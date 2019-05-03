@@ -475,8 +475,8 @@ class Wrapper:
             'task_generate_rule': {
                 '_type': 'ByInputDataCsv',
                 'csv_data_path': s3_path,
-                'task_id_prefix': task_id_prefix
             },
+            'task_id_prefix': task_id_prefix,
             'project_last_updated_datetime': project_last_updated_datetime
         }
         return self.api.initiate_tasks_generation(project_id, request_body=request_body)[0]

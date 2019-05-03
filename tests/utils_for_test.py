@@ -1,5 +1,6 @@
 from annofabapi import AnnofabApi
 import csv
+import os
 
 class TestWrapper:
     """
@@ -45,6 +46,8 @@ class TestWrapper:
         """
         first_line = ["1", first_input_data['input_data_name'], first_input_data['input_data_id']]
         lines = [first_line]
+
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, 'w') as f:
             writer = csv.writer(f, delimiter=',', lineterminator='\n')
             writer.writerows(lines)
