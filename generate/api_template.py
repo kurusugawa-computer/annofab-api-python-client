@@ -13,7 +13,7 @@ import mimetypes
 import functools
 import backoff
 import warnings
-
+import annofabapi.utils
 from annofabapi.exceptions import AnnofabApiException
 from typing import Dict, List, Any, Optional, Union, Tuple
 
@@ -81,13 +81,6 @@ class AnnofabApi:
     #########################################
     # Private Method
     #########################################
-    @staticmethod
-    def _log_error_response(response):
-        logger.error(f"response.text = {response.text}")
-        logger.error(f"request.url = {response.request.url}")
-        logger.error(f"request.headers = {response.request.headers}")
-        logger.error(f"request.body = {response.request.body}")
-
     def _create_kwargs(self, params: Dict[str, Any], headers: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         requestsモジュールのget,...メソッドに渡すkwargsを生成する。
@@ -185,8 +178,7 @@ class AnnofabApi:
             self.login()
             return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
 
-        if response.status_code != requests.codes.ok:
-            self._log_error_response(response)
+        annofabapi.utils.log_error_response(logger, response)
 
         response.encoding = 'utf-8'
         response.raise_for_status()

@@ -13,7 +13,7 @@ import mimetypes
 import functools
 import backoff
 import warnings
-
+import annofabapi.utils
 from annofabapi.exceptions import AnnofabApiException
 from typing import Dict, List, Any, Optional, Union, Tuple
 
@@ -81,13 +81,6 @@ class AnnofabApi:
     #########################################
     # Private Method
     #########################################
-    @staticmethod
-    def _log_error_response(response):
-        logger.error(f"response.text = {response.text}")
-        logger.error(f"request.url = {response.request.url}")
-        logger.error(f"request.headers = {response.request.headers}")
-        logger.error(f"request.body = {response.request.body}")
-
     def _create_kwargs(self, params: Dict[str, Any], headers: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         requestsモジュールのget,...メソッドに渡すkwargsを生成する。
@@ -185,8 +178,7 @@ class AnnofabApi:
             self.login()
             return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
 
-        if response.status_code != requests.codes.ok:
-            self._log_error_response(response)
+        annofabapi.utils.log_error_response(logger, response)
 
         response.encoding = 'utf-8'
         response.raise_for_status()
@@ -1053,7 +1045,7 @@ class AnnofabApi:
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_instruction_image_url_for_put(self, project_id, image_id, header_params: Optional[Dict[str, Any]]) -> Tuple[Any, requests.Response]:  # noqa: E501
+    def get_instruction_image_url_for_put(self, project_id, image_id, header_params) -> Tuple[Any, requests.Response]:  # noqa: E501
         """作業ガイドの画像登録・更新用URL取得  # noqa: E501
         プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。   # noqa: E501
         Args:
