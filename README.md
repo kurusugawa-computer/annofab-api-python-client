@@ -42,6 +42,7 @@ service = build(user_id, password)
 * メソッド名は、[AnnoFab Web APIのOpenAPI specification](https://annofab.com/docs/api/swagger.yaml)に記載されている`operationId`をスネークケースに変換したものです。
 * 各メソッドの戻り値は`Tupple[Content, Response]`です。
 Responseは[requestsモジュールのReponseオブジェクト](https://2.python-requests.org/en/master/api/#requests.Response)です。
+ContentはReponseの中身です。
 
 ```python
 # `status`が`complete`のタスクを取得する
