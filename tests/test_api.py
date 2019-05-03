@@ -20,6 +20,10 @@ import logging
 from annofabapi import AnnofabApi, Wrapper
 from tests.utils_for_test import TestWrapper
 
+logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
+logging.basicConfig(format=logging_formatter)
+logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
+
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
@@ -36,16 +40,8 @@ api = AnnofabApi(annofab_user_id, annofab_password)
 wrapper = Wrapper(api)
 test_wrapper = TestWrapper(api)
 
-logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
-logging.basicConfig(format=logging_formatter)
-logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
-
-
-def get_my_account_id() -> str:
-    my_account, _ = api.get_my_account()
-    return my_account['account_id']
-
-my_account_id = get_my_account_id()
+my_account_id = api.get_my_account()[0]['account_id']
+organization_name = api.get_organization_of_project(project_id)[0]['organization_name']
 
 
 def test_account():
@@ -87,12 +83,11 @@ def test_my():
 
 def test_annotation():
     """
-    batchUpdateAnnotations, putAnnotationはテストしない. タスクの状態を変化させる必要があり、コーディングに時間がかかるため。
+    batchUpdateAnnotations, putAnnotationはテストしない.
     """
 
     task_id = test_wrapper.get_first_task_id(project_id)
     input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
-    first_annotation = test_wrapper.get_first_annotation(project_id)
 
     print("get_annotation_list in wrapper.get_all_annotation_list")
     assert len(wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}})) >= 0
@@ -103,10 +98,8 @@ def test_annotation():
     print("post_annotation_archive_update")
     assert type(api.post_annotation_archive_update(project_id)[0]) == dict
 
-    print("post_annotation_archive_update")
+    print("get_annotation_archive")
     content, response = api.get_annotation_archive(project_id)
-    # 2019/05/02時点でAPIのResponse Content-Typeが正しくないので、期待結果が間違っている
-    # assert type(content) == dict
     assert response.headers["Location"].startswith("https://")
 
     print("wrapper.download_annotation_archive")
@@ -147,7 +140,8 @@ def test_input():
     assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f'{test_dir}/lenna.png')) == dict
 
     print(f"get_input_data")
-    assert type(api.get_input_data(project_id, test_input_data_id)[0]) == dict
+    test_input_data = api.get_input_data(project_id, test_input_data_id)[0]
+    assert type(test_input_data) == dict
 
     print(f"get_input_data_list in wrapper.get_all_input_data_list")
     # すぐには反映されないので、少し待つ
@@ -205,8 +199,6 @@ def test_organization():
     createNewOrganization はテストしない
     """
 
-    organization_name = inifile.get('annofab', 'organization_name')
-
     print("get_organization")
     assert type(api.get_organization(organization_name)[0]) == dict
 
@@ -221,8 +213,6 @@ def test_organization_member():
     """
     招待関係のAPI、削除関係のAPIはテストしない
     """
-
-    organization_name = inifile.get('annofab', 'organization_name')
 
     print("api.get_organization_members in wrapper.get_all_organization_members")
     assert len(wrapper.get_all_organization_members(organization_name)) > 0
@@ -309,7 +299,7 @@ def test_task():
     assert type(api.get_task(project_id, test_task_id)[0]) == dict
 
     print(f"get_tasks in wrapper.get_all_tasks")
-    time.sleep(3) # sleepしないと失敗したため
+    time.sleep(3)  # sleepしないと失敗したため
     assert len(wrapper.get_all_tasks(project_id, query_params={'task_id': test_task_id})) == 1
 
     print(f"start_task (annotation)")
@@ -322,12 +312,6 @@ def test_task():
                      'account_id': my_account_id}
     assert type(api.operate_task(project_id, test_task_id, request_body=request_body1)[0]) == dict
 
-    print(f"initiate_tasks_generation in wrapper.initiate_tasks_generation_by_csv")
-    csv_file_path = f'{test_dir}/tmp/create_task.csv'
-    test_wrapper.create_csv_for_task(csv_file_path, first_input_data)
-    content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path, str(uuid.uuid4()))
-    assert type(content) == dict
-
     print(f"get_task_histories")
     assert len(api.get_task_histories(project_id, test_task_id)[0]) > 0
 
@@ -336,6 +320,13 @@ def test_task():
 
     print(f"delete_task")
     assert type(api.delete_task(project_id, test_task_id)[0]) == dict
+
+    print(f"initiate_tasks_generation in wrapper.initiate_tasks_generation_by_csv")
+    csv_file_path = f'{test_dir}/tmp/create_task.csv'
+    test_wrapper.create_csv_for_task(csv_file_path, first_input_data)
+    task_id_prefix = str(uuid.uuid4())
+    content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path, task_id_prefix)
+    assert type(content) == dict
 
 
 def test_instruction():
