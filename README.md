@@ -95,6 +95,11 @@ logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 ### リトライの処理をカスタマイズ
 TODO
 
+
+# `annofabapi/api.py`の生成方法
+`annofabapi/api.py`は[AnnoFab Web APIのOpenAPI specification](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
+詳細は[generate/README.md](generate/README.md)を参照してください。
+
 # テスト実行方法
 
 ## 準備
@@ -126,20 +131,3 @@ $ mypy annofabapi
 $ flake8 
 
 ```
-
-
-# その他
-
-## 注意
-* 以下のAPIは使用する機会が少ない or 使用する危険度が高いので、未実装です。
-    * account関係のPUT, POST, DELETEメソッド
-    * organization関係のPUT, POST, DELETEメソッド
-    * project関係のPUT, POST, DELETEメソッド
-* 予告なく互換性のない変更がある可能性があります。
-
-予告なく互換性のない変更がある可能性があります。
-メソッド名は、swagger.yamlのoperationIdと対応していません
-作者または著作権者は、ソフトウェアに関してなんら責任を負いません。
-put, post, delete系のメソッドを間違えて実行してしまわないよう、注意してください。
-
-
