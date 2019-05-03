@@ -146,7 +146,7 @@ def test_input():
     print(f"get_input_data_list in wrapper.get_all_input_data_list")
     # すぐには反映されないので、少し待つ
     time.sleep(3)
-    assert len(wrapper.get_all_input_data_list(project_id, {"input_data_id": test_input_data_id})) > 0
+    assert len(wrapper.get_all_input_data_list(project_id, {"input_data_id": test_input_data_id})) == 1
 
     print(f"delete_input_data")
     assert type(api.delete_input_data(project_id, test_input_data_id)[0]) == dict
@@ -185,7 +185,7 @@ def test_supplementary():
 
 def test_inspection():
     """
-    batchUpdateInspectionsはテストしない. タスクの状態を変化させる必要があり、コーディングに時間がかかるため。
+    batchUpdateInspectionsはテストしない.
     """
 
     task_id = test_wrapper.get_first_task_id(project_id)
@@ -250,15 +250,7 @@ def test_project_member():
     print(f"get_project_members in wrapper.get_all_project_members")
     assert len(wrapper.get_all_project_members(project_id)) >= 0
 
-    print(f"put_project_member_by_user_id")
-    request_body = {
-        "member_status": "active",
-        "member_role": "owner",
-        "last_updated_datetime": my_member["updated_datetime"],
-    }
-    assert type(api.put_project_member(project_id, annofab_user_id, request_body=request_body)[0]) == dict
-
-    print("wrapper.put_project_members in wrapper.copy_project_member")
+    print("wrapper.copy_project_member -> wrapper.put_project_members -> put_project_member")
     content = wrapper.copy_project_members(src_project_id=project_id, dest_project_id=project_id, delete_dest=False)
     assert type(content) == list
 
