@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+# setup.pyのinstall_requiresに記述
+
+[dev-packages]
+pytest = "*"
+tox = "*"
+isort = "*"
+yapf = "*"
+mypy = "*"
+"flake8" = "*"
+pylint = "*"
