@@ -309,7 +309,8 @@ def test_task():
     assert type(api.get_task(project_id, test_task_id)[0]) == dict
 
     print(f"get_tasks in wrapper.get_all_tasks")
-    assert len(wrapper.get_all_tasks(project_id, query_params={'task_id': test_task_id})) > 0
+    time.sleep(3) # sleepしないと失敗したため
+    assert len(wrapper.get_all_tasks(project_id, query_params={'task_id': test_task_id})) == 1
 
     print(f"start_task (annotation)")
     request_body = {"phase": "annotation"}

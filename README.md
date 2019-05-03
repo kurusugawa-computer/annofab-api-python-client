@@ -1,4 +1,4 @@
-# annofab-api-python-Client
+# annofab-api-python-client
 AnnoFab Web APIのPythonクライアントライブラリです。
 https://annofab.com/docs/api/
 

@@ -4,6 +4,7 @@ Annofab APIのutils
 """
 
 import requests
+import os
 import logging
 
 
@@ -31,5 +32,7 @@ def download(url, dest_path):
     """
     response = requests.get(url)
     response.raise_for_status()
+
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, 'wb') as f:
         f.write(response.content)
