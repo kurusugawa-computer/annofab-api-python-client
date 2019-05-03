@@ -6,7 +6,7 @@ import functools
 import backoff
 import annofabapi.utils
 from annofabapi.exceptions import AnnofabApiException
-from typing import Dict, List, Any, Optional, Union, Tuple
+from typing import Dict, List, Any, Optional, Union, Tuple, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +49,7 @@ class AnnofabApiMixin:
 
         self.login_user_id = login_user_id
         self.login_password = login_password
+
         self.session = requests.Session()
 
     #: アクセスするURL
