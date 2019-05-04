@@ -20,21 +20,23 @@ import logging
 from annofabapi import AnnofabApi, Wrapper
 from tests.utils_for_test import TestWrapper
 
-logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
-logging.basicConfig(format=logging_formatter)
-logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
-
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read('./pytest.ini', 'UTF-8')
 project_id = inifile.get('annofab', 'project_id')
+should_execute_job_api = inifile.get('annofab', 'should_execute_job_api')
 
 annofab_user_id = os.getenv('ANNOFAB_USER_ID')
 annofab_password = os.getenv('ANNOFAB_PASSWORD')
 
 test_dir = './tests/data'
 out_dir = './tests/out'
+
+if inifile.get('annofab', 'should_print_log_message'):
+    logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
+    logging.basicConfig(format=logging_formatter)
+    logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 
 api = AnnofabApi(annofab_user_id, annofab_password)
 wrapper = Wrapper(api)
@@ -95,15 +97,16 @@ def test_annotation():
     print("get_annotation")
     assert type(api.get_annotation(project_id, task_id, input_data_id)[0]) == dict
 
-    print("post_annotation_archive_update")
-    assert type(api.post_annotation_archive_update(project_id)[0]) == dict
-
     print("get_annotation_archive")
     content, response = api.get_annotation_archive(project_id)
     assert response.headers["Location"].startswith("https://")
 
     print("wrapper.download_annotation_archive")
     wrapper.download_annotation_archive(project_id, f'{out_dir}/simple-annotation.zip')
+
+    if should_execute_job_api:
+        print("post_annotation_archive_update")
+        assert type(api.post_annotation_archive_update(project_id)[0]) == dict
 
 
 def test_annotation_specs():
@@ -313,12 +316,30 @@ def test_task():
     print(f"delete_task")
     assert type(api.delete_task(project_id, test_task_id)[0]) == dict
 
-    print(f"initiate_tasks_generation in wrapper.initiate_tasks_generation_by_csv")
-    csv_file_path = f'{test_dir}/tmp/create_task.csv'
-    test_wrapper.create_csv_for_task(csv_file_path, first_input_data)
-    task_id_prefix = str(uuid.uuid4())
-    content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path, task_id_prefix)
-    assert type(content) == dict
+    test2_task_id = str(uuid.uuid4())
+    print(f"batch_update_tasks. test_task_id={test2_task_id}")
+    request_body = {
+        "input_data_id_list": input_data_id_list
+    }
+    test_task_data = api.put_task(project_id, test2_task_id, request_body=request_body)[0]
+
+    request_body = [
+        {
+            'project_id': project_id,
+            'task_id': test2_task_id,
+            '_type': 'Delete'
+        }
+    ]
+    content = api.batch_update_tasks(project_id, request_body=request_body)[0]
+    assert type(content) == list
+
+    if should_execute_job_api:
+        print(f"initiate_tasks_generation in wrapper.initiate_tasks_generation_by_csv")
+        csv_file_path = f'{test_dir}/tmp/create_task.csv'
+        test_wrapper.create_csv_for_task(csv_file_path, first_input_data)
+        task_id_prefix = str(uuid.uuid4())
+        content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path, task_id_prefix)
+        assert type(content) == dict
 
 
 def test_instruction():
