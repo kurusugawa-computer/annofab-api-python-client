@@ -7,7 +7,7 @@ name = "pypi"
 # setup.pyのinstall_requiresに記述
 
 [dev-packages]
-annofabapi = {editable = true, path = "."} # For reading setup.py
+annofabapi = {editable = true,path = "."} # For reading setup.py
 pytest = "*"
 tox = "*"
 isort = "*"
