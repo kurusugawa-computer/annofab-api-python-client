@@ -34,7 +34,6 @@ from annofabapi import build
 
 user_id = "XXXXXX"
 password = "YYYYYY"
-project_id = "ZZZZZZ"
 
 service = build(user_id, password)
 ```
@@ -48,6 +47,7 @@ Responseは[requestsモジュールのReponseオブジェクト](https://2.pytho
 ContentはReponseの中身です。
 
 ```python
+project_id = "ZZZZZZ"
 # `status`が`complete`のタスクを取得する
 content, response = service.api.get_tasks(project_id, query_params={'status': 'complete'})
 print(content)
