@@ -18,7 +18,10 @@ https://annofab.com/docs/api/
 * python 3.5+
 
 # Install
-TODO
+
+```
+$ pipenv install requests
+```
 
 # Usage
 
