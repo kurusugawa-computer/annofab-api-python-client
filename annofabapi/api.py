@@ -821,7 +821,7 @@ class AnnofabApi(AnnofabApiMixin):
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_instruction_image_url_for_put(self, project_id, image_id, header_params: Optional[Dict[str, Any]]) -> Tuple[Any, requests.Response]:  # noqa: E501
+    def get_instruction_image_url_for_put(self, project_id, image_id, ) -> Tuple[Any, requests.Response]:  # noqa: E501
         """作業ガイドの画像登録・更新用URL取得  # noqa: E501
         プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。   # noqa: E501
         Args:
@@ -837,7 +837,6 @@ class AnnofabApi(AnnofabApiMixin):
         url_path = f'/projects/{project_id}/instruction-images/{image_id}/put-url'
         http_method = 'GET'
         keyword_params = {
-            'header_params': header_params
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
@@ -1028,9 +1027,10 @@ class AnnofabApi(AnnofabApiMixin):
         自身が所属するプロジェクトを一括で取得します。   # noqa: E501
         Args:
             query_params (Dict[str, Any]): Query Parameters
-                exclusive_start_id (str):  取得するデータの直前のプロジェクトID
-                page (int):  表示するページ番号  現在は未実装のパラメータです。(今後対応予定) 
-                limit (int):  1ページあたりの取得するデータ件数  現在は未実装のパラメータです。(今後対応予定) 
+                page (int):  表示するページ番号 
+                limit (int):  1ページあたりの取得するデータ件数 
+                status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。 
+                sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。 
 
         Returns:
             Tuple[InlineResponse2003, requests.Response]
@@ -1167,8 +1167,12 @@ class AnnofabApi(AnnofabApiMixin):
         Args:
             organization_name (str):  組織名 (required)
             query_params (Dict[str, Any]): Query Parameters
-                page (int):  表示するページ番号  現在は未実装のパラメータです。(今後対応予定) 
-                limit (int):  1ページあたりの取得するデータ件数  現在は未実装のパラメータです。(今後対応予定) 
+                page (int):  表示するページ番号 
+                limit (int):  1ページあたりの取得するデータ件数 
+                account_id (str):  指定したアカウントIDをメンバーに持つプロジェクトで絞り込む。 
+                except_account_id (str):  指定したアカウントIDをメンバーに持たないプロジェクトで絞り込む。 
+                status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。 
+                sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。 
 
         Returns:
             Tuple[InlineResponse2001, requests.Response]
@@ -2011,6 +2015,7 @@ class AnnofabApi(AnnofabApiMixin):
 
     def put_webhook(self, project_id, webhook_id, request_body: Optional[Any] = None) -> Tuple[Any, requests.Response]:  # noqa: E501
         """プロジェクトのWebhookを更新  # noqa: E501
+        プロジェクトのWebhookを新規登録/更新することができます。  body中には、event_typeによって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}}: タスクID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip   # noqa: E501
         Args:
             project_id (str):  プロジェクトID (required)
             webhook_id (str):  WebhookID (required)
