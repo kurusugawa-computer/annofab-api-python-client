@@ -1,4 +1,4 @@
-#!/bin/bash -uvx
+#!/bin/bash -uvxe
 
 # このスクリプトの存在するディレクトリに移動する
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
