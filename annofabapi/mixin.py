@@ -165,7 +165,7 @@ class AnnofabApiMixin:
         # HTTP Requestを投げる
         response = execute_request()
 
-        # Unauthoraized Errorならば、ログイン後に再度実行する
+        # Unauthorized Errorならば、ログイン後に再度実行する
         if response.status_code == requests.codes.unauthorized:
             logger.debug(response.text)
             self.login()
@@ -196,10 +196,9 @@ class AnnofabApiMixin:
         """
         ログイン
         Returns:
-            token情報
+            Tuple[Token, requests.Response]
 
         """
-        logger.debug("Call Login API")
         login_info = {'user_id': self.login_user_id, 'password': self.login_password}
 
         url = f"{self.URL_PREFIX}/login"
@@ -213,7 +212,10 @@ class AnnofabApiMixin:
     def logout(self) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
         """
         ログアウト
-        すでにログアウトされているときは何もしない
+        ログインしていないときはNoneを返す。
+        Returns:
+            Tuple[Token, requests.Response]. ログインしていないときはNone.
+
         """
 
         if self.token_dict is None:
@@ -228,7 +230,9 @@ class AnnofabApiMixin:
     def refresh_token(self) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
         """
         トークン リフレッシュ
-        すでにログアウトされているときは何もしない
+        ログインしていないときはNoneを返す。
+        Returns:
+            Tuple[Token, requests.Response]. ログインしていないときはNone.
         """
 
         if self.token_dict is None:
