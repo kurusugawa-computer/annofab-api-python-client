@@ -221,8 +221,7 @@ class Wrapper:
 
         s3_path = self.upload_file_to_s3(project_id, file_path, content_type)
 
-        copied_request_body = copy.deepcopy(request_body) if (
-                request_body is not None) else {}
+        copied_request_body = copy.deepcopy(request_body) if request_body is not None else {}
 
         copied_request_body.update({"input_data_path": s3_path})
         if "input_data_name" not in copied_request_body:
@@ -260,8 +259,7 @@ class Wrapper:
         # S3にファイルアップロード
         s3_path = self.upload_file_to_s3(project_id, file_path, new_content_type)
 
-        copied_request_body = copy.deepcopy(request_body) if (
-                request_body is not None) else {}
+        copied_request_body = copy.deepcopy(request_body) if request_body is not None else {}
 
         copied_request_body["supplementary_data_path"] = s3_path
 

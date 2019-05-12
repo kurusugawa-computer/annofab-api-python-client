@@ -3,10 +3,11 @@ Annofab WebAPIに対応する関数
 注意：このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
 """
 
-from annofabapi.mixin import AnnofabApiMixin
-from typing import Dict, List, Any, Optional, Union, Tuple
-import requests
 import warnings
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+import requests
+
 from annofabapi.mixin import AnnofabApiMixin
 
 
