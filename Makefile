@@ -9,8 +9,8 @@ format:
 	pipenv run yapf --verbose --in-place --recursive annofabapi tests
 
 lint:
-	pipenv run flake8 sample_project tests
-	pipenv run mypy sample_project tests
+	pipenv run flake8 annofabapi tests
+	pipenv run mypy annofabapi tests
 	pipenv run pylint sample_project tests --rcfile setup.cfg
 
 test:

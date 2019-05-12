@@ -1,4 +1,3 @@
-# flake8: noqa: W291
 """
 Annofab WebAPIに対応する関数
 注意：このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
@@ -45,7 +44,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/change-password'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -66,7 +65,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/confirm-reset-email'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -88,7 +87,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/confirm-reset-password'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -108,7 +107,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/confirm-sign-up'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -129,7 +128,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/confirm-verify-email'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -151,7 +150,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/request-password-reset'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -172,7 +171,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/reset-email'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -190,7 +189,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/sign-up'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -211,7 +210,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/verify-email'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -232,7 +231,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/reset-password'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -260,7 +259,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/annotations'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -286,7 +285,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation/simple'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_annotation_archive(
@@ -306,7 +305,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/archive/simple'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_annotation_list(
@@ -332,7 +331,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/annotations'
         http_method = 'GET'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -355,7 +354,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/projects/{project_id}/archive/full'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_outer_with_pro_id_tas_id_inp_dat_id_ann_id(
@@ -382,7 +381,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation/{annotation_id}/outer'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def post_annotation_archive_update(
@@ -402,7 +401,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/archive/update'
         http_method = 'POST'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_annotation(self,
@@ -428,7 +427,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -454,7 +453,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/annotation-specs'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_annotation_specs(self,
@@ -475,7 +474,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/annotation-specs'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -500,7 +499,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/projects'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def permanent_redirect2(
@@ -521,7 +520,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/projects/{project_id}/my-member'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def permanent_redirect3(self,
@@ -539,7 +538,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/accounts/my'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def permanent_redirect4(self,
@@ -557,7 +556,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/accounts/my'
         http_method = 'PUT'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def permanent_redirect5(self,
@@ -575,7 +574,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/accounts/my/delete-request'
         http_method = 'POST'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def permanent_redirect6(self,
@@ -593,7 +592,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/accounts/my/delete-request/confirm'
         http_method = 'POST'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -620,7 +619,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/inputs'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -645,7 +644,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/create-temp-path'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'header_params': header_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -668,7 +667,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}'
         http_method = 'DELETE'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_input_data(
@@ -689,7 +688,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_input_data_list(
@@ -718,7 +717,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/inputs'
         http_method = 'GET'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -743,7 +742,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/projects/{project_id}/inputs/{input_data_id}/data'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_input_data(self,
@@ -767,7 +766,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -801,7 +800,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/inspections'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -826,7 +825,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/inspections'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -853,7 +852,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/instruction-images/{image_id}'
         http_method = 'DELETE'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_instruction(
@@ -876,7 +875,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/instruction'
         http_method = 'GET'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -901,7 +900,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/instruction-history'
         http_method = 'GET'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -928,7 +927,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/instruction-images/{image_id}/put-url'
         http_method = 'GET'
-        keyword_params = {'header_params': header_params}
+        keyword_params: Dict[str, Any] = {'header_params': header_params}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_instruction_images(
@@ -948,7 +947,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/instruction-images'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_instruction(self,
@@ -970,7 +969,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/instruction'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -998,7 +997,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/jobs/gen-inputs/{job_id}'
         http_method = 'DELETE'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project_job(
@@ -1023,7 +1022,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/jobs'
         http_method = 'GET'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1050,7 +1049,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/my/account/delete-request/confirm'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1067,7 +1066,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/my/account'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_my_member_in_project(
@@ -1087,7 +1086,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/my/projects/{project_id}/member'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_my_organizations(
@@ -1108,7 +1107,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/my/organizations'
         http_method = 'GET'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1126,7 +1125,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/my/project-members'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_my_projects(
@@ -1150,7 +1149,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/my/projects'
         http_method = 'GET'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1169,7 +1168,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/my/account/delete-request'
         http_method = 'POST'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_my_account(self, request_body: Optional[Any] = None
@@ -1187,7 +1186,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/my/account'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1208,7 +1207,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/my/organizations'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1235,7 +1234,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/organizations'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1256,7 +1255,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/organizations/{organization_name}'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_activity(
@@ -1275,7 +1274,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/organizations/{organization_name}/activity'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_projects_of_organization(
@@ -1303,7 +1302,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/organizations/{organization_name}/projects'
         http_method = 'GET'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1323,7 +1322,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/organizations'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def permanent_redirect8(self,
@@ -1341,7 +1340,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/organizations'
         http_method = 'PUT'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -1371,7 +1370,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/organizations/{organization_name}/members/{user_id}/invitation/accept'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1395,7 +1394,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/organizations/{organization_name}/members/{user_id}'
         http_method = 'DELETE'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_member(
@@ -1417,7 +1416,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/organizations/{organization_name}/members/{user_id}'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_members(
@@ -1441,7 +1440,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/organizations/{organization_name}/members'
         http_method = 'GET'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1468,7 +1467,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/organizations/{organization_name}/members/{user_id}/invitation'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1494,7 +1493,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/organizations/{organization_name}/members/{user_id}/role'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1521,7 +1520,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}'
         http_method = 'DELETE'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_of_project(
@@ -1540,7 +1539,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/organization'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project(
@@ -1559,7 +1558,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_project_copy(self,
@@ -1581,7 +1580,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/copy'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1603,7 +1602,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1631,7 +1630,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/members/{user_id}'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project_members(
@@ -1654,7 +1653,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/members'
         http_method = 'GET'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1679,7 +1678,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/members/{user_id}'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1705,7 +1704,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/statistics/accounts'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_inspection_statistics(
@@ -1724,7 +1723,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/statistics/inspections'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_label_statistics(
@@ -1743,7 +1742,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/statistics/labels'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task_phase_statistics(
@@ -1762,7 +1761,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/statistics/task-phases'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task_statistics(
@@ -1781,7 +1780,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/statistics/tasks'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_worktime_statistics(
@@ -1801,7 +1800,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/statistics/worktimes'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -1829,7 +1828,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}/supplementary-data/{supplementary_data_id}'
         http_method = 'DELETE'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_supplementary_data_list(
@@ -1850,7 +1849,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}/supplementary-data'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_supplementary_data(
@@ -1876,7 +1875,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}/supplementary-data/{supplementary_data_id}'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1905,7 +1904,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1929,7 +1928,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}'
         http_method = 'DELETE'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_histories_with_pro_id_tas_id_tas_his_id(
@@ -1953,7 +1952,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/projects/{project_id}/tasks/{task_id}/histories/{task_history_id}'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_history_events_with_pro_id_tas_id(
@@ -1976,7 +1975,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/projects/{project_id}/tasks/{task_id}/history-events'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task(
@@ -1998,7 +1997,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task_histories(
@@ -2019,7 +2018,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/histories'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task_validation(
@@ -2041,7 +2040,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/validation'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_tasks(
@@ -2075,7 +2074,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks'
         http_method = 'GET'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -2097,7 +2096,7 @@ class AnnofabApi(AnnofabApiMixin):
         warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/projects/{project_id}/tasks-inputs'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_tasks_generation(
@@ -2118,7 +2117,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/generate-tasks'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -2144,7 +2143,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/operate'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -2170,7 +2169,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -2192,7 +2191,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/start-task'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -2220,7 +2219,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/webhooks/{webhook_id}'
         http_method = 'DELETE'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_webhooks(
@@ -2239,7 +2238,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/webhooks'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_webhook(self,
@@ -2248,7 +2247,7 @@ class AnnofabApi(AnnofabApiMixin):
                     request_body: Optional[Any] = None
                     ) -> Tuple[Any, requests.Response]:  # noqa: E501
         """プロジェクトのWebhookを更新  # noqa: E501
-        プロジェクトのWebhookを新規登録/更新することができます。  body中には、event_typeによって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip   # noqa: E501
+        プロジェクトのWebhookを新規登録/更新することができます。  body中には、event_typeによって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}}: タスクID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip   # noqa: E501
         Args:
             project_id (str):  プロジェクトID (required)
             webhook_id (str):  WebhookID (required)
@@ -2263,7 +2262,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/webhooks/{webhook_id}'
         http_method = 'PUT'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -2288,7 +2287,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/webhooks/{webhook_id}/test'
         http_method = 'POST'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)

@@ -78,7 +78,7 @@ class AnnofabApiMixin:
     # Private Method
     #########################################
     def _create_kwargs(self,
-                       params: Dict[str, Any],
+                       params: Optional[Dict[str, Any]] = None,
                        headers: Optional[Dict[str, Any]] = None
                        ) -> Dict[str, Any]:
         """

@@ -28,7 +28,8 @@ class Wrapper:
     # Private Method
     #########################################
     @staticmethod
-    def _get_content_type(file_path: str, content_type: str) -> str:
+    def _get_content_type(file_path: str,
+                          content_type: Optional[str] = None) -> str:
         """
         ファイルパスからContent-Typeを取得する。
         Args:
@@ -74,7 +75,7 @@ class Wrapper:
         copied_query_params = copy.deepcopy(
             arg_query_params) if arg_query_params is not None else {}
 
-        all_objects = []
+        all_objects: List[Dict[str, Any]] = []
 
         copied_query_params.update({"page": 1, "limit": limit})
         kwargs_for_func_get_list['query_params'] = copied_query_params
@@ -666,7 +667,7 @@ class Wrapper:
         copied_params = copy.deepcopy(
             query_params) if query_params is not None else {}
 
-        all_jobs = []
+        all_jobs: List[Dict[str, Any]] = []
         limit = 200
         copied_params.update({"page": 1, "limit": limit})
         r = self.api.get_project_job(project_id, query_params=copied_params)[0]
