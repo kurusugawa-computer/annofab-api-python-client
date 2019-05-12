@@ -910,6 +910,7 @@ class AnnofabApi(AnnofabApiMixin):
             self,
             project_id: str,
             image_id: str,
+            header_params: Optional[str, Any] = None
     ) -> Tuple[Any, requests.Response]:  # noqa: E501
         """作業ガイドの画像登録・更新用URL取得  # noqa: E501
         プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。   # noqa: E501
@@ -925,7 +926,7 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/instruction-images/{image_id}/put-url'
         http_method = 'GET'
-        keyword_params = {}
+        keyword_params = {'header_params': header_params}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_instruction_images(
