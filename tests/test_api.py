@@ -20,14 +20,17 @@ import uuid
 from distutils.util import strtobool
 from annofabapi import AnnofabApi, Wrapper
 from tests.utils_for_test import TestWrapper
+from tests.utils_for_test import create_csv_for_task
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read('./pytest.ini', 'UTF-8')
 project_id = inifile.get('annofab', 'project_id')
-should_execute_job_api: bool = strtobool(inifile.get('annofab', 'should_execute_job_api'))
-should_print_log_message: bool = strtobool(inifile.get('annofab', 'should_print_log_message'))
+should_execute_job_api: bool = strtobool(
+    inifile.get('annofab', 'should_execute_job_api'))
+should_print_log_message: bool = strtobool(
+    inifile.get('annofab', 'should_print_log_message'))
 
 annofab_user_id = os.getenv('ANNOFAB_USER_ID')
 annofab_password = os.getenv('ANNOFAB_PASSWORD')
@@ -406,7 +409,7 @@ def test_task():
             f"initiate_tasks_generation in wrapper.initiate_tasks_generation_by_csv"
         )
         csv_file_path = f'{test_dir}/tmp/create_task.csv'
-        test_wrapper.create_csv_for_task(csv_file_path, first_input_data)
+        create_csv_for_task(csv_file_path, first_input_data)
         task_id_prefix = str(uuid.uuid4())
         content = wrapper.initiate_tasks_generation_by_csv(
             project_id, csv_file_path, task_id_prefix)

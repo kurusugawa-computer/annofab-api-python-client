@@ -4,6 +4,22 @@ import os
 from annofabapi import AnnofabApi
 
 
+def create_csv_for_task(file_path, first_input_data):
+    """
+    タスク生成用のCSVを作成する
+    """
+    first_line = [
+        "1", first_input_data['input_data_name'],
+        first_input_data['input_data_id']
+    ]
+    lines = [first_line]
+
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    with open(file_path, 'w') as f:
+        writer = csv.writer(f, delimiter=',', lineterminator='\n')
+        writer.writerows(lines)
+
+
 class TestWrapper:
     """
     テスト用のUtils
@@ -37,18 +53,3 @@ class TestWrapper:
             'input_data_id': first_input_data['input_data_id'],
             'annotation_id': first_annotation['annotation_id']
         }
-
-    def create_csv_for_task(self, file_path, first_input_data):
-        """
-        タスク生成用のCSVを作成する
-        """
-        first_line = [
-            "1", first_input_data['input_data_name'],
-            first_input_data['input_data_id']
-        ]
-        lines = [first_line]
-
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        with open(file_path, 'w') as f:
-            writer = csv.writer(f, delimiter=',', lineterminator='\n')
-            writer.writerows(lines)

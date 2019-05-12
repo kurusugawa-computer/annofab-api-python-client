@@ -46,7 +46,7 @@
         {{/isDeprecated}}
         url_path = f'{{{path}}}'
         http_method = '{{httpMethod}}'
-        keyword_params = {
+        keyword_params: Dict[str, Any] = {
 {{#hasQueryParams}}
             'query_params': query_params,
 {{/hasQueryParams}}
