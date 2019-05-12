@@ -3,10 +3,11 @@ Annofab WebAPIに対応する関数
 注意：このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
 """
 
-from annofabapi.mixin import AnnofabApiMixin
-from typing import Dict, List, Any, Optional, Union, Tuple
-import requests
 import warnings
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+import requests
+
 from annofabapi.mixin import AnnofabApiMixin
 
 
@@ -2015,7 +2016,7 @@ class AnnofabApi(AnnofabApiMixin):
 
     def put_webhook(self, project_id, webhook_id, request_body: Optional[Any] = None) -> Tuple[Any, requests.Response]:  # noqa: E501
         """プロジェクトのWebhookを更新  # noqa: E501
-        プロジェクトのWebhookを新規登録/更新することができます。  body中には、event_typeによって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}}: タスクID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip   # noqa: E501
+        プロジェクトのWebhookを新規登録/更新することができます。  body中には、event_typeによって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip   # noqa: E501
         Args:
             project_id (str):  プロジェクトID (required)
             webhook_id (str):  WebhookID (required)
