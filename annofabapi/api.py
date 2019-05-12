@@ -910,13 +910,15 @@ class AnnofabApi(AnnofabApiMixin):
             self,
             project_id: str,
             image_id: str,
-            header_params: Optional[str, Any] = None
+            header_params: Optional[Dict[str, Any]] = None
     ) -> Tuple[Any, requests.Response]:  # noqa: E501
         """作業ガイドの画像登録・更新用URL取得  # noqa: E501
         プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。   # noqa: E501
         Args:
             project_id (str):  プロジェクトID (required)
             image_id (str):  作業ガイド画像ID (required)
+            header_params (Dict[str, Any]): Header Parameters
+                content_type (str):  アップロードしたいファイルの Content-Type を指定します。
 
         Returns:
             Tuple[DataPath, requests.Response]

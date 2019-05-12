@@ -28,5 +28,5 @@ setup(name='annofabapi',
             "Programming Language :: Python :: 3.7",
             "Topic :: Utilities",
       ],
-      packages=find_packages(exclude=["tests"])
+      packages=find_packages('annofabapi')
       )
