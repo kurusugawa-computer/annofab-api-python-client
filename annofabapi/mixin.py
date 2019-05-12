@@ -24,10 +24,12 @@ def my_backoff(function):
             code = e.response.status_code
             return code != 429 and code < 500
 
-        return backoff.on_exception(backoff.expo, requests.exceptions.RequestException,
+        return backoff.on_exception(backoff.expo,
+                                    requests.exceptions.RequestException,
                                     jitter=backoff.full_jitter,
                                     max_time=300,
-                                    giveup=fatal_code)(function)(*args, **kwargs)
+                                    giveup=fatal_code)(function)(*args,
+                                                                 **kwargs)
 
     return wrapped
 
@@ -75,7 +77,10 @@ class AnnofabApiMixin:
     #########################################
     # Private Method
     #########################################
-    def _create_kwargs(self, params: Dict[str, Any], headers: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def _create_kwargs(self,
+                       params: Dict[str, Any],
+                       headers: Optional[Dict[str, Any]] = None
+                       ) -> Dict[str, Any]:
         """
         requestsモジュールのget,...メソッドに渡すkwargsを生成する。
         Args:
@@ -101,9 +106,8 @@ class AnnofabApiMixin:
             'headers': headers,
         }
         if self.token_dict is not None:
-            kwargs.update({
-                'auth': self.__MyToken(self.token_dict['id_token'])
-            })
+            kwargs.update(
+                {'auth': self.__MyToken(self.token_dict['id_token'])})
 
         return kwargs
 
@@ -113,7 +117,8 @@ class AnnofabApiMixin:
                          url_path: str,
                          query_params: Optional[Dict[str, Any]] = None,
                          header_params: Optional[Dict[str, Any]] = None,
-                         request_body: Optional[Any] = None) -> Tuple[Any, requests.Response]:
+                         request_body: Optional[Any] = None
+                         ) -> Tuple[Any, requests.Response]:
         """
         HTTP　Requestを投げて、Reponseを返す。
         Args:
@@ -149,7 +154,8 @@ class AnnofabApiMixin:
                 return self.session.head(url, **kwargs)
 
             else:
-                raise AnnofabApiException("HTTP Method '{http_method}' is not supported")
+                raise AnnofabApiException(
+                    f"HTTP Method '{http_method}' is not supported")
 
         url = f'{self.URL_PREFIX}{url_path}'
         kwargs = self._create_kwargs(query_params, header_params)
@@ -170,7 +176,8 @@ class AnnofabApiMixin:
         if response.status_code == requests.codes.unauthorized:
             logger.debug(response.text)
             self.login()
-            return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
+            return self._request_wrapper(http_method, url_path, query_params,
+                                         header_params, request_body)
 
         annofabapi.utils.log_error_response(logger, response)
 
@@ -200,7 +207,10 @@ class AnnofabApiMixin:
             Tuple[Token, requests.Response]
 
         """
-        login_info = {'user_id': self.login_user_id, 'password': self.login_password}
+        login_info = {
+            'user_id': self.login_user_id,
+            'password': self.login_password
+        }
 
         url = f"{self.URL_PREFIX}/login"
         response = self.session.post(url, json=login_info)
@@ -224,11 +234,14 @@ class AnnofabApiMixin:
             return None
 
         request_body = self.token_dict
-        content, response = self._request_wrapper('POST', '/logout', request_body=request_body)
+        content, response = self._request_wrapper('POST',
+                                                  '/logout',
+                                                  request_body=request_body)
         self.token_dict = None
         return content, response
 
-    def refresh_token(self) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
+    def refresh_token(self
+                      ) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
         """
         トークン リフレッシュ
         ログインしていないときはNoneを返す。
@@ -241,6 +254,8 @@ class AnnofabApiMixin:
             return None
 
         request_body = {'refresh_token': self.token_dict['refresh_token']}
-        content, response = self._request_wrapper('POST', '/refresh-token', request_body=request_body)
+        content, response = self._request_wrapper('POST',
+                                                  '/refresh-token',
+                                                  request_body=request_body)
         self.token_dict = content
         return content, response

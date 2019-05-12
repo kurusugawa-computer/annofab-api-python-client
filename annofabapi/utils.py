@@ -11,7 +11,8 @@ import dateutil
 import requests
 
 
-def log_error_response(arg_logger: logging.Logger, response: requests.Response):
+def log_error_response(arg_logger: logging.Logger,
+                       response: requests.Response):
     """
     HTTP Statusが400以上ならば、loggerにエラー情報を出力する
     Args:
