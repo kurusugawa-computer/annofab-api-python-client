@@ -17,6 +17,7 @@ import os
 import time
 import uuid
 
+from distutils.util import strtobool
 from annofabapi import AnnofabApi, Wrapper
 from tests.utils_for_test import TestWrapper
 
@@ -25,7 +26,8 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read('./pytest.ini', 'UTF-8')
 project_id = inifile.get('annofab', 'project_id')
-should_execute_job_api = inifile.get('annofab', 'should_execute_job_api')
+should_execute_job_api: bool = strtobool(inifile.get('annofab', 'should_execute_job_api'))
+should_print_log_message: bool = strtobool(inifile.get('annofab', 'should_print_log_message'))
 
 annofab_user_id = os.getenv('ANNOFAB_USER_ID')
 annofab_password = os.getenv('ANNOFAB_PASSWORD')
@@ -33,7 +35,7 @@ annofab_password = os.getenv('ANNOFAB_PASSWORD')
 test_dir = './tests/data'
 out_dir = './tests/out'
 
-if inifile.get('annofab', 'should_print_log_message'):
+if should_print_log_message:
     logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
     logging.basicConfig(format=logging_formatter)
     logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
@@ -143,12 +145,18 @@ def test_login():
     assert api.login()[0]['token'].keys() >= {
         'id_token', 'access_token', 'refresh_token'
     }
-    print(f"refresh_token")
+    print(f"refresh_token with logging in")
     assert api.refresh_token()[0].keys() >= {
         'id_token', 'access_token', 'refresh_token'
     }
-    print(f"logout")
+    print(f"logout with logging in")
     assert type(api.logout()[0]) == dict
+
+    print(f"refresh_token with logging out")
+    assert api.refresh_token() is None
+
+    print(f"logout with logging out")
+    assert api.logout() is None
 
 
 def test_input():

@@ -14,4 +14,4 @@ lint:
 	pipenv run pylint sample_project tests --rcfile setup.cfg
 
 test:
-	pipenv run python -m unittest discover tests
+	pipenv run pytest tests -v --cov=annofabapi --cov-report=html
