@@ -1,12 +1,13 @@
-import logging
-import json
-
-import requests
 import functools
+import json
+import logging
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+
 import backoff
+import requests
+
 import annofabapi.utils
 from annofabapi.exceptions import AnnofabApiException
-from typing import Dict, List, Any, Optional, Union, Tuple, Callable
 
 logger = logging.getLogger(__name__)
 

@@ -1,12 +1,13 @@
+import copy
 import logging
+import mimetypes
 import urllib
 import urllib.parse
-import copy
-import mimetypes
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-import annofabapi.utils
-from typing import Dict, List, Any, Optional, Tuple, Callable
 
 logger = logging.getLogger(__name__)
 
