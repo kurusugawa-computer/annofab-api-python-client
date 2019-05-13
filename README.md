@@ -98,3 +98,7 @@ logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 
 ### リトライの処理をカスタマイズ
 TODO
+
+
+## Usage for Develper
+[](README_for_developer.md)を参照してください。
