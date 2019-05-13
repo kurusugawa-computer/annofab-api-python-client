@@ -14,17 +14,17 @@ import requests
 def log_error_response(arg_logger: logging.Logger,
                        response: requests.Response):
     """
-    HTTP Statusが400以上ならば、loggerにエラー情報を出力する
+    HTTP Statusが400以上ならば、loggerにresponse/request情報を出力する
     Args:
         arg_logger: logger
         response: Response
     """
 
     if 400 <= response.status_code < 600:
-        arg_logger.error(f"response.text = {response.text}")
-        arg_logger.error(f"request.url = {response.request.url}")
-        arg_logger.error(f"request.headers = {response.request.headers}")
-        arg_logger.error(f"request.body = {response.request.body}")
+        arg_logger.debug(f"response.text = {response.text}")
+        arg_logger.debug(f"request.url = {response.request.url}")
+        arg_logger.debug(f"request.headers = {response.request.headers}")
+        arg_logger.debug(f"request.body = {response.request.body}")
 
 
 def download(url, dest_path):
