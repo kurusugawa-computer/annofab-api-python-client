@@ -1,5 +1,5 @@
 # annofab-api-python-client
-AnnoFab Web API(https://annofab.com/docs/api/)のPythonクライアントライブラリです。
+[AnnoFab Web API](https://annofab.com/docs/api/)のPythonクライアントライブラリです。
 
 
 # 注意
@@ -27,6 +27,8 @@ $ pip install annofabapi
 
 ## インスタンス生成
 
+### user_id, passwordをコンストラクタ引数に渡す
+
 ```python
 # APIアクセス用のインスタンスを生成
 from annofabapi import build
@@ -37,6 +39,31 @@ password = "YYYYYY"
 
 service = build(user_id, password)
 ```
+
+### `.netrc`に記載されたuser_id, passwordから生成
+`.netrc`ファイルに、AnnofabのユーザIDとパスワードを記載する。
+
+```plain:.netrc
+machine annofab.com
+login annofab_user_id
+password annofab_password
+```
+
+```python
+from annofabapi import build_from_netrc
+service = build_from_netrc()
+```
+
+
+#### For Linux
+* パスは`$HOME/.netrc`
+* `$ chmod 600 $HOME/.netrc`でパーミッションを変更する
+
+
+
+#### For Windows
+* パスは`%USERPROFILE%\.netrc`
+
 
 ## `service.api`のサンプルコード
 
@@ -101,4 +128,4 @@ TODO
 
 
 ## Usage for Develper
-[](README_for_developer.md)を参照してください。
+[README_for_developer.md](README_for_developer.md)を参照してください。

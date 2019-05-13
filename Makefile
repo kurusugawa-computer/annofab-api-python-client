@@ -5,8 +5,8 @@ init:
 	pipenv install --dev
 
 format:
-	pipenv run isort --verbose --recursive annofabapi tests
-	pipenv run yapf --verbose --in-place --recursive annofabapi tests
+	pipenv run isort --verbose --recursive annofabapi tests examples
+	pipenv run yapf --verbose --in-place --recursive annofabapi tests examples
 
 lint:
 	pipenv run flake8 annofabapi tests
