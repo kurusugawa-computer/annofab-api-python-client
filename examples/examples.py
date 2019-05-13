@@ -2,8 +2,9 @@
 
 """
 
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 from annofabapi import AnnofabApi
-from typing import Dict, List, Any, Optional, Union, Tuple
 
 
 class ExampleWrapper:
@@ -18,7 +19,8 @@ class ExampleWrapper:
         """
         self.api = api
 
-    def get_tasks_by_input_data_id(self, project_id: str, input_data_id: str) -> List[Dict[str, Any]]:
+    def get_tasks_by_input_data_id(self, project_id: str,
+                                   input_data_id: str) -> List[Dict[str, Any]]:
         """
         指定したinput_data_idを含む複数のtaskを取得する。
         注意：`get_all_tasks`メソッドを実行するので、遅い。
