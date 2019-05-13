@@ -172,7 +172,7 @@ def test_input():
 
     print(f"get_input_data_list in wrapper.get_all_input_data_list")
     # すぐには反映されないので、少し待つ
-    time.sleep(3)
+    time.sleep(5)
     assert len(
         wrapper.get_all_input_data_list(
             project_id, {"input_data_id": test_input_data_id})) == 1
