@@ -1,6 +1,6 @@
 # annofab-api-python-client
-AnnoFab Web APIのPythonクライアントライブラリです。
-https://annofab.com/docs/api/
+AnnoFab Web API(https://annofab.com/docs/api/)のPythonクライアントライブラリです。
+
 
 # 注意
 * 作者または著作権者は、ソフトウェアに関してなんら責任を負いません。
@@ -20,7 +20,7 @@ https://annofab.com/docs/api/
 # Install
 
 ```
-$ pipenv install requests
+$ pip install annofabapi
 ```
 
 # Usage
@@ -98,40 +98,3 @@ logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 
 ### リトライの処理をカスタマイズ
 TODO
-
-
-# `annofabapi/api.py`の生成方法
-`annofabapi/api.py`は[AnnoFab Web APIのOpenAPI specification](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
-詳細は[generate/README.md](generate/README.md)を参照してください。
-
-# テスト実行方法
-
-## 準備
-1. pytest.iniにテスト対象のproject_idを指定. **プロジェクトが変更される恐れがあることに注意！！**
-2. 以下の環境変数にAnnofabの認証情報を設定
-    * `ANNOFAB_USER_ID`
-    * `ANNOFAB_PASSWORD`
-3. `pipenv run tox` でテスト実行
-
-### 備考
-* 基本的に、テストメソッドは、エラーが発生しないこと（HTTP STatus codeが400系でないこと）を確認しています。それより詳細な確認は行っていません。
-
-    
-
-# document生成方法
-
-### Windowsの場合
-
-```
-> docs\make.bat
-```
-
-
-# ソースチェックツール
-
-```bash
-$ mypy annofabapi
-
-$ flake8 
-
-```
