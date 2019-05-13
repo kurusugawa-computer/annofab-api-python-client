@@ -19,10 +19,10 @@ test:
 publish_test:
 	python setup.py bdist_wheel
 	pipenv run twine upload dist/* --repository-url https://test.pypi.org/legacy/ --verbose
-	rm -fr build/ dist/ annofabapi.egg
+	rm -fr build/ dist/ annofabapi.egg-info
 
 publish:
 	python setup.py bdist_wheel
 	pipenv run twine upload dist/* --repository-url https://upload.pypi.org/legacy/ --verbose
-	rm -fr build/ dist/ annofabapi.egg
+	rm -fr build/ dist/ annofabapi.egg-info
 
