@@ -19,7 +19,7 @@ import uuid
 
 from distutils.util import strtobool
 from annofabapi import AnnofabApi, Wrapper
-from tests.utils_for_test import TestWrapper
+from tests.utils_for_test import WrapperForTest
 from tests.utils_for_test import create_csv_for_task
 
 # プロジェクトトップに移動する
@@ -45,7 +45,7 @@ if should_print_log_message:
 
 api = AnnofabApi(annofab_user_id, annofab_password)
 wrapper = Wrapper(api)
-test_wrapper = TestWrapper(api)
+test_wrapper = WrapperForTest(api)
 
 my_account_id = api.get_my_account()[0]['account_id']
 organization_name = api.get_organization_of_project(

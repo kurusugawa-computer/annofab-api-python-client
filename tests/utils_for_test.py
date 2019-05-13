@@ -20,7 +20,7 @@ def create_csv_for_task(file_path, first_input_data):
         writer.writerows(lines)
 
 
-class TestWrapper:
+class WrapperForTest:
     """
     テスト用のUtils
     """
