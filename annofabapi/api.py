@@ -1,3 +1,4 @@
+# flake8: noqa: W291
 """
 Annofab WebAPIに対応する関数
 注意：このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照

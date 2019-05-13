@@ -12,11 +12,10 @@ import logging
 import os
 import time
 import uuid
-
 from distutils.util import strtobool
+
 from annofabapi import AnnofabApi, Wrapper
-from tests.utils_for_test import WrapperForTest
-from tests.utils_for_test import create_csv_for_task
+from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
