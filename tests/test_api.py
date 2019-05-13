@@ -1,14 +1,10 @@
 """
-AnnofabApi, Wrapperのテストメソッド
+AnnofabApi, Wrapperのテストコード
 
 ### テストの観点
-*
-※assert文が書いていないメソッドは、エラーが発生しないことを確認したいだけの場合
-※loginしていない状態でもメソッドが実行できることを確認するため、確認したいメソッドの直前にlogoutを実行している
 【注意】
-*
 * 基本的にHTTP GETのテストのみ行うこと。PUT/POST/DELETEのテストがあると、間違えて修正してまうおそれあり。
-*
+
 """
 import configparser
 import datetime
