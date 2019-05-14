@@ -7,7 +7,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
     readme = f.read()
 
 setup(name='annofabapi',
-      version='0.1.1',
+      version='0.1.2',
       description=
       'Python Clinet Library of AnnoFab API (https://annofab.com/docs/api/)',
       long_description=readme,
