@@ -1,13 +1,23 @@
 #!/usr/bin/env python
 # coding: UTF-8
 
+import os
+
 from setuptools import setup
+
+here = os.path.abspath(os.path.dirname(__file__))
 
 with open('README.md', 'r', encoding='utf-8') as f:
     readme = f.read()
 
+about = {}
+with open(os.path.join(here, 'annofabapi', '__version__.py'),
+          'r',
+          encoding='utf-8') as f:
+    exec(f.read(), about)
+
 setup(name='annofabapi',
-      version='0.1.2',
+      version=about['__version__'],
       description=
       'Python Clinet Library of AnnoFab API (https://annofab.com/docs/api/)',
       long_description=readme,
