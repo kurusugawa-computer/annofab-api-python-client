@@ -910,7 +910,7 @@ class AnnofabApi(AnnofabApiMixin):
             self,
             project_id: str,
             image_id: str,
-            header_params: Optional[Dict[str, Any]] = None
+            header_params: Optional[Dict[str, Any]] = None,
     ) -> Tuple[Any, requests.Response]:  # noqa: E501
         """作業ガイドの画像登録・更新用URL取得  # noqa: E501
         プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。   # noqa: E501
@@ -918,7 +918,7 @@ class AnnofabApi(AnnofabApiMixin):
             project_id (str):  プロジェクトID (required)
             image_id (str):  作業ガイド画像ID (required)
             header_params (Dict[str, Any]): Header Parameters
-                content_type (str):  アップロードしたいファイルの Content-Type を指定します。
+                content_type (str):  登録する画像ファイルの Content-Type を指定します。 
 
         Returns:
             Tuple[DataPath, requests.Response]
@@ -928,7 +928,9 @@ class AnnofabApi(AnnofabApiMixin):
         """
         url_path = f'/projects/{project_id}/instruction-images/{image_id}/put-url'
         http_method = 'GET'
-        keyword_params: Dict[str, Any] = {'header_params': header_params}
+        keyword_params: Dict[str, Any] = {
+            'header_params': header_params,
+        }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_instruction_images(
@@ -2248,7 +2250,7 @@ class AnnofabApi(AnnofabApiMixin):
                     request_body: Optional[Any] = None
                     ) -> Tuple[Any, requests.Response]:  # noqa: E501
         """プロジェクトのWebhookを更新  # noqa: E501
-        プロジェクトのWebhookを新規登録/更新することができます。  body中には、event_typeによって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}}: タスクID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}}: プロジェクトタイトル   * {{COMPLETE_DATETIME}}: 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip   # noqa: E501
+        プロジェクトのWebhookを新規登録/更新することができます。  body中には、event_typeによって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip   # noqa: E501
         Args:
             project_id (str):  プロジェクトID (required)
             webhook_id (str):  WebhookID (required)
