@@ -58,12 +58,29 @@ $ make lint
 $ make publish_test
 ```
 
+2. TestPyPIからインストールして、利用できることを確認する。
 
-2. PyPIに登録する。
+```
+$ pip uninstall annofabapi
+$ pip install --index-url https://test.pypi.org/simple/ annofabapi --upgrade
+$ python -c "import annofabapi; print(annofabapi.__version__)"
+```
+
+3. PyPIに登録する。
 
 ```
 $ make publish
 ```
+
+4. PyPIからインストールして、利用できることを確認する。
+
+```
+$ pip uninstall annofabapi
+$ pip install annofabapi --upgrade
+$ python -c "import annofabapi; print(annofabapi.__version__)"
+```
+
+
 
 ### GitHubのリリースページ
 GitHubのRelease機能を使って、リリース情報を記載する。
