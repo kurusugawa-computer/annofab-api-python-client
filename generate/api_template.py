@@ -5,7 +5,7 @@ Annofab WebAPIに対応する関数
 """
 
 import warnings
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import requests
 

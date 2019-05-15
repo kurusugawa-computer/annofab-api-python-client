@@ -3,7 +3,7 @@ import logging
 import mimetypes
 import urllib
 import urllib.parse
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
 
 import annofabapi.utils
 from annofabapi import AnnofabApi
