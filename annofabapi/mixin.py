@@ -96,7 +96,7 @@ class AnnofabApiMixin:
         new_params = {}
         if params is not None:
             for key, value in params.items():
-                if type(value) in [list, dict]:
+                if isinstance(value, (list, dict)):
                     new_params[key] = json.dumps(value)
                 else:
                     new_params[key] = value
@@ -160,10 +160,10 @@ class AnnofabApiMixin:
         url = f'{self.URL_PREFIX}{url_path}'
         kwargs = self._create_kwargs(query_params, header_params)
         if request_body is not None:
-            if type(request_body) == dict or type(request_body) == list:
+            if isinstance(request_body, (dict, list)):
                 kwargs.update({'json': request_body})
 
-            elif type(request_body) == str:
+            elif isinstance(request_body, str):
                 kwargs.update({'data': request_body.encode("utf-8")})
 
             else:
