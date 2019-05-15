@@ -9,9 +9,9 @@ format:
 	pipenv run yapf --verbose --in-place --recursive annofabapi tests examples setup.py
 
 lint:
-	pipenv run flake8 annofabapi tests
-	pipenv run mypy annofabapi tests
-	pipenv run pylint annofabapi tests --rcfile tox.cfg
+	pipenv run flake8 annofabapi
+	pipenv run mypy annofabapi --config-file tox.ini
+	pipenv run pylint annofabapi --rcfile tox.ini
 
 test:
 	pipenv run pytest tests -v --cov=annofabapi --cov-report=html

@@ -19,15 +19,13 @@ class Resource:
         self.wrapper = Wrapper(self.api)
 
 
-def build(login_user_id: str, login_password: str,
-          version: str = "v1") -> Resource:
+def build(login_user_id: str, login_password: str) -> Resource:
     """
     AnnofabApi, Wrapperのインスタンスを保持するインスタンスを生成する。
 
     Args:
         login_user_id: AnnoFabにログインするときのユーザID
         login_password: AnnoFabにログインするときのパスワード
-        version: APIのバージョン。2019/05時点ではv1のみ対応
 
     Returns:
         AnnofabApi, Wrapperのインスタンスを保持するインスタンス

@@ -1,11 +1,12 @@
 # flake8: noqa: W291
+# pylint: disable=too-many-lines,trailing-whitespace
 """
 Annofab WebAPIに対応する関数
 注意：このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
 """
 
 import warnings
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import requests
 
