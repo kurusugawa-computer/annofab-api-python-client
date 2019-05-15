@@ -59,11 +59,16 @@ generate/
 
 ## 実行方法
 
-`generate/generate.sh`を実行すると、`annofabapi/api.py`が上書きされます。
+`$ generate/generate.sh`を実行すると、`annofabapi/api.py`が上書きされます。
+`$ generate/generate.sh --notdownload`を実行すると`generate/swagger.yaml`を使って`api.py`が生成されます。
+
 
 ```bash
 $ generate/generate.sh
-...
+
+
+$ generate/generate.sh --notdownload
+
 ```
 
 

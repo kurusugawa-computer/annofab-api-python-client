@@ -45,7 +45,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし利便性のため指定は必須ではありません。
 
-  version: 0.48.1
+  version: 0.49.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -2163,6 +2163,12 @@ paths:
         required: false
         schema:
           $ref: "#/components/schemas/TaskId"
+      - name: input_data_ids
+        in: query
+        description: 指定された入力データIDを使用しているタスクを絞り込みます。カンマ区切りで複数の入力データIDを指定可能です。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません
+        required: false
+        schema:
+          $ref: "#/components/schemas/InputDataId"
       - name: phase
         in: query
         description: 絞り込み条件となるフェーズ名。未指定時は全フェーズ
