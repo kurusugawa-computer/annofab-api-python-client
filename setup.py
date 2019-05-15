@@ -16,10 +16,10 @@ with open(os.path.join(here, 'annofabapi', '__version__.py'),
           encoding='utf-8') as f:
     exec(f.read(), about)
 
+
 setup(name='annofabapi',
       version=about['__version__'],
-      description=
-      'Python Clinet Library of AnnoFab API (https://annofab.com/docs/api/)',
+      description='Python Clinet Library of AnnoFab API (https://annofab.com/docs/api/)',
       long_description=readme,
       long_description_content_type='text/markdown',
       author='yuji38kwmt',
