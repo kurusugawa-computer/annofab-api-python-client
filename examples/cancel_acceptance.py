@@ -32,6 +32,13 @@ def get_account_id_from_user_id(project_id: str, user_id: str):
 
 
 def cancel_acceptance(project_id: str, task_id_list: List[str], acceptor_user_id: Optional[str] = None):
+    """
+    タスクを受け入れ取り消しする
+    Args:
+        project_id:
+        task_id_list: 受け入れ取り消しするtask_id_list
+        acceptor_user_id: 再度受入を担当させたいユーザのuser_id
+    """
     acceptor_account_id = get_account_id_from_user_id(project_id,
                                                       acceptor_user_id) if acceptor_user_id is not None else None
 
