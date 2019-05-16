@@ -84,7 +84,9 @@ $ python cancel_acceptance.py --project_id prj1 --task_id_file file --user_id us
 ```
 
 ## reject_tasks_with_adding_comment.py
-アノテーション仕様を途中で変更したときなどに、利用します。
+検査コメントを付与して、タスクを差し戻します。検査コメントは、タスク内の先頭の画像の左上に付与します。
+
+このツールは、アノテーション仕様を途中で変更したときなどに、利用できます。
 
 プロジェクトのチェッカー以上の権限を持つユーザで実行してください。
 
