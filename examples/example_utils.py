@@ -2,11 +2,13 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import annofabapi
 
+
 def read_lines(filepath: str) -> List[str]:
     """ファイルを行単位で読み込む。改行コードを除く"""
     with open(filepath) as f:
         lines = f.readlines()
     return [e.rstrip('\r\n') for e in lines]
+
 
 class ExamplesWrapper:
     """
@@ -14,10 +16,12 @@ class ExamplesWrapper:
     Returns:
 
     """
+
     def __init__(self, service: annofabapi.Resource):
         self.service = service
 
-    def get_account_id_last_annotation_phase(self, task_histories: List[Dict[str, Any]]):
+    def get_account_id_last_annotation_phase(
+            self, task_histories: List[Dict[str, Any]]):
         """
         タスク履歴の最後のannotation phaseを担当したaccount_idを取得する. なければNoneを返す
         Args:
@@ -27,7 +31,9 @@ class ExamplesWrapper:
 
 
         """
-        annotation_histories = [e for e in task_histories if e["phase"] == "annotation"]
+        annotation_histories = [
+            e for e in task_histories if e["phase"] == "annotation"
+        ]
         if len(annotation_histories) > 0:
             last_history = annotation_histories[-1]
             return last_history["account_id"]
@@ -48,8 +54,8 @@ class ExamplesWrapper:
         member, _ = self.service.api.get_project_member(project_id, user_id)
         return member['account_id']
 
-
-    def change_operator_of_task(self, project_id: str, task_id: str, account_id: str) -> Dict[str, Any]:
+    def change_operator_of_task(self, project_id: str, task_id: str,
+                                account_id: str) -> Dict[str, Any]:
         """
         タスクの担当者を変更する
         Args:
@@ -68,11 +74,13 @@ class ExamplesWrapper:
             "status": "not_started",
             "account_id": account_id,
             "last_updated_datetime": task["updated_datetime"],
-
         }
-        return self.service.api.operate_task(project_id, task_id, request_body=req)[0]
+        return self.service.api.operate_task(project_id,
+                                             task_id,
+                                             request_body=req)[0]
 
-    def change_to_working_phase(self, project_id: str, task_id: str, account_id: str) -> Dict[str, Any]:
+    def change_to_working_phase(self, project_id: str, task_id: str,
+                                account_id: str) -> Dict[str, Any]:
         """
         タスクを作業中に変更する
         Args:
@@ -91,10 +99,10 @@ class ExamplesWrapper:
             "status": "working",
             "account_id": account_id,
             "last_updated_datetime": task["updated_datetime"],
-
         }
-        return self.service.api.operate_task(project_id, task_id, request_body=req)[0]
-
+        return self.service.api.operate_task(project_id,
+                                             task_id,
+                                             request_body=req)[0]
 
     def reject_task(self, project_id: str, task_id: str, account_id: str):
         """
@@ -110,22 +118,22 @@ class ExamplesWrapper:
 
         # タスクを差し戻す
         task, _ = self.service.api.get_task(project_id, task_id)
-        annotator_account_id = self.get_account_id_last_annotation_phase(task["histories_by_phase"])
+        annotator_account_id = self.get_account_id_last_annotation_phase(
+            task["histories_by_phase"])
 
         req_reject = {
             "status": "rejected",
             "account_id": account_id,
             "last_updated_datetime": task["updated_datetime"],
-
         }
-        rejected_task, _ = self.service.api.operate_task(project_id, task_id, request_body=req_reject)
+        rejected_task, _ = self.service.api.operate_task(
+            project_id, task_id, request_body=req_reject)
 
         req_change_operator = {
             "status": "not_started",
             "account_id": annotator_account_id,
             "last_updated_datetime": rejected_task["updated_datetime"],
-
         }
-        updated_task, _ = self.service.api.operate_task(project_id, task["task_id"], request_body=req_change_operator)
+        updated_task, _ = self.service.api.operate_task(
+            project_id, task["task_id"], request_body=req_change_operator)
         return updated_task
-

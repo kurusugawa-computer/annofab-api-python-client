@@ -14,7 +14,7 @@ import time
 import uuid
 from distutils.util import strtobool
 
-from annofabapi import AnnofabApi, Wrapper
+import annofabapi
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
@@ -27,9 +27,6 @@ should_execute_job_api: bool = strtobool(
 should_print_log_message: bool = strtobool(
     inifile.get('annofab', 'should_print_log_message'))
 
-annofab_user_id = os.getenv('ANNOFAB_USER_ID')
-annofab_password = os.getenv('ANNOFAB_PASSWORD')
-
 test_dir = './tests/data'
 out_dir = './tests/out'
 
@@ -38,8 +35,9 @@ if should_print_log_message:
     logging.basicConfig(format=logging_formatter)
     logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 
-api = AnnofabApi(annofab_user_id, annofab_password)
-wrapper = Wrapper(api)
+service = annofabapi.build_from_netrc()
+api = service.api
+wrapper = service.wrapper
 test_wrapper = WrapperForTest(api)
 
 my_account_id = api.get_my_account()[0]['account_id']
