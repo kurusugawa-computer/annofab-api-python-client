@@ -15,7 +15,7 @@
 * 「画像を入力データとして登録する」機能など、APIを組み合わせた機能を利用できます。
 
 # Requirements
-* python 3.6+
+* Python 3.6+
 
 # Install
 

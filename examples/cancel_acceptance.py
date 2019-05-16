@@ -10,7 +10,7 @@ import requests
 
 import annofabapi
 
-from example_utils import read_lines
+from example_utils import read_lines, ExamplesWrapper
 
 logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
 logging.basicConfig(format=logging_formatter)
@@ -33,8 +33,7 @@ def cancel_acceptance(project_id: str, task_id_list: List[str], acceptor_user_id
         task_id_list: 受け入れ取り消しするtask_id_list
         acceptor_user_id: 再度受入を担当させたいユーザのuser_id
     """
-    acceptor_account_id = get_account_id_from_user_id(project_id,
-                                                      acceptor_user_id) if acceptor_user_id is not None else None
+    acceptor_account_id = examples_wrapper.get_account_id_from_user_id(project_id, acceptor_user_id)
 
     for task_id in task_id_list:
         try:
@@ -88,6 +87,7 @@ if __name__ == "__main__":
     logger.info(args)
 
     service = annofabapi.build_from_netrc()
+    examples_wrapper = ExamplesWrapper(service)
 
     try:
         main(args)

@@ -2,7 +2,15 @@
 annofabapiモジュールを使ったサンプルコードです。
 pythonコマンドを使ってCLIとして利用できます。
 
+# Requirements
+* Python 3.6+
+* 最新のannofabapiモジュール
+
 # 使い方
+
+## AnnoFabの認証情報の設定
+`.netrc`ファイルにAnnoFabの認証情報を記載してください。
+詳しくは[../README.md](../README.md)を参照してください。
 
 ## Pipenvを使う場合
 
@@ -41,6 +49,8 @@ $ python invite_user_to_projects.py -h
 
 ## invite_user_to_projects.py
 複数のプロジェクトに、ユーザを招待します。
+各プロジェクトのオーナ権限を持つユーザで実行してください。
+※オーナ権限を持たないプロジェクトの場合はスキップします
 
 ```
 # ORG組織配下のすべてのプロジェクトに、user1をownerロールで割り当てる
@@ -52,7 +62,18 @@ $ python invite_user_to_projects.py --user_id user1 --role owner --project_id pr
 
 ## cancel_acceptance.py
 受け入れ完了タスクを、受け入れ取り消しにします。
+アノテーション仕様を途中で変更したときなどに、利用します。
 
+対象のタスクは、以下のようなtask_idの一覧が記載されたファイルで指定します。
+
+```
+task_id1
+task_id2
+task_id3
+...
+```
+
+プロジェクトのオーナ権限を持つユーザで実行してください。
 
 ```
 # prj1プロジェクトのタスクを、受け入れ取り消しにする。再度受け入れを担当させるユーザは未担当
@@ -62,3 +83,12 @@ $ python cancel_acceptance.py --project_id prj1 --task_id_file file
 $ python cancel_acceptance.py --project_id prj1 --task_id_file file --user_id user1
 ```
 
+## reject_tasks_with_adding_comment.py
+アノテーション仕様を途中で変更したときなどに、利用します。
+
+プロジェクトのチェッカー以上の権限を持つユーザで実行してください。
+
+```
+# prj1プロジェクトのタスクを、差し戻す
+$ python cancel_acceptance.py --project_id prj1 --task_id_file file --comment "auto comment at tool"
+```
