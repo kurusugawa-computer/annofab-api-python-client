@@ -9,8 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import requests
 
 import annofabapi
-
-from example_utils import read_lines, ExamplesWrapper
+from example_utils import ExamplesWrapper, read_lines
 
 logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
 logging.basicConfig(format=logging_formatter)
@@ -25,7 +24,9 @@ def get_account_id_from_user_id(project_id: str, user_id: str):
     return member['account_id']
 
 
-def cancel_acceptance(project_id: str, task_id_list: List[str], acceptor_user_id: Optional[str] = None):
+def cancel_acceptance(project_id: str,
+                      task_id_list: List[str],
+                      acceptor_user_id: Optional[str] = None):
     """
     タスクを受け入れ取り消しする
     Args:
@@ -33,20 +34,23 @@ def cancel_acceptance(project_id: str, task_id_list: List[str], acceptor_user_id
         task_id_list: 受け入れ取り消しするtask_id_list
         acceptor_user_id: 再度受入を担当させたいユーザのuser_id
     """
-    acceptor_account_id = examples_wrapper.get_account_id_from_user_id(project_id, acceptor_user_id)
+    acceptor_account_id = examples_wrapper.get_account_id_from_user_id(
+        project_id, acceptor_user_id)
 
     for task_id in task_id_list:
         try:
             task, _ = service.api.get_task(project_id, task_id)
             if task["status"] != "complete":
-                logger.warning(f"task_id = {task_id} は受入完了でありません。status = {task['status']}, phase={task['phase']}")
+                logger.warning(
+                    f"task_id = {task_id} は受入完了でありません。status = {task['status']}, phase={task['phase']}"
+                )
             request_body = {
                 "status": "not_started",
                 "account_id": acceptor_account_id,
                 "last_updated_datetime": task["updated_datetime"],
-
             }
-            operated_task, _ = service.api.operate_task(project_id, task_id, request_body=request_body)
+            operated_task, _ = service.api.operate_task(
+                project_id, task_id, request_body=request_body)
             logger.info(f"task_id = {task_id} の受け入れ取り消し完了")
 
         except requests.exceptions.HTTPError as e:
@@ -73,8 +77,7 @@ if __name__ == "__main__":
         metavar='file',
         type=str,
         required=True,
-        help=
-        'task_idの一覧が記載されたファイル。task_idは改行(LF or CRLF)で区切る。')
+        help='task_idの一覧が記載されたファイル。task_idは改行(LF or CRLF)で区切る。')
 
     parser.add_argument('--user_id',
                         metavar='user_id',

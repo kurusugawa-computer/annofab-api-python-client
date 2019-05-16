@@ -5,14 +5,14 @@
 import argparse
 import logging
 import time
+import uuid
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import requests
-import uuid
+
 import annofabapi
 import annofabapi.utils
-
-from example_utils import read_lines, ExamplesWrapper
+from example_utils import ExamplesWrapper, read_lines
 
 logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
 logging.basicConfig(format=logging_formatter)
@@ -21,7 +21,9 @@ logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.DEBUG)
 
-def add_inspection_comment(project_id: str, task: Dict[str, Any], inspection_comment: str, commenter_account_id: str):
+
+def add_inspection_comment(project_id: str, task: Dict[str, Any],
+                           inspection_comment: str, commenter_account_id: str):
     """
     先頭画像の左上に検査コメントを付与する
     Args:
@@ -53,14 +55,17 @@ def add_inspection_comment(project_id: str, task: Dict[str, Any], inspection_com
             "created_datetime": annofabapi.utils.str_now()
         },
         "_type": "Put",
-
     }]
 
-    return service.api.batch_update_inspections(project_id, task["task_id"], first_input_data_id, request_body=req_inspection)[0]
+    return service.api.batch_update_inspections(project_id,
+                                                task["task_id"],
+                                                first_input_data_id,
+                                                request_body=req_inspection)[0]
 
 
-
-def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str], inspection_comment: str, commenter_user_id: str):
+def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str],
+                                     inspection_comment: str,
+                                     commenter_user_id: str):
     """
     検査コメントを付与して、タスクを差し戻す
     Args:
@@ -70,21 +75,25 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str], i
         commenter_user_id: 検査コメントを付与して、タスクを差し戻すユーザのuser_id
     """
 
-    commenter_account_id = examples_wrapper.get_account_id_from_user_id(project_id, commenter_user_id)
+    commenter_account_id = examples_wrapper.get_account_id_from_user_id(
+        project_id, commenter_user_id)
 
     for task_id in task_id_list:
         task, _ = service.api.get_task(project_id, task_id)
         logger.debug(f"task_id = {task_id}, {task['status']}, {task['phase']}")
         if task["phase"] == "annotation":
-            logger.warning(f"task_id = {task_id} はannofation phaseのため、差し戻しできません。")
+            logger.warning(
+                f"task_id = {task_id} はannofation phaseのため、差し戻しできません。")
             continue
 
         try:
             # 担当者を変更して、作業中にする
-            examples_wrapper.change_operator_of_task(project_id, task_id, commenter_account_id)
+            examples_wrapper.change_operator_of_task(project_id, task_id,
+                                                     commenter_account_id)
             logger.debug(f"task_id = {task_id}, {commenter_user_id}に担当者変更 完了")
 
-            examples_wrapper.change_to_working_phase(project_id, task_id, commenter_account_id)
+            examples_wrapper.change_to_working_phase(project_id, task_id,
+                                                     commenter_account_id)
             logger.debug(f"task_id = {task_id}, working statusに変更 完了")
         except requests.exceptions.HTTPError as e:
             logger.error(e)
@@ -95,7 +104,8 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str], i
         time.sleep(3)
         try:
             # 検査コメントを付与する
-            add_inspection_comment(project_id, task, inspection_comment, commenter_account_id)
+            add_inspection_comment(project_id, task, inspection_comment,
+                                   commenter_account_id)
             logger.debug(f"task_id = {task_id}, 検査コメントの付与 完了")
         except requests.exceptions.HTTPError as e:
             logger.error(e)
@@ -104,7 +114,8 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str], i
 
         try:
             # タスクを差し戻す
-            rejected_task = examples_wrapper.reject_task(project_id, task_id, commenter_account_id)
+            rejected_task = examples_wrapper.reject_task(
+                project_id, task_id, commenter_account_id)
 
         except requests.exceptions.HTTPError as e:
             logger.error(e)
@@ -115,17 +126,18 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str], i
     return
 
 
-
-
 def main(args):
     task_id_list = read_lines(args.task_id_file)
     user_id = service.api.login_user_id
-    reject_tasks_with_adding_comment(args.project_id, task_id_list, args.comment, user_id)
+    reject_tasks_with_adding_comment(args.project_id, task_id_list,
+                                     args.comment, user_id)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="検査コメントを付与してタスクを差し戻します。検査コメントは先頭の画像の左上(0,0)に付与します。AnnoFab認証情報は`.netrc`に記載すること")
+        description=
+        "検査コメントを付与してタスクを差し戻します。検査コメントは先頭の画像の左上(0,0)に付与します。AnnoFab認証情報は`.netrc`に記載すること"
+    )
     parser.add_argument('--project_id',
                         metavar='project_id',
                         type=str,
@@ -137,8 +149,7 @@ if __name__ == "__main__":
         metavar='file',
         type=str,
         required=True,
-        help=
-        'task_idの一覧が記載されたファイル。task_idは改行(LF or CRLF)で区切る。')
+        help='task_idの一覧が記載されたファイル。task_idは改行(LF or CRLF)で区切る。')
 
     parser.add_argument('--comment',
                         metavar='comment',
