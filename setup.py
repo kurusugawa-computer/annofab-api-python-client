@@ -39,5 +39,6 @@ setup(name='annofabapi',
           "Programming Language :: Python :: 3.6",
           "Programming Language :: Python :: 3.7",
           "Topic :: Utilities",
+          "Operating System :: OS Independent",
       ],
       packages=['annofabapi'])
