@@ -15,7 +15,7 @@ $ make init
 
 ## `annofabapi/api.py`の生成方法
 `annofabapi/api.py`は[AnnoFab Web APIのOpenAPI specification](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
-詳細は[generate/README.md](generate/README_for_generate.md)を参照してください。
+詳細は[generate/README.md](generate/README.md)を参照してください。
 
 ## テスト実行方法
 1. AnnoFabの認証情報を`.netrc`に記載する。

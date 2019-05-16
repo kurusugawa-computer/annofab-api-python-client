@@ -1,11 +1,5 @@
 """
 受け入れ完了タスクを、受け入れ取り消しする。
-
-# ORG組織配下のすべてのプロジェクトに、userをownerロールで割り当てる
-$ python cancel_acceptance.py --project_id --user_id user --role owner --organization ORG
-
-# prj1, prj2のプロジェクトに、userをownerロールで割り当てる
-$ python invite_user_to_projects.py --user_id user --role owner --project_id prj1 prj2
 """
 
 import argparse
