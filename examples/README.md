@@ -96,3 +96,13 @@ $ python cancel_acceptance.py --project_id prj1 --task_id_file file --user_id us
 # prj1プロジェクトのタスクを、差し戻す
 $ python cancel_acceptance.py --project_id prj1 --task_id_file file --comment "auto comment at tool"
 ```
+
+## write_semantic_segmentation_images.py
+
+```
+$ python write_semantic_segmentation_images.py  --annotation_dir /tmp/af-annotation-xxxx \
+ ---default_input_data_size 1280x720 \
+ --label_color_json_file /tmp/label_color.json \
+ --output_dir /tmp/output \
+ --task_status_comlete
+```

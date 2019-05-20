@@ -19,11 +19,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.DEBUG)
 
 
-def get_account_id_from_user_id(project_id: str, user_id: str):
-    member, _ = service.api.get_project_member(project_id, user_id)
-    return member['account_id']
-
-
 def cancel_acceptance(project_id: str,
                       task_id_list: List[str],
                       acceptor_user_id: Optional[str] = None):
