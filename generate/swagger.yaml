@@ -1492,9 +1492,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/ProjectMember"
+                $ref: "#/components/schemas/ProjectMember"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
