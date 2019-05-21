@@ -9,7 +9,7 @@ import os
 import os.path
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
-
+from example_typing import SubInputDataList, RGB, Annotation, InputDataSize
 import example_utils
 import PIL.Image
 import PIL.ImageDraw
@@ -22,20 +22,9 @@ logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.DEBUG)
 
 # 型タイプ
-RGB = Tuple[int, int, int]
-"""RGB Type (Red, Blue, Green)"""
-
-InputDataSize = Tuple[int, int]
-"""画像データサイズType(width, height)"""
-
-Annotation = Dict[str, Any]
-"""Annotation Type"""
-
-SubInputDataList = List[Tuple[str, str]]
-"""Tuple(Jsonファイルのパス, 塗りつぶしアノテーションが格納されたディレクトリのパス)のList"""
-
 AnnotationSortKeyFunc = Callable[[Annotation], Any]
 """アノテーションをsortするときのkey関数のType"""
+
 
 
 def _create_sub_input_data_list(sub_annotation_dir_list: List[str],
@@ -284,8 +273,7 @@ def main(args):
     logger.debug(f"args: {args}")
 
     try:
-        splited_list = args.default_input_data_size.split("x")
-        default_input_data_size = (int(splited_list[0]), int(splited_list[1]))
+        default_input_data_size = example_utils.get_input_data_size(args.default_input_data_size)
 
     except Exception as e:
         logger.error("--default_input_data_size のフォーマットが不正です", e)
