@@ -6,10 +6,12 @@ import argparse
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, Callable  # pylint: disable=unused-import
 
 import PIL.Image
 import PIL.ImageDraw
+
+import example_utils
 
 logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
 logging.basicConfig(format=logging_formatter)
@@ -30,10 +32,10 @@ def write_one_semantic_segmentation_image(input_data_json_file: str,
                                           input_dat_size: InputDataSize,
                                           label_color_dict: Dict[str, RGB],
                                           output_image_file: str,
-                                          task_status_comlete: bool = False):
+                                          task_status_complete: bool = False,
+                                          annotation_sort_key_func: Optional[Callable[[Dict[str, Any]], Any]] = None):
     """
     アノテーション情報が記載されたJSONファイルから、Semantic Segmentation用の画像を生成する。
-    JSONファイルのdetailsの順番に塗っていく。
     Semantic Segmentation用のアノテーションがなくても、画像は生成する。
 
     Args:
@@ -42,7 +44,8 @@ def write_one_semantic_segmentation_image(input_data_json_file: str,
         input_dat_size: 画像データのサイズ Tupple[width, height]
         label_color_dict: label_nameとRGBを対応付けたdict
         output_image_file: 出力する画像ファイル
-        task_status_comlete: Trueならばtask_statusがcompleteのときのみ画像を生成する。
+        task_status_complete: Trueならばtask_statusがcompleteのときのみ画像を生成する。
+        annotation_sort_key_func: アノテーションをsortするときのkey関数. Noneならばsortしない
 
     """
     logger.debug(
@@ -51,7 +54,7 @@ def write_one_semantic_segmentation_image(input_data_json_file: str,
     with open(input_data_json_file) as f:
         input_data_json = json.load(f)
 
-    if task_status_comlete and input_data_json["task_status"] == "complete":
+    if task_status_complete and input_data_json["task_status"] != "complete":
         logger.info(
             f"task_statusがcompleteでない( {input_data_json['task_status']})ため、{output_image_file} は生成しない。"
         )
@@ -60,7 +63,8 @@ def write_one_semantic_segmentation_image(input_data_json_file: str,
     image = PIL.Image.new(mode="RGB", size=input_dat_size)
     draw = PIL.ImageDraw.Draw((image))
 
-    for annotation in input_data_json["details"]:
+    annotation_list = input_data_json["details"] if annotation_sort_key_func is None else sorted(input_data_json["details"], key=annotation_sort_key_func)
+    for annotation in annotation_list:
         data = annotation["data"]
         if data is None:
             # 画像全体アノテーション
@@ -105,7 +109,9 @@ def write_semantic_segmentation_images(annotation_dir: str,
                                        label_color_dict: Dict[str, RGB],
                                        output_dir: str,
                                        output_image_extension: str,
-                                       task_status_comlete: bool = False):
+                                       task_status_complete: bool = False,
+                                       annotation_sort_key_func: Optional[Callable[[Dict[str, Any]], Any]] = None
+                                       ):
     """
     アノテーションzipを展開したディレクトリから、Semantic Segmentation用の画像を生成する。
     出力ディレクトリの構成は `{output_dir/{task_id}/{input_data_name}.{image_extension}`
@@ -116,7 +122,8 @@ def write_semantic_segmentation_images(annotation_dir: str,
         output_image_extension: 出力画像の拡張子
         label_color_dict: label_nameとRGBを対応付けたdict
         output_dir: 出力ディレクトリのパス
-        task_status_comlete: Trueならばtask_statusがcompleteのときのみ画像を生成する。
+        task_status_complete: Trueならばtask_statusがcompleteのときのみ画像を生成する。
+        annotation_sort_key_func: アノテーションをsortするときのkey関数. Noneならばsortしない
 
     Returns:
 
@@ -146,7 +153,8 @@ def write_semantic_segmentation_images(annotation_dir: str,
                     input_dat_size=default_input_data_size,
                     label_color_dict=label_color_dict,
                     output_image_file=str(output_file),
-                    task_status_comlete=task_status_comlete)
+                    task_status_complete=task_status_complete,
+                annotation_sort_key_func=annotation_sort_key_func)
 
             except Exception as e:
                 logger.warning(f"{str(output_file)} の生成失敗", e)
@@ -174,13 +182,32 @@ def main(args):
         raise e
 
     try:
+        if args.label_order_file is not None:
+            labels = example_utils.read_lines(args.label_order_file)
+            def annotation_sort_key_func(d: Dict[str, Any]) -> int:
+                """
+                labelの順にアノテーションlistをソートする関数
+                """
+                if d["label"] not in labels:
+                    return -1
+
+                return labels.index(d["label"])
+        else:
+            annotation_sort_key_func = None
+
+    except Exception as e:
+        logger.error("--label_order_file のParseに失敗しました。", e)
+        raise e
+
+    try:
         write_semantic_segmentation_images(
             annotation_dir=args.annotation_dir,
             default_input_data_size=default_input_data_size,
             label_color_dict=label_color_dict,
             output_dir=args.output_dir,
             output_image_extension=args.output_image_extension,
-            task_status_comlete=args.task_status_comlete)
+            task_status_complete=args.task_status_complete,
+            annotation_sort_key_func=annotation_sort_key_func)
 
     except Exception as e:
         logger.exception(e)
@@ -218,9 +245,13 @@ if __name__ == "__main__":
                         default="png",
                         help='出力画像の拡張子')
 
-    parser.add_argument('--task_status_comlete',
+    parser.add_argument('--task_status_complete',
                         action="store_true",
                         help='taskのstatusがcompleteの場合のみ画像を生成する')
+
+    parser.add_argument('--label_order_file',
+                        type=str,
+                        help='ラベルごとのレイヤの順序を指定したファイル。ファイルに記載されたラベルの順に塗りつぶす。指定しなければ、アノテーションJSONに記載された順に塗りつぶす。')
 
     args = parser.parse_args()
     logger.info(args)
