@@ -4,7 +4,7 @@
 
 import argparse
 import logging
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import requests
 
@@ -55,6 +55,8 @@ def assign_role_with_project_id(project_id_list: List[str],
 
 
 def main(args):
+    logger.info(args)
+
     if args.organization_name is not None:
         assign_role_with_organization(args.organization_name,
                                       args.user_id_list, args.member_role)
@@ -98,14 +100,10 @@ if __name__ == "__main__":
                         nargs='*',
                         help='組織名が指定されていない場合は、必要')
 
-    args = parser.parse_args()
-
-    logger.info(args)
-
     service = annofabapi.build_from_netrc()
 
     try:
-        main(args)
+        main(parser.parse_args())
 
     except Exception as e:
         logger.exception(e)

@@ -6,7 +6,7 @@ import argparse
 import logging
 import time
 import uuid
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import requests
 
@@ -114,8 +114,8 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str],
 
         try:
             # タスクを差し戻す
-            rejected_task = examples_wrapper.reject_task(
-                project_id, task_id, commenter_account_id)
+            examples_wrapper.reject_task(project_id, task_id,
+                                         commenter_account_id)
 
         except requests.exceptions.HTTPError as e:
             logger.error(e)
@@ -123,10 +123,11 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str],
             continue
 
         logger.info(f"task_id = {task_id} の差し戻し完了")
-    return
 
 
 def main(args):
+    logger.debug(args)
+
     task_id_list = read_lines(args.task_id_file)
     user_id = service.api.login_user_id
     reject_tasks_with_adding_comment(args.project_id, task_id_list,
@@ -135,9 +136,8 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description=
-        "検査コメントを付与してタスクを差し戻します。検査コメントは先頭の画像の左上(0,0)に付与します。AnnoFab認証情報は`.netrc`に記載すること"
-    )
+        description="検査コメントを付与してタスクを差し戻します。検査コメントは先頭の画像の左上(0,0)に付与します。"
+        "AnnoFab認証情報は`.netrc`に記載すること")
     parser.add_argument('--project_id',
                         metavar='project_id',
                         type=str,
@@ -157,15 +157,11 @@ if __name__ == "__main__":
                         required=True,
                         help='差し戻すときに付与する検査コメントの中身')
 
-    args = parser.parse_args()
-
-    logger.info(args)
-
     service = annofabapi.build_from_netrc()
     examples_wrapper = ExamplesWrapper(service)
 
     try:
-        main(args)
+        main(parser.parse_args())
 
     except Exception as e:
         logger.exception(e)
