@@ -84,8 +84,7 @@ if __name__ == "__main__":
         type=str,
         required=True,
         choices=['owner', 'worker', 'accepter', 'training_data_user'],
-        help=
-        'ユーザに割り当てるロール')
+        help='ユーザに割り当てるロール')
     parser.add_argument('--organization',
                         metavar='organization',
                         dest='organization_name',
