@@ -142,7 +142,7 @@ def draw_sub_input_data(
 
         task_status = sub_input_data_json["task_status"]
         if task_status_complete and task_status != "complete":
-            logger.info(
+            logger.warning(
                 f"task_statusがcompleteでない( {task_status})ため、{sub_input_data_json_file} のアノテーションは描画しない"
             )
             continue
@@ -182,7 +182,7 @@ def write_one_semantic_segmentation_image(
 
     """
     logger.debug(
-        f"{input_data_json_file}, {input_data_dir}, {input_dat_size}, {output_image_file}"
+        f"args: {input_data_json_file}, {input_data_dir}, {input_dat_size}, {output_image_file}"
     )
     with open(input_data_json_file) as f:
         input_data_json = json.load(f)
@@ -243,7 +243,7 @@ def write_semantic_segmentation_images(
 
     """
     logger.debug(
-        f"{annotation_dir}, {default_input_data_size}, {label_color_dict}, {output_dir}, {output_image_extension}"
+        f"args: {annotation_dir}, {default_input_data_size}, {label_color_dict}, {output_dir}, {output_image_extension}"
     )
     annotation_dir_path = Path(annotation_dir)
     output_dir_path = Path(output_dir)
@@ -281,7 +281,7 @@ def write_semantic_segmentation_images(
 
 
 def main(args):
-    logger.debug(args)
+    logger.debug(f"args: {args}")
 
     try:
         splited_list = args.default_input_data_size.split("x")
