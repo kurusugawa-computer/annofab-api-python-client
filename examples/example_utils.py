@@ -1,5 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple, Union
-
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 import annofabapi
 
 
@@ -20,8 +19,9 @@ class ExamplesWrapper:
     def __init__(self, service: annofabapi.Resource):
         self.service = service
 
+    @staticmethod
     def get_account_id_last_annotation_phase(
-            self, task_histories: List[Dict[str, Any]]):
+            task_histories: List[Dict[str, Any]]):
         """
         タスク履歴の最後のannotation phaseを担当したaccount_idを取得する. なければNoneを返す
         Args:
@@ -40,7 +40,8 @@ class ExamplesWrapper:
         else:
             return None
 
-    def get_account_id_from_user_id(self, project_id: str, user_id: str):
+    def get_account_id_from_user_id(self, project_id: str,
+                                    user_id: str) -> str:
         """
         usre_idからaccount_idを取得する
         Args:

@@ -10,10 +10,9 @@ import os.path
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
+import example_utils
 import PIL.Image
 import PIL.ImageDraw
-
-import example_utils
 
 logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
 logging.basicConfig(format=logging_formatter)
@@ -38,12 +37,18 @@ SubInputDataList = List[Tuple[str, str]]
 AnnotationSortKeyFunc = Callable[[Annotation], Any]
 """アノテーションをsortするときのkey関数のType"""
 
-def create_sub_input_data_list(sub_annotation_dir_list: List[str], input_data_json: Path) -> SubInputDataList:
+
+def _create_sub_input_data_list(sub_annotation_dir_list: List[str],
+                                input_data_json: Path) -> SubInputDataList:
+    """
+    マージ対象の sub_input_data_listを生成する
+    """
     sub_input_data_list: SubInputDataList = []
 
     for sub_annotation_dir in sub_annotation_dir_list:
         sub_annotation_dir_path = Path(sub_annotation_dir)
-        sub_input_data_json = sub_annotation_dir_path / str(input_data_json.relative_to(input_data_json.parent.parent))
+        sub_input_data_json = sub_annotation_dir_path / str(
+            input_data_json.relative_to(input_data_json.parent.parent))
         sub_input_data_dir = sub_input_data_json.parent / sub_input_data_json.stem
 
         elm = (str(sub_input_data_json), str(sub_input_data_dir))
@@ -173,6 +178,7 @@ def write_one_semantic_segmentation_image(
         output_image_file: 出力する画像ファイル
         task_status_complete: Trueならばtask_statusがcompleteのときのみ画像を生成する。
         annotation_sort_key_func: アノテーションをsortするときのkey関数. Noneならばsortしない
+        sub_input_data_list: マージ対象の入力データ情報
 
     """
     logger.debug(
@@ -231,7 +237,7 @@ def write_semantic_segmentation_images(
         output_dir: 出力ディレクトリのパス
         task_status_complete: Trueならばtask_statusがcompleteのときのみ画像を生成する。
         annotation_sort_key_func: アノテーションをsortするときのkey関数. Noneならばsortしない
-
+        sub_annotation_dir_list: マージ対象のアノテーションディレクトリList
 
     Returns:
 
@@ -255,8 +261,9 @@ def write_semantic_segmentation_images(
             input_data_dir = task_dir / input_data_json.stem
             output_file = output_dir_path / task_dir.name / f"{str(input_data_json.stem)}.{output_image_extension}"
 
-            sub_input_data_list = create_sub_input_data_list(sub_annotation_dir_list, input_data_json) if (sub_annotation_dir_list is not None) else None
-            logger.info(sub_input_data_list)
+            sub_input_data_list = _create_sub_input_data_list(
+                sub_annotation_dir_list, input_data_json) if (
+                    sub_annotation_dir_list is not None) else None
 
             try:
                 write_one_semantic_segmentation_image(
@@ -267,13 +274,15 @@ def write_semantic_segmentation_images(
                     output_image_file=str(output_file),
                     task_status_complete=task_status_complete,
                     annotation_sort_key_func=annotation_sort_key_func,
-                sub_input_data_list= sub_input_data_list)
+                    sub_input_data_list=sub_input_data_list)
 
             except Exception as e:
                 logger.warning(f"{str(output_file)} の生成失敗", e)
 
 
 def main(args):
+    logger.debug(args)
+
     try:
         splited_list = args.default_input_data_size.split("x")
         default_input_data_size = (int(splited_list[0]), int(splited_list[1]))
@@ -332,8 +341,9 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=
-        "矩形、ポリゴン、塗りつぶし、塗りつぶしv2アノテーションから、Semantic Segmentation(Multi Class)用の画像を生成する。"
-    )
+        "アノテーションzipを展開したディレクトリから、アノテーションをSemantic Segmentation(Multi Class)用の画像をします。"
+        "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象です。"
+        "複数のアノテーションディレクトリを指定して、画像をマージすることも可能です。")
     parser.add_argument('--annotation_dir',
                         type=str,
                         required=True,
@@ -376,7 +386,4 @@ if __name__ == "__main__":
                         nargs="+",
                         help='`annotation_dir`にマージして描画するディレクトリ')
 
-    args = parser.parse_args()
-    logger.info(args)
-
-    main(args)
+    main(parser.parse_args())
