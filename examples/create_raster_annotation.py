@@ -104,12 +104,12 @@ def create_annotation_with_image(project_id: str, task_id: str, input_data_id: s
     return service.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)[0]
 
 
-def write_segmentation_image(input_data_json: Dict[str, Any], label: str, tmp_image_path: Path,
+def write_segmentation_image(input_data: Dict[str, Any], label: str, tmp_image_path: Path,
                              input_data_size: InputDataSize,
                              task_status_complete: bool = False):
-    if task_status_complete and input_data_json["task_status"] != "complete":
+    if task_status_complete and input_data["task_status"] != "complete":
         logger.info(
-            f"task_statusがcompleteでない( {input_data_json['task_status']})ため、除外"
+            f"task_statusがcompleteでない( {input_data['task_status']})ため、除外 {input_data['task_id']}, {input_data['input_data_id']}"
         )
         return False
 
@@ -117,9 +117,9 @@ def write_segmentation_image(input_data_json: Dict[str, Any], label: str, tmp_im
     draw = PIL.ImageDraw.Draw(image)
 
     # labelで絞り込み
-    annotation_list = [e for e in input_data_json["details"] if e["label"] == label]
+    annotation_list = [e for e in input_data["details"] if e["label"] == label]
     if len(annotation_list) == 0:
-        logger.info(f"{input_data_json['task_id']}, {input_data_json['input_data_id']} に label:{label} のアノテーションがない")
+        logger.info(f"{input_data['task_id']}, {input_data['input_data_id']} に label:{label} のアノテーションがない")
         return False
 
     # アノテーションを描画する
@@ -153,9 +153,9 @@ def create_segmentation_from_polygon(
                 continue
 
             with open(str(input_data_json)) as f:
-                input_data_json = json.load(f)
+                input_data = json.load(f)
 
-            input_data_id = input_data_json["input_data_id"]
+            input_data_id = input_data["input_data_id"]
             image_file_list = []
             for label_dict in labels:
                 label = label_dict["label"]
@@ -164,7 +164,7 @@ def create_segmentation_from_polygon(
                 tmp_image_path = tmp_dir_path / task_dir.name / input_data_json.stem / f"{label}.png"
 
                 try:
-                    result = write_segmentation_image(input_data_json=input_data_json, label=label,
+                    result = write_segmentation_image(input_data=input_data, label=label,
                                                       tmp_image_path=tmp_image_path,
                                                       input_data_size=default_input_data_size,
                                                       task_status_complete=task_status_complete)
@@ -181,6 +181,7 @@ def create_segmentation_from_polygon(
 
             if len(image_file_list) > 0:
                 create_annotation_with_image(project_id, task_id, input_data_id, image_file_list)
+                logger.info(f"{task_id}, {input_data_id} アノテーションの登録")
 
 
 def create_labels(project_id, labels: List[str]):
