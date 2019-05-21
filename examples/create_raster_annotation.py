@@ -30,7 +30,6 @@ logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.DEBUG)
 
-
 # def create_segmentation_image(input_dat_size: InputDataSize,):
 #     image = PIL.Image.new(mode="RGBA", size=input_dat_size, color=(0,0,0,0))
 #     draw = PIL.ImageDraw.Draw(image)
@@ -38,6 +37,7 @@ logger.setLevel(level=logging.DEBUG)
 
 label_dict: Dict[str, str]
 """key:label_id, value:label """
+
 
 def draw_annotation_list(annotation_list: List[Annotation], draw: PIL.ImageDraw.Draw) -> PIL.ImageDraw.Draw:
     """
@@ -104,14 +104,9 @@ def create_annotation_with_image(project_id: str, task_id: str, input_data_id: s
     return service.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)[0]
 
 
-def write_segmentation_image(json_path: Path, label: str, tmp_image_path: Path, input_data_size: InputDataSize,
+def write_segmentation_image(input_data_json: Dict[str, Any], label: str, tmp_image_path: Path,
+                             input_data_size: InputDataSize,
                              task_status_complete: bool = False):
-    logger.debug(
-        f"args: {json_path}, {label}, {tmp_image_path}"
-    )
-    with open(str(json_path)) as f:
-        input_data_json = json.load(f)
-
     if task_status_complete and input_data_json["task_status"] != "complete":
         logger.info(
             f"task_statusがcompleteでない( {input_data_json['task_status']})ため、除外"
@@ -124,7 +119,7 @@ def write_segmentation_image(json_path: Path, label: str, tmp_image_path: Path, 
     # labelで絞り込み
     annotation_list = [e for e in input_data_json["details"] if e["label"] == label]
     if len(annotation_list) == 0:
-        logger.info(f"{str(json_path)} に label:{label} のアノテーションがない")
+        logger.info(f"{input_data_json['task_id']}, {input_data_json['input_data_id']} に label:{label} のアノテーションがない")
         return False
 
     # アノテーションを描画する
@@ -136,7 +131,6 @@ def write_segmentation_image(json_path: Path, label: str, tmp_image_path: Path, 
     return True
 
 
-
 def create_segmentation_from_polygon(
         annotation_dir: str,
         default_input_data_size: InputDataSize,
@@ -144,7 +138,6 @@ def create_segmentation_from_polygon(
         labels: List[Dict[str, str]],
         project_id: str,
         task_status_complete: bool = False):
-
     annotation_dir_path = Path(annotation_dir)
     tmp_dir_path = Path(tmp_dir)
 
@@ -159,7 +152,10 @@ def create_segmentation_from_polygon(
             if not input_data_json.is_file():
                 continue
 
-            input_data_id = input_data_json.stem
+            with open(str(input_data_json)) as f:
+                input_data_json = json.load(f)
+
+            input_data_id = input_data_json["input_data_id"]
             image_file_list = []
             for label_dict in labels:
                 label = label_dict["label"]
@@ -168,10 +164,10 @@ def create_segmentation_from_polygon(
                 tmp_image_path = tmp_dir_path / task_dir.name / input_data_json.stem / f"{label}.png"
 
                 try:
-                    result = write_segmentation_image(json_path=input_data_json, label=label,
-                                             tmp_image_path=tmp_image_path,
-                                             input_data_size=default_input_data_size,
-                                             task_status_complete=task_status_complete)
+                    result = write_segmentation_image(input_data_json=input_data_json, label=label,
+                                                      tmp_image_path=tmp_image_path,
+                                                      input_data_size=default_input_data_size,
+                                                      task_status_complete=task_status_complete)
                     if result:
                         image_file_list.append({
                             "path": str(tmp_image_path),
@@ -183,7 +179,8 @@ def create_segmentation_from_polygon(
                     logger.warning(f"{str(tmp_image_path)} の生成失敗", e)
                     raise e
 
-            create_annotation_with_image(project_id, task_id, input_data_id, image_file_list)
+            if len(image_file_list) > 0:
+                create_annotation_with_image(project_id, task_id, input_data_id, image_file_list)
 
 
 def create_labels(project_id, labels: List[str]):
@@ -209,13 +206,12 @@ def main(args):
         logger.error("--label_json_file のParseに失敗しました。", e)
         raise e
 
-
     create_segmentation_from_polygon(annotation_dir=args.annotation_dir,
                                      default_input_data_size=default_input_data_size,
                                      tmp_dir=args.tmp_dir,
                                      labels=labels,
+                                     project_id=args.project_id,
                                      task_status_complete=args.task_status_complete)
-
 
 
 if __name__ == "__main__":
@@ -232,16 +228,20 @@ if __name__ == "__main__":
                         required=True,
                         help='入力データ画像のサイズ。{width}x{height}。ex. 1280x720')
 
-    parser.add_argument('--label_file',
+    parser.add_argument('--label_json_file',
                         type=str,
                         required=True,
                         help='塗りつぶしに変換するlabelが記載されたファイル')
-
 
     parser.add_argument('--tmp_dir',
                         type=str,
                         required=True,
                         help='temporaryディレクトリのパス')
+
+    parser.add_argument('--project_id',
+                        type=str,
+                        required=True,
+                        help='塗りつぶしv2アノテーションを登録するプロジェクトのproject_id')
 
     parser.add_argument('--task_status_complete',
                         action="store_true",
