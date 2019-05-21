@@ -1,4 +1,5 @@
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
+from example_typing import InputDataSize
 import annofabapi
 
 
@@ -7,6 +8,11 @@ def read_lines(filepath: str) -> List[str]:
     with open(filepath) as f:
         lines = f.readlines()
     return [e.rstrip('\r\n') for e in lines]
+
+def get_input_data_size(str_input_data_size: str) -> InputDataSize:
+    """400x300を(400,300)に変換する"""
+    splited_list = str_input_data_size.split("x")
+    return (int(splited_list[0]), int(splited_list[1]))
 
 
 class ExamplesWrapper:
@@ -39,6 +45,16 @@ class ExamplesWrapper:
             return last_history["account_id"]
         else:
             return None
+
+    def get_my_account_id(self) -> str:
+        """
+        自分自身のaccount_idを取得する
+        Returns:
+            account_id
+
+        """
+        account, _ = self.service.api.get_my_account()
+        return account['account_id']
 
     def get_account_id_from_user_id(self, project_id: str,
                                     user_id: str) -> str:
