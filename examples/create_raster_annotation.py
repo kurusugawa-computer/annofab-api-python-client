@@ -131,7 +131,7 @@ def write_segmentation_image(input_data: Dict[str, Any], label: str, tmp_image_p
     return True
 
 
-def create_segmentation_from_polygon(
+def register_raster_annotation_from_polygon(
         annotation_dir: str,
         default_input_data_size: InputDataSize,
         tmp_dir: str,
@@ -176,12 +176,15 @@ def create_segmentation_from_polygon(
 
 
                 except Exception as e:
-                    logger.warning(f"{str(tmp_image_path)} の生成失敗", e)
-                    raise e
+                    logger.warning(f"{task_id}, {input_data_id}, {str(tmp_image_path)} の生成失敗", e)
 
             if len(image_file_list) > 0:
-                create_annotation_with_image(project_id, task_id, input_data_id, image_file_list)
-                logger.info(f"{task_id}, {input_data_id} アノテーションの登録")
+                try:
+                    create_annotation_with_image(project_id, task_id, input_data_id, image_file_list)
+                    logger.info(f"{task_id}, {input_data_id} アノテーションの登録")
+
+                except Exception as e:
+                    logger.warning(f"{task_id}, {input_data_id} のアノテーション登録失敗", e)
 
 
 def create_labels(project_id, labels: List[str]):
@@ -207,12 +210,12 @@ def main(args):
         logger.error("--label_json_file のParseに失敗しました。", e)
         raise e
 
-    create_segmentation_from_polygon(annotation_dir=args.annotation_dir,
-                                     default_input_data_size=default_input_data_size,
-                                     tmp_dir=args.tmp_dir,
-                                     labels=labels,
-                                     project_id=args.project_id,
-                                     task_status_complete=args.task_status_complete)
+    register_raster_annotation_from_polygon(annotation_dir=args.annotation_dir,
+                                            default_input_data_size=default_input_data_size,
+                                            tmp_dir=args.tmp_dir,
+                                            labels=labels,
+                                            project_id=args.project_id,
+                                            task_status_complete=args.task_status_complete)
 
 
 if __name__ == "__main__":
