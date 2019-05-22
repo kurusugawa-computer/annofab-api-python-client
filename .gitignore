@@ -106,6 +106,9 @@ venv.bak/
 # IntelliJ IDEA
 .idea/
 
+# Visual Studio Code
+.vscode
+
 # sphinx-apidoc
 docs/_build
 
