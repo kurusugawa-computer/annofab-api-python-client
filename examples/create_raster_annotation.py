@@ -6,6 +6,7 @@ import argparse
 import logging
 import example_utils
 import json
+import copy
 import time
 import uuid
 from pathlib import Path
@@ -66,10 +67,11 @@ def draw_annotation_list(annotation_list: List[Annotation], draw: PIL.ImageDraw.
     return draw
 
 
-def create_annotation_with_image(project_id: str, task_id: str, input_data_id: str, image_file_list: List[Any]):
-    account_id = examples_wrapper.get_my_account_id()
+def create_annotation_with_image(project_id: str, task_id: str, input_data_id: str, image_file_list: List[Any], account_id: str, details: Optional[List[Annotation]] = None):
 
-    details = []
+
+    copied_details = copy.deepcopy(details) if details is not None else []
+
     for e in image_file_list:
         image_file = e["path"]
         label_id = e["label_id"]
@@ -92,19 +94,19 @@ def create_annotation_with_image(project_id: str, task_id: str, input_data_id: s
             "url": None,
         }
 
-        details.append(detail)
+        copied_details.append(detail)
 
     request_body = {
         "project_id": project_id,
         "task_id": task_id,
         "input_data_id": input_data_id,
-        "details": details
+        "details": copied_details
     }
 
     return service.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)[0]
 
 
-def write_segmentation_image(input_data: Dict[str, Any], label: str, tmp_image_path: Path,
+def write_segmentation_image(input_data: Dict[str, Any], label: str, label_id: str, tmp_image_path: Path,
                              input_data_size: InputDataSize,
                              task_status_complete: bool = False):
     if task_status_complete and input_data["task_status"] != "complete":
@@ -117,9 +119,9 @@ def write_segmentation_image(input_data: Dict[str, Any], label: str, tmp_image_p
     draw = PIL.ImageDraw.Draw(image)
 
     # labelで絞り込み
-    annotation_list = [e for e in input_data["details"] if e["label"] == label]
+    annotation_list = [e for e in input_data["detail"] if e["label_id"] == label_id]
     if len(annotation_list) == 0:
-        logger.info(f"{input_data['task_id']}, {input_data['input_data_id']} に label:{label} のアノテーションがない")
+        logger.info(f"{input_data['task_id']}, {input_data['input_data_id']} に label:{label}, label_id:{label_id} のアノテーションがない")
         return False
 
     # アノテーションを描画する
@@ -129,6 +131,45 @@ def write_segmentation_image(input_data: Dict[str, Any], label: str, tmp_image_p
     image.save(str(tmp_image_path))
     logger.info(f"{str(tmp_image_path)} の生成完了")
     return True
+
+
+def create_classification_details(input_data:Dict[str, Any]):
+    """classification用のdetails情報（アノテーション登録用）を取得"""
+    details = [e for e in input_data["detail"] if e["annotation_type"] == "classification"]
+    new_details = []
+
+
+    def create_additional_data_list(arg_additional_data_list):
+        new_list = []
+        for data in arg_additional_data_list:
+            new_data = {
+                "additional_data_definition_id": data["additional_data_definition_id"],
+                "choice": data["choice"],
+                "comment": data["comment"],
+                "flag": data["flag"],
+                "integer": data["integer"],
+            }
+            new_list.append(new_data)
+        return new_list
+
+    for detail in details:
+        new_detail = {
+            "account_id": detail["account_id"],
+            "additional_data_list": create_additional_data_list(detail["additional_data_list"]),
+            "annotation_id": detail["annotation_id"],
+            "created_datetime": None,
+            "data": None,
+            "etag": None,
+            "is_protected": False,
+            "label_id": detail["label_id"],
+            "path": None,
+            "updated_datetime": None,
+            "url": None,
+        }
+        new_details.append(new_detail)
+
+    return new_details
+
 
 
 def register_raster_annotation_from_polygon(
@@ -142,6 +183,8 @@ def register_raster_annotation_from_polygon(
     tmp_dir_path = Path(tmp_dir)
 
     tmp_dir_path.mkdir(exist_ok=True)
+
+    account_id = examples_wrapper.get_my_account_id()
 
     for task_dir in annotation_dir_path.iterdir():
         if not task_dir.is_dir():
@@ -164,7 +207,7 @@ def register_raster_annotation_from_polygon(
                 tmp_image_path = tmp_dir_path / task_dir.name / input_data_json.stem / f"{label}.png"
 
                 try:
-                    result = write_segmentation_image(input_data=input_data, label=label,
+                    result = write_segmentation_image(input_data=input_data, label=label, label_id=label_id,
                                                       tmp_image_path=tmp_image_path,
                                                       input_data_size=default_input_data_size,
                                                       task_status_complete=task_status_complete)
@@ -180,7 +223,8 @@ def register_raster_annotation_from_polygon(
 
             if len(image_file_list) > 0:
                 try:
-                    create_annotation_with_image(project_id, task_id, input_data_id, image_file_list)
+                    classification_details = create_classification_details(input_data)
+                    create_annotation_with_image(project_id, task_id, input_data_id, account_id=account_id, image_file_list=image_file_list, details=classification_details)
                     logger.info(f"{task_id}, {input_data_id} アノテーションの登録")
 
                 except Exception as e:
