@@ -242,9 +242,17 @@ def register_raster_annotation_from_polygon(
             if len(image_file_list) > 0:
                 try:
                     # annotaion phase or acceptance phaseであること
-                    examples_wrapper.change_operator_of_task(project_id, task_id, account_id)
-                    examples_wrapper.change_to_working_phase(project_id, task_id, account_id)
+                    task = service.api.get_task(project_id, task_id)[0]
+                    if task["account_id"] == account_id and task["status"] == "working":
+                        logger.info("{task_id} {input_data_id} 自分自身に割り合っていて、作業中のため、担当者を変更しない")
+                    else:
+                        examples_wrapper.change_operator_of_task(project_id, task_id, account_id)
+                        examples_wrapper.change_to_working_phase(project_id, task_id, account_id)
+                except Exception as e:
+                    logger.warning(f"{task_id}, {input_data_id} の担当者変更 or 作業中に変更に失敗", e)
+                    continue
 
+                try:
                     # アノテーションの登録
                     update_annotation_with_image(project_id, task_id, input_data_id, account_id=account_id, image_file_list=image_file_list, filter_details=filter_details)
 
@@ -266,14 +274,6 @@ def main(args):
         logger.error("--default_input_data_size のフォーマットが不正です", e)
         raise e
 
-    try:
-        with open(args.label_json_file) as f:
-            labels = json.load(f)
-
-    except Exception as e:
-        logger.error("--label_json_file のParseに失敗しました。", e)
-        raise e
-
 
     def filter_details(annotation: Annotation) -> bool:
         """
@@ -288,7 +288,7 @@ def main(args):
             "030bc859-4933-4bec-baa0-18fc80fb1eea", #vehicle
             "4bc53fa5-bb2e-44a5-adb2-04c76d87bfde" # motorcycle
         ]
-        label_id = annotation["lable_id"]
+        label_id = annotation["label_id"]
         # 除外するlabel_idにマッチしたらFalse
         return label_id not in exclude_label_ids
 
