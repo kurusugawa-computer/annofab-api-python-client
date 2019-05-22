@@ -121,6 +121,23 @@ class ExamplesWrapper:
                                              task_id,
                                              request_body=req)[0]
 
+    def change_to_break_phase(self, project_id: str, task_id: str, account_id: str) -> Dict[str, Any]:
+        """
+        タスクを休憩中に変更する
+        Returns:
+            変更後のtask情報
+        """
+        task, _ = self.service.api.get_task(project_id, task_id)
+
+        req = {
+            "status": "break",
+            "account_id": account_id,
+            "last_updated_datetime": task["updated_datetime"],
+        }
+        return self.service.api.operate_task(project_id,
+                                             task_id,
+                                             request_body=req)[0]
+
     def reject_task(self, project_id: str, task_id: str, account_id: str):
         """
         タスクを差し戻したあと、最後のannotation phase担当者に割り当てる。
