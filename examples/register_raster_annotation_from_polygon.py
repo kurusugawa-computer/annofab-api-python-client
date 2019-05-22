@@ -40,6 +40,16 @@ label_dict: Dict[str, str]
 """key:label_id, value:label """
 
 
+# AnnofabAPI をカスタマイズ
+def get_annotations_for_editor(self, project_id: str, task_id: str, input_data_id: str) :
+    url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation'
+    http_method = 'GET'
+    keyword_params: Dict[str, Any] = {
+    }
+    return self._request_wrapper(http_method, url_path, **keyword_params)
+
+
+
 def draw_annotation_list(annotation_list: List[Annotation], draw: PIL.ImageDraw.Draw) -> PIL.ImageDraw.Draw:
     """
     矩形、ポリゴンを描画する。
@@ -96,11 +106,14 @@ def create_annotation_with_image(project_id: str, task_id: str, input_data_id: s
 
         copied_details.append(detail)
 
+    old_annotations = get_annotations_for_editor(service.api, project_id, task_id, input_data_id)[0]
+
     request_body = {
         "project_id": project_id,
         "task_id": task_id,
         "input_data_id": input_data_id,
-        "details": copied_details
+        "details": copied_details,
+        "updated_datetime": old_annotations["updated_datetime"]
     }
 
     return service.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)[0]
@@ -159,6 +172,7 @@ def create_classification_details(input_data:Dict[str, Any], account_id: str):
             "annotation_id": detail["annotation_id"],
             "created_datetime": None,
             "data": None,
+            "data_holding_type": detail["data_holding_type"],
             "etag": None,
             "is_protected": False,
             "label_id": detail["label_id"],
@@ -254,6 +268,8 @@ def main(args):
         logger.error("--label_json_file のParseに失敗しました。", e)
         raise e
 
+
+
     register_raster_annotation_from_polygon(annotation_dir=args.annotation_dir,
                                             default_input_data_size=default_input_data_size,
                                             tmp_dir=args.tmp_dir,
@@ -265,7 +281,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=
-        "矩形/ポリゴンアノテーションを、塗りつぶしv2アノテーションとして登録する。")
+        "deprecated: 矩形/ポリゴンアノテーションを、塗りつぶしv2アノテーションとして登録する。")
     parser.add_argument('--annotation_dir',
                         type=str,
                         required=True,
