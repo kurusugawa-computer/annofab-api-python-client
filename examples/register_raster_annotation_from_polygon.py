@@ -133,7 +133,7 @@ def write_segmentation_image(input_data: Dict[str, Any], label: str, label_id: s
     return True
 
 
-def create_classification_details(input_data:Dict[str, Any]):
+def create_classification_details(input_data:Dict[str, Any], account_id: str):
     """classification用のdetails情報（アノテーション登録用）を取得"""
     details = [e for e in input_data["detail"] if e["annotation_type"] == "classification"]
     new_details = []
@@ -154,7 +154,7 @@ def create_classification_details(input_data:Dict[str, Any]):
 
     for detail in details:
         new_detail = {
-            "account_id": detail["account_id"],
+            "account_id": account_id,
             "additional_data_list": create_additional_data_list(detail["additional_data_list"]),
             "annotation_id": detail["annotation_id"],
             "created_datetime": None,
@@ -223,7 +223,7 @@ def register_raster_annotation_from_polygon(
 
             if len(image_file_list) > 0:
                 try:
-                    classification_details = create_classification_details(input_data)
+                    classification_details = create_classification_details(input_data, account_id)
                     create_annotation_with_image(project_id, task_id, input_data_id, account_id=account_id, image_file_list=image_file_list, details=classification_details)
                     logger.info(f"{task_id}, {input_data_id} アノテーションの登録")
 
@@ -269,7 +269,7 @@ if __name__ == "__main__":
     parser.add_argument('--annotation_dir',
                         type=str,
                         required=True,
-                        help='アノテーションzipを展開したディレクトリのパス')
+                        help='アノテーションFull zipを展開したディレクトリのパス')
 
     parser.add_argument('--default_input_data_size',
                         type=str,
