@@ -138,12 +138,13 @@ class ExamplesWrapper:
                                              task_id,
                                              request_body=req)[0]
 
-    def reject_task(self, project_id: str, task_id: str, account_id: str):
+    def reject_task(self, project_id: str, task_id: str, account_id: str, annotator_account_id: Optional[str] = None):
         """
-        タスクを差し戻したあと、最後のannotation phase担当者に割り当てる。
+        タスクを差し戻し、annotator_account_id　に担当を割り当てる。
         Args:
             task_id:
             account_id: 差し戻すときのユーザのaccount_id
+            annotator_account_id: 差し戻したあとに割り当てるユーザ。Noneの場合は直前のannotation phase担当者に割り当てる。
 
         Returns:
             変更あとのtask情報
@@ -152,8 +153,6 @@ class ExamplesWrapper:
 
         # タスクを差し戻す
         task, _ = self.service.api.get_task(project_id, task_id)
-        annotator_account_id = self.get_account_id_last_annotation_phase(
-            task["histories_by_phase"])
 
         req_reject = {
             "status": "rejected",
@@ -171,3 +170,22 @@ class ExamplesWrapper:
         updated_task, _ = self.service.api.operate_task(
             project_id, task["task_id"], request_body=req_change_operator)
         return updated_task
+
+    def reject_task_assign_last_annotator(self, project_id: str, task_id: str, account_id: str):
+        """
+        タスクを差し戻したあとに、最後のannotation phase担当者に割り当てる。
+        Args:
+            task_id:
+            account_id: 差し戻すときのユーザのaccount_id
+
+        Returns:
+            変更あとのtask情報
+
+        """
+
+        # タスクを差し戻す
+        task, _ = self.service.api.get_task(project_id, task_id)
+        last_annotator_account_id = self.get_account_id_last_annotation_phase(
+            task["histories_by_phase"])
+
+        return self.reject_task(project_id, task_id, account_id, last_annotator_account_id)
