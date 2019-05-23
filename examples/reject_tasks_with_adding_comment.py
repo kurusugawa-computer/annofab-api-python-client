@@ -76,6 +76,9 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str],
         task_id_list:
         inspection_comment: 検査コメントの中身
         commenter_user_id: 検査コメントを付与して、タスクを差し戻すユーザのuser_id
+        assign_last_annotator: Trueなら差し戻したタスクに対して、最後のannotation phaseを担当者を割り当てる
+        assigned_annotator_user_id: 差し戻したタスクに割り当てるユーザのuser_id. assign_last_annotatorがTrueの場合、この引数は無視される。
+
     """
 
     commenter_account_id = examples_wrapper.get_account_id_from_user_id(
@@ -96,14 +99,14 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str],
             # 担当者を変更して、作業中にする
             examples_wrapper.change_operator_of_task(project_id, task_id,
                                                      commenter_account_id)
-            logger.debug(f"task_id = {task_id}, {commenter_user_id}に担当者変更 完了")
+            logger.debug(f"task_id = {task_id}, phase={task['phase']}, {commenter_user_id}に担当者変更 完了")
 
             examples_wrapper.change_to_working_phase(project_id, task_id,
                                                      commenter_account_id)
-            logger.debug(f"task_id = {task_id}, working statusに変更 完了")
+            logger.debug(f"task_id = {task_id}, phase={task['phase']}, working statusに変更 完了")
         except requests.exceptions.HTTPError as e:
             logger.error(e)
-            logger.info(f"task_id = {task_id} の担当者変更 or 作業phaseへの変更に失敗")
+            logger.info(f"task_id = {task_id}, phase={task['phase']} の担当者変更 or 作業phaseへの変更に失敗")
             continue
 
         # 少し待たないと検査コメントが登録できない場合があるため
@@ -158,7 +161,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="検査コメントを付与してタスクを差し戻します。検査コメントは先頭の画像の左上(0,0)に付与します。"
+        description="検査コメントを付与してタスクを差し戻す。検査コメントは先頭の画像の左上(0,0)に付与する。"
         "AnnoFab認証情報は`.netrc`に記載すること")
     parser.add_argument('--project_id',
                         metavar='project_id',
@@ -177,16 +180,16 @@ if __name__ == "__main__":
                         metavar='comment',
                         type=str,
                         required=True,
-                        help='差し戻すときに付与する検査コメントの中身')
+                        help='差し戻すときに付与する検査コメントの内容')
 
     parser.add_argument('--assign_last_annotator',
                         action="store_true",
-                        help='指定した場合、差し戻した後のタスクに、最後のannotation phaseの担当者を割り当てる。')
+                        help='指定した場合、差し戻したタスクに、最後のannotation phaseの担当者を割り当てる。')
 
     parser.add_argument('--assigned_annotator_user_id',
                         metavar='annotator_user_id',
                         type=str,
-                        help='差し戻した後に担当を割り当てるユーザのuser_id. 指定しなければ未割り当て。`--assign_last_annotator`と同時に指定できない')
+                        help='差し戻したタスクに割り当てるユーザのuser_id. 指定しなければ割り当てない。`--assign_last_annotator`と同時に指定できない')
 
     service = annofabapi.build_from_netrc()
     examples_wrapper = ExamplesWrapper(service)
