@@ -65,7 +65,10 @@ def add_inspection_comment(project_id: str, task: Dict[str, Any],
 
 def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str],
                                      inspection_comment: str,
-                                     commenter_user_id: str):
+                                     commenter_user_id: str,
+                                     assign_last_annotator: bool = False,
+                                     assigned_annotator_user_id: Optional[str] = None
+                                     ):
     """
     検査コメントを付与して、タスクを差し戻す
     Args:
@@ -77,6 +80,9 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str],
 
     commenter_account_id = examples_wrapper.get_account_id_from_user_id(
         project_id, commenter_user_id)
+
+    assigned_annotator_account_id = examples_wrapper.get_account_id_from_user_id(
+        project_id, assigned_annotator_user_id) if assigned_annotator_user_id is not None else None
 
     for task_id in task_id_list:
         task, _ = service.api.get_task(project_id, task_id)
@@ -114,8 +120,12 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str],
 
         try:
             # タスクを差し戻す
-            examples_wrapper.reject_task(project_id, task_id,
-                                         commenter_account_id)
+            if assign_last_annotator:
+                # 最後のannotation phaseに担当を割り当てる
+                examples_wrapper.reject_task_assign_last_annotator(project_id, task_id, commenter_account_id)
+            else:
+                # 指定したユーザに担当を割り当てる
+                examples_wrapper.reject_task(project_id, task_id, account_id=commenter_account_id, annotator_account_id=assigned_annotator_account_id)
 
         except requests.exceptions.HTTPError as e:
             logger.error(e)
@@ -125,14 +135,23 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str],
         logger.info(f"task_id = {task_id} の差し戻し完了")
 
 
+def validate_args(args):
+    if args.assign_last_annotator and args.assigned_annotator_user_id is not None:
+        logger.error("--assign_last_annotator と --assigned_annotator_user_id は同時に指定できません")
+        return False
+
+    return True
+
+
 def main(args):
     logger.debug(args)
 
     task_id_list = read_lines(args.task_id_file)
     user_id = service.api.login_user_id
     reject_tasks_with_adding_comment(args.project_id, task_id_list,
-                                     args.comment, user_id)
-
+                                     args.comment, commenter_user_id=user_id,
+                                     assign_last_annotator=args.assign_last_annotator,
+                                     assigned_annotator_user_id=args.assigned_annotator_user_id)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -149,13 +168,22 @@ if __name__ == "__main__":
         metavar='file',
         type=str,
         required=True,
-        help='task_idの一覧が記載されたファイル。task_idは改行(LF or CRLF)で区切る。')
+        help='差し戻すタスク(inspection/acceptance phase)のtask_idの一覧が記載されたファイル。task_idは改行(LF or CRLF)で区切る。')
 
     parser.add_argument('--comment',
                         metavar='comment',
                         type=str,
                         required=True,
                         help='差し戻すときに付与する検査コメントの中身')
+
+    parser.add_argument('--assign_last_annotator',
+                        action="store_true",
+                        help='指定した場合、差し戻した後のタスクに、最後のannotation phaseの担当者を割り当てる。')
+
+    parser.add_argument('--assigned_annotator_user_id',
+                        metavar='annotator_user_id',
+                        type=str,
+                        help='差し戻した後に担当を割り当てるユーザのuser_id. 指定しなければ未割り当て。`--assign_last_annotator`と同時に指定できない')
 
     service = annofabapi.build_from_netrc()
     examples_wrapper = ExamplesWrapper(service)
