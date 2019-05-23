@@ -137,7 +137,7 @@ def reject_tasks_with_adding_comment(project_id: str, task_id_list: List[str],
 
 def validate_args(args):
     if args.assign_last_annotator and args.assigned_annotator_user_id is not None:
-        logger.error("--assign_last_annotator と --assigned_annotator_user_id は同時に指定できません")
+        logger.error("引数に --assign_last_annotator と --assigned_annotator_user_id は同時に指定できません")
         return False
 
     return True
@@ -145,6 +145,9 @@ def validate_args(args):
 
 def main(args):
     logger.debug(args)
+
+    if not validate_args(args):
+        return
 
     task_id_list = read_lines(args.task_id_file)
     user_id = service.api.login_user_id
