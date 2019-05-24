@@ -45,7 +45,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし利便性のため指定は必須ではありません。
 
-  version: 0.49.0
+  version: 0.50.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1371,6 +1371,96 @@ paths:
           $ref: "#/components/responses/ErrorForbiddenResource"
         503:
           $ref: "#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/rawdata/tasks:
+    get:
+      tags:
+      - af-project
+      summary: プロジェクトのタスク全件URLの取得
+      description: |
+        タスク全件ファイルは、毎日AM 02:00 JSTに更新されます。
+      security:
+      - ProjectOwner: []
+      operationId: getProjectTasksUrl
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "#/components/schemas/ProjectId"
+      responses:
+        200:
+          description: 正常 (LocationヘッダにAWS S3のPre-Signed URL)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        404:
+          $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/rawdata/inspections:
+    get:
+      tags:
+      - af-project
+      summary: プロジェクトの検査コメント全件URLの取得
+      description: |
+        検査コメント全件ファイルは、毎日AM 02:00 JSTに更新されます。
+      security:
+      - ProjectOwner: []
+      operationId: getProjectInspectionsUrl
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "#/components/schemas/ProjectId"
+      responses:
+        200:
+          description: 正常 (LocationヘッダにAWS S3のPre-Signed URL)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Inspection"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        404:
+          $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/rawdata/task_history_events:
+    get:
+      tags:
+      - af-project
+      summary: プロジェクトのタスク履歴イベント全件URLの取得
+      description: |
+        タスク履歴イベント全件ファイルは、毎日AM 02:00 JSTに更新されます。
+      security:
+      - ProjectOwner: []
+      operationId: getProjectTaskHistoryEventsUrl
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "#/components/schemas/ProjectId"
+      responses:
+        200:
+          description: 正常 (LocationヘッダにAWS S3のPre-Signed URL)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskHistoryEvent"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        404:
+          $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
   /my/projects/{project_id}/member:
     get:
       tags:
@@ -1671,6 +1761,9 @@ paths:
       - af-statistics
       summary: ラベル別アノテーション数集計取得
       description: |
+        ラベルごとの以下集計データを取得します。
+        * `completed_labels`：受入が完了したアノテーション数
+        * `wip_labels`：受入が完了していないアノテーション数
       security:
       - AllProjectMember: []
       operationId: getLabelStatistics
@@ -5539,9 +5632,11 @@ components:
         completed_labels:
           type: integer
           minimum: 0
+          description: ラベルごとの受入が完了したアノテーション数
         wip_labels:
           type: integer
           minimum: 0
+          description: ラベルごとの受入が完了していないアノテーション数
     WorktimeStatistics:
       type: object
       properties:
