@@ -97,8 +97,8 @@ url = response.headers['Location']
 
 ```python
 # `status`が`complete`のタスクすべてを取得する
-content, response = service.wrapper.get_all_tasks(project_id, query_params={'status': 'complete'})
-print(content)
+tasks = service.wrapper.get_all_tasks(project_id, query_params={'status': 'complete'})
+print(tasks)
 # [{'project_id': ...
 
 # simpleアノテーションzipのダウンロード
