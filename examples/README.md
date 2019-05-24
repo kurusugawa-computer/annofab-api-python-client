@@ -101,7 +101,7 @@ $ python cancel_acceptance.py --project_id prj1 --task_id_file file --comment "a
 
 ```
 $ python write_semantic_segmentation_images.py  --annotation_dir /tmp/af-annotation-xxxx \
- ---default_input_data_size 1280x720 \
+ --default_input_data_size 1280x720 \
  --label_color_json_file /tmp/label_color.json \
  --output_dir /tmp/output \
  --task_status_comlete
