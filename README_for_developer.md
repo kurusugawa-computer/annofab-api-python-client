@@ -17,6 +17,19 @@ $ make init
 `annofabapi/api.py`は[AnnoFab Web APIのOpenAPI specification](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
 詳細は[generate/README.md](generate/README.md)を参照してください。
 
+
+## フォーマッターを実行
+
+```
+$ make format
+```
+
+## lintを実行
+
+```
+$ make lint
+```
+
 ## テスト実行方法
 1. AnnoFabの認証情報を`.netrc`に記載する。
 2. `pytest.ini`にテスト対象の`project_id`を指定. テスト実行により、プロジェクトが変更されることに注意！！
@@ -32,17 +45,6 @@ $ make init
 * 「パスワード変更」など使用頻度が少なく、実行や確認がしづらいメソッド
 
 
-## フォーマッターを実行
-
-```
-$ make format
-```
-
-## lintを実行
-
-```
-$ make lint
-```
 
 ## リリースする
 

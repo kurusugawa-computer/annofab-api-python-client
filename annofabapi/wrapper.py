@@ -134,41 +134,6 @@ class Wrapper:
                                      project_id=project_id,
                                      query_params=query_params)
 
-    def put_annotation_with_outer_file(self,
-                                 project_id: str,
-                                       task_id: str,
-                                 input_data_id: str,
-                                 file_path: str,
-                                 request_body:Dict[str, Any],
-                                 content_type: Optional[str] = None) -> Dict[str, Any]:
-        """
-        外部ファイルと一緒にアノテーションを更新する。
-        外部ファイルは塗りつぶしアノテーションなどに利用される。
-        Args:
-            project_id: プロジェクトID
-            input_data_id:
-            file_path: アップロードするファイル
-            request_body: `put_input_data`に渡すrequest body. Keyに`input_data_name`がなければ、ファイルパスが設定される。
-            content_type: アップロードするファイルのMIME Type. Noneの場合、ファイルパスから推測する。
-        Returns:
-            `put_input_data`のcontent
-        """
-
-        s3_path = self.upload_file_to_s3(project_id, file_path, content_type)
-
-        copied_request_body = copy.deepcopy(
-            request_body) if request_body is not None else {}
-
-        copied_request_body.update({"input_data_path": s3_path})
-        if "input_data_name" not in copied_request_body:
-            copied_request_body["input_data_name"] = file_path
-
-        return self.api.put_input_data(project_id,
-                                       input_data_id,
-                                       request_body=copied_request_body)[0]
-
-
-
     #########################################
     # Public Method : AfAnnotationSpecsApi
     #########################################

@@ -44,6 +44,8 @@ my_account_id = api.get_my_account()[0]['account_id']
 organization_name = api.get_organization_of_project(
     project_id)[0]['organization_name']
 
+annofab_user_id = service.api.login_user_id
+
 
 def test_account():
     pass

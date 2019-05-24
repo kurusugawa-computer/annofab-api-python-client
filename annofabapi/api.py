@@ -1565,6 +1565,66 @@ class AnnofabApi(AnnofabApiMixin):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
+    def get_project_inspections_url(
+            self,
+            project_id: str,
+    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+        """プロジェクトの検査コメント全件URLの取得  # noqa: E501
+        検査コメント全件ファイルは、毎日AM 02:00 JSTに更新されます。   # noqa: E501
+        Args:
+            project_id (str):  プロジェクトID (required)
+
+        Returns:
+            Tuple[Inspection, requests.Response]
+
+        Authorizations:
+            ProjectOwner,
+        """
+        url_path = f'/projects/{project_id}/rawdata/inspections'
+        http_method = 'GET'
+        keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def get_project_task_history_events_url(
+            self,
+            project_id: str,
+    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+        """プロジェクトのタスク履歴イベント全件URLの取得  # noqa: E501
+        タスク履歴イベント全件ファイルは、毎日AM 02:00 JSTに更新されます。   # noqa: E501
+        Args:
+            project_id (str):  プロジェクトID (required)
+
+        Returns:
+            Tuple[TaskHistoryEvent, requests.Response]
+
+        Authorizations:
+            ProjectOwner,
+        """
+        url_path = f'/projects/{project_id}/rawdata/task_history_events'
+        http_method = 'GET'
+        keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def get_project_tasks_url(
+            self,
+            project_id: str,
+    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+        """プロジェクトのタスク全件URLの取得  # noqa: E501
+        タスク全件ファイルは、毎日AM 02:00 JSTに更新されます。   # noqa: E501
+        Args:
+            project_id (str):  プロジェクトID (required)
+
+        Returns:
+            Tuple[Task, requests.Response]
+
+        Authorizations:
+            ProjectOwner,
+        """
+        url_path = f'/projects/{project_id}/rawdata/tasks'
+        http_method = 'GET'
+        keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
     def initiate_project_copy(self,
                               project_id: str,
                               request_body: Optional[Any] = None
@@ -1627,7 +1687,7 @@ class AnnofabApi(AnnofabApiMixin):
             user_id (str):  アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。 (required)
 
         Returns:
-            Tuple[list[ProjectMember], requests.Response]
+            Tuple[ProjectMember, requests.Response]
 
         Authorizations:
             AllProjectMember,
@@ -1735,6 +1795,7 @@ class AnnofabApi(AnnofabApiMixin):
             project_id: str,
     ) -> Tuple[Any, requests.Response]:  # noqa: E501
         """ラベル別アノテーション数集計取得  # noqa: E501
+        ラベルごとの以下集計データを取得します。 * `completed_labels`：受入が完了したアノテーション数 * `wip_labels`：受入が完了していないアノテーション数   # noqa: E501
         Args:
             project_id (str):  プロジェクトID (required)
 

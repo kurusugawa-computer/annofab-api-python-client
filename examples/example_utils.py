@@ -1,6 +1,7 @@
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
-from example_typing import InputDataSize
+
 import annofabapi
+from example_typing import InputDataSize
 
 
 def read_lines(filepath: str) -> List[str]:
@@ -8,6 +9,7 @@ def read_lines(filepath: str) -> List[str]:
     with open(filepath) as f:
         lines = f.readlines()
     return [e.rstrip('\r\n') for e in lines]
+
 
 def get_input_data_size(str_input_data_size: str) -> InputDataSize:
     """400x300を(400,300)に変換する"""
@@ -121,7 +123,8 @@ class ExamplesWrapper:
                                              task_id,
                                              request_body=req)[0]
 
-    def change_to_break_phase(self, project_id: str, task_id: str, account_id: str) -> Dict[str, Any]:
+    def change_to_break_phase(self, project_id: str, task_id: str,
+                              account_id: str) -> Dict[str, Any]:
         """
         タスクを休憩中に変更する
         Returns:
@@ -138,7 +141,11 @@ class ExamplesWrapper:
                                              task_id,
                                              request_body=req)[0]
 
-    def reject_task(self, project_id: str, task_id: str, account_id: str, annotator_account_id: Optional[str] = None):
+    def reject_task(self,
+                    project_id: str,
+                    task_id: str,
+                    account_id: str,
+                    annotator_account_id: Optional[str] = None):
         """
         タスクを差し戻し、annotator_account_id　に担当を割り当てる。
         Args:
@@ -171,7 +178,8 @@ class ExamplesWrapper:
             project_id, task["task_id"], request_body=req_change_operator)
         return updated_task
 
-    def reject_task_assign_last_annotator(self, project_id: str, task_id: str, account_id: str):
+    def reject_task_assign_last_annotator(self, project_id: str, task_id: str,
+                                          account_id: str):
         """
         タスクを差し戻したあとに、最後のannotation phase担当者に割り当てる。
         Args:
@@ -188,4 +196,5 @@ class ExamplesWrapper:
         last_annotator_account_id = self.get_account_id_last_annotation_phase(
             task["histories_by_phase"])
 
-        return self.reject_task(project_id, task_id, account_id, last_annotator_account_id)
+        return self.reject_task(project_id, task_id, account_id,
+                                last_annotator_account_id)

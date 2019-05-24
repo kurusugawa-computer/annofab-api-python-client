@@ -12,4 +12,3 @@ Annotation = Dict[str, Any]
 
 SubInputDataList = List[Tuple[str, str]]
 """Tuple(Jsonファイルのパス, 塗りつぶしアノテーションが格納されたディレクトリのパス)のList"""
-

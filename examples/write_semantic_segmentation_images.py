@@ -9,10 +9,11 @@ import os
 import os.path
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
-from example_typing import SubInputDataList, RGB, Annotation, InputDataSize
+
 import example_utils
 import PIL.Image
 import PIL.ImageDraw
+from example_typing import RGB, Annotation, InputDataSize, SubInputDataList
 
 logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
 logging.basicConfig(format=logging_formatter)
@@ -24,7 +25,6 @@ logger.setLevel(level=logging.DEBUG)
 # 型タイプ
 AnnotationSortKeyFunc = Callable[[Annotation], Any]
 """アノテーションをsortするときのkey関数のType"""
-
 
 
 def _create_sub_input_data_list(sub_annotation_dir_list: List[str],
@@ -273,7 +273,8 @@ def main(args):
     logger.debug(f"args: {args}")
 
     try:
-        default_input_data_size = example_utils.get_input_data_size(args.default_input_data_size)
+        default_input_data_size = example_utils.get_input_data_size(
+            args.default_input_data_size)
 
     except Exception as e:
         logger.error("--default_input_data_size のフォーマットが不正です", e)
