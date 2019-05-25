@@ -358,6 +358,63 @@ class Wrapper:
                                      query_params=query_params)
 
     #########################################
+    # Public Method : AfProjectApi
+    #########################################
+    def download_project_tasks_url(self, project_id: str,
+                                   dest_path: str) -> str:
+        """
+        プロジェクトのタスク全件ファイルをダウンロードする。
+        ファイルの中身はJSON。
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先ファイルのパス
+
+        Returns:
+            ダウンロード元のURL
+
+        """
+
+        url, _ = self.api.get_project_tasks_url(project_id)
+        annofabapi.utils.download(url, dest_path)
+        return url
+
+    def download_project_inspections_url(self, project_id: str,
+                                         dest_path: str) -> str:
+        """
+        プロジェクトの検査コメント全件ファイルをダウンロードする。
+        ファイルの中身はJSON。
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先ファイルのパス
+
+        Returns:
+            ダウンロード元のURL
+
+        """
+
+        url, _ = self.api.get_project_inspections_url(project_id)
+        annofabapi.utils.download(url, dest_path)
+        return url
+
+    def download_project_task_history_events_url(self, project_id: str,
+                                                 dest_path: str) -> str:
+        """
+        プロジェクトのタスク履歴イベント全件ファイルをダウンロードする。
+        ファイルの中身はJSON。
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先ファイルのパス
+
+        Returns:
+            ダウンロード元のURL
+
+        """
+
+        url, _ = self.api.get_project_task_history_events_url(project_id)
+        annofabapi.utils.download(url, dest_path)
+        return url
+
+    #########################################
     # Public Method : AfProjectMemberApi
     #########################################
     def get_all_project_members(self,
