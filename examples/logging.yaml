@@ -1,0 +1,29 @@
+# version は必ず必要
+# https://docs.python.org/ja/3/library/logging.config.html#dictionary-schema-details
+version: 1
+formatters:
+  customFormatter:
+    format: '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
+handlers:
+  fileRotatingHandler:
+    class: logging.handlers.TimedRotatingFileHandler
+    filename: logfile/logger.log
+    when: 'D'
+    formatter: customFormatter
+  consoleHandler:
+    class: logging.StreamHandler
+    formatter: customFormatter
+loggers:
+  __main__:
+    level: DEBUG
+  annofabapi:
+    level: DEBUG
+  visualize_statistics:
+    level: DEBUG
+  backoff:
+    level: DEBUG
+root:
+  level: INFO
+  handlers: [fileRotatingHandler, consoleHandler]
+# デフォルトのロガーを無効化しないようにする　https://docs.djangoproject.com/ja/2.1/topics/logging/#configuring-logging
+disable_existing_loggers: False
