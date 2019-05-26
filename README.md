@@ -12,10 +12,9 @@
 # Features
 cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます。
 
-* Web APIに対応したメソッドが定義されています。
 * ログインを意識せずに、APIを利用できます。
 * アクセス過多などで失敗した場合は、リトライされます。
-* 「画像を入力データとして登録する」機能など、APIを組み合わせた機能を利用できます。
+* 「画像を入力データとして登録する」機能など、APIを組み合わせた機能も利用できます。
 
 
 
@@ -97,8 +96,8 @@ url = response.headers['Location']
 
 ```python
 # `status`が`complete`のタスクすべてを取得する
-content, response = service.wrapper.get_all_tasks(project_id, query_params={'status': 'complete'})
-print(content)
+tasks = service.wrapper.get_all_tasks(project_id, query_params={'status': 'complete'})
+print(tasks)
 # [{'project_id': ...
 
 # simpleアノテーションzipのダウンロード

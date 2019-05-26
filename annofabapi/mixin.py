@@ -20,9 +20,11 @@ def my_backoff(function):
     @functools.wraps(function)
     def wrapped(*args, **kwargs):
         def fatal_code(e):
-            """Too many Request以外の4XXはretryしない"""
+            """Too many Requests(429)のときはリトライする。それ以外の4XXはretryしない"""
+            if e.response is None:
+                return True
             code = e.response.status_code
-            return code != 429 and code < 500
+            return 400 <= code < 500 and code != 429
 
         return backoff.on_exception(backoff.expo,
                                     requests.exceptions.RequestException,

@@ -5,7 +5,7 @@ Annofab APIのutils
 
 import datetime
 import logging
-import os
+from pathlib import Path
 
 import dateutil
 import dateutil.tz
@@ -28,22 +28,23 @@ def log_error_response(arg_logger: logging.Logger,
         arg_logger.debug(f"request.body = {response.request.body}")
 
 
-def download(url, dest_path):
+def download(url: str, dest_path: str):
     """
-    HTTP GETで取得した内容を、ダウンロードする
+    HTTP GETで取得した内容をファイルに保存する（ダウンロードする）
     Args:
         url: ダウンロード対象のURL
-        dest_path: 保存先
+        dest_path: 保存先ファイルのパス
     """
     response = requests.get(url)
     response.raise_for_status()
 
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+    p = Path(dest_path)
+    p.parent.mkdir(parents=True, exist_ok=True)
     with open(dest_path, 'wb') as f:
         f.write(response.content)
 
 
-def str_now():
+def str_now() -> str:
     """
     現在日時をISO8601 formatで取得する。
     Returns:

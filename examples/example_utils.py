@@ -1,6 +1,7 @@
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import annofabapi
+from example_typing import InputDataSize
 
 
 def read_lines(filepath: str) -> List[str]:
@@ -8,6 +9,12 @@ def read_lines(filepath: str) -> List[str]:
     with open(filepath) as f:
         lines = f.readlines()
     return [e.rstrip('\r\n') for e in lines]
+
+
+def get_input_data_size(str_input_data_size: str) -> InputDataSize:
+    """400x300を(400,300)に変換する"""
+    splited_list = str_input_data_size.split("x")
+    return (int(splited_list[0]), int(splited_list[1]))
 
 
 class ExamplesWrapper:
@@ -20,8 +27,9 @@ class ExamplesWrapper:
     def __init__(self, service: annofabapi.Resource):
         self.service = service
 
+    @staticmethod
     def get_account_id_last_annotation_phase(
-            self, task_histories: List[Dict[str, Any]]):
+            task_histories: List[Dict[str, Any]]):
         """
         タスク履歴の最後のannotation phaseを担当したaccount_idを取得する. なければNoneを返す
         Args:
@@ -40,7 +48,18 @@ class ExamplesWrapper:
         else:
             return None
 
-    def get_account_id_from_user_id(self, project_id: str, user_id: str):
+    def get_my_account_id(self) -> str:
+        """
+        自分自身のaccount_idを取得する
+        Returns:
+            account_id
+
+        """
+        account, _ = self.service.api.get_my_account()
+        return account['account_id']
+
+    def get_account_id_from_user_id(self, project_id: str,
+                                    user_id: str) -> str:
         """
         usre_idからaccount_idを取得する
         Args:
@@ -104,12 +123,35 @@ class ExamplesWrapper:
                                              task_id,
                                              request_body=req)[0]
 
-    def reject_task(self, project_id: str, task_id: str, account_id: str):
+    def change_to_break_phase(self, project_id: str, task_id: str,
+                              account_id: str) -> Dict[str, Any]:
         """
-        タスクを差し戻したあと、最後のannotation phase担当者に割り当てる。
+        タスクを休憩中に変更する
+        Returns:
+            変更後のtask情報
+        """
+        task, _ = self.service.api.get_task(project_id, task_id)
+
+        req = {
+            "status": "break",
+            "account_id": account_id,
+            "last_updated_datetime": task["updated_datetime"],
+        }
+        return self.service.api.operate_task(project_id,
+                                             task_id,
+                                             request_body=req)[0]
+
+    def reject_task(self,
+                    project_id: str,
+                    task_id: str,
+                    account_id: str,
+                    annotator_account_id: Optional[str] = None):
+        """
+        タスクを差し戻し、annotator_account_id　に担当を割り当てる。
         Args:
             task_id:
             account_id: 差し戻すときのユーザのaccount_id
+            annotator_account_id: 差し戻したあとに割り当てるユーザ。Noneの場合は直前のannotation phase担当者に割り当てる。
 
         Returns:
             変更あとのtask情報
@@ -118,8 +160,6 @@ class ExamplesWrapper:
 
         # タスクを差し戻す
         task, _ = self.service.api.get_task(project_id, task_id)
-        annotator_account_id = self.get_account_id_last_annotation_phase(
-            task["histories_by_phase"])
 
         req_reject = {
             "status": "rejected",
@@ -137,3 +177,24 @@ class ExamplesWrapper:
         updated_task, _ = self.service.api.operate_task(
             project_id, task["task_id"], request_body=req_change_operator)
         return updated_task
+
+    def reject_task_assign_last_annotator(self, project_id: str, task_id: str,
+                                          account_id: str):
+        """
+        タスクを差し戻したあとに、最後のannotation phase担当者に割り当てる。
+        Args:
+            task_id:
+            account_id: 差し戻すときのユーザのaccount_id
+
+        Returns:
+            変更あとのtask情報
+
+        """
+
+        # タスクを差し戻す
+        task, _ = self.service.api.get_task(project_id, task_id)
+        last_annotator_account_id = self.get_account_id_last_annotation_phase(
+            task["histories_by_phase"])
+
+        return self.reject_task(project_id, task_id, account_id,
+                                last_annotator_account_id)
