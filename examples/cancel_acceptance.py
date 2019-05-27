@@ -9,15 +9,10 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: 
 import requests
 
 import annofabapi
+import example_utils
 from example_utils import ExamplesWrapper, read_lines
 
-logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
-logging.basicConfig(format=logging_formatter)
-logging.getLogger("annofabapi").setLevel(level=logging.INFO)
-
 logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.DEBUG)
-
 
 def cancel_acceptance(project_id: str,
                       task_id_list: List[str],
@@ -54,7 +49,9 @@ def cancel_acceptance(project_id: str,
 
 
 def main(args):
-    logger.info(args)
+    example_utils.load_logging_config(args)
+
+    logger.info(f"args: {args}")
 
     task_id_list = read_lines(args.task_id_file)
     cancel_acceptance(args.project_id, task_id_list, args.user_id)
@@ -81,6 +78,8 @@ if __name__ == "__main__":
                         dest='user_id',
                         type=str,
                         help='再度受入を担当させたいユーザのuser_id。指定しなければ未割り当てになる。')
+
+    example_utils.add_common_arguments_to_parser(parser)
 
     service = annofabapi.build_from_netrc()
     examples_wrapper = ExamplesWrapper(service)

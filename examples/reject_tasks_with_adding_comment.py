@@ -12,15 +12,10 @@ import requests
 
 import annofabapi
 import annofabapi.utils
+import example_utils
 from example_utils import ExamplesWrapper, read_lines
 
-logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
-logging.basicConfig(format=logging_formatter)
-logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
-
 logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.DEBUG)
-
 
 def add_inspection_comment(project_id: str, task: Dict[str, Any],
                            inspection_comment: str, commenter_account_id: str):
@@ -162,7 +157,9 @@ def validate_args(args):
 
 
 def main(args):
-    logger.debug(args)
+    example_utils.load_logging_config(args)
+
+    logger.info(f"args: {args}")
 
     if not validate_args(args):
         return
@@ -214,6 +211,8 @@ if __name__ == "__main__":
         help=
         '差し戻したタスクに割り当てるユーザのuser_id. 指定しなければ割り当てない。`--assign_last_annotator`と同時に指定できない'
     )
+
+    example_utils.add_common_arguments_to_parser(parser)
 
     service = annofabapi.build_from_netrc()
     examples_wrapper = ExamplesWrapper(service)

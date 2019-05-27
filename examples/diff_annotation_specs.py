@@ -171,7 +171,7 @@ def validate_args(args):
 def main(args):
     example_utils.load_logging_config(args)
 
-    logger.debug(args)
+    logger.info(f"args: {args}")
 
     if not validate_args(args):
         return
