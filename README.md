@@ -27,6 +27,8 @@ cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます
 $ pip install annofabapi
 ```
 
+https://pypi.org/project/annofabapi/
+
 # Usage
 
 ## インスタンス生成
