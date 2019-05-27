@@ -70,10 +70,3 @@ $ generate/generate.sh
 $ generate/generate.sh --notdownload
 
 ```
-
-
-# swagger.yamlやAPIの不具合で正しく動かない部分
-
-* `getInstruction`のContent-Type
-* `get_instruction_image_url_for_put`に`header_params`がない
-
