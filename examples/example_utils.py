@@ -1,11 +1,12 @@
+import argparse
+import logging.config
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import annofabapi
-from example_typing import InputDataSize
 import yaml
-import logging.config
-import argparse
-from pathlib import Path
+from example_typing import InputDataSize
+
 
 def read_lines(filepath: str) -> List[str]:
     """ファイルを行単位で読み込む。改行コードを除く"""
@@ -19,6 +20,7 @@ def get_input_data_size(str_input_data_size: str) -> InputDataSize:
     splited_list = str_input_data_size.split("x")
     return (int(splited_list[0]), int(splited_list[1]))
 
+
 def load_logging_config(args, logging_yaml_file: str = "./logging.yaml"):
     """./logging.yamlを読み込む"""
 
@@ -30,16 +32,18 @@ def load_logging_config(args, logging_yaml_file: str = "./logging.yaml"):
             logdir.mkdir(exist_ok=True, parents=True)
 
             log_filename = f"{str(logdir)}/examples.log"
-            logging_config["handlers"]["fileRotatingHandler"]["filename"] = log_filename
+            logging_config["handlers"]["fileRotatingHandler"][
+                "filename"] = log_filename
 
         logging.config.dictConfig(logging_config)
 
 
 def add_common_arguments_to_parser(parser: argparse.ArgumentParser):
     """共通のコマンドライン引数を設定する"""
-    parser.add_argument('--logdir',type=str, default=".log",
-        help='ログファイルを保存するディレクトリ'
-    )
+    parser.add_argument('--logdir',
+                        type=str,
+                        default=".log",
+                        help='ログファイルを保存するディレクトリ')
 
 
 class ExamplesWrapper:
