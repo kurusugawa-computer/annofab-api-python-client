@@ -1,5 +1,5 @@
 # 概要
-[OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator)を使って、`annofabapi/api.py`を生成します。
+[OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator)を使って、`annofabapi/generated_api.py`を生成します。
 
 
 # 設計方針
@@ -42,7 +42,7 @@ swagger.yamlの間違いを許容する部分と許容しない部分は以下�
 
 ```
 generate/
-│  api_template.py
+│  generated_api_template.py
 │  generate.sh
 │
 ├─out/
@@ -52,21 +52,18 @@ generate/
 
 ```
 
-* `generate.sh`：`annofabapi/api.py`を生成するBash Script
+* `generate.sh`：`annofabapi/generated_api.py`を生成するBash Script
 * `out/`：OpenAPI Generatorの出力先。
 * `api.mustache`：APIに対応してメソッド用のテンプレートファイル。https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/python/api.mustache からダウンロードしたファイルをカスタマイズした。
-* `api_template.py`：`annofabapi/api.py`の自動生成しない部分。このファイルとOpenAPI Generatorが生成したファイルを連結して、`annofabapi/api.py`を生成する。
+* `generated_api_template.py`：`annofabapi/generated_api.py`のヘッダ部分（OpenAPI Generatorで生成しない部分）。
 
 ## 実行方法
 
-`$ generate/generate.sh`を実行すると、`annofabapi/api.py`が上書きされます。
-`$ generate/generate.sh --notdownload`を実行すると`generate/swagger.yaml`を使って`api.py`が生成されます。
-
-
 ```bash
+# https://annofab.com/docs/api/swagger.yaml を元に生成します。
 $ generate/generate.sh
 
-
+# generate/swagger.yaml を元に生成します。
 $ generate/generate.sh --notdownload
 
 ```
