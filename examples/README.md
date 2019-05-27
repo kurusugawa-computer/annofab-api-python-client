@@ -16,11 +16,9 @@ pythonコマンドを使ってCLIとして利用できます。
 
 ```
 $ git clone https://github.com/kurusugawa-computer/annofab-api-python-client.git
-$ cd annofab-api-python-client 
-
+$ cd annofab-api-python-client/examples
 $ pipenv install
 $ pipenv shell
-$ cd examples
 
 # サンプルコートを実行
 $ python invite_user_to_projects.py --user_id user --role owner --organization ORG
@@ -33,6 +31,8 @@ $ pip install annofabapi --upgrade
 
 $ git clone https://github.com/kurusugawa-computer/annofab-api-python-client.git
 $ cd annofab-api-python-client/examples
+
+# Pipfileの`[packages]`に記載されているパッケージを`pip install`でインストールする
 
 # サンプルコートを実行
 $ python invite_user_to_projects.py --user_id user --role owner --organization ORG
