@@ -24,12 +24,7 @@ import PIL.ImageDraw
 from example_typing import Annotation, InputDataSize
 from example_utils import ExamplesWrapper, read_lines
 
-logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
-logging.basicConfig(format=logging_formatter)
-logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
-
 logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.DEBUG)
 
 FilterDetailsFunc = Callable[[Annotation], bool]
 """アノテーションをFilterする関数"""
@@ -67,6 +62,11 @@ def draw_annotation_list(annotation_list: List[Annotation],
         elif data_type == "Points":
             # Polygon
             xy = [(e["x"], e["y"]) for e in data["points"]]
+            draw.polygon(xy, fill=color)
+
+        elif data_type == "SegmentationV2":
+            # polygonを塗りつぶしに変換してしまったから対応する場合
+            xy = [int(e) for e in data["data_uri"].split(",")]
             draw.polygon(xy, fill=color)
 
     return draw
@@ -168,64 +168,6 @@ def write_segmentation_image(input_data: Dict[str, Any], label: str,
     return True
 
 
-def create_classification_details(input_data: Dict[str, Any], account_id: str):
-    """classification用のdetails情報（アノテーション登録用）を取得"""
-    details = [
-        e for e in input_data["detail"]
-        if e["annotation_type"] == "classification"
-    ]
-    new_details = []
-
-    def create_additional_data_list(arg_additional_data_list):
-        new_list = []
-        for data in arg_additional_data_list:
-            new_data = {
-                "additional_data_definition_id":
-                data["additional_data_definition_id"],
-                "choice":
-                data["choice"],
-                "comment":
-                data["comment"],
-                "flag":
-                data["flag"],
-                "integer":
-                data["integer"],
-            }
-            new_list.append(new_data)
-        return new_list
-
-    for detail in details:
-        new_detail = {
-            "account_id":
-            account_id,
-            "additional_data_list":
-            create_additional_data_list(detail["additional_data_list"]),
-            "annotation_id":
-            detail["annotation_id"],
-            "created_datetime":
-            None,
-            "data":
-            None,
-            "data_holding_type":
-            detail["data_holding_type"],
-            "etag":
-            None,
-            "is_protected":
-            False,
-            "label_id":
-            detail["label_id"],
-            "path":
-            None,
-            "updated_datetime":
-            None,
-            "url":
-            None,
-        }
-        new_details.append(new_detail)
-
-    return new_details
-
-
 def register_raster_annotation_from_polygon(
         annotation_dir: str,
         default_input_data_size: InputDataSize,
@@ -284,7 +226,7 @@ def register_raster_annotation_from_polygon(
                     if task["account_id"] == account_id and task[
                             "status"] == "working":
                         logger.info(
-                            "{task_id} {input_data_id} 自分自身に割り合っていて、作業中のため、担当者を変更しない"
+                            f"{task_id} {input_data_id} 自分自身に割り合っていて、作業中のため、担当者を変更しない"
                         )
                     else:
                         examples_wrapper.change_operator_of_task(
@@ -317,7 +259,9 @@ def register_raster_annotation_from_polygon(
 
 
 def main(args):
-    logger.debug(f"args: {args}")
+    example_utils.load_logging_config(args)
+
+    logger.info(f"args: {args}")
 
     try:
         default_input_data_size = example_utils.get_input_data_size(
@@ -391,6 +335,8 @@ if __name__ == "__main__":
                         type=str,
                         required=True,
                         help='task_idの一覧が記載されたファイル')
+
+    example_utils.add_common_arguments_to_parser(parser)
 
     try:
         service = annofabapi.build_from_netrc()
