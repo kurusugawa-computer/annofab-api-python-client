@@ -136,29 +136,6 @@ class AnnofabApiMixin:
 
         """
 
-        def execute_request():
-            if http_method == 'GET':
-                return self.session.get(url, **kwargs)
-
-            elif http_method == 'DELETE':
-                return self.session.delete(url, **kwargs)
-
-            elif http_method == 'PUT':
-                return self.session.put(url, **kwargs)
-
-            elif http_method == 'POST':
-                return self.session.post(url, **kwargs)
-
-            elif http_method == 'OPTIONS':
-                return self.session.options(url, **kwargs)
-
-            elif http_method == 'HEAD':
-                return self.session.head(url, **kwargs)
-
-            else:
-                raise AnnofabApiException(
-                    f"HTTP Method '{http_method}' is not supported")
-
         url = f'{self.URL_PREFIX}{url_path}'
         kwargs = self._create_kwargs(query_params, header_params)
         if request_body is not None:
@@ -172,7 +149,7 @@ class AnnofabApiMixin:
                 kwargs.update({'data': request_body})
 
         # HTTP Requestを投げる
-        response = execute_request()
+        response = getattr(self.session, http_method.lower())(url, **kwargs)
 
         # Unauthorized Errorならば、ログイン後に再度実行する
         if response.status_code == requests.codes.unauthorized:
