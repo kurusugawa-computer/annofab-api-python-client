@@ -8,3 +8,5 @@ verify_ssl = true
 [packages]
 annofabapi = "*"
 pillow = "*"
+pyyaml = "*"
+dictdiffer = "*"
