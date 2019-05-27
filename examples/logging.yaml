@@ -7,7 +7,7 @@ formatters:
 handlers:
   fileRotatingHandler:
     class: logging.handlers.TimedRotatingFileHandler
-    filename: logfile/logger.log
+    filename: .log/example.log
     when: 'D'
     formatter: customFormatter
   consoleHandler:
@@ -17,10 +17,6 @@ loggers:
   __main__:
     level: DEBUG
   annofabapi:
-    level: DEBUG
-  visualize_statistics:
-    level: DEBUG
-  backoff:
     level: DEBUG
 root:
   level: INFO
