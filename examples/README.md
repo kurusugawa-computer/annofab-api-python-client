@@ -106,3 +106,15 @@ $ python write_semantic_segmentation_images.py  --annotation_dir /tmp/af-annotat
  --output_dir /tmp/output \
  --task_status_comlete
 ```
+
+
+## diff_annotation_specs.py
+プロジェクト間のアノテーション仕様の差分を表示します。。ただし、label_idなどAnnoFab内で生成されるIDは比較しません。
+このツールは、同じアノテーションルールのプロジェクトが複数ある場合、アノテーション仕様が同一であることを確認するときなどに、利用できます。
+
+プロジェクトのチェッカー以上の権限を持つユーザで実行してください。
+
+
+```
+$ python diff_annotation_specs.py prj1 prj2
+```
