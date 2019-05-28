@@ -6,17 +6,14 @@ import argparse
 import copy
 import logging
 import pprint
-import time
-import uuid
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
+from typing import Any, Dict, List  # pylint: disable=unused-import
 
-import requests
-
-import annofabapi
-import annofabapi.utils
 import dictdiffer
-import example_utils
-from example_utils import ExamplesWrapper, load_logging_config, read_lines
+
+import annofabcli
+import annofabapi
+from annofabcli.common.utils import AnnofabApiFacade
+
 
 logger = logging.getLogger(__name__)
 
@@ -169,7 +166,7 @@ def validate_args(args):
 
 
 def main(args):
-    example_utils.load_logging_config(args)
+    annofabcli.utils.load_logging_config_from_args(args, __file__)
 
     logger.info(f"args: {args}")
 
@@ -188,10 +185,10 @@ if __name__ == "__main__":
 
     parser.add_argument('project_id2', type=str, help='比較対象のプロジェクトのproject_id')
 
-    example_utils.add_common_arguments_to_parser(parser)
+    annofabcli.utils.add_common_arguments_to_parser(parser)
 
     service = annofabapi.build_from_netrc()
-    examples_wrapper = ExamplesWrapper(service)
+    examples_wrapper = AnnofabApiFacade(service)
 
     try:
         main(parser.parse_args())
