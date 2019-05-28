@@ -11,24 +11,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional  # pylint: disable=unused-import
 
 import annofabapi.utils
-from annofabcli.common import example_utils
+import annofabcli
 import PIL
 import PIL.Image
 import PIL.ImageDraw
-from annofabcli.common.example_typing import Annotation, InputDataSize
-from annofabcli.common.example_utils import ExamplesWrapper
-
-logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
-logging.basicConfig(format=logging_formatter)
-logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
+from annofabcli.common.typing import Annotation, InputDataSize
+from annofabcli.common.utils import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.DEBUG)
 
-# def create_segmentation_image(input_dat_size: InputDataSize,):
-#     image = PIL.Image.new(mode="RGBA", size=input_dat_size, color=(0,0,0,0))
-#     draw = PIL.ImageDraw.Draw(image)
-#     draw.rectangle([0,0,100,100], fill=(255,255,255,255))
 
 label_dict: Dict[str, str]
 """key:label_id, value:label """
@@ -293,10 +284,12 @@ def create_labels(project_id, labels: List[str]):
 
 
 def main(args):
+    annofabcli.utils.load_logging_config_from_args(args, __file__)
+    
     logger.debug(f"args: {args}")
 
     try:
-        default_input_data_size = example_utils.get_input_data_size(
+        default_input_data_size = annofabcli.utils.get_input_data_size(
             args.default_input_data_size)
 
     except Exception as e:
@@ -354,7 +347,7 @@ if __name__ == "__main__":
 
     try:
         service = annofabapi.build_from_netrc()
-        examples_wrapper = ExamplesWrapper(service)
+        examples_wrapper = AnnofabApiFacade(service)
 
         main(parser.parse_args())
 

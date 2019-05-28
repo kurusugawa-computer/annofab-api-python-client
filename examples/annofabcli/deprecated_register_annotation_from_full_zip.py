@@ -9,15 +9,15 @@ import uuid
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
+import annofabapi
 import annofabcli
-import annofabcli.utils
-import annofabcli.typiing
 
 import PIL
 import PIL.Image
 import PIL.ImageDraw
-from annofabcli.typing import Annotation, InputDataSize
-from annofabcli.common.example_utils import ExamplesWrapper
+
+from annofabcli.common.typing import Annotation, InputDataSize
+from annofabcli.common.utils import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
 
@@ -211,8 +211,7 @@ def register_raster_annotation_from_polygon(
 
                 except Exception as e:
                     logger.warning(
-                        f"{task_id}, {input_data_id}, {str(tmp_image_path)} の生成失敗",
-                        e)
+                        f"{task_id}, {input_data_id}, {str(tmp_image_path)} の生成失敗")
 
             if len(image_file_list) > 0:
                 try:
@@ -230,7 +229,7 @@ def register_raster_annotation_from_polygon(
                             project_id, task_id, account_id)
                 except Exception as e:
                     logger.warning(
-                        f"{task_id}, {input_data_id} の担当者変更 or 作業中に変更に失敗", e)
+                        f"{task_id}, {input_data_id} の担当者変更 or 作業中に変更に失敗")
                     continue
 
                 try:
@@ -249,21 +248,20 @@ def register_raster_annotation_from_polygon(
                     logger.info(f"{task_id}, {input_data_id} アノテーションの登録")
 
                 except Exception as e:
-                    logger.warning(f"{task_id}, {input_data_id} のアノテーション登録失敗",
-                                   e)
+                    logger.warning(f"{task_id}, {input_data_id} のアノテーション登録失敗")
 
 
 def main(args):
-    example_utils.load_logging_config(args)
+    annofabcli.utils.load_logging_config_from_args(args, __file__)
 
     logger.info(f"args: {args}")
 
     try:
-        default_input_data_size = example_utils.get_input_data_size(
+        default_input_data_size = annofabcli.utils.get_input_data_size(
             args.default_input_data_size)
 
     except Exception as e:
-        logger.error("--default_input_data_size のフォーマットが不正です", e)
+        logger.error("--default_input_data_size のフォーマットが不正です")
         raise e
 
     def filter_details(annotation: Annotation) -> bool:
@@ -291,7 +289,7 @@ def main(args):
         "label_id": "4bc53fa5-bb2e-44a5-adb2-04c76d87bfde"
     }]
 
-    task_id_list = example_utils.read_lines(args.task_id_file)
+    task_id_list = annofabcli.utils.read_lines(args.task_id_file)
 
     register_raster_annotation_from_polygon(
         annotation_dir=args.annotation_dir,
@@ -331,11 +329,11 @@ if __name__ == "__main__":
                         required=True,
                         help='task_idの一覧が記載されたファイル')
 
-    example_utils.add_common_arguments_to_parser(parser)
+    annofabcli.utils.add_common_arguments_to_parser(parser)
 
     try:
         service = annofabapi.build_from_netrc()
-        examples_wrapper = ExamplesWrapper(service)
+        examples_wrapper = AnnofabApiFacade(service)
 
         main(parser.parse_args())
 

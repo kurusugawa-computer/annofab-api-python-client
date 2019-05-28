@@ -12,7 +12,10 @@ from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused
 
 import PIL.Image
 import PIL.ImageDraw
+import annofabcli
 from annofabcli.common.typing import RGB, Annotation, InputDataSize, SubInputDataList
+
+logger = logging.getLogger(__name__)
 
 # 型タイプ
 AnnotationSortKeyFunc = Callable[[Annotation], Any]
@@ -258,18 +261,20 @@ def write_semantic_segmentation_images(
                     sub_input_data_list=sub_input_data_list)
 
             except Exception as e:
-                logger.warning(f"{str(output_file)} の生成失敗", e)
+                logger.warning(f"{str(output_file)} の生成失敗")
 
 
 def main(args):
+    annofabcli.utils.load_logging_config_from_args(args, __file__)
+
     logger.debug(f"args: {args}")
 
     try:
-        default_input_data_size = example_utils.get_input_data_size(
+        default_input_data_size = annofabcli.utils.get_input_data_size(
             args.default_input_data_size)
 
     except Exception as e:
-        logger.error("--default_input_data_size のフォーマットが不正です", e)
+        logger.error("--default_input_data_size のフォーマットが不正です")
         raise e
 
     try:
@@ -281,12 +286,12 @@ def main(args):
             }
 
     except Exception as e:
-        logger.error("--label_color_json_file のJSON Parseに失敗しました。", e)
+        logger.error("--label_color_json_file のJSON Parseに失敗しました。")
         raise e
 
     try:
         if args.label_order_file is not None:
-            labels = example_utils.read_lines(args.label_order_file)
+            labels = annofabcli.utils.read_lines(args.label_order_file)
 
             def annotation_sort_key_func(d: Annotation) -> int:
                 """
@@ -300,7 +305,7 @@ def main(args):
             annotation_sort_key_func = None
 
     except Exception as e:
-        logger.error("--label_order_file のParseに失敗しました。", e)
+        logger.error("--label_order_file のParseに失敗しました。")
         raise e
 
     try:

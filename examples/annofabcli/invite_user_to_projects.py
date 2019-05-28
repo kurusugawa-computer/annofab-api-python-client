@@ -10,11 +10,9 @@ import requests
 
 import annofabapi
 
-logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
-logging.basicConfig(format=logging_formatter)
+import annofabcli
 
 logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.DEBUG)
 
 
 def assign_role_with_organization(organization_name: str,
@@ -55,6 +53,8 @@ def assign_role_with_project_id(project_id_list: List[str],
 
 
 def main(args):
+    annofabcli.utils.load_logging_config(args, __file__)
+
     logger.info(args)
 
     if args.organization_name is not None:

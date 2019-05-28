@@ -49,7 +49,7 @@ $ python invite_user_to_projects.py -h
 
 以下のpythonコマンドは、`$ pipenv shell`でPythonの仮想環境を有効にした状態で、実行してください。
 
-## invite_user_to_projects.py
+## invite_user_to_projects
 複数のプロジェクトに、ユーザを招待します。
 このツールは、新しく組織にユーザを追加するときなどに、利用できます。
 
@@ -58,13 +58,13 @@ $ python invite_user_to_projects.py -h
 
 ```
 # ORG組織配下のすべてのプロジェクトに、user1をownerロールで割り当てる
-$ python invite_user_to_projects.py --user_id user1 --role owner --organization ORG
+$ python -m annofabcli.invite_user_to_projects --user_id user1 --role owner --organization ORG
 
 # prj1, prj2のプロジェクトに、user1をownerロールで割り当てる
-$ python invite_user_to_projects.py --user_id user1 --role owner --project_id prj1 prj2
+$ python -m annofabcli.invite_user_to_projects --user_id user1 --role owner --project_id prj1 prj2
 ```
 
-## cancel_acceptance.py
+## cancel_acceptance
 受け入れ完了タスクを、受け入れ取り消しにします。
 アノテーション仕様を途中で変更したときなどに、利用します。
 
@@ -81,13 +81,13 @@ task_id3
 
 ```
 # prj1プロジェクトのタスクを、受け入れ取り消しにする。再度受け入れを担当させるユーザは未担当
-$ python cancel_acceptance.py --project_id prj1 --task_id_file file
+$ python -m annofabcli.cancel_acceptance --project_id prj1 --task_id_file file
 
 # prj1プロジェクトのタスクを、受け入れ取り消しにする。再度受け入れを担当させるユーザはuser1
-$ python cancel_acceptance.py --project_id prj1 --task_id_file file --user_id user1
+$ python -m annofabcli.cancel_acceptance --project_id prj1 --task_id_file file --user_id user1
 ```
 
-## reject_tasks_with_adding_comment.py
+## reject_tasks_with_adding_comment
 検査コメントを付与して、タスクを差し戻します。検査コメントは、タスク内の先頭の画像の左上に付与します。
 
 このツールは、アノテーション仕様を途中で変更したときなどに、利用できます。
@@ -95,14 +95,30 @@ $ python cancel_acceptance.py --project_id prj1 --task_id_file file --user_id us
 プロジェクトのチェッカー以上の権限を持つユーザで実行してください。
 
 ```
-# prj1プロジェクトのタスクを、差し戻す
-$ python cancel_acceptance.py --project_id prj1 --task_id_file file --comment "auto comment at tool"
+# prj1プロジェクトのタスクを、差し戻す。差し戻したタスクの担当者は割り当てられていない
+$ python -m annofabcli.reject_tasks_with_adding_comment --project_id prj1 --task_id_file file \
+ --comment "auto comment at tool"
+
+# 差し戻したタスクに、最後のannotation phaseを担当したユーザに割り当てる（画面と同じ動き）
+$ python -m annofabcli.reject_tasks_with_adding_comment --project_id prj1 --task_id_file file \
+ --comment "auto comment at tool" \
+ --assign_last_annotator
+
+# 差し戻したタスクには、usr1を割り当てる
+$ python -m annofabcli.reject_tasks_with_adding_comment --project_id prj1 --task_id_file file \
+ --comment "auto comment at tool" \
+ ----assigned_annotator_user_id usr1
+
 ```
 
-## write_semantic_segmentation_images.py
+## write_semantic_segmentation_images
+アノテーションzipを展開したディレクトリから、アノテーションをSemantic Segmentation(Multi Class)用の画像をします。
+矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象です。
+複数のアノテーションディレクトリを指定して、画像をマージすることも可能です。
+
 
 ```
-$ python write_semantic_segmentation_images.py  --annotation_dir /tmp/af-annotation-xxxx \
+$ python  -m annofabcli.write_semantic_segmentation_images  --annotation_dir /tmp/af-annotation-xxxx \
  --default_input_data_size 1280x720 \
  --label_color_json_file /tmp/label_color.json \
  --output_dir /tmp/output \

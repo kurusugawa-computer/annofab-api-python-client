@@ -12,6 +12,7 @@ import requests
 
 import annofabapi
 import annofabapi.utils
+
 import annofabcli
 from annofabcli.common.utils import AnnofabApiFacade, read_lines
 

@@ -50,7 +50,7 @@ def cancel_acceptance(project_id: str,
 
 
 def main(args):
-    load_logging_config(args)
+    annofabcli.utils.load_logging_config_from_args(args, __file__)
 
     logger.info(f"args: {args}")
 
