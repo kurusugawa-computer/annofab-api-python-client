@@ -64,10 +64,10 @@ def draw_annotation_list(annotation_list: List[Annotation],
             xy = [(e["x"], e["y"]) for e in data["points"]]
             draw.polygon(xy, fill=color)
 
-        elif data_type == "SegmentationV2":
-            # polygonを塗りつぶしに変換してしまったから対応する場合
-            xy = [int(e) for e in data["data_uri"].split(",")]
-            draw.polygon(xy, fill=color)
+        # elif data_type == "SegmentationV2":
+        #     # polygonを塗りつぶしに変換してしまったから対応する場合
+        #     xy = [float(e) for e in data["data_uri"].split(",")]
+        #     draw.polygon(xy, fill=color)
 
     return draw
 
