@@ -1,11 +1,12 @@
 import argparse
 import logging.config
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
+from typing import Any, Dict, List, Optional  # pylint: disable=unused-import
 
 import annofabapi
 import yaml
-from example_typing import InputDataSize
+import os
+from annofabcli.common.typing import InputDataSize
 
 
 def read_lines(filepath: str) -> List[str]:
@@ -21,19 +22,31 @@ def get_input_data_size(str_input_data_size: str) -> InputDataSize:
     return (int(splited_list[0]), int(splited_list[1]))
 
 
-def load_logging_config(args, logging_yaml_file: str = "./logging.yaml"):
+def load_logging_config_from_args(args, py_filepath: str, logging_yaml_file: str = "./logging.yaml"):
+    """
+    args情報から、logging設定ファイルを読み込む
+    Args:
+        args: Command引数情報
+        py_filepath: Python Filepath
+        logging_yaml_file: logging設定ファイル
+
+    Returns:
+
+    """
+    log_dir = args.logdir
+    log_filename = f"{os.path.basename(py_filepath)}.log"
+    load_logging_config(log_dir, log_filename, logging_yaml_file)
+
+
+def load_logging_config(log_dir, log_filename: str, logging_yaml_file: str = "./logging.yaml"):
     """./logging.yamlを読み込む"""
 
     with open(logging_yaml_file, encoding='utf-8') as f:
         logging_config = yaml.safe_load(f)
 
-        if hasattr(args, "logdir"):
-            logdir = Path(args.logdir)
-            logdir.mkdir(exist_ok=True, parents=True)
-
-            log_filename = f"{str(logdir)}/examples.log"
-            logging_config["handlers"]["fileRotatingHandler"][
-                "filename"] = log_filename
+        log_filename = f"{str(log_dir)}/{log_filename}"
+        logging_config["handlers"]["fileRotatingHandler"][
+            "filename"] = log_filename
 
         logging.config.dictConfig(logging_config)
 
@@ -46,9 +59,9 @@ def add_common_arguments_to_parser(parser: argparse.ArgumentParser):
                         help='ログファイルを保存するディレクトリ')
 
 
-class ExamplesWrapper:
+class AnnofabApiFacade:
     """
-    Exampleツール用のWrapperクラス
+    AnnofabApiのFacadeクラス。annofabapiの複雑な処理を簡単に呼び出せるようにする。
     Returns:
 
     """

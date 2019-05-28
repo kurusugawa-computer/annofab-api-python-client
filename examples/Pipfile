@@ -4,9 +4,6 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+annofabcli = {editable = true,path = "."} # For reading setup.py
 
 [packages]
-annofabapi = ">=0.3.1"
-pillow = "*"
-pyyaml = "*"
-dictdiffer = "*"

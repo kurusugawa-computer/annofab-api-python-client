@@ -6,14 +6,14 @@ import argparse
 import logging
 import time
 import uuid
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
+from typing import Any, Dict, List, Optional  # pylint: disable=unused-import
 
 import requests
 
 import annofabapi
 import annofabapi.utils
-import example_utils
-from example_utils import ExamplesWrapper, read_lines
+import annofabcli
+from annofabcli.common.utils import AnnofabApiFacade, read_lines
 
 logger = logging.getLogger(__name__)
 
@@ -106,8 +106,8 @@ def reject_tasks_with_adding_comment(
                 f"task_id = {task_id}, phase={task['phase']}, working statusに変更 完了"
             )
         except requests.exceptions.HTTPError as e:
-            logger.error(e)
-            logger.info(
+            logger.warning(e)
+            logger.warning(
                 f"task_id = {task_id}, phase={task['phase']} の担当者変更 or 作業phaseへの変更に失敗"
             )
             continue
@@ -120,8 +120,8 @@ def reject_tasks_with_adding_comment(
                                    commenter_account_id)
             logger.debug(f"task_id = {task_id}, 検査コメントの付与 完了")
         except requests.exceptions.HTTPError as e:
-            logger.error(e)
-            logger.info(f"task_id = {task_id} 検査コメントの付与に失敗")
+            logger.warning(e)
+            logger.warning(f"task_id = {task_id} 検査コメントの付与に失敗")
             continue
 
         try:
@@ -139,8 +139,8 @@ def reject_tasks_with_adding_comment(
                     annotator_account_id=assigned_annotator_account_id)
 
         except requests.exceptions.HTTPError as e:
-            logger.error(e)
-            logger.info(f"task_id = {task_id} タスクの差し戻しに失敗")
+            logger.warning(e)
+            logger.warning(f"task_id = {task_id} タスクの差し戻しに失敗")
             continue
 
         logger.info(f"task_id = {task_id} の差し戻し完了")
@@ -157,7 +157,7 @@ def validate_args(args):
 
 
 def main(args):
-    example_utils.load_logging_config(args)
+    annofabcli.utils.load_logging_config(args, __file__)
 
     logger.info(f"args: {args}")
 
@@ -212,10 +212,10 @@ if __name__ == "__main__":
         '差し戻したタスクに割り当てるユーザのuser_id. 指定しなければ割り当てない。`--assign_last_annotator`と同時に指定できない'
     )
 
-    example_utils.add_common_arguments_to_parser(parser)
+    annofabcli.utils.add_common_arguments_to_parser(parser)
 
     service = annofabapi.build_from_netrc()
-    examples_wrapper = ExamplesWrapper(service)
+    examples_wrapper = AnnofabApiFacade(service)
 
     try:
         main(parser.parse_args())

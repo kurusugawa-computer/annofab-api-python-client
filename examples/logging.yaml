@@ -3,7 +3,7 @@
 version: 1
 formatters:
   customFormatter:
-    format: '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
+    format: '%(levelname)s : %(asctime)s : %(filename)s : %(name)s : %(funcName)s : %(message)s'
 handlers:
   fileRotatingHandler:
     class: logging.handlers.TimedRotatingFileHandler

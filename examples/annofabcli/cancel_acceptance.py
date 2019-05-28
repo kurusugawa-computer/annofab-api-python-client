@@ -4,13 +4,14 @@
 
 import argparse
 import logging
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
+from typing import List, Optional  # pylint: disable=unused-import
 
 import requests
 
+import annofabcli
 import annofabapi
-import example_utils
-from example_utils import ExamplesWrapper, read_lines
+from annofabcli.common.utils import read_lines, AnnofabApiFacade, load_logging_config
+
 
 logger = logging.getLogger(__name__)
 
@@ -44,12 +45,12 @@ def cancel_acceptance(project_id: str,
             logger.info(f"task_id = {task_id} の受け入れ取り消し完了")
 
         except requests.exceptions.HTTPError as e:
-            logger.error(e)
-            logger.info(f"task_id = {task_id} の受け入れ取り消し失敗")
+            logger.warning(e)
+            logger.warning(f"task_id = {task_id} の受け入れ取り消し失敗")
 
 
 def main(args):
-    example_utils.load_logging_config(args)
+    load_logging_config(args)
 
     logger.info(f"args: {args}")
 
@@ -79,10 +80,10 @@ if __name__ == "__main__":
                         type=str,
                         help='再度受入を担当させたいユーザのuser_id。指定しなければ未割り当てになる。')
 
-    example_utils.add_common_arguments_to_parser(parser)
+    annofabcli.utils.add_common_arguments_to_parser(parser)
 
     service = annofabapi.build_from_netrc()
-    examples_wrapper = ExamplesWrapper(service)
+    examples_wrapper = AnnofabApiFacade(service)
 
     try:
         main(parser.parse_args())

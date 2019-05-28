@@ -47,6 +47,8 @@ $ python invite_user_to_projects.py -h
 
 # examplesツール
 
+以下のpythonコマンドは、`$ pipenv shell`でPythonの仮想環境を有効にした状態で、実行してください。
+
 ## invite_user_to_projects.py
 複数のプロジェクトに、ユーザを招待します。
 このツールは、新しく組織にユーザを追加するときなどに、利用できます。
@@ -108,7 +110,8 @@ $ python write_semantic_segmentation_images.py  --annotation_dir /tmp/af-annotat
 ```
 
 
-## diff_annotation_specs.py
+
+## diff_annotation_specs
 プロジェクト間のアノテーション仕様の差分を表示します。。ただし、label_idなどAnnoFab内で生成されるIDは比較しません。
 このツールは、同じアノテーションルールのプロジェクトが複数ある場合、アノテーション仕様が同一であることを確認するときなどに、利用できます。
 
@@ -116,5 +119,6 @@ $ python write_semantic_segmentation_images.py  --annotation_dir /tmp/af-annotat
 
 
 ```
-$ python diff_annotation_specs.py prj1 prj2
+$ python -m annofabcli.diff_annotation_specs prj1 prj2
 ```
+

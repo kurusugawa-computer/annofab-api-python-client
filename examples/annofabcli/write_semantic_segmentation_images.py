@@ -8,19 +8,11 @@ import logging
 import os
 import os.path
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
+from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
-import example_utils
 import PIL.Image
 import PIL.ImageDraw
-from example_typing import RGB, Annotation, InputDataSize, SubInputDataList
-
-logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
-logging.basicConfig(format=logging_formatter)
-logging.getLogger("annofabapi").setLevel(level=logging.INFO)
-
-logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.DEBUG)
+from annofabcli.common.typing import RGB, Annotation, InputDataSize, SubInputDataList
 
 # 型タイプ
 AnnotationSortKeyFunc = Callable[[Annotation], Any]
