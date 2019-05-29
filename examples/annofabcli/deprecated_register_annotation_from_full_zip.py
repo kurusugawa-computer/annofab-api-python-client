@@ -228,6 +228,7 @@ def register_raster_annotation_from_polygon(
                         examples_wrapper.change_to_working_phase(
                             project_id, task_id, account_id)
                 except Exception as e:
+                    logger.warning(e)
                     logger.warning(
                         f"{task_id}, {input_data_id} の担当者変更 or 作業中に変更に失敗")
                     continue
@@ -248,6 +249,7 @@ def register_raster_annotation_from_polygon(
                     logger.info(f"{task_id}, {input_data_id} アノテーションの登録")
 
                 except Exception as e:
+                    logger.warning(e)
                     logger.warning(f"{task_id}, {input_data_id} のアノテーション登録失敗")
 
 

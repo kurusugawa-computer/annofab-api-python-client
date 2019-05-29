@@ -31,9 +31,10 @@ def assign_role_with_organization(organization_name: str,
 
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == requests.codes.not_found:
-                logger.info(f"プロジェクトオーナでないので、{project_title} に招待できなかった。")
+                logger.warning(f"プロジェクトオーナでないので、{project_title} に招待できなかった。")
             else:
-                logger.info(f"エラーのため、{project_title} に招待できなかった。")
+                logger.warning(e)
+                logger.warning(f"エラーのため、{project_title} に招待できなかった。")
 
 
 def assign_role_with_project_id(project_id_list: List[str],
@@ -47,9 +48,10 @@ def assign_role_with_project_id(project_id_list: List[str],
 
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == requests.codes.not_found:
-                logger.info("プロジェクトオーナでないので、招待できなかった。project_id={project_id}")
+                logger.warning("プロジェクトオーナでないので、招待できなかった。project_id={project_id}")
             else:
-                logger.info("エラーのため、招待できなかった。project_id={project_id}")
+                logger.warning(e)
+                logger.warning("エラーのため、招待できなかった。project_id={project_id}")
 
 
 def main(args):

@@ -256,6 +256,7 @@ def register_raster_annotation_from_polygon(
                         })
 
                 except Exception as e:
+                    logger.warning(e)
                     logger.warning(
                         f"{task_id}, {input_data_id}, {str(tmp_image_path)} の生成失敗",
                         e)
@@ -274,6 +275,7 @@ def register_raster_annotation_from_polygon(
                     logger.info(f"{task_id}, {input_data_id} アノテーションの登録")
 
                 except Exception as e:
+                    logger.warning(e)
                     logger.warning(f"{task_id}, {input_data_id} のアノテーション登録失敗",
                                    e)
 

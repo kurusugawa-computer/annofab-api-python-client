@@ -261,6 +261,7 @@ def write_semantic_segmentation_images(
                     sub_input_data_list=sub_input_data_list)
 
             except Exception as e:
+                logger.warning(e)
                 logger.warning(f"{str(output_file)} の生成失敗")
 
 
