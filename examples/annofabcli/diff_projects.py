@@ -28,6 +28,9 @@ def get_label_name_en(label: Dict[str, Any]):
 def sorted_inspection_phrases(phrases: List[Dict[str, Any]]):
     return sorted(phrases, key=lambda e: e["id"])
 
+def sorted_project_members(project_members: List[Dict[str, Any]]):
+    return sorted(project_members, key=lambda e: e["user_id"])
+
 
 def create_ignored_label(label: Dict[str, Any]):
     """
@@ -52,6 +55,57 @@ def create_ignored_label(label: Dict[str, Any]):
     return copied_label
 
 
+
+def diff_project_members(project_id1: str, project_id2: str):
+    """
+    プロジェクト間のプロジェクトメンバの差分を表示する。
+    Args:
+        project_id1: 比較対象のプロジェクトのproject_id
+        project_id2: 比較対象のプロジェクトのproject_id
+
+    Returns:
+        差分があれば Trueを返す
+
+    """
+    print("=== プロジェクトメンバの差分 ===")
+
+    project_members1 = service.wrapper.get_all_project_members(project_id1)
+    project_members2 = service.wrapper.get_all_project_members(project_id2)
+
+    # プロジェクトメンバは順番に意味がないので、ソートしたリストを比較する
+    sorted_members1 = sorted_project_members(project_members1)
+    sorted_members2 = sorted_project_members(project_members2)
+
+    user_ids1 = [e["user_id"] for e in sorted_members1]
+    user_ids2 = [e["user_id"] for e in sorted_members2]
+
+    if user_ids1 != user_ids2:
+        print("user_idのListに差分あり")
+        print(
+            f"set(user_ids1) - set(user_ids2) = {set(user_ids1) - set(user_ids2)}"
+        )
+        print(
+            f"set(user_ids2) - set(user_ids1) = {set(user_ids2) - set(user_ids1)}"
+        )
+        return True
+
+    is_different = False
+    for member1, member2 in zip(sorted_members1,
+                                sorted_members2):
+        ignored_key = {"updated_datetime", "created_datetime", "project_id"}
+        diff_result = list(dictdiffer.diff(member1, member2, ignore=ignored_key))
+        if len(diff_result) > 0:
+            is_different = True
+            print(f"差分のあるuser_id: {member1['user_id']}")
+            pprint.pprint(diff_result)
+
+    if not is_different:
+        print("プロジェクトメンバは同一")
+
+    return is_different
+
+
+
 def diff_labels_of_annotation_specs(labels1: List[Dict[str, Any]],
                                     labels2: List[Dict[str, Any]]) -> bool:
     """
@@ -67,7 +121,7 @@ def diff_labels_of_annotation_specs(labels1: List[Dict[str, Any]],
     Returns:
         差分があれば Trueを返す
     """
-    print("=== アノテーションラベル情報の差分を確認 ===")
+    print("=== アノテーションラベル情報の差分 ===")
 
     label_names1 = [get_label_name_en(e) for e in labels1]
     label_names2 = [get_label_name_en(e) for e in labels2]
@@ -108,7 +162,7 @@ def diff_inspection_phrases(inspection_phrases1: List[Dict[str, Any]],
         差分があれば Trueを返す
 
     """
-    print("=== 定型指摘の差分を確認 ===")
+    print("=== 定型指摘の差分 ===")
 
     # 定型指摘は順番に意味がないので、ソートしたリストを比較する
     sorted_inspection_phrases1 = sorted_inspection_phrases(inspection_phrases1)
@@ -142,27 +196,53 @@ def diff_inspection_phrases(inspection_phrases1: List[Dict[str, Any]],
     return is_different
 
 
-def diff_annotation_specs(project_id1: str, project_id2: str):
+def diff_annotation_specs(project_id1: str, project_id2: str, diff_targets: List[str]):
     """
     プロジェクト間のアノテーション仕様の差分を表示する。
     Args:
         project_id1: 比較対象のプロジェクトのproject_id
         project_id2: 比較対象のプロジェクトのproject_id
+        diff_targets: 比較対象の項目
 
     """
 
     annotation_specs1, _ = service.api.get_annotation_specs(project_id1)
     annotation_specs2, _ = service.api.get_annotation_specs(project_id2)
 
-    diff_inspection_phrases(annotation_specs1["inspection_phrases"],
-                            annotation_specs2["inspection_phrases"])
+    if "inspection_phrases" in diff_targets:
+        diff_inspection_phrases(annotation_specs1["inspection_phrases"],
+                                annotation_specs2["inspection_phrases"])
 
-    diff_labels_of_annotation_specs(annotation_specs1["labels"],
+    if "annotation_labels" in diff_targets:
+        diff_labels_of_annotation_specs(annotation_specs1["labels"],
                                     annotation_specs2["labels"])
 
+def diff_project_settingss(project_id1: str, project_id2: str):
+    """
+    プロジェクト間のプロジェクト設定の差分を表示する。
+    Args:
+        project_id1: 比較対象のプロジェクトのproject_id
+        project_id2: 比較対象のプロジェクトのproject_id
 
-def validate_args(args):
-    return True
+
+    Returns:
+        差分があれば Trueを返す
+
+    """
+    print("=== プロジェクト設定の差分 ===")
+
+    config1 = service.api.get_project(project_id1)[0]["configuration"]
+    config2 = service.api.get_project(project_id2)[0]["configuration"]
+
+    # ignored_key = {"updated_datetime", "created_datetime", "project_id"}
+    diff_result = list(dictdiffer.diff(config1, config2))
+    if len(diff_result) > 0:
+        print("プロジェクト設定に差分あり")
+        pprint.pprint(diff_result)
+        return True
+    else:
+        print("プロジェクト設定は同一")
+        return False
 
 
 def main(args):
@@ -170,20 +250,34 @@ def main(args):
 
     logger.info(f"args: {args}")
 
-    if not validate_args(args):
-        return
+    diff_targets = args.target
+    if "members" in diff_targets:
+        diff_project_members(args.project_id1, args.project_id2)
 
-    diff_annotation_specs(args.project_id1, args.project_id2)
+    if "settings" in diff_targets:
+        diff_project_settingss(args.project_id1, args.project_id2)
+
+    if "annotation_labels" in diff_targets or "inspection_phrases" in diff_targets:
+        diff_annotation_specs(args.project_id1, args.project_id2, diff_targets)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="プロジェクト間のアノテーション仕様の差分を表示する。"
-                                     "ただし、label_idなどAnnoFab内で生成されるIDは比較しない。"
+    parser = argparse.ArgumentParser(description="プロジェクト間の差分を表示する。"
+                                     "ただし、AnnoFabで生成されるIDや、変化する日時などは比較しない。"
                                      "AnnoFab認証情報は`.netrc`に記載すること")
 
     parser.add_argument('project_id1', type=str, help='比較対象のプロジェクトのproject_id')
 
     parser.add_argument('project_id2', type=str, help='比較対象のプロジェクトのproject_id')
+
+    parser.add_argument('--target', type=str, nargs="+",
+                        choices=["annotation_labels", "inspection_phrases","members","settings"],
+                        default=["annotation_labels", "inspection_phrases", "members", "settings"],
+                        help='比較する項目。指定しなければ全項目を比較する。'
+                             'annotation_labels: アノテーション仕様のラベル情報, '
+                             'inspection_phrases: 定型指摘,'
+                             'members: プロジェクトメンバ,'
+                             'settings: プロジェクト設定,')
 
     annofabcli.utils.add_common_arguments_to_parser(parser)
 

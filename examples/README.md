@@ -126,22 +126,26 @@ $ python  -m annofabcli.write_semantic_segmentation_images  --annotation_dir /tm
 
 
 
-## diff_annotation_specs
-プロジェクト間のアノテーション仕様の差分を表示します。ただし、label_idなどAnnoFab内で生成されるIDは比較しません。
-このツールは、同じアノテーションルールのプロジェクトが複数ある場合、アノテーション仕様が同一であることを確認するときなどに、利用できます。
-
-プロジェクトのチェッカー以上の権限を持つユーザで実行してください。
+## diff_projects
+プロジェクト間の差分を表示します。
+同じアノテーションルールのプロジェクトが複数ある場合、各種情報が同一であることを確認するときなどに、利用できます。
 
 
 ```
-$ python -m annofabcli.diff_annotation_specs prj1 prj2
+choices=["annotation_labels", "inspection_phrases","members","settings"],
+
+# アノテーション仕様のラベル情報の差分
+$ python -m annofabcli.diff_projects prj1 prj2 --target annotation_labels
+
+# 定型指摘の差分
+$ python -m annofabcli.diff_projects prj1 prj2 --target inspection_phrases
+
+# プロジェクトメンバの差分
+$ python -m annofabcli.diff_projects prj1 prj2 --target members
+
+# プロジェクト設定の差分
+$ python -m annofabcli.diff_projects prj1 prj2 --target settings
+
+# 上記項目すべての差分
+$ python -m annofabcli.diff_projects prj1 prj2
 ```
-
-## diff_project_members
-プロジェクト間のプロジェクトメンバの差分を表示します。
-
-
-```
-$ python -m annofabcli.diff_project_members prj1 prj2
-```
-
