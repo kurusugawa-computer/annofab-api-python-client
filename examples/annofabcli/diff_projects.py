@@ -14,7 +14,6 @@ import annofabcli
 import annofabapi
 from annofabcli.common.utils import AnnofabApiFacade
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -27,6 +26,7 @@ def get_label_name_en(label: Dict[str, Any]):
 
 def sorted_inspection_phrases(phrases: List[Dict[str, Any]]):
     return sorted(phrases, key=lambda e: e["id"])
+
 
 def sorted_project_members(project_members: List[Dict[str, Any]]):
     return sorted(project_members, key=lambda e: e["user_id"])
@@ -53,7 +53,6 @@ def create_ignored_label(label: Dict[str, Any]):
             choice.pop("choice_id", None)
 
     return copied_label
-
 
 
 def diff_project_members(project_id1: str, project_id2: str):
@@ -103,7 +102,6 @@ def diff_project_members(project_id1: str, project_id2: str):
         print("プロジェクトメンバは同一")
 
     return is_different
-
 
 
 def diff_labels_of_annotation_specs(labels1: List[Dict[str, Any]],
@@ -215,7 +213,8 @@ def diff_annotation_specs(project_id1: str, project_id2: str, diff_targets: List
 
     if "annotation_labels" in diff_targets:
         diff_labels_of_annotation_specs(annotation_specs1["labels"],
-                                    annotation_specs2["labels"])
+                                        annotation_specs2["labels"])
+
 
 def diff_project_settingss(project_id1: str, project_id2: str):
     """
@@ -263,23 +262,22 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="プロジェクト間の差分を表示する。"
-                                     "ただし、AnnoFabで生成されるIDや、変化する日時などは比較しない。"
-                                     "AnnoFab認証情報は`.netrc`に記載すること")
+                                                 "ただし、AnnoFabで生成されるIDや、変化する日時などは比較しない。",
+                                     epilog="AnnoFab認証情報は`.netrc`に記載すること",
+                                     parents=[annofabcli.utils.create_parent_parser()])
 
     parser.add_argument('project_id1', type=str, help='比較対象のプロジェクトのproject_id')
 
     parser.add_argument('project_id2', type=str, help='比較対象のプロジェクトのproject_id')
 
     parser.add_argument('--target', type=str, nargs="+",
-                        choices=["annotation_labels", "inspection_phrases","members","settings"],
+                        choices=["annotation_labels", "inspection_phrases", "members", "settings"],
                         default=["annotation_labels", "inspection_phrases", "members", "settings"],
                         help='比較する項目。指定しなければ全項目を比較する。'
                              'annotation_labels: アノテーション仕様のラベル情報, '
                              'inspection_phrases: 定型指摘,'
                              'members: プロジェクトメンバ,'
                              'settings: プロジェクト設定,')
-
-    annofabcli.utils.add_common_arguments_to_parser(parser)
 
     service = annofabapi.build_from_netrc()
     examples_wrapper = AnnofabApiFacade(service)

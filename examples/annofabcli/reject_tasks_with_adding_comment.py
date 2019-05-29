@@ -158,7 +158,7 @@ def validate_args(args):
 
 
 def main(args):
-    annofabcli.utils.load_logging_config(args, __file__)
+    annofabcli.utils.load_logging_config_from_args(args, __file__)
 
     logger.info(f"args: {args}")
 
@@ -178,17 +178,18 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="検査コメントを付与してタスクを差し戻す。検査コメントは先頭の画像の左上(0,0)に付与する。"
-        "AnnoFab認証情報は`.netrc`に記載すること")
+        description="検査コメントを付与してタスクを差し戻す。検査コメントは先頭の画像の左上(0,0)に付与する。",
+        epilog="AnnoFab認証情報は`.netrc`に記載すること",
+        parents=[annofabcli.utils.create_parent_parser()])
+
+
     parser.add_argument('--project_id',
-                        metavar='project_id',
                         type=str,
                         required=True,
                         help='対象のプロジェクトのproject_id')
 
     parser.add_argument(
         '--task_id_file',
-        metavar='file',
         type=str,
         required=True,
         help=
@@ -196,7 +197,6 @@ if __name__ == "__main__":
     )
 
     parser.add_argument('--comment',
-                        metavar='comment',
                         type=str,
                         required=True,
                         help='差し戻すときに付与する検査コメントの内容')
@@ -207,13 +207,12 @@ if __name__ == "__main__":
 
     parser.add_argument(
         '--assigned_annotator_user_id',
-        metavar='annotator_user_id',
         type=str,
         help=
         '差し戻したタスクに割り当てるユーザのuser_id. 指定しなければ割り当てない。`--assign_last_annotator`と同時に指定できない'
     )
 
-    annofabcli.utils.add_common_arguments_to_parser(parser)
+
 
     service = annofabapi.build_from_netrc()
     examples_wrapper = AnnofabApiFacade(service)

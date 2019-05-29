@@ -8,6 +8,18 @@ import yaml
 import os
 from annofabcli.common.typing import InputDataSize
 
+def create_parent_parser():
+    """
+    共通の引数セットを生成する。
+    """
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    parent_parser.add_argument('--logdir',
+                        type=str,
+                        default=".log",
+                        help='ログファイルを保存するディレクトリ')
+    return parent_parser
+
+
 
 def read_lines(filepath: str) -> List[str]:
     """ファイルを行単位で読み込む。改行コードを除く"""
@@ -49,14 +61,6 @@ def load_logging_config(log_dir, log_filename: str, logging_yaml_file: str = "./
             "filename"] = log_filename
 
         logging.config.dictConfig(logging_config)
-
-
-def add_common_arguments_to_parser(parser: argparse.ArgumentParser):
-    """共通のコマンドライン引数を設定する"""
-    parser.add_argument('--logdir',
-                        type=str,
-                        default=".log",
-                        help='ログファイルを保存するディレクトリ')
 
 
 class AnnofabApiFacade:

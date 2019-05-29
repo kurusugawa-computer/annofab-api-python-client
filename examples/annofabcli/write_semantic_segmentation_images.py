@@ -324,13 +324,27 @@ def main(args):
         logger.exception(e)
         raise e
 
+def create_label_color_json_file(project_id: str, output_file: str):
+    """
+    今のアノテーション仕様から、label名とRGBを紐付ける
+    Args:
+        args:
+
+    Returns:
+    """
+
+    
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=
         "アノテーションzipを展開したディレクトリから、アノテーションをSemantic Segmentation(Multi Class)用の画像をします。"
         "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象です。"
-        "複数のアノテーションディレクトリを指定して、画像をマージすることも可能です。")
+        "複数のアノテーションディレクトリを指定して、画像をマージすることも可能です。",
+        parents=[annofabcli.utils.create_parent_parser()])
+    
     parser.add_argument('--annotation_dir',
                         type=str,
                         required=True,
@@ -373,4 +387,50 @@ if __name__ == "__main__":
                         nargs="+",
                         help='`annotation_dir`にマージして描画するディレクトリ')
 
+
+    subparsers = parser.add_subparsers()
+    subparsers.add_argument('--project_id',
+                        metavar='project_id',
+                        type=str,
+                        required=True,
+                        help='対象のプロジェクトのproject_id')
+
+
+
     main(parser.parse_args())
+
+
+
+#
+#
+# >>> # sub-command functions
+# >>> def foo(args):
+# ...     print(args.x * args.y)
+# ...
+# >>> def bar(args):
+# ...     print('((%s))' % args.z)
+# ...
+# >>> # create the top-level parser
+# >>> parser = argparse.ArgumentParser()
+# >>> subparsers = parser.add_subparsers()
+# >>>
+# >>> # create the parser for the "foo" command
+# >>> parser_foo = subparsers.add_parser('foo')
+# >>> parser_foo.add_argument('-x', type=int, default=1)
+# >>> parser_foo.add_argument('y', type=float)
+# >>> parser_foo.set_defaults(func=foo)
+# >>>
+# >>> # create the parser for the "bar" command
+# >>> parser_bar = subparsers.add_parser('bar')
+# >>> parser_bar.add_argument('z')
+# >>> parser_bar.set_defaults(func=bar)
+# >>>
+# >>> # parse the args and call whatever function was selected
+# >>> args = parser.parse_args('foo 1 -x 2'.split())
+# >>> args.func(args)
+# 2.0
+# >>>
+# >>> # parse the args and call whatever function was selected
+# >>> args = parser.parse_args('bar XYZYX'.split())
+# >>> args.func(args)
+# ((XYZYX))

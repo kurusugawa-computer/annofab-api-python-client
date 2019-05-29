@@ -73,7 +73,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="複数のプロジェクトに、ユーザを招待する。AnnoFab認証情報は`.netrc`に記載すること")
+        description="複数のプロジェクトに、ユーザを招待する。",
+        epilog="AnnoFab認証情報は`.netrc`に記載すること",
+        parents=[annofabcli.utils.create_parent_parser()])
     parser.add_argument('--user_id',
                         metavar='user_id',
                         dest='user_id_list',
