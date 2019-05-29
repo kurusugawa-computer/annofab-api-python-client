@@ -152,7 +152,6 @@ class AnnofabApi(AbstractAnnofabApi):
 
         # Unauthorized Errorならば、ログイン後に再度実行する
         if response.status_code == requests.codes.unauthorized:
-            logger.debug(response.text)
             self.login()
             return self._request_wrapper(http_method, url_path, query_params,
                                          header_params, request_body)
@@ -196,6 +195,8 @@ class AnnofabApi(AbstractAnnofabApi):
 
         json_obj = response.json()
         self.token_dict = json_obj["token"]
+
+        logger.debug("Logined successfully")
         return json_obj, response
 
     def logout(self) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
