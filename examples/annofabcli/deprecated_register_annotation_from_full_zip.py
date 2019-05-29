@@ -95,6 +95,9 @@ def update_annotation_with_image(
     old_details = old_annotations["details"]
 
     details = [e for e in old_details if filter_details(e)]
+    for detail in details:
+        detail.pop("etag", None)
+        detail.pop("url", None)
 
     for e in image_file_list:
         image_file = e["path"]
