@@ -59,10 +59,10 @@ def draw_annotation_list(annotation_list: List[Annotation],
             xy = [(e["x"], e["y"]) for e in data["points"]]
             draw.polygon(xy, fill=color)
 
-        # elif data_type == "SegmentationV2":
-        #     # polygonを塗りつぶしに変換してしまったから対応する場合
-        #     xy = [float(e) for e in data["data_uri"].split(",")]
-        #     draw.polygon(xy, fill=color)
+        elif data_type == "SegmentationV2":
+            # polygonを塗りつぶしに変換してしまったから対応する場合
+            xy = [float(e) for e in data["data_uri"].split(",")]
+            draw.polygon(xy, fill=color)
 
     return draw
 
@@ -163,6 +163,42 @@ def write_segmentation_image(input_data: Dict[str, Any], label: str,
     return True
 
 
+def write_segmentation_image_for_labels(labels: List[Dict[str, str]], input_data: Dict[str, Any], default_input_data_size: InputDataSize, tmp_image_dir: Path):
+    """
+    ラベルごとに、セマンティック画像ファイルを出力する。
+    Args:
+        labels:
+        input_data:
+        default_input_data_size:
+        tmp_image_dir:
+
+    Returns:
+
+    """
+
+    image_file_list = []
+    for label_dict in labels:
+        label = label_dict["label"]
+        label_id = label_dict["label_id"]
+
+        tmp_image_path = tmp_image_dir / f"{label}.png"
+
+        result = write_segmentation_image(
+            input_data=input_data,
+            label=label,
+            label_id=label_id,
+            tmp_image_path=tmp_image_path,
+            input_data_size=default_input_data_size)
+
+        if result:
+            image_file_list.append({
+                "path": str(tmp_image_path),
+                "label_id": label_id
+            })
+
+    return image_file_list
+
+
 def register_raster_annotation_from_polygon(
         annotation_dir: str,
         default_input_data_size: InputDataSize,
@@ -189,68 +225,57 @@ def register_raster_annotation_from_polygon(
                 input_data = json.load(f)
 
             input_data_id = input_data["input_data_id"]
-            image_file_list = []
-            for label_dict in labels:
-                label = label_dict["label"]
-                label_id = label_dict["label_id"]
 
-                tmp_image_path = tmp_dir_path / task_dir.name / input_data_json_path.stem / f"{label}.png"
+            tmp_image_dir = tmp_dir_path / task_dir.name / input_data_json_path.stem
+            try:
+                image_file_list = write_segmentation_image_for_labels(labels, input_data, default_input_data_size, tmp_image_dir)
 
-                try:
-                    result = write_segmentation_image(
-                        input_data=input_data,
-                        label=label,
-                        label_id=label_id,
-                        tmp_image_path=tmp_image_path,
-                        input_data_size=default_input_data_size)
-                    if result:
-                        image_file_list.append({
-                            "path": str(tmp_image_path),
-                            "label_id": label_id
-                        })
+            except Exception as e:
+                logger.exception(e)
+                logger.warning(
+                    f"{task_id}, {input_data_id}, {str(tmp_image_dir)} 用のセグメンテーション画像の生成失敗")
+                continue
 
-                except Exception as e:
-                    logger.warning(
-                        f"{task_id}, {input_data_id}, {str(tmp_image_path)} の生成失敗")
+            if len(image_file_list) == 0:
+                continue
 
-            if len(image_file_list) > 0:
-                try:
-                    # annotaion phase or acceptance phaseであること
-                    task = service.api.get_task(project_id, task_id)[0]
-                    if task["account_id"] == account_id and task[
-                            "status"] == "working":
-                        logger.info(
-                            f"{task_id} {input_data_id} 自分自身に割り合っていて、作業中のため、担当者を変更しない"
-                        )
-                    else:
-                        examples_wrapper.change_operator_of_task(
-                            project_id, task_id, account_id)
-                        examples_wrapper.change_to_working_phase(
-                            project_id, task_id, account_id)
-                except Exception as e:
-                    logger.warning(e)
-                    logger.warning(
-                        f"{task_id}, {input_data_id} の担当者変更 or 作業中に変更に失敗")
-                    continue
-
-                try:
-                    # アノテーションの登録
-                    update_annotation_with_image(
-                        project_id,
-                        task_id,
-                        input_data_id,
-                        account_id=account_id,
-                        image_file_list=image_file_list,
-                        filter_details=filter_details)
-
-                    examples_wrapper.change_to_break_phase(
+            try:
+                # annotaion phase or acceptance phaseであること
+                task = service.api.get_task(project_id, task_id)[0]
+                if task["account_id"] == account_id and task[
+                        "status"] == "working":
+                    logger.info(
+                        f"{task_id} {input_data_id} 自分自身に割り合っていて、作業中のため、担当者を変更しない"
+                    )
+                else:
+                    examples_wrapper.change_operator_of_task(
                         project_id, task_id, account_id)
+                    examples_wrapper.change_to_working_phase(
+                        project_id, task_id, account_id)
+            except Exception as e:
+                logger.warning(e)
+                logger.warning(
+                    f"{task_id}, {input_data_id} の担当者変更 or 作業中に変更に失敗")
+                continue
 
-                    logger.info(f"{task_id}, {input_data_id} アノテーションの登録")
+            try:
+                # アノテーションの登録
+                update_annotation_with_image(
+                    project_id,
+                    task_id,
+                    input_data_id,
+                    account_id=account_id,
+                    image_file_list=image_file_list,
+                    filter_details=filter_details)
 
-                except Exception as e:
-                    logger.warning(e)
-                    logger.warning(f"{task_id}, {input_data_id} のアノテーション登録失敗")
+                examples_wrapper.change_to_break_phase(
+                    project_id, task_id, account_id)
+
+                logger.info(f"{task_id}, {input_data_id} アノテーションの登録完了")
+
+            except Exception as e:
+                logger.warning(e)
+                logger.warning(f"{task_id}, {input_data_id} のアノテーション登録失敗")
 
 
 def main(args):
@@ -305,7 +330,8 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="deprecated: 矩形/ポリゴンアノテーションを、塗りつぶしv2アノテーションとして登録する。")
+        description="deprecated: 矩形/ポリゴンアノテーションを、塗りつぶしv2アノテーションとして登録する。",
+    parents=[annofabcli.utils.create_parent_parser()])
     parser.add_argument('--annotation_dir',
                         type=str,
                         required=True,
@@ -331,7 +357,6 @@ if __name__ == "__main__":
                         required=True,
                         help='task_idの一覧が記載されたファイル')
 
-    annofabcli.utils.add_common_arguments_to_parser(parser)
 
     try:
         service = annofabapi.build_from_netrc()
