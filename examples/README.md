@@ -132,7 +132,6 @@ $ python  -m annofabcli.write_semantic_segmentation_images  --annotation_dir /tm
 
 
 ```
-choices=["annotation_labels", "inspection_phrases","members","settings"],
 
 # アノテーション仕様のラベル情報の差分
 $ python -m annofabcli.diff_projects prj1 prj2 --target annotation_labels
