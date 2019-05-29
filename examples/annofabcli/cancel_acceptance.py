@@ -12,8 +12,8 @@ import annofabcli
 import annofabapi
 from annofabcli.common.utils import read_lines, AnnofabApiFacade, load_logging_config
 
-
 logger = logging.getLogger(__name__)
+
 
 def cancel_acceptance(project_id: str,
                       task_id_list: List[str],
@@ -60,7 +60,10 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="受け入れ完了タスクを、受け入れ取り消しする。AnnoFab認証情報は`.netrc`に記載すること")
+        description="受け入れ完了タスクを、受け入れ取り消しする。",
+        epilog="AnnoFab認証情報は`.netrc`に記載すること",
+        parents=[annofabcli.utils.create_parent_parser()])
+
     parser.add_argument('--project_id',
                         metavar='project_id',
                         type=str,
