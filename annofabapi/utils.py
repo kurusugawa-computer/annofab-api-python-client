@@ -23,7 +23,7 @@ def log_error_response(arg_logger: logging.Logger,
 
     if 400 <= response.status_code < 600:
         arg_logger.debug(f"response.text = {response.text}")
-        arg_logger.debug(f"request.url = {response.request.url}")
+        arg_logger.debug(f"request.url = {response.request.method}  {response.request.url}")
         arg_logger.debug(f"request.headers = {response.request.headers}")
         arg_logger.debug(f"request.body = {response.request.body}")
 
