@@ -73,7 +73,7 @@ def update_annotation_with_image(
         input_data_id: str,
         image_file_list: List[Any],
         account_id: str,
-        filter_details: Optional[FilterDetailsFunc] = None):
+        filter_details: FilterDetailsFunc):
     """
     塗りつぶしアノテーションを登録する。他のアノテーションが変更されないようにする。
     アノテーションを登録できる状態であること
@@ -212,7 +212,7 @@ def register_raster_annotation_from_polygon(
         labels: List[Dict[str, str]],
         project_id: str,
         task_id_list: List[str],
-        filter_details: Optional[FilterDetailsFunc] = None):
+        filter_details: FilterDetailsFunc):
     annotation_dir_path = Path(annotation_dir)
     tmp_dir_path = Path(tmp_dir)
 
