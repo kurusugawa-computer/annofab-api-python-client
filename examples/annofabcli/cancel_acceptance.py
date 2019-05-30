@@ -8,9 +8,9 @@ from typing import List, Optional  # pylint: disable=unused-import
 
 import requests
 
-import annofabcli
 import annofabapi
-from annofabcli.common.utils import read_lines, AnnofabApiFacade, load_logging_config
+import annofabcli
+from annofabcli.common.utils import AnnofabApiFacade, load_logging_config, read_lines
 
 logger = logging.getLogger(__name__)
 

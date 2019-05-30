@@ -1,5 +1,5 @@
 """
-プロジェクト間のアノテーション仕様の差分を表示する。
+プロジェクト間の差分を表示する。
 """
 
 import argparse
@@ -8,10 +8,9 @@ import logging
 import pprint
 from typing import Any, Dict, List  # pylint: disable=unused-import
 
-import dictdiffer
-
-import annofabcli
 import annofabapi
+import annofabcli
+import dictdiffer
 from annofabcli.common.utils import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
@@ -89,10 +88,10 @@ def diff_project_members(project_id1: str, project_id2: str):
         return True
 
     is_different = False
-    for member1, member2 in zip(sorted_members1,
-                                sorted_members2):
+    for member1, member2 in zip(sorted_members1, sorted_members2):
         ignored_key = {"updated_datetime", "created_datetime", "project_id"}
-        diff_result = list(dictdiffer.diff(member1, member2, ignore=ignored_key))
+        diff_result = list(
+            dictdiffer.diff(member1, member2, ignore=ignored_key))
         if len(diff_result) > 0:
             is_different = True
             print(f"差分のあるuser_id: {member1['user_id']}")
@@ -194,7 +193,8 @@ def diff_inspection_phrases(inspection_phrases1: List[Dict[str, Any]],
     return is_different
 
 
-def diff_annotation_specs(project_id1: str, project_id2: str, diff_targets: List[str]):
+def diff_annotation_specs(project_id1: str, project_id2: str,
+                          diff_targets: List[str]):
     """
     プロジェクト間のアノテーション仕様の差分を表示する。
     Args:
@@ -249,35 +249,52 @@ def main(args):
 
     logger.info(f"args: {args}")
 
+    project_id1 = args.project_id1
+    project_id2 = args.project_id2
+    project_title1 = examples_wrapper.get_project_title(project_id1)
+    project_title2 = examples_wrapper.get_project_title(project_id2)
+
+    print(f"=== {project_title1}({project_id1}) と {project_title2}({project_id1}) の差分を表示")
+
+    
     diff_targets = args.target
     if "members" in diff_targets:
-        diff_project_members(args.project_id1, args.project_id2)
+        diff_project_members(project_id1, project_id2)
 
     if "settings" in diff_targets:
-        diff_project_settingss(args.project_id1, args.project_id2)
+        diff_project_settingss(project_id1, project_id2)
 
     if "annotation_labels" in diff_targets or "inspection_phrases" in diff_targets:
-        diff_annotation_specs(args.project_id1, args.project_id2, diff_targets)
+        diff_annotation_specs(project_id1, project_id2, diff_targets)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="プロジェクト間の差分を表示する。"
-                                                 "ただし、AnnoFabで生成されるIDや、変化する日時などは比較しない。",
-                                     epilog="AnnoFab認証情報は`.netrc`に記載すること",
-                                     parents=[annofabcli.utils.create_parent_parser()])
+    parser = argparse.ArgumentParser(
+        description="プロジェクト間の差分を表示する。"
+        "ただし、AnnoFabで生成されるIDや、変化する日時などは比較しない。",
+        epilog="AnnoFab認証情報は`.netrc`に記載すること",
+        parents=[annofabcli.utils.create_parent_parser()])
 
     parser.add_argument('project_id1', type=str, help='比較対象のプロジェクトのproject_id')
 
     parser.add_argument('project_id2', type=str, help='比較対象のプロジェクトのproject_id')
 
-    parser.add_argument('--target', type=str, nargs="+",
-                        choices=["annotation_labels", "inspection_phrases", "members", "settings"],
-                        default=["annotation_labels", "inspection_phrases", "members", "settings"],
+    parser.add_argument('--target',
+                        type=str,
+                        nargs="+",
+                        choices=[
+                            "annotation_labels", "inspection_phrases",
+                            "members", "settings"
+                        ],
+                        default=[
+                            "annotation_labels", "inspection_phrases",
+                            "members", "settings"
+                        ],
                         help='比較する項目。指定しなければ全項目を比較する。'
-                             'annotation_labels: アノテーション仕様のラベル情報, '
-                             'inspection_phrases: 定型指摘,'
-                             'members: プロジェクトメンバ,'
-                             'settings: プロジェクト設定,')
+                        'annotation_labels: アノテーション仕様のラベル情報, '
+                        'inspection_phrases: 定型指摘,'
+                        'members: プロジェクトメンバ,'
+                        'settings: プロジェクト設定,')
 
     service = annofabapi.build_from_netrc()
     examples_wrapper = AnnofabApiFacade(service)

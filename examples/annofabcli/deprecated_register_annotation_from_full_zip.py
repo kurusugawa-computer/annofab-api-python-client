@@ -11,11 +11,9 @@ from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused
 
 import annofabapi
 import annofabcli
-
 import PIL
 import PIL.Image
 import PIL.ImageDraw
-
 from annofabcli.common.typing import Annotation, InputDataSize
 from annofabcli.common.utils import AnnofabApiFacade
 
@@ -166,7 +164,10 @@ def write_segmentation_image(input_data: Dict[str, Any], label: str,
     return True
 
 
-def write_segmentation_image_for_labels(labels: List[Dict[str, str]], input_data: Dict[str, Any], default_input_data_size: InputDataSize, tmp_image_dir: Path):
+def write_segmentation_image_for_labels(labels: List[Dict[str, str]],
+                                        input_data: Dict[str, Any],
+                                        default_input_data_size: InputDataSize,
+                                        tmp_image_dir: Path):
     """
     ラベルごとに、セマンティック画像ファイルを出力する。
     Args:
@@ -231,12 +232,14 @@ def register_raster_annotation_from_polygon(
 
             tmp_image_dir = tmp_dir_path / task_dir.name / input_data_json_path.stem
             try:
-                image_file_list = write_segmentation_image_for_labels(labels, input_data, default_input_data_size, tmp_image_dir)
+                image_file_list = write_segmentation_image_for_labels(
+                    labels, input_data, default_input_data_size, tmp_image_dir)
 
             except Exception as e:
                 logger.exception(e)
                 logger.warning(
-                    f"{task_id}, {input_data_id}, {str(tmp_image_dir)} 用のセグメンテーション画像の生成失敗")
+                    f"{task_id}, {input_data_id}, {str(tmp_image_dir)} 用のセグメンテーション画像の生成失敗"
+                )
                 continue
 
             if len(image_file_list) == 0:
@@ -263,16 +266,15 @@ def register_raster_annotation_from_polygon(
 
             try:
                 # アノテーションの登録
-                update_annotation_with_image(
-                    project_id,
-                    task_id,
-                    input_data_id,
-                    account_id=account_id,
-                    image_file_list=image_file_list,
-                    filter_details=filter_details)
+                update_annotation_with_image(project_id,
+                                             task_id,
+                                             input_data_id,
+                                             account_id=account_id,
+                                             image_file_list=image_file_list,
+                                             filter_details=filter_details)
 
-                examples_wrapper.change_to_break_phase(
-                    project_id, task_id, account_id)
+                examples_wrapper.change_to_break_phase(project_id, task_id,
+                                                       account_id)
 
                 logger.info(f"{task_id}, {input_data_id} アノテーションの登録完了")
 
@@ -334,7 +336,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="deprecated: 矩形/ポリゴンアノテーションを、塗りつぶしv2アノテーションとして登録する。",
-    parents=[annofabcli.utils.create_parent_parser()])
+        parents=[annofabcli.utils.create_parent_parser()])
     parser.add_argument('--annotation_dir',
                         type=str,
                         required=True,
@@ -359,7 +361,6 @@ if __name__ == "__main__":
                         type=str,
                         required=True,
                         help='task_idの一覧が記載されたファイル')
-
 
     try:
         service = annofabapi.build_from_netrc()

@@ -12,11 +12,11 @@ import requests
 
 import annofabapi
 import annofabapi.utils
-
 import annofabcli
 from annofabcli.common.utils import AnnofabApiFacade, read_lines
 
 logger = logging.getLogger(__name__)
+
 
 def add_inspection_comment(project_id: str, task: Dict[str, Any],
                            inspection_comment: str, commenter_account_id: str):
@@ -182,7 +182,6 @@ if __name__ == "__main__":
         epilog="AnnoFab認証情報は`.netrc`に記載すること",
         parents=[annofabcli.utils.create_parent_parser()])
 
-
     parser.add_argument('--project_id',
                         type=str,
                         required=True,
@@ -211,8 +210,6 @@ if __name__ == "__main__":
         help=
         '差し戻したタスクに割り当てるユーザのuser_id. 指定しなければ割り当てない。`--assign_last_annotator`と同時に指定できない'
     )
-
-
 
     service = annofabapi.build_from_netrc()
     examples_wrapper = AnnofabApiFacade(service)

@@ -9,7 +9,6 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: 
 import requests
 
 import annofabapi
-
 import annofabcli
 
 logger = logging.getLogger(__name__)
@@ -48,7 +47,8 @@ def assign_role_with_project_id(project_id_list: List[str],
 
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == requests.codes.not_found:
-                logger.warning("プロジェクトオーナでないので、招待できなかった。project_id={project_id}")
+                logger.warning(
+                    "プロジェクトオーナでないので、招待できなかった。project_id={project_id}")
             else:
                 logger.warning(e)
                 logger.warning("エラーのため、招待できなかった。project_id={project_id}")
