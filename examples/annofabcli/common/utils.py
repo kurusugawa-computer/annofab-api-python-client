@@ -1,12 +1,13 @@
 import argparse
 import logging.config
+import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional  # pylint: disable=unused-import
 
 import annofabapi
 import yaml
-import os
 from annofabcli.common.typing import InputDataSize
+
 
 def create_parent_parser():
     """
@@ -14,11 +15,10 @@ def create_parent_parser():
     """
     parent_parser = argparse.ArgumentParser(add_help=False)
     parent_parser.add_argument('--logdir',
-                        type=str,
-                        default=".log",
-                        help='ログファイルを保存するディレクトリ')
+                               type=str,
+                               default=".log",
+                               help='ログファイルを保存するディレクトリ')
     return parent_parser
-
 
 
 def read_lines(filepath: str) -> List[str]:
@@ -34,7 +34,9 @@ def get_input_data_size(str_input_data_size: str) -> InputDataSize:
     return (int(splited_list[0]), int(splited_list[1]))
 
 
-def load_logging_config_from_args(args, py_filepath: str, logging_yaml_file: str = "./logging.yaml"):
+def load_logging_config_from_args(args,
+                                  py_filepath: str,
+                                  logging_yaml_file: str = "./logging.yaml"):
     """
     args情報から、logging設定ファイルを読み込む
     Args:
@@ -50,7 +52,9 @@ def load_logging_config_from_args(args, py_filepath: str, logging_yaml_file: str
     load_logging_config(log_dir, log_filename, logging_yaml_file)
 
 
-def load_logging_config(log_dir, log_filename: str, logging_yaml_file: str = "./logging.yaml"):
+def load_logging_config(log_dir,
+                        log_filename: str,
+                        logging_yaml_file: str = "./logging.yaml"):
     """./logging.yamlを読み込む"""
 
     with open(logging_yaml_file, encoding='utf-8') as f:
@@ -93,6 +97,16 @@ class AnnofabApiFacade:
             return last_history["account_id"]
         else:
             return None
+
+    def get_project_title(self, project_id: str) -> str:
+        """
+        プロジェクトのタイトルを取得する
+        Returns:
+            プロジェクトのタイトル
+
+        """
+        project, _ = self.service.api.get_project(project_id)
+        return project['title']
 
     def get_my_account_id(self) -> str:
         """

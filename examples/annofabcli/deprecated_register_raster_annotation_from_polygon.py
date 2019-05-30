@@ -20,7 +20,6 @@ from annofabcli.common.utils import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
 
-
 label_dict: Dict[str, str]
 """key:label_id, value:label """
 
@@ -287,7 +286,7 @@ def create_labels(project_id, labels: List[str]):
 
 def main(args):
     annofabcli.utils.load_logging_config_from_args(args, __file__)
-    
+
     logger.debug(f"args: {args}")
 
     try:
