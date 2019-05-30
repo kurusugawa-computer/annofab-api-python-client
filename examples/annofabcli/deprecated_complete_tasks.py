@@ -4,6 +4,7 @@
 
 import argparse
 import logging
+import requests
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
 import annofabapi
@@ -27,11 +28,22 @@ def complete_tasks_with_changing_inspection_status(
             continue
 
         try:
+            facade.change_operator_of_task(project_id, task_id, account_id)
+            facade.change_to_working_phase(project_id, task_id, account_id)
+            logger.debug(f"{task_id}: 担当者を変更した")
+
+        except requests.HTTPError as e:
+            logger.warning(e)
+            logger.warning(f"{task_id} の担当者変更に失敗")
+
+        try:
             complete_acceptance_task(project_id, task, inspection_status,
                                      filter_inspection, account_id)
-        except Exception as e:
+        except requests.HTTPError as e:
             logger.warning(e)
             logger.warning(f"{task_id} の受入完了に失敗")
+
+            facade.change_to_break_phase(project_id, task_id, account_id)
             continue
 
 
@@ -40,10 +52,6 @@ def complete_acceptance_task(project_id: str, task: Task,
                              filter_inspection: Callable[[Inspection], bool],
                              account_id: str):
     task_id = task["task_id"]
-
-    facade.change_operator_of_task(project_id, task_id, account_id)
-    facade.change_to_working_phase(project_id, task_id, account_id)
-    logger.debug(f"{task_id}: 担当者を変更した")
 
     # 検査コメントの状態を変更する
     for input_data_id in task["input_data_id_list"]:
@@ -58,19 +66,20 @@ def complete_acceptance_task(project_id: str, task: Task,
         logger.info(f"{task_id}: タスクを受入完了にした")
     else:
         logger.warning(f"{task_id}, タスク検査で警告/エラーがあったので、タスクを受入完了できなかった")
+        facade.change_to_break_phase(project_id, task_id, account_id)
 
 
 def validate_task(project_id:str, task_id: str) -> bool:
     # Validation
     validation, _ = service.api.get_task_validation(project_id, task_id)
     validation_inputs = validation["inputs"]
-    is_valid = False
+    is_valid = True
     for validation in validation_inputs:
-        input_data_id = validation["input"]
+        input_data_id = validation["input_data_id"]
         inspection_summary = validation["inspection_summary"]
         if  inspection_summary == "unprocessed":
             logger.warning(f"{task_id}, {input_data_id}, {inspection_summary}, 未処置の検査コメントがある。")
-            is_valid = True
+            is_valid = False
 
         # TODO annotation_summaries も確認する必要ある？
 
