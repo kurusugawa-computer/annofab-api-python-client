@@ -10,5 +10,8 @@ InputDataSize = Tuple[int, int]
 Annotation = Dict[str, Any]
 """Annotation Type"""
 
+Inspection = Dict[str, Any]
+"""Inspection Type"""
+
 SubInputDataList = List[Tuple[str, str]]
 """Tuple(Jsonファイルのパス, 塗りつぶしアノテーションが格納されたディレクトリのパス)のList"""

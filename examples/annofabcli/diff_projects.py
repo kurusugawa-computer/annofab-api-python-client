@@ -8,19 +8,13 @@ import logging
 import pprint
 from typing import Any, Dict, List  # pylint: disable=unused-import
 
+import dictdiffer
+
 import annofabapi
 import annofabcli
-import dictdiffer
 from annofabcli.common.utils import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
-
-
-def get_label_name_en(label: Dict[str, Any]):
-    """label情報から英語名を取得する"""
-    label_name_messages = label["label_name"]["messages"]
-    return [e["message"] for e in label_name_messages
-            if e["lang"] == "en-US"][0]
 
 
 def sorted_inspection_phrases(phrases: List[Dict[str, Any]]):
@@ -120,8 +114,8 @@ def diff_labels_of_annotation_specs(labels1: List[Dict[str, Any]],
     """
     print("=== アノテーションラベル情報の差分 ===")
 
-    label_names1 = [get_label_name_en(e) for e in labels1]
-    label_names2 = [get_label_name_en(e) for e in labels2]
+    label_names1 = [facade.get_label_name_en(e) for e in labels1]
+    label_names2 = [facade.get_label_name_en(e) for e in labels2]
 
     if label_names1 != label_names2:
         print("ラベル名(en)のListに差分あり")
@@ -137,7 +131,7 @@ def diff_labels_of_annotation_specs(labels1: List[Dict[str, Any]],
                             create_ignored_label(label2)))
         if len(diff_result) > 0:
             is_different = True
-            print(f"差分のあるラベル情報: {get_label_name_en(label1)}")
+            print(f"差分のあるラベル情報: {facade.get_label_name_en(label1)}")
             pprint.pprint(diff_result)
 
     if not is_different:
@@ -251,12 +245,13 @@ def main(args):
 
     project_id1 = args.project_id1
     project_id2 = args.project_id2
-    project_title1 = examples_wrapper.get_project_title(project_id1)
-    project_title2 = examples_wrapper.get_project_title(project_id2)
+    project_title1 = facade.get_project_title(project_id1)
+    project_title2 = facade.get_project_title(project_id2)
 
-    print(f"=== {project_title1}({project_id1}) と {project_title2}({project_id1}) の差分を表示")
+    print(
+        f"=== {project_title1}({project_id1}) と {project_title2}({project_id1}) の差分を表示"
+    )
 
-    
     diff_targets = args.target
     if "members" in diff_targets:
         diff_project_members(project_id1, project_id2)
@@ -297,7 +292,7 @@ if __name__ == "__main__":
                         'settings: プロジェクト設定,')
 
     service = annofabapi.build_from_netrc()
-    examples_wrapper = AnnofabApiFacade(service)
+    facade = AnnofabApiFacade(service)
 
     try:
         main(parser.parse_args())
