@@ -83,8 +83,6 @@ if __name__ == "__main__":
                         type=str,
                         help='再度受入を担当させたいユーザのuser_id。指定しなければ未割り当てになる。')
 
-    annofabcli.utils.add_common_arguments_to_parser(parser)
-
     service = annofabapi.build_from_netrc()
     examples_wrapper = AnnofabApiFacade(service)
 

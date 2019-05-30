@@ -7,11 +7,5 @@ RGB = Tuple[int, int, int]
 InputDataSize = Tuple[int, int]
 """画像データサイズType(width, height)"""
 
-Annotation = Dict[str, Any]
-"""Annotation Type"""
-
-Inspection = Dict[str, Any]
-"""Inspection Type"""
-
 SubInputDataList = List[Tuple[str, str]]
 """Tuple(Jsonファイルのパス, 塗りつぶしアノテーションが格納されたディレクトリのパス)のList"""
