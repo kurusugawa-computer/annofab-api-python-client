@@ -43,9 +43,9 @@ info:
       例えば、`_type` 属性に `ByDirectory` を指定すると `TaskGenerateRuleByDirectory` にデコードされ、`Poliline` を指定すると `InspectionDataPolyline` にデコードされます。
       リクエストボディが誤っている場合はエラーになります。
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
-    * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし利便性のため指定は必須ではありません。
+    * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし、利便性のために一部APIを除き指定は必須ではありません。
 
-  version: 0.50.0
+  version: 0.51.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -859,8 +859,7 @@ paths:
         required: false
         schema:
           type: integer
-          minimum: 1
-          default: 30
+          minimum: 0
           maximum: 200
       responses:
         200:
@@ -881,6 +880,17 @@ paths:
                   total_page_no:
                     type: number
                     description: 指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる組織メンバーが0件であっても、総ページ数は1となります。
+                  total_count:
+                    type: number
+                    description: 検索結果の総件数。
+                  over_limit:
+                    type: boolean
+                    description: 検索結果が1万件を超えた場合にtrueとなる。
+                  aggregations:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AggregationResult"
+                    description: Aggregationによる集約結果。
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         503:
@@ -1390,11 +1400,16 @@ paths:
           $ref: "#/components/schemas/ProjectId"
       responses:
         200:
-          description: 正常 (LocationヘッダにAWS S3のPre-Signed URL)
+          description: |
+            正常 (LocationヘッダにAWS S3のPre-Signed URL)
+
+            レスポンスボディには、AWS S3のPre-Signed URLが格納されています。
+            Pre-signed URLを取得すると、Task形式のJSON配列が取得されます。
+            このURLは一時間で失効します。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Task"
+                type: string
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -1420,11 +1435,16 @@ paths:
           $ref: "#/components/schemas/ProjectId"
       responses:
         200:
-          description: 正常 (LocationヘッダにAWS S3のPre-Signed URL)
+          description: |
+            正常 (LocationヘッダにAWS S3のPre-Signed URL)
+
+            レスポンスボディには、AWS S3のPre-Signed URLが格納されています。
+            Pre-signed URLを取得すると、Inspection形式のJSON配列が取得されます。
+            このURLは一時間で失効します。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Inspection"
+                type: string
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -1450,11 +1470,16 @@ paths:
           $ref: "#/components/schemas/ProjectId"
       responses:
         200:
-          description: 正常 (LocationヘッダにAWS S3のPre-Signed URL)
+          description: |
+            正常 (LocationヘッダにAWS S3のPre-Signed URL)
+
+            レスポンスボディには、AWS S3のPre-Signed URLが格納されています。
+            Pre-signed URLを取得すると、TaskHistoryEvent形式のJSON配列が取得されます。
+            このURLは一時間で失効します。
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TaskHistoryEvent"
+                type: string
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -1512,7 +1537,9 @@ paths:
         description: ページ番号
         required: false
         schema:
-          type: string
+          type: integer
+          minimum: 1
+          default: 1
       - name: limit
         in: query
         description: 1ページあたりの取得するデータ件数
@@ -3874,7 +3901,16 @@ paths:
           $ref: "#/components/schemas/InputDataId"
       responses:
         200:
-          description: 正常 (LocationヘッダにAWS S3のPre-Signed URL)
+          description: |
+            正常 (LocationヘッダにAWS S3のPre-Signed URL)
+
+            レスポンスボディには、AWS S3のPre-Signed URLが格納されています。
+            Pre-signed URLを取得すると、入力データの実体（画像や動画などのファイルそのもの）が取得されます。
+            このURLは一時間で失効します。
+          content:
+            application/json:
+              schema:
+                type: string
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -6504,9 +6540,12 @@ components:
         data_holding_type:
           $ref: "#/components/schemas/AnnotationDataHoldingType"
         data:
-          type: string
+          oneOf:
+            - type: string
+            - $ref: "#/components/schemas/FullAnnotationData"
           description: |
-            data_holding_type が inner の場合のみ存在し、annotation_type に応じたデータの値が格納される。
+            data_holding_type が inner の場合のみ存在し、annotation_type に応じたデータの値が格納されます。
+            `string`もしくは`object`の値を指定することができ、`string`の形式は次の通りです。
               * annotation_type が bounding_box の場合: 左上x,左上y,右下x,右下y のCSV文字列形式。
               * annotation_type が polygon/polyline の場合: x1,y1,x2,y2, ... のCSV文字列形式。
               * annotation_type が segmentation または segmentation_v2 の場合: 塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
@@ -6669,14 +6708,7 @@ components:
         data_holding_type:
           $ref: "#/components/schemas/AnnotationDataHoldingType"
         data:
-          oneOf:
-          - $ref: "#/components/schemas/TrainingAnnotationDetailVector"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailSegmentation"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailClassification"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailRange"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailBoundingBox"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailPoint"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailUnknown"
+          $ref: "#/components/schemas/FullAnnotationData"
         etag:
           type: string
           description: data_holding_typeがouterの場合のみ存在し、データのETagが格納される
@@ -6708,14 +6740,7 @@ components:
           description: |
             個々のアノテーションにつけられたIDです。
         data:
-          oneOf:
-          - $ref: "#/components/schemas/TrainingAnnotationDetailVector"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailSegmentation"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailClassification"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailRange"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailBoundingBox"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailPoint"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailUnknown"
+          $ref: "#/components/schemas/FullAnnotationData"
         attributes:
           type: object
           description: |
@@ -6760,14 +6785,7 @@ components:
         data_holding_type:
           $ref: "#/components/schemas/AnnotationDataHoldingType"
         data:
-          oneOf:
-          - $ref: "#/components/schemas/TrainingAnnotationDetailVector"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailSegmentation"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailClassification"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailRange"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailBoundingBox"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailPoint"
-          - $ref: "#/components/schemas/TrainingAnnotationDetailUnknown"
+          $ref: "#/components/schemas/FullAnnotationData"
         path:
           type: string
           description: data_holding_typeがouterの場合のみ存在し、データへのパスが格納される
@@ -6777,6 +6795,17 @@ components:
             $ref: "#/components/schemas/FullAnnotationAdditionalData"
         comment:
           type: string
+    FullAnnotationData:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/FullAnnotationDataClassification"
+        - $ref: "#/components/schemas/FullAnnotationDataSegmentation"
+        - $ref: "#/components/schemas/FullAnnotationDataSegmentationV2"
+        - $ref: "#/components/schemas/FullAnnotationDataBoundingBox"
+        - $ref: "#/components/schemas/FullAnnotationDataPoints"
+        - $ref: "#/components/schemas/FullAnnotationDataSinglePoint"
+        - $ref: "#/components/schemas/FullAnnotationDataRange"
+        - $ref: "#/components/schemas/FullAnnotationDataUnknown"
     FullAnnotationAdditionalData:
       type: object
       properties:
@@ -6810,50 +6839,94 @@ components:
           allOf:
           - $ref: "#/components/schemas/InternationalizationMessage"
           - description: typeがchoice・selectの場合に、選択肢の表示名が格納される
-    TrainingAnnotationDetailVector:
+    FullAnnotationDataClassification:
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          description: Classification
+          example: "Classification"
+    FullAnnotationDataSegmentation:
+      description: 塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
+      type: object
+      required:
+        - data_uri
+        - _type
+      properties:
+        data_uri:
+          type: string
+        _type:
+          type: string
+          description: Segmentation
+          example: "Segmentation"
+    FullAnnotationDataSegmentationV2:
+      type: object
+      required:
+        - data_uri
+        - _type
+      properties:
+        data_uri:
+          type: string
+        _type:
+          type: string
+          description: SegmentationV2
+          example: "SegmentationV2"
+    FullAnnotationDataBoundingBox:
+      description: annotation_type が bounding_boxの場合に、[左上頂点座標, 右下頂点座標]を {"x":int, "y":int} の形式で記述したもの。
+      type: object
+      required:
+        - left_top
+        - right_bottom
+        - _type
+      properties:
+        left_top:
+          $ref: "#/components/schemas/Point"
+        right_bottom:
+          $ref: "#/components/schemas/Point"
+        _type:
+          type: string
+          description: BoundingBox
+          example: "BoundingBox"
+    FullAnnotationDataPoints:
       description: |
         頂点座標 {"x":int, "y":int} の配列。
 
         * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。
-      type: array
-      items:
-        type: object
-        properties:
-          x:
-            type: integer
-          y:
-            type: integer
-    TrainingAnnotationDetailBoundingBox:
-      description: annotation_type が bounding_boxの場合に、[左上頂点座標, 右下頂点座標]を {"x":int, "y":int} の形式で記述したもの。
       type: object
+      required:
+        - points
+        - _type
       properties:
-        left_top:
-          type: object
-          properties:
-            x:
-              type: integer
-            y:
-              type: integer
-        right_bottom:
-          type: object
-          properties:
-            x:
-              type: integer
-            y:
-              type: integer
-    TrainingAnnotationDetailSegmentation:
-      description: 塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
-      type: object
-      properties:
-        data_uri:
+        points:
+          type: array
+          items:
+            $ref: "#/components/schemas/Point"
+        _type:
           type: string
-    TrainingAnnotationDetailClassification:
-      description: annotation_type が classificationの場合、形状に関する情報をもたないので、常に `null` です。
+          description: Points
+          example: "Points"
+    FullAnnotationDataSinglePoint:
+      description: annotation_type が pointの場合。
       type: object
-      example: null
-    TrainingAnnotationDetailRange:
+      required:
+        - point
+        - _type
+      properties:
+        point:
+          $ref: "#/components/schemas/Point"
+        _type:
+          type: string
+          description: SinglePoint。
+          example: "SinglePoint"
+    FullAnnotationDataRange:
       description: annotation_type が rangeの場合に、[開始時間, 終了時間]を {"begin":number, "end":number} の形式で記述したもの。開始時間・終了時間の単位は秒で、精度はミリ秒まで。
       type: object
+      required:
+        - begin
+        - end
+        - _type
       properties:
         begin:
           type: number
@@ -6861,23 +6934,34 @@ components:
         end:
           type: number
           description: 終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。
-    TrainingAnnotationDetailPoint:
-      description: annotation_type が pointの場合。
-      type: object
-      properties:
-        point:
-          type: object
-          properties:
-            x:
-              type: integer
-            y:
-              type: integer
-    TrainingAnnotationDetailUnknown:
+        _type:
+          type: string
+          description: Range
+          example: "Range"
+    FullAnnotationDataUnknown:
       description: annotation_typeにデータ構造が一致していない場合に、元のdata文字列をそのまま記述したもの。
       type: object
+      required:
+        - data
+        - _type
       properties:
         data:
           type: string
+        _type:
+          type: string
+          description: Unknown
+          example: "Unknown"
+    Point:
+      description: 座標
+      type: object
+      required:
+        - x
+        - y
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
     BatchInspectionRequestItemPut:
       type: object
       description: 検査コメント更新
