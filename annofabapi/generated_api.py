@@ -736,7 +736,7 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[, requests.Response]
+            Tuple[str, requests.Response]
 
         Authorizations:
             AllProjectMember,
@@ -1575,7 +1575,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[Inspection, requests.Response]
+            Tuple[str, requests.Response]
 
         Authorizations:
             ProjectOwner,
@@ -1595,7 +1595,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[TaskHistoryEvent, requests.Response]
+            Tuple[str, requests.Response]
 
         Authorizations:
             ProjectOwner,
@@ -1615,7 +1615,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[Task, requests.Response]
+            Tuple[str, requests.Response]
 
         Authorizations:
             ProjectOwner,
@@ -1706,7 +1706,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                page (str):  ページ番号
+                page (int):  ページ番号
                 limit (int):  1ページあたりの取得するデータ件数
 
         Returns:

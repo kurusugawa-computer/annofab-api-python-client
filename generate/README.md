@@ -63,7 +63,23 @@ generate/
 # https://annofab.com/docs/api/swagger.yaml を元に生成します。
 $ generate/generate.sh
 
-# generate/swagger.yaml を元に生成します。
-$ generate/generate.sh --notdownload
+```
 
+### `openapi-gnerator-cli`でエラーが発生した場合
+
+1. swagger.yamlをチェックする。
+
+```
+$ cd generate
+$ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli validate \
+    -i /local/swagger.yaml \
+
+```
+
+2. swagger.yamlを修正する
+
+3. ローカルにある`swagger.yaml`（ダウンロードしない）を元に、`generated_api.py`を生成する。
+
+```bash
+$ generate/generate.sh --notdownload
 ```
