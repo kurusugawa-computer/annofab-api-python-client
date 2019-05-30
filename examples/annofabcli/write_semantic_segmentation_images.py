@@ -12,8 +12,11 @@ from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused
 
 import PIL.Image
 import PIL.ImageDraw
+
+import annofabapi
 import annofabcli
 from annofabcli.common.typing import RGB, Annotation, InputDataSize, SubInputDataList
+from annofabcli.common.utils import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
 
@@ -272,7 +275,7 @@ def main(args):
 
     try:
         default_input_data_size = annofabcli.utils.get_input_data_size(
-            args.default_input_data_size)
+            args.input_data_size)
 
     except Exception as e:
         logger.error("--default_input_data_size のフォーマットが不正です")
@@ -324,6 +327,7 @@ def main(args):
         logger.exception(e)
         raise e
 
+
 def create_label_color_json_file(project_id: str, output_file: str):
     """
     今のアノテーション仕様から、label名とRGBを紐付ける
@@ -332,50 +336,63 @@ def create_label_color_json_file(project_id: str, output_file: str):
 
     Returns:
     """
+    annotation_specs = service.api.get_annotation_specs(project_id)[0]
+    labels = annotation_specs["labels"]
 
-    
 
+def main_create_label_color_file(args):
+    try:
+        create_label_color_json_file(args.project_id, args.output)
+    except Exception as e:
+        logger.exception(e)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=
-        "アノテーションzipを展開したディレクトリから、アノテーションをSemantic Segmentation(Multi Class)用の画像をします。"
+        "アノテーションzipを展開したディレクトリから、アノテーションをSemantic Segmentation(Multi Class)用の画像を作成します。"
         "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象です。"
         "複数のアノテーションディレクトリを指定して、画像をマージすることも可能です。",
         parents=[annofabcli.utils.create_parent_parser()])
-    
-    parser.add_argument('--annotation_dir',
-                        type=str,
-                        required=True,
-                        help='アノテーションzipを展開したディレクトリのパス')
 
-    parser.add_argument('--default_input_data_size',
-                        type=str,
-                        required=True,
-                        help='入力データ画像のサイズ。{width}x{height}。ex. 1280x720')
+    subparsers = parser.add_subparsers(title='subcommands',
+                                       description='valid subcommands',
+                                       help='additional help')
+    parse_write = subparsers.add_parser(
+        "write",
+        help="アノテーションzipを展開したディレクトリから、Semantic Segmentation用の画像を生成する。")
 
-    parser.add_argument(
-        '--label_color_json_file',
+    parse_write.add_argument('--annotation_dir',
+                             type=str,
+                             required=True,
+                             help='アノテーションzipを展開したディレクトリのパス')
+
+    parse_write.add_argument('--input_data_size',
+                             type=str,
+                             required=True,
+                             help='入力データ画像のサイズ。{width}x{height}。ex. 1280x720')
+
+    parse_write.add_argument(
+        '--label_color_file',
         type=str,
         required=True,
         help='label_nameとRGBを対応付けたJSONファイルのパス. key: label_name, value:[R,G,B]')
 
-    parser.add_argument('--output_dir',
-                        type=str,
-                        required=True,
-                        help='出力ディレクトリのパス')
+    parse_write.add_argument('--output_dir',
+                             type=str,
+                             required=True,
+                             help='出力ディレクトリのパス')
 
-    parser.add_argument('--output_image_extension',
-                        type=str,
-                        default="png",
-                        help='出力画像の拡張子')
+    parse_write.add_argument('--output_image_extension',
+                             type=str,
+                             default="png",
+                             help='出力画像の拡張子')
 
-    parser.add_argument('--task_status_complete',
-                        action="store_true",
-                        help='taskのstatusがcompleteの場合のみ画像を生成する')
+    parse_write.add_argument('--task_status_complete',
+                             action="store_true",
+                             help='taskのstatusがcompleteの場合のみ画像を生成する')
 
-    parser.add_argument(
+    parse_write.add_argument(
         '--label_order_file',
         type=str,
         help=
@@ -387,50 +404,17 @@ if __name__ == "__main__":
                         nargs="+",
                         help='`annotation_dir`にマージして描画するディレクトリ')
 
+    parse_label_color = subparsers.add_parser(
+        "create_label_color_file",
+        help="アノテーション仕様から、label_nameとRGBを対応付けたJSONファイルを生成する。")
+    parse_label_color.add_argument('--project_id',
+                                   type=str,
+                                   required=True,
+                                   help='対象のプロジェクトのproject_id')
 
-    subparsers = parser.add_subparsers()
-    subparsers.add_argument('--project_id',
-                        metavar='project_id',
-                        type=str,
-                        required=True,
-                        help='対象のプロジェクトのproject_id')
+    parse_label_color.add_argument('output', type=str, help='出力するファイルのパス')
 
+    parse_label_color.set_defaults(func=main_create_label_color_file)
 
-
-    main(parser.parse_args())
-
-
-
-#
-#
-# >>> # sub-command functions
-# >>> def foo(args):
-# ...     print(args.x * args.y)
-# ...
-# >>> def bar(args):
-# ...     print('((%s))' % args.z)
-# ...
-# >>> # create the top-level parser
-# >>> parser = argparse.ArgumentParser()
-# >>> subparsers = parser.add_subparsers()
-# >>>
-# >>> # create the parser for the "foo" command
-# >>> parser_foo = subparsers.add_parser('foo')
-# >>> parser_foo.add_argument('-x', type=int, default=1)
-# >>> parser_foo.add_argument('y', type=float)
-# >>> parser_foo.set_defaults(func=foo)
-# >>>
-# >>> # create the parser for the "bar" command
-# >>> parser_bar = subparsers.add_parser('bar')
-# >>> parser_bar.add_argument('z')
-# >>> parser_bar.set_defaults(func=bar)
-# >>>
-# >>> # parse the args and call whatever function was selected
-# >>> args = parser.parse_args('foo 1 -x 2'.split())
-# >>> args.func(args)
-# 2.0
-# >>>
-# >>> # parse the args and call whatever function was selected
-# >>> args = parser.parse_args('bar XYZYX'.split())
-# >>> args.func(args)
-# ((XYZYX))
+    service = annofabapi.build_from_netrc()
+    examples_wrapper = AnnofabApiFacade(service)

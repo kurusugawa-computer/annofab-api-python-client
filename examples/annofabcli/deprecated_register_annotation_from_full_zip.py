@@ -9,11 +9,12 @@ import uuid
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
-import annofabapi
-import annofabcli
 import PIL
 import PIL.Image
 import PIL.ImageDraw
+
+import annofabapi
+import annofabcli
 from annofabcli.common.typing import Annotation, InputDataSize
 from annofabcli.common.utils import AnnofabApiFacade
 
@@ -290,7 +291,7 @@ def main(args):
 
     try:
         default_input_data_size = annofabcli.utils.get_input_data_size(
-            args.default_input_data_size)
+            args.input_data_size)
 
     except Exception as e:
         logger.error("--default_input_data_size のフォーマットが不正です")
@@ -342,7 +343,7 @@ if __name__ == "__main__":
                         required=True,
                         help='アノテーションFull zipを展開したディレクトリのパス')
 
-    parser.add_argument('--default_input_data_size',
+    parser.add_argument('--input_data_size',
                         type=str,
                         required=True,
                         help='入力データ画像のサイズ。{width}x{height}。ex. 1280x720')

@@ -2,11 +2,12 @@ import argparse
 import logging.config
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional  # pylint: disable=unused-import
+from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
+
+import yaml
 
 import annofabapi
-import yaml
-from annofabcli.common.typing import InputDataSize
+from annofabcli.common.typing import InputDataSize, Inspection
 
 
 def create_parent_parser():
@@ -98,6 +99,14 @@ class AnnofabApiFacade:
         else:
             return None
 
+    @staticmethod
+    def get_label_name_en(label: Dict[str, Any]):
+        """label情報から英語名を取得する"""
+        label_name_messages = label["label_name"]["messages"]
+        return [
+            e["message"] for e in label_name_messages if e["lang"] == "en-US"
+        ][0]
+
     def get_project_title(self, project_id: str) -> str:
         """
         プロジェクトのタイトルを取得する
@@ -132,6 +141,10 @@ class AnnofabApiFacade:
         """
         member, _ = self.service.api.get_project_member(project_id, user_id)
         return member['account_id']
+
+    ##################
+    # operateTaskのfacade
+    ##################
 
     def change_operator_of_task(self, project_id: str, task_id: str,
                                 account_id: str) -> Dict[str, Any]:
@@ -205,7 +218,8 @@ class AnnofabApiFacade:
                     project_id: str,
                     task_id: str,
                     account_id: str,
-                    annotator_account_id: Optional[str] = None):
+                    annotator_account_id: Optional[str] = None
+                    ) -> Dict[str, Any]:
         """
         タスクを差し戻し、annotator_account_id　に担当を割り当てる。
         Args:
@@ -239,7 +253,7 @@ class AnnofabApiFacade:
         return updated_task
 
     def reject_task_assign_last_annotator(self, project_id: str, task_id: str,
-                                          account_id: str):
+                                          account_id: str) -> Dict[str, Any]:
         """
         タスクを差し戻したあとに、最後のannotation phase担当者に割り当てる。
         Args:
@@ -258,3 +272,78 @@ class AnnofabApiFacade:
 
         return self.reject_task(project_id, task_id, account_id,
                                 last_annotator_account_id)
+
+    def complete_task(self, project_id: str, task_id: str,
+                      account_id: str) -> Dict[str, Any]:
+        """
+        タスクを完了状態にする。
+        注意：サーバ側ではタスクの検査は実施されない。
+        タスクを完了状態にする前にクライアント側であらかじめ「タスクの自動検査」を実施する必要がある。
+        """
+        task, _ = self.service.api.get_task(project_id, task_id)
+
+        req = {
+            "status": "complete",
+            "account_id": account_id,
+            "last_updated_datetime": task["updated_datetime"],
+        }
+        return self.service.api.operate_task(project_id,
+                                             task_id,
+                                             request_body=req)[0]
+
+
+#
+#
+#
+#     if args.task_ids_file:
+#         task_ids = utils.read_lines(args.task_ids_file)
+#         logger.info(f"len(task_ids) : {len(task_ids)}")
+#         logger.info(task_ids)
+#
+#         for task_id in task_ids:
+#             try:
+#                 complete_acceptance_task(api, task_id)
+#             except Exception as e:
+#                 logger.warning(f"=== Error {task_id}")
+#                 logger.exception(e)
+#
+#
+# def complete_acceptance_task(api, task_id):
+#     # 担当者を変更
+#     account_id = "00589ed0-dd63-40db-abb2-dfe5e13c8299"
+#     change_operator(api, task_id, account_id)
+#
+#     # 作業中にする
+#     change_to_working_phase(api, task_id, account_id)
+#
+#     # 検査コメントを処置不要にする
+#     correct_inspection(api, task_id, account_id)
+#
+#     # Validation
+#     validations = api.get_task_validation(task_id)["inputs"]
+#     logger.debug(validations)
+#     if len(validations) == 0:
+#         complete_task(api, task_id, account_id)
+#     else:
+#         logger.info(f"{task_id} is validation error")
+
+#
+# def correct_inspection(self, project_id: str, task_id: str, commenter_account_id):
+#     """
+#     差し戻したときのコメントを処置不要にする
+#     """
+#     task, _ = self.service.api.get_task(project_id, task_id)
+#     first_input_data_id = task["input_data_id_list"][0]
+#     inspections = api.get_inspections(task_id, first_input_data_id)
+#
+#     target_inspection = [e for e in inspections if e["commenter_account_id"] == commenter_account_id and e["parent_inspection_id"] is None][0]
+#     target_inspection["status"] = "no_correction_required"
+#     target_inspection["updated_datetime"] = target_inspection["created_datetime"]
+#
+#     req_inspection = [{
+#         "data": target_inspection,
+#
+#         "_type": "Put",
+#
+#     }]
+#     return api.post_inspections(task_id, first_input_data_id, req_inspection)
