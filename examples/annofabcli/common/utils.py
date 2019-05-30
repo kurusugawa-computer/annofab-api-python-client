@@ -7,7 +7,7 @@ from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused
 import yaml
 
 import annofabapi
-from annofabcli.common.typing import InputDataSize, Inspection
+from annofabcli.common.typing import InputDataSize
 
 
 def create_parent_parser():
@@ -291,59 +291,3 @@ class AnnofabApiFacade:
                                              task_id,
                                              request_body=req)[0]
 
-
-#
-#
-#
-#     if args.task_ids_file:
-#         task_ids = utils.read_lines(args.task_ids_file)
-#         logger.info(f"len(task_ids) : {len(task_ids)}")
-#         logger.info(task_ids)
-#
-#         for task_id in task_ids:
-#             try:
-#                 complete_acceptance_task(api, task_id)
-#             except Exception as e:
-#                 logger.warning(f"=== Error {task_id}")
-#                 logger.exception(e)
-#
-#
-# def complete_acceptance_task(api, task_id):
-#     # 担当者を変更
-#     account_id = "00589ed0-dd63-40db-abb2-dfe5e13c8299"
-#     change_operator(api, task_id, account_id)
-#
-#     # 作業中にする
-#     change_to_working_phase(api, task_id, account_id)
-#
-#     # 検査コメントを処置不要にする
-#     correct_inspection(api, task_id, account_id)
-#
-#     # Validation
-#     validations = api.get_task_validation(task_id)["inputs"]
-#     logger.debug(validations)
-#     if len(validations) == 0:
-#         complete_task(api, task_id, account_id)
-#     else:
-#         logger.info(f"{task_id} is validation error")
-
-#
-# def correct_inspection(self, project_id: str, task_id: str, commenter_account_id):
-#     """
-#     差し戻したときのコメントを処置不要にする
-#     """
-#     task, _ = self.service.api.get_task(project_id, task_id)
-#     first_input_data_id = task["input_data_id_list"][0]
-#     inspections = api.get_inspections(task_id, first_input_data_id)
-#
-#     target_inspection = [e for e in inspections if e["commenter_account_id"] == commenter_account_id and e["parent_inspection_id"] is None][0]
-#     target_inspection["status"] = "no_correction_required"
-#     target_inspection["updated_datetime"] = target_inspection["created_datetime"]
-#
-#     req_inspection = [{
-#         "data": target_inspection,
-#
-#         "_type": "Put",
-#
-#     }]
-#     return api.post_inspections(task_id, first_input_data_id, req_inspection)
