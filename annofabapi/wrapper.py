@@ -374,7 +374,8 @@ class Wrapper:
 
         """
 
-        url, _ = self.api.get_project_tasks_url(project_id)
+        content, _ = self.api.get_project_tasks_url(project_id)
+        url = content["url"]
         annofabapi.utils.download(url, dest_path)
         return url
 
@@ -392,7 +393,8 @@ class Wrapper:
 
         """
 
-        url, _ = self.api.get_project_inspections_url(project_id)
+        content, _ = self.api.get_project_inspections_url(project_id)
+        url = content["url"]
         annofabapi.utils.download(url, dest_path)
         return url
 
@@ -410,7 +412,8 @@ class Wrapper:
 
         """
 
-        url, _ = self.api.get_project_task_history_events_url(project_id)
+        content, _ = self.api.get_project_task_history_events_url(project_id)
+        url = content["url"]
         annofabapi.utils.download(url, dest_path)
         return url
 
