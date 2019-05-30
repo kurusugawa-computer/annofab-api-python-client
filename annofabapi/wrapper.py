@@ -333,7 +333,7 @@ class Wrapper:
             inspection_status: 検査コメントのstatus
 
         Returns:
-            変更後の検査コメント一覧
+            `batch_update_inspections`メソッドのcontent
         """
 
         def not_reply_comment(arg_inspection: Inspection) -> bool:
