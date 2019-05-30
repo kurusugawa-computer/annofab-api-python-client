@@ -8,6 +8,9 @@ from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
+from annofabapi.typing import (AnnotationSpecs, InputData, Inspection,
+                               OrganizationMember, Project, ProjectJob,
+                               ProjectMember, SupplementaryData, Task)
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +141,7 @@ class Wrapper:
     # Public Method : AfAnnotationSpecsApi
     #########################################
     def copy_annotation_specs(self, src_project_id: str,
-                              dest_project_id: str) -> Dict[str, Any]:
+                              dest_project_id: str) -> AnnotationSpecs:
         """
         アノテーション仕様を、別のプロジェクトにコピーする。
         【注意】誤って実行しないようにすること
@@ -166,7 +169,7 @@ class Wrapper:
     def get_all_input_data_list(self,
                                 project_id: str,
                                 query_params: Optional[Dict[str, Any]] = None
-                                ) -> List[Dict[str, Any]]:
+                                ) -> List[InputData]:
         """
         すべての入力データを取得する。
         Args:
@@ -227,7 +230,7 @@ class Wrapper:
                                  file_path: str,
                                  request_body: Optional[Dict[str, Any]] = None,
                                  content_type: Optional[str] = None
-                                 ) -> Dict[str, Any]:
+                                 ) -> InputData:
         """
         ファイル（画像 or zip）を入力データとして登録する。
         zipファイルを指定した場合は、登録が完了した後「ZIPアップロードジョブエラー削除」(delete_project_job)を実施する必要がある。
@@ -264,7 +267,7 @@ class Wrapper:
                                          file_path: str,
                                          request_body: Dict[str, Any],
                                          content_type: Optional[str] = None
-                                         ) -> Dict[str, Any]:
+                                         ) -> SupplementaryData:
         """
         補助情報ファイルをアップロードする
         Args:
@@ -314,13 +317,59 @@ class Wrapper:
             request_body=copied_request_body)[0]
 
     #########################################
+    # Public Method : AfInspection
+    #########################################
+    def update_status_of_inspections(
+            self, project_id: str, task_id: str, input_data_id: str,
+            filter_inspection: Callable[[Inspection], bool],
+            inspection_status: str) -> List[Inspection]:
+        """
+        検査コメント（返信コメント以外）のstatusを変更する。
+        Args:
+            project_id: プロジェクトID
+            task_id: タスクID
+            input_data_id: 入力データID
+            filter_inspection: 変更対象の検査コメントを絞り込む条件
+            inspection_status: 検査コメントのstatus
+
+        Returns:
+            変更後の検査コメント一覧
+        """
+
+        def not_reply_comment(arg_inspection: Inspection) -> bool:
+            """返信コメントでないならTrueをかえす"""
+            return arg_inspection["parent_inspection_id"] is None
+
+        inspections, _ = self.api.get_inspections(project_id, task_id,
+                                                  input_data_id)
+
+        target_inspections = [
+            e for e in inspections
+            if filter_inspection(e) and not_reply_comment(e)
+        ]
+
+        for inspection in target_inspections:
+            inspection["status"] = inspection_status
+            if inspection["updated_datetime"] is None:
+                inspection["updated_datetime"] = inspection["created_datetime"]
+            else:
+                inspection["updated_datetime"] = annofabapi.utils.str_now()
+
+        req_inspection = [{
+            "data": e,
+            "_type": "Put"
+        } for e in target_inspections]
+        return self.api.batch_update_inspections(project_id, task_id,
+                                                 input_data_id,
+                                                 req_inspection)[0]
+
+    #########################################
     # Public Method : AfOrganizationApi
     #########################################
     def get_all_projects_of_organization(
             self,
             organization_name: str,
-            query_params: Optional[Dict[str, Any]] = None
-    ) -> List[Dict[str, Any]]:
+            query_params: Optional[Dict[str, Any]] = None) -> List[Project]:
         """
         組織配下のすべてのプロジェクト一覧を取得する
         Args:
@@ -342,7 +391,7 @@ class Wrapper:
             self,
             organization_name: str,
             query_params: Optional[Dict[str, Any]] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> List[OrganizationMember]:
         """
         すべての組織メンバ一覧を取得する
         Args:
@@ -423,7 +472,7 @@ class Wrapper:
     def get_all_project_members(self,
                                 project_id: str,
                                 query_params: Optional[Dict[str, Any]] = None
-                                ) -> List[Dict[str, Any]]:
+                                ) -> List[ProjectMember]:
         """
         すべてのプロジェクトメンバを取得する
         Args:
@@ -440,7 +489,7 @@ class Wrapper:
 
     def put_project_members(self, project_id,
                             project_members: List[Dict[str, Any]]
-                            ) -> List[Dict[str, Any]]:
+                            ) -> List[ProjectMember]:
         """
         複数のプロジェクトメンバを追加/更新/削除する.
         【注意】誤って実行しないようにすること
@@ -484,7 +533,7 @@ class Wrapper:
     def assign_role_to_project_members(self, project_id: str,
                                        user_id_list: List[str],
                                        member_role: str
-                                       ) -> List[Dict[str, Any]]:
+                                       ) -> List[ProjectMember]:
         """
         複数のプロジェクトメンバに1つのロールを割り当てる。
         【注意】誤って実行しないようにすること
@@ -509,7 +558,7 @@ class Wrapper:
         return self.put_project_members(project_id, project_members)
 
     def drop_role_to_project_members(self, project_id, user_id_list: List[str]
-                                     ) -> List[Dict[str, Any]]:
+                                     ) -> List[ProjectMember]:
         """
         複数のプロジェクトメンバを、プロジェクトから脱退させる
         【注意】誤って実行しないようにすること
@@ -534,8 +583,7 @@ class Wrapper:
     def copy_project_members(self,
                              src_project_id: str,
                              dest_project_id: str,
-                             delete_dest: bool = False
-                             ) -> List[Dict[str, Any]]:
+                             delete_dest: bool = False) -> List[ProjectMember]:
         """
         プロジェクトメンバを、別のプロジェクトにコピーする。
         【注意】誤って実行しないようにすること
@@ -606,7 +654,7 @@ class Wrapper:
     def get_all_tasks(self,
                       project_id: str,
                       query_params: Optional[Dict[str, Any]] = None
-                      ) -> List[Dict[str, Any]]:
+                      ) -> List[Task]:
         """
         すべてのタスクを取得する。
         Args:
@@ -688,7 +736,7 @@ class Wrapper:
     # Public Method : AfJobApi
     #########################################
     def delete_all_succeeded_job(self, project_id: str,
-                                 job_type: str) -> List[Dict[str, Any]]:
+                                 job_type: str) -> List[ProjectJob]:
         """
         成功したジョブをすべて削除する
         Args:
@@ -707,8 +755,8 @@ class Wrapper:
 
         return deleted_jobs
 
-    def get_all_project_job(self, project_id: str, query_params: Dict[str, Any]
-                            ) -> List[Dict[str, Any]]:
+    def get_all_project_job(self, project_id: str,
+                            query_params: Dict[str, Any]) -> List[ProjectJob]:
         """
         すべてのバックグランドジョブを取得する。
         2019/01時点でAPIが未実装のため、このメソッドも未実装。
