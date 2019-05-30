@@ -17,9 +17,9 @@
     "develop": {
         "annofabapi": {
             "hashes": [
-                "sha256:8c04410de322ab2b1f2fe13ec568ee5717848a3f1d6b86c26cbed4b9f691b157"
+                "sha256:bab656d9f9691e5700c1f1196b749f35a825dc5efd430ab84616a556280447eb"
             ],
-            "version": "==0.3.1"
+            "version": "==0.4.1"
         },
         "annofabcli": {
             "editable": true,
