@@ -53,8 +53,28 @@ def complete_acceptance_task(project_id: str, task: Task,
                                                      inspection_status)
         logger.debug(f"{task_id}, {input_data_id}, 検査コメントの状態を変更")
 
-    facade.complete_task(project_id, task_id, account_id)
-    logger.info(f"{task_id}: タスクを受入完了にした")
+    if validate_task(project_id, task_id):
+        facade.complete_task(project_id, task_id, account_id)
+        logger.info(f"{task_id}: タスクを受入完了にした")
+    else:
+        logger.warning(f"{task_id}, タスク検査で警告/エラーがあったので、タスクを受入完了できなかった")
+
+
+def validate_task(project_id:str, task_id: str) -> bool:
+    # Validation
+    validation, _ = service.api.get_task_validation(project_id, task_id)
+    validation_inputs = validation["inputs"]
+    is_valid = False
+    for validation in validation_inputs:
+        input_data_id = validation["input"]
+        inspection_summary = validation["inspection_summary"]
+        if  inspection_summary == "unprocessed":
+            logger.warning(f"{task_id}, {input_data_id}, {inspection_summary}, 未処置の検査コメントがある。")
+            is_valid = True
+
+        # TODO annotation_summaries も確認する必要ある？
+
+    return is_valid
 
 
 def main(args):
@@ -75,7 +95,7 @@ def main(args):
             return False
 
         # TODO
-        return True
+        return False
 
     annofabcli.utils.load_logging_config_from_args(args, __file__)
     logger.info(f"args: {args}")
