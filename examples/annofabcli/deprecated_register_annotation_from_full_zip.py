@@ -9,12 +9,11 @@ import uuid
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
+import annofabapi
+import annofabcli
 import PIL
 import PIL.Image
 import PIL.ImageDraw
-
-import annofabapi
-import annofabcli
 from annofabapi.typing import Annotation
 from annofabcli.common.typing import InputDataSize
 from annofabcli.common.utils import AnnofabApiFacade
@@ -67,13 +66,10 @@ def draw_annotation_list(annotation_list: List[Annotation],
     return draw
 
 
-def update_annotation_with_image(
-        project_id: str,
-        task_id: str,
-        input_data_id: str,
-        image_file_list: List[Any],
-        account_id: str,
-        filter_details: FilterDetailsFunc):
+def update_annotation_with_image(project_id: str, task_id: str,
+                                 input_data_id: str,
+                                 image_file_list: List[Any], account_id: str,
+                                 filter_details: FilterDetailsFunc):
     """
     塗りつぶしアノテーションを登録する。他のアノテーションが変更されないようにする。
     アノテーションを登録できる状態であること
@@ -206,13 +202,9 @@ def write_segmentation_image_for_labels(labels: List[Dict[str, str]],
 
 
 def register_raster_annotation_from_polygon(
-        annotation_dir: str,
-        default_input_data_size: InputDataSize,
-        tmp_dir: str,
-        labels: List[Dict[str, str]],
-        project_id: str,
-        task_id_list: List[str],
-        filter_details: FilterDetailsFunc):
+        annotation_dir: str, default_input_data_size: InputDataSize,
+        tmp_dir: str, labels: List[Dict[str, str]], project_id: str,
+        task_id_list: List[str], filter_details: FilterDetailsFunc):
     annotation_dir_path = Path(annotation_dir)
     tmp_dir_path = Path(tmp_dir)
 
