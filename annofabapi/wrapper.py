@@ -342,12 +342,15 @@ class Wrapper:
 
         def search_updated_inspections(arg_inspection: Inspection) -> bool:
             """変更対象の検査コメントを探す"""
-            return filter_inspection(arg_inspection) and not_reply_comment(arg_inspection)
+            return filter_inspection(arg_inspection) and not_reply_comment(
+                arg_inspection)
 
         inspections, _ = self.api.get_inspections(project_id, task_id,
                                                   input_data_id)
 
-        target_inspections = [e for e in inspections if search_updated_inspections(e)]
+        target_inspections = [
+            e for e in inspections if search_updated_inspections(e)
+        ]
 
         for inspection in target_inspections:
             inspection["status"] = inspection_status
@@ -361,8 +364,8 @@ class Wrapper:
             "_type": "Put"
         } for e in target_inspections]
         content = self.api.batch_update_inspections(project_id, task_id,
-                                                 input_data_id,
-                                                 req_inspection)[0]
+                                                    input_data_id,
+                                                    req_inspection)[0]
         return [e for e in content if search_updated_inspections(e)]
 
     #########################################
