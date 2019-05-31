@@ -15,6 +15,7 @@ import uuid
 from distutils.util import strtobool
 
 import annofabapi
+import annofabapi.utils
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
@@ -244,6 +245,30 @@ def test_inspection():
     task_id = test_wrapper.get_first_task_id(project_id)
     input_data_id = test_wrapper.get_first_input_data_id_in_task(
         project_id, task_id)
+
+    # # 作業中のタスクでなくても、検査コメントは付与できる
+    # req_inspection = [{
+    #     "data": {
+    #         "project_id": project_id,
+    #         "comment": f"test comment by test code {annofabapi.utils.str_now()}",
+    #         "task_id": task_id,
+    #         "input_data_id": input_data_id,
+    #         "inspection_id": str(uuid.uuid4()),
+    #         "phase": "acceptance",
+    #         "commenter_account_id": my_account_id,
+    #         "data": {
+    #             "x": 0,
+    #             "y": 0,
+    #             "_type": "Point"
+    #         },
+    #         "status": "annotator_action_required",
+    #         "created_datetime": annofabapi.utils.str_now()
+    #     },
+    #     "_type": "Put",
+    # }]
+    #
+    # api.batch_update_inspections(project_id, task_id, input_data_id,
+    #                                             request_body=req_inspection)
     print("get_inspections")
     assert len(api.get_inspections(project_id, task_id, input_data_id)[0]) >= 0
 
