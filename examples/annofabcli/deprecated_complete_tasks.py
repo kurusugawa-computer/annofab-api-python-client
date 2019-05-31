@@ -56,10 +56,9 @@ def complete_acceptance_task(project_id: str, task: Task,
 
     # 検査コメントの状態を変更する
     for input_data_id in task["input_data_id_list"]:
-        updated_inspections = service.wrapper.update_status_of_inspections(project_id, task_id,
-                                                     input_data_id,
-                                                     filter_inspection,
-                                                     inspection_status)
+        updated_inspections = service.wrapper.update_status_of_inspections(
+            project_id, task_id, input_data_id, filter_inspection,
+            inspection_status)
         logger.debug(f"{task_id}, {input_data_id}, 検査コメントの状態を変更")
 
     if validate_task(project_id, task_id):
@@ -140,9 +139,9 @@ if __name__ == "__main__":
                         type=str,
                         required=True,
                         choices=["error_corrected", "no_correction_required"],
-                        help='未処置の検査コメントをどの状態に変更するか。' 
-                             'error_corrected: 対応完了,' 
-                             'no_correction_required: 対応不要')
+                        help='未処置の検査コメントをどの状態に変更するか。'
+                        'error_corrected: 対応完了,'
+                        'no_correction_required: 対応不要')
 
     try:
         service = annofabapi.build_from_netrc()

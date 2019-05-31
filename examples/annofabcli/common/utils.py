@@ -4,8 +4,9 @@ import os
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
-import annofabapi
 import yaml
+
+import annofabapi
 from annofabcli.common.typing import InputDataSize
 
 
