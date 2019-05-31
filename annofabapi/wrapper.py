@@ -333,7 +333,7 @@ class Wrapper:
             inspection_status: 検査コメントのstatus
 
         Returns:
-            更新した検査コメント一覧（`batch_update_inspections`メソッドのcontentではない）
+            `batch_update_inspections`メソッドのcontent
         """
 
         def not_reply_comment(arg_inspection: Inspection) -> bool:
@@ -356,8 +356,6 @@ class Wrapper:
             inspection["status"] = inspection_status
             if inspection["updated_datetime"] is None:
                 inspection["updated_datetime"] = inspection["created_datetime"]
-            else:
-                inspection["updated_datetime"] = annofabapi.utils.str_now()
 
         req_inspection = [{
             "data": e,
@@ -366,7 +364,7 @@ class Wrapper:
         content = self.api.batch_update_inspections(project_id, task_id,
                                                     input_data_id,
                                                     req_inspection)[0]
-        return [e for e in content if search_updated_inspections(e)]
+        return content
 
     #########################################
     # Public Method : AfOrganizationApi
