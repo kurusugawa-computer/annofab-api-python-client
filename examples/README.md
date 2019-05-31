@@ -148,3 +148,15 @@ $ python -m annofabcli.diff_projects prj1 prj2 --target settings
 # 上記項目すべての差分
 $ python -m annofabcli.diff_projects prj1 prj2
 ```
+
+
+## 非推奨ツール
+
+
+### deprecated_complete_tasks
+検査コメントを適切な状態（対応完了 or 対応不要）にして、タスクを受け入れ完了にします。
+
+```
+$ python -m annofabcli.deprecated_complete_tasks --project_id prj1 --task_id_file task_id_file.txt --inspection_status no_correction_required 
+
+```
