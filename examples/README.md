@@ -113,15 +113,33 @@ $ python -m annofabcli.reject_tasks_with_adding_comment --project_id prj1 --task
 ## write_semantic_segmentation_images
 アノテーションzipを展開したディレクトリから、アノテーションをSemantic Segmentation(Multi Class)用の画像をします。
 矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象です。
-複数のアノテーションディレクトリを指定して、画像をマージすることも可能です。
+
+複数のアノテーションディレクトリを指定して、画像をマージすることも可能です。ただし、各プロジェクトでtask_id, input_data_idが一致している必要があります。
 
 
 ```
-$ python  -m annofabcli.write_semantic_segmentation_images  --annotation_dir /tmp/af-annotation-xxxx \
- --default_input_data_size 1280x720 \
- --label_color_json_file /tmp/label_color.json \
- --output_dir /tmp/output \
- --task_status_comlete
+# af-annotation-xxxx ディレクトリからSemantic Segmentation用の画像を生成. 生成対象はタスクのstatusがcompleteのみ。pngで生成。
+$ python  -m annofabcli.write_semantic_segmentation_images write  --annotation_dir af-annotation-xxxx \
+ --input_data_size 1280x720 \
+ --label_color_file label_color.json \
+ --output_dir output \
+ --task_status_complete
+ --image_extension png 
+ 
+ 
+# label_nameと色を対応づけたjsonファイルを生成する。
+$ python  -m annofabcli.write_semantic_segmentation_images create_label_color_file  --project_id prj1 label_color.json
+
+ 
+ # af-annotation-xxxx ディレクトリに、af-annotation-1、af-annotation-2ディレクトリをマージした、Semantic Segmentation用の画像を生成する。
+ # 生成対象は全タスク
+$ python  -m annofabcli.write_semantic_segmentation_images write  --annotation_dir af-annotation-xxxx \
+ --input_data_size 1280x720 \
+ --label_color_file label_color.json \
+ --output_dir output \
+ --sub_annotation_dir af-annotation-1 af-annotation-2
+
+
 ```
 
 

@@ -8,12 +8,13 @@ import logging
 import os
 import os.path
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
+from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
+
+import PIL.Image
+import PIL.ImageDraw
 
 import annofabapi
 import annofabcli
-import PIL.Image
-import PIL.ImageDraw
 from annofabapi.typing import Annotation
 from annofabcli.common.typing import RGB, InputDataSize, SubInputDataList
 from annofabcli.common.utils import AnnofabApiFacade
@@ -134,9 +135,12 @@ def draw_sub_input_data(
             )
             continue
 
-        sub_annotation_list = sub_input_data_json[
-            "details"] if annotation_sort_key_func is None else sorted(
-                sub_input_data_json["details"], key=annotation_sort_key_func)
+        if annotation_sort_key_func is None:
+            sub_annotation_list = list(reversed(
+                sub_input_data_json["details"]))
+        else:
+            sub_annotation_list = sorted(sub_input_data_json["details"],
+                                         key=annotation_sort_key_func)
 
         draw_annotation_list(sub_annotation_list, sub_input_data_dir,
                              label_color_dict, draw)
@@ -282,7 +286,7 @@ def main(args):
         raise e
 
     try:
-        with open(args.label_color_json_file) as f:
+        with open(args.label_color_file) as f:
             label_color_dict = json.load(f)
             label_color_dict = {
                 k: tuple(v)
@@ -298,7 +302,7 @@ def main(args):
             labels = annofabcli.utils.read_lines(args.label_order_file)
 
             def annotation_sort_key_func(d: Annotation) -> int:
-                """
+                """d
                 labelの順にアノテーションlistをソートする関数
                 """
                 if d["label"] not in labels:
@@ -318,7 +322,7 @@ def main(args):
             default_input_data_size=default_input_data_size,
             label_color_dict=label_color_dict,
             output_dir=args.output_dir,
-            output_image_extension=args.output_image_extension,
+            output_image_extension=args.image_extension,
             task_status_complete=args.task_status_complete,
             annotation_sort_key_func=annotation_sort_key_func,
             sub_annotation_dir_list=args.sub_annotation_dir)
@@ -326,6 +330,11 @@ def main(args):
     except Exception as e:
         logger.exception(e)
         raise e
+
+
+def get_rgb(label: Dict[str, Any]) -> Tuple[int, int, int]:
+    color = label["color"]
+    return color["red"], color["green"], color["blue"]
 
 
 def create_label_color_json_file(project_id: str, output_file: str):
@@ -339,8 +348,19 @@ def create_label_color_json_file(project_id: str, output_file: str):
     annotation_specs = service.api.get_annotation_specs(project_id)[0]
     labels = annotation_specs["labels"]
 
+    label_color_dict = {
+        facade.get_label_name_en(l): get_rgb(l)
+        for l in labels
+    }
+
+    output_file_path = Path(output_file)
+    output_file_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_file, "w") as f:
+        json.dump(label_color_dict, f, indent=2)
+
 
 def main_create_label_color_file(args):
+
     try:
         create_label_color_json_file(args.project_id, args.output)
     except Exception as e:
@@ -358,6 +378,7 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(title='subcommands',
                                        description='valid subcommands',
                                        help='additional help')
+    
     parse_write = subparsers.add_parser(
         "write",
         help="アノテーションzipを展開したディレクトリから、Semantic Segmentation用の画像を生成する。")
@@ -383,7 +404,7 @@ if __name__ == "__main__":
                              required=True,
                              help='出力ディレクトリのパス')
 
-    parse_write.add_argument('--output_image_extension',
+    parse_write.add_argument('--image_extension',
                              type=str,
                              default="png",
                              help='出力画像の拡張子')
@@ -396,17 +417,21 @@ if __name__ == "__main__":
         '--label_order_file',
         type=str,
         help=
-        'ラベルごとのレイヤの順序を指定したファイル。ファイルに記載されたラベルの順に塗りつぶす。指定しなければ、アノテーションJSONに記載された順に塗りつぶす。'
+        'ラベルごとのレイヤの順序を指定したファイル。ファイルに記載されたラベルの順に塗りつぶす。指定しなければ、アノテーションJSONに記載された逆順に塗りつぶす。'
     )
 
-    parser.add_argument('--sub_annotation_dir',
-                        type=str,
-                        nargs="+",
-                        help='`annotation_dir`にマージして描画するディレクトリ')
+    parse_write.add_argument(
+        '--sub_annotation_dir',
+        type=str,
+        nargs="+",
+        help='`annotation_dir`にマージして描画するディレクトリ.複数のプロジェクトを統合する場合に利用する。')
+
+    parse_write.set_defaults(func=main)
 
     parse_label_color = subparsers.add_parser(
         "create_label_color_file",
         help="アノテーション仕様から、label_nameとRGBを対応付けたJSONファイルを生成する。")
+
     parse_label_color.add_argument('--project_id',
                                    type=str,
                                    required=True,
@@ -416,5 +441,11 @@ if __name__ == "__main__":
 
     parse_label_color.set_defaults(func=main_create_label_color_file)
 
+    args = parser.parse_args()
+    annofabcli.utils.load_logging_config_from_args(args, __file__)
+    logger.info(f"args: {args}")
+
     service = annofabapi.build_from_netrc()
-    examples_wrapper = AnnofabApiFacade(service)
+    facade = AnnofabApiFacade(service)
+
+    args.func(args)
