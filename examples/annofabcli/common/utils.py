@@ -4,9 +4,8 @@ import os
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
-import yaml
-
 import annofabapi
+import yaml
 from annofabcli.common.typing import InputDataSize
 
 
@@ -290,4 +289,3 @@ class AnnofabApiFacade:
         return self.service.api.operate_task(project_id,
                                              task_id,
                                              request_body=req)[0]
-

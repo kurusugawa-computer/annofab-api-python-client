@@ -4,8 +4,9 @@
 
 import argparse
 import logging
-import requests
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
+
+import requests
 
 import annofabapi
 import annofabcli
@@ -55,7 +56,7 @@ def complete_acceptance_task(project_id: str, task: Task,
 
     # 検査コメントの状態を変更する
     for input_data_id in task["input_data_id_list"]:
-        service.wrapper.update_status_of_inspections(project_id, task_id,
+        updated_inspections = service.wrapper.update_status_of_inspections(project_id, task_id,
                                                      input_data_id,
                                                      filter_inspection,
                                                      inspection_status)
@@ -69,7 +70,7 @@ def complete_acceptance_task(project_id: str, task: Task,
         facade.change_to_break_phase(project_id, task_id, account_id)
 
 
-def validate_task(project_id:str, task_id: str) -> bool:
+def validate_task(project_id: str, task_id: str) -> bool:
     # Validation
     validation, _ = service.api.get_task_validation(project_id, task_id)
     validation_inputs = validation["inputs"]
@@ -77,8 +78,10 @@ def validate_task(project_id:str, task_id: str) -> bool:
     for validation in validation_inputs:
         input_data_id = validation["input_data_id"]
         inspection_summary = validation["inspection_summary"]
-        if  inspection_summary == "unprocessed":
-            logger.warning(f"{task_id}, {input_data_id}, {inspection_summary}, 未処置の検査コメントがある。")
+        if inspection_summary in ["unprocessed", "new_unprocessed_inspection"]:
+            logger.warning(
+                f"{task_id}, {input_data_id}, {inspection_summary}, 未処置の検査コメントがある。"
+            )
             is_valid = False
 
         # TODO annotation_summaries も確認する必要ある？
@@ -137,8 +140,8 @@ if __name__ == "__main__":
                         type=str,
                         required=True,
                         choices=["error_corrected", "no_correction_required"],
-                        help='未処置の検査コメントをどの状態に変更するか。' \
-                             'error_corrected: 対応完了,' \
+                        help='未処置の検査コメントをどの状態に変更するか。' 
+                             'error_corrected: 対応完了,' 
                              'no_correction_required: 対応不要')
 
     try:
