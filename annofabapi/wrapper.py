@@ -333,20 +333,21 @@ class Wrapper:
             inspection_status: 検査コメントのstatus
 
         Returns:
-            `batch_update_inspections`メソッドのcontent
+            更新した検査コメント一覧（`batch_update_inspections`メソッドのcontentではない）
         """
 
         def not_reply_comment(arg_inspection: Inspection) -> bool:
             """返信コメントでないならTrueをかえす"""
             return arg_inspection["parent_inspection_id"] is None
 
+        def search_updated_inspections(arg_inspection: Inspection) -> bool:
+            """変更対象の検査コメントを探す"""
+            return filter_inspection(arg_inspection) and not_reply_comment(arg_inspection)
+
         inspections, _ = self.api.get_inspections(project_id, task_id,
                                                   input_data_id)
 
-        target_inspections = [
-            e for e in inspections
-            if filter_inspection(e) and not_reply_comment(e)
-        ]
+        target_inspections = [e for e in inspections if search_updated_inspections(e)]
 
         for inspection in target_inspections:
             inspection["status"] = inspection_status
@@ -359,9 +360,10 @@ class Wrapper:
             "data": e,
             "_type": "Put"
         } for e in target_inspections]
-        return self.api.batch_update_inspections(project_id, task_id,
+        content = self.api.batch_update_inspections(project_id, task_id,
                                                  input_data_id,
                                                  req_inspection)[0]
+        return [e for e in content if search_updated_inspections(e)]
 
     #########################################
     # Public Method : AfOrganizationApi
