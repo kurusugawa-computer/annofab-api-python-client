@@ -45,7 +45,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし、利便性のために一部APIを除き指定は必須ではありません。
 
-  version: 0.51.0
+  version: 0.52.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -120,6 +120,8 @@ tags:
   description: バッチ処理ジョブに対する操作
 - name: af-webhook
   description: Webhookに対する操作
+- name: af-deprecated
+  description: 廃止予定API
 paths:
   /login:
     post:
@@ -845,22 +847,6 @@ paths:
         required: true
         schema:
           type: string
-      - name: page
-        in: query
-        description: ページ番号
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          default: 1
-      - name: limit
-        in: query
-        description: 1ページあたりの取得するデータ件数
-        required: false
-        schema:
-          type: integer
-          minimum: 0
-          maximum: 200
       responses:
         200:
           description: 正常
@@ -873,7 +859,6 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/OrganizationMember"
-                    description: 現在のページ番号に含まれる0件以上の組織メンバーです。
                   page_no:
                     type: number
                     description: 現在のページ番号です。
@@ -1401,15 +1386,18 @@ paths:
       responses:
         200:
           description: |
-            正常 (LocationヘッダにAWS S3のPre-Signed URL)
+            正常
 
-            レスポンスボディには、AWS S3のPre-Signed URLが格納されています。
+            `Response Body`と`Location Header`にはAWS S3のPre-Signed URLが格納されています。
             Pre-signed URLを取得すると、Task形式のJSON配列が取得されます。
             このURLは一時間で失効します。
           content:
             application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  url:
+                    type: string
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -1436,15 +1424,18 @@ paths:
       responses:
         200:
           description: |
-            正常 (LocationヘッダにAWS S3のPre-Signed URL)
+            正常
 
-            レスポンスボディには、AWS S3のPre-Signed URLが格納されています。
+            `Response Body`と`Location Header`にはAWS S3のPre-Signed URLが格納されています。
             Pre-signed URLを取得すると、Inspection形式のJSON配列が取得されます。
             このURLは一時間で失効します。
           content:
             application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  url:
+                    type: string
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -1471,15 +1462,18 @@ paths:
       responses:
         200:
           description: |
-            正常 (LocationヘッダにAWS S3のPre-Signed URL)
+            正常
 
-            レスポンスボディには、AWS S3のPre-Signed URLが格納されています。
+            `Response Body`と`Location Header`にはAWS S3のPre-Signed URLが格納されています。
             Pre-signed URLを取得すると、TaskHistoryEvent形式のJSON配列が取得されます。
             このURLは一時間で失効します。
           content:
             application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  url:
+                    type: string
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -1521,7 +1515,6 @@ paths:
       tags:
       - af-project-member
       summary: プロジェクトメンバー一括取得
-      description: |
       security:
       - AllProjectMember: []
       operationId: getProjectMembers
@@ -1532,22 +1525,13 @@ paths:
         required: true
         schema:
           $ref: "#/components/schemas/ProjectId"
-      - name: page
+      - name: include_inactive_member
         in: query
-        description: ページ番号
+        description: 脱退したプロジェクトメンバーも取得する時に、キーのみ指定します（値は無視されます）。
         required: false
+        allowEmptyValue: true
         schema:
-          type: integer
-          minimum: 1
-          default: 1
-      - name: limit
-        in: query
-        description: 1ページあたりの取得するデータ件数
-        required: false
-        schema:
-          type: integer
-          minimum: 0
-          maximum: 200
+          type: string
       responses:
         200:
           description: 正常
@@ -1565,7 +1549,7 @@ paths:
                     description: 現在のページ番号です。
                   total_page_no:
                     type: number
-                    description: 指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるアノテーションが0件であっても、総ページ数は1となります。
+                    description: 指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトメンバーが0件であっても、総ページ数は1となります。
                   total_count:
                     type: number
                     description: 検索結果の総件数。
@@ -2307,7 +2291,7 @@ paths:
           $ref: "#/components/schemas/AccountId"
       - name: no_user
         in: query
-        description: 未割り当てのタスクを絞り込む時に、キーのみ指定する（値不要）。
+        description: 未割り当てのタスクを絞り込む時に、キーのみ指定します（値は無視されます）。
         required: false
         allowEmptyValue: true
         schema:
@@ -5090,7 +5074,7 @@ components:
       properties:
         last_tasks_updated_datetime:
           type: string
-          format: date-timel
+          format: date-time
     PricePlan:
       type: string
       enum:
