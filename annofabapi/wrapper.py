@@ -390,24 +390,20 @@ class Wrapper:
     #########################################
     # Public Method : AfOrganizationMemberApi
     #########################################
-    def get_all_organization_members(
-            self,
-            organization_name: str,
-            query_params: Optional[Dict[str, Any]] = None
-    ) -> List[OrganizationMember]:
+    def get_all_organization_members(self, organization_name: str
+                                     ) -> List[OrganizationMember]:
         """
         すべての組織メンバ一覧を取得する
         Args:
             organization_name: 組織名
-            query_params: Query Parameter
 
         Returns:
             すべての組織メンバ一覧
         """
-        return self._get_all_objects(self.api.get_organization_members,
-                                     limit=200,
-                                     organization_name=organization_name,
-                                     query_params=query_params)
+
+        # ページングされないので、そのままAPIを実行する
+        content, _ = self.api.get_organization_members(organization_name)
+        return content["list"]
 
     #########################################
     # Public Method : AfProjectApi
@@ -485,10 +481,10 @@ class Wrapper:
         Returns:
             すべてのプロジェクトメンバ一覧
         """
-        return self._get_all_objects(self.api.get_project_members,
-                                     limit=200,
-                                     project_id=project_id,
-                                     query_params=query_params)
+        # ページングされないので、そのままAPIを実行する
+        content, _ = self.api.get_project_members(project_id,
+                                                  query_params=query_params)
+        return content["list"]
 
     def put_project_members(self, project_id,
                             project_members: List[Dict[str, Any]]

@@ -326,7 +326,7 @@ class AbstractAnnofabApi(abc.ABC):
                 sort (str):  ソート順の指定。 使用可能キーはtask_id, input_data_id, detail.annotation_id, detail.account_id, detail.label_id, detail.data_holding_type, detail.created_datetime, detail.updated_datetimeのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
 
         Returns:
-            Tuple[InlineResponse2006, requests.Response]
+            Tuple[InlineResponse2007, requests.Response]
 
         Authorizations:
             AllProjectMember,
@@ -712,7 +712,7 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  1ページあたりの取得するデータ件数
 
         Returns:
-            Tuple[InlineResponse2007, requests.Response]
+            Tuple[InlineResponse2008, requests.Response]
 
         Authorizations:
             AllProjectMember,
@@ -1426,15 +1426,11 @@ class AbstractAnnofabApi(abc.ABC):
     def get_organization_members(
             self,
             organization_name: str,
-            query_params: Optional[Dict[str, Any]] = None,
     ) -> Tuple[Any, requests.Response]:  # noqa: E501
         """組織メンバー一括取得  # noqa: E501
         脱退したメンバーは含まれません。   # noqa: E501
         Args:
             organization_name (str):  組織名 (required)
-            query_params (Dict[str, Any]): Query Parameters
-                page (int):  ページ番号
-                limit (int):  1ページあたりの取得するデータ件数
 
         Returns:
             Tuple[InlineResponse2002, requests.Response]
@@ -1444,9 +1440,7 @@ class AbstractAnnofabApi(abc.ABC):
         """
         url_path = f'/organizations/{organization_name}/members'
         http_method = 'GET'
-        keyword_params: Dict[str, Any] = {
-            'query_params': query_params,
-        }
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def invite_organization_member(
@@ -1575,7 +1569,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[str, requests.Response]
+            Tuple[InlineResponse2004, requests.Response]
 
         Authorizations:
             ProjectOwner,
@@ -1595,7 +1589,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[str, requests.Response]
+            Tuple[InlineResponse2004, requests.Response]
 
         Authorizations:
             ProjectOwner,
@@ -1615,7 +1609,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[str, requests.Response]
+            Tuple[InlineResponse2004, requests.Response]
 
         Authorizations:
             ProjectOwner,
@@ -1706,11 +1700,10 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                page (int):  ページ番号
-                limit (int):  1ページあたりの取得するデータ件数
+                include_inactive_member (str):  脱退したプロジェクトメンバーも取得する時に、キーのみ指定します（値は無視されます）。
 
         Returns:
-            Tuple[InlineResponse2004, requests.Response]
+            Tuple[InlineResponse2005, requests.Response]
 
         Authorizations:
             AllProjectMember,
@@ -2125,7 +2118,7 @@ class AbstractAnnofabApi(abc.ABC):
                 phase (str):  絞り込み条件となるフェーズ名。未指定時は全フェーズ
                 status (str):  絞り込み条件となる状態名。未指定時は全ステータス。
                 account_id (str):  絞り込み条件となる作業中のアカウントID。未指定時は全アカウント
-                no_user (str):  未割り当てのタスクを絞り込む時に、キーのみ指定する（値不要）。
+                no_user (str):  未割り当てのタスクを絞り込む時に、キーのみ指定します（値は無視されます）。
                 previous_account_id (str):  そのタスクをこれまでに担当したことのあるユーザー（現在の担当者含む）のアカウントID。未指定時は全ユーザ
                 previous_phase (TaskPhase):  そのタスクがこれまでに遷移したことのあるフェーズ名（現在のフェーズ含む）。未指定時は全フェーズ
                 rejected_only (str):  差し戻されたタスクだけを絞り込む時に、キーのみ指定します（値は無視されます）。
@@ -2133,7 +2126,7 @@ class AbstractAnnofabApi(abc.ABC):
                 sort (str):  ソート順の指定。 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、status、account_idのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
 
         Returns:
-            Tuple[InlineResponse2005, requests.Response]
+            Tuple[InlineResponse2006, requests.Response]
 
         Authorizations:
             AllProjectMember,
