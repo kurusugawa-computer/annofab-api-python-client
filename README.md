@@ -47,7 +47,7 @@ service = build(user_id, password)
 ```
 
 ### `.netrc`に記載されたuser_id, passwordから生成
-`.netrc`ファイルに、AnnofabのユーザIDとパスワードを記載する。
+`.netrc`ファイルに、AnnofabのユーザIDとパスワードを記載します。
 
 ```plain:.netrc
 machine annofab.com
@@ -75,7 +75,7 @@ service = build_from_netrc()
 
 * `service.api`には、Web APIに対応するメソッドが定義されています。
 * メソッド名は、[AnnoFab Web APIのOpenAPI specification](https://annofab.com/docs/api/swagger.yaml)に記載されている`operationId`をスネークケースに変換したものです。
-* 各メソッドの戻り値は`Tupple[Content, Response]`です。
+* 各メソッドの戻り値の型は`Tupple[Content, Response]`です。
 Responseは[requestsモジュールのReponseオブジェクト](https://2.python-requests.org/en/master/api/#requests.Response)です。
 ContentはReponseの中身です。
 
@@ -120,11 +120,11 @@ service.wrapper.copy_annotation_specs(src_project_id, dest_project_id)
 
 ## 備考
 
-### ログの出力方法の例
+### `annofabapi`のログを出力する方法（サンプル）
 
 ```python
 import logging
-logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
+logging_formatter = '%(levelname)s : %(asctime)s : %(filename)s : %(name)s : %(funcName)s : %(message)s'
 logging.basicConfig(format=logging_formatter)
 logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 ```
