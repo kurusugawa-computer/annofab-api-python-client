@@ -5087,7 +5087,10 @@ components:
           format: date-time
     OrganizationSummary:
       type: object
-      properties: {}
+      properties:
+        last_tasks_updated_datetime:
+          type: string
+          format: date-timel
     PricePlan:
       type: string
       enum:
