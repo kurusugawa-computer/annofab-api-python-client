@@ -8,10 +8,9 @@ import logging
 import pprint
 from typing import Any, Dict, List  # pylint: disable=unused-import
 
-import dictdiffer
-
 import annofabapi
 import annofabcli
+import dictdiffer
 from annofabcli.common.utils import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)

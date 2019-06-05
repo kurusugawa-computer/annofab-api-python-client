@@ -114,7 +114,7 @@ $ python -m annofabcli.reject_tasks_with_adding_comment --project_id prj1 --task
 # 差し戻したタスクには、usr1を割り当てる
 $ python -m annofabcli.reject_tasks_with_adding_comment --project_id prj1 --task_id_file file \
  --comment "auto comment at tool" \
- ----assigned_annotator_user_id usr1
+ --assigned_annotator_user_id usr1
 
 ```
 

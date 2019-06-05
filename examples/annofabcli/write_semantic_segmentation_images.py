@@ -10,11 +10,10 @@ import os.path
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
 
-import PIL.Image
-import PIL.ImageDraw
-
 import annofabapi
 import annofabcli
+import PIL.Image
+import PIL.ImageDraw
 from annofabapi.typing import Annotation
 from annofabcli.common.typing import RGB, InputDataSize, SubInputDataList
 from annofabcli.common.utils import AnnofabApiFacade
@@ -378,7 +377,7 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(title='subcommands',
                                        description='valid subcommands',
                                        help='additional help')
-    
+
     parse_write = subparsers.add_parser(
         "write",
         help="アノテーションzipを展開したディレクトリから、Semantic Segmentation用の画像を生成する。")
