@@ -4,9 +4,8 @@ import os
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
-import yaml
-
 import annofabapi
+import yaml
 from annofabcli.common.typing import InputDataSize
 
 
@@ -53,10 +52,12 @@ def load_logging_config_from_args(args,
     load_logging_config(log_dir, log_filename, logging_yaml_file)
 
 
-def load_logging_config(log_dir,
+def load_logging_config(log_dir: str,
                         log_filename: str,
                         logging_yaml_file: str = "./logging.yaml"):
     """./logging.yamlを読み込む"""
+
+    Path(log_dir).mkdir(exist_ok=True, parents=True)
 
     with open(logging_yaml_file, encoding='utf-8') as f:
         logging_config = yaml.safe_load(f)
