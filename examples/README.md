@@ -6,11 +6,7 @@ pythonコマンドを使ってCLIとして利用できます。
 * Python 3.6+
 * 最新のannofabapiモジュール
 
-# 使い方
-
-## AnnoFabの認証情報の設定
-`.netrc`ファイルにAnnoFabの認証情報を記載してください。
-詳しくは[../README.md](../README.md)を参照してください。
+# Install
 
 ## Pipenvを使う場合
 
@@ -19,22 +15,36 @@ $ git clone https://github.com/kurusugawa-computer/annofab-api-python-client.git
 $ cd annofab-api-python-client/examples
 $ pipenv install
 $ pipenv shell
-
-# サンプルコートを実行
-$ python -m annofabcli.diff_annotation_specs prj1 prj2
 ```
 
-## Pipenvを使わない場合
+`pipenv`は`$ pip install pipenv --upgrade`でインストールできる。
+
+
+## Pipenvを使わずにpipを利用する場合
 
 ```
 $ pip install annofabapi --upgrade
 $ git clone https://github.com/kurusugawa-computer/annofab-api-python-client.git
 $ cd annofab-api-python-client/examples
 $ pip install . -U
-
-# サンプルコートを実行
-$ python -m annofabcli.diff_annotation_specs prj1 prj2
 ```
+
+
+# 使い方
+
+## AnnoFabの認証情報の設定
+`.netrc`ファイルにAnnoFabの認証情報を記載してください。
+詳しくは[../README.md](../README.md)を参照してください。
+
+## コマンドの実行方法
+
+```
+$ cd annofab-api-python-client/examples
+
+# プロジェクト間の差分を表示
+$ python -m annofabcli.diff_projects prj1 prj2
+```
+
 
 ## Helpの見方
 
