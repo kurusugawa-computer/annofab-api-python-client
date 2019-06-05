@@ -10,12 +10,11 @@ import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Optional  # pylint: disable=unused-import
 
+import annofabapi.utils
+import annofabcli
 import PIL
 import PIL.Image
 import PIL.ImageDraw
-
-import annofabapi.utils
-import annofabcli
 from annofabapi.typing import Annotation
 from annofabcli.common.typing import InputDataSize
 from annofabcli.common.utils import AnnofabApiFacade
