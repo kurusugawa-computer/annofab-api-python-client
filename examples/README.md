@@ -55,8 +55,6 @@ $ python invite_user_to_projects.py -h
 
 # examplesツール
 
-以下のpythonコマンドは、`$ pipenv shell`でPythonの仮想環境を有効にした状態で、実行してください。
-
 ## invite_user_to_projects
 複数のプロジェクトに、ユーザを招待します。
 このツールは、新しく組織にユーザを追加するときなどに、利用できます。
