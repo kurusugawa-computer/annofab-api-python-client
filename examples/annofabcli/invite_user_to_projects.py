@@ -48,14 +48,14 @@ def assign_role_with_project_id(project_id_list: List[str],
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == requests.codes.not_found:
                 logger.warning(
-                    "プロジェクトオーナでないので、招待できなかった。project_id={project_id}")
+                    f"プロジェクトが存在しない or プロジェクトオーナでないので、招待できなかった。project_id={project_id}")
             else:
                 logger.warning(e)
-                logger.warning("エラーのため、招待できなかった。project_id={project_id}")
+                logger.warning(f"エラーのため、招待できなかった。project_id={project_id}")
 
 
 def main(args):
-    annofabcli.utils.load_logging_config(args, __file__)
+    annofabcli.utils.load_logging_config_from_args(args, __file__)
 
     logger.info(args)
 
