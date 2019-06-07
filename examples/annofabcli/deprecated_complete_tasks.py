@@ -125,9 +125,6 @@ def main(args):
         if arg_inspection["status"] != "annotator_action_required":
             return False
 
-        if (arg_inspection["commenter_account_id"] == "00589ed0-dd63-40db-abb2-dfe5e13c8299") and (arg_inspection["comment"] == "Add road annotation."):
-            return True
-
         return False
 
     annofabcli.utils.load_logging_config_from_args(args, __file__)
