@@ -48,7 +48,7 @@ def complete_tasks_with_changing_inspection_status(
             logger.warning(e)
             logger.warning(f"{task_id} の担当者変更に失敗")
 
-        # 担当者変更してから数秒待たないと、検査コメントの付与に失敗する「検査コメントの作成日時が不正です」と言われる。
+        # 担当者変更してから数秒待たないと、検査コメントの付与に失敗する(「検査コメントの作成日時が不正です」と言われる）
         time.sleep(3)
 
         # 検査コメントを付与して、タスクを受け入れ完了にする
