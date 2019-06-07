@@ -10,6 +10,7 @@ import requests
 
 import annofabapi
 import annofabcli
+import time
 from annofabapi.typing import Inspection, Task
 from annofabcli.common.utils import AnnofabApiFacade
 
@@ -46,6 +47,9 @@ def complete_tasks_with_changing_inspection_status(
         except requests.HTTPError as e:
             logger.warning(e)
             logger.warning(f"{task_id} の担当者変更に失敗")
+
+        # 担当者変更してから数秒待たないと、検査コメントの付与に失敗する「検査コメントの作成日時が不正です」と言われる。
+        time.sleep(3)
 
         # 検査コメントを付与して、タスクを受け入れ完了にする
         try:
@@ -121,7 +125,9 @@ def main(args):
         if arg_inspection["status"] != "annotator_action_required":
             return False
 
-        # TODO
+        if (arg_inspection["commenter_account_id"] == "00589ed0-dd63-40db-abb2-dfe5e13c8299") and (arg_inspection["comment"] == "Add road annotation."):
+            return True
+
         return False
 
     annofabcli.utils.load_logging_config_from_args(args, __file__)
