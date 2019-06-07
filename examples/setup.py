@@ -29,7 +29,7 @@ setup(
     keywords='annofab api cli',
     url=
     'https://github.com/kurusugawa-computer/annofab-api-python-client/examples',
-    install_requires=['annofabapi>=0.4.2', 'pillow', 'pyyaml', 'dictdiffer'],
+    install_requires=['annofabapi>=0.5.0', 'pillow', 'pyyaml', 'dictdiffer'],
     python_requires='>=3.6',
     classifiers=[
         "Development Status :: 4 - Beta",
