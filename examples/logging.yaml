@@ -9,6 +9,7 @@ handlers:
     class: logging.handlers.TimedRotatingFileHandler
     filename: .log/example.log
     when: 'D'
+    encoding: 'utf-8'
     formatter: customFormatter
   consoleHandler:
     class: logging.StreamHandler

@@ -19,6 +19,15 @@ logger = logging.getLogger(__name__)
 def complete_tasks_with_changing_inspection_status(
         project_id: str, task_id_list: List[str], inspection_status: str,
         filter_inspection: Callable[[Inspection], bool]):
+    """
+    検査コメントのstatusを変更（対応完了 or 対応不要）にした上で、タスクを受け入れ完了状態にする
+    Args:
+        project_id: 対象のproject_id
+        task_id_list: 受け入れ完了にするタスクのtask_idのList
+        inspection_status: 変更後の検査コメントの状態
+        filter_inspection: 変更対象の検査コメントを決める関数
+
+    """
 
     account_id = facade.get_my_account_id()
 
@@ -28,6 +37,7 @@ def complete_tasks_with_changing_inspection_status(
             logger.warning(f"task_id: {task_id}, phase: {task['phase']} ")
             continue
 
+        # 担当者変更
         try:
             facade.change_operator_of_task(project_id, task_id, account_id)
             facade.change_to_working_phase(project_id, task_id, account_id)
@@ -37,6 +47,7 @@ def complete_tasks_with_changing_inspection_status(
             logger.warning(e)
             logger.warning(f"{task_id} の担当者変更に失敗")
 
+        # 検査コメントを付与して、タスクを受け入れ完了にする
         try:
             complete_acceptance_task(project_id, task, inspection_status,
                                      filter_inspection, account_id)
@@ -52,6 +63,10 @@ def complete_acceptance_task(project_id: str, task: Task,
                              inspection_status: str,
                              filter_inspection: Callable[[Inspection], bool],
                              account_id: str):
+    """
+    検査コメントのstatusを変更（対応完了 or 対応不要）にした上で、タスクを受け入れ完了状態にする
+    """
+
     task_id = task["task_id"]
 
     # 検査コメントの状態を変更する
@@ -61,6 +76,7 @@ def complete_acceptance_task(project_id: str, task: Task,
             inspection_status)
         logger.debug(f"{task_id}, {input_data_id}, 検査コメントの状態を変更")
 
+    # タスクの状態を検査する
     if validate_task(project_id, task_id):
         facade.complete_task(project_id, task_id, account_id)
         logger.info(f"{task_id}: タスクを受入完了にした")
