@@ -234,14 +234,17 @@ class Wrapper:
         """
         ファイル（画像 or zip）を入力データとして登録する。
         zipファイルを指定した場合は、登録が完了した後「ZIPアップロードジョブエラー削除」(delete_project_job)を実施する必要がある。
+
         Args:
             project_id: プロジェクトID
             input_data_id:
             file_path: アップロードするファイル
-            request_body: `put_input_data`に渡すrequest body. Keyに`input_data_name`がなければ、ファイルパスが設定される。
+            request_body: `put_input_data` に渡すrequest body. Keyに`input_data_name` がなければ、ファイルパスが設定される。
             content_type: アップロードするファイルのMIME Type. Noneの場合、ファイルパスから推測する。
+
         Returns:
-            `put_input_data`のcontent
+            `put_input_data` のcontent
+
         """
 
         s3_path = self.upload_file_to_s3(project_id, file_path, content_type)
@@ -270,17 +273,19 @@ class Wrapper:
                                          ) -> SupplementaryData:
         """
         補助情報ファイルをアップロードする
+
         Args:
             project_id: プロジェクトID
             input_data_id:
             supplementary_data_id:
             file_path: アップロードするファイル(text , image)
-            request_body: `put_supplementary_data`に渡すRequest Body.
-                `supplementary_data_name`, `supplementary_data_type`は指定されていなければ、ファイルパスから取得した情報が設定される。
+            request_body: `put_supplementary_data` に渡すRequest Body.
+                `supplementary_data_name` , `supplementary_data_type` は指定されていなければ、ファイルパスから取得した情報が設定される。
             content_type: アップロードするファイルのMIME Type. Noneの場合、ファイルパスから推測する。
 
         Returns:
             put_supplementary_data のレスポンス
+
         """
 
         # content_type を推測
@@ -325,6 +330,7 @@ class Wrapper:
             inspection_status: str) -> List[Inspection]:
         """
         検査コメント（返信コメント以外）のstatusを変更する。
+
         Args:
             project_id: プロジェクトID
             task_id: タスクID
@@ -333,7 +339,7 @@ class Wrapper:
             inspection_status: 検査コメントのstatus
 
         Returns:
-            `batch_update_inspections`メソッドのcontent
+            `batch_update_inspections` メソッドのcontent
         """
 
         def not_reply_comment(arg_inspection: Inspection) -> bool:
@@ -492,12 +498,14 @@ class Wrapper:
         """
         複数のプロジェクトメンバを追加/更新/削除する.
         【注意】誤って実行しないようにすること
+
         Args:
             project_id: プロジェクトID
-            project_members: 追加/更新するメンバのList. `user_id`, `member_status`, `member_role`をKeyに持つこと
+            project_members: 追加/更新するメンバのList. `user_id` , `member_status` , `member_role` をKeyに持つこと
 
         Returns:
-            `putProjectMember`APIのContentのList
+            `putProjectMember` APIのContentのList
+
         """
 
         # 追加/更新前のプロジェクトメンバ
@@ -536,12 +544,13 @@ class Wrapper:
         """
         複数のプロジェクトメンバに1つのロールを割り当てる。
         【注意】誤って実行しないようにすること
+
         Args:
             project_id: プロジェクトID
             user_id_list: 追加/更新するメンバのuser_idのList
             member_role: 割り当てるロール.
         Returns:
-            `putProjectMember`APIのContentのList
+            `putProjectMember` APIのContentのList
 
         """
 
@@ -561,11 +570,12 @@ class Wrapper:
         """
         複数のプロジェクトメンバを、プロジェクトから脱退させる
         【注意】誤って実行しないようにすること
+
         Args:
             project_id: プロジェクトID
             user_id_list: 脱退させるメンバのuser_idのList
         Returns:
-            `putProjectMember`APIのContentのList
+            `putProjectMember` APIのContentのList
         """
 
         project_members = []
@@ -586,13 +596,14 @@ class Wrapper:
         """
         プロジェクトメンバを、別のプロジェクトにコピーする。
         【注意】誤って実行しないようにすること
+
         Args:
             src_project_id: コピー元のproject_id
             dest_project_id: コピー先のproject_id
             delete_dest: Trueならばコピー先にしか存在しないプロジェクトメンバを削除する。
 
         Returns:
-            `putProjectMember`APIのContentのList
+            `putProjectMember` APIのContentのList
 
         """
         src_project_members = self.get_all_project_members(src_project_id)
