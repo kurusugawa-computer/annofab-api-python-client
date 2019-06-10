@@ -43,9 +43,11 @@ class AnnofabApi(AbstractAnnofabApi):
 
     def __init__(self, login_user_id: str, login_password: str):
         """
+
         Args:
             login_user_id: AnnoFabにログインするときのユーザID
             login_password: AnnoFabにログインするときのパスワード
+
         """
 
         if not login_user_id or not login_password:
