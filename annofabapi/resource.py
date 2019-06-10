@@ -30,16 +30,18 @@ def build(login_user_id: str, login_password: str) -> Resource:
 
     Returns:
         AnnofabApi, Wrapperのインスタンスを保持するインスタンス
+
     """
     return Resource(login_user_id, login_password)
 
 
 def build_from_netrc() -> Resource:
     """
-    `.netrc`ファイルから、annnofabapi.Resourceインスタンスを生成する。
+    `.netrc` ファイルから、annnofabapi.Resourceインスタンスを生成する。
 
     Returns:
         annnofabapi.Resourceインスタンス
+
     """
     netrc_hosts = netrc.netrc().hosts
     if 'annofab.com' not in netrc_hosts:
