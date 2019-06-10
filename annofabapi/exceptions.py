@@ -1,6 +1,6 @@
 """
 annofabapi.exceptions
-~~~~~~~~~~~~~~~~~~~
+
 This module contains the set of annofabapi' exceptions.
 """
 
