@@ -2,6 +2,7 @@
 resource.pyのテストコード
 """
 import os
+
 import pytest
 
 import annofabapi
