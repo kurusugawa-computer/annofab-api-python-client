@@ -109,8 +109,6 @@ venv.bak/
 # Visual Studio Code
 .vscode
 
-# sphinx-apidoc
-docs/_build
 
 # temporary directory
 tests/data/tmp/
