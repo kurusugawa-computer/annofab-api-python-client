@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 # setup.pyのinstall_requiresに記述
 
-
 [dev-packages]
 annofabapi = {editable = true,path = "."} # For reading setup.py
 pytest = "*"
@@ -18,4 +17,4 @@ mypy = "*"
 flake8 = "*"
 pylint = "*"
 twine = "*"
-sphinx = "*"
+sphinx = "==1.8.5"
