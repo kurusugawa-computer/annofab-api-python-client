@@ -5,5 +5,3 @@ annofab-api-python-client
    :maxdepth: 4
 
    annofabapi
-   setup
-   tests

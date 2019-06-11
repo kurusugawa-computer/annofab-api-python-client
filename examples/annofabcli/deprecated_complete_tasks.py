@@ -4,13 +4,13 @@
 
 import argparse
 import logging
+import time
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
 import requests
 
 import annofabapi
 import annofabcli
-import time
 from annofabapi.typing import Inspection, Task
 from annofabcli.common.utils import AnnofabApiFacade
 
