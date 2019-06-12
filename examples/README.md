@@ -20,7 +20,7 @@ $ pipenv shell
 `pipenv`は`$ pip install pipenv --upgrade`でインストールできる。
 
 
-## Pipenvを使わずにpipを利用する場合
+## Pipenvを使わない場合
 
 ```
 $ pip install annofabapi --upgrade
@@ -34,7 +34,7 @@ $ pip install . -U
 
 ## AnnoFabの認証情報の設定
 `.netrc`ファイルにAnnoFabの認証情報を記載してください。
-詳しくは[../README.md](../README.md)を参照してください。
+詳しくは[annofab-api-python-client/README.md](https://github.com/kurusugawa-computer/annofab-api-python-client#netrc%E3%81%AB%E8%A8%98%E8%BC%89%E3%81%95%E3%82%8C%E3%81%9Fuser_id-password%E3%81%8B%E3%82%89%E7%94%9F%E6%88%90)を参照してください。
 
 ## コマンドの実行方法
 
