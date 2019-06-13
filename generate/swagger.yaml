@@ -2,6 +2,7 @@ openapi: "3.0.0"
 info:
   description: |
     [AnnoFab](https://annofab.com) のWeb APIです。
+    キャッシュされているV2のAPIは[こちら](https://annofab.com/docs/api/v2)です。
 
     APIベースURL: https://annofab.com/api/v1<br>
     例） /projects というAPIを使う場合、 https://annofab.com/api/v1/projects をリクエストします。
@@ -45,7 +46,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし、利便性のために一部APIを除き指定は必須ではありません。
 
-  version: 0.52.0
+  version: 0.53.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -120,8 +121,6 @@ tags:
   description: バッチ処理ジョブに対する操作
 - name: af-webhook
   description: Webhookに対する操作
-- name: af-deprecated
-  description: 廃止予定API
 paths:
   /login:
     post:
@@ -566,20 +565,6 @@ paths:
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
   /organizations:
-    get:
-      tags:
-        - af-organization
-      summary: 所属組織一括取得
-      deprecated: true
-      description: |
-        [/my/organizations](#operation/getMyOrganizations) にリダイレクトされます。
-      security:
-        - AllOrganizationMember: []
-      operationId: permanentRedirect7
-      responses:
-        308:
-          description: リダイレクト
-          content: {}
     post:
       tags:
         - af-organization
@@ -608,20 +593,6 @@ paths:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         503:
           $ref: "#/components/responses/ErrorUnderMaintenance"
-    put:
-      tags:
-        - af-organization
-      summary: 組織名変更
-      deprecated: true
-      description: |
-        [/my/organizations](#operation/updateOrganization) にリダイレクトされます。
-      security:
-        - OrganizationOwner: []
-      operationId: permanentRedirect8
-      responses:
-        308:
-          description: リダイレクト
-          content: {}
   /my/organizations:
     get:
       tags:
@@ -4303,102 +4274,6 @@ paths:
           $ref: "#/components/responses/ErrorMissingResource"
         503:
           $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects:
-    get:
-      tags:
-        - af-deprecated
-      summary: 所属プロジェクト一括取得
-      deprecated: true
-      description: |
-        [/my/projects](#operation/getMyProjects)にリダイレクトされます。
-      security:
-        - Everyone: []
-      operationId: permanentRedirect1
-      responses:
-        308:
-          description: リダイレクト
-          content: {}
-  /projects/{project_id}/my-member:
-    get:
-      tags:
-        - af-deprecated
-      summary: 自分のプロジェクトメンバー取得
-      deprecated: true
-      description: |
-        [/my/projects/{project_id}/member](#operation/getMyMemberInProject) にリダイレクトされます。
-      security:
-        - AllProjectMember: []
-      operationId: permanentRedirect2
-      parameters:
-        - name: project_id
-          in: path
-          description: プロジェクトID
-          required: true
-          schema:
-            $ref: "#/components/schemas/ProjectId"
-      responses:
-        308:
-          description: リダイレクト
-          content: {}
-  /accounts/my:
-    get:
-      tags:
-        - af-deprecated
-      summary: 自分のアカウント取得
-      deprecated: true
-      description: |
-        [/my/account](#operation/getMyAccount) にリダイレクトされます。
-      security:
-        - Everyone: []
-      operationId: permanentRedirect3
-      responses:
-        308:
-          description: リダイレクト
-          content: {}
-    put:
-      tags:
-        - af-deprecated
-      summary: 自分のアカウント情報更新
-      deprecated: true
-      description: |
-        [/my/account](#operation/putMyAccount) にリダイレクトされます。
-      security:
-        - Everyone: []
-      operationId: permanentRedirect4
-      responses:
-        308:
-          description: リダイレクト
-          content: {}
-  /accounts/my/delete-request:
-    post:
-      tags:
-        - af-deprecated
-      summary: アカウント削除step1
-      deprecated: true
-      description: |
-        [/my/account/delete-request](#operation/initiateMyAccountDelete) にリダイレクトされます。
-      security:
-        - Everyone: []
-      operationId: permanentRedirect5
-      responses:
-        308:
-          description: リダイレクト
-          content: {}
-  /accounts/my/delete-request/confirm:
-    post:
-      tags:
-        - af-deprecated
-      summary: アカウント削除step2（確定）
-      deprecated: true
-      description: |
-        [/my/account/delete-request/confirm](#operation/confirmMyAccountDelete) にリダイレクトされます。
-      security:
-        - EveryoneRequestBody: []
-      operationId: permanentRedirect6
-      responses:
-        308:
-          description: リダイレクト
-          content: {}
 components:
   securitySchemes:
     EveryoneRequestBody:
@@ -5492,6 +5367,12 @@ components:
           description: |
             copyInputs、copyTasksWithAnnotations のいずれかが true の時のみ、設定できます。いずれも false の場合、「補助情報」のコピーは行われません。
             true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「補助情報」のコピーも行います。
+            false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。
+          default: false
+        copy_instructions:
+          type: boolean
+          description: |
+            true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「作業ガイド」のコピーも行います。
             false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。
           default: false
     ProjectMember:
