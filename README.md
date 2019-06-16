@@ -129,6 +129,8 @@ logging.basicConfig(format=logging_formatter)
 logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 ```
 
+# Documentation
+https://annofab-api-python-client.readthedocs.io/en/latest/
 
-## Usage for Develper
+# Usage for Develper
 [README_for_developer.md](README_for_developer.md)を参照してください。
