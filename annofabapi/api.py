@@ -182,6 +182,7 @@ class AnnofabApi(AbstractAnnofabApi):
     def login(self) -> Tuple[Dict[str, Any], requests.Response]:
         """
         ログイン
+
         Returns:
             Tuple[Token, requests.Response]
 
@@ -205,6 +206,7 @@ class AnnofabApi(AbstractAnnofabApi):
         """
         ログアウト
         ログインしていないときはNoneを返す。
+
         Returns:
             Tuple[Token, requests.Response]. ログインしていないときはNone.
 
@@ -226,6 +228,7 @@ class AnnofabApi(AbstractAnnofabApi):
         """
         トークン リフレッシュ
         ログインしていないときはNoneを返す。
+
         Returns:
             Tuple[Token, requests.Response]. ログインしていないときはNone.
         """
