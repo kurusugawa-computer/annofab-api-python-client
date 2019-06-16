@@ -1,3 +1,0 @@
-# Read the docs用のrequirements.txt
-sphinx
--e.
