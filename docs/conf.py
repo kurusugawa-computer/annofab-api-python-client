@@ -97,6 +97,18 @@ html_theme = 'alabaster'
 # html_sidebars = {}
 
 
+html_sidebars = {
+    '**': ['localtoc.html', 'relations.html', 'links.html','searchbox.html']
+}
+
+html_copy_source=True
+
+html_show_sourcelink=True
+
+html_logo = "img/logo_landscape.png"
+
+html_favicon = "img/favicon.ico"
+
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
