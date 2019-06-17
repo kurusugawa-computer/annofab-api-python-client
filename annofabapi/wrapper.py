@@ -682,7 +682,7 @@ class Wrapper:
 
         Args:
             project_id: プロジェクトID
-            query_params: `api.get_tasks`メソッドに渡すQuery Parameter
+            query_params: `api.get_tasks` メソッドに渡すQuery Parameter
 
         Returns:
             すべてのタスク一覧
