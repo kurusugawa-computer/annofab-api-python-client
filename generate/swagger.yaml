@@ -46,7 +46,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし、利便性のために一部APIを除き指定は必須ではありません。
 
-  version: 0.53.0
+  version: 0.54.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1970,6 +1970,13 @@ paths:
             * 例 : 2019-05-08T10:00:00.000+09:00
           * {{ZIP_NAME}} : ZIPファイル名
             * 例 : input_data.zip
+
+        * project-copy-completed
+          * {{PROJECT_ID}} :  プロジェクトID
+          * {{DEST_PROJECT_ID}} :  コピー先プロジェクトID
+          * {{DEST_PROJECT_TITLE}}	: コピー先プロジェクトタイトル
+          * {{COMPLETE_DATETIME}}	: 完了日時
+            * 例 : 2019-05-08T10:00:00.000+09:00
 
       security:
       - ProjectOwner: []
@@ -5260,6 +5267,7 @@ components:
           - task-completed
           - annotation-archive-updated
           - input-data-zip-registered
+          - project-copy-completed
         webhook_id:
           $ref: "#/components/schemas/WebhookId"
         webhook_status:
