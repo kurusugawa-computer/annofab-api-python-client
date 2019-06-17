@@ -105,9 +105,10 @@ class Wrapper:
                                     dest_path: str) -> str:
         """
         simpleアノテーションZIPをダウンロードする。
+
         Args:
             project_id: プロジェクトID
-            dest_path: ダウンロード先
+            dest_path: ダウンロード先のファイルパス
 
         Returns:
             ダウンロード元のURL
@@ -127,7 +128,7 @@ class Wrapper:
         すべてのアノテーション情報を取得する。
         Args:
             project_id: プロジェクトID
-            query_params: Query Parameter
+            query_params: `api.get_annotation_list` メソッドのQuery Parameter
 
         Returns:
             すべてのアノテーション一覧
@@ -145,9 +146,11 @@ class Wrapper:
         """
         アノテーション仕様を、別のプロジェクトにコピーする。
         【注意】誤って実行しないようにすること
+
         Args:
             src_project_id: コピー元のproject_id
             dest_project_id: コピー先のproject_id
+
         Returns:
             put_annotation_specsのContent
         """
@@ -172,9 +175,10 @@ class Wrapper:
                                 ) -> List[InputData]:
         """
         すべての入力データを取得する。
+
         Args:
             project_id: プロジェクトID
-            query_params: Query Parameter
+            query_params: `api.get_input_data_list` メソッドのQuery Parameter
 
         Returns:
             入力データ一覧
@@ -190,6 +194,7 @@ class Wrapper:
                           content_type: Optional[str] = None) -> str:
         """
         createTempPath APIを使ってアップロード用のURLとS3パスを取得して、ファイルをアップロードする。
+
         Args:
             project_id: プロジェクトID
             file_path: アップロードするファイルのパス
@@ -237,8 +242,8 @@ class Wrapper:
 
         Args:
             project_id: プロジェクトID
-            input_data_id:
-            file_path: アップロードするファイル
+            input_data_id: 入力データID
+            file_path: アップロードするファイルのパス
             request_body: `put_input_data` に渡すrequest body. Keyに`input_data_name` がなければ、ファイルパスが設定される。
             content_type: アップロードするファイルのMIME Type. Noneの場合、ファイルパスから推測する。
 
@@ -276,8 +281,8 @@ class Wrapper:
 
         Args:
             project_id: プロジェクトID
-            input_data_id:
-            supplementary_data_id:
+            input_data_id: 入力データID
+            supplementary_data_id: 補助情報ID
             file_path: アップロードするファイル(text , image)
             request_body: `put_supplementary_data` に渡すRequest Body.
                 `supplementary_data_name` , `supplementary_data_type` は指定されていなければ、ファイルパスから取得した情報が設定される。
@@ -383,7 +388,7 @@ class Wrapper:
         組織配下のすべてのプロジェクト一覧を取得する
         Args:
             organization_name: 組織名
-            query_params: Query Parameter
+            query_params: `api.get_projects_of_organization` メソッドに渡すQuery Parameter
 
         Returns:
             すべてのプロジェクト一覧
@@ -419,6 +424,7 @@ class Wrapper:
         """
         プロジェクトのタスク全件ファイルをダウンロードする。
         ファイルの中身はJSON。
+
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先ファイルのパス
@@ -438,6 +444,7 @@ class Wrapper:
         """
         プロジェクトの検査コメント全件ファイルをダウンロードする。
         ファイルの中身はJSON。
+
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先ファイルのパス
@@ -457,6 +464,7 @@ class Wrapper:
         """
         プロジェクトのタスク履歴イベント全件ファイルをダウンロードする。
         ファイルの中身はJSON。
+
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先ファイルのパス
@@ -479,10 +487,11 @@ class Wrapper:
                                 query_params: Optional[Dict[str, Any]] = None
                                 ) -> List[ProjectMember]:
         """
-        すべてのプロジェクトメンバを取得する
+        すべてのプロジェクトメンバを取得する.
+
         Args:
             project_id: プロジェクトID
-            query_params: Query Parameter
+            query_params: `api.get_project_members` メソッドのQuery Parameter
 
         Returns:
             すべてのプロジェクトメンバ一覧
@@ -549,6 +558,7 @@ class Wrapper:
             project_id: プロジェクトID
             user_id_list: 追加/更新するメンバのuser_idのList
             member_role: 割り当てるロール.
+
         Returns:
             `putProjectMember` APIのContentのList
 
@@ -574,6 +584,7 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             user_id_list: 脱退させるメンバのuser_idのList
+
         Returns:
             `putProjectMember` APIのContentのList
         """
@@ -637,6 +648,7 @@ class Wrapper:
                                          ) -> Dict[str, Any]:
         """
         CSV Fileでタスクを生成する
+
         Args:
             project_id: プロジェクトID
             csvfile_path: CSVファイルのパス
@@ -667,12 +679,13 @@ class Wrapper:
                       ) -> List[Task]:
         """
         すべてのタスクを取得する。
+
         Args:
             project_id: プロジェクトID
-            query_params: Query Parameter
+            query_params: `api.get_tasks`メソッドに渡すQuery Parameter
 
         Returns:
-            タスク一覧
+            すべてのタスク一覧
         """
         return self._get_all_objects(self.api.get_tasks,
                                      limit=200,
@@ -686,6 +699,7 @@ class Wrapper:
         """
         最新の作業ガイドの取得.
         ガイドが設定されていない場合は空文字を返す。
+
         Args:
             project_id: プロジェクトID
 
@@ -706,6 +720,7 @@ class Wrapper:
                                  content_type: Optional[str] = None) -> str:
         """
         作業ガイドの画像をアップロードする。image_idはUUIDv4
+
         Args:
             project_id: プロジェクトID
             image_id: 作業ガイド画像ID
@@ -749,9 +764,11 @@ class Wrapper:
                                  job_type: str) -> List[ProjectJob]:
         """
         成功したジョブをすべて削除する
+
         Args:
             project_id: プロジェクトID
             job_type: ジョブ種別("copy-project" "gen-inputs" "gen-tasks" "gen-annotation")
+
         Returns:
             削除したジョブの一覧
         """
@@ -770,12 +787,13 @@ class Wrapper:
         """
         すべてのバックグランドジョブを取得する。
         2019/01時点でAPIが未実装のため、このメソッドも未実装。
+
         Args:
             project_id: プロジェクトID
-            query_params: Query Parameter
+            query_params: `api.get_project_job` メソッドに渡すQuery Parameter
 
         Returns:
-            バックグランドジョブ一覧
+            すべてのバックグランドジョブ一覧
         """
 
         # return self._get_all_objects(self.api.get_project_job,
