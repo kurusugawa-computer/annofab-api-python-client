@@ -65,21 +65,17 @@ if __name__ == "__main__":
         parents=[annofabcli.utils.create_parent_parser()])
 
     parser.add_argument('--project_id',
-                        metavar='project_id',
                         type=str,
                         required=True,
                         help='対象のプロジェクトのproject_id')
 
     parser.add_argument(
         '--task_id_file',
-        metavar='file',
         type=str,
         required=True,
         help='task_idの一覧が記載されたファイル。task_idは改行(LF or CRLF)で区切る。')
 
     parser.add_argument('--user_id',
-                        metavar='user_id',
-                        dest='user_id',
                         type=str,
                         help='再度受入を担当させたいユーザのuser_id。指定しなければ未割り当てになる。')
 
