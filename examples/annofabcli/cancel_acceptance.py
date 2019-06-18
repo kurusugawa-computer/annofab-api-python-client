@@ -14,14 +14,14 @@ from annofabcli.common.utils import AnnofabApiFacade, load_logging_config, read_
 
 logger = logging.getLogger(__name__)
 
-class CancelAcceptance:
 
+class CancelAcceptance:
     def __init__(self, service: annofabapi.Resource, facade: AnnofabApiFacade):
         self.service = service
         self.facade = facade
 
-
-    def cancel_acceptance(self, project_id: str,
+    def cancel_acceptance(self,
+                          project_id: str,
                           task_id_list: List[str],
                           acceptor_user_id: Optional[str] = None):
         """
@@ -34,7 +34,8 @@ class CancelAcceptance:
         """
 
         acceptor_account_id = self.facade.get_account_id_from_user_id(
-            project_id, acceptor_user_id) if acceptor_user_id is not None else None
+            project_id,
+            acceptor_user_id) if acceptor_user_id is not None else None
 
         for task_id in task_id_list:
             try:
@@ -56,7 +57,6 @@ class CancelAcceptance:
                 logger.warning(e)
                 logger.warning(f"task_id = {task_id} の受け入れ取り消し失敗")
 
-
     def main(self, args):
         annofabcli.utils.load_logging_config_from_args(args, __file__)
 
@@ -64,7 +64,6 @@ class CancelAcceptance:
 
         task_id_list = read_lines(args.task_id_file)
         self.cancel_acceptance(args.project_id, task_id_list, args.user_id)
-
 
 
 def main(args):
@@ -97,6 +96,7 @@ def parse_args(parser: argparse.ArgumentParser):
 
     parser.set_defaults(subcommand_func=main)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="受け入れ完了タスクを、受け入れ取り消しする。",
@@ -106,4 +106,3 @@ if __name__ == "__main__":
     parse_args(parser)
 
     main(parser.parse_args())
-

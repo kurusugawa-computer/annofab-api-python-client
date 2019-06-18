@@ -14,6 +14,7 @@ from annofabcli.common.utils import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
 
+
 class InviteUser:
     """
     ユーザをプロジェクトに招待する
@@ -23,9 +24,9 @@ class InviteUser:
         self.service = service
         self.facade = facade
 
-
     def assign_role_with_organization(self, organization_name: str,
-                                      user_id_list: List[str], member_role: str):
+                                      user_id_list: List[str],
+                                      member_role: str):
         projects = self.service.wrapper.get_all_projects_of_organization(
             organization_name)
 
@@ -40,17 +41,18 @@ class InviteUser:
 
             except requests.exceptions.HTTPError as e:
                 if e.response.status_code == requests.codes.not_found:
-                    logger.warning(f"プロジェクトオーナでないので、{project_title} に招待できなかった。")
+                    logger.warning(
+                        f"プロジェクトオーナでないので、{project_title} に招待できなかった。")
                 else:
                     logger.warning(e)
                     logger.warning(f"エラーのため、{project_title} に招待できなかった。")
-
 
     def assign_role_with_project_id(self, project_id_list: List[str],
                                     user_id_list: List[str], member_role: str):
         for project_id in project_id_list:
             try:
-                project_title = self.service.api.get_project(project_id)[0]["title"]
+                project_title = self.service.api.get_project(
+                    project_id)[0]["title"]
                 self.service.wrapper.assign_role_to_project_members(
                     project_id, user_id_list, member_role)
                 logger.info(f"{project_title}に招待成功. project_id={project_id}")
@@ -64,22 +66,22 @@ class InviteUser:
                     logger.warning(e)
                     logger.warning(f"エラーのため、招待できなかった。project_id={project_id}")
 
-
     def main(self, args):
         annofabcli.utils.load_logging_config_from_args(args, __file__)
 
         logger.info(args)
 
         if args.organization_name is not None:
-            self.assign_role_with_organization(args.organization,
-                                          args.user_id, args.role)
+            self.assign_role_with_organization(args.organization, args.user_id,
+                                               args.role)
 
         elif args.project_id_list is not None:
             self.assign_role_with_project_id(args.project_id, args.user_id,
-                                        args.role)
+                                             args.role)
 
         else:
-            logger.error("引数に`--organization` or `--project_id_list`を指定してください。")
+            logger.error(
+                "引数に`--organization` or `--project_id_list`を指定してください。")
 
 
 def main(args):
@@ -115,6 +117,7 @@ def parse_args(parser: argparse.ArgumentParser):
                         help='組織名が指定されていない場合は、必要')
 
     parser.set_defaults(subcommand_func=main)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

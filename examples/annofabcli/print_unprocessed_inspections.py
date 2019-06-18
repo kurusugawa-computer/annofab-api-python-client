@@ -3,6 +3,7 @@
 """
 
 import argparse
+import json
 import logging
 import time
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
@@ -13,9 +14,9 @@ import annofabapi
 import annofabcli
 from annofabapi.typing import Inspection, Task
 from annofabcli.common.utils import AnnofabApiFacade
-import json
 
 logger = logging.getLogger(__name__)
+
 
 class PrintUnprocessedInspections:
     """
@@ -26,9 +27,13 @@ class PrintUnprocessedInspections:
         self.service = service
         self.facade = facade
 
-    def get_unprocessed_inspections(self,
-            project_id: str, task_id: str, input_data_id: str, inspection_comment: Optional[str] = None,
-                                      commenter_account_id: Optional[str] = None):
+    def get_unprocessed_inspections(
+            self,
+            project_id: str,
+            task_id: str,
+            input_data_id: str,
+            inspection_comment: Optional[str] = None,
+            commenter_account_id: Optional[str] = None):
         """
         対象の検査コメント一覧を取得する
 
@@ -53,7 +58,8 @@ class PrintUnprocessedInspections:
                 return False
 
             if commenter_account_id is not None:
-                if arg_inspection["commenter_account_id"] != commenter_account_id:
+                if arg_inspection[
+                        "commenter_account_id"] != commenter_account_id:
                     return False
 
             if inspection_comment is not None:
@@ -62,12 +68,14 @@ class PrintUnprocessedInspections:
 
             return True
 
-        inspectins, _ = self.service.api.get_inspections(project_id, task_id, input_data_id)
+        inspectins, _ = self.service.api.get_inspections(
+            project_id, task_id, input_data_id)
         return [i for i in inspectins if filter_inspection(i)]
 
-
     def print_unprocessed_inspections(self,
-            project_id: str, task_id_list: List[str], inspection_comment: Optional[str] = None,
+                                      project_id: str,
+                                      task_id_list: List[str],
+                                      inspection_comment: Optional[str] = None,
                                       commenter_user_id: Optional[str] = None):
         """
         未処置の検査コメントを出力する。
@@ -82,7 +90,9 @@ class PrintUnprocessedInspections:
 
         """
 
-        commenter_account_id = self.facade.get_account_id_from_user_id(project_id, commenter_user_id) if (commenter_user_id is not None) else None
+        commenter_account_id = self.facade.get_account_id_from_user_id(
+            project_id,
+            commenter_user_id) if (commenter_user_id is not None) else None
 
         task_dict = {}
 
@@ -92,17 +102,19 @@ class PrintUnprocessedInspections:
             input_data_dict = {}
             for input_data_id in task["input_data_id_list"]:
 
-                inspections = self.get_unprocessed_inspections(project_id, task_id, input_data_id, inspection_comment=inspection_comment,
-                                                 commenter_account_id=commenter_account_id)
+                inspections = self.get_unprocessed_inspections(
+                    project_id,
+                    task_id,
+                    input_data_id,
+                    inspection_comment=inspection_comment,
+                    commenter_account_id=commenter_account_id)
 
                 input_data_dict[input_data_id] = inspections
 
             task_dict[task_id] = input_data_dict
 
-
         # 出力
         print(json.dumps(task_dict, indent=2))
-
 
     def main(self, args):
 
@@ -111,10 +123,9 @@ class PrintUnprocessedInspections:
 
         task_id_list = annofabcli.utils.read_lines(args.task_id_file)
 
-        self.print_unprocessed_inspections(args.project_id,
-                                                       task_id_list,
-                                                       args.inspection_comment,
-                                                            args.commenter_user_id)
+        self.print_unprocessed_inspections(args.project_id, task_id_list,
+                                           args.inspection_comment,
+                                           args.commenter_user_id)
 
 
 def parse_args(parser: argparse.ArgumentParser):
@@ -132,12 +143,13 @@ def parse_args(parser: argparse.ArgumentParser):
                         type=str,
                         help='絞り込み条件となる、検査コメントの中身。指定しない場合は絞り込まない。')
 
-    parser.add_argument('--commenter_user_id',
-                        type=str,
-                        help='絞り込み条件となる、検査コメントを付与したユーザのuser_id。 指定しない場合は絞り込まない。')
-
+    parser.add_argument(
+        '--commenter_user_id',
+        type=str,
+        help='絞り込み条件となる、検査コメントを付与したユーザのuser_id。 指定しない場合は絞り込まない。')
 
     parser.set_defaults(subcommand_func=main)
+
 
 def main(args):
     try:
@@ -149,11 +161,12 @@ def main(args):
     except Exception as e:
         logger.exception(e)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="未処置の検査コメントIDのList(task_id, input_data_idごと)を出力する。"
-                    "出力された内容は、`complete_tasks`ツールに利用する。"
-                    "出力内容は`Dict[TaskId, Dict[InputDatId, List[Inspection]]]`である.",
+        "出力された内容は、`complete_tasks`ツールに利用する。"
+        "出力内容は`Dict[TaskId, Dict[InputDatId, List[Inspection]]]`である.",
         parents=[annofabcli.utils.create_parent_parser()])
 
     parse_args(parser)
