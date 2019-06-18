@@ -9,6 +9,7 @@ import annofabcli.diff_projects
 import annofabcli.invite_users
 import annofabcli.reject_tasks
 import annofabcli.cancel_acceptance
+import annofabcli.print_unprocessed_inspections
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -31,6 +32,11 @@ if __name__ == "__main__":
 
     annofabcli.reject_tasks.parse_args(subparsers.add_parser("reject_tasks",
         help="検査コメントを付与してタスクを差し戻す。検査コメントは先頭の画像の左上(0,0)に付与する。"))
+
+    annofabcli.print_unprocessed_inspections.parse_args(subparsers.add_parser("print_unprocessed_inspections",
+        help="未処置の検査コメントIDのList(task_id, input_data_idごと)を出力する。"
+    "出力された内容は、`complete_tasks`ツールに利用する。"
+    "出力内容は`Dict[TaskId, Dict[InputDatId, List[Inspection]]]`である."))
 
 
 
