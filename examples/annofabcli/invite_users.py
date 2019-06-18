@@ -114,6 +114,8 @@ def parse_args(parser: argparse.ArgumentParser):
                         nargs='+',
                         help='組織名が指定されていない場合は、必要')
 
+    parser.set_defaults(subcommand_func=main)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="複数のプロジェクトに、ユーザを招待する。",

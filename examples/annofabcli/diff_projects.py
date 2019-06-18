@@ -295,7 +295,7 @@ def parse_args(parser: argparse.ArgumentParser):
                         'members: プロジェクトメンバ,'
                         'settings: プロジェクト設定,')
 
-    parser.set_defaults(func=main)
+    parser.set_defaults(subcommand_func=main)
 
 def main(args):
     try:

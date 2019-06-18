@@ -224,6 +224,8 @@ def parse_args(parser: argparse.ArgumentParser):
         '差し戻したタスクに割り当てるユーザのuser_id. 指定しなければ割り当てない。`--assign_last_annotator`と同時に指定できない'
     )
 
+    parser.set_defaults(subcommand_func=main)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

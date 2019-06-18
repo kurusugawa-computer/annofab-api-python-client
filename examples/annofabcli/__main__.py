@@ -8,8 +8,9 @@ import annofabcli.cancel_acceptance
 import annofabcli.diff_projects
 import annofabcli.invite_users
 import annofabcli.reject_tasks
-import annofabcli.cancel_acceptance
 import annofabcli.print_unprocessed_inspections
+import annofabcli.print_label_color
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -38,7 +39,8 @@ if __name__ == "__main__":
     "出力された内容は、`complete_tasks`ツールに利用する。"
     "出力内容は`Dict[TaskId, Dict[InputDatId, List[Inspection]]]`である."))
 
-    # annofabcli.cancel_acceptance(subparsers.add_parser("cancel_acceptance", help=""))
+    annofabcli.print_label_color.parse_args(subparsers.add_parser("print_label_color",
+        help="アノテーション仕様から、label_nameとRGBを対応付けたJSONファイルを出力する。"))
 
     args = parser.parse_args()
 
