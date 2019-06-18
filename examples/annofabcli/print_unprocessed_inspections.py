@@ -7,7 +7,6 @@ import json
 import logging
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
-
 import annofabapi
 import annofabcli
 from annofabapi.typing import Inspection

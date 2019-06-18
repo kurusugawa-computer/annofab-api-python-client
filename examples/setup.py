@@ -42,4 +42,8 @@ setup(
         "Topic :: Utilities",
         "Operating System :: OS Independent",
     ],
-    packages=['annofabcli'])
+    packages=['annofabcli'],
+    entry_points={
+        'console_scripts': ['annofabcli=annofabcli.__main__:main'],
+    }
+)

@@ -28,7 +28,7 @@ def create_ignored_label(label: Dict[str, Any]):
     """
     比較対象外のkeyを削除したラベル情報を生成する
     """
-    
+
     copied_label = copy.deepcopy(label)
     copied_label.pop("label_id", None)
 

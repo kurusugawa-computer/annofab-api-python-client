@@ -281,6 +281,11 @@ class RegisterAnnotation:
                     logger.warning(f"{task_id}, {input_data_id} のアノテーション登録失敗")
 
     def main(self, args):
+        """
+        main処理。
+        注意：このメソッドを修正すること
+        """
+
         annofabcli.utils.load_logging_config_from_args(args, __file__)
 
         logger.info(f"args: {args}")
@@ -370,7 +375,8 @@ def main(args):
 
 if __name__ == "__main__":
     global_parser = argparse.ArgumentParser(
-        description="deprecated: 矩形/ポリゴンアノテーションを、塗りつぶしv2アノテーションとして登録する。",
+        description="deprecated: 矩形/ポリゴンアノテーションを、塗りつぶしv2アノテーションとして登録する。"
+                    "注意：対象プロジェクトに合わせてスクリプトを修正すること。そのままでは実行できに。",
         parents=[annofabcli.utils.create_parent_parser()])
 
     parse_args(global_parser)
