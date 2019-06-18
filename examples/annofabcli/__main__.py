@@ -10,7 +10,7 @@ import annofabcli.invite_users
 import annofabcli.reject_tasks
 import annofabcli.print_unprocessed_inspections
 import annofabcli.print_label_color
-
+import annofabcli.write_annotation_image
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -41,6 +41,11 @@ if __name__ == "__main__":
 
     annofabcli.print_label_color.parse_args(subparsers.add_parser("print_label_color",
         help="アノテーション仕様から、label_nameとRGBを対応付けたJSONファイルを出力する。"))
+
+    annofabcli.write_annotation_image.parse_args(subparsers.add_parser("write_annotation_image",
+        help="アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。"
+        "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象。"
+        "複数のアノテーションディレクトリを指定して、画像をマージすることもできる。"))
 
     args = parser.parse_args()
 
