@@ -19,12 +19,14 @@ def main():
 
     annofabcli.cancel_acceptance.parse_args(
         subparsers.add_parser("cancel_acceptance",
-                              help="受け入れ完了タスクを、受け入れ取り消しする。"))
+                              help="受け入れ完了タスクを、受け入れ取り消しする。"
+                                   "オーナ権限を持つユーザで実行すること。"))
 
     annofabcli.complete_tasks.parse_args(
         subparsers.add_parser(
             "complete_tasks",
-            help="deprecated: タスクを受け入れ完了にする。その際、検査コメントを適切な状態にする。"))
+            help="未処置の検査コメントを適切な状態に変更して、タスクを受け入れ完了にする。"
+                 "オーナ権限を持つユーザで実行すること。"))
 
     annofabcli.diff_projects.parse_args(
         subparsers.add_parser("diff_projects",
@@ -32,7 +34,10 @@ def main():
                               "ただし、AnnoFabで生成されるIDや、変化する日時などは比較しない。"))
 
     annofabcli.invite_users.parse_args(
-        subparsers.add_parser("invite_users", help="複数のプロジェクトに、ユーザを招待する。"))
+        subparsers.add_parser("invite_users",
+                              help="複数のプロジェクトに、ユーザを招待する。"
+                                   "オーナ権限を持つユーザで実行すること。"))
+
     annofabcli.print_unprocessed_inspections.parse_args(
         subparsers.add_parser(
             "print_unprocessed_inspections",

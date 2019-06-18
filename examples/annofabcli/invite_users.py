@@ -27,30 +27,40 @@ class InviteUser:
     def assign_role_with_organization(self, organization_name: str,
                                       user_id_list: List[str],
                                       member_role: str):
+
+        # 進行中で自分自身が所属しているプロジェクトの一覧を取得する
+        my_account_id = self.facade.get_my_account_id()
         projects = self.service.wrapper.get_all_projects_of_organization(
-            organization_name)
+            organization_name, query_params={"status":"active", "account_id": my_account_id})
 
         for project in projects:
             project_id = project["project_id"]
             project_title = project["title"]
 
             try:
+                if not self.facade.my_role_is_owner(project_id):
+                    logger.warning(f"オーナではないため、プロジェクトメンバを招待できません。"
+                                   f"project_id = {project_id}, project_tilte = {project_title}")
+                    continue
+
                 self.service.wrapper.assign_role_to_project_members(
                     project_id, user_id_list, member_role)
-                logger.info(f"{project_title}に招待成功")
+                logger.info(f"{project_title}に招待成功. project_id = {project_id}")
 
             except requests.exceptions.HTTPError as e:
-                if e.response.status_code == requests.codes.not_found:
-                    logger.warning(
-                        f"プロジェクトオーナでないので、{project_title} に招待できなかった。")
-                else:
-                    logger.warning(e)
-                    logger.warning(f"エラーのため、{project_title} に招待できなかった。")
+                logger.warning(e)
+                logger.warning(f"エラーのため、{project_title} に招待できなかった。")
 
     def assign_role_with_project_id(self, project_id_list: List[str],
                                     user_id_list: List[str], member_role: str):
         for project_id in project_id_list:
+
             try:
+                if not self.facade.my_role_is_owner(project_id):
+                    logger.warning(f"オーナではないため、プロジェクトメンバを招待できません。"
+                                   f"project_id = {project_id}")
+                    continue
+
                 project_title = self.service.api.get_project(
                     project_id)[0]["title"]
                 self.service.wrapper.assign_role_to_project_members(
@@ -58,24 +68,19 @@ class InviteUser:
                 logger.info(f"{project_title}に招待成功. project_id={project_id}")
 
             except requests.exceptions.HTTPError as e:
-                if e.response.status_code == requests.codes.not_found:
-                    logger.warning(
-                        f"プロジェクトが存在しない or プロジェクトオーナでないので、招待できなかった。project_id={project_id}"
-                    )
-                else:
-                    logger.warning(e)
-                    logger.warning(f"エラーのため、招待できなかった。project_id={project_id}")
+                logger.warning(e)
+                logger.warning(f"エラーのため、招待できなかった。project_id={project_id}")
 
     def main(self, args):
         annofabcli.utils.load_logging_config_from_args(args, __file__)
 
         logger.info(args)
 
-        if args.organization_name is not None:
+        if args.organization is not None:
             self.assign_role_with_organization(args.organization, args.user_id,
                                                args.role)
 
-        elif args.project_id_list is not None:
+        elif args.project_id is not None:
             self.assign_role_with_project_id(args.project_id, args.user_id,
                                              args.role)
 
