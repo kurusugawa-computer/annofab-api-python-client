@@ -17,15 +17,15 @@ from annofabcli.common.utils import AnnofabApiFacade, read_lines
 
 logger = logging.getLogger(__name__)
 
-class RejectTasks:
 
+class RejectTasks:
     def __init__(self, service: annofabapi.Resource, facade: AnnofabApiFacade):
         self.service = service
         self.facade = facade
 
-
     def add_inspection_comment(self, project_id: str, task: Dict[str, Any],
-                               inspection_comment: str, commenter_account_id: str):
+                               inspection_comment: str,
+                               commenter_account_id: str):
         """
         先頭画像の左上に検査コメントを付与する
         Args:
@@ -59,13 +59,14 @@ class RejectTasks:
             "_type": "Put",
         }]
 
-        return self.service.api.batch_update_inspections(project_id,
-                                                    task["task_id"],
-                                                    first_input_data_id,
-                                                    request_body=req_inspection)[0]
+        return self.service.api.batch_update_inspections(
+            project_id,
+            task["task_id"],
+            first_input_data_id,
+            request_body=req_inspection)[0]
 
-
-    def reject_tasks_with_adding_comment(self,
+    def reject_tasks_with_adding_comment(
+            self,
             project_id: str,
             task_id_list: List[str],
             inspection_comment: str,
@@ -93,7 +94,8 @@ class RejectTasks:
 
         for task_id in task_id_list:
             task, _ = self.service.api.get_task(project_id, task_id)
-            logger.debug(f"task_id = {task_id}, {task['status']}, {task['phase']}")
+            logger.debug(
+                f"task_id = {task_id}, {task['status']}, {task['phase']}")
             if task["phase"] == "annotation":
                 logger.warning(
                     f"task_id = {task_id} はannofation phaseのため、差し戻しできません。")
@@ -102,13 +104,13 @@ class RejectTasks:
             try:
                 # 担当者を変更して、作業中にする
                 self.facade.change_operator_of_task(project_id, task_id,
-                                                         commenter_account_id)
+                                                    commenter_account_id)
                 logger.debug(
                     f"task_id = {task_id}, phase={task['phase']}, {commenter_user_id}に担当者変更 完了"
                 )
 
                 self.facade.change_to_working_phase(project_id, task_id,
-                                                         commenter_account_id)
+                                                    commenter_account_id)
                 logger.debug(
                     f"task_id = {task_id}, phase={task['phase']}, working statusに変更 完了"
                 )
@@ -123,8 +125,9 @@ class RejectTasks:
             time.sleep(3)
             try:
                 # 検査コメントを付与する
-                self.add_inspection_comment(project_id, task, inspection_comment,
-                                       commenter_account_id)
+                self.add_inspection_comment(project_id, task,
+                                            inspection_comment,
+                                            commenter_account_id)
                 logger.debug(f"task_id = {task_id}, 検査コメントの付与 完了")
             except requests.exceptions.HTTPError as e:
                 logger.warning(e)
@@ -152,7 +155,6 @@ class RejectTasks:
 
             logger.info(f"task_id = {task_id} の差し戻し完了")
 
-
     def validate_args(self, args):
         if args.assign_last_annotator and args.assigned_annotator_user_id is not None:
             logger.error(
@@ -161,7 +163,6 @@ class RejectTasks:
             return False
 
         return True
-
 
     def main(self, args):
         annofabcli.utils.load_logging_config_from_args(args, __file__)
@@ -180,7 +181,6 @@ class RejectTasks:
             commenter_user_id=user_id,
             assign_last_annotator=args.assign_last_annotator,
             assigned_annotator_user_id=args.assigned_annotator_user_id)
-
 
 
 def main(args):

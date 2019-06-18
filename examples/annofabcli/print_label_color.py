@@ -3,6 +3,7 @@
 """
 
 import argparse
+import json
 import logging
 from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
 
@@ -11,9 +12,9 @@ import requests
 import annofabapi
 import annofabcli
 from annofabcli.common.utils import AnnofabApiFacade
-import json
 
 logger = logging.getLogger(__name__)
+
 
 class PrintLabelColor:
     """
@@ -47,15 +48,12 @@ class PrintLabelColor:
 
         print(json.dumps(label_color_dict, indent=2))
 
-
     def main(self, args):
         self.print_label_color(args.project_id)
 
 
 def parse_args(parser: argparse.ArgumentParser):
-    parser.add_argument('project_id',
-                        type=str,
-                        help='対象のプロジェクトのproject_id')
+    parser.add_argument('project_id', type=str, help='対象のプロジェクトのproject_id')
 
     parser.set_defaults(subcommand_func=main)
 
@@ -70,6 +68,7 @@ def main(args):
     except Exception as e:
         logger.exception(e)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="アノテーション仕様から、label_nameとRGBを対応付けたJSONファイルを出力する。",
@@ -78,4 +77,3 @@ if __name__ == "__main__":
     parse_args(parser)
 
     main(parser.parse_args())
-
