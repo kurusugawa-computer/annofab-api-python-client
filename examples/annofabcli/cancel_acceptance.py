@@ -95,6 +95,7 @@ def parse_args(parser: argparse.ArgumentParser):
                         type=str,
                         help='再度受入を担当させたいユーザのuser_id。指定しなければ未割り当てになる。')
 
+    parser.set_defaults(subcommand_func=main)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
