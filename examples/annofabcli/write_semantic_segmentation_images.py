@@ -447,4 +447,5 @@ if __name__ == "__main__":
     service = annofabapi.build_from_netrc()
     facade = AnnofabApiFacade(service)
 
-    # args.func(args)
+    if hasattr(args, "func"):
+        args.func(args)

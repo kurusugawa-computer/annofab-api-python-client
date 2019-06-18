@@ -38,8 +38,15 @@ if __name__ == "__main__":
     "出力された内容は、`complete_tasks`ツールに利用する。"
     "出力内容は`Dict[TaskId, Dict[InputDatId, List[Inspection]]]`である."))
 
-
-
     # annofabcli.cancel_acceptance(subparsers.add_parser("cancel_acceptance", help=""))
 
     args = parser.parse_args()
+
+    if hasattr(args, 'subcommand_func'):
+        args.subcommand_func(args)
+
+    else:
+        # 未知のサブコマンドの場合はヘルプを表示
+        parser.print_help()
+
+

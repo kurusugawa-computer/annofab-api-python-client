@@ -137,7 +137,7 @@ def parse_args(parser: argparse.ArgumentParser):
                         help='絞り込み条件となる、検査コメントを付与したユーザのuser_id。 指定しない場合は絞り込まない。')
 
 
-    parser.set_defaults(func=main)
+    parser.set_defaults(subcommand_func=main)
 
 def main(args):
     try:
