@@ -5,6 +5,7 @@
 import argparse
 import logging
 import time
+import json
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
 import requests
@@ -15,6 +16,10 @@ from annofabapi.typing import Inspection, Task
 from annofabcli.common.utils import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
+
+TaskId = str
+InputDataId = str
+InspectionJson = Dict[TaskId, Dict[InputDataId, List[Inspection]]]
 
 class ComleteTasks:
     """
@@ -28,14 +33,14 @@ class ComleteTasks:
 
     def complete_tasks_with_changing_inspection_status(self,
             project_id: str, task_id_list: List[str], inspection_status: str,
-            filter_inspection: Callable[[Inspection], bool]):
+                                                       inspection_json: InspectionJson):
         """
         検査コメントのstatusを変更（対応完了 or 対応不要）にした上で、タスクを受け入れ完了状態にする
         Args:
             project_id: 対象のproject_id
             task_id_list: 受け入れ完了にするタスクのtask_idのList
             inspection_status: 変更後の検査コメントの状態
-            filter_inspection: 変更対象の検査コメントを決める関数
+            inspection_json: 変更対象の検査コメントのJSON情報
 
         """
 
@@ -63,7 +68,7 @@ class ComleteTasks:
             # 検査コメントを付与して、タスクを受け入れ完了にする
             try:
                 self.complete_acceptance_task(project_id, task, inspection_status,
-                                         filter_inspection, account_id)
+                                         inspection_json, account_id)
             except requests.HTTPError as e:
                 logger.warning(e)
                 logger.warning(f"{task_id} の受入完了に失敗")
@@ -72,22 +77,40 @@ class ComleteTasks:
                 continue
 
 
+    def update_status_of_inspections(self, project_id: str, task_id: str, input_data_id: str, inspection_json: InspectionJson, inspection_status: str):
+        target_insepctions = inspection_json.get(task_id, {}).get(input_data_id)
+
+        if target_insepctions is None or len(target_insepctions) == 0:
+            logger.warning(f"変更対象の検査コメントはなかった。task_id = {task_id}, input_data_id = {input_data_id}")
+            return
+
+        target_inspection_id_list = [inspection["inspection_id"] for inspection in target_insepctions]
+
+        def filter_inspection(arg_inspection: Inspection) -> bool:
+            """
+            statusを変更する検査コメントの条件。
+            """
+
+            return arg_inspection["inspection_id"] in target_inspection_id_list
+
+
+        self.service.wrapper.update_status_of_inspections(project_id, task_id, input_data_id, filter_inspection, inspection_status)
+        logger.debug(f"{task_id}, {input_data_id}, {len(target_insepctions)}件 検査コメントの状態を変更")
+
     def complete_acceptance_task(self, project_id: str, task: Task,
                                  inspection_status: str,
-                                 filter_inspection: Callable[[Inspection], bool],
+                                 inspection_json: InspectionJson,
                                  account_id: str):
         """
         検査コメントのstatusを変更（対応完了 or 対応不要）にした上で、タスクを受け入れ完了状態にする
         """
 
+
         task_id = task["task_id"]
 
         # 検査コメントの状態を変更する
         for input_data_id in task["input_data_id_list"]:
-            self.service.wrapper.update_status_of_inspections(
-                project_id, task_id, input_data_id, filter_inspection,
-                inspection_status)
-            logger.debug(f"{task_id}, {input_data_id}, 検査コメントの状態を変更")
+            self.update_status_of_inspections(project_id, task_id, input_data_id, inspection_json, inspection_status)
 
         # タスクの状態を検査する
         if self.validate_task(project_id, task_id):
@@ -112,7 +135,12 @@ class ComleteTasks:
                 )
                 is_valid = False
 
-            # TODO annotation_summaries も確認する必要ある？
+            annotation_summaries = validation["annotation_summaries"]
+            if len(annotation_summaries) > 0:
+                logger.warning(
+                    f"{task_id}, {input_data_id}, {inspection_summary}, アノテーションにエラーがある。{annotation_summaries}"
+                )
+                is_valid = False
 
         return is_valid
 
@@ -141,10 +169,13 @@ class ComleteTasks:
 
         task_id_list = annofabcli.utils.read_lines(args.task_id_file)
 
+        with open(args.inspection_json) as f:
+            inspection_json = json.load(f)
+
         self.complete_tasks_with_changing_inspection_status(args.project_id,
                                                        task_id_list,
                                                        args.inspection_status,
-                                                       filter_inspection)
+                                                            inspection_json)
 
 
 def parse_args(parser: argparse.ArgumentParser):
@@ -158,6 +189,13 @@ def parse_args(parser: argparse.ArgumentParser):
                         required=True,
                         help='受入を完了するタスクのtask_idの一覧が記載されたファイル')
 
+    parser.add_argument('--inspection_json',
+                        type=str,
+                        required=True,
+                        help='未処置の検査コメントの一覧。このファイルに記載された検査コメントの状態を変更する。'
+                             'jsonの構成は`Dict[TaskId, Dict[InputDatId, List[Inspection]]]。'
+                             '`print_unprocessed_inspections`ツールの出力結果である。')
+
     parser.add_argument('--inspection_status',
                         type=str,
                         required=True,
@@ -166,7 +204,7 @@ def parse_args(parser: argparse.ArgumentParser):
                         'error_corrected: 対応完了,'
                         'no_correction_required: 対応不要')
 
-    parser.set_defaults(func=main)
+    parser.set_defaults(subcommand_func=main)
 
 def main(args):
     try:
@@ -180,8 +218,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="deprecated: タスクを受け入れ完了にする。その際、検査コメントを適切な状態にする。"
-        "注意：ユーザがスクリプトを修正すること。",
+        description="deprecated: タスクを受け入れ完了にする。その際、検査コメントを適切な状態にする。",
         parents=[annofabcli.utils.create_parent_parser()])
 
     parse_args(parser)
