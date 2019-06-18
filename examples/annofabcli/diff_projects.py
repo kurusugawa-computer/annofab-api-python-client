@@ -311,15 +311,3 @@ def main(args):
 
     except Exception as e:
         logger.exception(e)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="プロジェクト間の差分を表示する。"
-        "ただし、AnnoFabで生成されるIDや、変化する日時などは比較しない。",
-        epilog="AnnoFab認証情報は`.netrc`に記載すること",
-        parents=[annofabcli.utils.create_parent_parser()])
-
-    parse_args(parser)
-
-    main(parser.parse_args())

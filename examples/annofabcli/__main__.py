@@ -16,7 +16,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="annofabapiを使ったCLIツール",
         parents=[annofabcli.utils.create_parent_parser()],
-        epilog="AnnoFab認証情報は`.netrc`に記載すること")
+        epilog="AnnoFabの認証情報は`.netrc`に記載すること")
 
     subparsers = parser.add_subparsers()
 
@@ -36,12 +36,6 @@ if __name__ == "__main__":
 
     annofabcli.invite_users.parse_args(
         subparsers.add_parser("invite_users", help="複数のプロジェクトに、ユーザを招待する。"))
-
-    annofabcli.reject_tasks.parse_args(
-        subparsers.add_parser(
-            "reject_tasks",
-            help="検査コメントを付与してタスクを差し戻す。検査コメントは先頭の画像の左上(0,0)に付与する。"))
-
     annofabcli.print_unprocessed_inspections.parse_args(
         subparsers.add_parser(
             "print_unprocessed_inspections",
@@ -53,6 +47,11 @@ if __name__ == "__main__":
         subparsers.add_parser(
             "print_label_color",
             help="アノテーション仕様から、label_nameとRGBを対応付けたJSONファイルを出力する。"))
+
+    annofabcli.reject_tasks.parse_args(
+        subparsers.add_parser(
+            "reject_tasks",
+            help="検査コメントを付与してタスクを差し戻す。検査コメントは先頭の画像の左上(0,0)に付与する。"))
 
     annofabcli.write_annotation_image.parse_args(
         subparsers.add_parser(

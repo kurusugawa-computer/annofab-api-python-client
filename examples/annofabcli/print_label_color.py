@@ -67,13 +67,3 @@ def main(args):
 
     except Exception as e:
         logger.exception(e)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="アノテーション仕様から、label_nameとRGBを対応付けたJSONファイルを出力する。",
-        parents=[annofabcli.utils.create_parent_parser()])
-
-    parse_args(parser)
-
-    main(parser.parse_args())

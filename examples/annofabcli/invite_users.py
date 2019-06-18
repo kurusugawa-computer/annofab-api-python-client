@@ -117,14 +117,3 @@ def parse_args(parser: argparse.ArgumentParser):
                         help='組織名が指定されていない場合は、必要')
 
     parser.set_defaults(subcommand_func=main)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="複数のプロジェクトに、ユーザを招待する。",
-        epilog="AnnoFab認証情報は`.netrc`に記載すること",
-        parents=[annofabcli.utils.create_parent_parser()])
-
-    parse_args(parser)
-
-    main(parser.parse_args())

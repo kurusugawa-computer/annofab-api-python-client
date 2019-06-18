@@ -232,13 +232,3 @@ def main(args):
 
     except Exception as e:
         logger.exception(e)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="deprecated: タスクを受け入れ完了にする。その際、検査コメントを適切な状態にする。",
-        parents=[annofabcli.utils.create_parent_parser()])
-
-    parse_args(parser)
-
-    main(parser.parse_args())
