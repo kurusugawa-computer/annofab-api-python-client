@@ -92,7 +92,9 @@ GitHubのRelease機能を使って、リリース情報を記載する。
 
 
 ### ドキュメントを作成する
-TODO
+1. `$ make docs`を実行して、ドキュメントを生成する。
+2. ドキュメントが期待通り生成されていること、警告やエラーが発生していないことを確認する。
+3. Read the Docsにログインして、ビルドする。https://readthedocs.org/projects/annofab-api-python-client/builds/
 
 
 ## 開発フロー
