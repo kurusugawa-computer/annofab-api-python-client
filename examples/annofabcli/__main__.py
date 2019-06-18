@@ -10,6 +10,11 @@ import annofabcli.reject_tasks
 import annofabcli.write_annotation_image
 
 def main():
+    """
+    サブコマンドとして利用できるようにする。
+    ただし`deprecated`なツールは、サブコマンド化しない。
+    """
+
     parser = argparse.ArgumentParser(
         description="annofabapiを使ったCLIツール",
         parents=[annofabcli.utils.create_parent_parser()],
@@ -41,19 +46,20 @@ def main():
     annofabcli.print_unprocessed_inspections.parse_args(
         subparsers.add_parser(
             "print_unprocessed_inspections",
-            help="未処置の検査コメントIDのList(task_id, input_data_idごと)を出力する。"
+            help="未処置の検査コメントList(task_id, input_data_idごと)をJSONとして出力する。"
             "出力された内容は、`complete_tasks`ツールに利用する。"
             "出力内容は`Dict[TaskId, Dict[InputDatId, List[Inspection]]]`である."))
 
     annofabcli.print_label_color.parse_args(
         subparsers.add_parser(
             "print_label_color",
-            help="アノテーション仕様から、label_nameとRGBを対応付けたJSONファイルを出力する。"))
+            help="アノテーション仕様から、label_nameとRGBを対応付けたJSONを出力する。"))
 
     annofabcli.reject_tasks.parse_args(
         subparsers.add_parser(
             "reject_tasks",
-            help="検査コメントを付与してタスクを差し戻す。検査コメントは先頭の画像の左上(0,0)に付与する。"))
+            help="検査コメントを付与してタスクを差し戻す。検査コメントは先頭の画像の左上(0,0)に付与する。"
+                 "オーナ権限を持つユーザで実行すること。"))
 
     annofabcli.write_annotation_image.parse_args(
         subparsers.add_parser(
