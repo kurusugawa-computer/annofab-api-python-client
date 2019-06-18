@@ -12,6 +12,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable
 
 import annofabapi
 import annofabcli
+import PIL
 import PIL.Image
 import PIL.ImageDraw
 from annofabapi.typing import Annotation
