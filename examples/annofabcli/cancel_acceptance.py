@@ -49,7 +49,9 @@ class CancelAcceptance:
                     "account_id": acceptor_account_id,
                     "last_updated_datetime": task["updated_datetime"],
                 }
-                self.service.api.operate_task(project_id, task_id, request_body=request_body)
+                self.service.api.operate_task(project_id,
+                                              task_id,
+                                              request_body=request_body)
                 logger.info(f"task_id = {task_id} の受け入れ取り消し完了")
 
             except requests.exceptions.HTTPError as e:

@@ -9,7 +9,7 @@ import annofabcli.print_unprocessed_inspections
 import annofabcli.reject_tasks
 import annofabcli.write_annotation_image
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="annofabapiを使ったCLIツール",
         parents=[annofabcli.utils.create_parent_parser()],
@@ -53,9 +53,10 @@ if __name__ == "__main__":
     annofabcli.write_annotation_image.parse_args(
         subparsers.add_parser(
             "write_annotation_image",
-            help="アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。"
-                 "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象。"
-                 "複数のアノテーションディレクトリを指定して、画像をマージすることもできる。"))
+            help=
+            "アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。"
+            "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象。"
+            "複数のアノテーションディレクトリを指定して、画像をマージすることもできる。"))
 
     args = parser.parse_args()
 
@@ -65,3 +66,6 @@ if __name__ == "__main__":
     else:
         # 未知のサブコマンドの場合はヘルプを表示
         parser.print_help()
+
+if __name__ == "__main__":
+    main()
