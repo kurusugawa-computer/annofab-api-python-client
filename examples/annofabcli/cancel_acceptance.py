@@ -10,7 +10,7 @@ import requests
 
 import annofabapi
 import annofabcli
-from annofabcli.common.utils import AnnofabApiFacade, load_logging_config, read_lines
+from annofabcli.common.utils import AnnofabApiFacade, read_lines
 
 logger = logging.getLogger(__name__)
 
@@ -49,8 +49,7 @@ class CancelAcceptance:
                     "account_id": acceptor_account_id,
                     "last_updated_datetime": task["updated_datetime"],
                 }
-                operated_task, _ = self.service.api.operate_task(
-                    project_id, task_id, request_body=request_body)
+                self.service.api.operate_task(project_id, task_id, request_body=request_body)
                 logger.info(f"task_id = {task_id} の受け入れ取り消し完了")
 
             except requests.exceptions.HTTPError as e:

@@ -162,24 +162,6 @@ class ComleteTasks:
         return is_valid
 
     def main(self, args):
-        def filter_inspection(arg_inspection: Inspection) -> bool:
-            """
-            statusを変更する検査コメントの条件。
-            TODO スクリプトを使う人が修正する
-            Args:
-                arg_inspection: 検査コメント
-
-            Returns:
-                検査コメントが変更対象ならば、Trueを返す。
-
-            """
-
-            # 未処置コメントのみ、変更する
-            if arg_inspection["status"] != "annotator_action_required":
-                return False
-
-            return False
-
         annofabcli.utils.load_logging_config_from_args(args, __file__)
         logger.info(f"args: {args}")
 

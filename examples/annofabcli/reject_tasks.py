@@ -155,7 +155,8 @@ class RejectTasks:
 
             logger.info(f"task_id = {task_id} の差し戻し完了")
 
-    def validate_args(self, args):
+    @staticmethod
+    def validate_args(args):
         if args.assign_last_annotator and args.assigned_annotator_user_id is not None:
             logger.error(
                 "引数に --assign_last_annotator と --assigned_annotator_user_id は同時に指定できません"

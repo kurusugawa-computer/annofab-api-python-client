@@ -1,7 +1,5 @@
 import argparse
 
-import annofabapi
-import annofabcli
 import annofabcli.cancel_acceptance
 import annofabcli.complete_tasks
 import annofabcli.diff_projects
@@ -10,7 +8,6 @@ import annofabcli.print_label_color
 import annofabcli.print_unprocessed_inspections
 import annofabcli.reject_tasks
 import annofabcli.write_annotation_image
-from annofabcli.common.utils import AnnofabApiFacade
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -56,10 +53,9 @@ if __name__ == "__main__":
     annofabcli.write_annotation_image.parse_args(
         subparsers.add_parser(
             "write_annotation_image",
-            help=
-            "アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。"
-            "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象。"
-            "複数のアノテーションディレクトリを指定して、画像をマージすることもできる。"))
+            help="アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。"
+                 "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象。"
+                 "複数のアノテーションディレクトリを指定して、画像をマージすることもできる。"))
 
     args = parser.parse_args()
 

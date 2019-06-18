@@ -5,14 +5,12 @@
 import argparse
 import json
 import logging
-import time
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
-import requests
 
 import annofabapi
 import annofabcli
-from annofabapi.typing import Inspection, Task
+from annofabapi.typing import Inspection
 from annofabcli.common.utils import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)

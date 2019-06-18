@@ -7,10 +7,7 @@ import json
 import logging
 from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
 
-import requests
-
 import annofabapi
-import annofabcli
 from annofabcli.common.utils import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
