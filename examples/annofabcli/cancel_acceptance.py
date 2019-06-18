@@ -95,14 +95,3 @@ def parse_args(parser: argparse.ArgumentParser):
                         help='再度受入を担当させたいユーザのuser_id。指定しなければ未割り当てになる。')
 
     parser.set_defaults(subcommand_func=main)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="受け入れ完了タスクを、受け入れ取り消しする。",
-        epilog="AnnoFab認証情報は`.netrc`に記載すること",
-        parents=[annofabcli.utils.create_parent_parser()])
-
-    parse_args(parser)
-
-    main(parser.parse_args())

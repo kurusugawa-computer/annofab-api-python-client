@@ -394,16 +394,3 @@ def main(args):
 
     except Exception as e:
         logger.exception(e)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description=
-        "アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。"
-        "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象。"
-        "複数のアノテーションディレクトリを指定して、画像をマージすることもできる。",
-        parents=[annofabcli.utils.create_parent_parser()])
-
-    parse_args(parser)
-
-    main(parser.parse_args())

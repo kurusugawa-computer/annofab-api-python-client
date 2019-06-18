@@ -160,15 +160,3 @@ def main(args):
 
     except Exception as e:
         logger.exception(e)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="未処置の検査コメントIDのList(task_id, input_data_idごと)を出力する。"
-        "出力された内容は、`complete_tasks`ツールに利用する。"
-        "出力内容は`Dict[TaskId, Dict[InputDatId, List[Inspection]]]`である.",
-        parents=[annofabcli.utils.create_parent_parser()])
-
-    parse_args(parser)
-
-    main(parser.parse_args())
