@@ -8,6 +8,7 @@ import annofabcli.cancel_acceptance
 import annofabcli.diff_projects
 import annofabcli.invite_users
 import annofabcli.reject_tasks
+import annofabcli.cancel_acceptance
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -15,6 +16,8 @@ if __name__ == "__main__":
 
     subparsers = parser.add_subparsers()
 
+    annofabcli.cancel_acceptance.parse_args(subparsers.add_parser("cancel_acceptance",
+        help="受け入れ完了タスクを、受け入れ取り消しする。"))
 
     annofabcli.deprecated_complete_tasks.parse_args(subparsers.add_parser("deprecated_complete_tasks",
         help="deprecated: タスクを受け入れ完了にする。その際、検査コメントを適切な状態にする。"))
