@@ -3,7 +3,7 @@ import annofabapi
 import annofabcli
 from annofabcli.common.utils import AnnofabApiFacade
 
-import annofabcli.deprecated_complete_tasks
+import annofabcli.complete_tasks
 import annofabcli.cancel_acceptance
 import annofabcli.diff_projects
 import annofabcli.invite_users
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     annofabcli.cancel_acceptance.parse_args(subparsers.add_parser("cancel_acceptance",
         help="受け入れ完了タスクを、受け入れ取り消しする。"))
 
-    annofabcli.deprecated_complete_tasks.parse_args(subparsers.add_parser("deprecated_complete_tasks",
+    annofabcli.complete_tasks.parse_args(subparsers.add_parser("complete_tasks",
         help="deprecated: タスクを受け入れ完了にする。その際、検査コメントを適切な状態にする。"))
 
     annofabcli.diff_projects.parse_args(subparsers.add_parser("diff_projects",

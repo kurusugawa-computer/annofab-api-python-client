@@ -19,6 +19,8 @@ loggers:
     level: DEBUG
   annofabapi:
     level: DEBUG
+  annofabcli:
+    level: DEBUG
 root:
   level: INFO
   handlers: [fileRotatingHandler, consoleHandler]
