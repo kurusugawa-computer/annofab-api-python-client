@@ -73,7 +73,6 @@ class InviteUser:
 
     def main(self, args):
         annofabcli.utils.load_logging_config_from_args(args, __file__)
-
         logger.info(args)
 
         if args.organization is not None:

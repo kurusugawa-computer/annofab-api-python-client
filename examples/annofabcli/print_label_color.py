@@ -5,6 +5,7 @@
 import argparse
 import json
 import logging
+import annofabcli
 from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
 
 import annofabapi
@@ -46,6 +47,9 @@ class PrintLabelColor:
         print(json.dumps(label_color_dict, indent=2))
 
     def main(self, args):
+        annofabcli.utils.load_logging_config_from_args(args, __file__)
+        logger.info(args)
+
         self.print_label_color(args.project_id)
 
 
