@@ -28,6 +28,11 @@ def read_lines(filepath: str) -> List[str]:
     return [e.rstrip('\r\n') for e in lines]
 
 
+def read_lines_except_blank_line(filepath: str) -> List[str]:
+    """ファイルを行単位で読み込む。ただし、改行コード、空行を除く"""
+    return [line for line in read_lines_except_blank_line(filepath) if line != ""]
+
+
 def get_input_data_size(str_input_data_size: str) -> InputDataSize:
     """400x300を(400,300)に変換する"""
     splited_list = str_input_data_size.split("x")

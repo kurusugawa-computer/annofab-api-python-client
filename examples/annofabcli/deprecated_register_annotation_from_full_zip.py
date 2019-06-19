@@ -323,7 +323,7 @@ class RegisterAnnotation:
             "label_id": "4bc53fa5-bb2e-44a5-adb2-04c76d87bfde"
         }]
 
-        task_id_list = annofabcli.utils.read_lines(args.task_id_file)
+        task_id_list = annofabcli.utils.read_lines_except_blank_line(args.task_id_file)
 
         self.register_raster_annotation_from_polygon(
             annotation_dir=args.annotation_dir,

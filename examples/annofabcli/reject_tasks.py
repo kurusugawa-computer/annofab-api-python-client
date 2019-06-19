@@ -13,7 +13,7 @@ import requests
 import annofabapi
 import annofabapi.utils
 import annofabcli
-from annofabcli.common.utils import AnnofabApiFacade, read_lines
+from annofabcli.common.utils import AnnofabApiFacade, read_lines_except_blank_line
 
 logger = logging.getLogger(__name__)
 
@@ -173,7 +173,7 @@ class RejectTasks:
         if not self.validate_args(args):
             return
 
-        task_id_list = read_lines(args.task_id_file)
+        task_id_list = read_lines_except_blank_line(args.task_id_file)
         user_id = self.service.api.login_user_id
         self.reject_tasks_with_adding_comment(
             args.project_id,
