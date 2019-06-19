@@ -17,7 +17,7 @@ def create_parent_parser():
     parent_parser.add_argument('--logdir',
                                type=str,
                                default=".log",
-                               help='ログファイルを保存するディレクトリ')
+                               help='ログファイルを保存するディレクトリ。指定しない場合は`.log`ディレクトリ')
     return parent_parser
 
 
