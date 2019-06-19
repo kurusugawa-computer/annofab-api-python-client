@@ -34,6 +34,21 @@ def get_input_data_size(str_input_data_size: str) -> InputDataSize:
     return (int(splited_list[0]), int(splited_list[1]))
 
 
+def add_parser(subparsers: argparse._SubParsersAction, subcommand_name: str, subcommand_help:str, description: str):
+    """
+    サブコマンド用にparserを追加する
+    """
+
+    epilog="AnnoFabの認証情報は、`$HOME/.netrc`に記載すること"
+
+    subparsers.add_parser(subcommand_name,
+                          parents=[create_parent_parser()],
+                          description=description,
+                          help=subcommand_help,
+                          epilog=epilog)
+
+
+
 def load_logging_config_from_args(args,
                                   py_filepath: str,
                                   logging_yaml_file: str = "./logging.yaml"):

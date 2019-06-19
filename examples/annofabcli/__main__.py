@@ -22,21 +22,11 @@ def main():
 
     subparsers = parser.add_subparsers()
 
-    annofabcli.cancel_acceptance.parse_args(
-        subparsers.add_parser("cancel_acceptance",
-                              help="受け入れ完了タスクを、受け入れ取り消しする。"
-                                   "オーナ権限を持つユーザで実行すること。"))
+    annofabcli.cancel_acceptance.add_parser(subparsers)
 
-    annofabcli.complete_tasks.parse_args(
-        subparsers.add_parser(
-            "complete_tasks",
-            help="未処置の検査コメントを適切な状態に変更して、タスクを受け入れ完了にする。"
-                 "オーナ権限を持つユーザで実行すること。"))
+    annofabcli.complete_tasks.add_parser(subparsers)
 
-    annofabcli.diff_projects.parse_args(
-        subparsers.add_parser("diff_projects",
-                              help="プロジェクト間の差分を表示する。"
-                              "ただし、AnnoFabで生成されるIDや、変化する日時などは比較しない。"))
+    annofabcli.diff_projects.add_parser(subparsers)
 
     annofabcli.invite_users.parse_args(
         subparsers.add_parser("invite_users",
