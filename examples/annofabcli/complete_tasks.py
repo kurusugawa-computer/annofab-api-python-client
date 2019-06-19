@@ -214,3 +214,12 @@ def main(args):
 
     except Exception as e:
         logger.exception(e)
+
+def add_parser(subparsers: argparse._SubParsersAction):
+    subcommand_name = "complete_tasks"
+    subcommand_help = "未処置の検査コメントを適切な状態に変更して、タスクを受け入れ完了にする。"
+    description = ("未処置の検査コメントを適切な状態に変更して、タスクを受け入れ完了にする。"
+                   "オーナ権限を持つユーザで実行すること。")
+
+    annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
+

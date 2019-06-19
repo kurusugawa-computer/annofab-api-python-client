@@ -96,3 +96,11 @@ def parse_args(parser: argparse.ArgumentParser):
                         help='再度受入を担当させたいユーザのuser_id。指定しなければ未割り当てになる。')
 
     parser.set_defaults(subcommand_func=main)
+
+def add_parser(subparsers: argparse._SubParsersAction):
+    subcommand_name = "cancel_acceptance"
+    subcommand_help = "受け入れ完了タスクを、受け入れ取り消しする。"
+    description = ("受け入れ完了タスクを、受け入れ取り消しする。"
+                   "オーナ権限を持つユーザで実行すること。")
+
+    annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
