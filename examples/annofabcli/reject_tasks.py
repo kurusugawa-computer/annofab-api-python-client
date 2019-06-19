@@ -226,3 +226,15 @@ def parse_args(parser: argparse.ArgumentParser):
     )
 
     parser.set_defaults(subcommand_func=main)
+
+
+def add_parser(subparsers: argparse._SubParsersAction):
+    subcommand_name = "reject_tasks"
+
+    subcommand_help = "検査コメントを付与してタスクを差し戻す。検査コメントは先頭の画像の左上(0,0)に付与する。"
+
+    description = ("検査コメントを付与してタスクを差し戻す。検査コメントは先頭の画像の左上(0,0)に付与する。"
+                 "オーナ権限を持つユーザで実行すること。")
+
+    parser = annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
+    parse_args(parser)

@@ -9,6 +9,7 @@ import annofabcli.print_unprocessed_inspections
 import annofabcli.reject_tasks
 import annofabcli.write_annotation_image
 
+
 def main():
     """
     サブコマンドとして利用できるようにする。
@@ -16,57 +17,35 @@ def main():
     """
 
     parser = argparse.ArgumentParser(
-        description="annofabapiを使ったCLIツール",
-        parents=[annofabcli.utils.create_parent_parser()],
-        epilog="AnnoFabの認証情報は`.netrc`に記載すること")
+        description="annofabapiを使ったCLIツール")
 
     subparsers = parser.add_subparsers()
 
+    # サブコマンドの定義
     annofabcli.cancel_acceptance.add_parser(subparsers)
 
     annofabcli.complete_tasks.add_parser(subparsers)
 
     annofabcli.diff_projects.add_parser(subparsers)
 
-    annofabcli.invite_users.parse_args(
-        subparsers.add_parser("invite_users",
-                              help="複数のプロジェクトに、ユーザを招待する。"
-                                   "オーナ権限を持つユーザで実行すること。"))
+    annofabcli.invite_users.add_parser(subparsers)
 
-    annofabcli.print_unprocessed_inspections.parse_args(
-        subparsers.add_parser(
-            "print_unprocessed_inspections",
-            help="未処置の検査コメントList(task_id, input_data_idごと)をJSONとして出力する。"
-            "出力された内容は、`complete_tasks`ツールに利用する。"
-            "出力内容は`Dict[TaskId, Dict[InputDatId, List[Inspection]]]`である."))
+    annofabcli.print_unprocessed_inspections.add_parser(subparsers)
 
-    annofabcli.print_label_color.parse_args(
-        subparsers.add_parser(
-            "print_label_color",
-            help="アノテーション仕様から、label_nameとRGBを対応付けたJSONを出力する。"))
+    annofabcli.print_label_color.add_parser(subparsers)
 
-    annofabcli.reject_tasks.parse_args(
-        subparsers.add_parser(
-            "reject_tasks",
-            help="検査コメントを付与してタスクを差し戻す。検査コメントは先頭の画像の左上(0,0)に付与する。"
-                 "オーナ権限を持つユーザで実行すること。"))
+    annofabcli.reject_tasks.add_parser(subparsers)
 
-    annofabcli.write_annotation_image.parse_args(
-        subparsers.add_parser(
-            "write_annotation_image",
-            help=
-            "アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。"
-            "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象。"
-            "複数のアノテーションディレクトリを指定して、画像をマージすることもできる。"))
+    annofabcli.write_annotation_image.add_parser(subparsers)
 
     args = parser.parse_args()
-
     if hasattr(args, 'subcommand_func'):
         args.subcommand_func(args)
 
     else:
         # 未知のサブコマンドの場合はヘルプを表示
         parser.print_help()
+
 
 if __name__ == "__main__":
     main()

@@ -68,3 +68,16 @@ def main(args):
 
     except Exception as e:
         logger.exception(e)
+
+def add_parser(subparsers: argparse._SubParsersAction):
+    subcommand_name = "print_label_color"
+
+    subcommand_help = ("アノテーション仕様から、label_nameとRGBを対応付けたJSONを出力する。"
+                       "出力された内容は、`write_annotation_image`ツールに利用する。")
+
+    description = ("アノテーション仕様から、label_nameとRGBを対応付けたJSONを出力する。"
+                   "出力された内容は、`write_annotation_image`ツールに利用する。"
+                   "出力内容は`Dict[LabelName, [R,G,B]]`である.")
+
+    parser = annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
+    parse_args(parser)

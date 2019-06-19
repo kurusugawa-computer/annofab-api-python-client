@@ -157,3 +157,17 @@ def main(args):
 
     except Exception as e:
         logger.exception(e)
+
+
+def add_parser(subparsers: argparse._SubParsersAction):
+    subcommand_name = "print_unprocessed_inspections"
+
+    subcommand_help = "未処置の検査コメントList(task_id, input_data_idごと)をJSONとして出力する。出力された内容は、`complete_tasks`ツールに利用する。"
+
+    description = ("未処置の検査コメントList(task_id, input_data_idごと)をJSONとして出力する。"
+            "出力された内容は、`complete_tasks`ツールに利用する。"
+            "出力内容は`Dict[TaskId, Dict[InputDatId, List[Inspection]]]`である.")
+
+    parser = annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
+    parse_args(parser)
+
