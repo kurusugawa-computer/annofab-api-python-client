@@ -118,7 +118,7 @@ class PrintUnprocessedInspections:
         annofabcli.utils.load_logging_config_from_args(args, __file__)
         logger.info(f"args: {args}")
 
-        task_id_list = annofabcli.utils.read_lines(args.task_id_file)
+        task_id_list = annofabcli.utils.read_lines_except_blank_line(args.task_id_file)
 
         self.print_unprocessed_inspections(args.project_id, task_id_list,
                                            args.inspection_comment,

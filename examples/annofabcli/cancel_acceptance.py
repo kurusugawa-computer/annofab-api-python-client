@@ -10,7 +10,7 @@ import requests
 
 import annofabapi
 import annofabcli
-from annofabcli.common.utils import AnnofabApiFacade, read_lines
+from annofabcli.common.utils import AnnofabApiFacade, read_lines_except_blank_line
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ class CancelAcceptance:
 
         logger.info(f"args: {args}")
 
-        task_id_list = read_lines(args.task_id_file)
+        task_id_list = read_lines_except_blank_line(args.task_id_file)
         self.cancel_acceptance(args.project_id, task_id_list, args.user_id)
 
 

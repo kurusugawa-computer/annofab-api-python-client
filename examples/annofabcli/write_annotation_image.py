@@ -305,7 +305,7 @@ class WriteAnnotationImage:
 
         try:
             if args.label_order_file is not None:
-                labels = annofabcli.utils.read_lines(args.label_order_file)
+                labels = annofabcli.utils.read_lines_except_blank_line(args.label_order_file)
 
                 def annotation_sort_key_func(d: Annotation) -> int:
                     """d
