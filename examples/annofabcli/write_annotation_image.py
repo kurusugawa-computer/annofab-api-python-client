@@ -395,3 +395,17 @@ def main(args):
 
     except Exception as e:
         logger.exception(e)
+
+
+def add_parser(subparsers: argparse._SubParsersAction):
+    subcommand_name = "write_annotation_image"
+
+    subcommand_help = "アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。"
+
+    description = ("アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。"
+            "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象。"
+            "複数のアノテーションディレクトリを指定して、画像をマージすることもできる。")
+
+    parser = annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
+    parse_args(parser)
+

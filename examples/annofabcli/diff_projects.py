@@ -315,5 +315,6 @@ def add_parser(subparsers: argparse._SubParsersAction):
     description = ("プロジェクト間の差分を表示する。"
                    "ただし、AnnoFabで生成されるIDや、変化する日時などは比較しない。")
 
-    annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
+    parser = annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
+    parse_args(parser)
 

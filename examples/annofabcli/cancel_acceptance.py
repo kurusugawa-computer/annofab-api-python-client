@@ -103,4 +103,5 @@ def add_parser(subparsers: argparse._SubParsersAction):
     description = ("受け入れ完了タスクを、受け入れ取り消しする。"
                    "オーナ権限を持つユーザで実行すること。")
 
-    annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
+    parser = annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
+    parse_args(parser)

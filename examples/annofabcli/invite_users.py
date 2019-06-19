@@ -121,3 +121,12 @@ def parse_args(parser: argparse.ArgumentParser):
                         help='組織名が指定されていない場合は、必要')
 
     parser.set_defaults(subcommand_func=main)
+
+def add_parser(subparsers: argparse._SubParsersAction):
+    subcommand_name = "invite_users"
+    subcommand_help = "複数のプロジェクトに、ユーザを招待する。"
+    description = ("複数のプロジェクトに、ユーザを招待する。"
+                   "オーナ権限を持つユーザで実行すること。")
+
+    parser = annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
+    parse_args(parser)
