@@ -46,7 +46,8 @@ $ pip install . -U
 
 ## 共通のオプション引数
 
-## Help
+### `-h` or `--help`
+コマンドのヘルプを出力します。
 
 ```
 # annofabcli全体のヘルプ
@@ -56,11 +57,15 @@ $ annofabcli -h
 $ annofabcli diff_projects -h
 ```
 
+### `--logdir`
+ログファイルを保存するディレクトリを指定します。指定しない場合、`.log`ディレクトリにログファイルを出力します。
+
 
 ### `--task_id_file`
 `task_id`の一覧が記載されたファイルです。`task_id`は改行（CR/LF）で区切られています。
+`--task_id_file`を指定できないサブコマンドもあります。
 
-```
+```plain:task.txt
 task_id_1
 task_id_2
 ...
@@ -166,11 +171,11 @@ $ annofabcli print_unprocessed_inspections --project_id prj1 --task_id_file task
 ```
 
 
-* `task.txt`は、`task_id`の一覧が記載されたファイルです。
+
 
 
 ### print_label_color
-アノテーション仕様から、label_name(english)とRGBを対応付けたJSONを出力します。
+アノテーション仕様から、label_name(english)とRGBを対応付けたJSONを出力します。出力結果は[write_annotation_image](#write_annotation_image)に利用します。
 
 ```
 # 未処置の検査コメント一覧を出力する
@@ -213,7 +218,7 @@ $ annofabcli reject_tasks --project_id prj1 --task_id_file tasks.txt --comment "
 ```
 
 * オーナ権限を持つユーザで実行してください。
-* `task.txt`は、`task_id`の一覧が記載されたファイルです。
+
 
 
 ### write_annotation_image
