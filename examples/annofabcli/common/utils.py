@@ -22,9 +22,9 @@ def create_parent_parser():
 
     parent_parser.add_argument("--logging_yaml",
                                type=str,
-                               help="ロギグングの設定ファイル(YAML)。"
+                               help="ロギグングの設定ファイル(YAML)。指定した場合、`--logdir`オプションは無視される。"
                                     "指定しない場合、デフォルトのロギング設定ファイルが読み込まれる。"
-                                    "設定ファイルのフォーマットは https://docs.python.org/ja/3/howto/logging.html 参照。")
+                                    "設定ファイルの書き方は https://docs.python.org/ja/3/howto/logging.html 参照。")
     return parent_parser
 
 
