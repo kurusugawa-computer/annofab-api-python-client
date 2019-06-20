@@ -134,20 +134,8 @@ https://annofab-api-python-client.readthedocs.io/en/latest/
 
 
 # CLIツール
-annofabapiを使ったCLI(Command Line Interface)ツールを提供しています。詳しくは[examples/README.md](examples/README.md)を参照してください。
-
-
-| サブコマンド                  | 内容                                                                                                     |
-|-------------------------------|----------------------------------------------------------------------------------------------------------|
-| cancel_acceptance             | 受け入れ完了タスクを、受け入れ取り消しする。                                                             |
-| complete_tasks                | 未処置の検査コメントを適切な状態に変更して、タスクを受け入れ完了にする。                                 |
-| diff_projects                 | プロジェクト間の差分を表示する                                                                           |
-| invite_users                  | 複数のプロジェクトに、ユーザを招待する。                                                                 |
-| print_unprocessed_inspections | 未処置の検査コメントList(task_id, input_data_idごと)をJSONとして出力する。                               |
-| print_label_color             | アノテーション仕様から、label_nameとRGBを対応付けたJSONを出力する。                                      |
-| reject_tasks                  | 検査コメントを付与してタスクを差し戻す。                                                                 |
-| write_annotation_image        | アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。 |
-
+「タスクの一括差し戻し」や、「プロジェクト間の差分表示」など、AnnoFabの画面で実施するには時間がかかる操作を、CLIツールとして提供しています。
+詳しくは[examples/README.md](examples/README.md)を参照してください。
 
 # Usage for Develper
 [README_for_developer.md](README_for_developer.md)を参照してください。
