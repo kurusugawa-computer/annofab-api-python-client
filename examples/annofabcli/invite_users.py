@@ -89,14 +89,9 @@ class InviteUser:
 
 
 def main(args):
-    try:
-        service = annofabapi.build_from_netrc()
-        facade = AnnofabApiFacade(service)
-
-        InviteUser(service, facade).main(args)
-
-    except Exception as e:
-        logger.exception(e)
+    service = annofabapi.build_from_netrc()
+    facade = AnnofabApiFacade(service)
+    InviteUser(service, facade).main(args)
 
 
 def parse_args(parser: argparse.ArgumentParser):

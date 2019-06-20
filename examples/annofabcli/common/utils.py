@@ -1,6 +1,7 @@
 import argparse
 import logging.config
 import os
+import pkgutil
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused-import
 
@@ -18,6 +19,12 @@ def create_parent_parser():
                                type=str,
                                default=".log",
                                help='ログファイルを保存するディレクトリ。指定しない場合は`.log`ディレクトリ')
+
+    parent_parser.add_argument("--logging_yaml",
+                               type=str,
+                               help="ロギグングの設定ファイル(YAML)。"
+                                    "指定しない場合、デフォルトのロギング設定ファイルが読み込まれる。"
+                                    "設定ファイルのフォーマットは https://docs.python.org/ja/3/howto/logging.html 参照。")
     return parent_parser
 
 
@@ -64,39 +71,45 @@ def add_parser(subparsers: argparse._SubParsersAction, subcommand_name: str, sub
 
 
 
-def load_logging_config_from_args(args,
-                                  py_filepath: str,
-                                  logging_yaml_file: str = "./logging.yaml"):
+def load_logging_config_from_args(args: argparse.Namespace,
+                                  py_filepath: str):
     """
     args情報から、logging設定ファイルを読み込む
     Args:
         args: Command引数情報
-        py_filepath: Python Filepath
-        logging_yaml_file: logging設定ファイル
-
-    Returns:
-
+        py_filepath: Python Filepath. この名前を元にログファイル名が決まる。
     """
     log_dir = args.logdir
+    logging_yaml_file = args.logging_yaml if hasattr(args, "logging_yaml") else None
+
     log_filename = f"{os.path.basename(py_filepath)}.log"
     load_logging_config(log_dir, log_filename, logging_yaml_file)
 
 
 def load_logging_config(log_dir: str,
                         log_filename: str,
-                        logging_yaml_file: str = "./logging.yaml"):
-    """./logging.yamlを読み込む"""
+                        logging_yaml_file: Optional[str] = None):
+    """
+    ログ設定ファイルを読み込み、loggingを設定する。
 
-    Path(log_dir).mkdir(exist_ok=True, parents=True)
+    Args:
+        log_dir: ログの出力先
+        log_filename: ログのファイル名
+        logging_yaml_file: ログ設定ファイル。指定しない場合、`data/logging.yaml`を読み込む. 指定した場合、log_dir, log_filenameは無視する。
 
-    with open(logging_yaml_file, encoding='utf-8') as f:
-        logging_config = yaml.safe_load(f)
+    """
 
+    if logging_yaml_file is not None and os.path.exists(logging_yaml_file):
+        with open(logging_yaml_file, encoding='utf-8') as f:
+            logging_config = yaml.safe_load(f)
+
+    else:
+        logging_config = yaml.safe_load(pkgutil.get_data('annofabcli', 'data/logging.yaml').decode("utf-8"))
         log_filename = f"{str(log_dir)}/{log_filename}"
-        logging_config["handlers"]["fileRotatingHandler"][
-            "filename"] = log_filename
+        logging_config["handlers"]["fileRotatingHandler"]["filename"] = log_filename
+        Path(log_dir).mkdir(exist_ok=True, parents=True)
 
-        logging.config.dictConfig(logging_config)
+    logging.config.dictConfig(logging_config)
 
 
 class AnnofabApiFacade:

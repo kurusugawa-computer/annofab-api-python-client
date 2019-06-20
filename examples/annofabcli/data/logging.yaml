@@ -1,5 +1,3 @@
-# version は必ず必要
-# https://docs.python.org/ja/3/library/logging.config.html#dictionary-schema-details
 version: 1
 formatters:
   customFormatter:
@@ -24,5 +22,6 @@ loggers:
 root:
   level: INFO
   handlers: [fileRotatingHandler, consoleHandler]
-# デフォルトのロガーを無効化しないようにする　https://docs.djangoproject.com/ja/2.1/topics/logging/#configuring-logging
+
+# Avoid disabling default logger　https://docs.djangoproject.com/ja/2.1/topics/logging/#configuring-logging
 disable_existing_loggers: False

@@ -60,14 +60,10 @@ def parse_args(parser: argparse.ArgumentParser):
 
 
 def main(args):
-    try:
-        service = annofabapi.build_from_netrc()
-        facade = AnnofabApiFacade(service)
+    service = annofabapi.build_from_netrc()
+    facade = AnnofabApiFacade(service)
+    PrintLabelColor(service, facade).main(args)
 
-        PrintLabelColor(service, facade).main(args)
-
-    except Exception as e:
-        logger.exception(e)
 
 def add_parser(subparsers: argparse._SubParsersAction):
     subcommand_name = "print_label_color"

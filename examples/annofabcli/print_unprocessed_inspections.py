@@ -149,14 +149,9 @@ def parse_args(parser: argparse.ArgumentParser):
 
 
 def main(args):
-    try:
-        service = annofabapi.build_from_netrc()
-        facade = AnnofabApiFacade(service)
-
-        PrintUnprocessedInspections(service, facade).main(args)
-
-    except Exception as e:
-        logger.exception(e)
+    service = annofabapi.build_from_netrc()
+    facade = AnnofabApiFacade(service)
+    PrintUnprocessedInspections(service, facade).main(args)
 
 
 def add_parser(subparsers: argparse._SubParsersAction):

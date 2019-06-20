@@ -298,14 +298,9 @@ def parse_args(parser: argparse.ArgumentParser):
 
 
 def main(args):
-    try:
-        service = annofabapi.build_from_netrc()
-        facade = AnnofabApiFacade(service)
-
-        DiffProjecs(service, facade).main(args)
-
-    except Exception as e:
-        logger.exception(e)
+    service = annofabapi.build_from_netrc()
+    facade = AnnofabApiFacade(service)
+    DiffProjecs(service, facade).main(args)
 
 
 

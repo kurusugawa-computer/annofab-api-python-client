@@ -206,14 +206,10 @@ def parse_args(parser: argparse.ArgumentParser):
 
 
 def main(args):
-    try:
-        service = annofabapi.build_from_netrc()
-        facade = AnnofabApiFacade(service)
+    service = annofabapi.build_from_netrc()
+    facade = AnnofabApiFacade(service)
+    ComleteTasks(service, facade).main(args)
 
-        ComleteTasks(service, facade).main(args)
-
-    except Exception as e:
-        logger.exception(e)
 
 def add_parser(subparsers: argparse._SubParsersAction):
     subcommand_name = "complete_tasks"
