@@ -66,7 +66,7 @@ def add_parser(subparsers: argparse._SubParsersAction, subcommand_name: str, sub
 
 def load_logging_config_from_args(args,
                                   py_filepath: str,
-                                  logging_yaml_file: str = "annofabcli/logging.yaml"):
+                                  logging_yaml_file: str = "./logging.yaml"):
     """
     args情報から、logging設定ファイルを読み込む
     Args:
