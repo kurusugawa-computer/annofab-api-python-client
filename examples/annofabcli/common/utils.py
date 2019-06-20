@@ -30,7 +30,7 @@ def read_lines(filepath: str) -> List[str]:
 
 def read_lines_except_blank_line(filepath: str) -> List[str]:
     """ファイルを行単位で読み込む。ただし、改行コード、空行を除く"""
-    lines = read_lines_except_blank_line(filepath)
+    lines = read_lines(filepath)
     return [line for line in lines if line != ""]
 
 
