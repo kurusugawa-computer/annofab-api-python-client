@@ -10,7 +10,7 @@ import requests
 
 import annofabapi
 import annofabcli
-from annofabcli.common.utils import AnnofabApiFacade
+from annofabcli import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
 

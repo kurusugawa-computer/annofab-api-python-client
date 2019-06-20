@@ -13,7 +13,8 @@ import requests
 import annofabapi
 import annofabapi.utils
 import annofabcli
-from annofabcli.common.utils import AnnofabApiFacade, read_lines_except_blank_line
+from annofabcli.common.utils import read_lines_except_blank_line
+from annofabcli import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
 

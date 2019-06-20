@@ -9,7 +9,7 @@ import annofabcli
 from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
 
 import annofabapi
-from annofabcli.common.utils import AnnofabApiFacade
+from annofabcli import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
 

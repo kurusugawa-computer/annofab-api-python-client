@@ -13,7 +13,7 @@ import requests
 import annofabapi
 import annofabcli
 from annofabapi.typing import Inspection, Task
-from annofabcli.common.utils import AnnofabApiFacade
+from annofabcli import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
 

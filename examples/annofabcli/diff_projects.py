@@ -11,7 +11,7 @@ from typing import Any, Dict, List  # pylint: disable=unused-import
 import annofabapi
 import annofabcli
 import dictdiffer
-from annofabcli.common.utils import AnnofabApiFacade
+from annofabcli import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
 

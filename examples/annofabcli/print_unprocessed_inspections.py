@@ -10,7 +10,7 @@ from typing import Any, Callable, Dict, List, Optional  # pylint: disable=unused
 import annofabapi
 import annofabcli
 from annofabapi.typing import Inspection
-from annofabcli.common.utils import AnnofabApiFacade
+from annofabcli import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
 
