@@ -30,7 +30,8 @@ def read_lines(filepath: str) -> List[str]:
 
 def read_lines_except_blank_line(filepath: str) -> List[str]:
     """ファイルを行単位で読み込む。ただし、改行コード、空行を除く"""
-    return [line for line in read_lines_except_blank_line(filepath) if line != ""]
+    lines = read_lines_except_blank_line(filepath)
+    return [line for line in lines if line != ""]
 
 
 def get_input_data_size(str_input_data_size: str) -> InputDataSize:
@@ -65,7 +66,7 @@ def add_parser(subparsers: argparse._SubParsersAction, subcommand_name: str, sub
 
 def load_logging_config_from_args(args,
                                   py_filepath: str,
-                                  logging_yaml_file: str = "./logging.yaml"):
+                                  logging_yaml_file: str = "annofabcli/logging.yaml"):
     """
     args情報から、logging設定ファイルを読み込む
     Args:
