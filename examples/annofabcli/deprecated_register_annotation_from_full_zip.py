@@ -363,14 +363,9 @@ def parse_args(parser: argparse.ArgumentParser):
 
 
 def main(args):
-    try:
-        service = annofabapi.build_from_netrc()
-        facade = AnnofabApiFacade(service)
-
-        RegisterAnnotation(service, facade).main(args)
-
-    except Exception as e:
-        logger.exception(e)
+    service = annofabapi.build_from_netrc()
+    facade = AnnofabApiFacade(service)
+    RegisterAnnotation(service, facade).main(args)
 
 
 if __name__ == "__main__":
@@ -381,4 +376,8 @@ if __name__ == "__main__":
 
     parse_args(global_parser)
 
-    main(global_parser.parse_args())
+    try:
+        main(global_parser.parse_args())
+    except Exception as e:
+        logger.exception(e)
+        raise e

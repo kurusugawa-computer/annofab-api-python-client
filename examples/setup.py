@@ -3,7 +3,7 @@
 
 import os
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -42,7 +42,8 @@ setup(
         "Topic :: Utilities",
         "Operating System :: OS Independent",
     ],
-    packages=['annofabcli'],
+    packages=find_packages(),
+    package_data={'annofabcli': ['data/logging.yaml']},
     entry_points={
         'console_scripts': ['annofabcli=annofabcli.__main__:main'],
     }

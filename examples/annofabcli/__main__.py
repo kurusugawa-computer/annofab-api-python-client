@@ -1,4 +1,5 @@
 import argparse
+import logging
 
 import annofabcli.cancel_acceptance
 import annofabcli.complete_tasks
@@ -9,6 +10,7 @@ import annofabcli.print_unprocessed_inspections
 import annofabcli.reject_tasks
 import annofabcli.write_annotation_image
 
+logger = logging.getLogger(__name__)
 
 def main():
     """
@@ -40,7 +42,11 @@ def main():
 
     args = parser.parse_args()
     if hasattr(args, 'subcommand_func'):
-        args.subcommand_func(args)
+        try:
+            args.subcommand_func(args)
+        except Exception as e:
+            logger.exception(e)
+            raise e
 
     else:
         # 未知のサブコマンドの場合はヘルプを表示
