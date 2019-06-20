@@ -59,6 +59,25 @@ $ annofabcli diff_projects -h
 ### `--logdir`
 ログファイルを保存するディレクトリを指定します。指定しない場合、`.log`ディレクトリにログファイルを出力します。
 
+### `--logging_yaml`
+ロギグングの設定ファイル(YAML)を指定します。指定した場合、`--logdir`オプションは無視されます。指定しない場合、デフォルトのロギング設定ファイルが読み込まれます。
+設定ファイルの書き方は https://docs.python.org/ja/3/howto/logging.html を参照してください。
+
+```yaml:logging-sample.yaml
+# WARNINGレベル以上のログをコンソールに出力する
+
+version: 1
+handlers:
+  consoleHandler:
+    class: logging.StreamHandler
+root:
+  level: WARNING
+  handlers: [consoleHandler]
+
+# デフォルトのロガーを無効化しないようにする https://docs.djangoproject.com/ja/2.1/topics/logging/#configuring-logging
+disable_existing_loggers: False
+```
+
 
 ### `--task_id_file`
 `task_id`の一覧が記載されたファイルです。`task_id`は改行（CR/LF）で区切られています。
