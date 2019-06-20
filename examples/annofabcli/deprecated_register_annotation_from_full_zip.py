@@ -16,7 +16,7 @@ import PIL.Image
 import PIL.ImageDraw
 from annofabapi.typing import Annotation
 from annofabcli.common.typing import InputDataSize
-from annofabcli.common.utils import AnnofabApiFacade
+from annofabcli import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
 
