@@ -125,6 +125,32 @@ class AnnofabApi(AbstractAnnofabApi):
 
         return kwargs
 
+    @staticmethod
+    def _response_to_content(response: requests.Response) -> Any:
+        """
+        Reponseのcontentを、Content-Typeに対応した型に変換する。
+
+        Args:
+            response:
+
+        Returns:
+            JSONの場合はDict, textの場合はstringのcontent
+
+        """
+
+        content_type = response.headers['Content-Type']
+        if content_type == 'application/json':
+            content = response.json() if len(response.content) != 0 else {}
+
+        elif content_type.find('text/') >= 0:
+            content = response.text
+
+        else:
+            content = response.content
+
+        return content
+
+
     @my_backoff
     def _request_wrapper(self,
                          http_method: str,
@@ -165,16 +191,7 @@ class AnnofabApi(AbstractAnnofabApi):
         response.encoding = 'utf-8'
         response.raise_for_status()
 
-        content_type = response.headers['Content-Type']
-        if content_type == 'application/json':
-            content = response.json() if len(response.content) != 0 else {}
-
-        elif content_type.find('text/') >= 0:
-            content = response.text
-
-        else:
-            content = response.content
-
+        content = self._response_to_content(response)
         return content, response
 
     #########################################
