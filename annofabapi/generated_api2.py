@@ -18,13 +18,9 @@ class AbstractAnnofabApi2(abc.ABC):
     """
 
     @abc.abstractmethod
-    def _request_wrapper(self,
-                         http_method: str,
-                         url_path: str,
-                         query_params: Optional[Dict[str, Any]] = None,
+    def _request_wrapper(self, http_method: str, url_path: str, query_params: Optional[Dict[str, Any]] = None,
                          header_params: Optional[Dict[str, Any]] = None,
-                         request_body: Optional[Any] = None
-                         ) -> Tuple[Any, requests.Response]:
+                         request_body: Optional[Any] = None) -> Tuple[Any, requests.Response]:
         pass
 
     #########################################
