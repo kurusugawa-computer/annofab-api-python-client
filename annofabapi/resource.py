@@ -1,6 +1,6 @@
 import netrc
 
-from annofabapi import AnnofabApi, Wrapper
+from annofabapi import AnnofabApi, AnnofabApi2, Wrapper
 from annofabapi.exceptions import AnnofabApiException
 
 
@@ -18,6 +18,7 @@ class Resource:
         """
         self.api = AnnofabApi(login_user_id, login_password)
         self.wrapper = Wrapper(self.api)
+        self.api2 = AnnofabApi2(self.api)
 
 
 def build(login_user_id: str, login_password: str) -> Resource:
