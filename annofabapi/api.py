@@ -27,12 +27,8 @@ def my_backoff(function):
             code = e.response.status_code
             return 400 <= code < 500 and code != 429
 
-        return backoff.on_exception(backoff.expo,
-                                    requests.exceptions.RequestException,
-                                    jitter=backoff.full_jitter,
-                                    max_time=300,
-                                    giveup=fatal_code)(function)(*args,
-                                                                 **kwargs)
+        return backoff.on_exception(backoff.expo, requests.exceptions.RequestException, jitter=backoff.full_jitter,
+                                    max_time=300, giveup=fatal_code)(function)(*args, **kwargs)
 
     return wrapped
 
@@ -81,9 +77,7 @@ class AnnofabApi(AbstractAnnofabApi):
     #########################################
     # Private Method
     #########################################
-    def _create_kwargs(self,
-                       params: Optional[Dict[str, Any]] = None,
-                       headers: Optional[Dict[str, Any]] = None,
+    def _create_kwargs(self, params: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, Any]] = None,
                        request_body: Optional[Any] = None) -> Dict[str, Any]:
         """
         requestsモジュールのget,...メソッドに渡すkwargsを生成する。
@@ -110,8 +104,7 @@ class AnnofabApi(AbstractAnnofabApi):
             'headers': headers,
         }
         if self.token_dict is not None:
-            kwargs.update(
-                {'auth': self.__MyToken(self.token_dict['id_token'])})
+            kwargs.update({'auth': self.__MyToken(self.token_dict['id_token'])})
 
         if request_body is not None:
             if isinstance(request_body, (dict, list)):
@@ -151,13 +144,9 @@ class AnnofabApi(AbstractAnnofabApi):
         return content
 
     @my_backoff
-    def _request_wrapper(self,
-                         http_method: str,
-                         url_path: str,
-                         query_params: Optional[Dict[str, Any]] = None,
+    def _request_wrapper(self, http_method: str, url_path: str, query_params: Optional[Dict[str, Any]] = None,
                          header_params: Optional[Dict[str, Any]] = None,
-                         request_body: Optional[Any] = None
-                         ) -> Tuple[Any, requests.Response]:
+                         request_body: Optional[Any] = None) -> Tuple[Any, requests.Response]:
         """
         HTTP　Requestを投げて、Reponseを返す。
 
@@ -183,8 +172,7 @@ class AnnofabApi(AbstractAnnofabApi):
         # Unauthorized Errorならば、ログイン後に再度実行する
         if response.status_code == requests.codes.unauthorized:
             self.login()
-            return self._request_wrapper(http_method, url_path, query_params,
-                                         header_params, request_body)
+            return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
 
         annofabapi.utils.log_error_response(logger, response)
 
@@ -208,10 +196,7 @@ class AnnofabApi(AbstractAnnofabApi):
             Tuple[Token, requests.Response]
 
         """
-        login_info = {
-            'user_id': self.login_user_id,
-            'password': self.login_password
-        }
+        login_info = {'user_id': self.login_user_id, 'password': self.login_password}
 
         url = f"{self.URL_PREFIX}/login"
         response = self.session.post(url, json=login_info)
@@ -240,14 +225,11 @@ class AnnofabApi(AbstractAnnofabApi):
             return None
 
         request_body = self.token_dict
-        content, response = self._request_wrapper('POST',
-                                                  '/logout',
-                                                  request_body=request_body)
+        content, response = self._request_wrapper('POST', '/logout', request_body=request_body)
         self.token_dict = None
         return content, response
 
-    def refresh_token(self
-                      ) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
+    def refresh_token(self) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
         """
         トークン リフレッシュ
         ログインしていないときはNoneを返す。
@@ -263,8 +245,6 @@ class AnnofabApi(AbstractAnnofabApi):
             return None
 
         request_body = {'refresh_token': self.token_dict['refresh_token']}
-        content, response = self._request_wrapper('POST',
-                                                  '/refresh-token',
-                                                  request_body=request_body)
+        content, response = self._request_wrapper('POST', '/refresh-token', request_body=request_body)
         self.token_dict = content
         return content, response

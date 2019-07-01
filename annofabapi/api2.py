@@ -36,13 +36,9 @@ class AnnofabApi2(AbstractAnnofabApi2):
     #########################################
 
     @annofabapi.api.my_backoff
-    def _request_wrapper(self,
-                         http_method: str,
-                         url_path: str,
-                         query_params: Optional[Dict[str, Any]] = None,
+    def _request_wrapper(self, http_method: str, url_path: str, query_params: Optional[Dict[str, Any]] = None,
                          header_params: Optional[Dict[str, Any]] = None,
-                         request_body: Optional[Any] = None
-                         ) -> Tuple[Any, requests.Response]:
+                         request_body: Optional[Any] = None) -> Tuple[Any, requests.Response]:
         """
         HTTP　Requestを投げて、Reponseを返す。
         Args:
@@ -63,31 +59,24 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
         if url_path == "/sign-url":
             # HTTP Requestを投げる
-            response = getattr(self.api.session, http_method.lower())(url,
-                                                                      **kwargs)
+            response = getattr(self.api.session, http_method.lower())(url, **kwargs)
 
             # Unauthorized Errorならば、ログイン後に再度実行する
             if response.status_code == requests.codes.unauthorized:
                 self.api.login()
-                return self._request_wrapper(http_method, url_path,
-                                             query_params, header_params,
-                                             request_body)
+                return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
 
         else:
             kwargs.update({"cookies": self.cookies})
 
             # HTTP Requestを投げる
-            response = getattr(self.api.session, http_method.lower())(url,
-                                                                      **kwargs)
+            response = getattr(self.api.session, http_method.lower())(url, **kwargs)
 
             # CloudFrontから403 Errorが発生したとき
-            if response.status_code == requests.codes.forbidden and response.headers.get(
-                    "server") == "CloudFront":
+            if response.status_code == requests.codes.forbidden and response.headers.get("server") == "CloudFront":
 
                 self._get_signed_access_v2(url_path)
-                return self._request_wrapper(http_method, url_path,
-                                             query_params, header_params,
-                                             request_body)
+                return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
 
         annofabapi.utils.log_error_response(logger, response)
 
@@ -104,8 +93,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
     #########################################
     # Public Method : Cache
     #########################################
-    def get_signed_access_v2(self, query_params: Dict[str, Any]
-                             ) -> Tuple[Dict[str, Any], requests.Response]:
+    def get_signed_access_v2(self, query_params: Dict[str, Any]) -> Tuple[Dict[str, Any], requests.Response]:
         """
         Signed Cookieを取得して、インスタンスに保持する。
 
@@ -124,8 +112,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
             'query_params': query_params,
         }
 
-        content, response = self._request_wrapper(http_method, url_path,
-                                                  **keyword_params)
+        content, response = self._request_wrapper(http_method, url_path, **keyword_params)
         # Signed Cookieをインスタンスに保持する
         self.cookies = content
         return content, response

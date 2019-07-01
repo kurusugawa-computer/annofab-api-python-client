@@ -12,8 +12,7 @@ import dateutil.tz
 import requests
 
 
-def log_error_response(arg_logger: logging.Logger,
-                       response: requests.Response):
+def log_error_response(arg_logger: logging.Logger, response: requests.Response):
     """
     HTTP Statusが400以上ならば、loggerにresponse/request情報を出力する
 
@@ -24,11 +23,8 @@ def log_error_response(arg_logger: logging.Logger,
     """
 
     if 400 <= response.status_code < 600:
-        arg_logger.debug(
-            f"status_code = {response.status_code}, response.text = {response.text}"
-        )
-        arg_logger.debug(
-            f"request.url = {response.request.method}  {response.request.url}")
+        arg_logger.debug(f"status_code = {response.status_code}, response.text = {response.text}")
+        arg_logger.debug(f"request.url = {response.request.method}  {response.request.url}")
         arg_logger.debug(f"request.headers = {response.request.headers}")
         arg_logger.debug(f"request.body = {response.request.body}")
 

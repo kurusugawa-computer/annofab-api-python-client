@@ -52,15 +52,12 @@ def build_from_netrc() -> Resource:
     """
     netrc_hosts = netrc.netrc().hosts
     if 'annofab.com' not in netrc_hosts:
-        raise AnnofabApiException(
-            "The `.netrc` file does not contain the machine name `annofab.com`"
-        )
+        raise AnnofabApiException("The `.netrc` file does not contain the machine name `annofab.com`")
 
     host = netrc_hosts['annofab.com']
     login_user_id = host[0]
     login_password = host[2]
     if login_user_id is None or login_password is None:
-        raise AnnofabApiException(
-            "Login name or password in the .netrc file are None.")
+        raise AnnofabApiException("Login name or password in the .netrc file are None.")
 
     return Resource(login_user_id, login_password)
