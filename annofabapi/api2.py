@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 class AnnofabApi2(AbstractAnnofabApi2):
     """
     Web API v2に対応したメソッドが存在するクラス。
+    【注意】 開発途上版のため、互換性のない変更がある可能性があります。
     """
 
     def __init__(self, api: AnnofabApi):
@@ -31,20 +32,12 @@ class AnnofabApi2(AbstractAnnofabApi2):
     #: アクセスするURL
     URL_PREFIX = "https://annofab.com/api/v2"
 
+    #: Signed Cookie情報
     cookies: Optional[Dict[str, Any]] = None
 
     #########################################
     # Private Method
     #########################################
-    class __NoAuth(AuthBase):
-        """
-        netrcの有無にかかわらず、authorizationヘッダを空にする
-        http://docs.python-requests.org/en/master/user/advanced/#custom-authentication
-        """
-
-        def __call__(self, req):
-            req.headers['Authorization'] = None
-            return req
 
     @annofabapi.api.my_backoff
     def _request_wrapper(self,
@@ -86,7 +79,6 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
         else:
             kwargs.update({"cookies": self.cookies})
-            kwargs.pop("auth", self.__NoAuth())
 
             # HTTP Requestを投げる
             response: requests.Response = getattr(self.api.session,
@@ -96,7 +88,8 @@ class AnnofabApi2(AbstractAnnofabApi2):
             # CloudFrontから403 Errorが発生したとき
             if response.status_code == requests.codes.forbidden and response.headers.get(
                     "server") == "CloudFront":
-                self.api.login()
+
+                self._get_signed_access_v2(url_path)
                 return self._request_wrapper(http_method, url_path,
                                              query_params, header_params,
                                              request_body)
@@ -109,11 +102,24 @@ class AnnofabApi2(AbstractAnnofabApi2):
         content = self.api._response_to_content(response)
         return content, response
 
+    def _get_signed_access_v2(self, url_path: str):
+        query_params = {"url": f"/api/v2{url_path}"}
+        self.get_signed_access_v2(query_params)
+
     #########################################
     # Public Method : Cache
     #########################################
-    def get_signed_access_v2(self, query_params):
+    def get_signed_access_v2(self, query_params: Dict[str, Any]) -> Tuple[Dict[str, Any], requests.Response]:
         """
+        Signed Cookieを取得して、インスタンスに保持する。
+
+        Args:
+            query_params (Dict[str, Any]): Query Parameters
+                url (str): アクセスするページのURL
+
+        Returns:
+            Tuple[SignedCookie, requests.Response]
+
         """
 
         url_path = f'/sign-url'
