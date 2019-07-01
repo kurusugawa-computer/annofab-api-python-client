@@ -1,6 +1,7 @@
 # flake8: noqa: W291
 # pylint: disable=too-many-lines,trailing-whitespace
 """
+AbstractAnnofabApiのヘッダ部分
 注意：このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
 """
 

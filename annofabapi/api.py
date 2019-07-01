@@ -5,6 +5,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: 
 
 import backoff
 import requests
+from requests.auth import AuthBase
 
 import annofabapi.utils
 from annofabapi.generated_api import AbstractAnnofabApi
@@ -64,7 +65,7 @@ class AnnofabApi(AbstractAnnofabApi):
     #: login, refresh_tokenで取得したtoken情報
     token_dict: Optional[Dict[str, Any]] = None
 
-    class __MyToken:
+    class __MyToken(AuthBase):
         """
         requestsモジュールのauthに渡す情報。
         http://docs.python-requests.org/en/master/user/advanced/#custom-authentication
@@ -83,8 +84,7 @@ class AnnofabApi(AbstractAnnofabApi):
     def _create_kwargs(self,
                        params: Optional[Dict[str, Any]] = None,
                        headers: Optional[Dict[str, Any]] = None,
-                       request_body: Optional[Any] = None
-                       ) -> Dict[str, Any]:
+                       request_body: Optional[Any] = None) -> Dict[str, Any]:
         """
         requestsモジュールのget,...メソッドに渡すkwargsを生成する。
         Args:
@@ -149,7 +149,6 @@ class AnnofabApi(AbstractAnnofabApi):
             content = response.content
 
         return content
-
 
     @my_backoff
     def _request_wrapper(self,
