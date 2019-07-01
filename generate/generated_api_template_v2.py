@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union  # pylint: disable=un
 import requests
 
 
-class AbstractAnnofabApi(abc.ABC):
+class AbstractAnnofabApi2(abc.ABC):
     """
     AnnofabApi2クラスの抽象クラス
     """
