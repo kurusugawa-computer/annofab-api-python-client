@@ -1272,6 +1272,29 @@ class AbstractAnnofabApi(abc.ABC):
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
+    def delete_organization(
+            self,
+            organization_name: str,
+    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+        """組織削除
+
+
+        組織を完全に削除します。  組織のプロジェクトが1件も存在しない場合のみ削除できます。 組織を削除したい場合は全てのプロジェクトを削除してください。 また、削除された組織は元に戻せませんのでご注意ください。 
+
+        Authorizations: OrganizationOwner, 
+
+        Args:
+            organization_name (str):  組織名 (required)
+
+        Returns:
+            Tuple[Organization, requests.Response]
+
+        """
+        url_path = f'/organizations/{organization_name}'
+        http_method = 'DELETE'
+        keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
     def get_organization(
             self,
             organization_name: str,

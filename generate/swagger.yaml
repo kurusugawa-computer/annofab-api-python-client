@@ -46,7 +46,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし、利便性のために一部APIを除き指定は必須ではありません。
 
-  version: 0.54.0
+  version: 0.55.3
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -645,6 +645,17 @@ paths:
                   total_page_no:
                     type: number
                     description: 指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる所属組織が0件であっても、総ページ数は1となります。
+                  total_count:
+                    type: number
+                    description: 検索結果の総件数。
+                  over_limit:
+                    type: boolean
+                    description: 検索結果が1万件を超えた場合にtrueとなる。
+                  aggregations:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AggregationResult"
+                    description: Aggregationによる集約結果。
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         503:
@@ -710,6 +721,47 @@ paths:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
           $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+    delete:
+      tags:
+        - af-organization
+      summary: 組織削除
+      description: |
+        組織を完全に削除します。
+
+        組織のプロジェクトが1件も存在しない場合のみ削除できます。
+        組織を削除したい場合は全てのプロジェクトを削除してください。
+        また、削除された組織は元に戻せませんのでご注意ください。
+      security:
+        - OrganizationOwner: []
+      operationId: deleteOrganization
+      parameters:
+        - name: organization_name
+          in: path
+          description: 組織名
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        403:
+          $ref: "#/components/responses/ErrorForbiddenResource"
+        404:
+          $ref: "#/components/responses/ErrorMissingResource"
+        409:
+          description: プロジェクトが存在する組織を削除しようとした
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStateMismatch"
         503:
           $ref: "#/components/responses/ErrorUnderMaintenance"
   /organizations/{organization_name}/projects:
@@ -797,6 +849,17 @@ paths:
                   total_page_no:
                     type: number
                     description: 指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトが0件であっても、総ページ数は1となります。
+                  total_count:
+                    type: number
+                    description: 検索結果の総件数。
+                  over_limit:
+                    type: boolean
+                    description: 検索結果が1万件を超えた場合にtrueとなる。
+                  aggregations:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AggregationResult"
+                    description: Aggregationによる集約結果。
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         503:
@@ -5007,16 +5070,29 @@ components:
         * `waiting_response` - 組織に招待され、まだ加入/脱退を返答していません。組織の一部を閲覧のみできます。
         * `inactive` - 脱退したメンバーを表します。組織を閲覧できません。
     MyOrganization:
-      allOf:
-      - $ref: "#/components/schemas/Organization"
-      - required:
-        - my_role
-        - my_status
-        properties:
-          my_role:
-            $ref: "#/components/schemas/OrganizationMemberRole"
-          my_status:
-            $ref: "#/components/schemas/OrganizationMemberStatus"
+      type: object
+      properties:
+        organization_id:
+          $ref: "#/components/schemas/OrganizationId"
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        price_plan:
+          $ref: "#/components/schemas/PricePlan"
+        summary:
+          $ref: "#/components/schemas/OrganizationSummary"
+        created_datetime:
+          type: string
+          format: date-time
+        updated_datetime:
+          type: string
+          format: date-time
+        my_role:
+          $ref: "#/components/schemas/OrganizationMemberRole"
+        my_status:
+          $ref: "#/components/schemas/OrganizationMemberStatus"
     OrganizationRegistrationRequest:
       type: object
       required:
@@ -6101,8 +6177,7 @@ components:
         annotation_summaries:
           type: array
           items:
-            # ValidationErrorはエラー内容によってフィールドがまちまちなのでobjectとする
-            type: object
+            $ref: "#/components/schemas/ValidationError"
     InputData:
       type: object
       required:
@@ -7059,3 +7134,152 @@ components:
           format: uri
         etag:
           type: string
+    ValidationError:
+        type: object
+        oneOf:
+          - $ref: "#/components/schemas/InvalidAnnotationData"
+          - $ref: "#/components/schemas/DuplicatedSegmentationV2"
+          - $ref: "#/components/schemas/InvalidCommentFormat"
+          - $ref: "#/components/schemas/UnknownLinkTarget"
+          - $ref: "#/components/schemas/InvalidLinkTarget"
+          - $ref: "#/components/schemas/EmptyAttribute"
+          - $ref: "#/components/schemas/Duplicated"
+          - $ref: "#/components/schemas/UnknownAdditionalData"
+          - $ref: "#/components/schemas/OutOfImageBounds"
+          - $ref: "#/components/schemas/UnknownLabel"
+    InvalidAnnotationData:
+      type: object
+      description: アノテーションデータ不正エラー
+      properties:
+        labelId:
+          type: string
+        annotationId:
+          type: string
+        message:
+          type: string
+        _type:
+          type: string
+          description: InvalidAnnotationData
+          example: "InvalidAnnotationData"
+    DuplicatedSegmentationV2:
+      type: object
+      description: 塗りつぶしv2のラベルに対する1ラベルにつき1アノテーションまでの制約違反エラー
+      properties:
+        labelId:
+          type: string
+        annotationIds:
+          type: array
+          items:
+            type: string
+        _type:
+          type: string
+          description: DuplicatedSegmentationV2
+          example: "DuplicatedSegmentationV2"
+    InvalidCommentFormat:
+      type: object
+      description: コメントが正規表現に合致しないエラー
+      properties:
+        labelId:
+          type: string
+        annotationId:
+          type: string
+        additionalDataDefinitionId:
+          type: string
+        _type:
+          type: string
+          description: InvalidCommentFormat
+          example: "InvalidCommentFormat"
+    UnknownLinkTarget:
+      type: object
+      description: 指定されたIDに該当するアノテーションが存在しないエラー
+      properties:
+        labelId:
+          type: string
+        annotationId:
+          type: string
+        additionalDataDefinitionId:
+          type: string
+        _type:
+          type: string
+          description: UnknownLinkTarget
+          example: "UnknownLinkTarget"
+    InvalidLinkTarget:
+      type: object
+      description: リンク先アノテーションが許可されているラベルでないエラー
+      properties:
+        labelId:
+          type: string
+        annotationId:
+          type: string
+        additionalDataDefinitionId:
+          type: string
+        _type:
+          type: string
+          description: InvalidLinkTarget
+          example: "InvalidLinkTarget"
+    EmptyAttribute:
+      type: object
+      description: 属性が未入力であるエラー
+      properties:
+        labelId:
+          type: string
+        annotationId:
+          type: string
+        additionalDataDefinitionId:
+          type: string
+        _type:
+          type: string
+          description: EmptyAttribute
+          example: "EmptyAttribute"
+    Duplicated:
+      type: object
+      description: 値の重複が許可されていない属性の重複エラー
+      properties:
+        labelId:
+          type: string
+        annotationId:
+          type: string
+        additionalData:
+          $ref: "#/components/schemas/AdditionalData"
+        _type:
+          type: string
+          description: Duplicated
+          example: "Duplicated"
+    UnknownAdditionalData:
+      type: object
+      description: 何らかの原因で、アノテーション仕様にない属性がついているエラー
+      properties:
+        labelId:
+          type: string
+        annotationId:
+          type: string
+        additionalDataDefinitionId:
+          type: string
+        _type:
+          type: string
+          description: UnknownAdditionalData
+          example: "UnknownAdditionalData"
+    OutOfImageBounds:
+      type: object
+      description: 画像範囲外にアノテーションがはみ出しているエラー
+      properties:
+        labelId:
+          type: string
+        annotationId:
+          type: string
+        _type:
+          type: string
+          description: OutOfImageBounds
+          example: "OutOfImageBounds"
+    UnknownLabel:
+      type: object
+      description: 何らかの原因で、アノテーション仕様にないラベルがついているエラー
+      properties:
+        labelId:
+          type: string
+        annotationId:
+          type: string
+        _type:
+          type: string
+          description: UnknownLabel
+          example: "UnknownLabel"
