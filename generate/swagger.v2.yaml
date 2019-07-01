@@ -90,11 +90,11 @@ paths:
               schema:
                 type: string
         401:
-          $ref: "swagger.yaml#/components/responses/ErrorUnauthorizedApi"
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
-          $ref: "swagger.yaml#/components/responses/ErrorMissingResource"
+          $ref: "#/components/responses/ErrorMissingResource"
         503:
-          $ref: "swagger.yaml#/components/responses/ErrorUnderMaintenance"
+          $ref: "#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/cache:
     get:
       tags:
@@ -110,7 +110,7 @@ paths:
         description: プロジェクトID
         required: true
         schema:
-          $ref: "swagger.yaml#/components/schemas/ProjectId"
+          $ref: "#/components/schemas/ProjectId"
       responses:
         200:
           description: 正常
@@ -119,11 +119,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/CacheRecord"
         401:
-          $ref: "swagger.yaml#/components/responses/ErrorUnauthorizedApi"
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
-          $ref: "swagger.yaml#/components/responses/ErrorMissingResource"
+          $ref: "#/components/responses/ErrorMissingResource"
         503:
-          $ref: "swagger.yaml#/components/responses/ErrorUnderMaintenance"
+          $ref: "#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/statistics/tasks:
     get:
       tags:
