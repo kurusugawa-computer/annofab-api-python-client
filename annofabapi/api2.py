@@ -9,44 +9,21 @@ from requests.auth import AuthBase
 
 import annofabapi.utils
 from annofabapi.api import AnnofabApi
-from annofabapi.generated_api import AbstractAnnofabApi
+from annofabapi.generated_api2 import AbstractAnnofabApi2
 
 logger = logging.getLogger(__name__)
 
 
-def my_backoff(function):
+class AnnofabApi2(AbstractAnnofabApi2):
     """
-    HTTP Status Codeが429 or 5XXのときはリトライする. 最大5分間リトライする。
-    """
-
-    @functools.wraps(function)
-    def wrapped(*args, **kwargs):
-        def fatal_code(e):
-            """Too many Requests(429)のときはリトライする。それ以外の4XXはretryしない"""
-            if e.response is None:
-                return True
-            code = e.response.status_code
-            return 400 <= code < 500 and code != 429
-
-        return backoff.on_exception(backoff.expo,
-                                    requests.exceptions.RequestException,
-                                    jitter=backoff.full_jitter,
-                                    max_time=300,
-                                    giveup=fatal_code)(function)(*args,
-                                                                 **kwargs)
-
-    return wrapped
-
-
-class AnnofabApi2:
-    """
-    Web APIに対応したメソッドが存在するクラス。
+    Web API v2に対応したメソッドが存在するクラス。
     """
 
     def __init__(self, api: AnnofabApi):
         """
 
-
+        Args:
+            api: API v1のインスタンス（一部のAPIは、v1のログインメソッドを利用するため）
         """
 
         self.api = api
@@ -69,7 +46,7 @@ class AnnofabApi2:
             req.headers['Authorization'] = None
             return req
 
-    @my_backoff
+    @annofabapi.api.my_backoff
     def _request_wrapper(self,
                          http_method: str,
                          url_path: str,
@@ -95,19 +72,34 @@ class AnnofabApi2:
         url = f'{self.URL_PREFIX}{url_path}'
         kwargs = self.api._create_kwargs(query_params, header_params)
 
-        if url_path != "/sign-url":
+        if url_path == "/sign-url":
+            # HTTP Requestを投げる
+            response = getattr(self.api.session, http_method.lower())(url,
+                                                                      **kwargs)
+
+            # Unauthorized Errorならば、ログイン後に再度実行する
+            if response.status_code == requests.codes.unauthorized:
+                self.api.login()
+                return self._request_wrapper(http_method, url_path,
+                                             query_params, header_params,
+                                             request_body)
+
+        else:
             kwargs.update({"cookies": self.cookies})
             kwargs.pop("auth", self.__NoAuth())
 
-        # HTTP Requestを投げる
-        response = getattr(self.api.session, http_method.lower())(url,
-                                                                  **kwargs)
+            # HTTP Requestを投げる
+            response: requests.Response = getattr(self.api.session,
+                                                  http_method.lower())(
+                                                      url, **kwargs)
 
-        # Unauthorized Errorならば、ログイン後に再度実行する
-        if response.status_code == requests.codes.unauthorized:
-            self.api.login()
-            return self._request_wrapper(http_method, url_path, query_params,
-                                         header_params, request_body)
+            # CloudFrontから403 Errorが発生したとき
+            if response.status_code == requests.codes.forbidden and response.headers.get(
+                    "server") == "CloudFront":
+                self.api.login()
+                return self._request_wrapper(http_method, url_path,
+                                             query_params, header_params,
+                                             request_body)
 
         annofabapi.utils.log_error_response(logger, response)
 
@@ -132,23 +124,6 @@ class AnnofabApi2:
 
         content, response = self._request_wrapper(http_method, url_path,
                                                   **keyword_params)
+        # Signed Cookieをインスタンスに保持する
         self.cookies = content
         return content, response
-
-    def get_project_cache_v2(
-            self, project_id: str
-    ) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
-
-        url_path = f'/projects/{project_id}/cache'
-        http_method = 'GET'
-        keyword_params: Dict[str, Any] = {}
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def get_task_statistics_v2(
-            self, project_id: str
-    ) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
-
-        url_path = f'/projects/{project_id}/statistics/tasks'
-        http_method = 'GET'
-        keyword_params: Dict[str, Any] = {}
-        return self._request_wrapper(http_method, url_path, **keyword_params)
