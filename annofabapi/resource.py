@@ -16,8 +16,14 @@ class Resource:
             login_password: AnnoFabにログインするときのパスワード
 
         """
+
+        #: AnnofabApi Instance
         self.api = AnnofabApi(login_user_id, login_password)
+
+        #: Wrapper Instance
         self.wrapper = Wrapper(self.api)
+
+        #: AnnofabApi2 Instance
         self.api2 = AnnofabApi2(self.api)
 
 

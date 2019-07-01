@@ -1,11 +1,7 @@
-import functools
-import json
 import logging
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
-import backoff
 import requests
-from requests.auth import AuthBase
 
 import annofabapi.utils
 from annofabapi.api import AnnofabApi
@@ -81,9 +77,8 @@ class AnnofabApi2(AbstractAnnofabApi2):
             kwargs.update({"cookies": self.cookies})
 
             # HTTP Requestを投げる
-            response: requests.Response = getattr(self.api.session,
-                                                  http_method.lower())(
-                                                      url, **kwargs)
+            response = getattr(self.api.session, http_method.lower())(url,
+                                                                      **kwargs)
 
             # CloudFrontから403 Errorが発生したとき
             if response.status_code == requests.codes.forbidden and response.headers.get(
@@ -109,7 +104,8 @@ class AnnofabApi2(AbstractAnnofabApi2):
     #########################################
     # Public Method : Cache
     #########################################
-    def get_signed_access_v2(self, query_params: Dict[str, Any]) -> Tuple[Dict[str, Any], requests.Response]:
+    def get_signed_access_v2(self, query_params: Dict[str, Any]
+                             ) -> Tuple[Dict[str, Any], requests.Response]:
         """
         Signed Cookieを取得して、インスタンスに保持する。
 
