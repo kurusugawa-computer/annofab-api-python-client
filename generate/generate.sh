@@ -31,19 +31,33 @@ pushd ${SCRIPT_DIR}
 # swagger.yamlを修正したいときがあるので、
 if "${FLAG_DOWNLOAD}"; then
     curl https://annofab.com/docs/api/swagger.yaml --output swagger.yaml
+    curl https://annofab.com/docs/api/swagger.v2.yaml --output swagger.v2.yaml
+
 fi
 
-# openapi-generatorでpython scriptを生成
-docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+OPENAPI_GENERATOR_CLI_COMMON_OPTION="generate \
     -i /local/swagger.yaml \
     -g python \
     -o /local/out \
     -t /local/template \
-    -Dapis   -DapiTests=false -DapiDocs=false
+    -Dapis   -DapiTests=false -DapiDocs=false"
+
+# v1 apiを生成
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli \
+    ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
+    --ignore-file-override=/local/.openapi-generator-ignore_v1
+
+cat generated_api_template_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
+
+rm out/openapi_client/api/*_api.py
 
 
-# 連結
-cat generated_api_template.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
+# v2 apiを生成
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli \
+    ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
+    --ignore-file-override=/local/.openapi-generator-ignore_v2
+
+cat generated_api_template_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
 
 rm out/openapi_client/api/*_api.py
 
