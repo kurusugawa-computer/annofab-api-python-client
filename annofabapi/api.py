@@ -82,7 +82,8 @@ class AnnofabApi(AbstractAnnofabApi):
     #########################################
     def _create_kwargs(self,
                        params: Optional[Dict[str, Any]] = None,
-                       headers: Optional[Dict[str, Any]] = None
+                       headers: Optional[Dict[str, Any]] = None,
+                       request_body: Optional[Any] = None
                        ) -> Dict[str, Any]:
         """
         requestsモジュールのget,...メソッドに渡すkwargsを生成する。
@@ -112,6 +113,16 @@ class AnnofabApi(AbstractAnnofabApi):
             kwargs.update(
                 {'auth': self.__MyToken(self.token_dict['id_token'])})
 
+        if request_body is not None:
+            if isinstance(request_body, (dict, list)):
+                kwargs.update({'json': request_body})
+
+            elif isinstance(request_body, str):
+                kwargs.update({'data': request_body.encode("utf-8")})
+
+            else:
+                kwargs.update({'data': request_body})
+
         return kwargs
 
     @my_backoff
@@ -138,16 +149,7 @@ class AnnofabApi(AbstractAnnofabApi):
         """
 
         url = f'{self.URL_PREFIX}{url_path}'
-        kwargs = self._create_kwargs(query_params, header_params)
-        if request_body is not None:
-            if isinstance(request_body, (dict, list)):
-                kwargs.update({'json': request_body})
-
-            elif isinstance(request_body, str):
-                kwargs.update({'data': request_body.encode("utf-8")})
-
-            else:
-                kwargs.update({'data': request_body})
+        kwargs = self._create_kwargs(query_params, header_params, request_body)
 
         # HTTP Requestを投げる
         response = getattr(self.session, http_method.lower())(url, **kwargs)
