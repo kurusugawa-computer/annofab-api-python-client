@@ -8,10 +8,7 @@ def create_csv_for_task(file_path, first_input_data):
     """
     タスク生成用のCSVを作成する
     """
-    first_line = [
-        "1", first_input_data['input_data_name'],
-        first_input_data['input_data_id']
-    ]
+    first_line = ["1", first_input_data['input_data_name'], first_input_data['input_data_id']]
     lines = [first_line]
 
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -45,8 +42,7 @@ class WrapperForTest:
         return input_data_list[0]
 
     def get_first_annotation(self, project_id):
-        first_input_data = self.api.get_annotation_list(
-            project_id)[0]['list'][0]
+        first_input_data = self.api.get_annotation_list(project_id)[0]['list'][0]
         first_annotation = first_input_data['detail']
         return {
             'task_id': first_input_data['task_id'],

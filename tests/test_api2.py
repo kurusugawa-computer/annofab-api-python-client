@@ -19,10 +19,8 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read('./pytest.ini', 'UTF-8')
 project_id = inifile.get('annofab', 'project_id')
-should_execute_job_api: bool = strtobool(
-    inifile.get('annofab', 'should_execute_job_api'))
-should_print_log_message: bool = strtobool(
-    inifile.get('annofab', 'should_print_log_message'))
+should_execute_job_api: bool = strtobool(inifile.get('annofab', 'should_execute_job_api'))
+should_print_log_message: bool = strtobool(inifile.get('annofab', 'should_print_log_message'))
 
 test_dir = './tests/data'
 out_dir = './tests/out'
@@ -36,8 +34,7 @@ service = annofabapi.build_from_netrc()
 test_wrapper = WrapperForTest(service.api)
 
 my_account_id = service.api.get_my_account()[0]['account_id']
-organization_name = service.api.get_organization_of_project(
-    project_id)[0]['organization_name']
+organization_name = service.api.get_organization_of_project(project_id)[0]['organization_name']
 
 annofab_user_id = service.api.login_user_id
 
