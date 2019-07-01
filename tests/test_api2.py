@@ -44,4 +44,3 @@ annofab_user_id = service.api.login_user_id
 
 def test_project():
     assert type(service.api2.get_project_cache_v2(project_id))
-
