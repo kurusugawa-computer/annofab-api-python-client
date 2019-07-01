@@ -52,7 +52,7 @@ info:
     url: "https://annofab.com/images/logo_landscape.png"
     href: "https://annofab.com/"
   contact:
-    url: "https://docs/forms/trouble-shooting.html"
+    url: "https://annofab.com/docs/forms/trouble-shooting.html"
 servers:
 - url: https://annofab.com/api/v2
 tags:
