@@ -5,10 +5,10 @@
 import argparse
 import json
 import logging
-import annofabcli
 from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
 
 import annofabapi
+import annofabcli
 from annofabcli import AnnofabApiFacade
 
 logger = logging.getLogger(__name__)
@@ -39,10 +39,7 @@ class PrintLabelColor:
         annotation_specs = self.service.api.get_annotation_specs(project_id)[0]
         labels = annotation_specs["labels"]
 
-        label_color_dict = {
-            self.facade.get_label_name_en(l): self.get_rgb(l)
-            for l in labels
-        }
+        label_color_dict = {self.facade.get_label_name_en(l): self.get_rgb(l) for l in labels}
 
         print(json.dumps(label_color_dict, indent=2))
 
@@ -68,8 +65,7 @@ def main(args):
 def add_parser(subparsers: argparse._SubParsersAction):
     subcommand_name = "print_label_color"
 
-    subcommand_help = ("アノテーション仕様から、label_nameとRGBを対応付けたJSONを出力する。"
-                       "出力された内容は、`write_annotation_image`ツールに利用する。")
+    subcommand_help = ("アノテーション仕様から、label_nameとRGBを対応付けたJSONを出力する。" "出力された内容は、`write_annotation_image`ツールに利用する。")
 
     description = ("アノテーション仕様から、label_nameとRGBを対応付けたJSONを出力する。"
                    "出力された内容は、`write_annotation_image`ツールに利用する。"

@@ -14,16 +14,12 @@ def create_parent_parser():
     共通の引数セットを生成する。
     """
     parent_parser = argparse.ArgumentParser(add_help=False)
-    parent_parser.add_argument('--logdir',
-                               type=str,
-                               default=".log",
-                               help='ログファイルを保存するディレクトリ。指定しない場合は`.log`ディレクトリ')
+    parent_parser.add_argument('--logdir', type=str, default=".log", help='ログファイルを保存するディレクトリ。指定しない場合は`.log`ディレクトリ')
 
-    parent_parser.add_argument("--logging_yaml",
-                               type=str,
-                               help="ロギグングの設定ファイル(YAML)。指定した場合、`--logdir`オプションは無視される。"
-                                    "指定しない場合、デフォルトのロギング設定ファイルが読み込まれる。"
-                                    "設定ファイルの書き方は https://docs.python.org/ja/3/howto/logging.html 参照。")
+    parent_parser.add_argument(
+        "--logging_yaml", type=str, help="ロギグングの設定ファイル(YAML)。指定した場合、`--logdir`オプションは無視される。"
+        "指定しない場合、デフォルトのロギング設定ファイルが読み込まれる。"
+        "設定ファイルの書き方は https://docs.python.org/ja/3/howto/logging.html 参照。")
     return parent_parser
 
 
@@ -46,7 +42,8 @@ def get_input_data_size(str_input_data_size: str) -> InputDataSize:
     return (int(splited_list[0]), int(splited_list[1]))
 
 
-def add_parser(subparsers: argparse._SubParsersAction, subcommand_name: str, subcommand_help:str, description: str) -> argparse.ArgumentParser:
+def add_parser(subparsers: argparse._SubParsersAction, subcommand_name: str, subcommand_help: str,
+               description: str) -> argparse.ArgumentParser:
     """
     サブコマンド用にparserを追加する
 
@@ -60,18 +57,13 @@ def add_parser(subparsers: argparse._SubParsersAction, subcommand_name: str, sub
         サブコマンドのparser
 
     """
-    epilog="AnnoFabの認証情報は、`$HOME/.netrc`に記載すること"
+    epilog = "AnnoFabの認証情報は、`$HOME/.netrc`に記載すること"
 
-    return subparsers.add_parser(subcommand_name,
-                          parents=[create_parent_parser()],
-                          description=description,
-                          help=subcommand_help,
-                          epilog=epilog)
+    return subparsers.add_parser(subcommand_name, parents=[create_parent_parser()], description=description,
+                                 help=subcommand_help, epilog=epilog)
 
 
-
-def load_logging_config_from_args(args: argparse.Namespace,
-                                  py_filepath: str):
+def load_logging_config_from_args(args: argparse.Namespace, py_filepath: str):
     """
     args情報から、logging設定ファイルを読み込む
     Args:
@@ -85,9 +77,7 @@ def load_logging_config_from_args(args: argparse.Namespace,
     load_logging_config(log_dir, log_filename, logging_yaml_file)
 
 
-def load_logging_config(log_dir: str,
-                        log_filename: str,
-                        logging_yaml_file: Optional[str] = None):
+def load_logging_config(log_dir: str, log_filename: str, logging_yaml_file: Optional[str] = None):
     """
     ログ設定ファイルを読み込み、loggingを設定する。
 
@@ -109,4 +99,3 @@ def load_logging_config(log_dir: str,
         Path(log_dir).mkdir(exist_ok=True, parents=True)
 
     logging.config.dictConfig(logging_config)
-

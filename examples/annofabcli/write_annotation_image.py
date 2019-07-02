@@ -16,8 +16,8 @@ import PIL
 import PIL.Image
 import PIL.ImageDraw
 from annofabapi.typing import Annotation
-from annofabcli.common.typing import RGB, InputDataSize, SubInputDataList
 from annofabcli import AnnofabApiFacade
+from annofabcli.common.typing import RGB, InputDataSize, SubInputDataList
 
 logger = logging.getLogger(__name__)
 
@@ -49,10 +49,8 @@ class WriteAnnotationImage:
 
         return sub_input_data_list
 
-    def draw_annotation_list(self, annotation_list: List[Annotation],
-                             input_data_dir: str,
-                             label_color_dict: Dict[str, RGB],
-                             draw: PIL.ImageDraw.Draw) -> PIL.ImageDraw.Draw:
+    def draw_annotation_list(self, annotation_list: List[Annotation], input_data_dir: str,
+                             label_color_dict: Dict[str, RGB], draw: PIL.ImageDraw.Draw) -> PIL.ImageDraw.Draw:
         """
         矩形、ポリゴン、塗りつぶし、塗りつぶしv2アノテーションを描画する。
         Args:
@@ -71,15 +69,12 @@ class WriteAnnotationImage:
                 continue
 
             data_type = data["_type"]
-            if data_type not in [
-                    "BoundingBox", "Points", "SegmentationV2", "Segmentation"
-            ]:
+            if data_type not in ["BoundingBox", "Points", "SegmentationV2", "Segmentation"]:
                 continue
 
             color = label_color_dict.get(annotation["label"])
             if color is None:
-                logger.warning(
-                    f"label_name = {annotation['label']} のcolorが指定されていません")
+                logger.warning(f"label_name = {annotation['label']} のcolorが指定されていません")
                 color = (255, 255, 255)
 
             if data_type == "BoundingBox":
@@ -104,14 +99,9 @@ class WriteAnnotationImage:
 
         return draw
 
-    def draw_sub_input_data(
-            self,
-            sub_input_data_list: SubInputDataList,
-            label_color_dict: Dict[str, RGB],
-            draw: PIL.ImageDraw.Draw,
-            task_status_complete: bool = False,
-            annotation_sort_key_func: Optional[AnnotationSortKeyFunc] = None
-    ) -> PIL.ImageDraw.Draw:
+    def draw_sub_input_data(self, sub_input_data_list: SubInputDataList, label_color_dict: Dict[str, RGB],
+                            draw: PIL.ImageDraw.Draw, task_status_complete: bool = False,
+                            annotation_sort_key_func: Optional[AnnotationSortKeyFunc] = None) -> PIL.ImageDraw.Draw:
         """
         他のプロジェクトのアノテーション情報を描画する。
         Args:
@@ -135,33 +125,23 @@ class WriteAnnotationImage:
 
             task_status = sub_input_data_json["task_status"]
             if task_status_complete and task_status != "complete":
-                logger.warning(
-                    f"task_statusがcompleteでない( {task_status})ため、{sub_input_data_json_file} のアノテーションは描画しない"
-                )
+                logger.warning(f"task_statusがcompleteでない( {task_status})ため、{sub_input_data_json_file} のアノテーションは描画しない")
                 continue
 
             if annotation_sort_key_func is None:
-                sub_annotation_list = list(
-                    reversed(sub_input_data_json["details"]))
+                sub_annotation_list = list(reversed(sub_input_data_json["details"]))
             else:
-                sub_annotation_list = sorted(sub_input_data_json["details"],
-                                             key=annotation_sort_key_func)
+                sub_annotation_list = sorted(sub_input_data_json["details"], key=annotation_sort_key_func)
 
-            self.draw_annotation_list(sub_annotation_list, sub_input_data_dir,
-                                      label_color_dict, draw)
+            self.draw_annotation_list(sub_annotation_list, sub_input_data_dir, label_color_dict, draw)
 
         return draw
 
-    def write_one_semantic_segmentation_image(
-            self,
-            input_data_json_file: str,
-            input_data_dir: str,
-            input_dat_size: InputDataSize,
-            label_color_dict: Dict[str, RGB],
-            output_image_file: str,
-            task_status_complete: bool = False,
-            annotation_sort_key_func: Optional[AnnotationSortKeyFunc] = None,
-            sub_input_data_list: Optional[SubInputDataList] = None):
+    def write_one_semantic_segmentation_image(self, input_data_json_file: str, input_data_dir: str,
+                                              input_dat_size: InputDataSize, label_color_dict: Dict[str, RGB],
+                                              output_image_file: str, task_status_complete: bool = False,
+                                              annotation_sort_key_func: Optional[AnnotationSortKeyFunc] = None,
+                                              sub_input_data_list: Optional[SubInputDataList] = None):
         """
         アノテーション情報が記載されたJSONファイルから、Semantic Segmentation用の画像を生成する。
         Semantic Segmentation用のアノテーションがなくても、画像は生成する。
@@ -177,52 +157,37 @@ class WriteAnnotationImage:
             sub_input_data_list: マージ対象の入力データ情報
 
         """
-        logger.debug(
-            f"args: {input_data_json_file}, {input_data_dir}, {input_dat_size}, {output_image_file}"
-        )
+        logger.debug(f"args: {input_data_json_file}, {input_data_dir}, {input_dat_size}, {output_image_file}")
         with open(input_data_json_file) as f:
             input_data_json = json.load(f)
 
-        if task_status_complete and input_data_json[
-                "task_status"] != "complete":
-            logger.info(
-                f"task_statusがcompleteでない( {input_data_json['task_status']})ため、{output_image_file} は生成しない。"
-            )
+        if task_status_complete and input_data_json["task_status"] != "complete":
+            logger.info(f"task_statusがcompleteでない( {input_data_json['task_status']})ため、{output_image_file} は生成しない。")
             return
 
         image = PIL.Image.new(mode="RGB", size=input_dat_size)
         draw = PIL.ImageDraw.Draw(image)
 
-        annotation_list = input_data_json[
-            "details"] if annotation_sort_key_func is None else sorted(
-                input_data_json["details"], key=annotation_sort_key_func)
+        annotation_list = input_data_json["details"] if annotation_sort_key_func is None else sorted(
+            input_data_json["details"], key=annotation_sort_key_func)
         # アノテーションを描画する
-        self.draw_annotation_list(annotation_list, input_data_dir,
-                                  label_color_dict, draw)
+        self.draw_annotation_list(annotation_list, input_data_dir, label_color_dict, draw)
 
         if sub_input_data_list is not None:
-            self.draw_sub_input_data(
-                sub_input_data_list=sub_input_data_list,
-                label_color_dict=label_color_dict,
-                draw=draw,
-                task_status_complete=task_status_complete,
-                annotation_sort_key_func=annotation_sort_key_func)
+            self.draw_sub_input_data(sub_input_data_list=sub_input_data_list, label_color_dict=label_color_dict,
+                                     draw=draw, task_status_complete=task_status_complete,
+                                     annotation_sort_key_func=annotation_sort_key_func)
 
         Path(output_image_file).parent.mkdir(parents=True, exist_ok=True)
         image.save(output_image_file)
 
         logger.info(f"{str(output_image_file)} の生成完了")
 
-    def write_semantic_segmentation_images(
-            self,
-            annotation_dir: str,
-            default_input_data_size: InputDataSize,
-            label_color_dict: Dict[str, RGB],
-            output_dir: str,
-            output_image_extension: str,
-            task_status_complete: bool = False,
-            annotation_sort_key_func: Optional[AnnotationSortKeyFunc] = None,
-            sub_annotation_dir_list: Optional[List[str]] = None):
+    def write_semantic_segmentation_images(self, annotation_dir: str, default_input_data_size: InputDataSize,
+                                           label_color_dict: Dict[str, RGB], output_dir: str,
+                                           output_image_extension: str, task_status_complete: bool = False,
+                                           annotation_sort_key_func: Optional[AnnotationSortKeyFunc] = None,
+                                           sub_annotation_dir_list: Optional[List[str]] = None):
         """
         アノテーションzipを展開したディレクトリから、Semantic Segmentation用の画像を生成する。
         出力ディレクトリの構成は `{output_dir/{task_id}/{input_data_name}.{image_extension}`
@@ -260,18 +225,13 @@ class WriteAnnotationImage:
                 output_file = output_dir_path / task_dir.name / f"{str(input_data_json.stem)}.{output_image_extension}"
 
                 sub_input_data_list = self._create_sub_input_data_list(
-                    sub_annotation_dir_list, input_data_json) if (
-                        sub_annotation_dir_list is not None) else None
+                    sub_annotation_dir_list, input_data_json) if (sub_annotation_dir_list is not None) else None
 
                 try:
                     self.write_one_semantic_segmentation_image(
-                        str(input_data_json),
-                        str(input_data_dir),
-                        input_dat_size=default_input_data_size,
-                        label_color_dict=label_color_dict,
-                        output_image_file=str(output_file),
-                        task_status_complete=task_status_complete,
-                        annotation_sort_key_func=annotation_sort_key_func,
+                        str(input_data_json), str(input_data_dir), input_dat_size=default_input_data_size,
+                        label_color_dict=label_color_dict, output_image_file=str(output_file),
+                        task_status_complete=task_status_complete, annotation_sort_key_func=annotation_sort_key_func,
                         sub_input_data_list=sub_input_data_list)
 
                 except Exception as e:
@@ -284,8 +244,7 @@ class WriteAnnotationImage:
         logger.debug(f"args: {args}")
 
         try:
-            default_input_data_size = annofabcli.utils.get_input_data_size(
-                args.input_data_size)
+            default_input_data_size = annofabcli.utils.get_input_data_size(args.input_data_size)
 
         except Exception as e:
             logger.error("--default_input_data_size のフォーマットが不正です")
@@ -294,10 +253,7 @@ class WriteAnnotationImage:
         try:
             with open(args.label_color_file) as f:
                 label_color_dict = json.load(f)
-                label_color_dict = {
-                    k: tuple(v)
-                    for k, v in label_color_dict.items()
-                }
+                label_color_dict = {k: tuple(v) for k, v in label_color_dict.items()}
 
         except Exception as e:
             logger.error("--label_color_json_file のJSON Parseに失敗しました。")
@@ -324,14 +280,10 @@ class WriteAnnotationImage:
 
         try:
             self.write_semantic_segmentation_images(
-                annotation_dir=args.annotation_dir,
-                default_input_data_size=default_input_data_size,
-                label_color_dict=label_color_dict,
-                output_dir=args.output_dir,
-                output_image_extension=args.image_extension,
-                task_status_complete=args.task_status_complete,
-                annotation_sort_key_func=annotation_sort_key_func,
-                sub_annotation_dir_list=args.sub_annotation_dir)
+                annotation_dir=args.annotation_dir, default_input_data_size=default_input_data_size,
+                label_color_dict=label_color_dict, output_dir=args.output_dir,
+                output_image_extension=args.image_extension, task_status_complete=args.task_status_complete,
+                annotation_sort_key_func=annotation_sort_key_func, sub_annotation_dir_list=args.sub_annotation_dir)
 
         except Exception as e:
             logger.exception(e)
@@ -340,48 +292,24 @@ class WriteAnnotationImage:
 
 def parse_args(parser: argparse.ArgumentParser):
 
-    parser.add_argument('--annotation_dir',
-                        type=str,
-                        required=True,
-                        help='アノテーションzipを展開したディレクトリのパス')
+    parser.add_argument('--annotation_dir', type=str, required=True, help='アノテーションzipを展開したディレクトリのパス')
 
-    parser.add_argument('--input_data_size',
-                        type=str,
-                        required=True,
-                        help='入力データ画像のサイズ。{width}x{height}。ex. 1280x720')
+    parser.add_argument('--input_data_size', type=str, required=True, help='入力データ画像のサイズ。{width}x{height}。ex. 1280x720')
 
-    parser.add_argument(
-        '--label_color_file',
-        type=str,
-        required=True,
-        help='label_nameとRGBを対応付けたJSONファイルのパス. key: label_name, value:[R,G,B]')
+    parser.add_argument('--label_color_file', type=str, required=True,
+                        help='label_nameとRGBを対応付けたJSONファイルのパス. key: label_name, value:[R,G,B]')
 
-    parser.add_argument('--output_dir',
-                        type=str,
-                        required=True,
-                        help='出力ディレクトリのパス')
+    parser.add_argument('--output_dir', type=str, required=True, help='出力ディレクトリのパス')
 
-    parser.add_argument('--image_extension',
-                        type=str,
-                        default="png",
-                        help='出力画像の拡張子')
+    parser.add_argument('--image_extension', type=str, default="png", help='出力画像の拡張子')
 
-    parser.add_argument('--task_status_complete',
-                        action="store_true",
-                        help='taskのstatusがcompleteの場合のみ画像を生成する')
+    parser.add_argument('--task_status_complete', action="store_true", help='taskのstatusがcompleteの場合のみ画像を生成する')
 
-    parser.add_argument(
-        '--label_order_file',
-        type=str,
-        help=
-        'ラベルごとのレイヤの順序を指定したファイル。ファイルに記載されたラベルの順に塗りつぶす。指定しなければ、アノテーションJSONに記載された逆順に塗りつぶす。'
-    )
+    parser.add_argument('--label_order_file', type=str,
+                        help='ラベルごとのレイヤの順序を指定したファイル。ファイルに記載されたラベルの順に塗りつぶす。指定しなければ、アノテーションJSONに記載された逆順に塗りつぶす。')
 
-    parser.add_argument(
-        '--sub_annotation_dir',
-        type=str,
-        nargs="+",
-        help='`annotation_dir`にマージして描画するディレクトリ.複数のプロジェクトを統合する場合に利用する。')
+    parser.add_argument('--sub_annotation_dir', type=str, nargs="+",
+                        help='`annotation_dir`にマージして描画するディレクトリ.複数のプロジェクトを統合する場合に利用する。')
 
     parser.set_defaults(subcommand_func=main)
 
@@ -398,9 +326,8 @@ def add_parser(subparsers: argparse._SubParsersAction):
     subcommand_help = "アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。"
 
     description = ("アノテーションzipを展開したディレクトリから、アノテーションの画像（Semantic Segmentation用）を生成する。"
-            "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象。"
-            "複数のアノテーションディレクトリを指定して、画像をマージすることもできる。")
+                   "矩形、ポリゴン、塗りつぶし、塗りつぶしv2が対象。"
+                   "複数のアノテーションディレクトリを指定して、画像をマージすることもできる。")
 
     parser = annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
     parse_args(parser)
-

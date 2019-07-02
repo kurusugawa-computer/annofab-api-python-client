@@ -64,10 +64,8 @@ class DiffProjecs:
         """
         print("=== プロジェクトメンバの差分 ===")
 
-        project_members1 = self.service.wrapper.get_all_project_members(
-            project_id1)
-        project_members2 = self.service.wrapper.get_all_project_members(
-            project_id2)
+        project_members1 = self.service.wrapper.get_all_project_members(project_id1)
+        project_members2 = self.service.wrapper.get_all_project_members(project_id2)
 
         # プロジェクトメンバは順番に意味がないので、ソートしたリストを比較する
         sorted_members1 = sorted_project_members(project_members1)
@@ -78,21 +76,14 @@ class DiffProjecs:
 
         if user_ids1 != user_ids2:
             print("user_idのListに差分あり")
-            print(
-                f"set(user_ids1) - set(user_ids2) = {set(user_ids1) - set(user_ids2)}"
-            )
-            print(
-                f"set(user_ids2) - set(user_ids1) = {set(user_ids2) - set(user_ids1)}"
-            )
+            print(f"set(user_ids1) - set(user_ids2) = {set(user_ids1) - set(user_ids2)}")
+            print(f"set(user_ids2) - set(user_ids1) = {set(user_ids2) - set(user_ids1)}")
             return True
 
         is_different = False
         for member1, member2 in zip(sorted_members1, sorted_members2):
-            ignored_key = {
-                "updated_datetime", "created_datetime", "project_id"
-            }
-            diff_result = list(
-                dictdiffer.diff(member1, member2, ignore=ignored_key))
+            ignored_key = {"updated_datetime", "created_datetime", "project_id"}
+            diff_result = list(dictdiffer.diff(member1, member2, ignore=ignored_key))
             if len(diff_result) > 0:
                 is_different = True
                 print(f"差分のあるuser_id: {member1['user_id']}")
@@ -103,8 +94,7 @@ class DiffProjecs:
 
         return is_different
 
-    def diff_labels_of_annotation_specs(self, labels1: List[Dict[str, Any]],
-                                        labels2: List[Dict[str, Any]]) -> bool:
+    def diff_labels_of_annotation_specs(self, labels1: List[Dict[str, Any]], labels2: List[Dict[str, Any]]) -> bool:
         """
         アノテーションラベル情報の差分を表示する。ラベル名(英語)を基準に差分を表示する。
         以下の項目は無視して比較する。
@@ -132,9 +122,7 @@ class DiffProjecs:
         is_different = False
         for label1, label2 in zip(labels1, labels2):
 
-            diff_result = list(
-                dictdiffer.diff(create_ignored_label(label1),
-                                create_ignored_label(label2)))
+            diff_result = list(dictdiffer.diff(create_ignored_label(label1), create_ignored_label(label2)))
             if len(diff_result) > 0:
                 is_different = True
                 print(f"差分のあるラベル情報: {self.facade.get_label_name_en(label1)}")
@@ -145,10 +133,8 @@ class DiffProjecs:
 
         return is_different
 
-    def diff_inspection_phrases(self,
-                                inspection_phrases1: List[Dict[str, Any]],
-                                inspection_phrases2: List[Dict[str, Any]]
-                                ) -> bool:
+    def diff_inspection_phrases(self, inspection_phrases1: List[Dict[str, Any]],
+                                inspection_phrases2: List[Dict[str, Any]]) -> bool:
         """
         定型指摘の差分を表示する。定型指摘IDを基準に差分を表示する。
 
@@ -163,27 +149,20 @@ class DiffProjecs:
         print("=== 定型指摘の差分 ===")
 
         # 定型指摘は順番に意味がないので、ソートしたリストを比較する
-        sorted_inspection_phrases1 = sorted_inspection_phrases(
-            inspection_phrases1)
-        sorted_inspection_phrases2 = sorted_inspection_phrases(
-            inspection_phrases2)
+        sorted_inspection_phrases1 = sorted_inspection_phrases(inspection_phrases1)
+        sorted_inspection_phrases2 = sorted_inspection_phrases(inspection_phrases2)
 
         phrase_ids1 = [e["id"] for e in sorted_inspection_phrases1]
         phrase_ids2 = [e["id"] for e in sorted_inspection_phrases2]
 
         if phrase_ids1 != phrase_ids2:
             print("定型指摘IDのListに差分あり")
-            print(
-                f"set(phrase_ids1) - set(phrase_ids2) = {set(phrase_ids1) - set(phrase_ids2)}"
-            )
-            print(
-                f"set(phrase_ids2) - set(phrase_ids1) = {set(phrase_ids2) - set(phrase_ids1)}"
-            )
+            print(f"set(phrase_ids1) - set(phrase_ids2) = {set(phrase_ids1) - set(phrase_ids2)}")
+            print(f"set(phrase_ids2) - set(phrase_ids1) = {set(phrase_ids2) - set(phrase_ids1)}")
             return True
 
         is_different = False
-        for phrase1, phrase2 in zip(sorted_inspection_phrases1,
-                                    sorted_inspection_phrases2):
+        for phrase1, phrase2 in zip(sorted_inspection_phrases1, sorted_inspection_phrases2):
             diff_result = list(dictdiffer.diff(phrase1, phrase2))
             if len(diff_result) > 0:
                 is_different = True
@@ -195,8 +174,7 @@ class DiffProjecs:
 
         return is_different
 
-    def diff_annotation_specs(self, project_id1: str, project_id2: str,
-                              diff_targets: List[str]):
+    def diff_annotation_specs(self, project_id1: str, project_id2: str, diff_targets: List[str]):
         """
         プロジェクト間のアノテーション仕様の差分を表示する。
         Args:
@@ -206,19 +184,15 @@ class DiffProjecs:
 
         """
 
-        annotation_specs1, _ = self.service.api.get_annotation_specs(
-            project_id1)
-        annotation_specs2, _ = self.service.api.get_annotation_specs(
-            project_id2)
+        annotation_specs1, _ = self.service.api.get_annotation_specs(project_id1)
+        annotation_specs2, _ = self.service.api.get_annotation_specs(project_id2)
 
         if "inspection_phrases" in diff_targets:
-            self.diff_inspection_phrases(
-                annotation_specs1["inspection_phrases"],
-                annotation_specs2["inspection_phrases"])
+            self.diff_inspection_phrases(annotation_specs1["inspection_phrases"],
+                                         annotation_specs2["inspection_phrases"])
 
         if "annotation_labels" in diff_targets:
-            self.diff_labels_of_annotation_specs(annotation_specs1["labels"],
-                                                 annotation_specs2["labels"])
+            self.diff_labels_of_annotation_specs(annotation_specs1["labels"], annotation_specs2["labels"])
 
     def diff_project_settingss(self, project_id1: str, project_id2: str):
         """
@@ -257,9 +231,7 @@ class DiffProjecs:
         project_title1 = self.facade.get_project_title(project_id1)
         project_title2 = self.facade.get_project_title(project_id2)
 
-        print(
-            f"=== {project_title1}({project_id1}) と {project_title2}({project_id1}) の差分を表示"
-        )
+        print(f"=== {project_title1}({project_id1}) と {project_title2}({project_id1}) の差分を表示")
 
         diff_targets = args.target
         if "members" in diff_targets:
@@ -277,22 +249,13 @@ def parse_args(parser: argparse.ArgumentParser):
 
     parser.add_argument('project_id2', type=str, help='比較対象のプロジェクトのproject_id')
 
-    parser.add_argument('--target',
-                        type=str,
-                        nargs="+",
-                        choices=[
-                            "annotation_labels", "inspection_phrases",
-                            "members", "settings"
-                        ],
-                        default=[
-                            "annotation_labels", "inspection_phrases",
-                            "members", "settings"
-                        ],
-                        help='比較する項目。指定しなければ全項目を比較する。'
-                        'annotation_labels: アノテーション仕様のラベル情報, '
-                        'inspection_phrases: 定型指摘,'
-                        'members: プロジェクトメンバ,'
-                        'settings: プロジェクト設定,')
+    parser.add_argument(
+        '--target', type=str, nargs="+", choices=["annotation_labels", "inspection_phrases", "members", "settings"],
+        default=["annotation_labels", "inspection_phrases", "members", "settings"], help='比較する項目。指定しなければ全項目を比較する。'
+        'annotation_labels: アノテーション仕様のラベル情報, '
+        'inspection_phrases: 定型指摘,'
+        'members: プロジェクトメンバ,'
+        'settings: プロジェクト設定,')
 
     parser.set_defaults(subcommand_func=main)
 
@@ -303,13 +266,10 @@ def main(args):
     DiffProjecs(service, facade).main(args)
 
 
-
 def add_parser(subparsers: argparse._SubParsersAction):
     subcommand_name = "diff_projects"
     subcommand_help = "プロジェクト間の差分を表示する。"
-    description = ("プロジェクト間の差分を表示する。"
-                   "ただし、AnnoFabで生成されるIDや、変化する日時などは比較しない。")
+    description = ("プロジェクト間の差分を表示する。" "ただし、AnnoFabで生成されるIDや、変化する日時などは比較しない。")
 
     parser = annofabcli.utils.add_parser(subparsers, subcommand_name, subcommand_help, description)
     parse_args(parser)
-
