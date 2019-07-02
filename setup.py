@@ -3,7 +3,7 @@
 
 import os
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -38,4 +38,6 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Topic :: Utilities",
         "Operating System :: OS Independent",
-    ], packages=['annofabapi'])
+    ],
+    packages=find_packages()
+)
