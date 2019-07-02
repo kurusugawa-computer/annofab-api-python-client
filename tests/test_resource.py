@@ -18,7 +18,6 @@ def test_build():
     with pytest.raises(ValueError):
         annofabapi.AnnofabApi("test_user", "")
 
-
     with pytest.raises(annofabapi.exceptions.AnnofabApiException):
         os.environ.pop('ANNOFAB_USER_ID', None)
         os.environ.pop('ANNOFAB_PASSWORD', None)
