@@ -15,12 +15,20 @@ with open(os.path.join(here, 'annofabapi', '__version__.py'), 'r', encoding='utf
     exec(f.read(), about)
 
 setup(
-    name='annofabapi', version=about['__version__'],
-    description='Python Clinet Library of AnnoFab API (https://annofab.com/docs/api/)', long_description=readme,
-    long_description_content_type='text/markdown', author='yuji38kwmt', author_email='yuji38kwmt@gmail.com',
-    maintainer='yuji38kwmt', license='MIT', keywords='annofab api',
+    name='annofabapi',
+    version=about['__version__'],
+    description='Python Clinet Library of AnnoFab API (https://annofab.com/docs/api/)',
+    long_description=readme,
+    long_description_content_type='text/markdown',
+    author='yuji38kwmt',
+    author_email='yuji38kwmt@gmail.com',
+    maintainer='yuji38kwmt',
+    license='MIT',
+    keywords='annofab api',
     url='https://github.com/kurusugawa-computer/annofab-api-python-client',
-    install_requires=['requests', 'python-dateutil', 'backoff'], python_requires='>=3.6', classifiers=[
+    install_requires=['requests', 'python-dateutil', 'backoff'],
+    python_requires='>=3.6',
+    classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
