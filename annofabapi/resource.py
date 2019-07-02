@@ -1,4 +1,5 @@
 import netrc
+import os
 
 from annofabapi import AnnofabApi, AnnofabApi2, Wrapper
 from annofabapi.exceptions import AnnofabApiException
@@ -58,6 +59,22 @@ def build_from_netrc() -> Resource:
     login_user_id = host[0]
     login_password = host[2]
     if login_user_id is None or login_password is None:
-        raise AnnofabApiException("Login name or password in the .netrc file are None.")
+        raise AnnofabApiException("User ID or password in the .netrc file are None.")
+
+    return Resource(login_user_id, login_password)
+
+
+def build_from_env() -> Resource:
+    """
+    環境変数`ANNOFAB_USER_ID` , `ANNOFAB_PASSWORD`から、annnofabapi.Resourceインスタンスを生成する。
+
+    Returns:
+        annnofabapi.Resourceインスタンス
+
+    """
+    login_user_id = os.environ.get("ANNOFAB_USER_ID")
+    login_password = os.environ.get("ANNOFAB_PASSWORD")
+    if login_user_id is None or login_password is None:
+        raise AnnofabApiException("`ANNOFAB_USER_ID` or `ANNOFAB_PASSWORD`  environment variable are empty.")
 
     return Resource(login_user_id, login_password)
