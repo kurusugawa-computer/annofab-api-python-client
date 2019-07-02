@@ -205,7 +205,7 @@ class AnnofabApi(AbstractAnnofabApi):
         json_obj = response.json()
         self.token_dict = json_obj["token"]
 
-        logger.debug("Logined successfully")
+        logger.debug(f"Logined successfully. user_id = {self.login_user_id}")
         return json_obj, response
 
     def logout(self) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
