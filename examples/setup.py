@@ -11,27 +11,15 @@ with open('README.md', 'r', encoding='utf-8') as f:
     readme = f.read()
 
 about = {}
-with open(os.path.join(here, 'annofabcli', '__version__.py'),
-          'r',
-          encoding='utf-8') as f:
+with open(os.path.join(here, 'annofabcli', '__version__.py'), 'r', encoding='utf-8') as f:
     exec(f.read(), about)
 
 setup(
-    name='annofabcli',
-    version=about['__version__'],
-    description='AnnoFab API CLI(Command Line Interface)',
-    long_description=readme,
-    long_description_content_type='text/markdown',
-    author='yuji38kwmt',
-    author_email='yuji38kwmt@gmail.com',
-    maintainer='yuji38kwmt',
-    license='MIT',
-    keywords='annofab api cli',
-    url=
-    'https://github.com/kurusugawa-computer/annofab-api-python-client/examples',
-    install_requires=['annofabapi>=0.5.0', 'pillow', 'pyyaml', 'dictdiffer'],
-    python_requires='>=3.6',
-    classifiers=[
+    name='annofabcli', version=about['__version__'], description='AnnoFab API CLI(Command Line Interface)',
+    long_description=readme, long_description_content_type='text/markdown', author='yuji38kwmt',
+    author_email='yuji38kwmt@gmail.com', maintainer='yuji38kwmt', license='MIT', keywords='annofab api cli',
+    url='https://github.com/kurusugawa-computer/annofab-api-python-client/examples',
+    install_requires=['annofabapi>=0.5.0', 'pillow', 'pyyaml', 'dictdiffer'], python_requires='>=3.6', classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
@@ -41,9 +29,6 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Topic :: Utilities",
         "Operating System :: OS Independent",
-    ],
-    packages=find_packages(),
-    package_data={'annofabcli': ['data/logging.yaml']},
-    entry_points={
+    ], packages=find_packages(), package_data={'annofabcli': ['data/logging.yaml']}, entry_points={
         'console_scripts': ['annofabcli=annofabcli.__main__:main'],
     })

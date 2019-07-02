@@ -12,14 +12,14 @@ import annofabcli.write_annotation_image
 
 logger = logging.getLogger(__name__)
 
+
 def main():
     """
     サブコマンドとして利用できるようにする。
     ただし`deprecated`なツールは、サブコマンド化しない。
     """
 
-    parser = argparse.ArgumentParser(
-        description="annofabapiを使ったCLIツール")
+    parser = argparse.ArgumentParser(description="annofabapiを使ったCLIツール")
 
     subparsers = parser.add_subparsers()
 
