@@ -124,7 +124,7 @@ service.wrapper.copy_annotation_specs(src_project_id, dest_project_id)
 
 ```python
 import logging
-logging_formatter = '%(levelname)s : %(asctime)s : %(filename)s : %(name)s : %(funcName)s : %(message)s'
+logging_formatter = '%(levelname)-8s : %(asctime)s : %(filename)s : %(name)s : %(funcName)s : %(message)s'
 logging.basicConfig(format=logging_formatter)
 logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 ```
