@@ -3,7 +3,7 @@ language: python
 python:
   - "3.6"
 install:
-  - make init
+  - pipenv install --dev
 script:
   - make lint
   - echo "OK" # dummy
