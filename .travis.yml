@@ -3,7 +3,7 @@ language: python
 python:
   - "3.6"
 install:
-  - python setup.py -q install
+  - python setup.py -q --dev install
 script:
   - make lint
   - echo "OK" # dummy
