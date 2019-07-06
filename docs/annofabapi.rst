@@ -34,3 +34,10 @@ annofabapi.utils module
     :members:
 
 
+annofabapi.enums module
+-----------------------
+
+.. automodule:: annofabapi.enums
+    :members:
+
+
