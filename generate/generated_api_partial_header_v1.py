@@ -2,20 +2,20 @@
 # pylint: disable=too-many-lines,trailing-whitespace
 
 """
-AbstractAnnofabApi2のヘッダ部分
+AbstractAnnofabApiのヘッダ部分
 注意：このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
 """
 
 import abc
-import warnings
+import warnings # pylint: disable=unused-import
 from typing import Any, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import requests
 
 
-class AbstractAnnofabApi2(abc.ABC):
+class AbstractAnnofabApi(abc.ABC):
     """
-    AnnofabApi2クラスの抽象クラス
+    AnnofabApiクラスの抽象クラス
     """
 
     @abc.abstractmethod

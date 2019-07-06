@@ -1,0 +1,20 @@
+{{#models}}
+{{#model}}
+{{#isEnum}}
+class {{classname}}(Enum):
+    """
+    {{#description}}
+    {{{description}}}  # noqa: E501
+    {{/description}}
+    """
+
+{{#allowableValues}}
+{{#enumVars}}
+    {{name}} = {{{value}}}{{^-last}}
+{{/-last}}
+{{/enumVars}}
+{{/allowableValues}}
+
+{{/isEnum}}
+{{/model}}
+{{/models}}
