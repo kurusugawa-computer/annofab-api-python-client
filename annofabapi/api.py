@@ -177,7 +177,7 @@ class AnnofabApi(AbstractAnnofabApi):
         annofabapi.utils.log_error_response(logger, response)
 
         response.encoding = 'utf-8'
-        response.raise_for_status()
+        annofabapi.utils.raise_for_status(response)
 
         content = self._response_to_content(response)
         return content, response
@@ -200,7 +200,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         url = f"{self.URL_PREFIX}/login"
         response = self.session.post(url, json=login_info)
-        response.raise_for_status()
+        annofabapi.utils.raise_for_status(response)
 
         json_obj = response.json()
         self.token_dict = json_obj["token"]

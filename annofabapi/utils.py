@@ -12,6 +12,26 @@ import dateutil.tz
 import requests
 
 
+def raise_for_status(response: requests.Response):
+    """
+    HTTP Status CodeがErrorの場合、`requests.exceptions.HTTPError`を発生させる。
+    そのとき`response.text`もHTTPErrorに加えて、HTTPError発生時にエラーの原因が分かるようにする。
+
+    Args:
+        response: Response
+
+    Raises:
+        requests.exceptions.HTTPError:
+
+    """
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        http_error_msg = f"{e.args[0]} , {response.text}"
+        e.args = (http_error_msg,)
+        raise e
+
+
 def log_error_response(arg_logger: logging.Logger, response: requests.Response):
     """
     HTTP Statusが400以上ならば、loggerにresponse/request情報を出力する
@@ -39,7 +59,7 @@ def download(url: str, dest_path: str):
 
     """
     response = requests.get(url)
-    response.raise_for_status()
+    raise_for_status(response)
 
     p = Path(dest_path)
     p.parent.mkdir(parents=True, exist_ok=True)
