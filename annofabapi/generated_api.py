@@ -33,14 +33,16 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: Everyone, 
-
         Args:
             request_body (Any): Request Body
                 change_password_request (ChangePasswordRequest):  (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: Everyone
+
 
         """
         url_path = f'/change-password'
@@ -56,14 +58,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         [受け取った確認コード](#operation/initiateResetEmail)を使い、メールアドレスを変更します。 
 
-        Authorizations: EveryoneRequestBody, 
-
         Args:
             request_body (Any): Request Body
                 confirm_reset_email_request (ConfirmResetEmailRequest):  (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: EveryoneRequestBody
+
 
         """
         url_path = f'/confirm-reset-email'
@@ -79,14 +83,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         新しいパスワードに変更します。 本人確認のため、[パスワードリセットを要求](#operation/resetPassoword)で受信したメールに記載された検証コードを使用します。  パスワードリセットプロセスの最終ステップです。 
 
-        Authorizations: EveryoneRequestBody, 
-
         Args:
             request_body (Any): Request Body
                 confirm_reset_password_request (ConfirmResetPasswordRequest):  (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: EveryoneRequestBody
+
 
         """
         url_path = f'/confirm-reset-password'
@@ -101,14 +107,16 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: EveryoneRequestBody, 
-
         Args:
             request_body (Any): Request Body
                 confirm_sign_up_request (ConfirmSignUpRequest):  (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: EveryoneRequestBody
+
 
         """
         url_path = f'/confirm-sign-up'
@@ -124,14 +132,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         [受け取った確認コード](#operation/verifyEmail)を使い、メールアドレスが有効であることを確認します。 
 
-        Authorizations: Everyone, 
-
         Args:
             request_body (Any): Request Body
                 confirm_verify_email_request (ConfirmVerifyEmailRequest):  (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: Everyone
+
 
         """
         url_path = f'/confirm-verify-email'
@@ -148,14 +158,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         パスワードリセットプロセスを開始します。  このAPIを実行した後、後続の[古いパスワードを無効化](#operation/resetPassoword)を実行するまでは、古いパスワードでログインできます。 
 
-        Authorizations: EveryoneRequestBody, 
-
         Args:
             request_body (Any): Request Body
                 password_reset_request (PasswordResetRequest):  (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: EveryoneRequestBody
+
 
         """
         url_path = f'/request-password-reset'
@@ -171,14 +183,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         メールアドレス変更プロセスを開始します。  本人からの要求かどうかを検証するための確認コードがメールで送付されます。 
 
-        Authorizations: Everyone, 
-
         Args:
             request_body (Any): Request Body
                 reset_email_request (ResetEmailRequest):  (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: Everyone
+
 
         """
         url_path = f'/reset-email'
@@ -193,13 +207,15 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-
         Args:
             request_body (Any): Request Body
                 sign_up_request (SignUpRequest):  (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+
 
         """
         url_path = f'/sign-up'
@@ -215,14 +231,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         メールアドレスが有効かどうかの確認プロセスを開始します。  本人からの要求かどうかを検証するための確認コードがメールで送付されます。 
 
-        Authorizations: Everyone, 
-
         Args:
             request_body (Any): Request Body
                 verify_email_request (VerifyEmailRequest):  (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: Everyone
+
 
         """
         url_path = f'/verify-email'
@@ -238,14 +256,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         古いパスワードを無効化し、パスワードリセットに必要な確認コードをメールで送付します。 本人確認のため、[パスワードリセットを要求](#operation/initiatePasswordReset)して取得したトークンを使用します。  後続の[新しいパスワードに変更](#operation/confirmResetPassoword)を実行することで、新しいパスワードに変更できます。 
 
-        Authorizations: EveryoneRequestBody, 
-
         Args:
             request_body (Any): Request Body
                 reset_password_request (ResetPasswordRequest):  (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: EveryoneRequestBody
+
 
         """
         url_path = f'/reset-password'
@@ -267,8 +287,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         複数のアノテーションを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。  **現時点で、このAPIは複数のアノテーションを修正するためのもので、新しいアノテーションを作成することはできません**。 新しいアノテーションを更新や削除の対象に指定した場合、無視されます。  既に作成済みのアノテーションのうち、リクエストボディの配列に含まれないアノテーションは更新されません。  更新対象のアノテーションのうち、属性配列に含まれない属性は更新されません。  更新対象のアノテーションのラベルを変更する場合、変更後のラベルに含まれない属性は削除されます。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。  受入が完了しているタスクのアノテーション更新を含む場合、オーナー以上の権限が必要になります。 
 
-        Authorizations: ProjectAccepter, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
@@ -276,6 +294,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[list[SingleAnnotation], requests.Response]
+
+        Notes:
+            authorizations: ProjectAccepter
+
 
         """
         url_path = f'/projects/{project_id}/annotations'
@@ -296,8 +318,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         指定したタスク - 入力データにつけられたアノテーションを一括で取得します。 simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  プロジェクト全体のアノテーションを一括で取得する場合は、[getAnnotationArchive](#operation/getAnnotationArchive) を使用できます。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
@@ -305,6 +325,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[SimpleAnnotation, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation/simple'
@@ -321,13 +345,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         プロジェクト内のアノテーション（simple版）をZIPにまとめて、一括で取得します。  simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データ名}.json       * アノテーションJSONデータ (詳細は 200レスポンス を参照)     * {入力データ名}/ (塗りつぶしアノテーション時のみ)       * combined/         * {ラベル名} (ラベルごとに結合した塗りつぶしのPNG画像)       * {アノテーションデータID} (塗りつぶしのPNG画像)  IDが異なる入力データで {入力データ名}が一致するときは、重複ファイル名には {入力データ名__入力データID} のように接尾辞がつきます。 AnnoFabの画像アップロード機能を使うとこのようなケースは発生しませんが、[入力データ更新API](#operation/putInputData)で入力名を重複させると発生します。 入力名の重複を解消してアノテーションZIPを再作成すれば、接尾辞を解消できます。  特定のタスクのsimpleアノテーションを取得したい場合は、[getAnnotation](#operation/getAnnotation) を使用できます。 
 
-        Authorizations: ProjectDataUser, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[SimpleAnnotation, requests.Response]
+
+        Notes:
+            authorizations: ProjectDataUser
+
 
         """
         url_path = f'/projects/{project_id}/archive/simple'
@@ -345,8 +371,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         指定したタスク-入力データにつけられたアノテーションを一括で取得します。
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -357,6 +381,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[InlineResponse2007, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/annotations'
@@ -376,13 +404,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         **このAPIは廃止予定です。fullアノテーションZIPにある情報で、simpleアノテーションZIPにも欲しいものがあれば、ご連絡ください。**  プロジェクト内のアノテーション（full版）がまとめられたZIPを取得します。  full版のアノテーションJSONデータは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。機械学習での一般的な利用には、[詳細情報を省いた扱いやすい構造の simple版](#operation/getAnnotationArchive) を推奨します。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データID}.json       * アノテーションJSONデータ (詳細は 200レスポンス を参照)     * {入力データID}/ (塗りつぶしアノテーション時のみ)       * combined/         * {ラベルID} (ラベルごとに結合した塗りつぶしのPNG画像)       * {アノテーションデータID} (塗りつぶしのPNG画像) 
 
-        Authorizations: ProjectDataUser, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[FullAnnotation, requests.Response]
+
+        Notes:
+            authorizations: ProjectDataUser
+
 
         """
         warnings.warn("deprecated", DeprecationWarning)
@@ -404,8 +434,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         このAPIが返すアノテーションは、エディタ用です。 機械学習などで利用する成果物としてのアノテーションを取得するには、以下をご利用いただけます。  * [getAnnotation](#operation/getAnnotation): 特定のタスク - 入力データのアノテーション取得 * [getAnnotationArchive](#operation/getAnnotationArchive): プロジェクト全体のアノテーション（ZIP） 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
@@ -414,6 +442,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         warnings.warn("deprecated", DeprecationWarning)
@@ -431,13 +463,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         プロジェクト内のアノテーションZIP（simple版とfull版の両方）の更新を開始します。 ZIPの更新は、データ量に応じて数分〜数十分かかります。  ZIPは日本時間AM03:00ごろに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 
 
-        Authorizations: ProjectDataUser, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: ProjectDataUser
+
 
         """
         url_path = f'/projects/{project_id}/archive/update'
@@ -452,8 +486,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         「過去に誰にも割り当てられていないタスクに含まれる入力データ」に限り、プロジェクトオーナーであればアノテーションを更新できます。 この挙動は、[AnnoFab外部で作成されたアノテーションをインポート](/docs/tutorial/tutorial-ex-importing-annotation.html) する目的にも利用できます。  １度でも誰かに割り当てられたタスクは、タスクの現在の担当者であればアノテーションを更新できます。 タスクの現在の担当者でない場合、エラーになります。 この制限は、アノテーション作業中の予期せぬ同時編集を防ぐためです。  `is_protected`（保護） を `true` にすることで、アノテーションをアノテーションエディタ上での削除から保護できます。 属性の変更もさせたくない場合は、アノテーション仕様で特定の属性を読取専用にすることで保護できます。保護は、  * 外部からインポートしたアノテーション * 別プロジェクトからコピーしたアノテーション  などを誤って削除したくないときに便利です。 `is_protected`は、プロジェクトオーナーのみ変更可能です。  なお、本APIでは `is_protected` によらず、更新や削除が可能です。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
@@ -463,6 +495,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[Annotation, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation'
@@ -485,13 +521,15 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[AnnotationSpecs, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/annotation-specs'
@@ -505,8 +543,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
@@ -514,6 +550,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[AnnotationSpecs, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/annotation-specs'
@@ -535,8 +575,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         入力データを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、現在「削除」の1通りのみがあります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の削除ができます。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
@@ -544,6 +582,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[list[InputData], requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/inputs'
@@ -563,8 +605,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         「複数の入力データを圧縮したZIPファイル」や「4MBを超える画像」などをAnnoFabに一時的に保存するための、URLと登録用データパスを発行します。  このAPIと他のAPIを以下に示すように使うことで、ZIPファイルなどをAFにアップロードできます。   1. 本APIを実行して、URLを取得する。   * `curl -X POST -H 'Content-Type: CONTENT_TYPE_HERE' 'https://annofab.com/api/v1/projects/（プロジェクトID）/create-temp-path` 2. 1で取得したURLに、一時保存したいファイルをPUTする。   * `curl -X PUT -H \"Content-Type: CONTENT_TYPE_HERE' --data-binary @/hoge.zip 'https://（発行されたURL）'` 3. 1で取得した登録用データパスを [入力データ登録API](#operation/putInputData)のリクエストボディ `input_data_path` に指定する。   * `curl -X PUT -H 'Content-Type: text/json\" -d '{\"input_data_name\":\"...\", \"input_data_path\":\"(登録用データパス)\" }' '/projects/{project_id}/inputs/{input_data_id}'`  ここで、1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。 ZIPファイルの場合は `application/zip` 、画像ファイルの場合は `image/png` など、適切な Content-Type を指定します。  登録するファイルはどのような内容であれ、アップロードから24時間経過すると削除されます。 したがって、ZIP圧縮した入力データを登録する場合は、URL発行から24時間以内に完了してください。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             header_params (Dict[str, Any]): Header Parameters
@@ -572,6 +612,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[DataPath, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/create-temp-path'
@@ -590,14 +634,16 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID (required)
 
         Returns:
             Tuple[InputData, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}'
@@ -614,14 +660,16 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID (required)
 
         Returns:
             Tuple[InputData, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}'
@@ -638,8 +686,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -654,6 +700,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[InlineResponse2008, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/inputs'
@@ -674,14 +724,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         入力データの実体（画像や動画などのファイルそのもの）にアクセスするための、認証済み一時URLを取得します。  取得したURLは、1時間で失効し、アクセスできなくなります。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID (required)
 
         Returns:
             Tuple[str, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         warnings.warn("deprecated", DeprecationWarning)
@@ -697,8 +749,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         入力データ（画像プロジェクトなら画像、動画プロジェクトなら動画や時系列データ）を登録します。  画像プロジェクトの場合、複数の画像ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> アノテーション作業生産性を高めるため、画像は「長辺4096px以内」かつ「4MB以内」になるよう圧縮されます。<br> 作成されるアノテーションは、元の解像度でつけた場合相当に自動で復元されます。  動画プロジェクトの場合、複数の動画ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> また、複数のストリーミング形式の動画をアップロードすることもできます。<br> この場合はZIP形式必須で、同一のZIPファイル内にm3u8ファイルとtsファイルを両方含めてください。<br> なお、このm3u8ファイルに記述された相対パスでtsファイルが参照可能である必要があります。  ### ディレクトリ例 ```   hoge.zip/     hoge.ts     fuga/       foo.m3u8(hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)       foo1.ts       foo2.ts     piyo1/       piyo2/         bar.ts       bar.m3u8(hoge.ts, piyo1/piyo2/bar.tsを参照) ```  4MBを超えるファイルの登録には、[アップロード用一時データ保存先作成API](#operation/createTempPath) を組み合わせて使用します。 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID (required)
@@ -707,6 +757,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[InputData, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}'
@@ -728,8 +782,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         検査コメントを一括更新します。 タスクの現在の担当者でない場合、409エラーになります。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新（作成含む）」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。  既に作成済みの検査コメントのうち、リクエストボディの配列に含まれないものは更新されません。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
@@ -739,6 +791,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[list[Inspection], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/inspections'
@@ -758,8 +814,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
@@ -767,6 +821,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[list[Inspection], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/inspections'
@@ -789,14 +847,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         プロジェクトの作業ガイドの画像を削除します。 
 
-        Authorizations: ProjectAccepter, ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             image_id (str):  作業ガイド画像ID (required)
 
         Returns:
             Tuple[, requests.Response]
+
+        Notes:
+            authorizations: ProjectAccepter, ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/instruction-images/{image_id}'
@@ -814,8 +874,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         指定された版の作業ガイドのHTMLを取得します。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -823,6 +881,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[str, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/instruction'
@@ -842,8 +904,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         プロジェクトの作業ガイドの編集履歴を取得します。 取得される編集履歴は日付の新しい順にソートされます。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -851,6 +911,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[list[InstructionHistory], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/instruction-history'
@@ -871,8 +935,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。 
 
-        Authorizations: ProjectAccepter, ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             image_id (str):  作業ガイド画像ID (required)
@@ -881,6 +943,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[DataPath, requests.Response]
+
+        Notes:
+            authorizations: ProjectAccepter, ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/instruction-images/{image_id}/put-url'
@@ -899,13 +965,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         プロジェクトの作業ガイドの画像一覧を取得します。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[list[InstructionImage], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/instruction-images'
@@ -920,8 +988,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         作業ガイドのHTMLを更新します。 
 
-        Authorizations: ProjectAccepter, ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
@@ -929,6 +995,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[InstructionHistory, requests.Response]
+
+        Notes:
+            authorizations: ProjectAccepter, ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/instruction'
@@ -952,14 +1022,16 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             job_id (str):  ジョブID (required)
 
         Returns:
             Tuple[, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/jobs/gen-inputs/{job_id}'
@@ -976,8 +1048,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -988,6 +1058,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[list[JobInfo], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/jobs'
@@ -1009,14 +1083,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         [受け取った確認コード](#operation/initiateMyAccountDelete)を使い、アカウントを削除します。 
 
-        Authorizations: EveryoneRequestBody, 
-
         Args:
             request_body (Any): Request Body
                 confirm_account_delete_request (ConfirmAccountDeleteRequest):  (required)
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: EveryoneRequestBody
+
 
         """
         url_path = f'/my/account/delete-request/confirm'
@@ -1031,12 +1107,14 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: Everyone, 
-
         Args:
 
         Returns:
             Tuple[MyAccount, requests.Response]
+
+        Notes:
+            authorizations: Everyone
+
 
         """
         url_path = f'/my/account'
@@ -1053,13 +1131,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         備考: システム管理者が自身が所属しないプロジェクトに対して実行した場合、オーナーであるというダミーのプロジェクトメンバー情報が取得できます。ダミーには更新日は含まれません。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[ProjectMember, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/my/projects/{project_id}/member'
@@ -1075,8 +1155,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllOrganizationMember, 
-
         Args:
             query_params (Dict[str, Any]): Query Parameters
                 page (int):  表示するページ番号  現在は未実装のパラメータです。(今後対応予定) 
@@ -1084,6 +1162,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[InlineResponse200, requests.Response]
+
+        Notes:
+            authorizations: AllOrganizationMember
+
 
         """
         url_path = f'/my/organizations'
@@ -1098,12 +1180,14 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: Everyone, 
-
         Args:
 
         Returns:
             Tuple[list[ProjectMember], requests.Response]
+
+        Notes:
+            authorizations: Everyone
+
 
         """
         url_path = f'/my/project-members'
@@ -1120,8 +1204,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         自身が所属するプロジェクトを一括で取得します。 
 
-        Authorizations: Everyone, 
-
         Args:
             query_params (Dict[str, Any]): Query Parameters
                 page (int):  表示するページ番号 
@@ -1131,6 +1213,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[InlineResponse2003, requests.Response]
+
+        Notes:
+            authorizations: Everyone
+
 
         """
         url_path = f'/my/projects'
@@ -1146,12 +1232,14 @@ class AbstractAnnofabApi(abc.ABC):
 
         アカウント削除プロセスを開始します。  本人からの要求かどうかを検証するための確認コードがメールで送付されます。 
 
-        Authorizations: Everyone, 
-
         Args:
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: Everyone
+
 
         """
         url_path = f'/my/account/delete-request'
@@ -1164,14 +1252,16 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: Everyone, 
-
         Args:
             request_body (Any): Request Body
                 put_my_account_request (PutMyAccountRequest):  (required)
 
         Returns:
             Tuple[MyAccount, requests.Response]
+
+        Notes:
+            authorizations: Everyone
+
 
         """
         url_path = f'/my/account'
@@ -1187,14 +1277,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         同じ name の組織が既に存在する場合は失敗(400)します。 
 
-        Authorizations: OrganizationOwner, 
-
         Args:
             request_body (Any): Request Body
                 put_organization_name_request (PutOrganizationNameRequest):  (required)
 
         Returns:
             Tuple[Organization, requests.Response]
+
+        Notes:
+            authorizations: OrganizationOwner
+
 
         """
         url_path = f'/my/organizations'
@@ -1216,14 +1308,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         同じ name の組織が既に存在する場合は失敗（400）します。 
 
-        Authorizations: Everyone, 
-
         Args:
             request_body (Any): Request Body
                 organization_registration_request (OrganizationRegistrationRequest):  (required)
 
         Returns:
             Tuple[Organization, requests.Response]
+
+        Notes:
+            authorizations: Everyone
+
 
         """
         url_path = f'/organizations'
@@ -1242,13 +1336,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         組織を完全に削除します。  組織のプロジェクトが1件も存在しない場合のみ削除できます。 組織を削除したい場合は全てのプロジェクトを削除してください。 また、削除された組織は元に戻せませんのでご注意ください。 
 
-        Authorizations: OrganizationOwner, 
-
         Args:
             organization_name (str):  組織名 (required)
 
         Returns:
             Tuple[Organization, requests.Response]
+
+        Notes:
+            authorizations: OrganizationOwner
+
 
         """
         url_path = f'/organizations/{organization_name}'
@@ -1264,13 +1360,15 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllOrganizationMember, 
-
         Args:
             organization_name (str):  組織名 (required)
 
         Returns:
             Tuple[Organization, requests.Response]
+
+        Notes:
+            authorizations: AllOrganizationMember
+
 
         """
         url_path = f'/organizations/{organization_name}'
@@ -1286,13 +1384,15 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllOrganizationMember, 
-
         Args:
             organization_name (str):  組織名 (required)
 
         Returns:
             Tuple[OrganizationActivity, requests.Response]
+
+        Notes:
+            authorizations: AllOrganizationMember
+
 
         """
         url_path = f'/organizations/{organization_name}/activity'
@@ -1310,8 +1410,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         指定した組織のプロジェクトを一括で取得します。 
 
-        Authorizations: AllOrganizationMember, 
-
         Args:
             organization_name (str):  組織名 (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -1324,6 +1422,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[InlineResponse2001, requests.Response]
+
+        Notes:
+            authorizations: AllOrganizationMember
+
 
         """
         url_path = f'/organizations/{organization_name}/projects'
@@ -1345,8 +1447,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         組織への招待を受諾し、組織へのメンバー登録を完了します。  [組織招待API](#operation/postInviteOrganizationMember)で送信されたメールに記載されているトークンが必要です。 
 
-        Authorizations: EveryoneRequestBody, 
-
         Args:
             organization_name (str):  組織名 (required)
             user_id (str):  ユーザ名 (required)
@@ -1355,6 +1455,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[Message, requests.Response]
+
+        Notes:
+            authorizations: EveryoneRequestBody
+
 
         """
         url_path = f'/organizations/{organization_name}/members/{user_id}/invitation/accept'
@@ -1374,14 +1478,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         指定したメンバーを指定した組織から削除します。  組織の管理者が実行する場合、組織のオーナーは削除できません。(権限エラーになります) 
 
-        Authorizations: OrganizationAdministrator, 
-
         Args:
             organization_name (str):  組織名 (required)
             user_id (str):  ユーザID (required)
 
         Returns:
             Tuple[OrganizationMember, requests.Response]
+
+        Notes:
+            authorizations: OrganizationAdministrator
+
 
         """
         url_path = f'/organizations/{organization_name}/members/{user_id}'
@@ -1399,14 +1505,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         指定したユーザーが指定した組織にどのようなロールで参加しているかを取得します。 
 
-        Authorizations: AllOrganizationMember, 
-
         Args:
             organization_name (str):  組織名 (required)
             user_id (str):  ユーザID (required)
 
         Returns:
             Tuple[OrganizationMember, requests.Response]
+
+        Notes:
+            authorizations: AllOrganizationMember
+
 
         """
         url_path = f'/organizations/{organization_name}/members/{user_id}'
@@ -1423,13 +1531,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         脱退したメンバーは含まれません。 
 
-        Authorizations: AllOrganizationMember, 
-
         Args:
             organization_name (str):  組織名 (required)
 
         Returns:
             Tuple[InlineResponse2002, requests.Response]
+
+        Notes:
+            authorizations: AllOrganizationMember
+
 
         """
         url_path = f'/organizations/{organization_name}/members'
@@ -1444,8 +1554,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         指定したユーザーに、組織への招待（メール）を送信します。  組織の管理者が実行する場合、リクエストボディ内の `role` には `contributor` を指定してください。(それ以外の値を指定した場合エラーとなります) 
 
-        Authorizations: OrganizationAdministrator, 
-
         Args:
             organization_name (str):  組織名 (required)
             user_id (str):  ユーザ名 (required)
@@ -1454,6 +1562,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[OrganizationMember, requests.Response]
+
+        Notes:
+            authorizations: OrganizationAdministrator
+
 
         """
         url_path = f'/organizations/{organization_name}/members/{user_id}/invitation'
@@ -1469,8 +1581,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: OrganizationOwner, 
-
         Args:
             organization_name (str):  組織名 (required)
             user_id (str):  ユーザID (required)
@@ -1479,6 +1589,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[OrganizationMember, requests.Response]
+
+        Notes:
+            authorizations: OrganizationOwner
+
 
         """
         url_path = f'/organizations/{organization_name}/members/{user_id}/role'
@@ -1502,13 +1616,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         プロジェクトを完全に削除します。 アノテーション仕様、タスク、入力データ、アノテーションなど、プロジェクト配下のリソースがすべて削除されます。  削除されたプロジェクトは元に戻せません。 完了したプロジェクトは削除せず、プロジェクト状態を「停止中」に変更するのをおすすめします。 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[Project, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}'
@@ -1524,13 +1640,15 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[Organization, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/organization'
@@ -1546,13 +1664,15 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[Project, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}'
@@ -1569,13 +1689,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         検査コメント全件ファイルは、毎日AM 02:00 JSTに更新されます。 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[InlineResponse2004, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/rawdata/inspections'
@@ -1592,13 +1714,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         タスク履歴イベント全件ファイルは、毎日AM 02:00 JSTに更新されます。 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[InlineResponse2004, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/rawdata/task_history_events'
@@ -1615,13 +1739,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         タスク全件ファイルは、毎日AM 02:00 JSTに更新されます。 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[InlineResponse2004, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/rawdata/tasks'
@@ -1636,8 +1762,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         プロジェクトのアノテーション仕様やメンバーを引き継いで、別のプロジェクトを作成します。 設定により、アノテーションやタスクも引き継がせる事が可能です。  このAPIを利用するには、プロジェクトを登録する組織の[OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) かつ コピー元プロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 
 
-        Authorizations: OrganizationAdministrator, ProjectOwner, 
-
         Args:
             project_id (str):  コピー元となるプロジェクトID (required)
             request_body (Any): Request Body
@@ -1645,6 +1769,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[Project, requests.Response]
+
+        Notes:
+            authorizations: OrganizationAdministrator, ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/copy'
@@ -1661,8 +1789,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。 
 
-        Authorizations: OrganizationAdministrator, ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
@@ -1670,6 +1796,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[Project, requests.Response]
+
+        Notes:
+            authorizations: OrganizationAdministrator, ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}'
@@ -1693,14 +1823,16 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             user_id (str):  アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。 (required)
 
         Returns:
             Tuple[ProjectMember, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/members/{user_id}'
@@ -1717,8 +1849,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -1726,6 +1856,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[InlineResponse2005, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/members'
@@ -1741,8 +1875,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             user_id (str):  アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。 (required)
@@ -1751,6 +1883,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[ProjectMember, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/members/{user_id}'
@@ -1773,13 +1909,15 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[list[ProjectAccountStatistics], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/statistics/accounts'
@@ -1795,13 +1933,15 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[list[InspectionStatistics], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/statistics/inspections'
@@ -1818,13 +1958,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         ラベルごとの以下集計データを取得します。 * `completed_labels`：受入が完了したアノテーション数 * `wip_labels`：受入が完了していないアノテーション数 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[list[LabelStatistics], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/statistics/labels'
@@ -1840,13 +1982,15 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[list[TaskPhaseStatistics], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/statistics/task-phases'
@@ -1862,13 +2006,15 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[list[ProjectTaskStatisticsHistory], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/statistics/tasks'
@@ -1885,13 +2031,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。 アカウント毎の集計のby_tasks、by_inputsには、最終日であってもヒストグラムを返却しない。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[list[WorktimeStatistics], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/statistics/worktimes'
@@ -1914,8 +2062,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID (required)
@@ -1923,6 +2069,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}/supplementary-data/{supplementary_data_id}'
@@ -1939,14 +2089,16 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID (required)
 
         Returns:
             Tuple[list[SupplementaryData], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}/supplementary-data'
@@ -1960,8 +2112,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID (required)
@@ -1971,6 +2121,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[SupplementaryData, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/inputs/{input_data_id}/supplementary-data/{supplementary_data_id}'
@@ -1992,8 +2146,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         タスクを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、現在「削除」の1通りのみがあります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の削除ができます。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
@@ -2001,6 +2153,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[list[Task], requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/tasks'
@@ -2020,14 +2176,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         不要になったタスクや、間違って投入したタスクを削除します。教師データなどは削除せず残すので、あとから復元することも可能です。 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
 
         Returns:
             Tuple[Task, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}'
@@ -2046,8 +2204,6 @@ class AbstractAnnofabApi(abc.ABC):
         DEPRECATED
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
@@ -2055,6 +2211,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[list[TaskHistory], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         warnings.warn("deprecated", DeprecationWarning)
@@ -2074,14 +2234,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         作業時間を計算したタスク履歴ではなく、その元となったタスク履歴イベントを一括で取得します。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
 
         Returns:
             Tuple[list[TaskHistoryEvent], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         warnings.warn("deprecated", DeprecationWarning)
@@ -2100,14 +2262,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         個々のタスクの情報を取得します。  タスクを割り当てる場合は、[タスク割当](#operation/startTask)を使います。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
 
         Returns:
             Tuple[Task, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}'
@@ -2124,14 +2288,16 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
 
         Returns:
             Tuple[list[TaskHistory], requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/histories'
@@ -2149,14 +2315,16 @@ class AbstractAnnofabApi(abc.ABC):
 
         指定したタスクの自動検査で見つかった警告やエラーを一括で取得します。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
 
         Returns:
             Tuple[TaskValidation, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/validation'
@@ -2173,8 +2341,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         プロジェクトに含まれる複数のタスクをまとめて取得します。  検索条件を指定することで、特定のユーザが担当するタスクなどを絞り込むことができます。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。 
-
-        Authorizations: AllProjectMember, 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2196,6 +2362,10 @@ class AbstractAnnofabApi(abc.ABC):
         Returns:
             Tuple[InlineResponse2006, requests.Response]
 
+        Notes:
+            authorizations: AllProjectMember
+
+
         """
         url_path = f'/projects/{project_id}/tasks'
         http_method = 'GET'
@@ -2213,13 +2383,15 @@ class AbstractAnnofabApi(abc.ABC):
         DEPRECATED
 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[TasksInputs, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         warnings.warn("deprecated", DeprecationWarning)
@@ -2235,8 +2407,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         典型的なタスク作成ルールにもとづいた、一括作成を行うAPIです。  タスク作成ルールは、リクエストペイロードの `task_generate_rule` フィールドで指定できます。<br> `ByCount` を指定した場合、1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。この作成ルールは、画像を同じ枚数均等にタスクに割り振りたい場合に便利です。<br> `ByDirectory` を指定した場合、入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。この作成ルールは、動画などから切り出した画像をディレクトリ別に格納し、、その動画（ディレクトリ）の単位でタスクを作りたい場合に便利です。 `ByInputDataCsv` を指定した場合、入力データを各タスクに割り振ったCSVへのS3パスを指定してタスクを生成できます。この作成ルールは特定のデータの組み合わせを持ったタスクを作成したい場合に便利です。<br>   #### ByDirectory: ディレクトリ単位でのタスク一括生成の使い方 例えば、次のような `input_data_name_` の入力データが登録されているとします。  * a.zip/dir1/image1.png * a.zip/dir1/image2.png * a.zip/dir1/subdir/image3.png * a.zip/dir1/subdir/image4.png * a.zip/dir1/subdir/image5.png * b.zip/dir2/subdir1/image6.png * b.zip/dir2/subdir1/image7.png * b.zip/dir2/subdir1/image8.png * b.zip/dir2/subdir2/image9.png * b.zip/dir2/subdir2/image10.png  ここで、`input_data_name_prefix`フィールド に `a.zip` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png  次に、`input_data_name_prefix` に `b.zip/dir2` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 2. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  `input_data_name_prefix` が未指定の時は、全ディレクトリごとにタスクが作成されます。つまり次のように4つのタスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png 3. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 4. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  画像プロジェクトの場合、タスクに割り当てられる「ディレクトリ内の入力データ」の順序は、名前の昇順となります。<br> 動画プロジェクトの場合、タスクに割り当てられる「ディレクトリ内の入力データ」の順序は、動画の入力データが先頭に来るようにソートされたうえで、名前の昇順となります。  **注意:** `ByDirectory`では、入力データ名がファイルパス形式になっていない入力データはタスクの作成対象になりません。 例えば、`foo/bar.png` はタスクの作成対象になりますが、ディレクトリを含まない`bar.png` や、最後がディレクトリになっている`foo/bar.png/` は対象になりません。  **注意:** 動画プロジェクトの場合、ディレクトリに含まれる動画の入力データは一つに制限してください。 これが守られない場合、作成されたタスクで動画を再生できない場合があります。  #### ByInputDataCsv: CSVによるタスク一括生成の使い方 以下のように「タスク番号,入力データ名,入力データID」を1行毎に指定したCSVを作成します。  ``` 1,a001.jpg,ca0cb2f9-fec5-49b4-98df-dc34490f9785 1,a002.jpg,5ac1987e-ca7c-42a0-9c19-b5b23a41836b 1,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee 2,b001.jpg,4f2ae4d0-7a38-4f9a-be6f-170ba76aba73 2,b002.jpg,45ac5852-f20c-4938-9ee9-cc0274401df7 2,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee 3,c001.jpg,3260c7a0-4820-424d-a26e-db7e91dbc139 3,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee ``` CSVのエンコーディングは UTF-8(BOM付き)、UTF-8(BOMなし)、UTF-16(BOM付きLE) のいずれかのみ対応しています。  **注意:** 動画プロジェクトの場合、一つのタスクに含まれる動画の入力データは一つに制限し、動画の入力データの位置は先頭にしてください。 これが守られない場合、作成されたタスクで動画を再生できない場合があります。  [createTempPath](#operation/createTempPath) APIを使ってアップロード用のURLとS3パスを取得してCSVをアップロードした上で`csv_data_path` フィールドに取得したS3パスを記述します。 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
@@ -2244,6 +2414,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[Project, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/generate-tasks'
@@ -2260,8 +2434,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         タスクの状態、もしくはタスクの担当者を変更することができます。  #### ユースケースごとの使い方  * タスクを作業中(working)にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が未着手(not_started)、休憩中(break)、保留(on_hold)のいずれかであるタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"working\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを休憩中にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"break\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを保留(on_hold)にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"on_hold\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを提出(complete)したい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"complete\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの提出を取消し(cancelled)したい場合   * 制約     * タスクを提出したユーザーのみ、この操作を行うことができます。     * タスク提出後に検査/受入(抜取含む)等の作業が一切行われていない場合のみ、この操作を行うことができます。     * 現在の状態が未着手(not_started)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"cancelled\", account_id: \"自身(タスク提出者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを差戻し(rejected)したい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"rejected\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの受入完了を取り消したい場合   * 制約     * プロジェクトオーナー(owner)のみ、この操作を行うことができます。     * 現在の状態が完了(completed)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", account_id: \"再度受入を担当させたいアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの担当者を変更したい場合   * 制約     * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", account_id: \"現在のフェーズを担当できるアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの担当者を未割当てにしたい場合   * 制約     * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
@@ -2270,6 +2442,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[Task, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}/operate'
@@ -2286,8 +2462,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         1つのタスクを作成または更新します。 複数のタスクを一括生成する場合は、効率のよい[一括作成API](#operation/initiateTasksGeneration)を検討してください。  このAPIで変更できるのは、タスクの入力データ（`input_data_list`）のみです。タスクに割り当てた画像や動画などの入力データを差し替えることができます。  タスクの担当者やステータスを変更するには、[タスク割当](#operation/startTask)や[タスクの状態遷移](#operation/operateTask)を使用します。 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
@@ -2296,6 +2470,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[Task, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/tasks/{task_id}'
@@ -2312,8 +2490,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         タスクの割当を要求します。  個々のタスクの情報を取得する場合は、[タスク取得](#operation/getTask)を使います。 
 
-        Authorizations: AllProjectMember, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
@@ -2321,6 +2497,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[Task, requests.Response]
+
+        Notes:
+            authorizations: AllProjectMember
+
 
         """
         url_path = f'/projects/{project_id}/start-task'
@@ -2344,14 +2524,16 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             webhook_id (str):  WebhookID (required)
 
         Returns:
             Tuple[Webhook, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/webhooks/{webhook_id}'
@@ -2367,13 +2549,15 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[list[Webhook], requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/webhooks'
@@ -2388,8 +2572,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         プロジェクトのWebhookを新規登録/更新することができます。  body中には、event_typeによって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip  * project-copy-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{DEST_PROJECT_ID}} :  コピー先プロジェクトID   * {{DEST_PROJECT_TITLE}} : コピー先プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             webhook_id (str):  WebhookID (required)
@@ -2398,6 +2580,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[Webhook, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/webhooks/{webhook_id}'
@@ -2413,8 +2599,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        Authorizations: ProjectOwner, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             webhook_id (str):  WebhookID (required)
@@ -2423,6 +2607,10 @@ class AbstractAnnofabApi(abc.ABC):
 
         Returns:
             Tuple[WebhookTestResponse, requests.Response]
+
+        Notes:
+            authorizations: ProjectOwner
+
 
         """
         url_path = f'/projects/{project_id}/webhooks/{webhook_id}/test'
