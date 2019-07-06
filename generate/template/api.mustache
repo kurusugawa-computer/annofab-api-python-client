@@ -16,10 +16,6 @@
         {{{notes}}}
 {{/notes}}
 
-{{#hasAuthMethods}}
-        Authorizations: {{#authMethods}}{{name}}, {{/authMethods}}
-{{/hasAuthMethods}}
-
         Args:
 {{#pathParams}}            
             {{paramName}} ({{dataType}}): {{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional){{/optional}}
@@ -45,6 +41,12 @@
 
         Returns:
             Tuple[{{returnType}}, requests.Response]
+
+        Notes:
+{{#hasAuthMethods}}
+            authorizations: {{#authMethods}}{{name}}{{#hasMore}}, {{/hasMore}}{{/authMethods}}
+{{/hasAuthMethods}}
+
 
         """
         {{#isDeprecated}}

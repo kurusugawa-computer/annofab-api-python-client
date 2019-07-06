@@ -37,8 +37,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
 
 
-        Authorizations: SignedCookie, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -46,6 +44,10 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[AnnotationSpecs, requests.Response]
+
+        Notes:
+            authorizations: SignedCookie
+
 
         """
         url_path = f'/projects/{project_id}/annotation-specs'
@@ -68,13 +70,15 @@ class AbstractAnnofabApi2(abc.ABC):
 
 
 
-        Authorizations: SignedCookie, 
-
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
             Tuple[CacheRecord, requests.Response]
+
+        Notes:
+            authorizations: SignedCookie
+
 
         """
         url_path = f'/projects/{project_id}/cache'
@@ -96,8 +100,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
 
 
-        Authorizations: SignedCookie, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -105,6 +107,10 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[list[ProjectAccountStatistics], requests.Response]
+
+        Notes:
+            authorizations: SignedCookie
+
 
         """
         url_path = f'/projects/{project_id}/statistics/accounts'
@@ -123,8 +129,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
 
 
-        Authorizations: SignedCookie, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -132,6 +136,10 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[list[InspectionStatistics], requests.Response]
+
+        Notes:
+            authorizations: SignedCookie
+
 
         """
         url_path = f'/projects/{project_id}/statistics/inspections'
@@ -150,8 +158,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
 
 
-        Authorizations: SignedCookie, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -159,6 +165,10 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[list[LabelStatistics], requests.Response]
+
+        Notes:
+            authorizations: SignedCookie
+
 
         """
         url_path = f'/projects/{project_id}/statistics/labels'
@@ -177,8 +187,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
 
 
-        Authorizations: SignedCookie, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -186,6 +194,10 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[list[TaskPhaseStatistics], requests.Response]
+
+        Notes:
+            authorizations: SignedCookie
+
 
         """
         url_path = f'/projects/{project_id}/statistics/task-phases'
@@ -204,8 +216,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
 
 
-        Authorizations: SignedCookie, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -213,6 +223,10 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[list[ProjectTaskStatisticsHistory], requests.Response]
+
+        Notes:
+            authorizations: SignedCookie
+
 
         """
         url_path = f'/projects/{project_id}/statistics/tasks'
@@ -232,8 +246,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
         ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。 アカウント毎の集計のby_tasks、by_inputsには、最終日であってもヒストグラムを返却しない。 
 
-        Authorizations: SignedCookie, 
-
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
@@ -241,6 +253,10 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[list[WorktimeStatistics], requests.Response]
+
+        Notes:
+            authorizations: SignedCookie
+
 
         """
         url_path = f'/projects/{project_id}/statistics/worktimes'
