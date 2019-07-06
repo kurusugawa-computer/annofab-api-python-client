@@ -35,14 +35,14 @@ if "${FLAG_DOWNLOAD}"; then
 
 fi
 
-OPENAPI_GENERATOR_CLI_COMMON_OPTION="-g python \
-    -o /local/out \
-    -t /local/template \
+OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
+    --output /local/out \
+    --template-dir /local/template \
     -Dapis   -DapiTests=false -DapiDocs=false"
 
 # v1 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-    -i /local/swagger.yaml \
+    --input-spec /local/swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
@@ -53,7 +53,7 @@ rm out/openapi_client/api/*_api.py
 
 # v2 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-    -i /local/swagger.v2.yaml \
+    --input-spec /local/swagger.v2.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --ignore-file-override=/local/.openapi-generator-ignore_v2
 
