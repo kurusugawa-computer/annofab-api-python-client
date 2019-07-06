@@ -42,20 +42,26 @@ swagger.yamlの間違いを許容する部分と許容しない部分は以下�
 
 ```
 generate/
-│  generated_api_template.py
+│  generated_api_partial_header_v1.py
+│  generated_api_partial_header_v2.py
+│  enum_partial_header_v1.py
 │  generate.sh
 │
 ├─out/
 │  
 └─template
         api.mustache
+        model.mustache
 
 ```
 
 * `generate.sh`：`annofabapi/generated_api.py`を生成するBash Script
 * `out/`：OpenAPI Generatorの出力先。
-* `api.mustache`：APIに対応してメソッド用のテンプレートファイル。https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/python/api.mustache からダウンロードしたファイルをカスタマイズした。
-* `generated_api_template.py`：`annofabapi/generated_api.py`のヘッダ部分（OpenAPI Generatorで生成しない部分）。
+* `api.mustache`：APIに対応したメソッド用のテンプレートファイル。https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/python/api.mustache からダウンロードしたファイルをカスタマイズした。
+* `model.mustache`：schemeに列挙体用のテンプレートファイル。https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/python/model.mustache からダウンロードしたファイルをカスタマイズした。
+* `generated_api_partial_header_v1.py`：`annofabapi/generated_api.py`のヘッダ部分（OpenAPI Generatorで生成しない部分）。
+* `generated_api_partial_header_v2.py`：`annofabapi/generated_api2.py`のヘッダ部分（OpenAPI Generatorで生成しない部分）。
+* `enums_partial_header.py`：`annofabapi/enums.py`のヘッダ部分（OpenAPI Generatorで生成しない部分）。
 
 ## 実行方法
 

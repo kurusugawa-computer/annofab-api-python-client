@@ -49,7 +49,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-gene
 
 cat generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
 
-cat enum_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/enums.py
+cat enums_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/enums.py
 
 rm -Rf out/openapi_client
 
