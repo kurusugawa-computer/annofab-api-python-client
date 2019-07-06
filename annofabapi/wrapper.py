@@ -199,7 +199,7 @@ class Wrapper:
                                            headers={'content-type': new_content_type})
 
         annofabapi.utils.log_error_response(logger, res_put)
-        res_put.raise_for_status()
+        annofabapi.utils.raise_for_status(res_put)
         return content["path"]
 
     def put_input_data_from_file(self, project_id: str, input_data_id: str, file_path: str,
@@ -648,7 +648,7 @@ class Wrapper:
             res_put = self.api.session.put(s3_url, params=query_dict, data=f,
                                            headers={'content-type': new_content_type})
         annofabapi.utils.log_error_response(logger, res_put)
-        res_put.raise_for_status()
+        annofabapi.utils.raise_for_status(res_put)
         return content["path"]
 
     #########################################

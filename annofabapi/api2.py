@@ -81,7 +81,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
         annofabapi.utils.log_error_response(logger, response)
 
         response.encoding = 'utf-8'
-        response.raise_for_status()
+        annofabapi.utils.raise_for_status(response)
 
         content = self.api._response_to_content(response)
         return content, response
