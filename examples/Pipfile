@@ -1,9 +1,0 @@
-[[source]]
-name = "pypi"
-url = "https://pypi.org/simple"
-verify_ssl = true
-
-[dev-packages]
-annofabcli = {editable = true,path = "."} # For reading setup.py
-
-[packages]
