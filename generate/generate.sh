@@ -66,7 +66,8 @@ rm -Rf out/openapi_client
 cd ../
 
 # Format
-pipenv run isort --verbose annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/enums.py
-pipenv run yapf --verbose --in-place annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/enums.py
+FORMATTED_FILE="annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/enums.py"
+pipenv run isort --verbose ${FORMATTED_FILE}
+pipenv run yapf --verbose --in-place ${FORMATTED_FILE}
 
 popd
