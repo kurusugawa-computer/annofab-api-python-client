@@ -38,7 +38,8 @@ fi
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --output /local/out \
     --template-dir /local/template \
-    -Dapis   -DapiTests=false -DapiDocs=false"
+    -Dapis   -DapiTests=false -DapiDocs=false \
+    -Dmodels   -DmodelTests=false -DmodelDocs=false"
 
 # v1 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli generate \
@@ -46,10 +47,11 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-gene
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
-cat generated_api_template_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
+cat generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
 
-rm out/openapi_client/api/*_api.py
+cat enum_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/enum.py
 
+rm -Rf out/openapi_client
 
 # v2 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli generate \
@@ -57,16 +59,14 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-gene
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --ignore-file-override=/local/.openapi-generator-ignore_v2
 
-cat generated_api_template_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
+cat generated_api_partial_header_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
 
-rm out/openapi_client/api/*_api.py
+rm -Rf out/openapi_client
 
 cd ../
 
 # Format
-pipenv run isort --verbose annofabapi/generated_api.py
-pipenv run yapf --verbose --in-place annofabapi/generated_api.py
-
+pipenv run isort --verbose annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/enum.py
+pipenv run yapf --verbose --in-place annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/enum.py
 
 popd
-

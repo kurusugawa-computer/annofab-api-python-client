@@ -6,7 +6,7 @@ AbstractAnnofabApiのヘッダ部分
 """
 
 import abc
-import warnings
+import warnings  # pylint: disable=unused-import
 from typing import Any, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import requests

@@ -25,6 +25,8 @@ class Wrapper:
             api: AnnofabApi Instance
         """
         self.api = api
+        import annofabapi.enum
+        annofabapi.enum.TaskPhase
 
     #########################################
     # Private Method
