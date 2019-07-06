@@ -28,7 +28,7 @@ def raise_for_status(response: requests.Response):
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
         http_error_msg = f"{e.args[0]} , {response.text}"
-        e.args = (http_error_msg,)
+        e.args = (http_error_msg, )
         raise e
 
 
