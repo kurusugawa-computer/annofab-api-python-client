@@ -8,7 +8,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.typing import (AnnotationSpecs, InputData, Inspection, OrganizationMember, Project, ProjectJob,
+from annofabapi.models import (AnnotationSpecs, InputData, Inspection, OrganizationMember, Project, JobInfo,
                                ProjectMember, SupplementaryData, Task)
 
 logger = logging.getLogger(__name__)
@@ -654,7 +654,7 @@ class Wrapper:
     #########################################
     # Public Method : AfJobApi
     #########################################
-    def delete_all_succeeded_job(self, project_id: str, job_type: str) -> List[ProjectJob]:
+    def delete_all_succeeded_job(self, project_id: str, job_type: str) -> List[JobInfo]:
         """
         成功したジョブをすべて削除する
 
@@ -675,7 +675,7 @@ class Wrapper:
 
         return deleted_jobs
 
-    def get_all_project_job(self, project_id: str, query_params: Dict[str, Any]) -> List[ProjectJob]:
+    def get_all_project_job(self, project_id: str, query_params: Dict[str, Any]) -> List[JobInfo]:
         """
         すべてのバックグランドジョブを取得する。
         2019/01時点でAPIが未実装のため、このメソッドも未実装。
