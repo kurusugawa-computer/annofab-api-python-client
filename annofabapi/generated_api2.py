@@ -11,6 +11,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union  # pylint: disable=un
 
 import requests
 
+import annofabapi  # pylint: disable=unused-import
+
 
 class AbstractAnnofabApi2(abc.ABC):
     """
@@ -106,7 +108,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 cache (str):  CACHE TIMESTAMP 
 
         Returns:
-            Tuple[list[ProjectAccountStatistics], requests.Response]
+            Tuple[List[ProjectAccountStatistics], requests.Response]
 
         Notes:
             authorizations: SignedCookie
@@ -135,7 +137,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 cache (str):  CACHE TIMESTAMP 
 
         Returns:
-            Tuple[list[InspectionStatistics], requests.Response]
+            Tuple[List[InspectionStatistics], requests.Response]
 
         Notes:
             authorizations: SignedCookie
@@ -164,7 +166,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 cache (str):  CACHE TIMESTAMP 
 
         Returns:
-            Tuple[list[LabelStatistics], requests.Response]
+            Tuple[List[LabelStatistics], requests.Response]
 
         Notes:
             authorizations: SignedCookie
@@ -193,7 +195,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 cache (str):  CACHE TIMESTAMP 
 
         Returns:
-            Tuple[list[TaskPhaseStatistics], requests.Response]
+            Tuple[List[TaskPhaseStatistics], requests.Response]
 
         Notes:
             authorizations: SignedCookie
@@ -222,7 +224,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 cache (str):  CACHE TIMESTAMP 
 
         Returns:
-            Tuple[list[ProjectTaskStatisticsHistory], requests.Response]
+            Tuple[List[ProjectTaskStatisticsHistory], requests.Response]
 
         Notes:
             authorizations: SignedCookie
@@ -252,7 +254,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 cache (str):  CACHE TIMESTAMP 
 
         Returns:
-            Tuple[list[WorktimeStatistics], requests.Response]
+            Tuple[List[WorktimeStatistics], requests.Response]
 
         Notes:
             authorizations: SignedCookie

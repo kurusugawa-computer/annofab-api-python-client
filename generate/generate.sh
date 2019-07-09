@@ -67,7 +67,7 @@ rm -Rf out/openapi_client
 cd ../
 
 # Format
-FORMATTED_FILE="annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/enums.py"
+FORMATTED_FILE="annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/models.py"
 pipenv run isort --verbose ${FORMATTED_FILE}
 pipenv run yapf --verbose --in-place ${FORMATTED_FILE}
 

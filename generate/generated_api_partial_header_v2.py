@@ -10,7 +10,6 @@ import abc
 import annofabapi # pylint: disable=unused-import
 import warnings # pylint: disable=unused-import
 from typing import Any, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
-from annofabapi.models import *
 import requests
 
 

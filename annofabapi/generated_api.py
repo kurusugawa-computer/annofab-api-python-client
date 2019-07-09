@@ -11,6 +11,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union  # pylint: disable=un
 
 import requests
 
+import annofabapi  # pylint: disable=unused-import
+
 
 class AbstractAnnofabApi(abc.ABC):
     """
@@ -290,10 +292,10 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                one_of_batch_annotation_request_item_put_batch_annotation_request_item_delete (list[OneOfBatchAnnotationRequestItemPutBatchAnnotationRequestItemDelete]):  (required)
+                one_of_batch_annotation_request_item_put_batch_annotation_request_item_delete (List[OneOfBatchAnnotationRequestItemPutBatchAnnotationRequestItemDelete]):  (required)
 
         Returns:
-            Tuple[list[SingleAnnotation], requests.Response]
+            Tuple[List[SingleAnnotation], requests.Response]
 
         Notes:
             authorizations: ProjectAccepter
@@ -578,10 +580,10 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                one_of_batch_input_data_request_item_delete (list[OneOfBatchInputDataRequestItemDelete]):  (required)
+                one_of_batch_input_data_request_item_delete (List[OneOfBatchInputDataRequestItemDelete]):  (required)
 
         Returns:
-            Tuple[list[InputData], requests.Response]
+            Tuple[List[InputData], requests.Response]
 
         Notes:
             authorizations: ProjectOwner
@@ -787,10 +789,10 @@ class AbstractAnnofabApi(abc.ABC):
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
             request_body (Any): Request Body
-                one_of_batch_inspection_request_item_put_batch_inspection_request_item_delete (list[OneOfBatchInspectionRequestItemPutBatchInspectionRequestItemDelete]):  (required)
+                one_of_batch_inspection_request_item_put_batch_inspection_request_item_delete (List[OneOfBatchInspectionRequestItemPutBatchInspectionRequestItemDelete]):  (required)
 
         Returns:
-            Tuple[list[Inspection], requests.Response]
+            Tuple[List[Inspection], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -820,7 +822,7 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[list[Inspection], requests.Response]
+            Tuple[List[Inspection], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -910,7 +912,7 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  取得する編集履歴の件数
 
         Returns:
-            Tuple[list[InstructionHistory], requests.Response]
+            Tuple[List[InstructionHistory], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -969,7 +971,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[list[InstructionImage], requests.Response]
+            Tuple[List[InstructionImage], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -1057,7 +1059,7 @@ class AbstractAnnofabApi(abc.ABC):
                 exclusive_start_created_datetime (str):  取得するデータの直前の作成日時
 
         Returns:
-            Tuple[list[JobInfo], requests.Response]
+            Tuple[List[JobInfo], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -1183,7 +1185,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
 
         Returns:
-            Tuple[list[ProjectMember], requests.Response]
+            Tuple[List[ProjectMember], requests.Response]
 
         Notes:
             authorizations: Everyone
@@ -1913,7 +1915,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[list[ProjectAccountStatistics], requests.Response]
+            Tuple[List[ProjectAccountStatistics], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -1937,7 +1939,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[list[InspectionStatistics], requests.Response]
+            Tuple[List[InspectionStatistics], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -1962,7 +1964,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[list[LabelStatistics], requests.Response]
+            Tuple[List[LabelStatistics], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -1986,7 +1988,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[list[TaskPhaseStatistics], requests.Response]
+            Tuple[List[TaskPhaseStatistics], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -2010,7 +2012,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[list[ProjectTaskStatisticsHistory], requests.Response]
+            Tuple[List[ProjectTaskStatisticsHistory], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -2035,7 +2037,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[list[WorktimeStatistics], requests.Response]
+            Tuple[List[WorktimeStatistics], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -2094,7 +2096,7 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[list[SupplementaryData], requests.Response]
+            Tuple[List[SupplementaryData], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -2149,10 +2151,10 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                one_of_batch_task_request_item_delete (list[OneOfBatchTaskRequestItemDelete]):  (required)
+                one_of_batch_task_request_item_delete (List[OneOfBatchTaskRequestItemDelete]):  (required)
 
         Returns:
-            Tuple[list[Task], requests.Response]
+            Tuple[List[Task], requests.Response]
 
         Notes:
             authorizations: ProjectOwner
@@ -2210,7 +2212,7 @@ class AbstractAnnofabApi(abc.ABC):
             task_history_id (str):  タスク履歴ID (required)
 
         Returns:
-            Tuple[list[TaskHistory], requests.Response]
+            Tuple[List[TaskHistory], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -2239,7 +2241,7 @@ class AbstractAnnofabApi(abc.ABC):
             task_id (str):  タスクID (required)
 
         Returns:
-            Tuple[list[TaskHistoryEvent], requests.Response]
+            Tuple[List[TaskHistoryEvent], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -2293,7 +2295,7 @@ class AbstractAnnofabApi(abc.ABC):
             task_id (str):  タスクID (required)
 
         Returns:
-            Tuple[list[TaskHistory], requests.Response]
+            Tuple[List[TaskHistory], requests.Response]
 
         Notes:
             authorizations: AllProjectMember
@@ -2553,7 +2555,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[list[Webhook], requests.Response]
+            Tuple[List[Webhook], requests.Response]
 
         Notes:
             authorizations: ProjectOwner
