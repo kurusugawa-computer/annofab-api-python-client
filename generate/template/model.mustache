@@ -22,13 +22,12 @@ class {{classname}}(Enum):
 {{classname}} = Dict[str, Any]
 """
 {{#description}}
-{{{description}}}  # noqa: E501
+{{{description}}}
 {{/description}}
 
-Notes:
-    Dictのkeyとその型
+Dictのkeyとその型
 {{#vars}}
-    * {{name}}: {{{dataType}}}
+* {{name}}: {{{dataType}}}
 {{/vars}}
 
 """

@@ -8,7 +8,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationSpecs, InputData, Inspection, OrganizationMember, Project, JobInfo,
+from annofabapi.models import (AnnotationSpecs, InputData, Inspection, JobInfo, OrganizationMember, Project,
                                ProjectMember, SupplementaryData, Task)
 
 logger = logging.getLogger(__name__)
