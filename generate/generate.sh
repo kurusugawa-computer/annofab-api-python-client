@@ -38,6 +38,7 @@ fi
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --output /local/out \
     --template-dir /local/template \
+    --type-mappings array=List \
     -Dapis   -DapiTests=false -DapiDocs=false \
     -Dmodels   -DmodelTests=false -DmodelDocs=false"
 
@@ -49,7 +50,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-gene
 
 cat generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
 
-cat enums_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/enums.py
+cat models_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/models.py
 
 rm -Rf out/openapi_client
 

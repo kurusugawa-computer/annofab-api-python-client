@@ -1,6 +1,7 @@
 {{#models}}
 {{#model}}
 {{#isEnum}}
+{{! enumならば列挙体として定義する }}
 class {{classname}}(Enum):
     """
     {{#description}}
@@ -16,5 +17,22 @@ class {{classname}}(Enum):
 {{/allowableValues}}
 
 {{/isEnum}}
+{{^isEnum}}
+{{! enum以外ならばDictとして型ヒントを定義する }}
+{{classname}} = Dict[str, Any]
+"""
+{{#description}}
+{{{description}}}  # noqa: E501
+{{/description}}
+
+Notes:
+    Dictのkeyとその型
+{{#vars}}
+    * {{name}}: {{{dataType}}}
+{{/vars}}
+
+"""
+{{/isEnum}}
 {{/model}}
+
 {{/models}}
