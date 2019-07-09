@@ -51,7 +51,11 @@ def build_from_netrc() -> Resource:
         annnofabapi.Resourceインスタンス
 
     """
-    netrc_hosts = netrc.netrc().hosts
+    try:
+        netrc_hosts = netrc.netrc().hosts
+    except FileNotFoundError as e:
+        raise AnnofabApiException(e)
+
     if 'annofab.com' not in netrc_hosts:
         raise AnnofabApiException("The `.netrc` file does not contain the machine name `annofab.com`")
 
