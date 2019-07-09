@@ -17,7 +17,7 @@ AcceptOrganizationInvitationRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-token: str
+* token: str
 
 """
 
@@ -25,14 +25,14 @@ Account = Dict[str, Any]
 """
 
 Dictのkeyとその型
-account_id: str
-user_id: str
-username: str
-email: str
-lang: str
-keylayout: str
-authority: AccountAuthority
-updated_datetime: datetime
+* account_id: str
+* user_id: str
+* username: str
+* email: str
+* lang: str
+* keylayout: str
+* authority: AccountAuthority
+* updated_datetime: datetime
 
 """
 
@@ -49,9 +49,9 @@ AccountWorktimeStatistics = Dict[str, Any]
 """
 
 Dictのkeyとその型
-account_id: str
-by_tasks: List[WorktimeStatisticsItem]
-by_inputs: List[WorktimeStatisticsItem]
+* account_id: str
+* by_tasks: List[WorktimeStatisticsItem]
+* by_inputs: List[WorktimeStatisticsItem]
 
 """
 
@@ -59,11 +59,11 @@ AdditionalData = Dict[str, Any]
 """
 
 Dictのkeyとその型
-additional_data_definition_id: str
-flag: bool
-interger: int
-comment: str
-choice: str
+* additional_data_definition_id: str
+* flag: bool
+* interger: int
+* comment: str
+* choice: str
 
 """
 
@@ -71,15 +71,15 @@ AdditionalDataDefinition = Dict[str, Any]
 """
 
 Dictのkeyとその型
-additional_data_definition_id: str
-read_only: bool
-name: InternationalizationMessage
-keybind: List[Keybind]
-type: AdditionalDataDefinitionType
-choices: List[AdditionalDataDefinitionChoices]
-regex: str
-label_ids: List[str]
-required: bool
+* additional_data_definition_id: str
+* read_only: bool
+* name: InternationalizationMessage
+* keybind: List[Keybind]
+* type: AdditionalDataDefinitionType
+* choices: List[AdditionalDataDefinitionChoices]
+* regex: str
+* label_ids: List[str]
+* required: bool
 
 """
 
@@ -87,9 +87,9 @@ AdditionalDataDefinitionChoices = Dict[str, Any]
 """
 
 Dictのkeyとその型
-choice_id: str
-name: InternationalizationMessage
-keybind: List[Keybind]
+* choice_id: str
+* name: InternationalizationMessage
+* keybind: List[Keybind]
 
 """
 
@@ -112,10 +112,10 @@ AggregationResult = Dict[str, Any]
 """
 
 Dictのkeyとその型
-type: str
-name: str
-field: str
-items: List[Count]
+* type: str
+* name: str
+* field: str
+* items: List[Count]
 
 """
 
@@ -123,12 +123,12 @@ Annotation = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-input_data_id: str
-details: List[AnnotationDetail]
-comment: str
-updated_datetime: datetime
+* project_id: str
+* task_id: str
+* input_data_id: str
+* details: List[AnnotationDetail]
+* comment: str
+* updated_datetime: datetime
 
 """
 
@@ -146,17 +146,17 @@ AnnotationDetail = Dict[str, Any]
 """
 
 Dictのkeyとその型
-annotation_id: str
-account_id: str
-label_id: str
-is_protected: bool
-data_holding_type: AnnotationDataHoldingType
-data: OneOfstringFullAnnotationData
-path: str
-etag: str
-url: str
-additional_data_list: List[AdditionalData]
-comment: str
+* annotation_id: str
+* account_id: str
+* label_id: str
+* is_protected: bool
+* data_holding_type: AnnotationDataHoldingType
+* data: OneOfstringFullAnnotationData
+* path: str
+* etag: str
+* url: str
+* additional_data_list: List[AdditionalData]
+* comment: str
 
 """
 
@@ -164,12 +164,12 @@ AnnotationEditorFeature = Dict[str, Any]
 """
 
 Dictのkeyとその型
-append: bool
-erase: bool
-freehand: bool
-rectangle_fill: bool
-polygon_fill: bool
-fill_near: bool
+* append: bool
+* erase: bool
+* freehand: bool
+* rectangle_fill: bool
+* polygon_fill: bool
+* fill_near: bool
 
 """
 
@@ -177,12 +177,12 @@ AnnotationQuery = Dict[str, Any]
 """
 
 Dictのkeyとその型
-task_id: str
-exact_match_task_id: bool
-input_data_id: str
-exact_match_input_data_id: bool
-label_id: str
-attributes: List[AdditionalData]
+* task_id: str
+* exact_match_task_id: bool
+* input_data_id: str
+* exact_match_input_data_id: bool
+* label_id: str
+* attributes: List[AdditionalData]
 
 """
 
@@ -190,10 +190,10 @@ AnnotationSpecs = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-labels: List[Label]
-inspection_phrases: List[InspectionPhrase]
-updated_datetime: datetime
+* project_id: str
+* labels: List[Label]
+* inspection_phrases: List[InspectionPhrase]
+* updated_datetime: datetime
 
 """
 
@@ -201,9 +201,9 @@ AnnotationSpecsRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-labels: List[Label]
-inspection_phrases: List[InspectionPhrase]
-updated_datetime: datetime
+* labels: List[Label]
+* inspection_phrases: List[InspectionPhrase]
+* updated_datetime: datetime
 
 """
 
@@ -235,13 +235,13 @@ BatchAnnotation = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-input_data_id: str
-annotation_id: str
-label_id: str
-additional_data_list: List[FullAnnotationAdditionalData]
-updated_datetime: datetime
+* project_id: str
+* task_id: str
+* input_data_id: str
+* annotation_id: str
+* label_id: str
+* additional_data_list: List[FullAnnotationAdditionalData]
+* updated_datetime: datetime
 
 """
 
@@ -250,12 +250,12 @@ BatchAnnotationRequestItemDelete = Dict[str, Any]
 アノテーション削除
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-input_data_id: str
-annotation_id: str
-updated_datetime: datetime
-type: str
+* project_id: str
+* task_id: str
+* input_data_id: str
+* annotation_id: str
+* updated_datetime: datetime
+* type: str
 
 """
 
@@ -264,8 +264,8 @@ BatchAnnotationRequestItemPut = Dict[str, Any]
 アノテーション更新
 
 Dictのkeyとその型
-data: BatchAnnotation
-type: str
+* data: BatchAnnotation
+* type: str
 
 """
 
@@ -274,9 +274,9 @@ BatchInputDataRequestItemDelete = Dict[str, Any]
 入力データ削除
 
 Dictのkeyとその型
-project_id: str
-input_data_id: str
-type: str
+* project_id: str
+* input_data_id: str
+* type: str
 
 """
 
@@ -285,11 +285,11 @@ BatchInspectionRequestItemDelete = Dict[str, Any]
 検査コメント削除
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-input_data_id: str
-inspection_id: str
-type: str
+* project_id: str
+* task_id: str
+* input_data_id: str
+* inspection_id: str
+* type: str
 
 """
 
@@ -298,8 +298,8 @@ BatchInspectionRequestItemPut = Dict[str, Any]
 検査コメント更新
 
 Dictのkeyとその型
-data: Inspection
-type: str
+* data: Inspection
+* type: str
 
 """
 
@@ -308,9 +308,9 @@ BatchTaskRequestItemDelete = Dict[str, Any]
 タスク削除
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-type: str
+* project_id: str
+* task_id: str
+* type: str
 
 """
 
@@ -318,9 +318,9 @@ ChangePasswordRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-user_id: str
-old_password: str
-new_password: str
+* user_id: str
+* old_password: str
+* new_password: str
 
 """
 
@@ -328,9 +328,9 @@ Color = Dict[str, Any]
 """
 
 Dictのkeyとその型
-red: int
-green: int
-blue: int
+* red: int
+* green: int
+* blue: int
 
 """
 
@@ -338,7 +338,7 @@ ConfirmAccountDeleteRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-token: str
+* token: str
 
 """
 
@@ -346,7 +346,7 @@ ConfirmResetEmailRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-token: str
+* token: str
 
 """
 
@@ -354,9 +354,9 @@ ConfirmResetPasswordRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-user_id: str
-confirmation_code: str
-new_password: str
+* user_id: str
+* confirmation_code: str
+* new_password: str
 
 """
 
@@ -364,13 +364,13 @@ ConfirmSignUpRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-account_id: str
-user_id: str
-password: str
-username: str
-lang: str
-keylayout: str
-confirmation_code: str
+* account_id: str
+* user_id: str
+* password: str
+* username: str
+* lang: str
+* keylayout: str
+* confirmation_code: str
 
 """
 
@@ -378,8 +378,8 @@ ConfirmVerifyEmailRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-token: Token
-confirmation_code: str
+* token: Token
+* confirmation_code: str
 
 """
 
@@ -387,9 +387,9 @@ Count = Dict[str, Any]
 """
 
 Dictのkeyとその型
-key: str
-count: int
-aggregations: List[AggregationResult]
+* key: str
+* count: int
+* aggregations: List[AggregationResult]
 
 """
 
@@ -397,10 +397,10 @@ CountResult = Dict[str, Any]
 """
 
 Dictのkeyとその型
-type: str
-name: str
-field: str
-items: List[Count]
+* type: str
+* name: str
+* field: str
+* items: List[Count]
 
 """
 
@@ -408,8 +408,8 @@ DataPath = Dict[str, Any]
 """
 
 Dictのkeyとその型
-url: str
-path: str
+* url: str
+* path: str
 
 """
 
@@ -418,10 +418,10 @@ Duplicated = Dict[str, Any]
 値の重複が許可されていない属性の重複エラー
 
 Dictのkeyとその型
-label_id: str
-annotation_id: str
-additional_data: AdditionalData
-type: str
+* label_id: str
+* annotation_id: str
+* additional_data: AdditionalData
+* type: str
 
 """
 
@@ -430,9 +430,9 @@ DuplicatedSegmentationV2 = Dict[str, Any]
 塗りつぶしv2のラベルに対する1ラベルにつき1アノテーションまでの制約違反エラー
 
 Dictのkeyとその型
-label_id: str
-annotation_ids: List[str]
-type: str
+* label_id: str
+* annotation_ids: List[str]
+* type: str
 
 """
 
@@ -441,10 +441,10 @@ EmptyAttribute = Dict[str, Any]
 属性が未入力であるエラー
 
 Dictのkeyとその型
-label_id: str
-annotation_id: str
-additional_data_definition_id: str
-type: str
+* label_id: str
+* annotation_id: str
+* additional_data_definition_id: str
+* type: str
 
 """
 
@@ -452,9 +452,9 @@ Error = Dict[str, Any]
 """
 
 Dictのkeyとその型
-error_code: str
-message: str
-ext: object
+* error_code: str
+* message: str
+* ext: object
 
 """
 
@@ -462,8 +462,8 @@ ErrorAlreadyUpdated = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -471,8 +471,8 @@ ErrorExpiredToken = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -480,8 +480,8 @@ ErrorForbiddenResource = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -489,8 +489,8 @@ ErrorInternalServerError = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -498,8 +498,8 @@ ErrorInvalidBody = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -507,8 +507,8 @@ ErrorInvalidPath = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -516,8 +516,8 @@ ErrorInvalidQueryParam = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -525,8 +525,8 @@ ErrorLoginFailed = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -534,8 +534,8 @@ ErrorMissingNecessaryQueryParam = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -543,8 +543,8 @@ ErrorMissingResource = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -552,8 +552,8 @@ ErrorPasswordResetRequired = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -561,8 +561,8 @@ ErrorRefreshTokenExpired = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -570,8 +570,8 @@ ErrorStateMismatch = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -579,8 +579,8 @@ ErrorTimeout = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -588,8 +588,8 @@ ErrorUnauthorizedApi = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -597,8 +597,8 @@ ErrorUnderMaintenance = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -606,8 +606,8 @@ Errors = Dict[str, Any]
 """
 
 Dictのkeyとその型
-errors: List[Error]
-context: object
+* errors: List[Error]
+* context: object
 
 """
 
@@ -615,13 +615,13 @@ FullAnnotation = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-input_data_id: str
-input_data_name: str
-details: List[FullAnnotationDetail]
-comment: str
-updated_datetime: datetime
+* project_id: str
+* task_id: str
+* input_data_id: str
+* input_data_name: str
+* details: List[FullAnnotationDetail]
+* comment: str
+* updated_datetime: datetime
 
 """
 
@@ -629,14 +629,14 @@ FullAnnotationAdditionalData = Dict[str, Any]
 """
 
 Dictのkeyとその型
-additional_data_definition_id: str
-additional_data_definition_name: InternationalizationMessage
-type: AdditionalDataDefinitionType
-flag: bool
-integer: int
-comment: str
-choice: str
-choice_name: InternationalizationMessage
+* additional_data_definition_id: str
+* additional_data_definition_name: InternationalizationMessage
+* type: AdditionalDataDefinitionType
+* flag: bool
+* integer: int
+* comment: str
+* choice: str
+* choice_name: InternationalizationMessage
 
 """
 
@@ -644,15 +644,15 @@ FullAnnotationData = Dict[str, Any]
 """
 
 Dictのkeyとその型
-type: str
-data_uri: str
-left_top: Point
-right_bottom: Point
-points: List[Point]
-point: Point
-begin: float
-end: float
-data: str
+* type: str
+* data_uri: str
+* left_top: Point
+* right_bottom: Point
+* points: List[Point]
+* point: Point
+* begin: float
+* end: float
+* data: str
 
 """
 
@@ -661,9 +661,9 @@ FullAnnotationDataBoundingBox = Dict[str, Any]
 annotation_type が bounding_boxの場合に、[左上頂点座標, 右下頂点座標]を {\"x\":int, \"y\":int} の形式で記述したもの。
 
 Dictのkeyとその型
-left_top: Point
-right_bottom: Point
-type: str
+* left_top: Point
+* right_bottom: Point
+* type: str
 
 """
 
@@ -671,7 +671,7 @@ FullAnnotationDataClassification = Dict[str, Any]
 """
 
 Dictのkeyとその型
-type: str
+* type: str
 
 """
 
@@ -680,8 +680,8 @@ FullAnnotationDataPoints = Dict[str, Any]
 頂点座標 {\"x\":int, \"y\":int} の配列。  * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。 
 
 Dictのkeyとその型
-points: List[Point]
-type: str
+* points: List[Point]
+* type: str
 
 """
 
@@ -690,9 +690,9 @@ FullAnnotationDataRange = Dict[str, Any]
 annotation_type が rangeの場合に、[開始時間, 終了時間]を {\"begin\":number, \"end\":number} の形式で記述したもの。開始時間・終了時間の単位は秒で、精度はミリ秒まで。
 
 Dictのkeyとその型
-begin: float
-end: float
-type: str
+* begin: float
+* end: float
+* type: str
 
 """
 
@@ -701,8 +701,8 @@ FullAnnotationDataSegmentation = Dict[str, Any]
 塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
 
 Dictのkeyとその型
-data_uri: str
-type: str
+* data_uri: str
+* type: str
 
 """
 
@@ -710,8 +710,8 @@ FullAnnotationDataSegmentationV2 = Dict[str, Any]
 """
 
 Dictのkeyとその型
-data_uri: str
-type: str
+* data_uri: str
+* type: str
 
 """
 
@@ -720,8 +720,8 @@ FullAnnotationDataSinglePoint = Dict[str, Any]
 annotation_type が pointの場合。
 
 Dictのkeyとその型
-point: Point
-type: str
+* point: Point
+* type: str
 
 """
 
@@ -730,8 +730,8 @@ FullAnnotationDataUnknown = Dict[str, Any]
 annotation_typeにデータ構造が一致していない場合に、元のdata文字列をそのまま記述したもの。
 
 Dictのkeyとその型
-data: str
-type: str
+* data: str
+* type: str
 
 """
 
@@ -739,16 +739,16 @@ FullAnnotationDetail = Dict[str, Any]
 """
 
 Dictのkeyとその型
-annotation_id: str
-user_id: str
-label_id: str
-label_name: InternationalizationMessage
-annotation_type: AnnotationType
-data_holding_type: AnnotationDataHoldingType
-data: FullAnnotationData
-path: str
-additional_data_list: List[FullAnnotationAdditionalData]
-comment: str
+* annotation_id: str
+* user_id: str
+* label_id: str
+* label_name: InternationalizationMessage
+* annotation_type: AnnotationType
+* data_holding_type: AnnotationDataHoldingType
+* data: FullAnnotationData
+* path: str
+* additional_data_list: List[FullAnnotationAdditionalData]
+* comment: str
 
 """
 
@@ -756,9 +756,9 @@ HistogramItem = Dict[str, Any]
 """
 
 Dictのkeyとその型
-begin: float
-end: float
-count: int
+* begin: float
+* end: float
+* count: int
 
 """
 
@@ -766,12 +766,12 @@ InlineResponse200 = Dict[str, Any]
 """
 
 Dictのkeyとその型
-list: List[MyOrganization]
-page_no: float
-total_page_no: float
-total_count: float
-over_limit: bool
-aggregations: List[AggregationResult]
+* list: List[MyOrganization]
+* page_no: float
+* total_page_no: float
+* total_count: float
+* over_limit: bool
+* aggregations: List[AggregationResult]
 
 """
 
@@ -779,12 +779,12 @@ InlineResponse2001 = Dict[str, Any]
 """
 
 Dictのkeyとその型
-list: List[Project]
-page_no: float
-total_page_no: float
-total_count: float
-over_limit: bool
-aggregations: List[AggregationResult]
+* list: List[Project]
+* page_no: float
+* total_page_no: float
+* total_count: float
+* over_limit: bool
+* aggregations: List[AggregationResult]
 
 """
 
@@ -792,12 +792,12 @@ InlineResponse2002 = Dict[str, Any]
 """
 
 Dictのkeyとその型
-list: List[OrganizationMember]
-page_no: float
-total_page_no: float
-total_count: float
-over_limit: bool
-aggregations: List[AggregationResult]
+* list: List[OrganizationMember]
+* page_no: float
+* total_page_no: float
+* total_count: float
+* over_limit: bool
+* aggregations: List[AggregationResult]
 
 """
 
@@ -805,8 +805,8 @@ InlineResponse2003 = Dict[str, Any]
 """
 
 Dictのkeyとその型
-list: List[Project]
-has_next: bool
+* list: List[Project]
+* has_next: bool
 
 """
 
@@ -814,7 +814,7 @@ InlineResponse2004 = Dict[str, Any]
 """
 
 Dictのkeyとその型
-url: str
+* url: str
 
 """
 
@@ -822,12 +822,12 @@ InlineResponse2005 = Dict[str, Any]
 """
 
 Dictのkeyとその型
-list: List[ProjectMember]
-page_no: float
-total_page_no: float
-total_count: float
-over_limit: bool
-aggregations: List[AggregationResult]
+* list: List[ProjectMember]
+* page_no: float
+* total_page_no: float
+* total_count: float
+* over_limit: bool
+* aggregations: List[AggregationResult]
 
 """
 
@@ -835,12 +835,12 @@ InlineResponse2006 = Dict[str, Any]
 """
 
 Dictのkeyとその型
-list: List[Task]
-page_no: float
-total_page_no: float
-total_count: float
-over_limit: bool
-aggregations: List[AggregationResult]
+* list: List[Task]
+* page_no: float
+* total_page_no: float
+* total_count: float
+* over_limit: bool
+* aggregations: List[AggregationResult]
 
 """
 
@@ -848,12 +848,12 @@ InlineResponse2007 = Dict[str, Any]
 """
 
 Dictのkeyとその型
-list: List[SingleAnnotation]
-page_no: float
-total_page_no: float
-total_count: float
-over_limit: bool
-aggregations: List[AggregationResult]
+* list: List[SingleAnnotation]
+* page_no: float
+* total_page_no: float
+* total_count: float
+* over_limit: bool
+* aggregations: List[AggregationResult]
 
 """
 
@@ -861,12 +861,12 @@ InlineResponse2008 = Dict[str, Any]
 """
 
 Dictのkeyとその型
-list: List[InputData]
-page_no: float
-total_page_no: float
-total_count: float
-over_limit: bool
-aggregations: List[AggregationResult]
+* list: List[InputData]
+* page_no: float
+* total_page_no: float
+* total_count: float
+* over_limit: bool
+* aggregations: List[AggregationResult]
 
 """
 
@@ -874,17 +874,17 @@ InputData = Dict[str, Any]
 """
 
 Dictのkeyとその型
-input_data_id: str
-project_id: str
-input_data_name: str
-input_data_path: str
-url: str
-etag: str
-original_input_data_path: str
-original_resolution: Resolution
-resized_resolution: Resolution
-updated_datetime: datetime
-sign_required: bool
+* input_data_id: str
+* project_id: str
+* input_data_name: str
+* input_data_path: str
+* url: str
+* etag: str
+* original_input_data_path: str
+* original_resolution: Resolution
+* resized_resolution: Resolution
+* updated_datetime: datetime
+* sign_required: bool
 
 """
 
@@ -903,10 +903,10 @@ InputDataRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-input_data_name: str
-input_data_path: str
-last_updated_datetime: datetime
-sign_required: bool
+* input_data_name: str
+* input_data_path: str
+* last_updated_datetime: datetime
+* sign_required: bool
 
 """
 
@@ -915,9 +915,9 @@ InputDataSummary = Dict[str, Any]
 ある入力データのバリデーション結果です。入力データIDをキーに引けるようにMap[入力データID, バリデーション結果]となっています
 
 Dictのkeyとその型
-input_data_id: str
-inspection_summary: str
-annotation_summaries: List[ValidationError]
+* input_data_id: str
+* inspection_summary: str
+* annotation_summaries: List[ValidationError]
 
 """
 
@@ -936,20 +936,20 @@ Inspection = Dict[str, Any]
 検査コメント
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-input_data_id: str
-inspection_id: str
-phase: TaskPhase
-commenter_account_id: str
-annotation_id: str
-data: OneOfInspectionDataPointInspectionDataPolylineInspectionDataTime
-parent_inspection_id: str
-phrases: List[str]
-comment: str
-status: InspectionStatus
-created_datetime: datetime
-updated_datetime: datetime
+* project_id: str
+* task_id: str
+* input_data_id: str
+* inspection_id: str
+* phase: TaskPhase
+* commenter_account_id: str
+* annotation_id: str
+* data: OneOfInspectionDataPointInspectionDataPolylineInspectionDataTime
+* parent_inspection_id: str
+* phrases: List[str]
+* comment: str
+* status: InspectionStatus
+* created_datetime: datetime
+* updated_datetime: datetime
 
 """
 
@@ -958,9 +958,9 @@ InspectionDataPoint = Dict[str, Any]
 問題のある部分を示す座標 
 
 Dictのkeyとその型
-x: int
-y: int
-type: str
+* x: int
+* y: int
+* type: str
 
 """
 
@@ -969,8 +969,8 @@ InspectionDataPolyline = Dict[str, Any]
 問題のある部分を示すポリライン 
 
 Dictのkeyとその型
-coordinates: List[InspectionDataPolylineCoordinates]
-type: str
+* coordinates: List[InspectionDataPolylineCoordinates]
+* type: str
 
 """
 
@@ -978,8 +978,8 @@ InspectionDataPolylineCoordinates = Dict[str, Any]
 """
 
 Dictのkeyとその型
-x: int
-y: int
+* x: int
+* y: int
 
 """
 
@@ -988,9 +988,9 @@ InspectionDataTime = Dict[str, Any]
 問題のある時間帯を表す区間 
 
 Dictのkeyとその型
-start: float
-end: float
-type: str
+* start: float
+* end: float
+* type: str
 
 """
 
@@ -998,8 +998,8 @@ InspectionPhrase = Dict[str, Any]
 """
 
 Dictのkeyとその型
-id: str
-text: InternationalizationMessage
+* id: str
+* text: InternationalizationMessage
 
 """
 
@@ -1007,9 +1007,9 @@ InspectionStatistics = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-date: date
-breakdown: InspectionStatisticsBreakdown
+* project_id: str
+* date: date
+* breakdown: InspectionStatisticsBreakdown
 
 """
 
@@ -1017,8 +1017,8 @@ InspectionStatisticsBreakdown = Dict[str, Any]
 """
 
 Dictのkeyとその型
-labels: dict(str, InspectionStatisticsPhrases)
-no_label: InspectionStatisticsPhrases
+* labels: dict(str, InspectionStatisticsPhrases)
+* no_label: InspectionStatisticsPhrases
 
 """
 
@@ -1026,8 +1026,8 @@ InspectionStatisticsPhrases = Dict[str, Any]
 """
 
 Dictのkeyとその型
-phrases: dict(str, int)
-no_phrase: int
+* phrases: dict(str, int)
+* no_phrase: int
 
 """
 
@@ -1047,9 +1047,9 @@ InstructionHistory = Dict[str, Any]
 """
 
 Dictのkeyとその型
-history_id: str
-account_id: str
-updated_datetime: datetime
+* history_id: str
+* account_id: str
+* updated_datetime: datetime
 
 """
 
@@ -1057,10 +1057,10 @@ InstructionImage = Dict[str, Any]
 """
 
 Dictのkeyとその型
-image_id: str
-path: str
-url: str
-etag: str
+* image_id: str
+* path: str
+* url: str
+* etag: str
 
 """
 
@@ -1068,8 +1068,8 @@ InternationalizationMessage = Dict[str, Any]
 """
 
 Dictのkeyとその型
-messages: List[InternationalizationMessageMessages]
-default_lang: str
+* messages: List[InternationalizationMessageMessages]
+* default_lang: str
 
 """
 
@@ -1077,8 +1077,8 @@ InternationalizationMessageMessages = Dict[str, Any]
 """
 
 Dictのkeyとその型
-lang: str
-message: str
+* lang: str
+* message: str
 
 """
 
@@ -1087,10 +1087,10 @@ InvalidAnnotationData = Dict[str, Any]
 アノテーションデータ不正エラー
 
 Dictのkeyとその型
-label_id: str
-annotation_id: str
-message: str
-type: str
+* label_id: str
+* annotation_id: str
+* message: str
+* type: str
 
 """
 
@@ -1099,10 +1099,10 @@ InvalidCommentFormat = Dict[str, Any]
 コメントが正規表現に合致しないエラー
 
 Dictのkeyとその型
-label_id: str
-annotation_id: str
-additional_data_definition_id: str
-type: str
+* label_id: str
+* annotation_id: str
+* additional_data_definition_id: str
+* type: str
 
 """
 
@@ -1111,10 +1111,10 @@ InvalidLinkTarget = Dict[str, Any]
 リンク先アノテーションが許可されているラベルでないエラー
 
 Dictのkeyとその型
-label_id: str
-annotation_id: str
-additional_data_definition_id: str
-type: str
+* label_id: str
+* annotation_id: str
+* additional_data_definition_id: str
+* type: str
 
 """
 
@@ -1122,7 +1122,7 @@ InviteOrganizationMemberRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-role: OrganizationMemberRole
+* role: OrganizationMemberRole
 
 """
 
@@ -1130,14 +1130,14 @@ JobInfo = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-job_type: str
-job_id: str
-job_status: str
-job_execution: object
-job_detail: object
-created_datetime: datetime
-updated_datetime: datetime
+* project_id: str
+* job_type: str
+* job_id: str
+* job_status: str
+* job_execution: object
+* job_detail: object
+* created_datetime: datetime
+* updated_datetime: datetime
 
 """
 
@@ -1145,10 +1145,10 @@ Keybind = Dict[str, Any]
 """
 
 Dictのkeyとその型
-code: str
-shift: bool
-ctrl: bool
-alt: bool
+* code: str
+* shift: bool
+* ctrl: bool
+* alt: bool
 
 """
 
@@ -1156,16 +1156,16 @@ Label = Dict[str, Any]
 """
 
 Dictのkeyとその型
-label_id: str
-label_name: InternationalizationMessage
-keybind: List[Keybind]
-annotation_type: AnnotationType
-bounding_box_metadata: LabelBoundingBoxMetadata
-segmentation_metadata: LabelSegmentationMetadata
-additional_data_definitions: List[AdditionalDataDefinition]
-color: Color
-annotation_editor_feature: AnnotationEditorFeature
-allow_out_of_image_bounds: bool
+* label_id: str
+* label_name: InternationalizationMessage
+* keybind: List[Keybind]
+* annotation_type: AnnotationType
+* bounding_box_metadata: LabelBoundingBoxMetadata
+* segmentation_metadata: LabelSegmentationMetadata
+* additional_data_definitions: List[AdditionalDataDefinition]
+* color: Color
+* annotation_editor_feature: AnnotationEditorFeature
+* allow_out_of_image_bounds: bool
 
 """
 
@@ -1173,13 +1173,13 @@ LabelBoundingBoxMetadata = Dict[str, Any]
 """
 
 Dictのkeyとその型
-min_width: int
-min_height: int
-min_warn_rule: str
-min_area: int
-max_vertices: int
-min_vertices: int
-tolerance: int
+* min_width: int
+* min_height: int
+* min_warn_rule: str
+* min_area: int
+* max_vertices: int
+* min_vertices: int
+* tolerance: int
 
 """
 
@@ -1187,10 +1187,10 @@ LabelSegmentationMetadata = Dict[str, Any]
 """
 
 Dictのkeyとその型
-min_width: int
-min_height: int
-min_warn_rule: str
-tolerance: int
+* min_width: int
+* min_height: int
+* min_warn_rule: str
+* tolerance: int
 
 """
 
@@ -1198,9 +1198,9 @@ LabelStatistics = Dict[str, Any]
 """
 
 Dictのkeyとその型
-label_id: str
-completed_labels: int
-wip_labels: int
+* label_id: str
+* completed_labels: int
+* wip_labels: int
 
 """
 
@@ -1208,8 +1208,8 @@ LoginRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-user_id: str
-password: str
+* user_id: str
+* password: str
 
 """
 
@@ -1217,7 +1217,7 @@ LoginResponse = Dict[str, Any]
 """
 
 Dictのkeyとその型
-token: Token
+* token: Token
 
 """
 
@@ -1225,7 +1225,7 @@ Message = Dict[str, Any]
 """
 
 Dictのkeyとその型
-message: str
+* message: str
 
 """
 
@@ -1233,16 +1233,16 @@ MyAccount = Dict[str, Any]
 """
 
 Dictのkeyとその型
-account_id: str
-user_id: str
-username: str
-email: str
-lang: str
-keylayout: str
-authority: AccountAuthority
-updated_datetime: datetime
-reset_requested_email: str
-errors: List[str]
+* account_id: str
+* user_id: str
+* username: str
+* email: str
+* lang: str
+* keylayout: str
+* authority: AccountAuthority
+* updated_datetime: datetime
+* reset_requested_email: str
+* errors: List[str]
 
 """
 
@@ -1250,15 +1250,15 @@ MyOrganization = Dict[str, Any]
 """
 
 Dictのkeyとその型
-organization_id: str
-name: str
-email: str
-price_plan: PricePlan
-summary: OrganizationSummary
-created_datetime: datetime
-updated_datetime: datetime
-my_role: OrganizationMemberRole
-my_status: OrganizationMemberStatus
+* organization_id: str
+* name: str
+* email: str
+* price_plan: PricePlan
+* summary: OrganizationSummary
+* created_datetime: datetime
+* updated_datetime: datetime
+* my_role: OrganizationMemberRole
+* my_status: OrganizationMemberStatus
 
 """
 
@@ -1266,13 +1266,13 @@ Organization = Dict[str, Any]
 """
 
 Dictのkeyとその型
-organization_id: str
-organization_name: str
-email: str
-price_plan: PricePlan
-summary: OrganizationSummary
-created_datetime: datetime
-updated_datetime: datetime
+* organization_id: str
+* organization_name: str
+* email: str
+* price_plan: PricePlan
+* summary: OrganizationSummary
+* created_datetime: datetime
+* updated_datetime: datetime
 
 """
 
@@ -1280,9 +1280,9 @@ OrganizationActivity = Dict[str, Any]
 """
 
 Dictのkeyとその型
-organization_id: str
-created_datetime: datetime
-storage_usage_bytes: float
+* organization_id: str
+* created_datetime: datetime
+* storage_usage_bytes: float
 
 """
 
@@ -1290,14 +1290,14 @@ OrganizationMember = Dict[str, Any]
 """
 
 Dictのkeyとその型
-organization_id: str
-account_id: str
-user_id: str
-username: str
-role: OrganizationMemberRole
-status: OrganizationMemberStatus
-created_datetime: datetime
-updated_datetime: datetime
+* organization_id: str
+* account_id: str
+* user_id: str
+* username: str
+* role: OrganizationMemberRole
+* status: OrganizationMemberStatus
+* created_datetime: datetime
+* updated_datetime: datetime
 
 """
 
@@ -1325,9 +1325,9 @@ OrganizationRegistrationRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-organization_name: str
-organization_email: str
-price_plan: PricePlan
+* organization_name: str
+* organization_email: str
+* price_plan: PricePlan
 
 """
 
@@ -1335,7 +1335,7 @@ OrganizationSummary = Dict[str, Any]
 """
 
 Dictのkeyとその型
-last_tasks_updated_datetime: datetime
+* last_tasks_updated_datetime: datetime
 
 """
 
@@ -1344,9 +1344,9 @@ OutOfImageBounds = Dict[str, Any]
 画像範囲外にアノテーションがはみ出しているエラー
 
 Dictのkeyとその型
-label_id: str
-annotation_id: str
-type: str
+* label_id: str
+* annotation_id: str
+* type: str
 
 """
 
@@ -1354,7 +1354,7 @@ PasswordResetRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-email: str
+* email: str
 
 """
 
@@ -1362,8 +1362,8 @@ PhaseStatistics = Dict[str, Any]
 """
 
 Dictのkeyとその型
-phase: str
-worktime: str
+* phase: str
+* worktime: str
 
 """
 
@@ -1372,8 +1372,8 @@ Point = Dict[str, Any]
 座標
 
 Dictのkeyとその型
-x: int
-y: int
+* x: int
+* y: int
 
 """
 
@@ -1390,16 +1390,16 @@ Project = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-organization_id: str
-title: str
-overview: str
-status: ProjectStatus
-input_data_type: InputDataType
-configuration: ProjectConfiguration
-created_datetime: datetime
-updated_datetime: datetime
-summary: ProjectSummary
+* project_id: str
+* organization_id: str
+* title: str
+* overview: str
+* status: ProjectStatus
+* input_data_type: InputDataType
+* configuration: ProjectConfiguration
+* created_datetime: datetime
+* updated_datetime: datetime
+* summary: ProjectSummary
 
 """
 
@@ -1407,8 +1407,8 @@ ProjectAccountStatistics = Dict[str, Any]
 """
 
 Dictのkeyとその型
-account_id: str
-histories: List[ProjectAccountStatisticsHistory]
+* account_id: str
+* histories: List[ProjectAccountStatisticsHistory]
 
 """
 
@@ -1416,10 +1416,10 @@ ProjectAccountStatisticsHistory = Dict[str, Any]
 """
 
 Dictのkeyとその型
-date: date
-tasks_completed: int
-tasks_rejected: int
-worktime: str
+* date: date
+* tasks_completed: int
+* tasks_rejected: int
+* worktime: str
 
 """
 
@@ -1427,15 +1427,15 @@ ProjectConfiguration = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_rule: str
-project_workflow: ProjectWorkflow
-assignee_rule_of_resubmitted_task: AssigneeRuleOfResubmittedTask
-max_tasks_per_member: int
-max_tasks_per_member_including_hold: int
-input_data_max_long_side_length: int
-sampling_inspection_rate: int
-sampling_acceptance_rate: int
-private_storage_aws_iam_role_arn: str
+* project_rule: str
+* project_workflow: ProjectWorkflow
+* assignee_rule_of_resubmitted_task: AssigneeRuleOfResubmittedTask
+* max_tasks_per_member: int
+* max_tasks_per_member_including_hold: int
+* input_data_max_long_side_length: int
+* sampling_inspection_rate: int
+* sampling_acceptance_rate: int
+* private_storage_aws_iam_role_arn: str
 
 """
 
@@ -1443,14 +1443,14 @@ ProjectCopyRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-dest_project_id: str
-dest_title: str
-dest_overview: str
-copy_inputs: bool
-copy_tasks_with_annotations: bool
-copy_webhooks: bool
-copy_supplementaly_data: bool
-copy_instructions: bool
+* dest_project_id: str
+* dest_title: str
+* dest_overview: str
+* copy_inputs: bool
+* copy_tasks_with_annotations: bool
+* copy_webhooks: bool
+* copy_supplementaly_data: bool
+* copy_instructions: bool
 
 """
 
@@ -1458,15 +1458,15 @@ ProjectMember = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-account_id: str
-user_id: str
-username: str
-member_status: ProjectMemberStatus
-member_role: ProjectMemberRole
-updated_datetime: datetime
-created_datetime: datetime
-sampling_inspection_rate: int
+* project_id: str
+* account_id: str
+* user_id: str
+* username: str
+* member_status: ProjectMemberStatus
+* member_role: ProjectMemberRole
+* updated_datetime: datetime
+* created_datetime: datetime
+* sampling_inspection_rate: int
 
 """
 
@@ -1474,9 +1474,9 @@ ProjectMemberRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-member_status: ProjectMemberStatus
-member_role: ProjectMemberRole
-last_updated_datetime: datetime
+* member_status: ProjectMemberStatus
+* member_role: ProjectMemberRole
+* last_updated_datetime: datetime
 
 """
 
@@ -1512,7 +1512,7 @@ ProjectSummary = Dict[str, Any]
 """
 
 Dictのkeyとその型
-last_tasks_updated_datetime: datetime
+* last_tasks_updated_datetime: datetime
 
 """
 
@@ -1520,10 +1520,10 @@ ProjectTaskStatistics = Dict[str, Any]
 """
 
 Dictのkeyとその型
-phase: TaskPhase
-status: TaskStatus
-count: int
-work_timespan: int
+* phase: TaskPhase
+* status: TaskStatus
+* count: int
+* work_timespan: int
 
 """
 
@@ -1531,8 +1531,8 @@ ProjectTaskStatisticsHistory = Dict[str, Any]
 """
 
 Dictのkeyとその型
-date: date
-tasks: List[ProjectTaskStatistics]
+* date: date
+* tasks: List[ProjectTaskStatistics]
 
 """
 
@@ -1549,12 +1549,12 @@ PutMyAccountRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-user_id: str
-username: str
-lang: str
-keylayout: str
-token: Token
-last_updated_datetime: datetime
+* user_id: str
+* username: str
+* lang: str
+* keylayout: str
+* token: Token
+* last_updated_datetime: datetime
 
 """
 
@@ -1562,8 +1562,8 @@ PutOrganizationMemberRoleRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-role: OrganizationMemberRole
-last_updated_datetime: datetime
+* role: OrganizationMemberRole
+* last_updated_datetime: datetime
 
 """
 
@@ -1571,9 +1571,9 @@ PutOrganizationNameRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-organization_id: str
-organization_name: str
-last_updated_datetime: datetime
+* organization_id: str
+* organization_name: str
+* last_updated_datetime: datetime
 
 """
 
@@ -1581,14 +1581,14 @@ PutProjectRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-title: str
-overview: str
-status: str
-input_data_type: InputDataType
-organization_name: str
-configuration: ProjectConfiguration
-last_updated_datetime: datetime
-force_suspend: bool
+* title: str
+* overview: str
+* status: str
+* input_data_type: InputDataType
+* organization_name: str
+* configuration: ProjectConfiguration
+* last_updated_datetime: datetime
+* force_suspend: bool
 
 """
 
@@ -1596,7 +1596,7 @@ RefreshTokenRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-refresh_token: str
+* refresh_token: str
 
 """
 
@@ -1604,7 +1604,7 @@ ResetEmailRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-email: str
+* email: str
 
 """
 
@@ -1612,7 +1612,7 @@ ResetPasswordRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-token: str
+* token: str
 
 """
 
@@ -1621,8 +1621,8 @@ Resolution = Dict[str, Any]
 画像などの解像度 
 
 Dictのkeyとその型
-width: float
-height: float
+* width: float
+* height: float
 
 """
 
@@ -1630,7 +1630,7 @@ SignUpRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-email: str
+* email: str
 
 """
 
@@ -1638,13 +1638,13 @@ SimpleAnnotation = Dict[str, Any]
 """
 
 Dictのkeyとその型
-annotation_format_version: str
-project_id: str
-task_id: str
-input_data_id: str
-input_data_name: str
-details: List[SimpleAnnotationDetail]
-comment: str
+* annotation_format_version: str
+* project_id: str
+* task_id: str
+* input_data_id: str
+* input_data_name: str
+* details: List[SimpleAnnotationDetail]
+* comment: str
 
 """
 
@@ -1652,10 +1652,10 @@ SimpleAnnotationDetail = Dict[str, Any]
 """
 
 Dictのkeyとその型
-label: str
-annotation_id: str
-data: FullAnnotationData
-attributes: object
+* label: str
+* annotation_id: str
+* data: FullAnnotationData
+* attributes: object
 
 """
 
@@ -1663,11 +1663,11 @@ SingleAnnotation = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-input_data_id: str
-detail: SingleAnnotationDetail
-updated_datetime: datetime
+* project_id: str
+* task_id: str
+* input_data_id: str
+* detail: SingleAnnotationDetail
+* updated_datetime: datetime
 
 """
 
@@ -1675,16 +1675,16 @@ SingleAnnotationDetail = Dict[str, Any]
 """
 
 Dictのkeyとその型
-annotation_id: str
-account_id: str
-label_id: str
-data_holding_type: AnnotationDataHoldingType
-data: FullAnnotationData
-etag: str
-url: str
-additional_data_list: List[FullAnnotationAdditionalData]
-created_datetime: datetime
-updated_datetime: datetime
+* annotation_id: str
+* account_id: str
+* label_id: str
+* data_holding_type: AnnotationDataHoldingType
+* data: FullAnnotationData
+* etag: str
+* url: str
+* additional_data_list: List[FullAnnotationAdditionalData]
+* created_datetime: datetime
+* updated_datetime: datetime
 
 """
 
@@ -1692,16 +1692,16 @@ SupplementaryData = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-input_data_id: str
-supplementary_data_id: str
-supplementary_data_name: str
-supplementary_data_path: str
-url: str
-etag: str
-supplementary_data_type: str
-supplementary_data_number: int
-updated_datetime: datetime
+* project_id: str
+* input_data_id: str
+* supplementary_data_id: str
+* supplementary_data_name: str
+* supplementary_data_path: str
+* url: str
+* etag: str
+* supplementary_data_type: str
+* supplementary_data_number: int
+* updated_datetime: datetime
 
 """
 
@@ -1709,11 +1709,11 @@ SupplementaryDataRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-supplementary_data_name: str
-supplementary_data_path: str
-supplementary_data_type: str
-supplementary_data_number: int
-last_updated_datetime: datetime
+* supplementary_data_name: str
+* supplementary_data_path: str
+* supplementary_data_type: str
+* supplementary_data_number: int
+* last_updated_datetime: datetime
 
 """
 
@@ -1721,18 +1721,18 @@ Task = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-phase: TaskPhase
-status: TaskStatus
-input_data_id_list: List[str]
-account_id: str
-histories_by_phase: List[TaskHistoryShort]
-work_timespan: int
-number_of_rejections: int
-started_datetime: datetime
-updated_datetime: datetime
-sampling: str
+* project_id: str
+* task_id: str
+* phase: TaskPhase
+* status: TaskStatus
+* input_data_id_list: List[str]
+* account_id: str
+* histories_by_phase: List[TaskHistoryShort]
+* work_timespan: int
+* number_of_rejections: int
+* started_datetime: datetime
+* updated_datetime: datetime
+* sampling: str
 
 """
 
@@ -1740,9 +1740,9 @@ TaskGenerateRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-task_generate_rule: OneOfTaskGenerateRuleByCountTaskGenerateRuleByDirectoryTaskGenerateRuleByInputDataCsv
-task_id_prefix: str
-project_last_updated_datetime: datetime
+* task_generate_rule: OneOfTaskGenerateRuleByCountTaskGenerateRuleByDirectoryTaskGenerateRuleByInputDataCsv
+* task_id_prefix: str
+* project_last_updated_datetime: datetime
 
 """
 
@@ -1751,10 +1751,10 @@ TaskGenerateRuleByCount = Dict[str, Any]
 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
 
 Dictのkeyとその型
-allow_duplicate_input_data: bool
-input_data_count: int
-input_data_order: InputDataOrder
-type: str
+* allow_duplicate_input_data: bool
+* input_data_count: int
+* input_data_order: InputDataOrder
+* type: str
 
 """
 
@@ -1763,8 +1763,8 @@ TaskGenerateRuleByDirectory = Dict[str, Any]
 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。<br>
 
 Dictのkeyとその型
-input_data_name_prefix: str
-type: str
+* input_data_name_prefix: str
+* type: str
 
 """
 
@@ -1773,8 +1773,8 @@ TaskGenerateRuleByInputDataCsv = Dict[str, Any]
 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。
 
 Dictのkeyとその型
-csv_data_path: str
-type: str
+* csv_data_path: str
+* type: str
 
 """
 
@@ -1783,14 +1783,14 @@ TaskHistory = Dict[str, Any]
 タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-task_history_id: str
-started_datetime: datetime
-ended_datetime: datetime
-accumulated_labor_time_milliseconds: str
-phase: TaskPhase
-account_id: str
+* project_id: str
+* task_id: str
+* task_history_id: str
+* started_datetime: datetime
+* ended_datetime: datetime
+* accumulated_labor_time_milliseconds: str
+* phase: TaskPhase
+* account_id: str
 
 """
 
@@ -1799,13 +1799,13 @@ TaskHistoryEvent = Dict[str, Any]
 タスク履歴イベントは、タスクの状態が変化した１時点を表します。作業時間は、複数のこれらイベントを集約して計算するものなので、このオブジェクトには含まれません。
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-task_history_id: str
-created_datetime: datetime
-phase: TaskPhase
-status: TaskStatus
-account_id: str
+* project_id: str
+* task_id: str
+* task_history_id: str
+* created_datetime: datetime
+* phase: TaskPhase
+* status: TaskStatus
+* account_id: str
 
 """
 
@@ -1814,8 +1814,8 @@ TaskHistoryShort = Dict[str, Any]
 タスクのあるフェーズを誰が担当したかを表します。
 
 Dictのkeyとその型
-phase: TaskPhase
-account_id: str
+* phase: TaskPhase
+* account_id: str
 
 """
 
@@ -1823,9 +1823,9 @@ TaskOperation = Dict[str, Any]
 """
 
 Dictのkeyとその型
-status: TaskStatus
-last_updated_datetime: datetime
-account_id: str
+* status: TaskStatus
+* last_updated_datetime: datetime
+* account_id: str
 
 """
 
@@ -1844,9 +1844,9 @@ TaskPhaseStatistics = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-date: date
-phases: List[PhaseStatistics]
+* project_id: str
+* date: date
+* phases: List[PhaseStatistics]
 
 """
 
@@ -1854,7 +1854,7 @@ TaskRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-input_data_id_list: List[str]
+* input_data_id_list: List[str]
 
 """
 
@@ -1862,7 +1862,7 @@ TaskStart = Dict[str, Any]
 """
 
 Dictのkeyとその型
-phase: TaskPhase
+* phase: TaskPhase
 
 """
 
@@ -1886,9 +1886,9 @@ TaskValidation = Dict[str, Any]
 タスクの全入力データに対するバリデーション結果です。
 
 Dictのkeyとその型
-project_id: str
-task_id: str
-inputs: List[InputDataSummary]
+* project_id: str
+* task_id: str
+* inputs: List[InputDataSummary]
 
 """
 
@@ -1896,8 +1896,8 @@ TasksInputs = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-tasks: List[TasksInputsTask]
+* project_id: str
+* tasks: List[TasksInputsTask]
 
 """
 
@@ -1905,10 +1905,10 @@ TasksInputsTask = Dict[str, Any]
 """
 
 Dictのkeyとその型
-task_id: str
-phase: TaskPhase
-status: TaskStatus
-input_data_id_list: List[str]
+* task_id: str
+* phase: TaskPhase
+* status: TaskStatus
+* input_data_id_list: List[str]
 
 """
 
@@ -1916,9 +1916,9 @@ Token = Dict[str, Any]
 """
 
 Dictのkeyとその型
-id_token: str
-access_token: str
-refresh_token: str
+* id_token: str
+* access_token: str
+* refresh_token: str
 
 """
 
@@ -1927,10 +1927,10 @@ UnknownAdditionalData = Dict[str, Any]
 何らかの原因で、アノテーション仕様にない属性がついているエラー
 
 Dictのkeyとその型
-label_id: str
-annotation_id: str
-additional_data_definition_id: str
-type: str
+* label_id: str
+* annotation_id: str
+* additional_data_definition_id: str
+* type: str
 
 """
 
@@ -1939,9 +1939,9 @@ UnknownLabel = Dict[str, Any]
 何らかの原因で、アノテーション仕様にないラベルがついているエラー
 
 Dictのkeyとその型
-label_id: str
-annotation_id: str
-type: str
+* label_id: str
+* annotation_id: str
+* type: str
 
 """
 
@@ -1950,10 +1950,10 @@ UnknownLinkTarget = Dict[str, Any]
 指定されたIDに該当するアノテーションが存在しないエラー
 
 Dictのkeyとその型
-label_id: str
-annotation_id: str
-additional_data_definition_id: str
-type: str
+* label_id: str
+* annotation_id: str
+* additional_data_definition_id: str
+* type: str
 
 """
 
@@ -1961,13 +1961,13 @@ ValidationError = Dict[str, Any]
 """
 
 Dictのkeyとその型
-label_id: str
-annotation_id: str
-message: str
-type: str
-annotation_ids: List[str]
-additional_data_definition_id: str
-additional_data: AdditionalData
+* label_id: str
+* annotation_id: str
+* message: str
+* type: str
+* annotation_ids: List[str]
+* additional_data_definition_id: str
+* additional_data: AdditionalData
 
 """
 
@@ -1975,7 +1975,7 @@ VerifyEmailRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-token: Token
+* token: Token
 
 """
 
@@ -1983,16 +1983,16 @@ Webhook = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-event_type: str
-webhook_id: str
-webhook_status: str
-method: str
-headers: List[WebhookHeader]
-body: str
-url: str
-created_datetime: datetime
-updated_datetime: datetime
+* project_id: str
+* event_type: str
+* webhook_id: str
+* webhook_status: str
+* method: str
+* headers: List[WebhookHeader]
+* body: str
+* url: str
+* created_datetime: datetime
+* updated_datetime: datetime
 
 """
 
@@ -2000,8 +2000,8 @@ WebhookHeader = Dict[str, Any]
 """
 
 Dictのkeyとその型
-name: str
-value: str
+* name: str
+* value: str
 
 """
 
@@ -2009,7 +2009,7 @@ WebhookTestRequest = Dict[str, Any]
 """
 
 Dictのkeyとその型
-placeholders: object
+* placeholders: object
 
 """
 
@@ -2017,11 +2017,11 @@ WebhookTestResponse = Dict[str, Any]
 """
 
 Dictのkeyとその型
-result: str
-request_body: str
-response_status: int
-response_body: str
-message: str
+* result: str
+* request_body: str
+* response_status: int
+* response_body: str
+* message: str
 
 """
 
@@ -2029,11 +2029,11 @@ WorktimeStatistics = Dict[str, Any]
 """
 
 Dictのkeyとその型
-project_id: str
-date: date
-by_tasks: List[WorktimeStatisticsItem]
-by_inputs: List[WorktimeStatisticsItem]
-accounts: List[AccountWorktimeStatistics]
+* project_id: str
+* date: date
+* by_tasks: List[WorktimeStatisticsItem]
+* by_inputs: List[WorktimeStatisticsItem]
+* accounts: List[AccountWorktimeStatistics]
 
 """
 
@@ -2041,9 +2041,9 @@ WorktimeStatisticsItem = Dict[str, Any]
 """
 
 Dictのkeyとその型
-phase: TaskPhase
-histogram: List[HistogramItem]
-average: str
-standard_deviation: str
+* phase: TaskPhase
+* histogram: List[HistogramItem]
+* average: str
+* standard_deviation: str
 
 """
