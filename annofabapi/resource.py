@@ -1,9 +1,11 @@
 import netrc
 import os
+import logging
 
 from annofabapi import AnnofabApi, AnnofabApi2, Wrapper
 from annofabapi.exceptions import AnnofabApiException
 
+logger = logging.getLogger(__name__)
 
 class Resource:
     """
@@ -65,6 +67,7 @@ def build_from_netrc() -> Resource:
     if login_user_id is None or login_password is None:
         raise AnnofabApiException("User ID or password in the .netrc file are None.")
 
+    logger.debug(".netrcファイルからAnnoFab認証情報を読み込んだ。")
     return Resource(login_user_id, login_password)
 
 
@@ -81,4 +84,5 @@ def build_from_env() -> Resource:
     if login_user_id is None or login_password is None:
         raise AnnofabApiException("`ANNOFAB_USER_ID` or `ANNOFAB_PASSWORD`  environment variable are empty.")
 
+    logger.debug("環境変数からAnnoFab認証情報を読み込んだ。")
     return Resource(login_user_id, login_password)
