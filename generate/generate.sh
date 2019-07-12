@@ -32,7 +32,7 @@ pushd ${SCRIPT_DIR}
 if "${FLAG_DOWNLOAD}"; then
     curl https://annofab.com/docs/api/swagger.yaml --output swagger.yaml
     curl https://annofab.com/docs/api/swagger.v2.yaml --output swagger.v2.yaml
-
+    curl https://annofab.com/docs/api/swagger-api-components.yaml  --output swagger-api-components.yaml
 fi
 
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
@@ -43,10 +43,10 @@ OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     -Dmodels   -DmodelTests=false -DmodelDocs=false"
 
 # v1 apiを生成
-docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-    --input-spec /local/swagger.yaml \
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local openapitools/openapi-generator-cli generate \
+    --input-spec swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
-    --ignore-file-override=/local/.openapi-generator-ignore_v1
+    #--ignore-file-override=/local/.openapi-generator-ignore_v1
 
 cat generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
 
@@ -55,10 +55,10 @@ cat models_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/m
 rm -Rf out/openapi_client
 
 # v2 apiを生成
-docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli generate \
-    --input-spec /local/swagger.v2.yaml \
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local openapitools/openapi-generator-cli generate \
+    --input-spec swagger.v2.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
-    --ignore-file-override=/local/.openapi-generator-ignore_v2
+    #--ignore-file-override=/local/.openapi-generator-ignore_v2
 
 cat generated_api_partial_header_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
 
