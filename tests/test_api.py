@@ -103,6 +103,9 @@ def test_annotation():
     print("wrapper.download_annotation_archive")
     wrapper.download_annotation_archive(project_id, f'{out_dir}/simple-annotation.zip')
 
+    print("wrapper.download_full_annotation_archive")
+    wrapper.download_full_annotation_archive(project_id, f'{out_dir}/full-annotation.zip')
+
     if should_execute_job_api:
         print("post_annotation_archive_update")
         assert type(api.post_annotation_archive_update(project_id)[0]) == dict
