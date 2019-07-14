@@ -1,11 +1,12 @@
+import logging
 import netrc
 import os
-import logging
 
 from annofabapi import AnnofabApi, AnnofabApi2, Wrapper
 from annofabapi.exceptions import AnnofabApiException
 
 logger = logging.getLogger(__name__)
+
 
 class Resource:
     """

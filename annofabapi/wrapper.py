@@ -111,7 +111,6 @@ class Wrapper:
         annofabapi.utils.download(url, dest_path)
         return url
 
-
     def download_full_annotation_archive(self, project_id: str, dest_path: str) -> str:
         """
         FullアノテーションZIPをダウンロードする。
@@ -128,7 +127,6 @@ class Wrapper:
         url = response.headers['Location']
         annofabapi.utils.download(url, dest_path)
         return url
-
 
     def get_all_annotation_list(self, project_id: str,
                                 query_params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
