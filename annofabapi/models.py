@@ -314,6 +314,19 @@ Dictのkeyとその型
 
 """
 
+CacheRecord = Dict[str, Any]
+"""
+
+Dictのkeyとその型
+* input: str
+* members: str
+* project: str
+* specs: str
+* statistics: str
+* organization: str
+
+"""
+
 ChangePasswordRequest = Dict[str, Any]
 """
 

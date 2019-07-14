@@ -599,7 +599,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -614,7 +614,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -629,7 +629,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -644,7 +644,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -659,7 +659,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -674,7 +674,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -689,7 +689,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -704,7 +704,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -719,7 +719,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -734,7 +734,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -749,7 +749,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -764,7 +764,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -779,7 +779,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -794,7 +794,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -809,7 +809,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
@@ -824,7 +824,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: '#/schemas/Error'
+              - $ref: '#/components/schemas/Error'
               - properties:
                   error_code:
                     type: string
