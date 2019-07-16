@@ -113,9 +113,9 @@ Kyes of Dict
 * regex: str
     
 * label_ids: List[str]
-    リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし） # noqa: E501
+    リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）
 * required: bool
-    リンク属性において、入力を必須とするかどうか # noqa: E501
+    リンク属性において、入力を必須とするかどうか
 
 """
 
@@ -137,7 +137,7 @@ Kyes of Dict
 
 class AdditionalDataDefinitionType(Enum):
     """
-    * `flag` - 真偽値 * `integer` - 整数値 * `comment` - 自由記述 * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - 自由記述 (トラッキングID自動挿入) * `link` - アノテーションリンク   # noqa: E501
+    * `flag` - 真偽値 * `integer` - 整数値 * `comment` - 自由記述 * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - 自由記述 (トラッキングID自動挿入) * `link` - アノテーションリンク 
     """
 
     FLAG = "flag"
@@ -156,7 +156,7 @@ AggregationResult = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    他と区別するために `CountResult` を指定します  # noqa: E501
+    他と区別するために `CountResult` を指定します 
 * name: str
     
 * field: str
@@ -183,14 +183,14 @@ Kyes of Dict
 * comment: str
     
 * updated_datetime: datetime
-    新規作成時は未指定、更新時は必須（更新前の日時）  # noqa: E501
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
 
 class AnnotationDataHoldingType(Enum):
     """
-    * `inner` - アノテーションのデータ部をJSON内部に保持します。 * `outer` - アノテーションのデータ部を外部ファイルの形式（画像など）で保持します   # noqa: E501
+    * `inner` - アノテーションのデータ部をJSON内部に保持します。 * `outer` - アノテーションのデータ部を外部ファイルの形式（画像など）で保持します 
     """
 
     INNER = "inner"
@@ -214,15 +214,15 @@ Kyes of Dict
 * data_holding_type: AnnotationDataHoldingType
     
 * data: OneOfstringFullAnnotationData
-    data_holding_type が inner の場合のみ存在し、annotation_type に応じたデータの値が格納されます。 `string`もしくは`object`の値を指定することができ、`string`の形式は次の通りです。   * annotation_type が bounding_box の場合: 左上x,左上y,右下x,右下y のCSV文字列形式。   * annotation_type が polygon/polyline の場合: x1,y1,x2,y2, ... のCSV文字列形式。   * annotation_type が segmentation または segmentation_v2 の場合: 塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。   * annotation_type が classification の場合: data 属性は存在しない。   * annotation_type が range の場合: 開始時間,終了時間 のCSV文字列形式。  # noqa: E501
+    data_holding_type が inner の場合のみ存在し、annotation_type に応じたデータの値が格納されます。 `string`もしくは`object`の値を指定することができ、`string`の形式は次の通りです。   * annotation_type が bounding_box の場合: 左上x,左上y,右下x,右下y のCSV文字列形式。   * annotation_type が polygon/polyline の場合: x1,y1,x2,y2, ... のCSV文字列形式。   * annotation_type が segmentation または segmentation_v2 の場合: 塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。   * annotation_type が classification の場合: data 属性は存在しない。   * annotation_type が range の場合: 開始時間,終了時間 のCSV文字列形式。 
 * path: str
-    data_holding_typeがouterの場合のみ存在し、データのパスが格納される (現在はアノテーションIDと等しい) # noqa: E501
+    data_holding_typeがouterの場合のみ存在し、データのパスが格納される (現在はアノテーションIDと等しい)
 * etag: str
-    data_holding_typeがouterの場合のみ存在し、データのETagが格納される # noqa: E501
+    data_holding_typeがouterの場合のみ存在し、データのETagが格納される
 * url: str
-    data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される # noqa: E501
+    data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
 * additional_data_list: List[AdditionalData]
-    各要素は、 [アノテーション仕様](#operation/getAnnotationSpecs)で定義された属性（`additional_data_definitions`内）のいずれかの要素と対応づけます。 各要素は、どの属性なのかを表す`additional_data_definition_id`、値が必要です。値は、属性の種類に対応するキーに格納します（下表）。  <table> <tr><th>アノテーション属性の種類<br>（`additional_data_definition`の`type`）</th><th>属性の値を格納するキー</th><th>データ型</th></tr> <tr><td>`comment` または `tracking`</td><td>`comment`</td><td>string</td></tr> <tr><td>`flag`</td><td>`flag`</td><td>boolean</td></tr> <tr><td>`integer`</td><td>`integer`</td><td>integer</td></tr> <tr><td>`choice` または `select`</td><td>`choice`</td><td>string（選択肢ID）</td></tr> <tr><td>`link`</td><td>`comment`</td><td>string（アノテーションID）</td></tr> </table>  # noqa: E501
+    各要素は、 [アノテーション仕様](#operation/getAnnotationSpecs)で定義された属性（`additional_data_definitions`内）のいずれかの要素と対応づけます。 各要素は、どの属性なのかを表す`additional_data_definition_id`、値が必要です。値は、属性の種類に対応するキーに格納します（下表）。  <table> <tr><th>アノテーション属性の種類<br>（`additional_data_definition`の`type`）</th><th>属性の値を格納するキー</th><th>データ型</th></tr> <tr><td>`comment` または `tracking`</td><td>`comment`</td><td>string</td></tr> <tr><td>`flag`</td><td>`flag`</td><td>boolean</td></tr> <tr><td>`integer`</td><td>`integer`</td><td>integer</td></tr> <tr><td>`choice` または `select`</td><td>`choice`</td><td>string（選択肢ID）</td></tr> <tr><td>`link`</td><td>`comment`</td><td>string（アノテーションID）</td></tr> </table> 
 * comment: str
     
 
@@ -258,11 +258,11 @@ Kyes of Dict
 * task_id: str
     
 * exact_match_task_id: bool
-    タスクIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は中間一致検索です。  # noqa: E501
+    タスクIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は中間一致検索です。 
 * input_data_id: str
     
 * exact_match_input_data_id: bool
-    入力データIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は中間一致検索です。  # noqa: E501
+    入力データIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は中間一致検索です。 
 * label_id: str
     
 * attributes: List[AdditionalData]
@@ -294,9 +294,9 @@ AnnotationSpecsRequest = Dict[str, Any]
 Kyes of Dict
 
 * labels: List[Label]
-    ラベル  # noqa: E501
+    ラベル 
 * inspection_phrases: List[InspectionPhrase]
-    定型指摘  # noqa: E501
+    定型指摘 
 * updated_datetime: datetime
     
 
@@ -305,7 +305,7 @@ Kyes of Dict
 
 class AnnotationType(Enum):
     """
-    * `bounding_box` - 矩形を表します。 * `segmentation` - ピクセルレベルでの塗りつぶし（ラスター）を表します。 * `segmentation_v2` - 塗りつぶしv2を表します。v2はSemantic Segmentationに特化しています。 * `polygon` - ポリゴン（閉じた頂点集合）を表します。 * `polyline` - ポリライン（開いた頂点集合）を表します。 * `classification` - 入力データ全体に対するアノテーションを表します。 * `range` - 動画の区間を表します。   # noqa: E501
+    * `bounding_box` - 矩形を表します。 * `segmentation` - ピクセルレベルでの塗りつぶし（ラスター）を表します。 * `segmentation_v2` - 塗りつぶしv2を表します。v2はSemantic Segmentationに特化しています。 * `polygon` - ポリゴン（閉じた頂点集合）を表します。 * `polyline` - ポリライン（開いた頂点集合）を表します。 * `classification` - 入力データ全体に対するアノテーションを表します。 * `range` - 動画の区間を表します。 
     """
 
     BOUNDING_BOX = "bounding_box"
@@ -319,7 +319,7 @@ class AnnotationType(Enum):
 
 class AssigneeRuleOfResubmittedTask(Enum):
     """
-    * `no_assignee` - 以前の担当者で固定せず、未割当てにします。 * `fixed` - 以前の担当者が再度担当します。以前の担当者がいない(1回目の検査/受入)場合は未割当てになります。   # noqa: E501
+    * `no_assignee` - 以前の担当者で固定せず、未割当てにします。 * `fixed` - 以前の担当者が再度担当します。以前の担当者がいない(1回目の検査/受入)場合は未割当てになります。 
     """
 
     NO_ASSIGNEE = "no_assignee"
@@ -366,7 +366,7 @@ Kyes of Dict
 * updated_datetime: datetime
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -379,7 +379,7 @@ Kyes of Dict
 * data: BatchAnnotation
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -394,7 +394,7 @@ Kyes of Dict
 * input_data_id: str
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -413,7 +413,7 @@ Kyes of Dict
 * inspection_id: str
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -426,7 +426,7 @@ Kyes of Dict
 * data: Inspection
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -441,7 +441,7 @@ Kyes of Dict
 * task_id: str
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -591,7 +591,7 @@ CountResult = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    他と区別するために `CountResult` を指定します  # noqa: E501
+    他と区別するために `CountResult` を指定します 
 * name: str
     
 * field: str
@@ -608,9 +608,9 @@ DataPath = Dict[str, Any]
 Kyes of Dict
 
 * url: str
-    ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。 # noqa: E501
+    ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。
 * path: str
-    アップロードしたファイルをAFの [入力データ](#tag/af-input) や [補助情報](#tag/af-supplementary) に登録するとき、この`path`を指定します。 # noqa: E501
+    アップロードしたファイルをAFの [入力データ](#tag/af-input) や [補助情報](#tag/af-supplementary) に登録するとき、この`path`を指定します。
 
 """
 
@@ -627,7 +627,7 @@ Kyes of Dict
 * additional_data: AdditionalData
     
 * type: str
-    Duplicated # noqa: E501
+    Duplicated
 
 """
 
@@ -642,7 +642,7 @@ Kyes of Dict
 * annotation_ids: List[str]
     
 * type: str
-    DuplicatedSegmentationV2 # noqa: E501
+    DuplicatedSegmentationV2
 
 """
 
@@ -659,7 +659,7 @@ Kyes of Dict
 * additional_data_definition_id: str
     
 * type: str
-    EmptyAttribute # noqa: E501
+    EmptyAttribute
 
 """
 
@@ -672,9 +672,9 @@ Kyes of Dict
 * error_code: str
     
 * message: str
-    エラーの概要 # noqa: E501
+    エラーの概要
 * ext: object
-    補足情報 # noqa: E501
+    補足情報
 
 """
 
@@ -687,7 +687,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -700,7 +700,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -713,7 +713,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -726,7 +726,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -739,7 +739,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -752,7 +752,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -765,7 +765,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -778,7 +778,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -791,7 +791,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -804,7 +804,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -817,7 +817,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -830,7 +830,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -843,7 +843,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -856,7 +856,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -869,7 +869,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -882,7 +882,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -895,7 +895,7 @@ Kyes of Dict
 * errors: List[Error]
     
 * context: object
-    内部補足情報 # noqa: E501
+    内部補足情報
 
 """
 
@@ -935,11 +935,11 @@ Kyes of Dict
 * type: AdditionalDataDefinitionType
     
 * flag: bool
-    typeがflagの場合に、フラグのON(true)またはOFF(false)が格納される # noqa: E501
+    typeがflagの場合に、フラグのON(true)またはOFF(false)が格納される
 * integer: int
-    typeがintegerの場合に、整数値が格納される # noqa: E501
+    typeがintegerの場合に、整数値が格納される
 * comment: str
-    * typeがcommentの場合、コメントの値 * typeがtrackingの場合、トラッキングID * typeがlinkの場合、リンク先のアノテーションID  # noqa: E501
+    * typeがcommentの場合、コメントの値 * typeがtrackingの場合、トラッキングID * typeがlinkの場合、リンク先のアノテーションID 
 * choice: str
     
 * choice_name: InternationalizationMessage
@@ -954,7 +954,7 @@ FullAnnotationData = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    Unknown # noqa: E501
+    Unknown
 * data_uri: str
     
 * left_top: Point
@@ -966,9 +966,9 @@ Kyes of Dict
 * point: Point
     
 * begin: float
-    開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。 # noqa: E501
+    開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
 * end: float
-    終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。 # noqa: E501
+    終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。
 * data: str
     
 
@@ -985,7 +985,7 @@ Kyes of Dict
 * right_bottom: Point
     
 * type: str
-    BoundingBox # noqa: E501
+    BoundingBox
 
 """
 
@@ -996,7 +996,7 @@ FullAnnotationDataClassification = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    Classification # noqa: E501
+    Classification
 
 """
 
@@ -1009,7 +1009,7 @@ Kyes of Dict
 * points: List[Point]
     
 * type: str
-    Points # noqa: E501
+    Points
 
 """
 
@@ -1020,11 +1020,11 @@ annotation_type が rangeの場合に、[開始時間, 終了時間]を {\"begin
 Kyes of Dict
 
 * begin: float
-    開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。 # noqa: E501
+    開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
 * end: float
-    終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。 # noqa: E501
+    終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。
 * type: str
-    Range # noqa: E501
+    Range
 
 """
 
@@ -1037,7 +1037,7 @@ Kyes of Dict
 * data_uri: str
     
 * type: str
-    Segmentation # noqa: E501
+    Segmentation
 
 """
 
@@ -1050,7 +1050,7 @@ Kyes of Dict
 * data_uri: str
     
 * type: str
-    SegmentationV2 # noqa: E501
+    SegmentationV2
 
 """
 
@@ -1063,7 +1063,7 @@ Kyes of Dict
 * point: Point
     
 * type: str
-    SinglePoint。 # noqa: E501
+    SinglePoint。
 
 """
 
@@ -1076,7 +1076,7 @@ Kyes of Dict
 * data: str
     
 * type: str
-    Unknown # noqa: E501
+    Unknown
 
 """
 
@@ -1101,7 +1101,7 @@ Kyes of Dict
 * data: FullAnnotationData
     
 * path: str
-    data_holding_typeがouterの場合のみ存在し、データへのパスが格納される # noqa: E501
+    data_holding_typeがouterの場合のみ存在し、データへのパスが格納される
 * additional_data_list: List[FullAnnotationAdditionalData]
     
 * comment: str
@@ -1131,17 +1131,17 @@ InlineResponse200 = Dict[str, Any]
 Kyes of Dict
 
 * list: List[MyOrganization]
-    現在のページ番号に含まれる0件以上の所属組織です。 # noqa: E501
+    現在のページ番号に含まれる0件以上の所属組織です。
 * page_no: float
-    現在のページ番号です。 # noqa: E501
+    現在のページ番号です。
 * total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる所属組織が0件であっても、総ページ数は1となります。 # noqa: E501
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる所属組織が0件であっても、総ページ数は1となります。
 * total_count: float
-    検索結果の総件数。 # noqa: E501
+    検索結果の総件数。
 * over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。 # noqa: E501
+    検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
-    Aggregationによる集約結果。 # noqa: E501
+    Aggregationによる集約結果。
 
 """
 
@@ -1152,17 +1152,17 @@ InlineResponse2001 = Dict[str, Any]
 Kyes of Dict
 
 * list: List[Project]
-    現在のページ番号に含まれる0件以上のプロジェクトです。 # noqa: E501
+    現在のページ番号に含まれる0件以上のプロジェクトです。
 * page_no: float
-    現在のページ番号です。 # noqa: E501
+    現在のページ番号です。
 * total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトが0件であっても、総ページ数は1となります。 # noqa: E501
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトが0件であっても、総ページ数は1となります。
 * total_count: float
-    検索結果の総件数。 # noqa: E501
+    検索結果の総件数。
 * over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。 # noqa: E501
+    検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
-    Aggregationによる集約結果。 # noqa: E501
+    Aggregationによる集約結果。
 
 """
 
@@ -1175,15 +1175,15 @@ Kyes of Dict
 * list: List[OrganizationMember]
     
 * page_no: float
-    現在のページ番号です。 # noqa: E501
+    現在のページ番号です。
 * total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる組織メンバーが0件であっても、総ページ数は1となります。 # noqa: E501
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる組織メンバーが0件であっても、総ページ数は1となります。
 * total_count: float
-    検索結果の総件数。 # noqa: E501
+    検索結果の総件数。
 * over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。 # noqa: E501
+    検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
-    Aggregationによる集約結果。 # noqa: E501
+    Aggregationによる集約結果。
 
 """
 
@@ -1220,15 +1220,15 @@ Kyes of Dict
 * list: List[ProjectMember]
     
 * page_no: float
-    現在のページ番号です。 # noqa: E501
+    現在のページ番号です。
 * total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトメンバーが0件であっても、総ページ数は1となります。 # noqa: E501
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトメンバーが0件であっても、総ページ数は1となります。
 * total_count: float
-    検索結果の総件数。 # noqa: E501
+    検索結果の総件数。
 * over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。 # noqa: E501
+    検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
-    Aggregationによる集約結果。 # noqa: E501
+    Aggregationによる集約結果。
 
 """
 
@@ -1239,17 +1239,17 @@ InlineResponse2006 = Dict[str, Any]
 Kyes of Dict
 
 * list: List[Task]
-    現在のページ番号に含まれる0件以上のタスクです。 # noqa: E501
+    現在のページ番号に含まれる0件以上のタスクです。
 * page_no: float
-    現在のページ番号です。 # noqa: E501
+    現在のページ番号です。
 * total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるタスク0件であっても、総ページ数は1となります。 # noqa: E501
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるタスク0件であっても、総ページ数は1となります。
 * total_count: float
-    検索結果の総件数。 # noqa: E501
+    検索結果の総件数。
 * over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。 # noqa: E501
+    検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
-    Aggregationによる集約結果。 # noqa: E501
+    Aggregationによる集約結果。
 
 """
 
@@ -1260,17 +1260,17 @@ InlineResponse2007 = Dict[str, Any]
 Kyes of Dict
 
 * list: List[SingleAnnotation]
-    現在のページ番号に含まれる0件以上のアノテーションです。 # noqa: E501
+    現在のページ番号に含まれる0件以上のアノテーションです。
 * page_no: float
-    現在のページ番号です。 # noqa: E501
+    現在のページ番号です。
 * total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるアノテーションが0件であっても、総ページ数は1となります。 # noqa: E501
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるアノテーションが0件であっても、総ページ数は1となります。
 * total_count: float
-    検索結果の総件数。 # noqa: E501
+    検索結果の総件数。
 * over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。 # noqa: E501
+    検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
-    Aggregationによる集約結果。 # noqa: E501
+    Aggregationによる集約結果。
 
 """
 
@@ -1281,17 +1281,17 @@ InlineResponse2008 = Dict[str, Any]
 Kyes of Dict
 
 * list: List[InputData]
-    現在のページ番号に含まれる0件以上の入力データです。 # noqa: E501
+    現在のページ番号に含まれる0件以上の入力データです。
 * page_no: float
-    現在のページ番号です。 # noqa: E501
+    現在のページ番号です。
 * total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる入力データが0件であっても、総ページ数は1となります。 # noqa: E501
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる入力データが0件であっても、総ページ数は1となります。
 * total_count: float
-    検索結果の総件数。 # noqa: E501
+    検索結果の総件数。
 * over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。 # noqa: E501
+    検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
-    Aggregationによる集約結果。 # noqa: E501
+    Aggregationによる集約結果。
 
 """
 
@@ -1306,15 +1306,15 @@ Kyes of Dict
 * project_id: str
     
 * input_data_name: str
-    表示用の名前です。 # noqa: E501
+    表示用の名前です。
 * input_data_path: str
-    入力データの実体が保存されたパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。  # noqa: E501
+    入力データの実体が保存されたパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 
 * url: str
-    入力データを取得するためのhttpsスキーマのURLです。  このURLはセキュリティのために認証認可が必要となっており、URLだけでは入力データを参照できません。 このURLは内部用であり、常に変更になる可能性があります。そのため、アクセスは保証外となります。 また、このURLのレスポンスは最低1時間キャッシュされます。 キャッシュを無効にしたい場合は、クエリパラメータにアクセス毎にランダムなUUIDなどを付与してください。  設定の不備等でデータが取得できない場合、この属性は設定されません。  # noqa: E501
+    入力データを取得するためのhttpsスキーマのURLです。  このURLはセキュリティのために認証認可が必要となっており、URLだけでは入力データを参照できません。 このURLは内部用であり、常に変更になる可能性があります。そのため、アクセスは保証外となります。 また、このURLのレスポンスは最低1時間キャッシュされます。 キャッシュを無効にしたい場合は、クエリパラメータにアクセス毎にランダムなUUIDなどを付与してください。  設定の不備等でデータが取得できない場合、この属性は設定されません。 
 * etag: str
     
 * original_input_data_path: str
-    AF外部のストレージから登録された場合、その外部ストレージ中のパス。 それ以外の場合は値なし  # noqa: E501
+    AF外部のストレージから登録された場合、その外部ストレージ中のパス。 それ以外の場合は値なし 
 * original_resolution: Resolution
     
 * resized_resolution: Resolution
@@ -1322,14 +1322,14 @@ Kyes of Dict
 * updated_datetime: datetime
     
 * sign_required: bool
-    データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。  # noqa: E501
+    データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。 
 
 """
 
 
 class InputDataOrder(Enum):
     """
-    タスクに割り当てる入力データの順序  * `name_asc` - 入力データ名 昇順（a, b, c, ...）。日付や番号などの連続するデータ名を扱う場合に推奨 * `name_asc` - 入力データ名 降順（z, y, x, ...） * `random` - ランダム   # noqa: E501
+    タスクに割り当てる入力データの順序  * `name_asc` - 入力データ名 昇順（a, b, c, ...）。日付や番号などの連続するデータ名を扱う場合に推奨 * `name_asc` - 入力データ名 降順（z, y, x, ...） * `random` - ランダム 
     """
 
     NAME_ASC = "name_asc"
@@ -1344,13 +1344,13 @@ InputDataRequest = Dict[str, Any]
 Kyes of Dict
 
 * input_data_name: str
-    表示用の名前 # noqa: E501
+    表示用の名前
 * input_data_path: str
-    AnnoFabに登録する入力データの実体が保存されたパスです。  対応スキーマ： * s3 * https * data（廃止予定）  場面別の使い分け： * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA` * [プライベートストレージ](/docs/faq/#prst9c)の場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。 * dataスキーマでアップロードする場合: `data://....`     * dataスキーマは、4MB以内の画像であれば[一時データ保存先取得API](#operation/createTempPath)を使わずに直接アップロードできるので便利です。  # noqa: E501
+    AnnoFabに登録する入力データの実体が保存されたパスです。  対応スキーマ： * s3 * https * data（廃止予定）  場面別の使い分け： * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA` * [プライベートストレージ](/docs/faq/#prst9c)の場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。 * dataスキーマでアップロードする場合: `data://....`     * dataスキーマは、4MB以内の画像であれば[一時データ保存先取得API](#operation/createTempPath)を使わずに直接アップロードできるので便利です。 
 * last_updated_datetime: datetime
-    新規作成時は未指定、更新時は必須（更新前の日時）  # noqa: E501
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 * sign_required: bool
-    データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br> このオプションを有効にする場合は、`input_data_path`として、AnnoFabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。  # noqa: E501
+    データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br> このオプションを有効にする場合は、`input_data_path`として、AnnoFabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。 
 
 """
 
@@ -1372,7 +1372,7 @@ Kyes of Dict
 
 class InputDataType(Enum):
     """
-    プロジェクトの作成時のみ指定可能（未指定の場合は image）です。更新時は無視されます  # noqa: E501
+    プロジェクトの作成時のみ指定可能（未指定の場合は image）です。更新時は無視されます
     """
 
     IMAGE = "image"
@@ -1404,7 +1404,7 @@ Kyes of Dict
 * parent_inspection_id: str
     
 * phrases: List[str]
-    選択された定型指摘ID. 未選択時は空 # noqa: E501
+    選択された定型指摘ID. 未選択時は空
 * comment: str
     
 * status: InspectionStatus
@@ -1412,7 +1412,7 @@ Kyes of Dict
 * created_datetime: datetime
     
 * updated_datetime: datetime
-    新規作成時は未指定、更新時は必須（更新前の日時）  # noqa: E501
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
@@ -1427,7 +1427,7 @@ Kyes of Dict
 * y: int
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -1438,9 +1438,9 @@ InspectionDataPolyline = Dict[str, Any]
 Kyes of Dict
 
 * coordinates: List[InspectionDataPolylineCoordinates]
-    ポリラインを構成する頂点の配列  # noqa: E501
+    ポリラインを構成する頂点の配列 
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -1468,7 +1468,7 @@ Kyes of Dict
 * end: float
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -1494,7 +1494,7 @@ Kyes of Dict
 * project_id: str
     
 * date: date
-    集計日 # noqa: E501
+    集計日
 * breakdown: InspectionStatisticsBreakdown
     
 
@@ -1507,7 +1507,7 @@ InspectionStatisticsBreakdown = Dict[str, Any]
 Kyes of Dict
 
 * labels: dict(str, InspectionStatisticsPhrases)
-    ラベルごとの指摘集計結果 # noqa: E501
+    ラベルごとの指摘集計結果
 * no_label: InspectionStatisticsPhrases
     
 
@@ -1520,16 +1520,16 @@ InspectionStatisticsPhrases = Dict[str, Any]
 Kyes of Dict
 
 * phrases: dict(str, int)
-    定型指摘ごとの合計数 # noqa: E501
+    定型指摘ごとの合計数
 * no_phrase: int
-    非定型指摘の合計数 # noqa: E501
+    非定型指摘の合計数
 
 """
 
 
 class InspectionStatus(Enum):
     """
-    * `annotator_action_required` - 未処置。`annotation`フェーズ担当者が何らかの回答をする必要あり * `no_correction_required` - 処置不要。`annotation`フェーズ担当者が、検査コメントによる修正は不要、と回答した * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力   # noqa: E501
+    * `annotator_action_required` - 未処置。`annotation`フェーズ担当者が何らかの回答をする必要あり * `no_correction_required` - 処置不要。`annotation`フェーズ担当者が、検査コメントによる修正は不要、と回答した * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力 
     """
 
     ANNOTATOR_ACTION_REQUIRED = "annotator_action_required"
@@ -1609,7 +1609,7 @@ Kyes of Dict
 * message: str
     
 * type: str
-    InvalidAnnotationData # noqa: E501
+    InvalidAnnotationData
 
 """
 
@@ -1626,7 +1626,7 @@ Kyes of Dict
 * additional_data_definition_id: str
     
 * type: str
-    InvalidCommentFormat # noqa: E501
+    InvalidCommentFormat
 
 """
 
@@ -1643,7 +1643,7 @@ Kyes of Dict
 * additional_data_definition_id: str
     
 * type: str
-    InvalidLinkTarget # noqa: E501
+    InvalidLinkTarget
 
 """
 
@@ -1673,9 +1673,9 @@ Kyes of Dict
 * job_status: str
     
 * job_execution: object
-    ジョブの内部情報 # noqa: E501
+    ジョブの内部情報
 * job_detail: object
-    ジョブ結果の内部情報 # noqa: E501
+    ジョブ結果の内部情報
 * created_datetime: datetime
     
 * updated_datetime: datetime
@@ -1778,9 +1778,9 @@ Kyes of Dict
 * label_id: str
     
 * completed_labels: int
-    ラベルごとの受入が完了したアノテーション数 # noqa: E501
+    ラベルごとの受入が完了したアノテーション数
 * wip_labels: int
-    ラベルごとの受入が完了していないアノテーション数 # noqa: E501
+    ラベルごとの受入が完了していないアノテーション数
 
 """
 
@@ -1815,7 +1815,7 @@ Message = Dict[str, Any]
 Kyes of Dict
 
 * message: str
-    多言語対応 # noqa: E501
+    多言語対応
 
 """
 
@@ -1950,7 +1950,7 @@ class OrganizationMemberRole(Enum):
 
 class OrganizationMemberStatus(Enum):
     """
-    * `active` - 組織メンバーとして有効で、組織を閲覧したり、権限があれば編集できます。 * `waiting_response` - 組織に招待され、まだ加入/脱退を返答していません。組織の一部を閲覧のみできます。 * `inactive` - 脱退したメンバーを表します。組織を閲覧できません。   # noqa: E501
+    * `active` - 組織メンバーとして有効で、組織を閲覧したり、権限があれば編集できます。 * `waiting_response` - 組織に招待され、まだ加入/脱退を返答していません。組織の一部を閲覧のみできます。 * `inactive` - 脱退したメンバーを表します。組織を閲覧できません。 
     """
 
     ACTIVE = "active"
@@ -1995,7 +1995,7 @@ Kyes of Dict
 * annotation_id: str
     
 * type: str
-    OutOfImageBounds # noqa: E501
+    OutOfImageBounds
 
 """
 
@@ -2117,17 +2117,17 @@ Kyes of Dict
 * assignee_rule_of_resubmitted_task: AssigneeRuleOfResubmittedTask
     
 * max_tasks_per_member: int
-    保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。 # noqa: E501
+    保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
 * max_tasks_per_member_including_hold: int
-    保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は20件として扱う。 # noqa: E501
+    保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は20件として扱う。
 * input_data_max_long_side_length: int
-    入力データ画像の長辺の最大値（未指定時は4096px）。  画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。 アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。  大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。  # noqa: E501
+    入力データ画像の長辺の最大値（未指定時は4096px）。  画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。 アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。  大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。 
 * sampling_inspection_rate: int
-    抜取検査率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。 # noqa: E501
+    抜取検査率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
 * sampling_acceptance_rate: int
-    抜取受入率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。 # noqa: E501
+    抜取受入率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
 * private_storage_aws_iam_role_arn: str
-    AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。  # noqa: E501
+    AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
 
 """
 
@@ -2144,15 +2144,15 @@ Kyes of Dict
 * dest_overview: str
     
 * copy_inputs: bool
-    true の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」「入力データ」をコピーします。 false の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」のみコピーします。 copyTasksWithAnnotations が true に設定されている場合、そちらが優先されます。  # noqa: E501
+    true の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」「入力データ」をコピーします。 false の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」のみコピーします。 copyTasksWithAnnotations が true に設定されている場合、そちらが優先されます。 
 * copy_tasks_with_annotations: bool
-    true の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」「入力データ」「タスク」「アノテーション」をコピーします。 false の場合は copyInputs の設定に従います。  # noqa: E501
+    true の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」「入力データ」「タスク」「アノテーション」をコピーします。 false の場合は copyInputs の設定に従います。 
 * copy_webhooks: bool
-    true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「Webhook」のコピーも行います。 false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。  # noqa: E501
+    true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「Webhook」のコピーも行います。 false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。 
 * copy_supplementaly_data: bool
-    copyInputs、copyTasksWithAnnotations のいずれかが true の時のみ、設定できます。いずれも false の場合、「補助情報」のコピーは行われません。 true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「補助情報」のコピーも行います。 false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。  # noqa: E501
+    copyInputs、copyTasksWithAnnotations のいずれかが true の時のみ、設定できます。いずれも false の場合、「補助情報」のコピーは行われません。 true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「補助情報」のコピーも行います。 false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。 
 * copy_instructions: bool
-    true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「作業ガイド」のコピーも行います。 false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。  # noqa: E501
+    true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「作業ガイド」のコピーも行います。 false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。 
 
 """
 
@@ -2179,7 +2179,7 @@ Kyes of Dict
 * created_datetime: datetime
     
 * sampling_inspection_rate: int
-    メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。 # noqa: E501
+    メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。
 
 """
 
@@ -2194,7 +2194,7 @@ Kyes of Dict
 * member_role: ProjectMemberRole
     
 * last_updated_datetime: datetime
-    新規作成時は未指定、更新時は必須（更新前の日時）  # noqa: E501
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
@@ -2211,7 +2211,7 @@ class ProjectMemberRole(Enum):
 
 class ProjectMemberStatus(Enum):
     """
-    * `active` - プロジェクトメンバーとして有効で、プロジェクトを閲覧したり、権限があれば編集できます。 * `inactive` - 脱退したプロジェクトメンバーを表します。プロジェクトを閲覧できません。   # noqa: E501
+    * `active` - プロジェクトメンバーとして有効で、プロジェクトを閲覧したり、権限があれば編集できます。 * `inactive` - 脱退したプロジェクトメンバーを表します。プロジェクトを閲覧できません。 
     """
 
     ACTIVE = "active"
@@ -2293,7 +2293,7 @@ Kyes of Dict
 * token: Token
     
 * last_updated_datetime: datetime
-    新規作成時は未指定、更新時は必須（更新前の日時）  # noqa: E501
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
@@ -2306,7 +2306,7 @@ Kyes of Dict
 * role: OrganizationMemberRole
     
 * last_updated_datetime: datetime
-    新規作成時は未指定、更新時は必須（更新前の日時）  # noqa: E501
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
@@ -2340,13 +2340,13 @@ Kyes of Dict
 * input_data_type: InputDataType
     
 * organization_name: str
-    プロジェクトの所属組織を変更する場合は、ここに変更先の組織名を指定します。  * 所属組織を変更する前にプロジェクトを停止する必要があります。 * APIを呼び出すアカウントは、変更先組織の管理者またはオーナーである必要があります。 * 変更後の組織に所属していないプロジェクトメンバーも残りますが、作業はできません。あらためて組織に招待してください。  # noqa: E501
+    プロジェクトの所属組織を変更する場合は、ここに変更先の組織名を指定します。  * 所属組織を変更する前にプロジェクトを停止する必要があります。 * APIを呼び出すアカウントは、変更先組織の管理者またはオーナーである必要があります。 * 変更後の組織に所属していないプロジェクトメンバーも残りますが、作業はできません。あらためて組織に招待してください。 
 * configuration: ProjectConfiguration
     
 * last_updated_datetime: datetime
-    新規作成時は未指定、更新時は必須（更新前の日時）  # noqa: E501
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 * force_suspend: bool
-    作業中タスクがあるプロジェクトを停止する時trueにして下さい # noqa: E501
+    作業中タスクがあるプロジェクトを停止する時trueにして下さい
 
 """
 
@@ -2414,7 +2414,7 @@ SimpleAnnotation = Dict[str, Any]
 Kyes of Dict
 
 * annotation_format_version: str
-    アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。  # noqa: E501
+    アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 
 * project_id: str
     
 * task_id: str
@@ -2437,13 +2437,13 @@ SimpleAnnotationDetail = Dict[str, Any]
 Kyes of Dict
 
 * label: str
-    アノテーション仕様のラベル名です。  # noqa: E501
+    アノテーション仕様のラベル名です。 
 * annotation_id: str
-    個々のアノテーションにつけられたIDです。  # noqa: E501
+    個々のアノテーションにつけられたIDです。 
 * data: FullAnnotationData
     
 * attributes: object
-    キーに属性の名前、値に各属性の値が入った辞書構造です。  # noqa: E501
+    キーに属性の名前、値に各属性の値が入った辞書構造です。 
 
 """
 
@@ -2483,9 +2483,9 @@ Kyes of Dict
 * data: FullAnnotationData
     
 * etag: str
-    data_holding_typeがouterの場合のみ存在し、データのETagが格納される # noqa: E501
+    data_holding_typeがouterの場合のみ存在し、データのETagが格納される
 * url: str
-    data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される # noqa: E501
+    data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
 * additional_data_list: List[FullAnnotationAdditionalData]
     
 * created_datetime: datetime
@@ -2508,17 +2508,17 @@ Kyes of Dict
 * supplementary_data_id: str
     
 * supplementary_data_name: str
-    表示用の名前 # noqa: E501
+    表示用の名前
 * supplementary_data_path: str
-    補助情報の実体が保存されたパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。  # noqa: E501
+    補助情報の実体が保存されたパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 
 * url: str
-    このフィールドはAF内部での利用のみを想定しており、依存しないでください。 # noqa: E501
+    このフィールドはAF内部での利用のみを想定しており、依存しないでください。
 * etag: str
     
 * supplementary_data_type: str
     
 * supplementary_data_number: int
-    表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。 # noqa: E501
+    表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
 * updated_datetime: datetime
     
 
@@ -2531,13 +2531,13 @@ SupplementaryDataRequest = Dict[str, Any]
 Kyes of Dict
 
 * supplementary_data_name: str
-    表示用の名前 # noqa: E501
+    表示用の名前
 * supplementary_data_path: str
-    AnnoFabに登録する補助情報の実体が保存されたパスです。  対応スキーマ：s3, https  * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA` * [プライベートストレージ](/docs/faq/#prst9c)の場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。  # noqa: E501
+    AnnoFabに登録する補助情報の実体が保存されたパスです。  対応スキーマ：s3, https  * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA` * [プライベートストレージ](/docs/faq/#prst9c)の場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。 
 * supplementary_data_type: str
     
 * supplementary_data_number: int
-    表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。 # noqa: E501
+    表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
 * last_updated_datetime: datetime
     
 
@@ -2566,13 +2566,13 @@ Kyes of Dict
 * work_timespan: int
     
 * number_of_rejections: int
-    このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計  このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。 `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。  例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。  # noqa: E501
+    このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計  このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。 `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。  例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。 
 * started_datetime: datetime
     
 * updated_datetime: datetime
     
 * sampling: str
-    * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対処となったことを表す。(通常のワークフローを通過する)  # noqa: E501
+    * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対処となったことを表す。(通常のワークフローを通過する) 
 
 """
 
@@ -2583,11 +2583,11 @@ TaskGenerateRequest = Dict[str, Any]
 Kyes of Dict
 
 * task_generate_rule: OneOfTaskGenerateRuleByCountTaskGenerateRuleByDirectoryTaskGenerateRuleByInputDataCsv
-    * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。  # noqa: E501
+    * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。 
 * task_id_prefix: str
-    生成するタスクIDのプレフィックス # noqa: E501
+    生成するタスクIDのプレフィックス
 * project_last_updated_datetime: datetime
-    プロジェクトの最終更新日時。タスク生成の排他制御に使用。 # noqa: E501
+    プロジェクトの最終更新日時。タスク生成の排他制御に使用。
 
 """
 
@@ -2598,13 +2598,13 @@ TaskGenerateRuleByCount = Dict[str, Any]
 Kyes of Dict
 
 * allow_duplicate_input_data: bool
-    falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。 # noqa: E501
+    falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
 * input_data_count: int
-    1つのタスクに割り当てる入力データの個数 # noqa: E501
+    1つのタスクに割り当てる入力データの個数
 * input_data_order: InputDataOrder
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -2615,9 +2615,9 @@ TaskGenerateRuleByDirectory = Dict[str, Any]
 Kyes of Dict
 
 * input_data_name_prefix: str
-    タスク生成対象の入力データ名プレフィックス # noqa: E501
+    タスク生成対象の入力データ名プレフィックス
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -2628,9 +2628,9 @@ TaskGenerateRuleByInputDataCsv = Dict[str, Any]
 Kyes of Dict
 
 * csv_data_path: str
-    各タスクへの入力データへの割当を記入したCSVへのS3上のパス # noqa: E501
+    各タスクへの入力データへの割当を記入したCSVへのS3上のパス
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type)  # noqa: E501
+    [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -2704,7 +2704,7 @@ Kyes of Dict
 * status: TaskStatus
     
 * last_updated_datetime: datetime
-    新規作成時は未指定、更新時は必須（更新前の日時）  # noqa: E501
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 * account_id: str
     
 
@@ -2713,7 +2713,7 @@ Kyes of Dict
 
 class TaskPhase(Enum):
     """
-    * `annotation` - 教師付け。 * `inspection` - 中間検査。ワークフローが3フェーズのときのみ。 * `acceptance` - 受入。   # noqa: E501
+    * `annotation` - 教師付け。 * `inspection` - 中間検査。ワークフローが3フェーズのときのみ。 * `acceptance` - 受入。 
     """
 
     ANNOTATION = "annotation"
@@ -2761,7 +2761,7 @@ Kyes of Dict
 
 class TaskStatus(Enum):
     """
-    * `not_started` - 未着手。 * `working` - 作業中。誰かが実際にエディタ上で作業している状態。 * `on_hold` - 保留。作業ルールの確認などで作業できない状態。 * `break` - 休憩中。 * `complete` - 完了。次のフェーズへ進む * `rejected` - 差戻し。修正のため、`annotation`フェーズへ戻る。 * `cancelled` - 提出取消し。修正のため、前フェーズへ戻る。   # noqa: E501
+    * `not_started` - 未着手。 * `working` - 作業中。誰かが実際にエディタ上で作業している状態。 * `on_hold` - 保留。作業ルールの確認などで作業できない状態。 * `break` - 休憩中。 * `complete` - 完了。次のフェーズへ進む * `rejected` - 差戻し。修正のため、`annotation`フェーズへ戻る。 * `cancelled` - 提出取消し。修正のため、前フェーズへ戻る。 
     """
 
     NOT_STARTED = "not_started"
@@ -2825,11 +2825,11 @@ Token = Dict[str, Any]
 Kyes of Dict
 
 * id_token: str
-    形式は[JWT](https://jwt.io/)。 # noqa: E501
+    形式は[JWT](https://jwt.io/)。
 * access_token: str
-    形式は[JWT](https://jwt.io/)。 # noqa: E501
+    形式は[JWT](https://jwt.io/)。
 * refresh_token: str
-    形式は[JWT](https://jwt.io/)。 # noqa: E501
+    形式は[JWT](https://jwt.io/)。
 
 """
 
@@ -2846,7 +2846,7 @@ Kyes of Dict
 * additional_data_definition_id: str
     
 * type: str
-    UnknownAdditionalData # noqa: E501
+    UnknownAdditionalData
 
 """
 
@@ -2861,7 +2861,7 @@ Kyes of Dict
 * annotation_id: str
     
 * type: str
-    UnknownLabel # noqa: E501
+    UnknownLabel
 
 """
 
@@ -2878,7 +2878,7 @@ Kyes of Dict
 * additional_data_definition_id: str
     
 * type: str
-    UnknownLinkTarget # noqa: E501
+    UnknownLinkTarget
 
 """
 
@@ -2895,7 +2895,7 @@ Kyes of Dict
 * message: str
     
 * type: str
-    UnknownLabel # noqa: E501
+    UnknownLabel
 * annotation_ids: List[str]
     
 * additional_data_definition_id: str
@@ -2965,7 +2965,7 @@ WebhookTestRequest = Dict[str, Any]
 Kyes of Dict
 
 * placeholders: object
-    プレースホルダ名と置換する値 # noqa: E501
+    プレースホルダ名と置換する値
 
 """
 
@@ -2976,15 +2976,15 @@ WebhookTestResponse = Dict[str, Any]
 Kyes of Dict
 
 * result: str
-    * success: 通知先から正常なレスポンス（2xx系）を受け取った * failure: 通知先からエラーレスポンス（2xx系以外）を受け取った * error: リクエスト送信に失敗した、もしくはレスポンスを受信できなかった  # noqa: E501
+    * success: 通知先から正常なレスポンス（2xx系）を受け取った * failure: 通知先からエラーレスポンス（2xx系以外）を受け取った * error: リクエスト送信に失敗した、もしくはレスポンスを受信できなかった 
 * request_body: str
-    実際に送信されたリクエストボディ # noqa: E501
+    実際に送信されたリクエストボディ
 * response_status: int
-    通知先から返されたHTTPステータスコード # noqa: E501
+    通知先から返されたHTTPステータスコード
 * response_body: str
-    通知先から返されたレスポンスボディ # noqa: E501
+    通知先から返されたレスポンスボディ
 * message: str
-    result=\"error\" 時のエラー内容等 # noqa: E501
+    result=\"error\" 時のエラー内容等
 
 """
 
