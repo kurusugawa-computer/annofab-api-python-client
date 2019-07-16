@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union  # pylint: disable=un
 AcceptOrganizationInvitationRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * token: str
@@ -25,6 +26,7 @@ Kyes of Dict
 
 Account = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -59,6 +61,7 @@ class AccountAuthority(Enum):
 AccountWorktimeStatistics = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * account_id: str
@@ -72,6 +75,7 @@ Kyes of Dict
 
 AdditionalData = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -90,6 +94,7 @@ Kyes of Dict
 
 AdditionalDataDefinition = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -116,6 +121,7 @@ Kyes of Dict
 
 AdditionalDataDefinitionChoices = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -146,6 +152,7 @@ class AdditionalDataDefinitionType(Enum):
 AggregationResult = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * type: str
@@ -161,6 +168,7 @@ Kyes of Dict
 
 Annotation = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -192,6 +200,7 @@ class AnnotationDataHoldingType(Enum):
 AnnotationDetail = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * annotation_id: str
@@ -222,6 +231,7 @@ Kyes of Dict
 AnnotationEditorFeature = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * append: bool
@@ -241,6 +251,7 @@ Kyes of Dict
 
 AnnotationQuery = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -262,6 +273,7 @@ Kyes of Dict
 AnnotationSpecs = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * project_id: str
@@ -277,6 +289,7 @@ Kyes of Dict
 
 AnnotationSpecsRequest = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -316,6 +329,7 @@ class AssigneeRuleOfResubmittedTask(Enum):
 BatchAnnotation = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * project_id: str
@@ -338,6 +352,7 @@ Kyes of Dict
 BatchAnnotationRequestItemDelete = Dict[str, Any]
 """
 アノテーション削除
+
 Kyes of Dict
 
 * project_id: str
@@ -358,6 +373,7 @@ Kyes of Dict
 BatchAnnotationRequestItemPut = Dict[str, Any]
 """
 アノテーション更新
+
 Kyes of Dict
 
 * data: BatchAnnotation
@@ -370,6 +386,7 @@ Kyes of Dict
 BatchInputDataRequestItemDelete = Dict[str, Any]
 """
 入力データ削除
+
 Kyes of Dict
 
 * project_id: str
@@ -384,6 +401,7 @@ Kyes of Dict
 BatchInspectionRequestItemDelete = Dict[str, Any]
 """
 検査コメント削除
+
 Kyes of Dict
 
 * project_id: str
@@ -402,6 +420,7 @@ Kyes of Dict
 BatchInspectionRequestItemPut = Dict[str, Any]
 """
 検査コメント更新
+
 Kyes of Dict
 
 * data: Inspection
@@ -414,6 +433,7 @@ Kyes of Dict
 BatchTaskRequestItemDelete = Dict[str, Any]
 """
 タスク削除
+
 Kyes of Dict
 
 * project_id: str
@@ -427,6 +447,7 @@ Kyes of Dict
 
 CacheRecord = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -448,6 +469,7 @@ Kyes of Dict
 ChangePasswordRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * user_id: str
@@ -461,6 +483,7 @@ Kyes of Dict
 
 Color = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -476,6 +499,7 @@ Kyes of Dict
 ConfirmAccountDeleteRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * token: str
@@ -486,6 +510,7 @@ Kyes of Dict
 ConfirmResetEmailRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * token: str
@@ -495,6 +520,7 @@ Kyes of Dict
 
 ConfirmResetPasswordRequest = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -509,6 +535,7 @@ Kyes of Dict
 
 ConfirmSignUpRequest = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -532,6 +559,7 @@ Kyes of Dict
 ConfirmVerifyEmailRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * token: Token
@@ -543,6 +571,7 @@ Kyes of Dict
 
 Count = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -557,6 +586,7 @@ Kyes of Dict
 
 CountResult = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -574,6 +604,7 @@ Kyes of Dict
 DataPath = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * url: str
@@ -586,6 +617,7 @@ Kyes of Dict
 Duplicated = Dict[str, Any]
 """
 値の重複が許可されていない属性の重複エラー
+
 Kyes of Dict
 
 * label_id: str
@@ -602,6 +634,7 @@ Kyes of Dict
 DuplicatedSegmentationV2 = Dict[str, Any]
 """
 塗りつぶしv2のラベルに対する1ラベルにつき1アノテーションまでの制約違反エラー
+
 Kyes of Dict
 
 * label_id: str
@@ -616,6 +649,7 @@ Kyes of Dict
 EmptyAttribute = Dict[str, Any]
 """
 属性が未入力であるエラー
+
 Kyes of Dict
 
 * label_id: str
@@ -632,6 +666,7 @@ Kyes of Dict
 Error = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * error_code: str
@@ -646,6 +681,7 @@ Kyes of Dict
 ErrorAlreadyUpdated = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * errors: List[Error]
@@ -657,6 +693,7 @@ Kyes of Dict
 
 ErrorExpiredToken = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -670,6 +707,7 @@ Kyes of Dict
 ErrorForbiddenResource = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * errors: List[Error]
@@ -681,6 +719,7 @@ Kyes of Dict
 
 ErrorInternalServerError = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -694,6 +733,7 @@ Kyes of Dict
 ErrorInvalidBody = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * errors: List[Error]
@@ -705,6 +745,7 @@ Kyes of Dict
 
 ErrorInvalidPath = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -718,6 +759,7 @@ Kyes of Dict
 ErrorInvalidQueryParam = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * errors: List[Error]
@@ -729,6 +771,7 @@ Kyes of Dict
 
 ErrorLoginFailed = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -742,6 +785,7 @@ Kyes of Dict
 ErrorMissingNecessaryQueryParam = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * errors: List[Error]
@@ -753,6 +797,7 @@ Kyes of Dict
 
 ErrorMissingResource = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -766,6 +811,7 @@ Kyes of Dict
 ErrorPasswordResetRequired = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * errors: List[Error]
@@ -777,6 +823,7 @@ Kyes of Dict
 
 ErrorRefreshTokenExpired = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -790,6 +837,7 @@ Kyes of Dict
 ErrorStateMismatch = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * errors: List[Error]
@@ -801,6 +849,7 @@ Kyes of Dict
 
 ErrorTimeout = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -814,6 +863,7 @@ Kyes of Dict
 ErrorUnauthorizedApi = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * errors: List[Error]
@@ -825,6 +875,7 @@ Kyes of Dict
 
 ErrorUnderMaintenance = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -838,6 +889,7 @@ Kyes of Dict
 Errors = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * errors: List[Error]
@@ -849,6 +901,7 @@ Kyes of Dict
 
 FullAnnotation = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -871,6 +924,7 @@ Kyes of Dict
 
 FullAnnotationAdditionalData = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -895,6 +949,7 @@ Kyes of Dict
 
 FullAnnotationData = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -922,6 +977,7 @@ Kyes of Dict
 FullAnnotationDataBoundingBox = Dict[str, Any]
 """
 annotation_type が bounding_boxの場合に、[左上頂点座標, 右下頂点座標]を {\"x\":int, \"y\":int} の形式で記述したもの。
+
 Kyes of Dict
 
 * left_top: Point
@@ -936,6 +992,7 @@ Kyes of Dict
 FullAnnotationDataClassification = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * type: str
@@ -946,6 +1003,7 @@ Kyes of Dict
 FullAnnotationDataPoints = Dict[str, Any]
 """
 頂点座標 {\"x\":int, \"y\":int} の配列。  * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。 
+
 Kyes of Dict
 
 * points: List[Point]
@@ -958,6 +1016,7 @@ Kyes of Dict
 FullAnnotationDataRange = Dict[str, Any]
 """
 annotation_type が rangeの場合に、[開始時間, 終了時間]を {\"begin\":number, \"end\":number} の形式で記述したもの。開始時間・終了時間の単位は秒で、精度はミリ秒まで。
+
 Kyes of Dict
 
 * begin: float
@@ -972,6 +1031,7 @@ Kyes of Dict
 FullAnnotationDataSegmentation = Dict[str, Any]
 """
 塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
+
 Kyes of Dict
 
 * data_uri: str
@@ -983,6 +1043,7 @@ Kyes of Dict
 
 FullAnnotationDataSegmentationV2 = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -996,6 +1057,7 @@ Kyes of Dict
 FullAnnotationDataSinglePoint = Dict[str, Any]
 """
 annotation_type が pointの場合。
+
 Kyes of Dict
 
 * point: Point
@@ -1008,6 +1070,7 @@ Kyes of Dict
 FullAnnotationDataUnknown = Dict[str, Any]
 """
 annotation_typeにデータ構造が一致していない場合に、元のdata文字列をそのまま記述したもの。
+
 Kyes of Dict
 
 * data: str
@@ -1019,6 +1082,7 @@ Kyes of Dict
 
 FullAnnotationDetail = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1048,6 +1112,7 @@ Kyes of Dict
 HistogramItem = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * begin: float
@@ -1061,6 +1126,7 @@ Kyes of Dict
 
 InlineResponse200 = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1082,6 +1148,7 @@ Kyes of Dict
 InlineResponse2001 = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * list: List[Project]
@@ -1101,6 +1168,7 @@ Kyes of Dict
 
 InlineResponse2002 = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1122,6 +1190,7 @@ Kyes of Dict
 InlineResponse2003 = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * list: List[Project]
@@ -1134,6 +1203,7 @@ Kyes of Dict
 InlineResponse2004 = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * url: str
@@ -1143,6 +1213,7 @@ Kyes of Dict
 
 InlineResponse2005 = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1164,6 +1235,7 @@ Kyes of Dict
 InlineResponse2006 = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * list: List[Task]
@@ -1183,6 +1255,7 @@ Kyes of Dict
 
 InlineResponse2007 = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1204,6 +1277,7 @@ Kyes of Dict
 InlineResponse2008 = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * list: List[InputData]
@@ -1223,6 +1297,7 @@ Kyes of Dict
 
 InputData = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1265,6 +1340,7 @@ class InputDataOrder(Enum):
 InputDataRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * input_data_name: str
@@ -1281,6 +1357,7 @@ Kyes of Dict
 InputDataSummary = Dict[str, Any]
 """
 ある入力データのバリデーション結果です。入力データIDをキーに引けるようにMap[入力データID, バリデーション結果]となっています
+
 Kyes of Dict
 
 * input_data_id: str
@@ -1305,6 +1382,7 @@ class InputDataType(Enum):
 Inspection = Dict[str, Any]
 """
 検査コメント
+
 Kyes of Dict
 
 * project_id: str
@@ -1341,6 +1419,7 @@ Kyes of Dict
 InspectionDataPoint = Dict[str, Any]
 """
 問題のある部分を示す座標 
+
 Kyes of Dict
 
 * x: int
@@ -1355,6 +1434,7 @@ Kyes of Dict
 InspectionDataPolyline = Dict[str, Any]
 """
 問題のある部分を示すポリライン 
+
 Kyes of Dict
 
 * coordinates: List[InspectionDataPolylineCoordinates]
@@ -1366,6 +1446,7 @@ Kyes of Dict
 
 InspectionDataPolylineCoordinates = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1379,6 +1460,7 @@ Kyes of Dict
 InspectionDataTime = Dict[str, Any]
 """
 問題のある時間帯を表す区間 
+
 Kyes of Dict
 
 * start: float
@@ -1393,6 +1475,7 @@ Kyes of Dict
 InspectionPhrase = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * id: str
@@ -1404,6 +1487,7 @@ Kyes of Dict
 
 InspectionStatistics = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1419,6 +1503,7 @@ Kyes of Dict
 InspectionStatisticsBreakdown = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * labels: dict(str, InspectionStatisticsPhrases)
@@ -1430,6 +1515,7 @@ Kyes of Dict
 
 InspectionStatisticsPhrases = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1455,6 +1541,7 @@ class InspectionStatus(Enum):
 InstructionHistory = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * history_id: str
@@ -1468,6 +1555,7 @@ Kyes of Dict
 
 InstructionImage = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1485,6 +1573,7 @@ Kyes of Dict
 InternationalizationMessage = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * messages: List[InternationalizationMessageMessages]
@@ -1496,6 +1585,7 @@ Kyes of Dict
 
 InternationalizationMessageMessages = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1509,6 +1599,7 @@ Kyes of Dict
 InvalidAnnotationData = Dict[str, Any]
 """
 アノテーションデータ不正エラー
+
 Kyes of Dict
 
 * label_id: str
@@ -1525,6 +1616,7 @@ Kyes of Dict
 InvalidCommentFormat = Dict[str, Any]
 """
 コメントが正規表現に合致しないエラー
+
 Kyes of Dict
 
 * label_id: str
@@ -1541,6 +1633,7 @@ Kyes of Dict
 InvalidLinkTarget = Dict[str, Any]
 """
 リンク先アノテーションが許可されているラベルでないエラー
+
 Kyes of Dict
 
 * label_id: str
@@ -1557,6 +1650,7 @@ Kyes of Dict
 InviteOrganizationMemberRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * role: OrganizationMemberRole
@@ -1566,6 +1660,7 @@ Kyes of Dict
 
 JobInfo = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1591,6 +1686,7 @@ Kyes of Dict
 Keybind = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * code: str
@@ -1606,6 +1702,7 @@ Kyes of Dict
 
 Label = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1635,6 +1732,7 @@ Kyes of Dict
 LabelBoundingBoxMetadata = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * min_width: int
@@ -1657,6 +1755,7 @@ Kyes of Dict
 LabelSegmentationMetadata = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * min_width: int
@@ -1673,6 +1772,7 @@ Kyes of Dict
 LabelStatistics = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * label_id: str
@@ -1687,6 +1787,7 @@ Kyes of Dict
 LoginRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * user_id: str
@@ -1699,6 +1800,7 @@ Kyes of Dict
 LoginResponse = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * token: Token
@@ -1709,6 +1811,7 @@ Kyes of Dict
 Message = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * message: str
@@ -1718,6 +1821,7 @@ Kyes of Dict
 
 MyAccount = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1747,6 +1851,7 @@ Kyes of Dict
 MyOrganization = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * organization_id: str
@@ -1773,6 +1878,7 @@ Kyes of Dict
 Organization = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * organization_id: str
@@ -1795,6 +1901,7 @@ Kyes of Dict
 OrganizationActivity = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * organization_id: str
@@ -1808,6 +1915,7 @@ Kyes of Dict
 
 OrganizationMember = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1853,6 +1961,7 @@ class OrganizationMemberStatus(Enum):
 OrganizationRegistrationRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * organization_name: str
@@ -1867,6 +1976,7 @@ Kyes of Dict
 OrganizationSummary = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * last_tasks_updated_datetime: datetime
@@ -1877,6 +1987,7 @@ Kyes of Dict
 OutOfImageBounds = Dict[str, Any]
 """
 画像範囲外にアノテーションがはみ出しているエラー
+
 Kyes of Dict
 
 * label_id: str
@@ -1891,6 +2002,7 @@ Kyes of Dict
 PasswordResetRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * email: str
@@ -1900,6 +2012,7 @@ Kyes of Dict
 
 PhaseStatistics = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1913,6 +2026,7 @@ Kyes of Dict
 Point = Dict[str, Any]
 """
 座標
+
 Kyes of Dict
 
 * x: int
@@ -1933,6 +2047,7 @@ class PricePlan(Enum):
 
 Project = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1962,6 +2077,7 @@ Kyes of Dict
 ProjectAccountStatistics = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * account_id: str
@@ -1973,6 +2089,7 @@ Kyes of Dict
 
 ProjectAccountStatisticsHistory = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -1989,6 +2106,7 @@ Kyes of Dict
 
 ProjectConfiguration = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2016,6 +2134,7 @@ Kyes of Dict
 ProjectCopyRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * dest_project_id: str
@@ -2039,6 +2158,7 @@ Kyes of Dict
 
 ProjectMember = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2065,6 +2185,7 @@ Kyes of Dict
 
 ProjectMemberRequest = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2108,6 +2229,7 @@ class ProjectStatus(Enum):
 ProjectSummary = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * last_tasks_updated_datetime: datetime
@@ -2117,6 +2239,7 @@ Kyes of Dict
 
 ProjectTaskStatistics = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2133,6 +2256,7 @@ Kyes of Dict
 
 ProjectTaskStatisticsHistory = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2155,6 +2279,7 @@ class ProjectWorkflow(Enum):
 PutMyAccountRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * user_id: str
@@ -2175,6 +2300,7 @@ Kyes of Dict
 PutOrganizationMemberRoleRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * role: OrganizationMemberRole
@@ -2186,6 +2312,7 @@ Kyes of Dict
 
 PutOrganizationNameRequest = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2200,6 +2327,7 @@ Kyes of Dict
 
 PutProjectRequest = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2225,6 +2353,7 @@ Kyes of Dict
 RefreshTokenRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * refresh_token: str
@@ -2234,6 +2363,7 @@ Kyes of Dict
 
 ResetEmailRequest = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2245,6 +2375,7 @@ Kyes of Dict
 ResetPasswordRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * token: str
@@ -2255,6 +2386,7 @@ Kyes of Dict
 Resolution = Dict[str, Any]
 """
 画像などの解像度 
+
 Kyes of Dict
 
 * width: float
@@ -2267,6 +2399,7 @@ Kyes of Dict
 SignUpRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * email: str
@@ -2276,6 +2409,7 @@ Kyes of Dict
 
 SimpleAnnotation = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2299,6 +2433,7 @@ Kyes of Dict
 SimpleAnnotationDetail = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * label: str
@@ -2314,6 +2449,7 @@ Kyes of Dict
 
 SingleAnnotation = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2332,6 +2468,7 @@ Kyes of Dict
 
 SingleAnnotationDetail = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2361,6 +2498,7 @@ Kyes of Dict
 SupplementaryData = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * project_id: str
@@ -2389,6 +2527,7 @@ Kyes of Dict
 SupplementaryDataRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * supplementary_data_name: str
@@ -2406,6 +2545,7 @@ Kyes of Dict
 
 Task = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2439,6 +2579,7 @@ Kyes of Dict
 TaskGenerateRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * task_generate_rule: OneOfTaskGenerateRuleByCountTaskGenerateRuleByDirectoryTaskGenerateRuleByInputDataCsv
@@ -2453,6 +2594,7 @@ Kyes of Dict
 TaskGenerateRuleByCount = Dict[str, Any]
 """
 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
+
 Kyes of Dict
 
 * allow_duplicate_input_data: bool
@@ -2469,6 +2611,7 @@ Kyes of Dict
 TaskGenerateRuleByDirectory = Dict[str, Any]
 """
 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。<br>
+
 Kyes of Dict
 
 * input_data_name_prefix: str
@@ -2481,6 +2624,7 @@ Kyes of Dict
 TaskGenerateRuleByInputDataCsv = Dict[str, Any]
 """
 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。
+
 Kyes of Dict
 
 * csv_data_path: str
@@ -2493,6 +2637,7 @@ Kyes of Dict
 TaskHistory = Dict[str, Any]
 """
 タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
+
 Kyes of Dict
 
 * project_id: str
@@ -2517,6 +2662,7 @@ Kyes of Dict
 TaskHistoryEvent = Dict[str, Any]
 """
 タスク履歴イベントは、タスクの状態が変化した１時点を表します。作業時間は、複数のこれらイベントを集約して計算するものなので、このオブジェクトには含まれません。
+
 Kyes of Dict
 
 * project_id: str
@@ -2539,6 +2685,7 @@ Kyes of Dict
 TaskHistoryShort = Dict[str, Any]
 """
 タスクのあるフェーズを誰が担当したかを表します。
+
 Kyes of Dict
 
 * phase: TaskPhase
@@ -2550,6 +2697,7 @@ Kyes of Dict
 
 TaskOperation = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2576,6 +2724,7 @@ class TaskPhase(Enum):
 TaskPhaseStatistics = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * project_id: str
@@ -2590,6 +2739,7 @@ Kyes of Dict
 TaskRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * input_data_id_list: List[str]
@@ -2599,6 +2749,7 @@ Kyes of Dict
 
 TaskStart = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2625,6 +2776,7 @@ class TaskStatus(Enum):
 TaskValidation = Dict[str, Any]
 """
 タスクの全入力データに対するバリデーション結果です。
+
 Kyes of Dict
 
 * project_id: str
@@ -2639,6 +2791,7 @@ Kyes of Dict
 TasksInputs = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * project_id: str
@@ -2650,6 +2803,7 @@ Kyes of Dict
 
 TasksInputsTask = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2667,6 +2821,7 @@ Kyes of Dict
 Token = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * id_token: str
@@ -2681,6 +2836,7 @@ Kyes of Dict
 UnknownAdditionalData = Dict[str, Any]
 """
 何らかの原因で、アノテーション仕様にない属性がついているエラー
+
 Kyes of Dict
 
 * label_id: str
@@ -2697,6 +2853,7 @@ Kyes of Dict
 UnknownLabel = Dict[str, Any]
 """
 何らかの原因で、アノテーション仕様にないラベルがついているエラー
+
 Kyes of Dict
 
 * label_id: str
@@ -2711,6 +2868,7 @@ Kyes of Dict
 UnknownLinkTarget = Dict[str, Any]
 """
 指定されたIDに該当するアノテーションが存在しないエラー
+
 Kyes of Dict
 
 * label_id: str
@@ -2726,6 +2884,7 @@ Kyes of Dict
 
 ValidationError = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2749,6 +2908,7 @@ Kyes of Dict
 VerifyEmailRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * token: Token
@@ -2758,6 +2918,7 @@ Kyes of Dict
 
 Webhook = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2787,6 +2948,7 @@ Kyes of Dict
 WebhookHeader = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * name: str
@@ -2799,6 +2961,7 @@ Kyes of Dict
 WebhookTestRequest = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * placeholders: object
@@ -2808,6 +2971,7 @@ Kyes of Dict
 
 WebhookTestResponse = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
@@ -2827,6 +2991,7 @@ Kyes of Dict
 WorktimeStatistics = Dict[str, Any]
 """
 
+
 Kyes of Dict
 
 * project_id: str
@@ -2844,6 +3009,7 @@ Kyes of Dict
 
 WorktimeStatisticsItem = Dict[str, Any]
 """
+
 
 Kyes of Dict
 
