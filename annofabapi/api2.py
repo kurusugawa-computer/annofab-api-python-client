@@ -13,15 +13,16 @@ logger = logging.getLogger(__name__)
 class AnnofabApi2(AbstractAnnofabApi2):
     """
     Web API v2に対応したメソッドが存在するクラス。
-    【注意】 開発途上版のため、互換性のない変更がある可能性があります。
+
+    Note:
+        開発途上版のため、互換性のない変更がある可能性があります。
+
+    Args:
+        api: API v1のインスタンス（一部のAPIは、v1のログインメソッドを利用するため）
+
     """
 
     def __init__(self, api: AnnofabApi):
-        """
-
-        Args:
-            api: API v1のインスタンス（一部のAPIは、v1のログインメソッドを利用するため）
-        """
 
         self.api = api
 

@@ -14,8 +14,8 @@ import requests
 
 def raise_for_status(response: requests.Response):
     """
-    HTTP Status CodeがErrorの場合、`requests.exceptions.HTTPError`を発生させる。
-    そのとき`response.text`もHTTPErrorに加えて、HTTPError発生時にエラーの原因が分かるようにする。
+    HTTP Status CodeがErrorの場合、``requests.exceptions.HTTPError`` を発生させる。
+    そのとき ``response.text`` もHTTPErrorに加えて、HTTPError発生時にエラーの原因が分かるようにする。
 
     Args:
         response: Response
