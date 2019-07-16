@@ -11,16 +11,14 @@ logger = logging.getLogger(__name__)
 class Resource:
     """
     AnnofabApi, Wrapperのインスタンスを保持するクラス
+
+    Args:
+        login_user_id: AnnoFabにログインするときのユーザID
+        login_password: AnnoFabにログインするときのパスワード
+
     """
 
     def __init__(self, login_user_id: str, login_password: str):
-        """
-        Args:
-            login_user_id: AnnoFabにログインするときのユーザID
-            login_password: AnnoFabにログインするときのパスワード
-
-        """
-
         #: AnnofabApi Instance
         self.api = AnnofabApi(login_user_id, login_password)
 
@@ -48,7 +46,7 @@ def build(login_user_id: str, login_password: str) -> Resource:
 
 def build_from_netrc() -> Resource:
     """
-    `.netrc` ファイルから、annnofabapi.Resourceインスタンスを生成する。
+    ``.netrc`` ファイルから、annnofabapi.Resourceインスタンスを生成する。
 
     Returns:
         annnofabapi.Resourceインスタンス
@@ -74,7 +72,7 @@ def build_from_netrc() -> Resource:
 
 def build_from_env() -> Resource:
     """
-    環境変数`ANNOFAB_USER_ID` , `ANNOFAB_PASSWORD`から、annnofabapi.Resourceインスタンスを生成する。
+    環境変数 ``ANNOFAB_USER_ID`` , ``ANNOFAB_PASSWORD`` から、annnofabapi.Resourceインスタンスを生成する。
 
     Returns:
         annnofabapi.Resourceインスタンス

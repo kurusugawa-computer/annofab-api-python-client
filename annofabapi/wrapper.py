@@ -17,13 +17,13 @@ logger = logging.getLogger(__name__)
 class Wrapper:
     """
     AnnofabApiのラッパー.
+
+    Args:
+        api: AnnofabApi Instance
+
     """
 
     def __init__(self, api: AnnofabApi):
-        """
-        Args:
-            api: AnnofabApi Instance
-        """
         self.api = api
 
     #########################################

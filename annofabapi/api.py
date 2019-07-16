@@ -36,16 +36,14 @@ def my_backoff(function):
 class AnnofabApi(AbstractAnnofabApi):
     """
     Web APIに対応したメソッドが存在するクラス。
+
+    Args:
+        login_user_id: AnnoFabにログインするときのユーザID
+        login_password: AnnoFabにログインするときのパスワード
+
     """
 
     def __init__(self, login_user_id: str, login_password: str):
-        """
-
-        Args:
-            login_user_id: AnnoFabにログインするときのユーザID
-            login_password: AnnoFabにログインするときのパスワード
-
-        """
 
         if not login_user_id or not login_password:
             raise ValueError("login_user_id or login_password is empty.")
