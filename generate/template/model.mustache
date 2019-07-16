@@ -21,11 +21,9 @@ class {{classname}}(Enum):
 {{! enum以外ならばDictとして型ヒントを定義する }}
 {{classname}} = Dict[str, Any]
 """
-{{#description}}
-{{{description}}}
-{{/description}}
+{{#description}}{{{description}}}{{/description}}
+Kyes of Dict
 
-Dictのkeyとその型
 {{#vars}}
 * {{name}}: {{{dataType}}}
     {{#description}}{{{description}}} # noqa: E501{{/description}}
