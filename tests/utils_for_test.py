@@ -21,7 +21,6 @@ class WrapperForTest:
     """
     テスト用のUtils
     """
-
     def __init__(self, api: AnnofabApi):
         self.api = api
 

@@ -22,7 +22,6 @@ class Wrapper:
         api: AnnofabApi Instance
 
     """
-
     def __init__(self, api: AnnofabApi):
         self.api = api
 
@@ -321,7 +320,6 @@ class Wrapper:
         Returns:
             `batch_update_inspections` メソッドのcontent
         """
-
         def not_reply_comment(arg_inspection: Inspection) -> bool:
             """返信コメントでないならTrueをかえす"""
             return arg_inspection["parent_inspection_id"] is None
