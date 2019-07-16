@@ -21,7 +21,6 @@ class AnnofabApi2(AbstractAnnofabApi2):
         api: API v1のインスタンス（一部のAPIは、v1のログインメソッドを利用するため）
 
     """
-
     def __init__(self, api: AnnofabApi):
 
         self.api = api

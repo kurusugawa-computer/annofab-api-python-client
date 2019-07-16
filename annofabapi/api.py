@@ -17,7 +17,6 @@ def my_backoff(function):
     """
     HTTP Status Codeが429 or 5XXのときはリトライする. 最大5分間リトライする。
     """
-
     @functools.wraps(function)
     def wrapped(*args, **kwargs):
         def fatal_code(e):
@@ -42,7 +41,6 @@ class AnnofabApi(AbstractAnnofabApi):
         login_password: AnnoFabにログインするときのパスワード
 
     """
-
     def __init__(self, login_user_id: str, login_password: str):
 
         if not login_user_id or not login_password:
@@ -64,7 +62,6 @@ class AnnofabApi(AbstractAnnofabApi):
         requestsモジュールのauthに渡す情報。
         http://docs.python-requests.org/en/master/user/advanced/#custom-authentication
         """
-
         def __init__(self, id_token: str):
             self.id_token = id_token
 

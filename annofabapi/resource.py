@@ -17,7 +17,6 @@ class Resource:
         login_password: AnnoFabにログインするときのパスワード
 
     """
-
     def __init__(self, login_user_id: str, login_password: str):
         #: AnnofabApi Instance
         self.api = AnnofabApi(login_user_id, login_password)

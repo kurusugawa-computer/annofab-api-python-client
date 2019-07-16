@@ -18,7 +18,6 @@ class AbstractAnnofabApi(abc.ABC):
     """
     AnnofabApiクラスの抽象クラス
     """
-
     @abc.abstractmethod
     def _request_wrapper(self, http_method: str, url_path: str, query_params: Optional[Dict[str, Any]] = None,
                          header_params: Optional[Dict[str, Any]] = None,
