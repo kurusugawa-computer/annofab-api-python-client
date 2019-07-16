@@ -33,6 +33,7 @@ class Wrapper:
     def _get_content_type(file_path: str, content_type: Optional[str] = None) -> str:
         """
         ファイルパスからContent-Typeを取得する。
+
         Args:
             file_path: アップロードするファイルのパス
             content_type: アップロードするファイルのMIME Type. Noneの場合、ファイルパスから推測する。
@@ -60,6 +61,7 @@ class Wrapper:
     def _get_all_objects(func_get_list: Callable, limit: int, **kwargs_for_func_get_list) -> List[Dict[str, Any]]:
         """
         get_all_XXX関数の共通処理
+
         Args:
             func_get_list: AnnofabApiのget_XXX関数
             limit: 1ページあたりの取得するデータ件数
@@ -132,6 +134,7 @@ class Wrapper:
                                 query_params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         すべてのアノテーション情報を取得する。
+
         Args:
             project_id: プロジェクトID
             query_params: `api.get_annotation_list` メソッドのQuery Parameter
@@ -148,7 +151,9 @@ class Wrapper:
     def copy_annotation_specs(self, src_project_id: str, dest_project_id: str) -> AnnotationSpecs:
         """
         アノテーション仕様を、別のプロジェクトにコピーする。
-        【注意】誤って実行しないようにすること
+
+        Note:
+            誤って実行しないようにすること
 
         Args:
             src_project_id: コピー元のproject_id
@@ -224,6 +229,7 @@ class Wrapper:
                                  content_type: Optional[str] = None) -> InputData:
         """
         ファイル（画像 or zip）を入力データとして登録する。
+
         zipファイルを指定した場合は、登録が完了した後「ZIPアップロードジョブエラー削除」(delete_project_job)を実施する必要がある。
 
         Args:
@@ -344,6 +350,7 @@ class Wrapper:
                                          query_params: Optional[Dict[str, Any]] = None) -> List[Project]:
         """
         組織配下のすべてのプロジェクト一覧を取得する
+
         Args:
             organization_name: 組織名
             query_params: `api.get_projects_of_organization` メソッドに渡すQuery Parameter
@@ -360,6 +367,7 @@ class Wrapper:
     def get_all_organization_members(self, organization_name: str) -> List[OrganizationMember]:
         """
         すべての組織メンバ一覧を取得する
+
         Args:
             organization_name: 組織名
 
@@ -453,7 +461,9 @@ class Wrapper:
     def put_project_members(self, project_id, project_members: List[Dict[str, Any]]) -> List[ProjectMember]:
         """
         複数のプロジェクトメンバを追加/更新/削除する.
-        【注意】誤って実行しないようにすること
+
+        Note:
+            誤って実行しないようにすること
 
         Args:
             project_id: プロジェクトID
@@ -492,7 +502,9 @@ class Wrapper:
                                        member_role: str) -> List[ProjectMember]:
         """
         複数のプロジェクトメンバに1つのロールを割り当てる。
-        【注意】誤って実行しないようにすること
+
+        Note:
+            誤って実行しないようにすること
 
         Args:
             project_id: プロジェクトID
@@ -514,7 +526,9 @@ class Wrapper:
     def drop_role_to_project_members(self, project_id, user_id_list: List[str]) -> List[ProjectMember]:
         """
         複数のプロジェクトメンバを、プロジェクトから脱退させる
-        【注意】誤って実行しないようにすること
+
+        Note:
+            誤って実行しないようにすること
 
         Args:
             project_id: プロジェクトID
@@ -539,7 +553,9 @@ class Wrapper:
                              delete_dest: bool = False) -> List[ProjectMember]:
         """
         プロジェクトメンバを、別のプロジェクトにコピーする。
-        【注意】誤って実行しないようにすること
+
+        Note:
+            誤って実行しないようにすること
 
         Args:
             src_project_id: コピー元のproject_id
