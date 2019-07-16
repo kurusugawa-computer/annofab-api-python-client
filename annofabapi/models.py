@@ -16,7 +16,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union  # pylint: disable=un
 AcceptOrganizationInvitationRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * token: str
     
 
@@ -25,7 +26,8 @@ Dictのkeyとその型
 Account = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * account_id: str
     
 * user_id: str
@@ -57,7 +59,8 @@ class AccountAuthority(Enum):
 AccountWorktimeStatistics = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * account_id: str
     
 * by_tasks: List[WorktimeStatisticsItem]
@@ -70,7 +73,8 @@ Dictのkeyとその型
 AdditionalData = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * additional_data_definition_id: str
     
 * flag: bool
@@ -87,7 +91,8 @@ Dictのkeyとその型
 AdditionalDataDefinition = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * additional_data_definition_id: str
     
 * read_only: bool
@@ -112,7 +117,8 @@ Dictのkeyとその型
 AdditionalDataDefinitionChoices = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * choice_id: str
     
 * name: InternationalizationMessage
@@ -140,7 +146,8 @@ class AdditionalDataDefinitionType(Enum):
 AggregationResult = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * type: str
     他と区別するために `CountResult` を指定します  # noqa: E501
 * name: str
@@ -155,7 +162,8 @@ Dictのkeyとその型
 Annotation = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * task_id: str
@@ -184,7 +192,8 @@ class AnnotationDataHoldingType(Enum):
 AnnotationDetail = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * annotation_id: str
     
 * account_id: str
@@ -213,7 +222,8 @@ Dictのkeyとその型
 AnnotationEditorFeature = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * append: bool
     
 * erase: bool
@@ -232,7 +242,8 @@ Dictのkeyとその型
 AnnotationQuery = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * task_id: str
     
 * exact_match_task_id: bool
@@ -251,7 +262,8 @@ Dictのkeyとその型
 AnnotationSpecs = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * labels: List[Label]
@@ -266,7 +278,8 @@ Dictのkeyとその型
 AnnotationSpecsRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * labels: List[Label]
     ラベル  # noqa: E501
 * inspection_phrases: List[InspectionPhrase]
@@ -303,7 +316,8 @@ class AssigneeRuleOfResubmittedTask(Enum):
 BatchAnnotation = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * task_id: str
@@ -324,8 +338,8 @@ Dictのkeyとその型
 BatchAnnotationRequestItemDelete = Dict[str, Any]
 """
 アノテーション削除
+Kyes of Dict
 
-Dictのkeyとその型
 * project_id: str
     
 * task_id: str
@@ -344,8 +358,8 @@ Dictのkeyとその型
 BatchAnnotationRequestItemPut = Dict[str, Any]
 """
 アノテーション更新
+Kyes of Dict
 
-Dictのkeyとその型
 * data: BatchAnnotation
     
 * type: str
@@ -356,8 +370,8 @@ Dictのkeyとその型
 BatchInputDataRequestItemDelete = Dict[str, Any]
 """
 入力データ削除
+Kyes of Dict
 
-Dictのkeyとその型
 * project_id: str
     
 * input_data_id: str
@@ -370,8 +384,8 @@ Dictのkeyとその型
 BatchInspectionRequestItemDelete = Dict[str, Any]
 """
 検査コメント削除
+Kyes of Dict
 
-Dictのkeyとその型
 * project_id: str
     
 * task_id: str
@@ -388,8 +402,8 @@ Dictのkeyとその型
 BatchInspectionRequestItemPut = Dict[str, Any]
 """
 検査コメント更新
+Kyes of Dict
 
-Dictのkeyとその型
 * data: Inspection
     
 * type: str
@@ -400,8 +414,8 @@ Dictのkeyとその型
 BatchTaskRequestItemDelete = Dict[str, Any]
 """
 タスク削除
+Kyes of Dict
 
-Dictのkeyとその型
 * project_id: str
     
 * task_id: str
@@ -414,7 +428,8 @@ Dictのkeyとその型
 CacheRecord = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * input: str
     
 * members: str
@@ -433,7 +448,8 @@ Dictのkeyとその型
 ChangePasswordRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * user_id: str
     
 * old_password: str
@@ -446,7 +462,8 @@ Dictのkeyとその型
 Color = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * red: int
     
 * green: int
@@ -459,7 +476,8 @@ Dictのkeyとその型
 ConfirmAccountDeleteRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * token: str
     
 
@@ -468,7 +486,8 @@ Dictのkeyとその型
 ConfirmResetEmailRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * token: str
     
 
@@ -477,7 +496,8 @@ Dictのkeyとその型
 ConfirmResetPasswordRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * user_id: str
     
 * confirmation_code: str
@@ -490,7 +510,8 @@ Dictのkeyとその型
 ConfirmSignUpRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * account_id: str
     
 * user_id: str
@@ -511,7 +532,8 @@ Dictのkeyとその型
 ConfirmVerifyEmailRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * token: Token
     
 * confirmation_code: str
@@ -522,7 +544,8 @@ Dictのkeyとその型
 Count = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * key: str
     
 * count: int
@@ -535,7 +558,8 @@ Dictのkeyとその型
 CountResult = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * type: str
     他と区別するために `CountResult` を指定します  # noqa: E501
 * name: str
@@ -550,7 +574,8 @@ Dictのkeyとその型
 DataPath = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * url: str
     ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。 # noqa: E501
 * path: str
@@ -561,8 +586,8 @@ Dictのkeyとその型
 Duplicated = Dict[str, Any]
 """
 値の重複が許可されていない属性の重複エラー
+Kyes of Dict
 
-Dictのkeyとその型
 * label_id: str
     
 * annotation_id: str
@@ -577,8 +602,8 @@ Dictのkeyとその型
 DuplicatedSegmentationV2 = Dict[str, Any]
 """
 塗りつぶしv2のラベルに対する1ラベルにつき1アノテーションまでの制約違反エラー
+Kyes of Dict
 
-Dictのkeyとその型
 * label_id: str
     
 * annotation_ids: List[str]
@@ -591,8 +616,8 @@ Dictのkeyとその型
 EmptyAttribute = Dict[str, Any]
 """
 属性が未入力であるエラー
+Kyes of Dict
 
-Dictのkeyとその型
 * label_id: str
     
 * annotation_id: str
@@ -607,7 +632,8 @@ Dictのkeyとその型
 Error = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * error_code: str
     
 * message: str
@@ -620,7 +646,8 @@ Dictのkeyとその型
 ErrorAlreadyUpdated = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -631,7 +658,8 @@ Dictのkeyとその型
 ErrorExpiredToken = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -642,7 +670,8 @@ Dictのkeyとその型
 ErrorForbiddenResource = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -653,7 +682,8 @@ Dictのkeyとその型
 ErrorInternalServerError = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -664,7 +694,8 @@ Dictのkeyとその型
 ErrorInvalidBody = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -675,7 +706,8 @@ Dictのkeyとその型
 ErrorInvalidPath = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -686,7 +718,8 @@ Dictのkeyとその型
 ErrorInvalidQueryParam = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -697,7 +730,8 @@ Dictのkeyとその型
 ErrorLoginFailed = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -708,7 +742,8 @@ Dictのkeyとその型
 ErrorMissingNecessaryQueryParam = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -719,7 +754,8 @@ Dictのkeyとその型
 ErrorMissingResource = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -730,7 +766,8 @@ Dictのkeyとその型
 ErrorPasswordResetRequired = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -741,7 +778,8 @@ Dictのkeyとその型
 ErrorRefreshTokenExpired = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -752,7 +790,8 @@ Dictのkeyとその型
 ErrorStateMismatch = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -763,7 +802,8 @@ Dictのkeyとその型
 ErrorTimeout = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -774,7 +814,8 @@ Dictのkeyとその型
 ErrorUnauthorizedApi = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -785,7 +826,8 @@ Dictのkeyとその型
 ErrorUnderMaintenance = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -796,7 +838,8 @@ Dictのkeyとその型
 Errors = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * errors: List[Error]
     
 * context: object
@@ -807,7 +850,8 @@ Dictのkeyとその型
 FullAnnotation = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * task_id: str
@@ -828,7 +872,8 @@ Dictのkeyとその型
 FullAnnotationAdditionalData = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * additional_data_definition_id: str
     
 * additional_data_definition_name: InternationalizationMessage
@@ -851,7 +896,8 @@ Dictのkeyとその型
 FullAnnotationData = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * type: str
     Unknown # noqa: E501
 * data_uri: str
@@ -876,8 +922,8 @@ Dictのkeyとその型
 FullAnnotationDataBoundingBox = Dict[str, Any]
 """
 annotation_type が bounding_boxの場合に、[左上頂点座標, 右下頂点座標]を {\"x\":int, \"y\":int} の形式で記述したもの。
+Kyes of Dict
 
-Dictのkeyとその型
 * left_top: Point
     
 * right_bottom: Point
@@ -890,7 +936,8 @@ Dictのkeyとその型
 FullAnnotationDataClassification = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * type: str
     Classification # noqa: E501
 
@@ -899,8 +946,8 @@ Dictのkeyとその型
 FullAnnotationDataPoints = Dict[str, Any]
 """
 頂点座標 {\"x\":int, \"y\":int} の配列。  * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。 
+Kyes of Dict
 
-Dictのkeyとその型
 * points: List[Point]
     
 * type: str
@@ -911,8 +958,8 @@ Dictのkeyとその型
 FullAnnotationDataRange = Dict[str, Any]
 """
 annotation_type が rangeの場合に、[開始時間, 終了時間]を {\"begin\":number, \"end\":number} の形式で記述したもの。開始時間・終了時間の単位は秒で、精度はミリ秒まで。
+Kyes of Dict
 
-Dictのkeyとその型
 * begin: float
     開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。 # noqa: E501
 * end: float
@@ -925,8 +972,8 @@ Dictのkeyとその型
 FullAnnotationDataSegmentation = Dict[str, Any]
 """
 塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
+Kyes of Dict
 
-Dictのkeyとその型
 * data_uri: str
     
 * type: str
@@ -937,7 +984,8 @@ Dictのkeyとその型
 FullAnnotationDataSegmentationV2 = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * data_uri: str
     
 * type: str
@@ -948,8 +996,8 @@ Dictのkeyとその型
 FullAnnotationDataSinglePoint = Dict[str, Any]
 """
 annotation_type が pointの場合。
+Kyes of Dict
 
-Dictのkeyとその型
 * point: Point
     
 * type: str
@@ -960,8 +1008,8 @@ Dictのkeyとその型
 FullAnnotationDataUnknown = Dict[str, Any]
 """
 annotation_typeにデータ構造が一致していない場合に、元のdata文字列をそのまま記述したもの。
+Kyes of Dict
 
-Dictのkeyとその型
 * data: str
     
 * type: str
@@ -972,7 +1020,8 @@ Dictのkeyとその型
 FullAnnotationDetail = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * annotation_id: str
     
 * user_id: str
@@ -999,7 +1048,8 @@ Dictのkeyとその型
 HistogramItem = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * begin: float
     
 * end: float
@@ -1012,7 +1062,8 @@ Dictのkeyとその型
 InlineResponse200 = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * list: List[MyOrganization]
     現在のページ番号に含まれる0件以上の所属組織です。 # noqa: E501
 * page_no: float
@@ -1031,7 +1082,8 @@ Dictのkeyとその型
 InlineResponse2001 = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * list: List[Project]
     現在のページ番号に含まれる0件以上のプロジェクトです。 # noqa: E501
 * page_no: float
@@ -1050,7 +1102,8 @@ Dictのkeyとその型
 InlineResponse2002 = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * list: List[OrganizationMember]
     
 * page_no: float
@@ -1069,7 +1122,8 @@ Dictのkeyとその型
 InlineResponse2003 = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * list: List[Project]
     
 * has_next: bool
@@ -1080,7 +1134,8 @@ Dictのkeyとその型
 InlineResponse2004 = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * url: str
     
 
@@ -1089,7 +1144,8 @@ Dictのkeyとその型
 InlineResponse2005 = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * list: List[ProjectMember]
     
 * page_no: float
@@ -1108,7 +1164,8 @@ Dictのkeyとその型
 InlineResponse2006 = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * list: List[Task]
     現在のページ番号に含まれる0件以上のタスクです。 # noqa: E501
 * page_no: float
@@ -1127,7 +1184,8 @@ Dictのkeyとその型
 InlineResponse2007 = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * list: List[SingleAnnotation]
     現在のページ番号に含まれる0件以上のアノテーションです。 # noqa: E501
 * page_no: float
@@ -1146,7 +1204,8 @@ Dictのkeyとその型
 InlineResponse2008 = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * list: List[InputData]
     現在のページ番号に含まれる0件以上の入力データです。 # noqa: E501
 * page_no: float
@@ -1165,7 +1224,8 @@ Dictのkeyとその型
 InputData = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * input_data_id: str
     
 * project_id: str
@@ -1205,7 +1265,8 @@ class InputDataOrder(Enum):
 InputDataRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * input_data_name: str
     表示用の名前 # noqa: E501
 * input_data_path: str
@@ -1220,8 +1281,8 @@ Dictのkeyとその型
 InputDataSummary = Dict[str, Any]
 """
 ある入力データのバリデーション結果です。入力データIDをキーに引けるようにMap[入力データID, バリデーション結果]となっています
+Kyes of Dict
 
-Dictのkeyとその型
 * input_data_id: str
     
 * inspection_summary: str
@@ -1244,8 +1305,8 @@ class InputDataType(Enum):
 Inspection = Dict[str, Any]
 """
 検査コメント
+Kyes of Dict
 
-Dictのkeyとその型
 * project_id: str
     
 * task_id: str
@@ -1280,8 +1341,8 @@ Dictのkeyとその型
 InspectionDataPoint = Dict[str, Any]
 """
 問題のある部分を示す座標 
+Kyes of Dict
 
-Dictのkeyとその型
 * x: int
     
 * y: int
@@ -1294,8 +1355,8 @@ Dictのkeyとその型
 InspectionDataPolyline = Dict[str, Any]
 """
 問題のある部分を示すポリライン 
+Kyes of Dict
 
-Dictのkeyとその型
 * coordinates: List[InspectionDataPolylineCoordinates]
     ポリラインを構成する頂点の配列  # noqa: E501
 * type: str
@@ -1306,7 +1367,8 @@ Dictのkeyとその型
 InspectionDataPolylineCoordinates = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * x: int
     
 * y: int
@@ -1317,8 +1379,8 @@ Dictのkeyとその型
 InspectionDataTime = Dict[str, Any]
 """
 問題のある時間帯を表す区間 
+Kyes of Dict
 
-Dictのkeyとその型
 * start: float
     
 * end: float
@@ -1331,7 +1393,8 @@ Dictのkeyとその型
 InspectionPhrase = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * id: str
     
 * text: InternationalizationMessage
@@ -1342,7 +1405,8 @@ Dictのkeyとその型
 InspectionStatistics = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * date: date
@@ -1355,7 +1419,8 @@ Dictのkeyとその型
 InspectionStatisticsBreakdown = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * labels: dict(str, InspectionStatisticsPhrases)
     ラベルごとの指摘集計結果 # noqa: E501
 * no_label: InspectionStatisticsPhrases
@@ -1366,7 +1431,8 @@ Dictのkeyとその型
 InspectionStatisticsPhrases = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * phrases: dict(str, int)
     定型指摘ごとの合計数 # noqa: E501
 * no_phrase: int
@@ -1389,7 +1455,8 @@ class InspectionStatus(Enum):
 InstructionHistory = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * history_id: str
     
 * account_id: str
@@ -1402,7 +1469,8 @@ Dictのkeyとその型
 InstructionImage = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * image_id: str
     
 * path: str
@@ -1417,7 +1485,8 @@ Dictのkeyとその型
 InternationalizationMessage = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * messages: List[InternationalizationMessageMessages]
     
 * default_lang: str
@@ -1428,7 +1497,8 @@ Dictのkeyとその型
 InternationalizationMessageMessages = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * lang: str
     
 * message: str
@@ -1439,8 +1509,8 @@ Dictのkeyとその型
 InvalidAnnotationData = Dict[str, Any]
 """
 アノテーションデータ不正エラー
+Kyes of Dict
 
-Dictのkeyとその型
 * label_id: str
     
 * annotation_id: str
@@ -1455,8 +1525,8 @@ Dictのkeyとその型
 InvalidCommentFormat = Dict[str, Any]
 """
 コメントが正規表現に合致しないエラー
+Kyes of Dict
 
-Dictのkeyとその型
 * label_id: str
     
 * annotation_id: str
@@ -1471,8 +1541,8 @@ Dictのkeyとその型
 InvalidLinkTarget = Dict[str, Any]
 """
 リンク先アノテーションが許可されているラベルでないエラー
+Kyes of Dict
 
-Dictのkeyとその型
 * label_id: str
     
 * annotation_id: str
@@ -1487,7 +1557,8 @@ Dictのkeyとその型
 InviteOrganizationMemberRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * role: OrganizationMemberRole
     
 
@@ -1496,7 +1567,8 @@ Dictのkeyとその型
 JobInfo = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * job_type: str
@@ -1519,7 +1591,8 @@ Dictのkeyとその型
 Keybind = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * code: str
     
 * shift: bool
@@ -1534,7 +1607,8 @@ Dictのkeyとその型
 Label = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * label_id: str
     
 * label_name: InternationalizationMessage
@@ -1561,7 +1635,8 @@ Dictのkeyとその型
 LabelBoundingBoxMetadata = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * min_width: int
     
 * min_height: int
@@ -1582,7 +1657,8 @@ Dictのkeyとその型
 LabelSegmentationMetadata = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * min_width: int
     
 * min_height: int
@@ -1597,7 +1673,8 @@ Dictのkeyとその型
 LabelStatistics = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * label_id: str
     
 * completed_labels: int
@@ -1610,7 +1687,8 @@ Dictのkeyとその型
 LoginRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * user_id: str
     
 * password: str
@@ -1621,7 +1699,8 @@ Dictのkeyとその型
 LoginResponse = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * token: Token
     
 
@@ -1630,7 +1709,8 @@ Dictのkeyとその型
 Message = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * message: str
     多言語対応 # noqa: E501
 
@@ -1639,7 +1719,8 @@ Dictのkeyとその型
 MyAccount = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * account_id: str
     
 * user_id: str
@@ -1666,7 +1747,8 @@ Dictのkeyとその型
 MyOrganization = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * organization_id: str
     
 * name: str
@@ -1691,7 +1773,8 @@ Dictのkeyとその型
 Organization = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * organization_id: str
     
 * organization_name: str
@@ -1712,7 +1795,8 @@ Dictのkeyとその型
 OrganizationActivity = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * organization_id: str
     
 * created_datetime: datetime
@@ -1725,7 +1809,8 @@ Dictのkeyとその型
 OrganizationMember = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * organization_id: str
     
 * account_id: str
@@ -1768,7 +1853,8 @@ class OrganizationMemberStatus(Enum):
 OrganizationRegistrationRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * organization_name: str
     
 * organization_email: str
@@ -1781,7 +1867,8 @@ Dictのkeyとその型
 OrganizationSummary = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * last_tasks_updated_datetime: datetime
     
 
@@ -1790,8 +1877,8 @@ Dictのkeyとその型
 OutOfImageBounds = Dict[str, Any]
 """
 画像範囲外にアノテーションがはみ出しているエラー
+Kyes of Dict
 
-Dictのkeyとその型
 * label_id: str
     
 * annotation_id: str
@@ -1804,7 +1891,8 @@ Dictのkeyとその型
 PasswordResetRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * email: str
     
 
@@ -1813,7 +1901,8 @@ Dictのkeyとその型
 PhaseStatistics = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * phase: str
     
 * worktime: str
@@ -1824,8 +1913,8 @@ Dictのkeyとその型
 Point = Dict[str, Any]
 """
 座標
+Kyes of Dict
 
-Dictのkeyとその型
 * x: int
     
 * y: int
@@ -1845,7 +1934,8 @@ class PricePlan(Enum):
 Project = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * organization_id: str
@@ -1872,7 +1962,8 @@ Dictのkeyとその型
 ProjectAccountStatistics = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * account_id: str
     
 * histories: List[ProjectAccountStatisticsHistory]
@@ -1883,7 +1974,8 @@ Dictのkeyとその型
 ProjectAccountStatisticsHistory = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * date: date
     
 * tasks_completed: int
@@ -1898,7 +1990,8 @@ Dictのkeyとその型
 ProjectConfiguration = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_rule: str
     
 * project_workflow: ProjectWorkflow
@@ -1923,7 +2016,8 @@ Dictのkeyとその型
 ProjectCopyRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * dest_project_id: str
     
 * dest_title: str
@@ -1946,7 +2040,8 @@ Dictのkeyとその型
 ProjectMember = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * account_id: str
@@ -1971,7 +2066,8 @@ Dictのkeyとその型
 ProjectMemberRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * member_status: ProjectMemberStatus
     
 * member_role: ProjectMemberRole
@@ -2012,7 +2108,8 @@ class ProjectStatus(Enum):
 ProjectSummary = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * last_tasks_updated_datetime: datetime
     
 
@@ -2021,7 +2118,8 @@ Dictのkeyとその型
 ProjectTaskStatistics = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * phase: TaskPhase
     
 * status: TaskStatus
@@ -2036,7 +2134,8 @@ Dictのkeyとその型
 ProjectTaskStatisticsHistory = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * date: date
     
 * tasks: List[ProjectTaskStatistics]
@@ -2056,7 +2155,8 @@ class ProjectWorkflow(Enum):
 PutMyAccountRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * user_id: str
     
 * username: str
@@ -2075,7 +2175,8 @@ Dictのkeyとその型
 PutOrganizationMemberRoleRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * role: OrganizationMemberRole
     
 * last_updated_datetime: datetime
@@ -2086,7 +2187,8 @@ Dictのkeyとその型
 PutOrganizationNameRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * organization_id: str
     
 * organization_name: str
@@ -2099,7 +2201,8 @@ Dictのkeyとその型
 PutProjectRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * title: str
     
 * overview: str
@@ -2122,7 +2225,8 @@ Dictのkeyとその型
 RefreshTokenRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * refresh_token: str
     
 
@@ -2131,7 +2235,8 @@ Dictのkeyとその型
 ResetEmailRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * email: str
     
 
@@ -2140,7 +2245,8 @@ Dictのkeyとその型
 ResetPasswordRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * token: str
     
 
@@ -2149,8 +2255,8 @@ Dictのkeyとその型
 Resolution = Dict[str, Any]
 """
 画像などの解像度 
+Kyes of Dict
 
-Dictのkeyとその型
 * width: float
     
 * height: float
@@ -2161,7 +2267,8 @@ Dictのkeyとその型
 SignUpRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * email: str
     
 
@@ -2170,7 +2277,8 @@ Dictのkeyとその型
 SimpleAnnotation = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * annotation_format_version: str
     アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。  # noqa: E501
 * project_id: str
@@ -2191,7 +2299,8 @@ Dictのkeyとその型
 SimpleAnnotationDetail = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * label: str
     アノテーション仕様のラベル名です。  # noqa: E501
 * annotation_id: str
@@ -2206,7 +2315,8 @@ Dictのkeyとその型
 SingleAnnotation = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * task_id: str
@@ -2223,7 +2333,8 @@ Dictのkeyとその型
 SingleAnnotationDetail = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * annotation_id: str
     
 * account_id: str
@@ -2250,7 +2361,8 @@ Dictのkeyとその型
 SupplementaryData = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * input_data_id: str
@@ -2277,7 +2389,8 @@ Dictのkeyとその型
 SupplementaryDataRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * supplementary_data_name: str
     表示用の名前 # noqa: E501
 * supplementary_data_path: str
@@ -2294,7 +2407,8 @@ Dictのkeyとその型
 Task = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * task_id: str
@@ -2325,7 +2439,8 @@ Dictのkeyとその型
 TaskGenerateRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * task_generate_rule: OneOfTaskGenerateRuleByCountTaskGenerateRuleByDirectoryTaskGenerateRuleByInputDataCsv
     * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。  # noqa: E501
 * task_id_prefix: str
@@ -2338,8 +2453,8 @@ Dictのkeyとその型
 TaskGenerateRuleByCount = Dict[str, Any]
 """
 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
+Kyes of Dict
 
-Dictのkeyとその型
 * allow_duplicate_input_data: bool
     falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。 # noqa: E501
 * input_data_count: int
@@ -2354,8 +2469,8 @@ Dictのkeyとその型
 TaskGenerateRuleByDirectory = Dict[str, Any]
 """
 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。<br>
+Kyes of Dict
 
-Dictのkeyとその型
 * input_data_name_prefix: str
     タスク生成対象の入力データ名プレフィックス # noqa: E501
 * type: str
@@ -2366,8 +2481,8 @@ Dictのkeyとその型
 TaskGenerateRuleByInputDataCsv = Dict[str, Any]
 """
 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。
+Kyes of Dict
 
-Dictのkeyとその型
 * csv_data_path: str
     各タスクへの入力データへの割当を記入したCSVへのS3上のパス # noqa: E501
 * type: str
@@ -2378,8 +2493,8 @@ Dictのkeyとその型
 TaskHistory = Dict[str, Any]
 """
 タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
+Kyes of Dict
 
-Dictのkeyとその型
 * project_id: str
     
 * task_id: str
@@ -2402,8 +2517,8 @@ Dictのkeyとその型
 TaskHistoryEvent = Dict[str, Any]
 """
 タスク履歴イベントは、タスクの状態が変化した１時点を表します。作業時間は、複数のこれらイベントを集約して計算するものなので、このオブジェクトには含まれません。
+Kyes of Dict
 
-Dictのkeyとその型
 * project_id: str
     
 * task_id: str
@@ -2424,8 +2539,8 @@ Dictのkeyとその型
 TaskHistoryShort = Dict[str, Any]
 """
 タスクのあるフェーズを誰が担当したかを表します。
+Kyes of Dict
 
-Dictのkeyとその型
 * phase: TaskPhase
     
 * account_id: str
@@ -2436,7 +2551,8 @@ Dictのkeyとその型
 TaskOperation = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * status: TaskStatus
     
 * last_updated_datetime: datetime
@@ -2460,7 +2576,8 @@ class TaskPhase(Enum):
 TaskPhaseStatistics = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * date: date
@@ -2473,7 +2590,8 @@ Dictのkeyとその型
 TaskRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * input_data_id_list: List[str]
     
 
@@ -2482,7 +2600,8 @@ Dictのkeyとその型
 TaskStart = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * phase: TaskPhase
     
 
@@ -2506,8 +2625,8 @@ class TaskStatus(Enum):
 TaskValidation = Dict[str, Any]
 """
 タスクの全入力データに対するバリデーション結果です。
+Kyes of Dict
 
-Dictのkeyとその型
 * project_id: str
     
 * task_id: str
@@ -2520,7 +2639,8 @@ Dictのkeyとその型
 TasksInputs = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * tasks: List[TasksInputsTask]
@@ -2531,7 +2651,8 @@ Dictのkeyとその型
 TasksInputsTask = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * task_id: str
     
 * phase: TaskPhase
@@ -2546,7 +2667,8 @@ Dictのkeyとその型
 Token = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * id_token: str
     形式は[JWT](https://jwt.io/)。 # noqa: E501
 * access_token: str
@@ -2559,8 +2681,8 @@ Dictのkeyとその型
 UnknownAdditionalData = Dict[str, Any]
 """
 何らかの原因で、アノテーション仕様にない属性がついているエラー
+Kyes of Dict
 
-Dictのkeyとその型
 * label_id: str
     
 * annotation_id: str
@@ -2575,8 +2697,8 @@ Dictのkeyとその型
 UnknownLabel = Dict[str, Any]
 """
 何らかの原因で、アノテーション仕様にないラベルがついているエラー
+Kyes of Dict
 
-Dictのkeyとその型
 * label_id: str
     
 * annotation_id: str
@@ -2589,8 +2711,8 @@ Dictのkeyとその型
 UnknownLinkTarget = Dict[str, Any]
 """
 指定されたIDに該当するアノテーションが存在しないエラー
+Kyes of Dict
 
-Dictのkeyとその型
 * label_id: str
     
 * annotation_id: str
@@ -2605,7 +2727,8 @@ Dictのkeyとその型
 ValidationError = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * label_id: str
     
 * annotation_id: str
@@ -2626,7 +2749,8 @@ Dictのkeyとその型
 VerifyEmailRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * token: Token
     
 
@@ -2635,7 +2759,8 @@ Dictのkeyとその型
 Webhook = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * event_type: str
@@ -2662,7 +2787,8 @@ Dictのkeyとその型
 WebhookHeader = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * name: str
     
 * value: str
@@ -2673,7 +2799,8 @@ Dictのkeyとその型
 WebhookTestRequest = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * placeholders: object
     プレースホルダ名と置換する値 # noqa: E501
 
@@ -2682,7 +2809,8 @@ Dictのkeyとその型
 WebhookTestResponse = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * result: str
     * success: 通知先から正常なレスポンス（2xx系）を受け取った * failure: 通知先からエラーレスポンス（2xx系以外）を受け取った * error: リクエスト送信に失敗した、もしくはレスポンスを受信できなかった  # noqa: E501
 * request_body: str
@@ -2699,7 +2827,8 @@ Dictのkeyとその型
 WorktimeStatistics = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * project_id: str
     
 * date: date
@@ -2716,7 +2845,8 @@ Dictのkeyとその型
 WorktimeStatisticsItem = Dict[str, Any]
 """
 
-Dictのkeyとその型
+Kyes of Dict
+
 * phase: TaskPhase
     
 * histogram: List[HistogramItem]
