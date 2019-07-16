@@ -34,8 +34,11 @@ class AbstractAnnofabApi2(abc.ABC):
             self,
             project_id: str,
             query_params: Optional[Dict[str, Any]] = None,
-    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+    ) -> Tuple[Any, requests.Response]:
         """アノテーション仕様取得
+
+
+        authorizations: SignedCookie
 
 
 
@@ -46,9 +49,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[AnnotationSpecs, requests.Response]
-
-        Notes:
-            authorizations: SignedCookie
 
 
         """
@@ -67,8 +67,11 @@ class AbstractAnnofabApi2(abc.ABC):
     def get_project_cache_v2(
             self,
             project_id: str,
-    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+    ) -> Tuple[Any, requests.Response]:
         """キャッシュレコード
+
+
+        authorizations: SignedCookie
 
 
 
@@ -77,9 +80,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[CacheRecord, requests.Response]
-
-        Notes:
-            authorizations: SignedCookie
 
 
         """
@@ -97,8 +97,11 @@ class AbstractAnnofabApi2(abc.ABC):
             self,
             project_id: str,
             query_params: Optional[Dict[str, Any]] = None,
-    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+    ) -> Tuple[Any, requests.Response]:
         """ユーザー別タスク集計取得
+
+
+        authorizations: SignedCookie
 
 
 
@@ -109,9 +112,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[List[ProjectAccountStatistics], requests.Response]
-
-        Notes:
-            authorizations: SignedCookie
 
 
         """
@@ -126,8 +126,11 @@ class AbstractAnnofabApi2(abc.ABC):
             self,
             project_id: str,
             query_params: Optional[Dict[str, Any]] = None,
-    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+    ) -> Tuple[Any, requests.Response]:
         """検査コメント集計取得
+
+
+        authorizations: SignedCookie
 
 
 
@@ -138,9 +141,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[List[InspectionStatistics], requests.Response]
-
-        Notes:
-            authorizations: SignedCookie
 
 
         """
@@ -155,8 +155,11 @@ class AbstractAnnofabApi2(abc.ABC):
             self,
             project_id: str,
             query_params: Optional[Dict[str, Any]] = None,
-    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+    ) -> Tuple[Any, requests.Response]:
         """ラベル別アノテーション数集計取得
+
+
+        authorizations: SignedCookie
 
 
 
@@ -167,9 +170,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[List[LabelStatistics], requests.Response]
-
-        Notes:
-            authorizations: SignedCookie
 
 
         """
@@ -184,8 +184,11 @@ class AbstractAnnofabApi2(abc.ABC):
             self,
             project_id: str,
             query_params: Optional[Dict[str, Any]] = None,
-    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+    ) -> Tuple[Any, requests.Response]:
         """フェーズ別タスク集計取得
+
+
+        authorizations: SignedCookie
 
 
 
@@ -196,9 +199,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[List[TaskPhaseStatistics], requests.Response]
-
-        Notes:
-            authorizations: SignedCookie
 
 
         """
@@ -213,8 +213,11 @@ class AbstractAnnofabApi2(abc.ABC):
             self,
             project_id: str,
             query_params: Optional[Dict[str, Any]] = None,
-    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+    ) -> Tuple[Any, requests.Response]:
         """タスク集計取得
+
+
+        authorizations: SignedCookie
 
 
 
@@ -225,9 +228,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[List[ProjectTaskStatisticsHistory], requests.Response]
-
-        Notes:
-            authorizations: SignedCookie
 
 
         """
@@ -242,8 +242,11 @@ class AbstractAnnofabApi2(abc.ABC):
             self,
             project_id: str,
             query_params: Optional[Dict[str, Any]] = None,
-    ) -> Tuple[Any, requests.Response]:  # noqa: E501
+    ) -> Tuple[Any, requests.Response]:
         """タスク作業時間集計取得
+
+
+        authorizations: SignedCookie
 
 
         ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。 アカウント毎の集計のby_tasks、by_inputsには、最終日であってもヒストグラムを返却しない。 
@@ -255,9 +258,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Returns:
             Tuple[List[WorktimeStatistics], requests.Response]
-
-        Notes:
-            authorizations: SignedCookie
 
 
         """
