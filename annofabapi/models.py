@@ -1,11 +1,11 @@
 # flake8: noqa: W291
 # pylint: disable=too-many-lines,trailing-whitespace
 """
-annofabapiのmodel(swagger.yamlの`components.schemes`)
+annofabapiのmodel(swagger.yamlの ``components.schemes`` )
 enumならば列挙体として定義する。
 それ以外は型ヒントしてして宣言する。
 
-Notes:
+Note:
     このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
 """
 
