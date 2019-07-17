@@ -3,7 +3,9 @@
 
 """
 AbstractAnnofabApiのヘッダ部分
-注意：このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
+
+Note:
+    このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
 """
 
 import abc
