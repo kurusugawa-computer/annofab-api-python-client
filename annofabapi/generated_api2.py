@@ -2,7 +2,9 @@
 # pylint: disable=too-many-lines,trailing-whitespace
 """
 AbstractAnnofabApi2のヘッダ部分
-注意：このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
+
+Note:
+    このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
 """
 
 import abc
@@ -37,7 +39,7 @@ class AbstractAnnofabApi2(abc.ABC):
         """アノテーション仕様取得
 
 
-        authorizations: SignedCookie
+        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
 
@@ -70,7 +72,7 @@ class AbstractAnnofabApi2(abc.ABC):
         """キャッシュレコード
 
 
-        authorizations: SignedCookie
+        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
 
@@ -100,7 +102,7 @@ class AbstractAnnofabApi2(abc.ABC):
         """ユーザー別タスク集計取得
 
 
-        authorizations: SignedCookie
+        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
 
@@ -129,7 +131,7 @@ class AbstractAnnofabApi2(abc.ABC):
         """検査コメント集計取得
 
 
-        authorizations: SignedCookie
+        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
 
@@ -158,7 +160,7 @@ class AbstractAnnofabApi2(abc.ABC):
         """ラベル別アノテーション数集計取得
 
 
-        authorizations: SignedCookie
+        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
 
@@ -187,7 +189,7 @@ class AbstractAnnofabApi2(abc.ABC):
         """フェーズ別タスク集計取得
 
 
-        authorizations: SignedCookie
+        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
 
@@ -216,7 +218,7 @@ class AbstractAnnofabApi2(abc.ABC):
         """タスク集計取得
 
 
-        authorizations: SignedCookie
+        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
 
@@ -245,7 +247,7 @@ class AbstractAnnofabApi2(abc.ABC):
         """タスク作業時間集計取得
 
 
-        authorizations: SignedCookie
+        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
         ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。 アカウント毎の集計のby_tasks、by_inputsには、最終日であってもヒストグラムを返却しない。 
