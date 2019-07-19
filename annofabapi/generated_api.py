@@ -2,7 +2,9 @@
 # pylint: disable=too-many-lines,trailing-whitespace
 """
 AbstractAnnofabApiのヘッダ部分
-注意：このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
+
+Note:
+    このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
 """
 
 import abc
@@ -383,7 +385,7 @@ class AbstractAnnofabApi(abc.ABC):
                 sort (str):  ソート順の指定。 使用可能キーはtask_id, input_data_id, detail.annotation_id, detail.account_id, detail.label_id, detail.data_holding_type, detail.created_datetime, detail.updated_datetimeのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
 
         Returns:
-            Tuple[InlineResponse2007, requests.Response]
+            Tuple[InlineResponse2008, requests.Response]
 
 
         """
@@ -701,7 +703,7 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  1ページあたりの取得するデータ件数
 
         Returns:
-            Tuple[InlineResponse2008, requests.Response]
+            Tuple[InlineResponse2009, requests.Response]
 
 
         """
@@ -1016,7 +1018,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id: str,
             job_id: str,
     ) -> Tuple[Any, requests.Response]:
-        """ZIPアップロードジョブエラー削除
+        """バックグラウンドジョブ情報削除
 
 
         authorizations: ProjectOwner
@@ -1042,23 +1044,24 @@ class AbstractAnnofabApi(abc.ABC):
             project_id: str,
             query_params: Optional[Dict[str, Any]] = None,
     ) -> Tuple[Any, requests.Response]:
-        """バックグラウンドジョブ取得
+        """バックグラウンドジョブ情報取得
 
 
         authorizations: AllProjectMember
 
 
+        バックグラウンドジョブの情報を取得する。 取得されるジョブの情報は作成日付の新しい順にソートされる。 
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
                 type (str):  取得するジョブ種別 (required)
                 page (int):  検索結果のうち、取得したいページの番号(1始まり)  現在は未実装のパラメータです。(今後対応予定) 
-                limit (int):  1ページあたりの取得するデータ件数  現在は未実装のパラメータです。(今後対応予定) 
+                limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。 
                 exclusive_start_created_datetime (str):  取得するデータの直前の作成日時
 
         Returns:
-            Tuple[List[JobInfo], requests.Response]
+            Tuple[InlineResponse2006, requests.Response]
 
 
         """
@@ -2063,7 +2066,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID (required)
-            supplementary_data_id (str):  補助情報ID (required)
+            supplementary_data_id (str):  補助情報ID（プロジェクトIDとの2つ組で一意となる値） (required)
 
         Returns:
             Tuple[, requests.Response]
@@ -2113,7 +2116,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID (required)
-            supplementary_data_id (str):  補助情報ID (required)
+            supplementary_data_id (str):  補助情報ID（プロジェクトIDとの2つ組で一意となる値） (required)
             request_body (Any): Request Body
                 supplementary_data_request (SupplementaryDataRequest):  (required)
 
@@ -2357,7 +2360,7 @@ class AbstractAnnofabApi(abc.ABC):
                 sort (str):  ソート順の指定。 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、status、account_idのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
 
         Returns:
-            Tuple[InlineResponse2006, requests.Response]
+            Tuple[InlineResponse2007, requests.Response]
 
 
         """

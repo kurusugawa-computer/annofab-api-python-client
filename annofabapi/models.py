@@ -1238,6 +1238,19 @@ InlineResponse2006 = Dict[str, Any]
 
 Kyes of Dict
 
+* list: List[JobInfo]
+    
+* has_next: bool
+    
+
+"""
+
+InlineResponse2007 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
 * list: List[Task]
     現在のページ番号に含まれる0件以上のタスクです。
 * page_no: float
@@ -1253,7 +1266,7 @@ Kyes of Dict
 
 """
 
-InlineResponse2007 = Dict[str, Any]
+InlineResponse2008 = Dict[str, Any]
 """
 
 
@@ -1274,7 +1287,7 @@ Kyes of Dict
 
 """
 
-InlineResponse2008 = Dict[str, Any]
+InlineResponse2009 = Dict[str, Any]
 """
 
 
@@ -2533,7 +2546,7 @@ Kyes of Dict
 * supplementary_data_name: str
     表示用の名前
 * supplementary_data_path: str
-    AnnoFabに登録する補助情報の実体が保存されたパスです。  対応スキーマ：s3, https  * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA` * [プライベートストレージ](/docs/faq/#prst9c)の場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。 
+    AnnoFabに登録する補助情報の実体が保存されたパスです。  対応スキーマ：s3, https  * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードしたファイルパスの場合     * `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA`     * 補助情報作成/更新API成功時、アップロードしたファイルが一時データ保存先からコピーされます。         * APIのレスポンスからアップロードしたファイルのコピー先パス（s3スキーマ）を取得できます。 * すでにAFに登録されている補助情報のパスの場合     * `s3://ANNOFAB-SUPPLEMENTARY-BUCKET/PATH/TO/INPUT_DATA`     * ファイルはコピーされません。 * [プライベートストレージ](/docs/faq/#prst9c)のパスの場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。     * AFにファイルはコピーされません。 
 * supplementary_data_type: str
     
 * supplementary_data_number: int

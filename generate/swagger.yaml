@@ -46,7 +46,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし、利便性のために一部APIを除き指定は必須ではありません。
 
-  version: 0.56.0
+  version: 0.56.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -58,14 +58,10 @@ servers:
 tags:
 - name: af-account
   description: ユーザーアカウントに対する操作
-- name: af-my
-  description: 自身のリソースに対する操作
 - name: af-annotation
   description: アノテーションに対する操作
 - name: af-annotation-specs
   description: アノテーション仕様に対する操作
-- name: af-login
-  description: ログイン関連の操作
 - name: af-input
   description: |
     **入力データ（input data）**に対する操作です。
@@ -84,6 +80,26 @@ tags:
 
     関連
     * [af-supplementary](#tag/af-supplementary): 入力データを補う補助情報
+- name: af-inspection
+  description: 検査コメントに対する操作
+- name: af-instruction
+  description: 作業ガイドに対する操作
+- name: af-job
+  description: バッチ処理ジョブに対する操作
+- name: af-login
+  description: ログイン関連の操作
+- name: af-my
+  description: 自身のリソースに対する操作
+- name: af-organization
+  description: 組織に対する操作
+- name: af-organization-member
+  description: 組織メンバーに対する操作
+- name: af-project
+  description: プロジェクトに対する操作
+- name: af-project-member
+  description: プロジェクトメンバーに対する操作
+- name: af-statistics
+  description: 集計に関する操作
 - name: af-supplementary
   description: |
     **補助情報（supprementary data）**に対する操作です。
@@ -97,28 +113,13 @@ tags:
     * 写真や動画を撮影した日時、緯度経度、撮影者などのメタデータ（テキスト）
 
     補助情報は、画像やテキストで、プロジェクトの入力データごとにひも付けられます。
-    補助情報で扱う画像は、入力データ同様に、AnnoFabにアップロードするかまたはプライベートストレージを利用できます。
+    補助情報で扱う画像は、入力データと同様にAnnoFabにアップロードする他に、プライベートストレージの画像を利用することもできます。
 
     関連
     * [af-input](#tag/af-input): 補助情報をひもづける入力データ
-- name: af-inspection
-  description: 検査コメントに対する操作
-- name: af-organization
-  description: 組織に対する操作
-- name: af-organization-member
-  description: 組織メンバーに対する操作
-- name: af-project
-  description: プロジェクトに対する操作
-- name: af-project-member
-  description: プロジェクトメンバーに対する操作
-- name: af-statistics
-  description: 集計に関する操作
+    * [af-project](#tag/af-project): 補助情報をひもづけるプロジェクト
 - name: af-task
   description: タスクに対する操作
-- name: af-instruction
-  description: 作業ガイドに対する操作
-- name: af-job
-  description: バッチ処理ジョブに対する操作
 - name: af-webhook
   description: Webhookに対する操作
 paths:
@@ -860,6 +861,8 @@ paths:
                     items:
                       $ref: "#/components/schemas/AggregationResult"
                     description: Aggregationによる集約結果。
+        400:
+          $ref: "#/components/responses/ErrorInvalidRequest"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         503:
@@ -1202,6 +1205,8 @@ paths:
                       $ref: "#/components/schemas/Project"
                   has_next:
                     type: boolean
+        400:
+          $ref: "#/components/responses/ErrorInvalidRequest"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         503:
@@ -1871,8 +1876,10 @@ paths:
     get:
       tags:
       - af-job
-      summary: バックグラウンドジョブ取得
+      summary: バックグラウンドジョブ情報取得
       description: |
+        バックグラウンドジョブの情報を取得する。
+        取得されるジョブの情報は作成日付の新しい順にソートされる。
       security:
       - AllProjectMember: []
       operationId: getProjectJob
@@ -1891,6 +1898,7 @@ paths:
           type: string
           enum:
           - copy-project
+          - delete-project
           - gen-inputs
           - gen-tasks
           - gen-annotation
@@ -1909,9 +1917,8 @@ paths:
       - name: limit
         in: query
         description: |
-          1ページあたりの取得するデータ件数
-
-          現在は未実装のパラメータです。(今後対応予定)
+          1ページあたりの取得するデータ件数。
+          未指定時は1件のみ取得。
         required: false
         schema:
           type: integer
@@ -1930,9 +1937,16 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/JobInfo"
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/JobInfo"
+                  has_next:
+                    type: boolean
+        400:
+          $ref: "#/components/responses/ErrorInvalidRequest"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -1943,7 +1957,7 @@ paths:
     delete:
       tags:
       - af-job
-      summary: ZIPアップロードジョブエラー削除
+      summary: バックグラウンドジョブ情報削除
       description: |
       security:
       - ProjectOwner: []
@@ -2403,6 +2417,8 @@ paths:
                     items:
                       $ref: "#/components/schemas/AggregationResult"
                     description: Aggregationによる集約結果。
+        400:
+          $ref: "#/components/responses/ErrorInvalidRequest"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         503:
@@ -3093,6 +3109,8 @@ paths:
                     items:
                       $ref: "#/components/schemas/AggregationResult"
                     description: Aggregationによる集約結果。
+        400:
+          $ref: "#/components/responses/ErrorInvalidRequest"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         503:
@@ -3687,6 +3705,8 @@ paths:
                     items:
                       $ref: "#/components/schemas/AggregationResult"
                     description: Aggregationによる集約結果。
+        400:
+          $ref: "#/components/responses/ErrorInvalidRequest"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         503:
@@ -4003,7 +4023,7 @@ paths:
           $ref: "#/components/schemas/InputDataId"
       - name: supplementary_data_id
         in: path
-        description: 補助情報ID
+        description: 補助情報ID（プロジェクトIDとの2つ組で一意となる値）
         required: true
         schema:
           $ref: "#/components/schemas/SupplementaryDataId"
@@ -4049,7 +4069,7 @@ paths:
           $ref: "#/components/schemas/InputDataId"
       - name: supplementary_data_id
         in: path
-        description: 補助情報ID
+        description: 補助情報ID（プロジェクトIDとの2つ組で一意となる値）
         required: true
         schema:
           $ref: "#/components/schemas/SupplementaryDataId"
@@ -4225,6 +4245,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/InstructionHistory"
+        400:
+          $ref: "#/components/responses/ErrorInvalidRequest"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -4346,12 +4368,24 @@ paths:
           $ref: "#/components/responses/ErrorUnderMaintenance"
 components:
   securitySchemes:
-    SignedCookie:
+    SignedCookieKeyPairId:
       description: |
         認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名済みCookieを使います。
       type: "apiKey"
-      name: ""
       in: "cookie"
+      name: "CloudFront-Key-Pair-Id"
+    SignedCookiePolicy:
+      description: |
+        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名済みCookieを使います。
+      type: "apiKey"
+      in: "cookie"
+      name: "CloudFront-Policy"
+    SignedCookieSignature:
+      description: |
+        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名済みCookieを使います。
+      type: "apiKey"
+      in: "cookie"
+      name: "CloudFront-Signature"
     EveryoneRequestBody:
       description: |
         AnnoFabのユーザーなら誰でも利用できます。
@@ -6373,11 +6407,18 @@ components:
 
             対応スキーマ：s3, https
 
-            * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA`
-            * [プライベートストレージ](/docs/faq/#prst9c)の場合
+            * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードしたファイルパスの場合
+                * `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA`
+                * 補助情報作成/更新API成功時、アップロードしたファイルが一時データ保存先からコピーされます。
+                    * APIのレスポンスからアップロードしたファイルのコピー先パス（s3スキーマ）を取得できます。
+            * すでにAFに登録されている補助情報のパスの場合
+                * `s3://ANNOFAB-SUPPLEMENTARY-BUCKET/PATH/TO/INPUT_DATA`
+                * ファイルはコピーされません。
+            * [プライベートストレージ](/docs/faq/#prst9c)のパスの場合
                 * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`
                 * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`
                     * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。
+                * AFにファイルはコピーされません。
         supplementary_data_type:
           type: string
           enum:
@@ -7336,3 +7377,4 @@ components:
           type: string
           description: UnknownLabel
           example: "UnknownLabel"
+
