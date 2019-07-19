@@ -1,17 +1,17 @@
 #!/bin/bash -uex
 
 usage_exit() {
-        echo "Usage: $0 [--notdownload]" 1>&2
+        echo "Usage: $0 [--ownload]" 1>&2
         exit 1
 }
 
-FLAG_DOWNLOAD=true
+FLAG_DOWNLOAD=false
 
 if [ $# -gt 0 ]; then
     case ${1} in
-        --notdownload)
+        --download)
             echo "flag"
-            FLAG_DOWNLOAD=false
+            FLAG_DOWNLOAD=true
         ;;
 
         --help|-h)
