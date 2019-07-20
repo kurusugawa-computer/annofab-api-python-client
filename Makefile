@@ -11,8 +11,8 @@ format:
 
 lint:
 	pipenv run flake8 annofabapi
-	pipenv run mypy annofabapi --config-file tox.ini
-	pipenv run pylint annofabapi --rcfile tox.ini
+	pipenv run mypy annofabapi --config-file setup.cfg
+	pipenv run pylint annofabapi --rcfile setup.cfg
 
 test:
 	pipenv run pytest tests -v --cov=annofabapi --cov-report=html
