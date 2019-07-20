@@ -1062,10 +1062,10 @@ components:
         - user
         - admin
     MyAccount:
-      type: object
       allOf:
         - $ref: "#/components/schemas/Account"
-        - required:
+        - type: object
+          required:
             - errors
           properties:
             reset_requested_email:
@@ -2888,8 +2888,8 @@ components:
         comment:
           type: string
     FullAnnotationData:
-      type: object
       oneOf:
+        - type: object
         - $ref: "#/components/schemas/FullAnnotationDataClassification"
         - $ref: "#/components/schemas/FullAnnotationDataSegmentation"
         - $ref: "#/components/schemas/FullAnnotationDataSegmentationV2"
@@ -3223,8 +3223,8 @@ components:
         * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した
         * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力
     AggregationResult:
-      type: object
       oneOf:
+        - type: object
         - $ref: "#/components/schemas/CountResult"
     CountResult:
       type: object
@@ -3276,8 +3276,8 @@ components:
         etag:
           type: string
     ValidationError:
-      type: object
       oneOf:
+        - type: object
         - $ref: "#/components/schemas/InvalidAnnotationData"
         - $ref: "#/components/schemas/DuplicatedSegmentationV2"
         - $ref: "#/components/schemas/InvalidCommentFormat"
