@@ -402,7 +402,7 @@ class AbstractAnnofabApi(abc.ABC):
     ) -> Tuple[Any, requests.Response]:
         """fullアノテーションZIP取得
 
-        DEPRECATED
+        .. deprecated:: X
 
         authorizations: ProjectDataUser
 
@@ -432,7 +432,7 @@ class AbstractAnnofabApi(abc.ABC):
     ) -> Tuple[Any, requests.Response]:
         """【エディタ用】外部ファイル形式のアノテーション取得
 
-        DEPRECATED
+        .. deprecated:: X
 
         authorizations: AllProjectMember
 
@@ -721,7 +721,7 @@ class AbstractAnnofabApi(abc.ABC):
     ) -> Tuple[Any, requests.Response]:
         """実体参照用認証済みURL取得
 
-        DEPRECATED
+        .. deprecated:: X
 
         authorizations: AllProjectMember
 
@@ -2198,7 +2198,7 @@ class AbstractAnnofabApi(abc.ABC):
     ) -> Tuple[Any, requests.Response]:
         """タスク履歴取得
 
-        DEPRECATED
+        .. deprecated:: X
 
         authorizations: AllProjectMember
 
@@ -2227,7 +2227,7 @@ class AbstractAnnofabApi(abc.ABC):
     ) -> Tuple[Any, requests.Response]:
         """タスク履歴イベント取得
 
-        DEPRECATED
+        .. deprecated:: X
 
         authorizations: AllProjectMember
 
@@ -2377,7 +2377,7 @@ class AbstractAnnofabApi(abc.ABC):
     ) -> Tuple[Any, requests.Response]:
         """【非推奨】タスク-入力データ一括取得
 
-        DEPRECATED
+        .. deprecated:: X
 
         authorizations: AllProjectMember
 
