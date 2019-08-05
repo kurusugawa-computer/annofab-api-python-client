@@ -5623,6 +5623,7 @@ components:
           minimum: 0
         work_timespan:
           type: integer
+          description: 累計実作業時間(ミリ秒)
     ProjectAccountStatistics:
       type: object
       properties:
@@ -6003,6 +6004,7 @@ components:
             $ref: "#/components/schemas/TaskHistoryShort"
         work_timespan:
           type: integer
+          description: 累計実作業時間(ミリ秒)
         number_of_rejections:
           type: integer
           deprecated: true
