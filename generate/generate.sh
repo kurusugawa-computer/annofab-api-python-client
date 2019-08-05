@@ -42,6 +42,8 @@ if "${FLAG_DOWNLOAD}"; then
 
   sed '/swagger-api-components.yaml/d' swagger.v2.yaml > swagger-tmp.v2.yaml
   cat swagger-tmp.v2.yaml swagger-api-components.yaml > swagger.v2.yaml
+
+  rm swagger-tmp.yaml swagger-tmp.v2.yaml
 fi
 
 
