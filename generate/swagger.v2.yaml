@@ -46,7 +46,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし利便性のため指定は必須ではありません。
 
-  version: 0.56.1
+  version: 0.58.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -60,6 +60,8 @@ tags:
   description: アノテーション仕様に対する操作
 - name: af-cache-v2
   description: キャッシュに関係
+- name: af-project-member-v2
+  description: プロジェクトメンバーに対する操作
 - name: af-project-v2
   description: プロジェクトに対する操作
 - name: af-statistics-v2
@@ -120,6 +122,118 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CacheRecord"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        404:
+          $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/members:
+    get:
+      tags:
+      - af-project-member-v2
+      summary: プロジェクトメンバー一括取得
+      security:
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
+      operationId: getProjectMembersV2
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "#/components/schemas/ProjectId"
+      - name: include_inactive_member
+        in: query
+        description: 脱退したプロジェクトメンバーも取得する時に、キーのみ指定します（値は無視されます）。
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: string
+      - name: cache
+        in: query
+        description: |
+          CACHE TIMESTAMP
+        required: false
+        schema:
+          type: string
+          example: "123456789"
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ProjectMember"
+                  page_no:
+                    type: number
+                    description: 現在のページ番号です。
+                  total_page_no:
+                    type: number
+                    description: 指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトメンバーが0件であっても、総ページ数は1となります。
+                  total_count:
+                    type: number
+                    description: 検索結果の総件数。
+                  over_limit:
+                    type: boolean
+                    description: 検索結果が1万件を超えた場合にtrueとなる。
+                  aggregations:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AggregationResult"
+                    description: Aggregationによる集約結果。
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/members/{user_id}:
+    get:
+      tags:
+      - af-project-member-v2
+      summary: プロジェクトメンバー取得
+      description: |
+      security:
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
+      operationId: getProjectMemberV2
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "#/components/schemas/ProjectId"
+      - name: user_id
+        in: path
+        description: アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。
+        required: true
+        schema:
+          $ref: "#/components/schemas/UserId"
+      - name: cache
+        in: query
+        description: |
+          CACHE TIMESTAMP
+        required: false
+        schema:
+          type: string
+          example: "123456789"
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectMember"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -436,7 +550,7 @@ components:
     EveryoneRequestBody:
       description: |
         AnnoFabのユーザーなら誰でも利用できます。
-
+  
         認証/認可には、リクエストボディに含まれるパスワード、トークン、または何らかの検証コードを用います。
         詳しくは個別のAPIの説明を確認してください。
       type: "http"
@@ -444,7 +558,7 @@ components:
     EveryoneQueryParameter:
       description: |
         AnnoFabのユーザーなら誰でも利用できます。
-
+  
         認証/認可には、クエリパラメータに含まれるトークンまたは何らかの検証コードを用います。
         詳しくは個別のAPIの説明を確認してください。
       type: "http"
@@ -452,7 +566,7 @@ components:
     Everyone:
       description: |
         AnnoFabのユーザーなら誰でも利用できます。
-
+  
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
       type: "apiKey"
@@ -461,7 +575,7 @@ components:
     AnnoFabAdminOnly:
       description: |
         AnnoFabのシステム管理者のみ利用できます。
-
+  
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
       type: "apiKey"
@@ -470,7 +584,7 @@ components:
     AllProjectMember:
       description: |
         プロジェクトに所属するユーザーなら誰でも利用できます。
-
+  
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
       type: "apiKey"
@@ -479,7 +593,7 @@ components:
     ProjectAccepter:
       description: |
         プロジェクトのオーナーまたはプロジェクトのチェッカーのみ利用できます。
-
+  
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
       type: "apiKey"
@@ -488,7 +602,7 @@ components:
     ProjectDataUser:
       description: |
         プロジェクトのオーナーまたはプロジェクトのアノテーションユーザーのみ利用できます。
-
+  
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
       type: "apiKey"
@@ -497,7 +611,7 @@ components:
     ProjectAccepterOrDataUser:
       description: |
         プロジェクトのオーナー/チェッカー/アノテーションユーザーのいずれかのみ利用できます。
-
+  
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
       type: "apiKey"
@@ -506,7 +620,7 @@ components:
     ProjectOwner:
       description: |
         プロジェクトのオーナーのみ利用できます。
-
+  
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
       type: "apiKey"
@@ -515,7 +629,7 @@ components:
     AllOrganizationMember:
       description: |
         組織に所属するユーザーなら誰でも利用できます。
-
+  
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
       type: "apiKey"
@@ -524,7 +638,7 @@ components:
     OrganizationAdministrator:
       description: |
         組織のオーナーまたは組織の管理者のみ利用できます。
-
+  
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
       type: "apiKey"
@@ -533,7 +647,7 @@ components:
     OrganizationOwner:
       description: |
         組織のオーナーのみ利用できます。
-
+  
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
       type: "apiKey"
@@ -1062,10 +1176,10 @@ components:
         - user
         - admin
     MyAccount:
+      type: object
       allOf:
         - $ref: "#/components/schemas/Account"
-        - type: object
-          required:
+        - required:
             - errors
           properties:
             reset_requested_email:
@@ -1308,6 +1422,8 @@ components:
     AnnotationId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        annotation_type が classification の場合は label_id と同じ値が格納されます。
     InspectionId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -1359,11 +1475,6 @@ components:
       enum:
         - active
         - suspended
-    ProjectWorkflow:
-      type: string
-      enum:
-        - 2phase
-        - 3phase
     AssigneeRuleOfResubmittedTask:
       type: string
       enum:
@@ -1380,14 +1491,18 @@ components:
         - movie
     ProjectConfiguration:
       type: object
-      required:
-        - project_workflow
       properties:
         project_rule:
           type: string
-        project_workflow:
-          $ref: "#/components/schemas/ProjectWorkflow"
-          default: 2phase
+        number_of_inspections:
+          description: |
+            検査回数。
+            * 0回：教師付け -> 受入
+            * 1回：教師付け -> 検査 -> 受入
+            * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入
+          type: integer
+          default: 0
+          minimum: 0
         assignee_rule_of_resubmitted_task:
           description: 再提出されたタスクの検査/受入担当者ルール。
           $ref: "#/components/schemas/AssigneeRuleOfResubmittedTask"
@@ -1407,10 +1522,10 @@ components:
         input_data_max_long_side_length:
           description: |
             入力データ画像の長辺の最大値（未指定時は4096px）。
-
+  
             画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。
             アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。
-
+  
             大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。
           type: integer
           default: 4096
@@ -1537,7 +1652,7 @@ components:
           type: string
           description: |
             プロジェクトの所属組織を変更する場合は、ここに変更先の組織名を指定します。
-
+  
             * 所属組織を変更する前にプロジェクトを停止する必要があります。
             * APIを呼び出すアカウントは、変更先組織の管理者またはオーナーである必要があります。
             * 変更後の組織に所属していないプロジェクトメンバーも残りますが、作業はできません。あらためて組織に招待してください。
@@ -1564,34 +1679,53 @@ components:
         copy_inputs:
           type: boolean
           description: |
-            true の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」「入力データ」をコピーします。
-            false の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」のみコピーします。
-            copyTasksWithAnnotations が true に設定されている場合、そちらが優先されます。
+            「入力データ」をコピーするかどうかを指定します。
           default: false
-        copy_tasks_with_annotations:
+        copy_tasks:
           type: boolean
           description: |
-            true の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」「入力データ」「タスク」「アノテーション」をコピーします。
-            false の場合は copyInputs の設定に従います。
+            「タスク」をコピーするかどうかを指定します。
+  
+            以下の場合、copy_tasks を true に設定するとエラーとなります。
+            * copy_tasks_with_annotations が true に設定されているとき
+            * copy_inputs が false に設定されているとき
+        copy_annotations:
+          type: boolean
+          description: |
+            「アノテーション」をコピーするかどうかを指定します。
+  
+            以下の場合、copy_annotations を true に設定するとエラーとなります。
+            * copy_tasks_with_annotations が true に設定されているとき
+            * copy_inputs が false に設定されているとき
+            * copy_tasks が false に設定されているとき
           default: false
         copy_webhooks:
           type: boolean
           description: |
-            true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「Webhook」のコピーも行います。
-            false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。
+            「Webhook」をコピーするかどうかを指定します。
+          default: false
+        copy_tasks_with_annotations:
+          deprecated: true
+          type: boolean
+          description: |
+            「タスク」「アノテーション」をコピーするかどうかを指定します。
+  
+            以下の場合、copy_tasks_with_annotations を true に設定するとエラーとなります。
+            * copy_inputs が false に設定されているとき
+            * copy_tasks が true に設定されているとき
           default: false
         copy_supplementaly_data:
           type: boolean
           description: |
-            copyInputs、copyTasksWithAnnotations のいずれかが true の時のみ、設定できます。いずれも false の場合、「補助情報」のコピーは行われません。
-            true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「補助情報」のコピーも行います。
-            false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。
+            「補助情報」をコピーするかどうかを指定します。
+  
+            以下の場合、copy_supplementaly_data を true に設定するとエラーとなります。
+            * copy_inputs が false に設定されているとき
           default: false
         copy_instructions:
           type: boolean
           description: |
-            true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「作業ガイド」のコピーも行います。
-            false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。
+            「作業ガイド」をコピーするかどうかを指定します。
           default: false
     ProjectMember:
       type: object
@@ -1670,6 +1804,7 @@ components:
           minimum: 0
         work_timespan:
           type: integer
+          description: 累計実作業時間(ミリ秒)
     ProjectAccountStatistics:
       type: object
       properties:
@@ -2036,6 +2171,10 @@ components:
           $ref: "#/components/schemas/TaskId"
         phase:
           $ref: "#/components/schemas/TaskPhase"
+        phase_stage:
+          type: integer
+          default: 1
+          minimum: 1
         status:
           $ref: "#/components/schemas/TaskStatus"
         input_data_id_list:
@@ -2050,15 +2189,16 @@ components:
             $ref: "#/components/schemas/TaskHistoryShort"
         work_timespan:
           type: integer
+          description: 累計実作業時間(ミリ秒)
         number_of_rejections:
           type: integer
           deprecated: true
           description: |
             このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計
-
+  
             このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。
             `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。
-
+  
             例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。
         started_datetime:
           type: string
@@ -2069,13 +2209,17 @@ components:
         sampling:
           type: string
           enum:
+            - inspection_skipped
+            - inspection_stages_skipped
             - acceptance_skipped
             - inspection_and_acceptance_skipped
           description: |
+            * 'inspection_skipped' - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。
+            * 'inspection_stages_skipped' - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。
             * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。
             * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す
-
-            未指定時はこのタスクが抜取検査の対処となったことを表す。(通常のワークフローを通過する)
+  
+            未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する)
     TaskPhase:
       type: string
       enum:
@@ -2208,7 +2352,7 @@ components:
         - random
       description: |
         タスクに割り当てる入力データの順序
-
+  
         * `name_asc` - 入力データ名 昇順（a, b, c, ...）。日付や番号などの連続するデータ名を扱う場合に推奨
         * `name_asc` - 入力データ名 降順（z, y, x, ...）
         * `random` - ランダム
@@ -2238,6 +2382,10 @@ components:
       properties:
         phase:
           $ref: "#/components/schemas/TaskPhase"
+        phase_stage:
+          type: integer
+          default: 1
+          minimum: 1
         account_id:
           $ref: "#/components/schemas/AccountId"
     TaskHistory:
@@ -2260,6 +2408,9 @@ components:
           type: string
         phase:
           $ref: "#/components/schemas/TaskPhase"
+        phase_stage:
+          type: integer
+          minimum: 1
         account_id:
           $ref: "#/components/schemas/AccountId"
     TaskHistoryEvent:
@@ -2277,6 +2428,10 @@ components:
           format: date-time
         phase:
           $ref: "#/components/schemas/TaskPhase"
+        phase_stage:
+          type: integer
+          default: 1
+          minimum: 1
         status:
           $ref: "#/components/schemas/TaskStatus"
         account_id:
@@ -2338,12 +2493,12 @@ components:
           type: string
           description: |
             入力データを取得するためのhttpsスキーマのURLです。
-
+  
             このURLはセキュリティのために認証認可が必要となっており、URLだけでは入力データを参照できません。
             このURLは内部用であり、常に変更になる可能性があります。そのため、アクセスは保証外となります。
             また、このURLのレスポンスは最低1時間キャッシュされます。
             キャッシュを無効にしたい場合は、クエリパラメータにアクセス毎にランダムなUUIDなどを付与してください。
-
+  
             設定の不備等でデータが取得できない場合、この属性は設定されません。
         etag:
           type: string
@@ -2378,12 +2533,12 @@ components:
           example: "s3://YOUR-BUCKET/PATH/TO/OBJECT"
           description: |
             AnnoFabに登録する入力データの実体が保存されたパスです。
-
+  
             対応スキーマ：
             * s3
             * https
             * data（廃止予定）
-
+  
             場面別の使い分け：
             * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA`
             * [プライベートストレージ](/docs/faq/#prst9c)の場合
@@ -2451,9 +2606,9 @@ components:
           example: "s3://YOUR-BUCKET/PATH/TO/OBJECT"
           description: |
             AnnoFabに登録する補助情報の実体が保存されたパスです。
-
+  
             対応スキーマ：s3, https
-
+  
             * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードしたファイルパスの場合
                 * `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA`
                 * 補助情報作成/更新API成功時、アップロードしたファイルが一時データ保存先からコピーされます。
@@ -2658,7 +2813,7 @@ components:
           description: |
             各要素は、 [アノテーション仕様](#operation/getAnnotationSpecs)で定義された属性（`additional_data_definitions`内）のいずれかの要素と対応づけます。
             各要素は、どの属性なのかを表す`additional_data_definition_id`、値が必要です。値は、属性の種類に対応するキーに格納します（下表）。
-
+  
             <table>
             <tr><th>アノテーション属性の種類<br>（`additional_data_definition`の`type`）</th><th>属性の値を格納するキー</th><th>データ型</th></tr>
             <tr><td>`comment` または `tracking`</td><td>`comment`</td><td>string</td></tr>
@@ -2710,9 +2865,9 @@ components:
             アノテーションフォーマットのバージョンです。
             アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。
             したがって、アノテーション仕様を更新しても、このバージョンは変化しません。
-
+  
             バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。
-
+  
             JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。
             すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。
             バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。
@@ -2720,6 +2875,14 @@ components:
           $ref: "#/components/schemas/ProjectId"
         task_id:
           $ref: "#/components/schemas/TaskId"
+        task_phase:
+          $ref: "#/components/schemas/TaskPhase"
+        task_phase_stage:
+          type: integer
+          default: 1
+          minimum: 1
+        task_status:
+          $ref: "#/components/schemas/TaskStatus"
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
         input_data_name:
@@ -2728,8 +2891,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/SimpleAnnotationDetail"
-        comment:
-          type: string
     BatchAnnotation:
       type: object
       properties:
@@ -2848,6 +3009,14 @@ components:
           $ref: "#/components/schemas/ProjectId"
         task_id:
           $ref: "#/components/schemas/TaskId"
+        task_phase:
+          $ref: "#/components/schemas/TaskPhase"
+        task_phase_stage:
+          type: integer
+          default: 1
+          minimum: 1
+        task_status:
+          $ref: "#/components/schemas/TaskStatus"
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
         input_data_name:
@@ -2856,8 +3025,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FullAnnotationDetail"
-        comment:
-          type: string
         updated_datetime:
           type: string
           format: date-time
@@ -2888,8 +3055,8 @@ components:
         comment:
           type: string
     FullAnnotationData:
+      type: object
       oneOf:
-        - type: object
         - $ref: "#/components/schemas/FullAnnotationDataClassification"
         - $ref: "#/components/schemas/FullAnnotationDataSegmentation"
         - $ref: "#/components/schemas/FullAnnotationDataSegmentationV2"
@@ -2984,7 +3151,7 @@ components:
     FullAnnotationDataPoints:
       description: |
         頂点座標 {"x":int, "y":int} の配列。
-
+  
         * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。
       type: object
       required:
@@ -3113,6 +3280,10 @@ components:
           $ref: "#/components/schemas/InspectionId"
         phase:
           $ref: "#/components/schemas/TaskPhase"
+        phase_stage:
+          type: integer
+          default: 1
+          minimum: 1
         commenter_account_id:
           $ref: "#/components/schemas/AccountId"
         annotation_id:
@@ -3223,8 +3394,8 @@ components:
         * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した
         * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力
     AggregationResult:
+      type: object
       oneOf:
-        - type: object
         - $ref: "#/components/schemas/CountResult"
     CountResult:
       type: object
@@ -3276,8 +3447,8 @@ components:
         etag:
           type: string
     ValidationError:
+      type: object
       oneOf:
-        - type: object
         - $ref: "#/components/schemas/InvalidAnnotationData"
         - $ref: "#/components/schemas/DuplicatedSegmentationV2"
         - $ref: "#/components/schemas/InvalidCommentFormat"
