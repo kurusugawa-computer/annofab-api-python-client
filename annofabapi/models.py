@@ -151,7 +151,8 @@ Example:
 
 """
 
-### 以下は自動生成の部分AcceptOrganizationInvitationRequest = Dict[str, Any]
+### 以下は自動生成の部分
+AcceptOrganizationInvitationRequest = Dict[str, Any]
 """
 
 
