@@ -1762,7 +1762,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator, ProjectOwner
 
 
-        プロジェクトのアノテーション仕様やメンバーを引き継いで、別のプロジェクトを作成します。 設定により、アノテーションやタスクも引き継がせる事が可能です。  このAPIを利用するには、プロジェクトを登録する組織の[OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) かつ コピー元プロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 
+        プロジェクトのアノテーション仕様やメンバーを引き継いで、別のプロジェクトを作成します。 設定によらず、プロジェクト、プロジェクトメンバー、アノテーション仕様は引き継がれます。 設定により、アノテーション、タスク、補助情報、作業ガイド、Webhookも引き継がせる事が可能です。  このAPIを利用するには、プロジェクトを登録する組織の[OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) かつ コピー元プロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 
 
         Args:
             project_id (str):  コピー元となるプロジェクトID (required)
@@ -2350,14 +2350,16 @@ class AbstractAnnofabApi(abc.ABC):
                 task_id (str):  タスクIDでの部分一致検索で使用。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません
                 input_data_ids (str):  指定された入力データIDを使用しているタスクを絞り込みます。カンマ区切りで複数の入力データIDを指定可能です。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません
                 phase (str):  絞り込み条件となるフェーズ名。未指定時は全フェーズ
+                phase_stage (str):  絞り込み条件となるステージ。未指定時は全ステージ
                 status (str):  絞り込み条件となる状態名。未指定時は全ステータス。
                 account_id (str):  絞り込み条件となる作業中のアカウントID。未指定時は全アカウント
                 no_user (str):  未割り当てのタスクを絞り込む時に、キーのみ指定します（値は無視されます）。
                 previous_account_id (str):  そのタスクをこれまでに担当したことのあるユーザー（現在の担当者含む）のアカウントID。未指定時は全ユーザ
                 previous_phase (TaskPhase):  そのタスクがこれまでに遷移したことのあるフェーズ名（現在のフェーズ含む）。未指定時は全フェーズ
+                previous_phase_stage (str):  そのタスクがこれまでに遷移したことのあるステージ（現在のステージ含む）。未指定時は全ステージ
                 rejected_only (str):  差し戻されたタスクだけを絞り込む時に、キーのみ指定します（値は無視されます）。
                 auto_accepted_only (str):  「抜取検査の対象外となり、自動受入されたタスク」だけを絞り込む時に、キーのみ指定します（値は無視されます）。
-                sort (str):  ソート順の指定。 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、status、account_idのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
+                sort (str):  ソート順の指定。 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、phase_stage、status、account_idのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
 
         Returns:
             Tuple[InlineResponse2007, requests.Response]

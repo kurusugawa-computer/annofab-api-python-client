@@ -33,7 +33,17 @@ if "${FLAG_DOWNLOAD}"; then
     curl https://annofab.com/docs/api/swagger.yaml --output swagger.yaml
     curl https://annofab.com/docs/api/swagger.v2.yaml --output swagger.v2.yaml
     curl https://annofab.com/docs/api/swagger-api-components.yaml  --output swagger-api-components.yaml
+
+  # インデントを１つ深くする
+  sed -e "s/#\/schemas/#\/components\/schemas/g" -e "s/^/  /g" swagger-api-components.yaml --in-place
+
+  sed '/swagger-api-components.yaml/d' swagger.yaml > swagger-tmp.yaml
+  cat swagger-tmp.yaml  swagger-api-components.yaml > swagger.yaml
+
+  sed '/swagger-api-components.yaml/d' swagger.v2.yaml > swagger-tmp.v2.yaml
+  cat swagger-tmp.v2.yaml swagger-api-components.yaml > swagger.v2.yaml
 fi
+
 
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --output /local/out \
@@ -43,7 +53,7 @@ OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     -Dmodels   -DmodelTests=false -DmodelDocs=false"
 
 # v1 apiを生成
-docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS="-Dlog.level=debug" openapitools/openapi-generator-cli generate \
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS="-Dlog.level=info" openapitools/openapi-generator-cli generate \
     --input-spec swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --ignore-file-override=/local/.openapi-generator-ignore_v1
@@ -55,7 +65,7 @@ cat models_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/m
 rm -Rf out/openapi_client
 
 # v2 apiを生成
-docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS="-Dlog.level=debug" openapitools/openapi-generator-cli generate \
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS="-Dlog.level=info" openapitools/openapi-generator-cli generate \
     --input-spec swagger.v2.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --ignore-file-override=/local/.openapi-generator-ignore_v2

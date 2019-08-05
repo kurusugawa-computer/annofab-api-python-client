@@ -342,7 +342,7 @@ AnnotationDetail = Dict[str, Any]
 Kyes of Dict
 
 * annotation_id: str
-    
+    annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * account_id: str
     
 * label_id: str
@@ -477,7 +477,7 @@ Kyes of Dict
 * input_data_id: str
     
 * annotation_id: str
-    
+    annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * label_id: str
     
 * additional_data_list: List[FullAnnotationAdditionalData]
@@ -500,7 +500,7 @@ Kyes of Dict
 * input_data_id: str
     
 * annotation_id: str
-    
+    annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * updated_datetime: datetime
     
 * type: str
@@ -1047,13 +1047,17 @@ Kyes of Dict
     
 * task_id: str
     
+* task_phase: TaskPhase
+    
+* task_phase_stage: int
+    
+* task_status: TaskStatus
+    
 * input_data_id: str
     
 * input_data_name: str
     
 * details: List[FullAnnotationDetail]
-    
-* comment: str
     
 * updated_datetime: datetime
     
@@ -1225,7 +1229,7 @@ FullAnnotationDetail = Dict[str, Any]
 Kyes of Dict
 
 * annotation_id: str
-    
+    annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * user_id: str
     
 * label_id: str
@@ -1545,6 +1549,8 @@ Kyes of Dict
 * inspection_id: str
     
 * phase: TaskPhase
+    
+* phase_stage: int
     
 * commenter_account_id: str
     
@@ -2263,8 +2269,8 @@ Kyes of Dict
 
 * project_rule: str
     
-* project_workflow: ProjectWorkflow
-    
+* number_of_inspections: int
+    検査回数。 * 0回：教師付け -> 受入 * 1回：教師付け -> 検査 -> 受入 * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入 
 * assignee_rule_of_resubmitted_task: AssigneeRuleOfResubmittedTask
     
 * max_tasks_per_member: int
@@ -2295,15 +2301,19 @@ Kyes of Dict
 * dest_overview: str
     
 * copy_inputs: bool
-    true の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」「入力データ」をコピーします。 false の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」のみコピーします。 copyTasksWithAnnotations が true に設定されている場合、そちらが優先されます。 
-* copy_tasks_with_annotations: bool
-    true の場合は「プロジェクト」「プロジェクトメンバー」「アノテーション仕様」「入力データ」「タスク」「アノテーション」をコピーします。 false の場合は copyInputs の設定に従います。 
+    「入力データ」をコピーするかどうかを指定します。 
+* copy_tasks: bool
+    「タスク」をコピーするかどうかを指定します。  以下の場合、copy_tasks を true に設定するとエラーとなります。 * copy_tasks_with_annotations が true に設定されているとき * copy_inputs が false に設定されているとき 
+* copy_annotations: bool
+    「アノテーション」をコピーするかどうかを指定します。  以下の場合、copy_annotations を true に設定するとエラーとなります。 * copy_tasks_with_annotations が true に設定されているとき * copy_inputs が false に設定されているとき * copy_tasks が false に設定されているとき 
 * copy_webhooks: bool
-    true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「Webhook」のコピーも行います。 false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。 
+    「Webhook」をコピーするかどうかを指定します。 
+* copy_tasks_with_annotations: bool
+    「タスク」「アノテーション」をコピーするかどうかを指定します。  以下の場合、copy_tasks_with_annotations を true に設定するとエラーとなります。 * copy_inputs が false に設定されているとき * copy_tasks が true に設定されているとき 
 * copy_supplementaly_data: bool
-    copyInputs、copyTasksWithAnnotations のいずれかが true の時のみ、設定できます。いずれも false の場合、「補助情報」のコピーは行われません。 true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「補助情報」のコピーも行います。 false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。 
+    「補助情報」をコピーするかどうかを指定します。  以下の場合、copy_supplementaly_data を true に設定するとエラーとなります。 * copy_inputs が false に設定されているとき 
 * copy_instructions: bool
-    true の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象に加えて「作業ガイド」のコピーも行います。 false の場合はcopyInputs、copyTasksWithAnnotations によるコピー対象のコピーのみを行います。 
+    「作業ガイド」をコピーするかどうかを指定します。 
 
 """
 
@@ -2401,7 +2411,7 @@ Kyes of Dict
 * count: int
     
 * work_timespan: int
-    
+    累計実作業時間(ミリ秒)
 
 """
 
@@ -2417,15 +2427,6 @@ Kyes of Dict
     
 
 """
-
-
-class ProjectWorkflow(Enum):
-    """
-    """
-
-    _2PHASE = "2phase"
-    _3PHASE = "3phase"
-
 
 PutMyAccountRequest = Dict[str, Any]
 """
@@ -2570,13 +2571,17 @@ Kyes of Dict
     
 * task_id: str
     
+* task_phase: TaskPhase
+    
+* task_phase_stage: int
+    
+* task_status: TaskStatus
+    
 * input_data_id: str
     
 * input_data_name: str
     
 * details: List[SimpleAnnotationDetail]
-    
-* comment: str
     
 
 """
@@ -2624,7 +2629,7 @@ SingleAnnotationDetail = Dict[str, Any]
 Kyes of Dict
 
 * annotation_id: str
-    
+    annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * account_id: str
     
 * label_id: str
@@ -2706,6 +2711,8 @@ Kyes of Dict
     
 * phase: TaskPhase
     
+* phase_stage: int
+    
 * status: TaskStatus
     
 * input_data_id_list: List[str]
@@ -2715,7 +2722,7 @@ Kyes of Dict
 * histories_by_phase: List[TaskHistoryShort]
     
 * work_timespan: int
-    
+    累計実作業時間(ミリ秒)
 * number_of_rejections: int
     このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計  このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。 `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。  例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。 
 * started_datetime: datetime
@@ -2723,7 +2730,7 @@ Kyes of Dict
 * updated_datetime: datetime
     
 * sampling: str
-    * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対処となったことを表す。(通常のワークフローを通過する) 
+    * 'inspection_skipped' - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。 * 'inspection_stages_skipped' - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。 * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する) 
 
 """
 
@@ -2805,6 +2812,8 @@ Kyes of Dict
     
 * phase: TaskPhase
     
+* phase_stage: int
+    
 * account_id: str
     
 
@@ -2826,6 +2835,8 @@ Kyes of Dict
     
 * phase: TaskPhase
     
+* phase_stage: int
+    
 * status: TaskStatus
     
 * account_id: str
@@ -2840,6 +2851,8 @@ TaskHistoryShort = Dict[str, Any]
 Kyes of Dict
 
 * phase: TaskPhase
+    
+* phase_stage: int
     
 * account_id: str
     
