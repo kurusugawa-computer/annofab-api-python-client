@@ -39,5 +39,5 @@ setup(
         "Topic :: Utilities",
         "Operating System :: OS Independent",
     ],
-    packages=find_packages()
+    packages=find_packages(exclude=["tests"])
 )
