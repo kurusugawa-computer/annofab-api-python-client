@@ -149,7 +149,8 @@ class Wrapper:
     #########################################
     # Public Method : AfAnnotationSpecsApi
     #########################################
-    def copy_annotation_specs(self, src_project_id: str, dest_project_id: str) -> AnnotationSpecs:
+    def copy_annotation_specs(self, src_project_id: str, dest_project_id: str,
+                              comment: Optional[str] = None) -> AnnotationSpecs:
         """
         アノテーション仕様を、別のプロジェクトにコピーする。
 
@@ -159,17 +160,20 @@ class Wrapper:
         Args:
             src_project_id: コピー元のproject_id
             dest_project_id: コピー先のproject_id
+            comment: アノテーション仕様を保存するときのコメント。Noneならば、コピーした旨を記載する。
 
         Returns:
             put_annotation_specsのContent
         """
         src_annotation_specs = self.api.get_annotation_specs(src_project_id)[0]
-        dest_annotation_specs = self.api.get_annotation_specs(dest_project_id)[0]
+
+        if comment is None:
+            comment = f"Copied the annotation specification of project {src_project_id} on {annofabapi.utils.str_now()}"
 
         request_body = {
             "labels": src_annotation_specs["labels"],
             "inspection_phrases": src_annotation_specs["inspection_phrases"],
-            "updated_datetime": dest_annotation_specs["updated_datetime"],
+            "comment": comment,
         }
         return self.api.put_annotation_specs(dest_project_id, request_body=request_body)[0]
 

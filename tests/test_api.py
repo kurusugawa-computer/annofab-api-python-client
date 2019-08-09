@@ -120,7 +120,7 @@ def test_annotation_specs():
     request_body = {
         "labels": annotation_spec["labels"],
         "inspection_phrases": annotation_spec["inspection_phrases"],
-        "updated_datetime": annotation_spec["updated_datetime"],
+        "comment": f"{annofabapi.utils.str_now()} に更新しました。",
     }
     puted_annotation_spec, _ = api.put_annotation_specs(project_id, request_body=request_body)
     assert type(puted_annotation_spec) == dict
@@ -128,6 +128,10 @@ def test_annotation_specs():
     print("wrapper.copy_annotation_specs")
     content = wrapper.copy_annotation_specs(src_project_id=project_id, dest_project_id=project_id)
     assert type(content) == dict
+
+    print("get_annotation_specs_histories")
+    annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
+    assert type(annotation_specs_histories) == list
 
 
 def test_login():
