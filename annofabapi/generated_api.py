@@ -348,7 +348,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーション（simple版）をZIPにまとめて、一括で取得します。  simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データ名}.json       * アノテーションJSONデータ (詳細は 200レスポンス を参照)     * {入力データ名}/ (塗りつぶしアノテーション時のみ)       * combined/         * {ラベル名} (ラベルごとに結合した塗りつぶしのPNG画像)       * {アノテーションデータID} (塗りつぶしのPNG画像)  IDが異なる入力データで {入力データ名}が一致するときは、重複ファイル名には {入力データ名__入力データID} のように接尾辞がつきます。 AnnoFabの画像アップロード機能を使うとこのようなケースは発生しませんが、[入力データ更新API](#operation/putInputData)で入力名を重複させると発生します。 入力名の重複を解消してアノテーションZIPを再作成すれば、接尾辞を解消できます。  特定のタスクのsimpleアノテーションを取得したい場合は、[getAnnotation](#operation/getAnnotation) を使用できます。 
+        プロジェクト内のアノテーション（simple版）をZIPにまとめて、一括で取得します。  simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データ名}.json       * アノテーションJSONデータ (詳細は 200レスポンス を参照)     * {入力データ名}/ (塗りつぶしアノテーション時のみ)       * {アノテーションデータID} (塗りつぶしのPNG画像)  IDが異なる入力データで {入力データ名}が一致するときは、重複ファイル名には {入力データ名__入力データID} のように接尾辞がつきます。 AnnoFabの画像アップロード機能を使うとこのようなケースは発生しませんが、[入力データ更新API](#operation/putInputData)で入力名を重複させると発生します。 入力名の重複を解消してアノテーションZIPを再作成すれば、接尾辞を解消できます。  特定のタスクのsimpleアノテーションを取得したい場合は、[getAnnotation](#operation/getAnnotation) を使用できます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -407,7 +407,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        **このAPIは廃止予定です。fullアノテーションZIPにある情報で、simpleアノテーションZIPにも欲しいものがあれば、ご連絡ください。**  プロジェクト内のアノテーション（full版）がまとめられたZIPを取得します。  full版のアノテーションJSONデータは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。機械学習での一般的な利用には、[詳細情報を省いた扱いやすい構造の simple版](#operation/getAnnotationArchive) を推奨します。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データID}.json       * アノテーションJSONデータ (詳細は 200レスポンス を参照)     * {入力データID}/ (塗りつぶしアノテーション時のみ)       * combined/         * {ラベルID} (ラベルごとに結合した塗りつぶしのPNG画像)       * {アノテーションデータID} (塗りつぶしのPNG画像) 
+        **このAPIは廃止予定です。fullアノテーションZIPにある情報で、simpleアノテーションZIPにも欲しいものがあれば、ご連絡ください。**  プロジェクト内のアノテーション（full版）がまとめられたZIPを取得します。  full版のアノテーションJSONデータは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。機械学習での一般的な利用には、[詳細情報を省いた扱いやすい構造の simple版](#operation/getAnnotationArchive) を推奨します。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データID}.json       * アノテーションJSONデータ (詳細は 200レスポンス を参照)     * {入力データID}/ (塗りつぶしアノテーション時のみ)       * {アノテーションデータID} (塗りつぶしのPNG画像) 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -535,6 +535,30 @@ class AbstractAnnofabApi(abc.ABC):
 
         """
         url_path = f'/projects/{project_id}/annotation-specs'
+        http_method = 'GET'
+        keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def get_annotation_specs_histories(
+            self,
+            project_id: str,
+    ) -> Tuple[Any, requests.Response]:
+        """アノテーション仕様履歴取得
+
+
+        authorizations: AllProjectMember
+
+
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+
+        Returns:
+            Tuple[List[AnnotationSpecsHistory], requests.Response]
+
+
+        """
+        url_path = f'/projects/{project_id}/annotation-specs-histories'
         http_method = 'GET'
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)

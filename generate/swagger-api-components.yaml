@@ -177,11 +177,15 @@
           type: string
         project:
           type: string
+        instruction:
+          type: string
         specs:
           type: string
         statistics:
           type: string
         organization:
+          type: string
+        supplementary:
           type: string
     Errors:
       type: object
@@ -646,10 +650,10 @@
         - user
         - admin
     MyAccount:
-      type: object
       allOf:
         - $ref: "#/components/schemas/Account"
-        - required:
+        - type: object
+          required:
             - errors
           properties:
             reset_requested_email:
@@ -1432,9 +1436,6 @@
           type: array
           items:
             $ref: "#/components/schemas/InspectionPhrase"
-        updated_datetime:
-          type: string
-          format: date-time
     AnnotationSpecsRequest:
       type: object
       properties:
@@ -1450,9 +1451,22 @@
             $ref: "#/components/schemas/InspectionPhrase"
           description: |
             定型指摘
+        comment:
+          type: string
+    AnnotationSpecsHistory:
+      type: object
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
         updated_datetime:
           type: string
           format: date-time
+        url:
+          type: string
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+        comment:
+          type: string
     InspectionPhrase:
       type: object
       properties:
@@ -2525,8 +2539,8 @@
         comment:
           type: string
     FullAnnotationData:
-      type: object
       oneOf:
+        - type: object
         - $ref: "#/components/schemas/FullAnnotationDataClassification"
         - $ref: "#/components/schemas/FullAnnotationDataSegmentation"
         - $ref: "#/components/schemas/FullAnnotationDataSegmentationV2"
@@ -2864,8 +2878,8 @@
         * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した
         * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力
     AggregationResult:
-      type: object
       oneOf:
+        - type: object
         - $ref: "#/components/schemas/CountResult"
     CountResult:
       type: object
@@ -2917,8 +2931,8 @@
         etag:
           type: string
     ValidationError:
-      type: object
       oneOf:
+        - type: object
         - $ref: "#/components/schemas/InvalidAnnotationData"
         - $ref: "#/components/schemas/DuplicatedSegmentationV2"
         - $ref: "#/components/schemas/InvalidCommentFormat"

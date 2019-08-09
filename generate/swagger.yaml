@@ -46,7 +46,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし、利便性のために一部APIを除き指定は必須ではありません。
 
-  version: 0.58.1
+  version: 0.59.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -2231,6 +2231,37 @@ paths:
           $ref: "#/components/responses/ErrorForbiddenResource"
         503:
           $ref: "#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/annotation-specs-histories:
+    get:
+      tags:
+      - af-annotation-specs
+      summary: アノテーション仕様履歴取得
+      description: |
+      security:
+      - AllProjectMember: []
+      operationId: getAnnotationSpecsHistories
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "#/components/schemas/ProjectId"
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AnnotationSpecsHistory"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        404:
+          $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/start-task:
     post:
       tags:
@@ -3338,8 +3369,6 @@ paths:
             * {入力データID}.json
               * アノテーションJSONデータ (詳細は 200レスポンス を参照)
             * {入力データID}/ (塗りつぶしアノテーション時のみ)
-              * combined/
-                * {ラベルID} (ラベルごとに結合した塗りつぶしのPNG画像)
               * {アノテーションデータID} (塗りつぶしのPNG画像)
       security:
       - ProjectDataUser: []
@@ -3387,8 +3416,6 @@ paths:
             * {入力データ名}.json
               * アノテーションJSONデータ (詳細は 200レスポンス を参照)
             * {入力データ名}/ (塗りつぶしアノテーション時のみ)
-              * combined/
-                * {ラベル名} (ラベルごとに結合した塗りつぶしのPNG画像)
               * {アノテーションデータID} (塗りつぶしのPNG画像)
 
         IDが異なる入力データで {入力データ名}が一致するときは、重複ファイル名には {入力データ名__入力データID} のように接尾辞がつきます。
@@ -4559,11 +4586,15 @@ components:
           type: string
         project:
           type: string
+        instruction:
+          type: string
         specs:
           type: string
         statistics:
           type: string
         organization:
+          type: string
+        supplementary:
           type: string
     Errors:
       type: object
@@ -5028,10 +5059,10 @@ components:
         - user
         - admin
     MyAccount:
-      type: object
       allOf:
         - $ref: "#/components/schemas/Account"
-        - required:
+        - type: object
+          required:
             - errors
           properties:
             reset_requested_email:
@@ -5814,9 +5845,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/InspectionPhrase"
-        updated_datetime:
-          type: string
-          format: date-time
     AnnotationSpecsRequest:
       type: object
       properties:
@@ -5832,9 +5860,22 @@ components:
             $ref: "#/components/schemas/InspectionPhrase"
           description: |
             定型指摘
+        comment:
+          type: string
+    AnnotationSpecsHistory:
+      type: object
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
         updated_datetime:
           type: string
           format: date-time
+        url:
+          type: string
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+        comment:
+          type: string
     InspectionPhrase:
       type: object
       properties:
@@ -6907,8 +6948,8 @@ components:
         comment:
           type: string
     FullAnnotationData:
-      type: object
       oneOf:
+        - type: object
         - $ref: "#/components/schemas/FullAnnotationDataClassification"
         - $ref: "#/components/schemas/FullAnnotationDataSegmentation"
         - $ref: "#/components/schemas/FullAnnotationDataSegmentationV2"
@@ -7246,8 +7287,8 @@ components:
         * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した
         * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力
     AggregationResult:
-      type: object
       oneOf:
+        - type: object
         - $ref: "#/components/schemas/CountResult"
     CountResult:
       type: object
@@ -7299,8 +7340,8 @@ components:
         etag:
           type: string
     ValidationError:
-      type: object
       oneOf:
+        - type: object
         - $ref: "#/components/schemas/InvalidAnnotationData"
         - $ref: "#/components/schemas/DuplicatedSegmentationV2"
         - $ref: "#/components/schemas/InvalidCommentFormat"
