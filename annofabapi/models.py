@@ -421,7 +421,24 @@ Kyes of Dict
     
 * inspection_phrases: List[InspectionPhrase]
     
+
+"""
+
+AnnotationSpecsHistory = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    
 * updated_datetime: datetime
+    
+* url: str
+    
+* account_id: str
+    
+* comment: str
     
 
 """
@@ -436,7 +453,7 @@ Kyes of Dict
     ラベル 
 * inspection_phrases: List[InspectionPhrase]
     定型指摘 
-* updated_datetime: datetime
+* comment: str
     
 
 """
@@ -596,11 +613,15 @@ Kyes of Dict
     
 * project: str
     
+* instruction: str
+    
 * specs: str
     
 * statistics: str
     
 * organization: str
+    
+* supplementary: str
     
 
 """
