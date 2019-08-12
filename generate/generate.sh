@@ -50,7 +50,7 @@ JAVA_OPTS="-Dlog.level=info"
 
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --output /local/out \
-    --type-mappings array=List \
+    --type-mappings array=List,DateTime=str,date=str \
     -Dapis -DapiTests=false -DapiDocs=false \
     -Dmodels -DmodelTests=false -DmodelDocs=false"
 
@@ -98,7 +98,7 @@ rm -Rf out/openapi_client
 cd ../
 
 # Format
-FORMATTED_FILE="annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/models.py"
+FORMATTED_FILE="annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/models.py annofabapi/dataclass/models.py"
 pipenv run isort --verbose ${FORMATTED_FILE}
 pipenv run yapf --verbose --in-place ${FORMATTED_FILE}
 
