@@ -1,0 +1,26 @@
+{{#models}}
+{{#model}}
+{{#isEnum}}
+{{! enumならばannofabapi.modelsの列挙体を参照する。 }}
+from annofabapi.models import {{classname}}
+
+{{/isEnum}}
+
+{{^isEnum}}
+
+{{! enum以外ならばDictとして型ヒントを定義する }}
+@dataclass_json
+@dataclass
+class {{classname}}:
+"""
+{{#description}}{{{description}}}{{/description}}
+"""
+{{#vars}}
+    {{name}}: {{{dataType}}}
+    """{{#description}}{{{description}}}{{/description}}"""
+
+{{/vars}}
+{{/isEnum}}
+{{/model}}
+
+{{/models}}

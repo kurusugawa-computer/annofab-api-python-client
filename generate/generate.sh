@@ -46,18 +46,21 @@ if "${FLAG_DOWNLOAD}"; then
   rm swagger-tmp.yaml swagger-tmp.v2.yaml
 fi
 
+JAVA_OPTS="-Dlog.level=info"
 
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --output /local/out \
-    --template-dir /local/template \
     --type-mappings array=List \
-    -Dapis   -DapiTests=false -DapiDocs=false \
-    -Dmodels   -DmodelTests=false -DmodelDocs=false"
+    -Dapis -DapiTests=false -DapiDocs=false \
+    -Dmodels -DmodelTests=false -DmodelDocs=false"
 
 # v1 apiを生成
-docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS="-Dlog.level=info" openapitools/openapi-generator-cli generate \
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} openapitools/openapi-generator-cli generate \
     --input-spec swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
+    --template-dir /local/template \
+    -Dapis -DapiTests=false -DapiDocs=false \
+    -Dmodels -DmodelTests=false -DmodelDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
 cat generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
@@ -66,10 +69,26 @@ cat models_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/m
 
 rm -Rf out/openapi_client
 
+
+# v1 apiのmodelからDataClass用のpythonファイルを生成する。
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} \
+    openapitools/openapi-generator-cli generate \
+    --input-spec swagger.yaml \
+    ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
+    --template-dir /local/template_dataclass \
+    -Dmodels -DmodelTests=false -DmodelDocs=false \
+
+cat dataclass_models_partial_header.py out/openapi_client/models/*.py > ../annofabapi/dataclass/models.py
+
+rm -Rf out/openapi_client
+
+
 # v2 apiを生成
-docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS="-Dlog.level=info" openapitools/openapi-generator-cli generate \
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} openapitools/openapi-generator-cli generate \
     --input-spec swagger.v2.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
+    --template-dir /local/template \
+    -Dapis -DapiTests=false -DapiDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v2
 
 cat generated_api_partial_header_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py

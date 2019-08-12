@@ -21,3 +21,6 @@ sphinx = "==1.8.5"
 autoflake = "*"
 # バージョンの競合が発生しているので、一時的にバージョンを指定する
 docutils = "<=0.15.0"
+
+[pipenv]
+allow_prereleases = true
