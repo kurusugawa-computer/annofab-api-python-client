@@ -183,7 +183,7 @@ Kyes of Dict
     
 * authority: AccountAuthority
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 
 """
@@ -321,7 +321,7 @@ Kyes of Dict
     
 * comment: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
@@ -432,7 +432,7 @@ Kyes of Dict
 
 * project_id: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 * url: str
     
@@ -500,7 +500,7 @@ Kyes of Dict
     
 * additional_data_list: List[FullAnnotationAdditionalData]
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 
 """
@@ -519,7 +519,7 @@ Kyes of Dict
     
 * annotation_id: str
     annotation_type が classification の場合は label_id と同じ値が格納されます。 
-* updated_datetime: datetime
+* updated_datetime: str
     
 * type: str
     [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -1081,7 +1081,7 @@ Kyes of Dict
     
 * details: List[FullAnnotationDetail]
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 
 """
@@ -1496,7 +1496,7 @@ Kyes of Dict
     
 * resized_resolution: Resolution
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 * sign_required: bool
     データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。 
@@ -1524,7 +1524,7 @@ Kyes of Dict
     表示用の名前
 * input_data_path: str
     AnnoFabに登録する入力データの実体が保存されたパスです。  対応スキーマ： * s3 * https * data（廃止予定）  場面別の使い分け： * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA` * [プライベートストレージ](/docs/faq/#prst9c)の場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。 * dataスキーマでアップロードする場合: `data://....`     * dataスキーマは、4MB以内の画像であれば[一時データ保存先取得API](#operation/createTempPath)を使わずに直接アップロードできるので便利です。 
-* last_updated_datetime: datetime
+* last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * sign_required: bool
     データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br> このオプションを有効にする場合は、`input_data_path`として、AnnoFabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。 
@@ -1588,9 +1588,9 @@ Kyes of Dict
     
 * status: InspectionStatus
     
-* created_datetime: datetime
+* created_datetime: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
@@ -1672,7 +1672,7 @@ Kyes of Dict
 
 * project_id: str
     
-* date: date
+* date: str
     集計日
 * breakdown: InspectionStatisticsBreakdown
     
@@ -1727,7 +1727,7 @@ Kyes of Dict
     
 * account_id: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 
 """
@@ -1855,9 +1855,9 @@ Kyes of Dict
     ジョブの内部情報
 * job_detail: object
     ジョブ結果の内部情報
-* created_datetime: datetime
+* created_datetime: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 
 """
@@ -2018,7 +2018,7 @@ Kyes of Dict
     
 * authority: AccountAuthority
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 * reset_requested_email: str
     
@@ -2043,9 +2043,9 @@ Kyes of Dict
     
 * summary: OrganizationSummary
     
-* created_datetime: datetime
+* created_datetime: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 * my_role: OrganizationMemberRole
     
@@ -2070,9 +2070,9 @@ Kyes of Dict
     
 * summary: OrganizationSummary
     
-* created_datetime: datetime
+* created_datetime: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 
 """
@@ -2085,7 +2085,7 @@ Kyes of Dict
 
 * organization_id: str
     
-* created_datetime: datetime
+* created_datetime: str
     
 * storage_usage_bytes: float
     
@@ -2110,9 +2110,9 @@ Kyes of Dict
     
 * status: OrganizationMemberStatus
     
-* created_datetime: datetime
+* created_datetime: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 
 """
@@ -2158,7 +2158,7 @@ OrganizationSummary = Dict[str, Any]
 
 Kyes of Dict
 
-* last_tasks_updated_datetime: datetime
+* last_tasks_updated_datetime: str
     
 
 """
@@ -2244,9 +2244,9 @@ Kyes of Dict
     
 * configuration: ProjectConfiguration
     
-* created_datetime: datetime
+* created_datetime: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 * summary: ProjectSummary
     
@@ -2272,7 +2272,7 @@ ProjectAccountStatisticsHistory = Dict[str, Any]
 
 Kyes of Dict
 
-* date: date
+* date: str
     
 * tasks_completed: int
     
@@ -2357,9 +2357,9 @@ Kyes of Dict
     
 * member_role: ProjectMemberRole
     
-* updated_datetime: datetime
+* updated_datetime: str
     
-* created_datetime: datetime
+* created_datetime: str
     
 * sampling_inspection_rate: int
     メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。
@@ -2376,7 +2376,7 @@ Kyes of Dict
     
 * member_role: ProjectMemberRole
     
-* last_updated_datetime: datetime
+* last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
@@ -2415,7 +2415,7 @@ ProjectSummary = Dict[str, Any]
 
 Kyes of Dict
 
-* last_tasks_updated_datetime: datetime
+* last_tasks_updated_datetime: str
     
 
 """
@@ -2443,7 +2443,7 @@ ProjectTaskStatisticsHistory = Dict[str, Any]
 
 Kyes of Dict
 
-* date: date
+* date: str
     
 * tasks: List[ProjectTaskStatistics]
     
@@ -2466,7 +2466,7 @@ Kyes of Dict
     
 * token: Token
     
-* last_updated_datetime: datetime
+* last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
@@ -2479,7 +2479,7 @@ Kyes of Dict
 
 * role: OrganizationMemberRole
     
-* last_updated_datetime: datetime
+* last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
@@ -2494,7 +2494,7 @@ Kyes of Dict
     
 * organization_name: str
     
-* last_updated_datetime: datetime
+* last_updated_datetime: str
     
 
 """
@@ -2517,7 +2517,7 @@ Kyes of Dict
     プロジェクトの所属組織を変更する場合は、ここに変更先の組織名を指定します。  * 所属組織を変更する前にプロジェクトを停止する必要があります。 * APIを呼び出すアカウントは、変更先組織の管理者またはオーナーである必要があります。 * 変更後の組織に所属していないプロジェクトメンバーも残りますが、作業はできません。あらためて組織に招待してください。 
 * configuration: ProjectConfiguration
     
-* last_updated_datetime: datetime
+* last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * force_suspend: bool
     作業中タスクがあるプロジェクトを停止する時trueにして下さい
@@ -2639,7 +2639,7 @@ Kyes of Dict
     
 * detail: SingleAnnotationDetail
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 
 """
@@ -2666,9 +2666,9 @@ Kyes of Dict
     data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
 * additional_data_list: List[FullAnnotationAdditionalData]
     
-* created_datetime: datetime
+* created_datetime: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 
 """
@@ -2697,7 +2697,7 @@ Kyes of Dict
     
 * supplementary_data_number: int
     表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
-* updated_datetime: datetime
+* updated_datetime: str
     
 
 """
@@ -2716,7 +2716,7 @@ Kyes of Dict
     
 * supplementary_data_number: int
     表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
-* last_updated_datetime: datetime
+* last_updated_datetime: str
     
 
 """
@@ -2747,9 +2747,9 @@ Kyes of Dict
     累計実作業時間(ミリ秒)
 * number_of_rejections: int
     このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計  このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。 `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。  例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。 
-* started_datetime: datetime
+* started_datetime: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 * sampling: str
     * 'inspection_skipped' - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。 * 'inspection_stages_skipped' - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。 * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する) 
@@ -2766,7 +2766,7 @@ Kyes of Dict
     * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。 
 * task_id_prefix: str
     生成するタスクIDのプレフィックス
-* project_last_updated_datetime: datetime
+* project_last_updated_datetime: str
     プロジェクトの最終更新日時。タスク生成の排他制御に使用。
 
 """
@@ -2826,9 +2826,9 @@ Kyes of Dict
     
 * task_history_id: str
     
-* started_datetime: datetime
+* started_datetime: str
     
-* ended_datetime: datetime
+* ended_datetime: str
     
 * accumulated_labor_time_milliseconds: str
     
@@ -2853,7 +2853,7 @@ Kyes of Dict
     
 * task_history_id: str
     
-* created_datetime: datetime
+* created_datetime: str
     
 * phase: TaskPhase
     
@@ -2889,7 +2889,7 @@ Kyes of Dict
 
 * status: TaskStatus
     
-* last_updated_datetime: datetime
+* last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * account_id: str
     
@@ -2915,7 +2915,7 @@ Kyes of Dict
 
 * project_id: str
     
-* date: date
+* date: str
     
 * phases: List[PhaseStatistics]
     
@@ -3124,9 +3124,9 @@ Kyes of Dict
     
 * url: str
     
-* created_datetime: datetime
+* created_datetime: str
     
-* updated_datetime: datetime
+* updated_datetime: str
     
 
 """
@@ -3182,7 +3182,7 @@ Kyes of Dict
 
 * project_id: str
     
-* date: date
+* date: str
     
 * by_tasks: List[WorktimeStatisticsItem]
     

@@ -9,18 +9,24 @@ from annofabapi.models import {{classname}}
 {{^isEnum}}
 
 {{! enum以外ならばDictとして型ヒントを定義する }}
+
 @dataclass_json
 @dataclass
 class {{classname}}:
-"""
-{{#description}}{{{description}}}{{/description}}
-"""
+    """
+    {{#description}}{{{description}}}{{/description}}
+    """
 {{#vars}}
     {{name}}: {{{dataType}}}
     """{{#description}}{{{description}}}{{/description}}"""
 
+
+
 {{/vars}}
+
 {{/isEnum}}
+
 {{/model}}
 
 {{/models}}
+
