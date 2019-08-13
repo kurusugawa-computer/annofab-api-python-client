@@ -9,65 +9,6 @@ from annofabapi.models import (AccountAuthority, AdditionalDataDefinitionType, A
                                InspectionStatus, OrganizationMemberRole, OrganizationMemberStatus, PricePlan,
                                ProjectMemberRole, ProjectMemberStatus, ProjectStatus, TaskPhase, TaskStatus)
 
-@dataclass_json
-@dataclass
-class TaskGenerateRequest:
-    """
-
-    """
-    task_generate_rule: OneOfTaskGenerateRuleByCountTaskGenerateRuleByDirectoryTaskGenerateRuleByInputDataCsv
-    """* `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。 """
-
-    task_id_prefix: str
-    """生成するタスクIDのプレフィックス"""
-
-    project_last_updated_datetime: str
-    """プロジェクトの最終更新日時。タスク生成の排他制御に使用。"""
-
-
-@dataclass_json
-@dataclass
-class TaskGenerateRuleByCount:
-    """
-    1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
-    """
-    allow_duplicate_input_data: bool
-    """falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。"""
-
-    input_data_count: int
-    """1つのタスクに割り当てる入力データの個数"""
-
-    input_data_order: InputDataOrder
-    """"""
-
-    type: str
-    """[詳しくはこちら](#section/API-Convention/API-_type) """
-
-
-@dataclass_json
-@dataclass
-class TaskGenerateRuleByDirectory:
-    """
-    入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。<br>
-    """
-    input_data_name_prefix: str
-    """タスク生成対象の入力データ名プレフィックス"""
-
-    type: str
-    """[詳しくはこちら](#section/API-Convention/API-_type) """
-
-
-@dataclass_json
-@dataclass
-class TaskGenerateRuleByInputDataCsv:
-    """
-    各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。
-    """
-    csv_data_path: str
-    """各タスクへの入力データへの割当を記入したCSVへのS3上のパス"""
-
-    type: str
-    """[詳しくはこちら](#section/API-Convention/API-_type) """
 
 
 @dataclass_json
@@ -153,57 +94,6 @@ class TaskHistoryShort:
 
 
 
-@dataclass_json
-@dataclass
-class TaskValidation:
-    """
-    タスクの全入力データに対するバリデーション結果です。
-    """
-    project_id: str
-    """"""
-
-    task_id: str
-    """"""
-
-    inputs: List[InputDataSummary]
-    """"""
-
-
-
-@dataclass_json
-@dataclass
-class TasksInputsTask:
-    """
-
-    """
-    task_id: str
-    """"""
-
-    phase: TaskPhase
-    """"""
-
-    status: TaskStatus
-    """"""
-
-    input_data_id_list: List[str]
-    """"""
-
-
-
-@dataclass_json
-@dataclass
-class TasksInputs:
-    """
-
-    """
-    project_id: str
-    """"""
-
-    tasks: List[TasksInputsTask]
-    """"""
-
-
-
 
 @dataclass_json
 @dataclass
@@ -235,7 +125,8 @@ class Task:
     histories_by_phase: List[TaskHistoryShort]
     """"""
 
-    work_timespan: int
+    # work_timespan: int
+    work_time_span: int
     """累計実作業時間(ミリ秒)"""
 
     number_of_rejections: int
@@ -250,47 +141,3 @@ class Task:
     sampling: str
     """* 'inspection_skipped' - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。 * 'inspection_stages_skipped' - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。 * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する) """
 
-
-
-@dataclass_json
-@dataclass
-class ValidationError:
-    """
-
-    """
-    label_id: str
-    """"""
-
-    annotation_id: str
-    """"""
-
-    message: str
-    """"""
-
-    type: str
-    """UnknownLabel"""
-
-    annotation_ids: List[str]
-    """"""
-
-    additional_data_definition_id: str
-    """"""
-
-    additional_data: AdditionalData
-    """"""
-
-
-@dataclass_json
-@dataclass
-class InputDataSummary:
-    """
-    ある入力データのバリデーション結果です。入力データIDをキーに引けるようにMap[入力データID, バリデーション結果]となっています
-    """
-    input_data_id: str
-    """"""
-
-    inspection_summary: str
-    """"""
-
-    annotation_summaries: List[ValidationError]
-    """"""
