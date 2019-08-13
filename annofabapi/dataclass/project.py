@@ -1,0 +1,104 @@
+# flake8: noqa: W291
+# pylint: disable=too-many-lines,trailing-whitespace
+"""
+annofabapiのmodelをDataClassで定義したクラス。(swagger.yamlの ``components.schemes`` )
+
+Note:
+    このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照.
+
+    oneOf, allOfなどは正しく表現できない可能性がある。
+
+"""
+
+import warnings  # pylint: disable=unused-import
+from dataclasses import dataclass
+from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
+
+from dataclasses_json import dataclass_json
+
+from annofabapi.models import (AccountAuthority, AdditionalDataDefinitionType, AnnotationDataHoldingType,
+                               AnnotationType, AssigneeRuleOfResubmittedTask, InputDataOrder, InputDataType,
+                               InspectionStatus, OrganizationMemberRole, OrganizationMemberStatus, PricePlan,
+                               ProjectMemberRole, ProjectMemberStatus, ProjectStatus, TaskPhase, TaskStatus)
+
+
+@dataclass_json
+@dataclass
+class ProjectSummary:
+    """
+
+    """
+    last_tasks_updated_datetime: str
+    """"""
+
+
+@dataclass_json
+@dataclass
+class ProjectConfiguration:
+    """
+
+    """
+    project_rule: str
+    """"""
+
+    number_of_inspections: int
+    """検査回数。 * 0回：教師付け -> 受入 * 1回：教師付け -> 検査 -> 受入 * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入 """
+
+    assignee_rule_of_resubmitted_task: AssigneeRuleOfResubmittedTask
+    """"""
+
+    max_tasks_per_member: int
+    """保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。"""
+
+    max_tasks_per_member_including_hold: int
+    """保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は20件として扱う。"""
+
+    input_data_max_long_side_length: int
+    """入力データ画像の長辺の最大値（未指定時は4096px）。  画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。 アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。  大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。 """
+
+    sampling_inspection_rate: int
+    """抜取検査率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。"""
+
+    sampling_acceptance_rate: int
+    """抜取受入率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。"""
+
+    private_storage_aws_iam_role_arn: str
+    """AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 """
+
+
+
+@dataclass_json
+@dataclass
+class Project:
+    """
+
+    """
+    project_id: str
+    """"""
+
+    organization_id: str
+    """"""
+
+    title: str
+    """"""
+
+    overview: str
+    """"""
+
+    status: ProjectStatus
+    """"""
+
+    input_data_type: InputDataType
+    """"""
+
+    configuration: ProjectConfiguration
+    """"""
+
+    created_datetime: str
+    """"""
+
+    updated_datetime: str
+    """"""
+
+    summary: ProjectSummary
+    """"""
