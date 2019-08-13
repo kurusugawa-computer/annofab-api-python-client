@@ -12,7 +12,7 @@ from distutils.util import strtobool
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.dataclass.task import Task
+from annofabapi.dataclass.task import Task, TaskHistory
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
@@ -43,6 +43,10 @@ annofab_user_id = service.api.login_user_id
 
 def test_task():
     dict_task, _ = service.api.get_task(project_id, task_id)
-    print(dict_task)
     task = Task.from_dict(dict_task)
     assert type(task) == Task
+
+    task_histories, _ = service.api.get_task_histories(project_id, task_id)
+    task_history = TaskHistory.from_dict(task_histories[0])
+    print(task_history)
+    assert type(task_history) == TaskHistory
