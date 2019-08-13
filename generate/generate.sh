@@ -50,9 +50,7 @@ JAVA_OPTS="-Dlog.level=info"
 
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --output /local/out \
-    --type-mappings array=List,DateTime=str,date=str \
-    -Dapis -DapiTests=false -DapiDocs=false \
-    -Dmodels -DmodelTests=false -DmodelDocs=false"
+    --type-mappings array=List,DateTime=str,date=str"
 
 # v1 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} openapitools/openapi-generator-cli generate \
