@@ -83,3 +83,5 @@ def parse_simple_zip(zip_file_path: Path) -> Iterator[LazyAnnotationParser]:
             parser = lazy_parser(file, info)
             if parser is not None:
                 yield parser
+
+# TODO zip展開したディレクトリもparseできるようにする
