@@ -469,6 +469,7 @@ class AnnotationType(Enum):
     SEGMENTATION_V2 = "segmentation_v2"
     POLYGON = "polygon"
     POLYLINE = "polyline"
+    POINT = "point"
     CLASSIFICATION = "classification"
     RANGE = "range"
 
