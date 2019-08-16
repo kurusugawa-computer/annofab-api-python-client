@@ -92,8 +92,6 @@ MODELS_DIR=out/openapi_client/models
 # Annotation
 declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/additional_data.py \
- ${MODELS_DIR}/annotation_detail.py \
- ${MODELS_DIR}/annotation.py \
  ${MODELS_DIR}/full_annotation_additional_data.py \
  ${MODELS_DIR}/full_annotation_detail.py \
  ${MODELS_DIR}/full_annotation.py \
@@ -103,7 +101,9 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/single_annotation.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/annotation.py  \
  ${model_files[@]} > ../annofabapi/dataclass/annotation.py
-
+# swagger.yamlの間違いに対する暫定対応
+sed -e "s/details: Optional[List[FullAnnotationDetail]]/detail: Optional[List[FullAnnotationDetail]]/" ../annofabapi/dataclass/annotation.py --in-place
+# FullAnnotationDetailのcommentとpathを削除
 
 # Annotation Specs
 declare -a model_files=(${MODELS_DIR}/keybind.py \
