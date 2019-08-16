@@ -13,6 +13,7 @@ from distutils.util import strtobool
 import annofabapi
 import annofabapi.utils
 from annofabapi.dataclass.task import Task, TaskHistory
+from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
@@ -48,6 +49,12 @@ my_account_id = service.api.get_my_account()[0]['account_id']
 organization_name = service.api.get_organization_of_project(project_id)[0]['organization_name']
 
 annofab_user_id = service.api.login_user_id
+
+def test_annotation_specs():
+    dict_annotation_specs, _ = service.api.get_annotation_specs(project_id)
+    annotation_specs = AnnotationSpecs.from_dict(dict_annotation_specs)
+    assert type(annotation_specs) == AnnotationSpecs
+
 
 def test_input():
     input_data_list = service.wrapper.get_all_input_data_list(project_id, query_params={'task_id':task_id})
