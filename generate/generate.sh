@@ -67,20 +67,6 @@ cat models_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/m
 
 rm -Rf out/openapi_client
 
-
-# v1 apiのmodelからDataClass用のpythonファイルを生成する。
-docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} \
-    openapitools/openapi-generator-cli generate \
-    --input-spec swagger.yaml \
-    ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
-    --template-dir /local/template_dataclass \
-    -Dmodels -DmodelTests=false -DmodelDocs=false \
-
-cat dataclass_models_partial_header.py out/openapi_client/models/*.py > ../annofabapi/dataclass/models.py
-
-rm -Rf out/openapi_client
-
-
 # v2 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} openapitools/openapi-generator-cli generate \
     --input-spec swagger.v2.yaml \
@@ -92,6 +78,22 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${
 cat generated_api_partial_header_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
 
 rm -Rf out/openapi_client
+
+# v1 apiのmodelからDataClass用のpythonファイルを生成する。
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} \
+    openapitools/openapi-generator-cli generate \
+    --input-spec swagger.yaml \
+    ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
+    --template-dir /local/template_dataclass \
+    -Dmodels -DmodelTests=false -DmodelDocs=false \
+
+MODELS_DIR=out/openapi_client/models
+declare -a model_files=(${MODELS_DIR}/resolution.py ${MODELS_DIR}/input_data.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/input.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/input.py
+
+rm -Rf out/openapi_client
+
 
 cd ../
 
