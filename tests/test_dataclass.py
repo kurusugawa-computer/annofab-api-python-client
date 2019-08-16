@@ -17,6 +17,7 @@ from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember
+from annofabapi.dataclass.project import Project
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 
@@ -74,6 +75,16 @@ def test_organization_member():
     organization_member = OrganizationMember.from_dict(dict_organization_member)
     print(organization_member)
     assert type(organization_member) == OrganizationMember
+
+def test_project():
+    dict_project, _ = service.api.get_project(project_id)
+    print(dict_project['configuration'])
+    from annofabapi.dataclass.project import ProjectConfiguration
+    project_configuration = ProjectConfiguration.from_dict(dict_project['configuration'])
+    print(project_configuration)
+    project = Project.from_dict(dict_project)
+    print(project)
+    assert type(project) == Project
 
 
 def test_task():

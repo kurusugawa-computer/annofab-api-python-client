@@ -107,6 +107,11 @@ declare -a model_files=(${MODELS_DIR}/organization_member.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/organization_member.py  \
  ${model_files[@]} > ../annofabapi/dataclass/organization_member.py
 
+# Project
+declare -a model_files=(${MODELS_DIR}/project_summary.py ${MODELS_DIR}/project_configuration.py ${MODELS_DIR}/project.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/project.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/project.py
+
 
 rm -Rf out/openapi_client
 
