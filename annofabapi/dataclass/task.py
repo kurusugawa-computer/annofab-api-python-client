@@ -1,13 +1,26 @@
+# flake8: noqa: W291
+# pylint: disable=too-many-lines,trailing-whitespace
+
+"""
+annofabapiのmodelをDataClassで定義したクラス
+
+Note:
+    このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照.
+    oneOf, allOfなどは正しく表現できない可能性がある。
+"""
+
 import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
 from dataclasses_json import dataclass_json
 
+# 列挙体の一覧
 from annofabapi.models import (AccountAuthority, AdditionalDataDefinitionType, AnnotationDataHoldingType,
                                AnnotationType, AssigneeRuleOfResubmittedTask, InputDataOrder, InputDataType,
                                InspectionStatus, OrganizationMemberRole, OrganizationMemberStatus, PricePlan,
                                ProjectMemberRole, ProjectMemberStatus, ProjectStatus, TaskPhase, TaskStatus)
+
 
 
 
@@ -17,63 +30,56 @@ class TaskHistory:
     """
     タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
     """
-    project_id: str
-    """"""
-
-    task_id: str
-    """"""
-
-    task_history_id: str
-    """"""
-
-    started_datetime: str
-    """"""
-
-    ended_datetime: str
-    """"""
-
-    accumulated_labor_time_milliseconds: str
-    """"""
-
-    phase: TaskPhase
-    """"""
-
-    phase_stage: int
-    """"""
-
-    account_id: str
+    project_id: Optional[str]
     """"""
 
 
-@dataclass_json
-@dataclass
-class TaskHistoryEvent:
-    """
-    タスク履歴イベントは、タスクの状態が変化した１時点を表します。作業時間は、複数のこれらイベントを集約して計算するものなので、このオブジェクトには含まれません。
-    """
-    project_id: str
+
+    task_id: Optional[str]
     """"""
 
-    task_id: str
+
+
+    task_history_id: Optional[str]
     """"""
 
-    task_history_id: str
+
+
+    started_datetime: Optional[str]
     """"""
 
-    created_datetime: str
+
+
+    ended_datetime: Optional[str]
     """"""
 
-    phase: TaskPhase
+
+
+    accumulated_labor_time_milliseconds: Optional[str]
     """"""
 
-    phase_stage: int
+
+
+    phase: Optional[TaskPhase]
     """"""
 
-    status: TaskStatus
+
+
+    phase_stage: Optional[int]
     """"""
 
-    account_id: str
+
+
+    account_id: Optional[str]
     """"""
+
+
+
+
+
+
+
+
 
 
 @dataclass_json
@@ -82,14 +88,23 @@ class TaskHistoryShort:
     """
     タスクのあるフェーズを誰が担当したかを表します。
     """
-    phase: TaskPhase
+    phase: Optional[TaskPhase]
     """"""
 
-    phase_stage: int
+
+
+    phase_stage: Optional[int]
     """"""
 
-    account_id: str
+
+
+    account_id: Optional[str]
     """"""
+
+
+
+
+
 
 
 
@@ -99,45 +114,74 @@ class TaskHistoryShort:
 @dataclass
 class Task:
     """
-
+    
     """
-    project_id: str
+    project_id: Optional[str]
     """"""
 
-    task_id: str
+
+
+    task_id: Optional[str]
     """"""
 
-    phase: TaskPhase
+
+
+    phase: Optional[TaskPhase]
     """"""
 
-    phase_stage: int
+
+
+    phase_stage: Optional[int]
     """"""
 
-    status: TaskStatus
+
+
+    status: Optional[TaskStatus]
     """"""
 
-    input_data_id_list: List[str]
+
+
+    input_data_id_list: Optional[List[str]]
     """"""
 
-    account_id: str
+
+
+    account_id: Optional[str]
     """"""
 
-    histories_by_phase: List[TaskHistoryShort]
+
+
+    histories_by_phase: Optional[List[TaskHistoryShort]]
     """"""
 
-    # work_timespan: int
-    work_time_span: int
+
+
+    work_time_span: Optional[int]
     """累計実作業時間(ミリ秒)"""
 
-    number_of_rejections: int
+
+
+    number_of_rejections: Optional[int]
     """このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計  このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。 `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。  例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。 """
 
-    started_datetime: str
+
+
+    started_datetime: Optional[str]
     """"""
 
-    updated_datetime: str
+
+
+    updated_datetime: Optional[str]
     """"""
 
-    sampling: str
+
+
+    sampling: Optional[str]
     """* 'inspection_skipped' - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。 * 'inspection_stages_skipped' - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。 * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する) """
+
+
+
+
+
+
 
