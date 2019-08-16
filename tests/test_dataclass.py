@@ -4,18 +4,17 @@ AnnofabApi2のテストメソッド
 """
 import configparser
 import datetime
+import json
 import logging
 import os
-import json
 import time
 import uuid
-from pathlib import Path
 from distutils.util import strtobool
+from pathlib import Path
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.dataclass.task import Task, TaskHistory
-from annofabapi.dataclass.annotation import SingleAnnotation, SimpleAnnotation, FullAnnotation
+from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation, SingleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
@@ -24,8 +23,8 @@ from annofabapi.dataclass.organization_member import OrganizationMember
 from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
 from annofabapi.dataclass.supplementary import SupplementaryData
+from annofabapi.dataclass.task import Task, TaskHistory
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
-
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -38,7 +37,6 @@ should_execute_job_api: bool = strtobool(inifile.get('annofab', 'should_execute_
 should_print_log_message: bool = strtobool(inifile.get('annofab', 'should_print_log_message'))
 
 test_dir = Path('./tests/data')
-
 
 if should_print_log_message:
     logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
@@ -71,7 +69,6 @@ def test_annotation():
     assert type(full_annotion) == FullAnnotation
 
 
-
 def test_annotation_specs():
     dict_annotation_specs, _ = service.api.get_annotation_specs(project_id)
     annotation_specs = AnnotationSpecs.from_dict(dict_annotation_specs)
@@ -79,14 +76,16 @@ def test_annotation_specs():
 
 
 def test_input():
-    input_data_list = service.wrapper.get_all_input_data_list(project_id, query_params={'task_id':task_id})
+    input_data_list = service.wrapper.get_all_input_data_list(project_id, query_params={'task_id': task_id})
     input_data = InputData.from_dict(input_data_list[0])
     assert type(input_data) == InputData
+
 
 def test_inspection():
     inspection_list, _ = service.api.get_inspections(project_id, task_id, input_data_id)
     inspection = Inspection.from_dict(inspection_list[0])
     assert type(inspection) == Inspection
+
 
 def test_organization():
     dict_organization, _ = service.api.get_organization(organization_name)
@@ -103,10 +102,12 @@ def test_organization_member():
     organization_member = OrganizationMember.from_dict(dict_organization_member)
     assert type(organization_member) == OrganizationMember
 
+
 def test_project():
     dict_project, _ = service.api.get_project(project_id)
     project = Project.from_dict(dict_project)
     assert type(project) == Project
+
 
 def test_project_member():
     dict_project_member, _ = service.api.get_project_member(project_id, annofab_user_id)
