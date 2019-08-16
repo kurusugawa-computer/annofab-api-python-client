@@ -61,9 +61,9 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
     -Dmodels -DmodelTests=false -DmodelDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
-cat generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
+cat partial-header/generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
 
-cat models_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/models.py
+cat partial-header/models_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/models.py
 
 rm -Rf out/openapi_client
 
@@ -75,7 +75,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${
     -Dapis -DapiTests=false -DapiDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v2
 
-cat generated_api_partial_header_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
+cat partial-header/generated_api_partial_header_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
 
 rm -Rf out/openapi_client
 
