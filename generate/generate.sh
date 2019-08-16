@@ -112,6 +112,7 @@ declare -a model_files=(${MODELS_DIR}/project_summary.py ${MODELS_DIR}/project_c
 cat partial-header/dataclass/common.py partial-header/dataclass/project.py  \
  ${model_files[@]} > ../annofabapi/dataclass/project.py
 
+sed -e "s/status: ProjectStatus/project_status: ProjectStatus/" ../annofabapi/dataclass/project.py --in-place
 
 rm -Rf out/openapi_client
 
