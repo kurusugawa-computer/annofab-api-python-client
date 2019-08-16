@@ -19,6 +19,7 @@ from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember
 from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
+from annofabapi.dataclass.supplementary import SupplementaryData
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 
@@ -87,6 +88,13 @@ def test_project_member():
     project_member = ProjectMember.from_dict(dict_project_member)
     print(project_member)
     assert type(project_member) == ProjectMember
+
+
+def test_supplementary():
+    supplementary_data_list, _ = service.api.get_supplementary_data_list(project_id, input_data_id)
+    supplementary_data = SupplementaryData.from_dict(supplementary_data_list[0])
+    print(supplementary_data)
+    assert type(supplementary_data) == SupplementaryData
 
 
 def test_task():

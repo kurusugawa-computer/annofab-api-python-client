@@ -119,6 +119,11 @@ declare -a model_files=(${MODELS_DIR}/project_member.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/project_member.py  \
  ${model_files[@]} > ../annofabapi/dataclass/project_member.py
 
+# Supplementary
+declare -a model_files=(${MODELS_DIR}/supplementary_data.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/supplementary.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/supplementary.py
+
 
 rm -Rf out/openapi_client
 
@@ -126,7 +131,7 @@ rm -Rf out/openapi_client
 cd ../
 
 # Format
-FORMATTED_FILE="annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/models.py annofabapi/dataclass/models.py"
+FORMATTED_FILE="annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/models.py annofabapi/dataclass/*.py"
 pipenv run isort --verbose ${FORMATTED_FILE}
 pipenv run yapf --verbose --in-place ${FORMATTED_FILE}
 
