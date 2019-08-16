@@ -1,6 +1,5 @@
 # flake8: noqa: W291
 # pylint: disable=too-many-lines,trailing-whitespace
-
 """
 annofabapiのmodelをDataClassで定義したクラス
 
@@ -15,14 +14,9 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
-# 列挙体の一覧
-from annofabapi.models import (AccountAuthority, AdditionalDataDefinitionType, AnnotationDataHoldingType,
-                               AnnotationType, AssigneeRuleOfResubmittedTask, InputDataOrder, InputDataType,
-                               InspectionStatus, OrganizationMemberRole, OrganizationMemberStatus, PricePlan,
-                               ProjectMemberRole, ProjectMemberStatus, ProjectStatus, TaskPhase, TaskStatus)
+from annofabapi.models import InspectionStatus, TaskPhase
 
 OneOfInspectionDataPointInspectionDataPolylineInspectionDataTime = Dict[str, Any]
-
 
 
 @dataclass_json
@@ -34,79 +28,44 @@ class Inspection:
     project_id: str
     """"""
 
-
-
     task_id: str
     """"""
-
-
 
     input_data_id: str
     """"""
 
-
-
     inspection_id: str
     """"""
-
-
 
     phase: TaskPhase
     """"""
 
-
-
     phase_stage: Optional[int]
     """"""
-
-
 
     commenter_account_id: str
     """"""
 
-
-
     annotation_id: Optional[str]
     """"""
-
-
 
     data: OneOfInspectionDataPointInspectionDataPolylineInspectionDataTime
     """"""
 
-
-
     parent_inspection_id: Optional[str]
     """"""
-
-
 
     phrases: Optional[List[str]]
     """選択された定型指摘ID. 未選択時は空"""
 
-
-
     comment: Optional[str]
     """"""
-
-
 
     status: InspectionStatus
     """"""
 
-
-
     created_datetime: str
     """"""
 
-
-
     updated_datetime: Optional[str]
     """新規作成時は未指定、更新時は必須（更新前の日時） """
-
-
-
-
-
-
-

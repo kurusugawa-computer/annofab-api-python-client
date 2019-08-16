@@ -35,7 +35,6 @@ class Point:
 
     y: int
     """"""
-
 @dataclass_json
 @dataclass
 class AdditionalData:
@@ -56,7 +55,6 @@ class AdditionalData:
 
     choice: str
     """"""
-
 @dataclass_json
 @dataclass
 class AnnotationDetail:
@@ -95,9 +93,6 @@ class AnnotationDetail:
 
     comment: str
     """"""
-
-
-
 @dataclass_json
 @dataclass
 class Annotation:
@@ -121,8 +116,6 @@ class Annotation:
 
     updated_datetime: str
     """新規作成時は未指定、更新時は必須（更新前の日時） """
-
-
 @dataclass_json
 @dataclass
 class FullAnnotationAdditionalData:
@@ -152,8 +145,6 @@ class FullAnnotationAdditionalData:
 
     choice_name: InternationalizationMessage
     """"""
-
-
 @dataclass_json
 @dataclass
 class FullAnnotationData:
@@ -186,7 +177,6 @@ class FullAnnotationData:
 
     data: str
     """"""
-
 @dataclass_json
 @dataclass
 class FullAnnotationDetail:
@@ -222,8 +212,6 @@ class FullAnnotationDetail:
 
     comment: str
     """"""
-
-
 @dataclass_json
 @dataclass
 class FullAnnotation:
@@ -256,8 +244,6 @@ class FullAnnotation:
 
     updated_datetime: str
     """"""
-
-
 @dataclass_json
 @dataclass
 class SimpleAnnotationDetail:
@@ -275,9 +261,6 @@ class SimpleAnnotationDetail:
 
     attributes: object
     """キーに属性の名前、値に各属性の値が入った辞書構造です。 """
-
-
-
 @dataclass_json
 @dataclass
 class SimpleAnnotation:
@@ -310,9 +293,6 @@ class SimpleAnnotation:
 
     details: List[SimpleAnnotationDetail]
     """"""
-
-
-
 @dataclass_json
 @dataclass
 class SingleAnnotationDetail:
@@ -348,7 +328,6 @@ class SingleAnnotationDetail:
 
     updated_datetime: str
     """"""
-
 @dataclass_json
 @dataclass
 class SingleAnnotation:
@@ -369,4 +348,3 @@ class SingleAnnotation:
 
     updated_datetime: str
     """"""
-
