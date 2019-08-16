@@ -1,0 +1,121 @@
+{
+    "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
+    "task_id": "sample_423",
+    "task_phase": "annotation",
+    "task_phase_stage": 1,
+    "task_status": "break",
+    "input_data_id": "c2a3223b-90db-4416-8c7c-55bf140af1cd",
+    "input_data_name": "val.zip/val/a91b7555-00000565.jpg",
+    "detail": [
+        {
+            "annotation_id": "7ad04ec2-8c85-4bc7-9fad-f5bea508b02b",
+            "user_id": "test-user",
+            "label_id": "14a15029-9d24-4b7c-828e-4e6afb42e292",
+            "label_name": {
+                "messages": [
+                    {
+                        "lang": "ja-JP",
+                        "message": "cat"
+                    },
+                    {
+                        "lang": "en-US",
+                        "message": "cat"
+                    }
+                ],
+                "default_lang": "ja-JP"
+            },
+            "annotation_type": "segmentation_v2",
+            "data_holding_type": "outer",
+            "data": null,
+            "additional_data_list": []
+        },
+        {
+            "annotation_id": "108ef5f5-ee5d-4cf9-8946-abf63eb6fec9",
+            "user_id": "test-user",
+            "label_id": "610ff85f-45dc-4aa8-a42d-ed21342fcac6",
+            "label_name": {
+                "messages": [
+                    {
+                        "lang": "ja-JP",
+                        "message": "dog"
+                    },
+                    {
+                        "lang": "en-US",
+                        "message": "dog"
+                    }
+                ],
+                "default_lang": "ja-JP"
+            },
+            "annotation_type": "polygon",
+            "data_holding_type": "inner",
+            "data": {
+                "points": [
+                    {
+                        "x": 210,
+                        "y": 115
+                    },
+                    {
+                        "x": 267,
+                        "y": 152
+                    },
+                    {
+                        "x": 210,
+                        "y": 189
+                    },
+                    {
+                        "x": 153,
+                        "y": 152
+                    }
+                ],
+                "_type": "Points"
+            },
+            "additional_data_list": []
+        },
+        {
+            "annotation_id": "8aff181e-9df4-4c66-8fb2-10596c686d5c",
+            "user_id": "test-user",
+            "label_id": "8aff181e-9df4-4c66-8fb2-10596c686d5c",
+            "label_name": {
+                "messages": [
+                    {
+                        "lang": "ja-JP",
+                        "message": "all"
+                    },
+                    {
+                        "lang": "en-US",
+                        "message": "all"
+                    }
+                ],
+                "default_lang": "ja-JP"
+            },
+            "annotation_type": "classification",
+            "data_holding_type": "inner",
+            "data": null,
+            "additional_data_list": [
+                {
+                    "additional_data_definition_id": "441bb21a-12d8-4754-b897-ebed67aa30fc",
+                    "additional_data_definition_name": {
+                        "messages": [
+                            {
+                                "lang": "ja-JP",
+                                "message": "sunny"
+                            },
+                            {
+                                "lang": "en-US",
+                                "message": "sunny"
+                            }
+                        ],
+                        "default_lang": "ja-JP"
+                    },
+                    "type": "flag",
+                    "flag": false,
+                    "integer": null,
+                    "comment": null,
+                    "choice": null,
+                    "choice_name": null
+                }
+            ]
+        }
+    ],
+    "updated_datetime": "2019-05-24T13:09:01.735+09:00"
+}

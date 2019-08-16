@@ -40,6 +40,9 @@ class Wrapper:
         Returns:
             APIに渡すContent-Type
 
+        Raises:
+            AnnofabApiException: Content-Typeを取得できなかった
+
         """
 
         if content_type is None:
