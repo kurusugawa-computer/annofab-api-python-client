@@ -40,6 +40,9 @@ class Wrapper:
         Returns:
             APIに渡すContent-Type
 
+        Raises:
+            AnnofabApiException: Content-Typeを取得できなかった
+
         """
 
         if content_type is None:
@@ -263,7 +266,7 @@ class Wrapper:
     # Public Method : AfSupplementaryApi
     #########################################
     def put_supplementary_data_from_file(self, project_id, input_data_id: str, supplementary_data_id: str,
-                                         file_path: str, request_body: Dict[str, Any],
+                                         file_path: str, request_body: Optional[Dict[str, Any]],
                                          content_type: Optional[str] = None) -> SupplementaryData:
         """
         補助情報ファイルをアップロードする
