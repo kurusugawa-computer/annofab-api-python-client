@@ -18,6 +18,8 @@ from annofabapi.models import (AnnotationDataHoldingType, InternationalizationMe
                                AnnotationType, TaskPhase, TaskStatus)
 
 OneOfstringFullAnnotationData = Dict[str, Any]
+FullAnnotationData = Dict[str, Any]
+
 
 
 
@@ -246,57 +248,6 @@ class FullAnnotationAdditionalData:
 
 
 
-@dataclass_json
-@dataclass
-class FullAnnotationData:
-    """
-    
-    """
-    type: str
-    """Unknown"""
-
-
-
-    data_uri: str
-    """"""
-
-
-
-    left_top: Point
-    """"""
-
-
-
-    right_bottom: Point
-    """"""
-
-
-
-    points: List[Point]
-    """"""
-
-
-
-    point: Point
-    """"""
-
-
-
-    begin: float
-    """開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。"""
-
-
-
-    end: float
-    """終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。"""
-
-
-
-    data: str
-    """"""
-
-
-
 
 
 
@@ -308,7 +259,7 @@ class FullAnnotationData:
 @dataclass
 class FullAnnotationDetail:
     """
-    
+
     """
     annotation_id: Optional[str]
     """annotation_type が classification の場合は label_id と同じ値が格納されます。 """
@@ -371,7 +322,7 @@ class FullAnnotationDetail:
 @dataclass
 class FullAnnotation:
     """
-    
+
     """
     project_id: Optional[str]
     """"""
@@ -429,7 +380,7 @@ class FullAnnotation:
 @dataclass
 class SimpleAnnotationDetail:
     """
-    
+
     """
     label: Optional[str]
     """アノテーション仕様のラベル名です。 """
@@ -462,7 +413,7 @@ class SimpleAnnotationDetail:
 @dataclass
 class SimpleAnnotation:
     """
-    
+
     """
     annotation_format_version: Optional[str]
     """アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 """
@@ -520,7 +471,7 @@ class SimpleAnnotation:
 @dataclass
 class SingleAnnotationDetail:
     """
-    
+
     """
     annotation_id: Optional[str]
     """annotation_type が classification の場合は label_id と同じ値が格納されます。 """
@@ -583,7 +534,7 @@ class SingleAnnotationDetail:
 @dataclass
 class SingleAnnotation:
     """
-    
+
     """
     project_id: Optional[str]
     """"""
