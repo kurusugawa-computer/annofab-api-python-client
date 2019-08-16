@@ -3,8 +3,7 @@ import zipfile
 from pathlib import Path
 from typing import Iterator, List, Optional
 
-from annofabapi.dataclass import afanno
-
+from annofabapi.dataclass.annotation import SimpleAnnotation
 
 class LazyAnnotationParser:
     __file: zipfile.ZipFile
@@ -45,20 +44,10 @@ class LazyAnnotationParser:
         """
         return input_data_name.replace("/", "__") == self.__data_name_base
 
-    def parse(self) -> afanno.SimpleAnnotation:
-        def parse_detail(d: dict) -> afanno.SimpleAnnotationDetail:
-            return afanno.SimpleAnnotationDetail(annotation_id=["annotation_id"], label=d["label"],
-                                                 attributes=d["attributes"], data=d["data"])
-
+    def parse(self) -> SimpleAnnotation:
         with self.__file.open(self.__info) as entry:
             anno_dict: dict = json.load(entry)
-            detail_arr: List[dict] = anno_dict["details"]
-
-            return afanno.SimpleAnnotation(project_id=anno_dict["project_id"], task_id=anno_dict["task_id"],
-                                           input_data_id=anno_dict["input_data_id"],
-                                           input_data_name=anno_dict["input_data_name"],
-                                           comment=anno_dict.get("comment",
-                                                                 ""), details=[parse_detail(d) for d in detail_arr])
+            return SimpleAnnotation.from_dict(anno_dict)
 
 
 def parse_simple_zip(zip_file_path: Path) -> Iterator[LazyAnnotationParser]:
