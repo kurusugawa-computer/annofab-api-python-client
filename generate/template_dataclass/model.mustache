@@ -17,7 +17,12 @@ class {{classname}}:
     {{#description}}{{{description}}}{{/description}}
     """
 {{#vars}}
+{{#required}}
     {{name}}: {{{dataType}}}
+{{/required}}
+{{^required}}
+    {{name}}: Optional[{{{dataType}}}]
+{{/required}}
     """{{#description}}{{{description}}}{{/description}}"""
 
 
