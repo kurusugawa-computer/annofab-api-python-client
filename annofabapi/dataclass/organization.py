@@ -1,6 +1,5 @@
 # flake8: noqa: W291
 # pylint: disable=too-many-lines,trailing-whitespace
-
 """
 annofabapiのmodelをDataClassで定義したクラス
 
@@ -15,13 +14,7 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
-# 列挙体の一覧
-from annofabapi.models import (AccountAuthority, AdditionalDataDefinitionType, AnnotationDataHoldingType,
-                               AnnotationType, AssigneeRuleOfResubmittedTask, InputDataOrder, InputDataType,
-                               InspectionStatus, OrganizationMemberRole, OrganizationMemberStatus, PricePlan,
-                               ProjectMemberRole, ProjectMemberStatus, ProjectStatus, TaskPhase, TaskStatus)
-
-
+from annofabapi.models import PricePlan
 
 
 @dataclass_json
@@ -33,25 +26,11 @@ class OrganizationActivity:
     organization_id: str
     """"""
 
-
-
     created_datetime: str
     """"""
 
-
-
     storage_usage_bytes: float
     """"""
-
-
-
-
-
-
-
-
-
-
 @dataclass_json
 @dataclass
 class OrganizationSummary:
@@ -60,16 +39,6 @@ class OrganizationSummary:
     """
     last_tasks_updated_datetime: Optional[str]
     """"""
-
-
-
-
-
-
-
-
-
-
 @dataclass_json
 @dataclass
 class Organization:
@@ -79,39 +48,20 @@ class Organization:
     organization_id: str
     """"""
 
-
-
     organization_name: str
     """"""
-
-
 
     email: str
     """"""
 
-
-
     price_plan: PricePlan
     """"""
-
-
 
     summary: OrganizationSummary
     """"""
 
-
-
     created_datetime: str
     """"""
 
-
-
     updated_datetime: str
     """"""
-
-
-
-
-
-
-

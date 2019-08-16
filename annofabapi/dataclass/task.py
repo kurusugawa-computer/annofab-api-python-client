@@ -1,6 +1,5 @@
 # flake8: noqa: W291
 # pylint: disable=too-many-lines,trailing-whitespace
-
 """
 annofabapiのmodelをDataClassで定義したクラス
 
@@ -15,13 +14,7 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
-# 列挙体の一覧
-from annofabapi.models import (AccountAuthority, AdditionalDataDefinitionType, AnnotationDataHoldingType,
-                               AnnotationType, AssigneeRuleOfResubmittedTask, InputDataOrder, InputDataType,
-                               InspectionStatus, OrganizationMemberRole, OrganizationMemberStatus, PricePlan,
-                               ProjectMemberRole, ProjectMemberStatus, ProjectStatus, TaskPhase, TaskStatus)
-
-
+from annofabapi.models import TaskPhase, TaskStatus
 
 
 @dataclass_json
@@ -33,55 +26,29 @@ class TaskHistory:
     project_id: Optional[str]
     """"""
 
-
-
     task_id: Optional[str]
     """"""
-
-
 
     task_history_id: Optional[str]
     """"""
 
-
-
     started_datetime: Optional[str]
     """"""
-
-
 
     ended_datetime: Optional[str]
     """"""
 
-
-
     accumulated_labor_time_milliseconds: Optional[str]
     """"""
-
-
 
     phase: Optional[TaskPhase]
     """"""
 
-
-
     phase_stage: Optional[int]
     """"""
 
-
-
     account_id: Optional[str]
     """"""
-
-
-
-
-
-
-
-
-
-
 @dataclass_json
 @dataclass
 class TaskHistoryShort:
@@ -91,25 +58,11 @@ class TaskHistoryShort:
     phase: Optional[TaskPhase]
     """"""
 
-
-
     phase_stage: Optional[int]
     """"""
 
-
-
     account_id: Optional[str]
     """"""
-
-
-
-
-
-
-
-
-
-
 @dataclass_json
 @dataclass
 class Task:
@@ -119,69 +72,38 @@ class Task:
     project_id: Optional[str]
     """"""
 
-
-
     task_id: Optional[str]
     """"""
-
-
 
     phase: Optional[TaskPhase]
     """"""
 
-
-
     phase_stage: Optional[int]
     """"""
-
-
 
     status: Optional[TaskStatus]
     """"""
 
-
-
     input_data_id_list: Optional[List[str]]
     """"""
-
-
 
     account_id: Optional[str]
     """"""
 
-
-
     histories_by_phase: Optional[List[TaskHistoryShort]]
     """"""
-
-
 
     work_time_span: Optional[int]
     """累計実作業時間(ミリ秒)"""
 
-
-
     number_of_rejections: Optional[int]
     """このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計  このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。 `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。  例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。 """
-
-
 
     started_datetime: Optional[str]
     """"""
 
-
-
     updated_datetime: Optional[str]
     """"""
 
-
-
     sampling: Optional[str]
     """* 'inspection_skipped' - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。 * 'inspection_stages_skipped' - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。 * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する) """
-
-
-
-
-
-
-

@@ -57,25 +57,21 @@ def test_input():
 def test_inspection():
     inspection_list, _ = service.api.get_inspections(project_id, task_id, input_data_id)
     inspection = Inspection.from_dict(inspection_list[0])
-    print(inspection)
     assert type(inspection) == Inspection
 
 def test_organization():
     dict_organization, _ = service.api.get_organization(organization_name)
     organization = Organization.from_dict(dict_organization)
-    print(organization)
     assert type(organization) == Organization
 
     dict_organization_activity, _ = service.api.get_organization_activity(organization_name)
     organization_activity = OrganizationActivity.from_dict(dict_organization_activity)
-    print(organization_activity)
     assert type(organization_activity) == OrganizationActivity
 
 
 def test_organization_member():
     dict_organization_member, _ = service.api.get_organization_member(organization_name, annofab_user_id)
     organization_member = OrganizationMember.from_dict(dict_organization_member)
-    print(organization_member)
     assert type(organization_member) == OrganizationMember
 
 def test_project():
@@ -86,14 +82,12 @@ def test_project():
 def test_project_member():
     dict_project_member, _ = service.api.get_project_member(project_id, annofab_user_id)
     project_member = ProjectMember.from_dict(dict_project_member)
-    print(project_member)
     assert type(project_member) == ProjectMember
 
 
 def test_supplementary():
     supplementary_data_list, _ = service.api.get_supplementary_data_list(project_id, input_data_id)
     supplementary_data = SupplementaryData.from_dict(supplementary_data_list[0])
-    print(supplementary_data)
     assert type(supplementary_data) == SupplementaryData
 
 
@@ -104,5 +98,4 @@ def test_task():
 
     task_histories, _ = service.api.get_task_histories(project_id, task_id)
     task_history = TaskHistory.from_dict(task_histories[0])
-    print(task_history)
     assert type(task_history) == TaskHistory

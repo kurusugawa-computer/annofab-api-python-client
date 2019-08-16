@@ -27,8 +27,6 @@ class Keybind:
 
     alt: bool
     """"""
-
-
 @dataclass_json
 @dataclass
 class LabelBoundingBoxMetadata:
@@ -55,8 +53,6 @@ class LabelBoundingBoxMetadata:
 
     tolerance: int
     """"""
-
-
 @dataclass_json
 @dataclass
 class LabelSegmentationMetadata:
@@ -74,8 +70,6 @@ class LabelSegmentationMetadata:
 
     tolerance: int
     """"""
-
-
 @dataclass_json
 @dataclass
 class InternationalizationMessageMessages:
@@ -87,8 +81,6 @@ class InternationalizationMessageMessages:
 
     message: str
     """"""
-
-
 @dataclass_json
 @dataclass
 class InternationalizationMessage:
@@ -100,8 +92,6 @@ class InternationalizationMessage:
 
     default_lang: str
     """"""
-
-
 @dataclass_json
 @dataclass
 class InspectionPhrase:
@@ -113,7 +103,6 @@ class InspectionPhrase:
 
     text: InternationalizationMessage
     """"""
-
 @dataclass_json
 @dataclass
 class AnnotationSpecsHistory:
@@ -134,8 +123,6 @@ class AnnotationSpecsHistory:
 
     comment: str
     """"""
-
-
 @dataclass_json
 @dataclass
 class Color:
@@ -150,8 +137,6 @@ class Color:
 
     blue: int
     """"""
-
-
 @dataclass_json
 @dataclass
 class AdditionalDataDefinitionChoices:
@@ -166,7 +151,6 @@ class AdditionalDataDefinitionChoices:
 
     keybind: List[Keybind]
     """"""
-
 @dataclass_json
 @dataclass
 class AdditionalDataDefinition:
@@ -199,7 +183,6 @@ class AdditionalDataDefinition:
 
     required: bool
     """リンク属性において、入力を必須とするかどうか"""
-
 @dataclass_json
 @dataclass
 class Label:
@@ -235,9 +218,6 @@ class Label:
 
     allow_out_of_image_bounds: bool
     """"""
-
-
-
 @dataclass_json
 @dataclass
 class AnnotationSpecs:
