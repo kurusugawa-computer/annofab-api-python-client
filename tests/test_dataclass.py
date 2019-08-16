@@ -13,6 +13,7 @@ from distutils.util import strtobool
 import annofabapi
 import annofabapi.utils
 from annofabapi.dataclass.task import Task, TaskHistory
+from annofabapi.dataclass.annotation import SingleAnnotation, SimpleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
@@ -49,6 +50,19 @@ my_account_id = service.api.get_my_account()[0]['account_id']
 organization_name = service.api.get_organization_of_project(project_id)[0]['organization_name']
 
 annofab_user_id = service.api.login_user_id
+
+
+def test_annotation():
+    annotation_list = service.wrapper.get_all_annotation_list(project_id, query_params={'query': {'task_id': task_id}})
+    single_annotation = SingleAnnotation.from_dict(annotation_list[0])
+    print(single_annotation)
+    assert type(single_annotation) == SingleAnnotation
+
+    dict_simple_annotation, _ = service.api.get_annotation(project_id, task_id, input_data_id)
+    simple_annotation = SimpleAnnotation.from_dict(dict_simple_annotation)
+    print(simple_annotation)
+    assert type(simple_annotation) == SimpleAnnotation
+
 
 def test_annotation_specs():
     dict_annotation_specs, _ = service.api.get_annotation_specs(project_id)
