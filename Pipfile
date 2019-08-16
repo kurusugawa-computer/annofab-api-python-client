@@ -1,10 +1,12 @@
+# Only ASCII for Windows
+
 [[source]]
 url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
 [packages]
-# setup.pyのinstall_requiresに記述
+# Refer to `install_requires` in setup.py
 
 [dev-packages]
 annofabapi = {editable = true,path = "."} # For reading setup.py
@@ -17,9 +19,10 @@ mypy = "*"
 flake8 = "*"
 pylint = "*"
 twine = "*"
+# Match sphinx version at ReadTheDocs
 sphinx = "==1.8.5"
 autoflake = "*"
-# バージョンの競合が発生しているので、一時的にバージョンを指定する
+# Specify version temporarily
 docutils = "<=0.15.0"
 
 [pipenv]
