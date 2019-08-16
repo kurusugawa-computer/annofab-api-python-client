@@ -111,8 +111,14 @@ cat partial-header/dataclass/common.py partial-header/dataclass/organization_mem
 declare -a model_files=(${MODELS_DIR}/project_summary.py ${MODELS_DIR}/project_configuration.py ${MODELS_DIR}/project.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/project.py  \
  ${model_files[@]} > ../annofabapi/dataclass/project.py
-
+# swagger.yamlの間違いに対する暫定対応
 sed -e "s/status: ProjectStatus/project_status: ProjectStatus/" ../annofabapi/dataclass/project.py --in-place
+
+# Project Member
+declare -a model_files=(${MODELS_DIR}/project_member.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/project_member.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/project_member.py
+
 
 rm -Rf out/openapi_client
 
