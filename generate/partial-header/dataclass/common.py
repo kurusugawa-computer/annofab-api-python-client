@@ -14,10 +14,3 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
 from dataclasses_json import dataclass_json
-
-# 列挙体の一覧
-from annofabapi.models import (AccountAuthority, AdditionalDataDefinitionType, AnnotationDataHoldingType,
-                               AnnotationType, AssigneeRuleOfResubmittedTask, InputDataOrder, InputDataType,
-                               InspectionStatus, OrganizationMemberRole, OrganizationMemberStatus, PricePlan,
-                               ProjectMemberRole, ProjectMemberStatus, ProjectStatus, TaskPhase, TaskStatus)
-
