@@ -6,14 +6,16 @@ import configparser
 import datetime
 import logging
 import os
+import json
 import time
 import uuid
+from pathlib import Path
 from distutils.util import strtobool
 
 import annofabapi
 import annofabapi.utils
 from annofabapi.dataclass.task import Task, TaskHistory
-from annofabapi.dataclass.annotation import SingleAnnotation, SimpleAnnotation
+from annofabapi.dataclass.annotation import SingleAnnotation, SimpleAnnotation, FullAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
@@ -35,8 +37,8 @@ input_data_id = inifile.get('annofab', 'input_data_id')
 should_execute_job_api: bool = strtobool(inifile.get('annofab', 'should_execute_job_api'))
 should_print_log_message: bool = strtobool(inifile.get('annofab', 'should_print_log_message'))
 
-test_dir = './tests/data'
-out_dir = './tests/out'
+test_dir = Path('./tests/data')
+
 
 if should_print_log_message:
     logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
@@ -55,13 +57,19 @@ annofab_user_id = service.api.login_user_id
 def test_annotation():
     annotation_list = service.wrapper.get_all_annotation_list(project_id, query_params={'query': {'task_id': task_id}})
     single_annotation = SingleAnnotation.from_dict(annotation_list[0])
-    print(single_annotation)
     assert type(single_annotation) == SingleAnnotation
 
     dict_simple_annotation, _ = service.api.get_annotation(project_id, task_id, input_data_id)
     simple_annotation = SimpleAnnotation.from_dict(dict_simple_annotation)
-    print(simple_annotation)
     assert type(simple_annotation) == SimpleAnnotation
+
+    full_annotaion_json = test_dir / "full-annotation.json"
+    with full_annotaion_json.open() as f:
+        dict_full_annotation = json.load(f)
+
+    full_annotion = FullAnnotation.from_dict(dict_full_annotation)
+    assert type(full_annotion) == FullAnnotation
+
 
 
 def test_annotation_specs():
