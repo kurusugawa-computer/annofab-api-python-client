@@ -13,6 +13,7 @@ from distutils.util import strtobool
 import annofabapi
 import annofabapi.utils
 from annofabapi.dataclass.task import Task, TaskHistory
+from annofabapi.dataclass.input import InputData
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
@@ -39,6 +40,12 @@ my_account_id = service.api.get_my_account()[0]['account_id']
 organization_name = service.api.get_organization_of_project(project_id)[0]['organization_name']
 
 annofab_user_id = service.api.login_user_id
+
+def test_input():
+    input_data_list = service.wrapper.get_all_input_data_list(project_id, query_params={'task_id':task_id})
+    input_data = InputData.from_dict(input_data_list[0])
+    print(input_data)
+    assert type(input_data) == InputData
 
 
 def test_task():
