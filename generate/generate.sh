@@ -124,6 +124,13 @@ declare -a model_files=(${MODELS_DIR}/supplementary_data.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/supplementary.py  \
  ${model_files[@]} > ../annofabapi/dataclass/supplementary.py
 
+# Task
+declare -a model_files=(${MODELS_DIR}/task_history.py ${MODELS_DIR}/task_history_short.py ${MODELS_DIR}/task.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/task.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/task.py
+# swagger.yamlの間違いに対する暫定対応
+sed -e "s/work_timespan/work_time_span/" ../annofabapi/dataclass/task.py --in-place
+
 
 rm -Rf out/openapi_client
 
