@@ -2,3 +2,4 @@ from annofabapi.models import (AnnotationDataHoldingType, InternationalizationMe
                                AnnotationType, TaskPhase, TaskStatus)
 
 OneOfstringFullAnnotationData = Dict[str, Any]
+FullAnnotationData = Dict[str, Any]
