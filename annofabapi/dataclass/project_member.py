@@ -1,13 +1,12 @@
 # flake8: noqa: W291
 # pylint: disable=too-many-lines,trailing-whitespace
+
 """
-annofabapiのmodelをDataClassで定義したクラス。(swagger.yamlの ``components.schemes`` )
+annofabapiのmodelをDataClassで定義したクラス
 
 Note:
     このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照.
-
     oneOf, allOfなどは正しく表現できない可能性がある。
-
 """
 
 import warnings  # pylint: disable=unused-import
@@ -16,41 +15,67 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
+# 列挙体の一覧
 from annofabapi.models import (AccountAuthority, AdditionalDataDefinitionType, AnnotationDataHoldingType,
                                AnnotationType, AssigneeRuleOfResubmittedTask, InputDataOrder, InputDataType,
                                InspectionStatus, OrganizationMemberRole, OrganizationMemberStatus, PricePlan,
                                ProjectMemberRole, ProjectMemberStatus, ProjectStatus, TaskPhase, TaskStatus)
 
 
+
+
 @dataclass_json
 @dataclass
 class ProjectMember:
     """
-
+    
     """
     project_id: str
     """"""
 
+
+
     account_id: str
     """"""
+
+
 
     user_id: str
     """"""
 
+
+
     username: str
     """"""
+
+
 
     member_status: ProjectMemberStatus
     """"""
 
+
+
     member_role: ProjectMemberRole
     """"""
 
-    updated_datetime: str
+
+
+    updated_datetime: Optional[str]
     """"""
 
-    created_datetime: str
+
+
+    created_datetime: Optional[str]
     """"""
 
-    sampling_inspection_rate: int
+
+
+    sampling_inspection_rate: Optional[int]
     """メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。"""
+
+
+
+
+
+
+
