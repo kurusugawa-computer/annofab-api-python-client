@@ -89,6 +89,23 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
 
 MODELS_DIR=out/openapi_client/models
 
+# Annotation
+declare -a model_files=(${MODELS_DIR}/point.py \
+ ${MODELS_DIR}/additional_data.py \
+ ${MODELS_DIR}/annotation_detail.py \
+ ${MODELS_DIR}/annotation.py \
+ ${MODELS_DIR}/full_annotation_additional_data.py \
+ ${MODELS_DIR}/full_annotation_data.py \
+ ${MODELS_DIR}/full_annotation_detail.py \
+ ${MODELS_DIR}/full_annotation.py \
+ ${MODELS_DIR}/simple_annotation_detail.py \
+ ${MODELS_DIR}/simple_annotation.py \
+ ${MODELS_DIR}/single_annotation_detail.py \
+ ${MODELS_DIR}/single_annotation.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/annotation.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/annotation.py
+
+
 # Annotation Specs
 declare -a model_files=(${MODELS_DIR}/keybind.py \
  ${MODELS_DIR}/label_bounding_box_metadata.py \
