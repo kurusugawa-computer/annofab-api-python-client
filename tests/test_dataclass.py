@@ -15,6 +15,7 @@ import annofabapi.utils
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
+from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 
@@ -54,6 +55,17 @@ def test_inspection():
     inspection = Inspection.from_dict(inspection_list[0])
     print(inspection)
     assert type(inspection) == Inspection
+
+def test_organization():
+    dict_organization, _ = service.api.get_organization(organization_name)
+    organization = Organization.from_dict(dict_organization)
+    print(organization)
+    assert type(organization) == Organization
+
+    dict_organization_activity, _ = service.api.get_organization_activity(organization_name)
+    organization_activity = OrganizationActivity.from_dict(dict_organization_activity)
+    print(organization_activity)
+    assert type(organization_activity) == OrganizationActivity
 
 
 def test_task():
