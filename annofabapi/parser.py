@@ -5,6 +5,7 @@ from typing import Iterator, List, Optional
 
 from annofabapi.dataclass.annotation import SimpleAnnotation
 
+
 class LazyAnnotationParser:
     __file: zipfile.ZipFile
     __info: zipfile.ZipInfo
@@ -47,10 +48,11 @@ class LazyAnnotationParser:
     def parse(self) -> SimpleAnnotation:
         with self.__file.open(self.__info) as entry:
             anno_dict: dict = json.load(entry)
-            return SimpleAnnotation.from_dict(anno_dict)
+            # mypyの "has no attribute "from_dict" " をignore
+            return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
 
 
-def parse_simple_zip(zip_file_path: Path) -> Iterator[LazyAnnotationParser]:
+def parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[LazyAnnotationParser]:
     """ 引数のzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     大量のファイルを含むzipファイルを展開せず、task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
@@ -83,5 +85,3 @@ def parse_simple_zip(zip_file_path: Path) -> Iterator[LazyAnnotationParser]:
             parser = lazy_parser(file, info)
             if parser is not None:
                 yield parser
-
-# TODO zip展開したディレクトリもparseできるようにする
