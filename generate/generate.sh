@@ -89,6 +89,11 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
 
 MODELS_DIR=out/openapi_client/models
 
+############################
+# DataClassを作成
+############################
+
+
 # Annotation
 declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/additional_data.py \
@@ -127,6 +132,7 @@ declare -a model_files=(${MODELS_DIR}/resolution.py ${MODELS_DIR}/input_data.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/input.py  \
  ${model_files[@]} > ../annofabapi/dataclass/input.py
 
+# Inspection
 declare -a model_files=(${MODELS_DIR}/inspection.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/inspection.py  \
  ${model_files[@]} > ../annofabapi/dataclass/inspection.py
