@@ -157,7 +157,7 @@ class SimpleAnnotationDetail:
     data: Optional[FullAnnotationData]
     """"""
 
-    attributes: Optional[object]
+    attributes: Optional[Dict]
     """キーに属性の名前、値に各属性の値が入った辞書構造です。 """
 @dataclass_json
 @dataclass
