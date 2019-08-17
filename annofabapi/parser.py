@@ -1,16 +1,20 @@
 import json
 import zipfile
+import os
 from pathlib import Path
 from typing import Iterator, List, Optional
 
 from annofabapi.dataclass.annotation import SimpleAnnotation
 
+def _trim_extension(file_path: str) -> str:
+    """ファイルパスから拡張子を除去した文字列を返す"""
+    return os.path.splitext(file_path)[0]
 
 class LazyAnnotationParser:
     __file: zipfile.ZipFile
     __info: zipfile.ZipInfo
     __task_id: str
-    __input_data_name: str
+    __data_name_base: str
     __expected_data_name: str
 
     def __init__(self, file: zipfile.ZipFile, info: zipfile.ZipInfo, task_id: str, data_name_base: str):
@@ -51,6 +55,22 @@ class LazyAnnotationParser:
             # mypyの "has no attribute "from_dict" " をignore
             return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
 
+    def _get_outer_file_path(self, data_uri: str) -> str:
+        return _trim_extension(self.__info.filename) + "/" + data_uri
+
+    def open_outer_file(self, data_uri: str, **kwargs):
+        """
+        外部ファイル（塗りつぶし画像など）を開き、対応する ファイルオブジェクトを返す。
+        Args:
+            data_uri: 外部ファイルのパス(input_data_name ディレクトリからのパス）
+
+        Returns:
+            外部ファイルのファイルオブジェクト
+
+        """
+        outer_file_path = self._get_outer_file_path(data_uri)
+        return self.__file.open(outer_file_path, **kwargs)
+
 
 def parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[LazyAnnotationParser]:
     """ 引数のzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
@@ -71,7 +91,7 @@ def parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[LazyAnnotationP
             return None
 
         task_id = paths[0]
-        input_data_name = paths[1][0:-5]  # .jsonを取り除いたものがdata_name
+        input_data_name = _trim_extension(paths[1])  # .jsonを取り除いたものがdata_name
         return LazyAnnotationParser(zip_file, info, task_id, input_data_name)
 
     with zipfile.ZipFile(zip_file_path, mode="r") as file:
