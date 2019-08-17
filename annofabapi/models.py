@@ -834,7 +834,7 @@ Kyes of Dict
     
 * message: str
     エラーの概要
-* ext: object
+* ext: Dict
     補足情報
 
 """
@@ -847,7 +847,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -860,7 +860,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -873,7 +873,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -886,7 +886,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -899,7 +899,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -912,7 +912,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -925,7 +925,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -938,7 +938,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -951,7 +951,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -964,7 +964,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -977,7 +977,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -990,7 +990,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -1003,7 +1003,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -1016,7 +1016,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -1029,7 +1029,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -1042,7 +1042,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -1055,7 +1055,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: object
+* context: Dict
     内部補足情報
 
 """
@@ -1852,9 +1852,9 @@ Kyes of Dict
     
 * job_status: str
     
-* job_execution: object
+* job_execution: Dict
     ジョブの内部情報
-* job_detail: object
+* job_detail: Dict
     ジョブ結果の内部情報
 * created_datetime: str
     
@@ -2621,7 +2621,7 @@ Kyes of Dict
     個々のアノテーションにつけられたIDです。 
 * data: FullAnnotationData
     
-* attributes: object
+* attributes: Dict
     キーに属性の名前、値に各属性の値が入った辞書構造です。 
 
 """
@@ -3151,7 +3151,7 @@ WebhookTestRequest = Dict[str, Any]
 
 Kyes of Dict
 
-* placeholders: object
+* placeholders: Dict
     プレースホルダ名と置換する値
 
 """
