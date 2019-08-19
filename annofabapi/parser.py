@@ -1,6 +1,7 @@
 import json
 import zipfile
 import os
+import abc
 from pathlib import Path
 from typing import Iterator, List, Optional
 
@@ -10,7 +11,35 @@ def _trim_extension(file_path: str) -> str:
     """ファイルパスから拡張子を除去した文字列を返す"""
     return os.path.splitext(file_path)[0]
 
-class LazyAnnotationParser:
+
+
+class LazySimpleAnnotationParser(abc.ABC):
+    """
+    Simple Annotationの遅延Parser
+
+    Args:
+        task_id:
+        data_name_base: json_fileの拡張子を取り除いた部分
+
+    """
+
+    __task_id: str
+    __data_name_base: str
+    __expected_data_name: str
+
+    def __init__(self, task_id: str, data_name_base: str):
+        self.__task_id = task_id
+        self.__data_name_base = data_name_base
+        self.__expected_data_name = data_name_base.replace("__", "/")
+
+
+    # @abc.abstractmethod
+    # def _request_wrapper(self, http_method: str, url_path: str, query_params: Optional[Dict[str, Any]] = None,
+    #                      header_params: Optional[Dict[str, Any]] = None,
+    #                      request_body: Optional[Any] = None) -> Tuple[Any, requests.Response]:
+    #     pass
+
+class LazyAnnotationZipParser:
     __file: zipfile.ZipFile
     __info: zipfile.ZipInfo
     __task_id: str
@@ -55,8 +84,66 @@ class LazyAnnotationParser:
             # mypyの "has no attribute "from_dict" " をignore
             return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
 
-    def _get_outer_file_path(self, data_uri: str) -> str:
-        return _trim_extension(self.__info.filename) + "/" + data_uri
+    def open_outer_file(self, data_uri: str, **kwargs):
+        """
+        外部ファイル（塗りつぶし画像など）を開き、対応する ファイルオブジェクトを返す。
+        Args:
+            data_uri: 外部ファイルのパス(input_data_name ディレクトリからのパス）
+
+        Returns:
+            外部ファイルのファイルオブジェクト
+
+        """
+        outer_file_path = _trim_extension(self.__info.filename) + "/" + data_uri
+        return self.__file.open(outer_file_path, **kwargs)
+
+
+
+
+
+
+class LazyAnnotationDirParser:
+    __json_file: Path
+    __task_id: str
+    __data_name_base: str
+    __expected_data_name: str
+
+    def __init__(self, json_file: Path, task_id: str):
+        self.json_file = json_file
+        self.__task_id = task_id
+        self.__data_name_base = json_file.stem
+        self.__expected_data_name = json_file.stem.replace("__", "/")
+
+    @property
+    def task_id(self) -> str:
+        return self.__task_id
+
+    @property
+    def expected_input_data_name(self) -> str:
+        """ おそらく正しい、input_data_nameです。
+
+         zipファイル内のファイル名は、input_data_nameになっています。
+         しかし、'/'がinput_data_nameに含まれる場合'__'に変換されて格納されています。
+         そのため、真に正しいinput_data_nameはファイルの中身をparseしないと見つかりません。
+         """
+        return self.__expected_data_name
+
+    def can_match_input_data_name(self, input_data_name: str) -> bool:
+        """ 引数に与えたinput_data_nameが、parse結果のinput_data_nameと一致し得るかどうかを判定します。
+
+        Args:
+            input_data_name: テストしたい input_at_name
+
+        Returns: Trueの場合、input_data_nameが真に一致する可能性がある。 Falseの場合、一致しない
+
+        """
+        return input_data_name.replace("/", "__") == self.__data_name_base
+
+    def parse(self) -> SimpleAnnotation:
+        with open(str(self.__json_file)) as f:
+            anno_dict: dict = json.load(f)
+            return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
+
 
     def open_outer_file(self, data_uri: str, **kwargs):
         """
@@ -68,9 +155,65 @@ class LazyAnnotationParser:
             外部ファイルのファイルオブジェクト
 
         """
-        outer_file_path = self._get_outer_file_path(data_uri)
-        return self.__file.open(outer_file_path, **kwargs)
+        outer_file_path = _trim_extension(str(self.__json_file)) + "/" + data_uri
+        return open(outer_file_path, **kwargs)
 
+
+def parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[LazyAnnotationParser]:
+    """ アノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
+
+    task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
+
+    Args:
+        annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
+
+    Yields:
+        annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
+    """
+    def lazy_parser(zip_file: zipfile.ZipFile, info: zipfile.ZipInfo) -> Optional[LazyAnnotationParser]:
+        paths = [p for p in info.filename.split("/") if len(p) != 0]
+        if len(paths) != 2:
+            return None
+        if not paths[1].endswith(".json"):
+            return None
+
+        task_id = paths[0]
+        input_data_name = paths[1][0:-5]  # .jsonを取り除いたものがdata_name
+        return LazyAnnotationParser(zip_file, info, task_id, input_data_name)
+
+
+    for task_dir in annotaion_dir_path.iterdir():
+        if not task_dir.is_dir():
+            continue
+
+        for input_data_file in task_dir.iterdir():
+            if not input_data_file.is_file():
+                continue
+
+            if not input_data_file.suffix == ".json":
+                return None
+
+
+
+            input_data_dir = task_dir / input_data_json.stem
+            output_file = output_dir_path / task_dir.name / f"{str(input_data_json.stem)}.{output_image_extension}"
+
+            sub_input_data_list = self._create_sub_input_data_list(
+                sub_annotation_dir_list, input_data_json) if (sub_annotation_dir_list is not None) else None
+
+            try:
+
+    with zipfile.ZipFile(zip_file_path, mode="r") as file:
+        info_list: List[zipfile.ZipInfo] = file.infolist()
+
+        # 内包表記でiterator作りたいところだけど、withを抜けちゃうので yieldで
+        for info in info_list:
+            if info.is_dir():
+                continue
+
+            parser = lazy_parser(file, info)
+            if parser is not None:
+                yield parser
 
 def parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[LazyAnnotationParser]:
     """ 引数のzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
