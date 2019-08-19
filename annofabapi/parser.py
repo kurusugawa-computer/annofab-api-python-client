@@ -1,16 +1,16 @@
-import json
-import zipfile
-import os
 import abc
+import json
+import os
+import zipfile
 from pathlib import Path
 from typing import Iterator, List, Optional
 
 from annofabapi.dataclass.annotation import SimpleAnnotation
 
+
 def _trim_extension(file_path: str) -> str:
     """ファイルパスから拡張子を除去した文字列を返す"""
     return os.path.splitext(file_path)[0]
-
 
 
 class LazySimpleAnnotationParser(abc.ABC):
@@ -31,7 +31,6 @@ class LazySimpleAnnotationParser(abc.ABC):
         self.__task_id = task_id
         self.__data_name_base = data_name_base
         self.__expected_data_name = data_name_base.replace("__", "/")
-
 
     @property
     def task_id(self) -> str:
@@ -58,7 +57,6 @@ class LazySimpleAnnotationParser(abc.ABC):
         """
         return input_data_name.replace("/", "__") == self.__data_name_base
 
-
     @abc.abstractmethod
     def parse(self) -> SimpleAnnotation:
         pass
@@ -74,7 +72,6 @@ class LazySimpleAnnotationParser(abc.ABC):
             外部ファイルのファイルオブジェクト
 
         """
-        pass
 
 
 class LazySimpleAnnotationZipParser(LazySimpleAnnotationParser):
@@ -99,7 +96,6 @@ class LazySimpleAnnotationZipParser(LazySimpleAnnotationParser):
     def open_outer_file(self, data_uri: str, **kwargs):
         outer_file_path = _trim_extension(self.__info.filename) + "/" + data_uri
         return self.__file.open(outer_file_path, **kwargs)
-
 
 
 class LazySimpleAnnotationDirParser(LazySimpleAnnotationParser):
@@ -144,7 +140,7 @@ def parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[LazySimple
                 continue
 
             if not input_data_file.suffix == ".json":
-                return None
+                continue
 
             parser = LazySimpleAnnotationDirParser(input_data_file, task_id)
             yield parser
