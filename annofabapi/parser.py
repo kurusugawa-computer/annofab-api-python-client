@@ -76,6 +76,9 @@ class LazySimpleAnnotationParser(LazyAnnotationParser):
     """
     @abc.abstractmethod
     def parse(self) -> SimpleAnnotation:
+        """
+        入力データのJSONファイルをパースする。
+        """
         pass
 
 
@@ -129,6 +132,10 @@ class LazyFullAnnotationParser(LazyAnnotationParser):
     """
     @abc.abstractmethod
     def parse(self) -> FullAnnotation:
+        """
+        入力データのJSONファイルをパースする。
+        """
+
         pass
 
 
@@ -194,32 +201,28 @@ def __parse_annotation_dir(annotaion_dir_path: Path, clazz) -> Iterator[Any]:
 
 
 def parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[LazySimpleAnnotationParser]:
-    """ アノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
-
-    task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
+    """ Simpleアノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     Args:
         annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
 
     Yields:
-        annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
+        annotationの遅延Parseが可能なインスタンス列。
     """
 
-    return __parse_annotation_dir(annotaion_dir_path, LazySimpleAnnotationDirParser.__class__)
+    return __parse_annotation_dir(annotaion_dir_path, LazySimpleAnnotationDirParser)
 
 
 def parse_full_annotation_dir(annotaion_dir_path: Path) -> Iterator[LazySimpleAnnotationParser]:
-    """ アノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
-
-    task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
+    """ Fullアノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     Args:
         annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
 
     Yields:
-        annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
+        annotationの遅延Parseが可能なインスタンス列。
     """
-    return __parse_annotation_dir(annotaion_dir_path, LazyFullAnnotationDirParser.__class__)
+    return __parse_annotation_dir(annotaion_dir_path, LazyFullAnnotationDirParser)
 
 
 def __parse_annotation_zip(zip_file_path: Path, clazz) -> Iterator[Any]:
@@ -248,7 +251,7 @@ def __parse_annotation_zip(zip_file_path: Path, clazz) -> Iterator[Any]:
 
 
 def parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[LazySimpleAnnotationParser]:
-    """ 引数のzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
+    """ 引数のSimpleアノテーションzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     大量のファイルを含むzipファイルを展開せず、task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
 
@@ -258,11 +261,11 @@ def parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[LazySimpleAnnot
     Yields:
         annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
     """
-    return __parse_annotation_zip(zip_file_path, LazySimpleAnnotationZipParser.__class__)
+    return __parse_annotation_zip(zip_file_path, LazySimpleAnnotationZipParser)
 
 
 def parse_full_annotation_zip(zip_file_path: Path) -> Iterator[LazyFullAnnotationParser]:
-    """ 引数のzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
+    """ 引数のFullアノテーションzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     大量のファイルを含むzipファイルを展開せず、task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
 
@@ -272,4 +275,4 @@ def parse_full_annotation_zip(zip_file_path: Path) -> Iterator[LazyFullAnnotatio
     Yields:
         annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
     """
-    return __parse_annotation_zip(zip_file_path, LazyFullAnnotationZipParser.__class__)
+    return __parse_annotation_zip(zip_file_path, LazyFullAnnotationZipParser)

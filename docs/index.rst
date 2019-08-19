@@ -11,6 +11,7 @@ annofabapi : AnnoFab API Client Library for Python
    :caption: Contents:
 
    annofabapi
+   parser
 
 
 Indices and tables
