@@ -26,7 +26,11 @@ setup(
     license='MIT',
     keywords='annofab api',
     url='https://github.com/kurusugawa-computer/annofab-api-python-client',
-    install_requires=['requests', 'python-dateutil', 'backoff', 'dataclasses-json'],
+    install_requires=['requests',
+                      'python-dateutil',
+                      'backoff',
+                      'dataclasses; python_version<"3.7"',
+                      'dataclasses-json'],
     python_requires='>=3.6',
     classifiers=[
         "Development Status :: 4 - Beta",
