@@ -37,6 +37,13 @@ class LazyAnnotationParser(abc.ABC):
         return self.__task_id
 
     @property
+    def json_file_basename(self) -> str:
+        """
+        JSONファイルの拡張子を取り除いた部分。
+        """
+        return self.__data_name_base
+
+    @property
     def expected_input_data_name(self) -> str:
         """ おそらく正しい、input_data_nameです。
 
