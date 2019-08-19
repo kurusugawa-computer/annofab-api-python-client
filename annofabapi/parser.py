@@ -3,9 +3,9 @@ import json
 import os
 import zipfile
 from pathlib import Path
-from typing import Iterator, List, Optional
+from typing import Any, Iterator, List, Optional
 
-from annofabapi.dataclass.annotation import SimpleAnnotation
+from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 
 
 def _trim_extension(file_path: str) -> str:
@@ -13,9 +13,9 @@ def _trim_extension(file_path: str) -> str:
     return os.path.splitext(file_path)[0]
 
 
-class LazySimpleAnnotationParser(abc.ABC):
+class LazyAnnotationParser(abc.ABC):
     """
-    Simple Annotationの遅延Parser
+    Annotation(Simple/Full)の遅延Parser
 
     Args:
         task_id:
@@ -58,10 +58,6 @@ class LazySimpleAnnotationParser(abc.ABC):
         return input_data_name.replace("/", "__") == self.__data_name_base
 
     @abc.abstractmethod
-    def parse(self) -> SimpleAnnotation:
-        pass
-
-    @abc.abstractmethod
     def open_outer_file(self, data_uri: str, **kwargs):
         """
         外部ファイル（塗りつぶし画像など）を開き、対応する ファイルオブジェクトを返す。
@@ -72,6 +68,15 @@ class LazySimpleAnnotationParser(abc.ABC):
             外部ファイルのファイルオブジェクト
 
         """
+
+
+class LazySimpleAnnotationParser(LazyAnnotationParser):
+    """
+    Simple Annotationの遅延Parser
+    """
+    @abc.abstractmethod
+    def parse(self) -> SimpleAnnotation:
+        pass
 
 
 class LazySimpleAnnotationZipParser(LazySimpleAnnotationParser):
@@ -118,18 +123,60 @@ class LazySimpleAnnotationDirParser(LazySimpleAnnotationParser):
         return open(outer_file_path, **kwargs)
 
 
-def parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[LazySimpleAnnotationParser]:
-    """ アノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
+class LazyFullAnnotationParser(LazyAnnotationParser):
+    """
+    Full Annotationの遅延Parser
+    """
+    @abc.abstractmethod
+    def parse(self) -> FullAnnotation:
+        pass
 
-    task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
 
-    Args:
-        annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
-
-    Yields:
-        annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
+class LazyFullAnnotationZipParser(LazyFullAnnotationParser):
+    """
+    Lazy Annotationのzipファイルの遅延Parser
     """
 
+    __file: zipfile.ZipFile
+    __info: zipfile.ZipInfo
+
+    def __init__(self, file: zipfile.ZipFile, info: zipfile.ZipInfo, task_id: str, data_name_base: str):
+        self.__file = file
+        self.__info = info
+        super().__init__(task_id, data_name_base)
+
+    def parse(self) -> FullAnnotation:
+        with self.__file.open(self.__info) as entry:
+            anno_dict: dict = json.load(entry)
+            # mypyの "has no attribute "from_dict" " をignore
+            return FullAnnotation.from_dict(anno_dict)  # type: ignore
+
+    def open_outer_file(self, data_uri: str, **kwargs):
+        outer_file_path = _trim_extension(self.__info.filename) + "/" + data_uri
+        return self.__file.open(outer_file_path, **kwargs)
+
+
+class LazyFullAnnotationDirParser(LazyFullAnnotationParser):
+    """
+    Full Annotationのディレクトリの遅延Parser
+    """
+    __json_file: Path
+
+    def __init__(self, json_file: Path, task_id: str):
+        self.json_file = json_file
+        super().__init__(task_id, json_file.stem)
+
+    def parse(self) -> FullAnnotation:
+        with self.__json_file.open() as f:
+            anno_dict: dict = json.load(f)
+            return FullAnnotation.from_dict(anno_dict)  # type: ignore
+
+    def open_outer_file(self, data_uri: str, **kwargs):
+        outer_file_path = _trim_extension(str(self.__json_file)) + "/" + data_uri
+        return open(outer_file_path, **kwargs)
+
+
+def __parse_annotation_dir(annotaion_dir_path: Path, clazz) -> Iterator[Any]:
     for task_dir in annotaion_dir_path.iterdir():
         if not task_dir.is_dir():
             continue
@@ -142,8 +189,62 @@ def parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[LazySimple
             if not input_data_file.suffix == ".json":
                 continue
 
-            parser = LazySimpleAnnotationDirParser(input_data_file, task_id)
+            parser = clazz(input_data_file, task_id)
             yield parser
+
+
+def parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[LazySimpleAnnotationParser]:
+    """ アノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
+
+    task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
+
+    Args:
+        annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
+
+    Yields:
+        annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
+    """
+
+    return __parse_annotation_dir(annotaion_dir_path, LazySimpleAnnotationDirParser.__class__)
+
+
+def parse_full_annotation_dir(annotaion_dir_path: Path) -> Iterator[LazySimpleAnnotationParser]:
+    """ アノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
+
+    task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
+
+    Args:
+        annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
+
+    Yields:
+        annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
+    """
+    return __parse_annotation_dir(annotaion_dir_path, LazyFullAnnotationDirParser.__class__)
+
+
+def __parse_annotation_zip(zip_file_path: Path, clazz) -> Iterator[Any]:
+    def lazy_parser(zip_file: zipfile.ZipFile, info: zipfile.ZipInfo) -> Optional[Any]:
+        paths = [p for p in info.filename.split("/") if len(p) != 0]
+        if len(paths) != 2:
+            return None
+        if not paths[1].endswith(".json"):
+            return None
+
+        task_id = paths[0]
+        input_data_name = _trim_extension(paths[1])  # .jsonを取り除いたものがdata_name
+        return clazz(zip_file, info, task_id, input_data_name)
+
+    with zipfile.ZipFile(zip_file_path, mode="r") as file:
+        info_list: List[zipfile.ZipInfo] = file.infolist()
+
+        # 内包表記でiterator作りたいところだけど、withを抜けちゃうので yieldで
+        for info in info_list:
+            if info.is_dir():
+                continue
+
+            parser = lazy_parser(file, info)
+            if parser is not None:
+                yield parser
 
 
 def parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[LazySimpleAnnotationParser]:
@@ -157,25 +258,18 @@ def parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[LazySimpleAnnot
     Yields:
         annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
     """
-    def lazy_parser(zip_file: zipfile.ZipFile, info: zipfile.ZipInfo) -> Optional[LazySimpleAnnotationParser]:
-        paths = [p for p in info.filename.split("/") if len(p) != 0]
-        if len(paths) != 2:
-            return None
-        if not paths[1].endswith(".json"):
-            return None
+    return __parse_annotation_zip(zip_file_path, LazySimpleAnnotationZipParser.__class__)
 
-        task_id = paths[0]
-        input_data_name = _trim_extension(paths[1])  # .jsonを取り除いたものがdata_name
-        return LazySimpleAnnotationZipParser(zip_file, info, task_id, input_data_name)
 
-    with zipfile.ZipFile(zip_file_path, mode="r") as file:
-        info_list: List[zipfile.ZipInfo] = file.infolist()
+def parse_full_annotation_zip(zip_file_path: Path) -> Iterator[LazyFullAnnotationParser]:
+    """ 引数のzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
-        # 内包表記でiterator作りたいところだけど、withを抜けちゃうので yieldで
-        for info in info_list:
-            if info.is_dir():
-                continue
+    大量のファイルを含むzipファイルを展開せず、task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
 
-            parser = lazy_parser(file, info)
-            if parser is not None:
-                yield parser
+    Args:
+        zip_file_path: annofabからダウンロードしたsimple annotationのzipファイルへのパス
+
+    Yields:
+        annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
+    """
+    return __parse_annotation_zip(zip_file_path, LazyFullAnnotationZipParser.__class__)
