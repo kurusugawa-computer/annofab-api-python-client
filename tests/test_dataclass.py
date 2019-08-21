@@ -53,6 +53,18 @@ annofab_user_id = service.api.login_user_id
 
 
 def test_annotation():
+    simple_annotaion_json = test_dir / "simple-annotation.json"
+    with simple_annotaion_json.open() as f:
+        dict_full_annotation = json.load(f)
+    simple_annotion = SimpleAnnotation.from_dict(dict_full_annotation)
+    assert type(simple_annotion) == SimpleAnnotation
+
+    full_annotaion_json = test_dir / "full-annotation.json"
+    with full_annotaion_json.open() as f:
+        dict_full_annotation = json.load(f)
+    full_annotion = FullAnnotation.from_dict(dict_full_annotation)
+    assert type(full_annotion) == FullAnnotation
+
     annotation_list = service.wrapper.get_all_annotation_list(project_id, query_params={'query': {'task_id': task_id}})
     single_annotation = SingleAnnotation.from_dict(annotation_list[0])
     assert type(single_annotation) == SingleAnnotation
@@ -61,12 +73,6 @@ def test_annotation():
     simple_annotation = SimpleAnnotation.from_dict(dict_simple_annotation)
     assert type(simple_annotation) == SimpleAnnotation
 
-    full_annotaion_json = test_dir / "full-annotation.json"
-    with full_annotaion_json.open() as f:
-        dict_full_annotation = json.load(f)
-
-    full_annotion = FullAnnotation.from_dict(dict_full_annotation)
-    assert type(full_annotion) == FullAnnotation
 
 
 def test_annotation_specs():

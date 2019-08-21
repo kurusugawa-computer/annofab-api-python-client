@@ -1,0 +1,195 @@
+{
+    "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
+    "annotation_format_version": "1.1.0",
+    "task_id": "sample_423",
+    "task_phase": "annotation",
+    "task_phase_stage": 1,
+    "task_status": "break",
+    "input_data_id": "c2a3223b-90db-4416-8c7c-55bf140af1cd",
+    "input_data_name": "val.zip/val/a91b7555-00000565.jpg",
+    "details": [
+        {
+            "label": "paint",
+            "annotation_id": "7ad04ec2-8c85-4bc7-9fad-f5bea508b02b",
+            "data": {
+                "data_uri": "7ad04ec2-8c85-4bc7-9fad-f5bea508b02b",
+                "_type": "SegmentationV2"
+            },
+            "attributes": {}
+        },
+        {
+            "label": "add-polygon",
+            "annotation_id": "108ef5f5-ee5d-4cf9-8946-abf63eb6fec9",
+            "data": {
+                "points": [
+                    {
+                        "x": 210,
+                        "y": 115
+                    },
+                    {
+                        "x": 267,
+                        "y": 152
+                    },
+                    {
+                        "x": 210,
+                        "y": 189
+                    },
+                    {
+                        "x": 153,
+                        "y": 152
+                    }
+                ],
+                "_type": "Points"
+            },
+            "attributes": {}
+        },
+        {
+            "label": "add-polygon",
+            "annotation_id": "97ef017c-7f61-4e7d-935c-bbb9949f6877",
+            "data": {
+                "points": [
+                    {
+                        "x": 281,
+                        "y": 65
+                    },
+                    {
+                        "x": 379,
+                        "y": 182
+                    },
+                    {
+                        "x": 401,
+                        "y": 70
+                    }
+                ],
+                "_type": "Points"
+            },
+            "attributes": {}
+        },
+        {
+            "label": "add-polygon",
+            "annotation_id": "e8a873e5-f994-425a-96c4-4a3b5742e564",
+            "data": {
+                "points": [
+                    {
+                        "x": 284,
+                        "y": 271
+                    },
+                    {
+                        "x": 290,
+                        "y": 210
+                    },
+                    {
+                        "x": 374,
+                        "y": 216
+                    }
+                ],
+                "_type": "Points"
+            },
+            "attributes": {}
+        },
+        {
+            "label": "add-polygon",
+            "annotation_id": "28ac90c6-864d-4242-b5b5-74a2f05e0185",
+            "data": {
+                "points": [
+                    {
+                        "x": 145,
+                        "y": 349
+                    },
+                    {
+                        "x": 203,
+                        "y": 243
+                    },
+                    {
+                        "x": 357,
+                        "y": 323
+                    },
+                    {
+                        "x": 170,
+                        "y": 485
+                    },
+                    {
+                        "x": 221,
+                        "y": 463
+                    }
+                ],
+                "_type": "Points"
+            },
+            "attributes": {}
+        },
+        {
+            "label": "add-polygon",
+            "annotation_id": "08fc4386-12cc-478c-8def-a7495998aaef",
+            "data": {
+                "points": [
+                    {
+                        "x": 56,
+                        "y": 64
+                    },
+                    {
+                        "x": 154,
+                        "y": 62
+                    },
+                    {
+                        "x": 168,
+                        "y": 89
+                    }
+                ],
+                "_type": "Points"
+            },
+            "attributes": {}
+        },
+        {
+            "label": "add-polygon",
+            "annotation_id": "35fa3ce1-a605-48e3-adbd-9f74d564a6a4",
+            "data": {
+                "points": [
+                    {
+                        "x": 137,
+                        "y": 175
+                    },
+                    {
+                        "x": 120,
+                        "y": 237
+                    },
+                    {
+                        "x": 46,
+                        "y": 220
+                    }
+                ],
+                "_type": "Points"
+            },
+            "attributes": {}
+        },
+        {
+            "label": "add-polygon",
+            "annotation_id": "455ba108-78a2-4bfe-b980-ce83ca1490f4",
+            "data": {
+                "points": [
+                    {
+                        "x": 28,
+                        "y": 304
+                    },
+                    {
+                        "x": 146,
+                        "y": 266
+                    },
+                    {
+                        "x": 40,
+                        "y": 147
+                    }
+                ],
+                "_type": "Points"
+            },
+            "attributes": {}
+        },
+        {
+            "label": "all",
+            "annotation_id": "8aff181e-9df4-4c66-8fb2-10596c686d5c",
+            "data": null,
+            "attributes": {
+                "sunny": false
+            }
+        }
+    ]
+}
