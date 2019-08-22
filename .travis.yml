@@ -2,9 +2,11 @@ dist: xenial
 language: python
 python:
   - "3.6"
+  - "3.7"
 install:
-  - pipenv install --dev
+  - pip install .
 script:
-  - make lint
-  - pipenv run pytest tests/test_local*.py
-  - echo "OK" # dummy
+   - flake8 annofabapi
+   - mypy annofabapi --config-file setup.cfg
+   - pylint annofabapi --rcfile setup.cfg
+   - pytest tests/test_local*.py
