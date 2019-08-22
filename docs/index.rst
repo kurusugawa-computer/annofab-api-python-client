@@ -10,8 +10,14 @@ annofabapi : AnnoFab API Client Library for Python
    :maxdepth: 2
    :caption: Contents:
 
-   annofabapi
+   api
+   api2
+   wrapper
+   resource
+   utils
    parser
+   models
+   dataclass
 
 
 Indices and tables
