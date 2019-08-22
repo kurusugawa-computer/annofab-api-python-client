@@ -13,8 +13,8 @@ from distutils.util import strtobool
 from pathlib import Path
 
 import annofabapi
-import annofabapi.utils
 import annofabapi.parser
+import annofabapi.utils
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation, SingleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
@@ -42,6 +42,7 @@ def test_simple_annotation_zip():
     index = 0
     for parser in iter_parser:
         simple_annotation = parser.parse()
+        print(simple_annotation)
         assert type(simple_annotation) == SimpleAnnotation
         index += 1
 
@@ -55,7 +56,36 @@ def test_simple_annotation_dir():
     index = 0
     for parser in iter_parser:
         simple_annotation = parser.parse()
+        print(simple_annotation)
         assert type(simple_annotation) == SimpleAnnotation
         index += 1
 
     assert index == 2
+
+
+def test_full_annotation_zip():
+    zip_path = Path(test_dir / "full-annotation.zip")
+    iter_parser = annofabapi.parser.parse_full_annotation_zip(zip_path)
+
+    index = 0
+    for parser in iter_parser:
+        full_annotation = parser.parse()
+        print(full_annotation)
+        assert type(full_annotation) == FullAnnotation
+        index += 1
+
+    assert index == 4
+
+
+def test_full_annotation_dir():
+    dir_path = Path(test_dir / "full-annotation")
+    iter_parser = annofabapi.parser.parse_full_annotation_dir(dir_path)
+
+    index = 0
+    for parser in iter_parser:
+        full_annotation = parser.parse()
+        print(full_annotation)
+        assert type(full_annotation) == FullAnnotation
+        index += 1
+
+    assert index == 4

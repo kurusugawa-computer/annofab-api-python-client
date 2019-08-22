@@ -75,13 +75,11 @@ class LazySimpleAnnotationParser:
             外部ファイルのファイルオブジェクト
 
         """
-
     @abc.abstractmethod
     def parse(self) -> SimpleAnnotation:
         """
         入力データのJSONファイルをパースする。
         """
-        pass
 
 
 class LazySimpleAnnotationZipParser(LazySimpleAnnotationParser):
@@ -117,7 +115,6 @@ class LazySimpleAnnotationDirParser(LazySimpleAnnotationParser):
         task_id: task_id
 
     """
-
     def __init__(self, json_file: Path, task_id: str):
         self.__json_file = json_file
         super().__init__(task_id, json_file.stem)
@@ -166,7 +163,6 @@ class LazyFullAnnotationParser:
          """
         return self.__data_name_base
 
-
     @abc.abstractmethod
     def open_outer_file(self, data_uri: str, **kwargs):
         """
@@ -178,15 +174,11 @@ class LazyFullAnnotationParser:
             外部ファイルのファイルオブジェクト
 
         """
-
-
     @abc.abstractmethod
     def parse(self) -> FullAnnotation:
         """
         入力データのJSONファイルをパースする。
         """
-
-        pass
 
 
 class LazyFullAnnotationZipParser(LazyFullAnnotationParser):
@@ -220,7 +212,7 @@ class LazyFullAnnotationDirParser(LazyFullAnnotationParser):
     __json_file: Path
 
     def __init__(self, json_file: Path, task_id: str):
-        self.json_file = json_file
+        self.__json_file = json_file
         super().__init__(task_id, json_file.stem)
 
     def parse(self) -> FullAnnotation:
