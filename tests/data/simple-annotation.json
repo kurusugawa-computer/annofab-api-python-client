@@ -1,195 +1,142 @@
 {
-    "project_id": "a2345678-abcd-1234-abcd-1234abcd5678",
-    "annotation_format_version": "1.1.0",
-    "task_id": "sample_423",
-    "task_phase": "annotation",
-    "task_phase_stage": 1,
-    "task_status": "break",
-    "input_data_id": "c2a3223b-90db-4416-8c7c-55bf140af1cd",
-    "input_data_name": "val.zip/val/a91b7555-00000565.jpg",
-    "details": [
-        {
-            "label": "paint",
-            "annotation_id": "7ad04ec2-8c85-4bc7-9fad-f5bea508b02b",
-            "data": {
-                "data_uri": "7ad04ec2-8c85-4bc7-9fad-f5bea508b02b",
-                "_type": "SegmentationV2"
-            },
-            "attributes": {}
+  "project_id": "a2345678-abcd-1234-abcd-1234abcd5678",
+  "annotation_format_version": "1.1.0",
+  "task_id": "sample_1",
+  "task_phase": "acceptance",
+  "task_phase_stage": 1,
+  "task_status": "complete",
+  "input_data_id": "c86205d1-bdd4-4110-ae46-194e661d622b",
+  "input_data_name": "./tests/data/lenna.png",
+  "details": [
+    {
+      "label": "bird",
+      "annotation_id": "02a9eab8-264b-4b92-b3b7-6e6c377a10ee",
+      "data": {
+        "points": [
+          {
+            "x": 55,
+            "y": 18
+          },
+          {
+            "x": 58,
+            "y": 27
+          },
+          {
+            "x": 57,
+            "y": 33
+          },
+          {
+            "x": 57,
+            "y": 35
+          },
+          {
+            "x": 53,
+            "y": 60
+          },
+          {
+            "x": 50,
+            "y": 60
+          },
+          {
+            "x": 40,
+            "y": 61
+          },
+          {
+            "x": 38,
+            "y": 34
+          },
+          {
+            "x": 47,
+            "y": 33
+          },
+          {
+            "x": 39,
+            "y": 30
+          }
+        ],
+        "_type": "Points"
+      },
+      "attributes": {}
+    },
+    {
+      "label": "human",
+      "annotation_id": "e2a1fbe3-fa8e-413c-be31-882f12ef62b9",
+      "data": {
+        "data_uri": "e2a1fbe3-fa8e-413c-be31-882f12ef62b9",
+        "_type": "SegmentationV2"
+      },
+      "attributes": {}
+    },
+    {
+      "label": "eye",
+      "annotation_id": "2280a89f-986c-4184-82df-feaec37a9149",
+      "data": {
+        "point": {
+          "x": 25,
+          "y": 18
         },
-        {
-            "label": "add-polygon",
-            "annotation_id": "108ef5f5-ee5d-4cf9-8946-abf63eb6fec9",
-            "data": {
-                "points": [
-                    {
-                        "x": 210,
-                        "y": 115
-                    },
-                    {
-                        "x": 267,
-                        "y": 152
-                    },
-                    {
-                        "x": 210,
-                        "y": 189
-                    },
-                    {
-                        "x": 153,
-                        "y": 152
-                    }
-                ],
-                "_type": "Points"
-            },
-            "attributes": {}
+        "_type": "SinglePoint"
+      },
+      "attributes": {}
+    },
+    {
+      "label": "Cat",
+      "annotation_id": "226b49a4-c8ef-4016-9e90-99107d8a623b",
+      "data": {
+        "left_top": {
+          "x": 10,
+          "y": 7
         },
-        {
-            "label": "add-polygon",
-            "annotation_id": "97ef017c-7f61-4e7d-935c-bbb9949f6877",
-            "data": {
-                "points": [
-                    {
-                        "x": 281,
-                        "y": 65
-                    },
-                    {
-                        "x": 379,
-                        "y": 182
-                    },
-                    {
-                        "x": 401,
-                        "y": 70
-                    }
-                ],
-                "_type": "Points"
-            },
-            "attributes": {}
+        "right_bottom": {
+          "x": 36,
+          "y": 36
         },
-        {
-            "label": "add-polygon",
-            "annotation_id": "e8a873e5-f994-425a-96c4-4a3b5742e564",
-            "data": {
-                "points": [
-                    {
-                        "x": 284,
-                        "y": 271
-                    },
-                    {
-                        "x": 290,
-                        "y": 210
-                    },
-                    {
-                        "x": 374,
-                        "y": 216
-                    }
-                ],
-                "_type": "Points"
-            },
-            "attributes": {}
-        },
-        {
-            "label": "add-polygon",
-            "annotation_id": "28ac90c6-864d-4242-b5b5-74a2f05e0185",
-            "data": {
-                "points": [
-                    {
-                        "x": 145,
-                        "y": 349
-                    },
-                    {
-                        "x": 203,
-                        "y": 243
-                    },
-                    {
-                        "x": 357,
-                        "y": 323
-                    },
-                    {
-                        "x": 170,
-                        "y": 485
-                    },
-                    {
-                        "x": 221,
-                        "y": 463
-                    }
-                ],
-                "_type": "Points"
-            },
-            "attributes": {}
-        },
-        {
-            "label": "add-polygon",
-            "annotation_id": "08fc4386-12cc-478c-8def-a7495998aaef",
-            "data": {
-                "points": [
-                    {
-                        "x": 56,
-                        "y": 64
-                    },
-                    {
-                        "x": 154,
-                        "y": 62
-                    },
-                    {
-                        "x": 168,
-                        "y": 89
-                    }
-                ],
-                "_type": "Points"
-            },
-            "attributes": {}
-        },
-        {
-            "label": "add-polygon",
-            "annotation_id": "35fa3ce1-a605-48e3-adbd-9f74d564a6a4",
-            "data": {
-                "points": [
-                    {
-                        "x": 137,
-                        "y": 175
-                    },
-                    {
-                        "x": 120,
-                        "y": 237
-                    },
-                    {
-                        "x": 46,
-                        "y": 220
-                    }
-                ],
-                "_type": "Points"
-            },
-            "attributes": {}
-        },
-        {
-            "label": "add-polygon",
-            "annotation_id": "455ba108-78a2-4bfe-b980-ce83ca1490f4",
-            "data": {
-                "points": [
-                    {
-                        "x": 28,
-                        "y": 304
-                    },
-                    {
-                        "x": 146,
-                        "y": 266
-                    },
-                    {
-                        "x": 40,
-                        "y": 147
-                    }
-                ],
-                "_type": "Points"
-            },
-            "attributes": {}
-        },
-        {
-            "label": "all",
-            "annotation_id": "8aff181e-9df4-4c66-8fb2-10596c686d5c",
-            "data": null,
-            "attributes": {
-                "sunny": false
-            }
-        }
-    ]
+        "_type": "BoundingBox"
+      },
+      "attributes": {
+        "weight": 3,
+        "name": "lena",
+        "link-eye": "2280a89f-986c-4184-82df-feaec37a9149",
+        "occluded": true,
+        "object id": "6602c86c-5e22-42b9-b5a4-8a77c7bade01",
+        "memo": "テスト"
+      }
+    },
+    {
+      "label": "leg",
+      "annotation_id": "60a18a10-5d8a-4c1a-90b3-aa67226249c6",
+      "data": {
+        "points": [
+          {
+            "x": 22,
+            "y": 29
+          },
+          {
+            "x": 33,
+            "y": 41
+          }
+        ],
+        "_type": "Points"
+      },
+      "attributes": {}
+    },
+    {
+      "label": "dog",
+      "annotation_id": "ee83756f-074d-4aab-8bfc-6ab6e754c2b8",
+      "data": {
+        "data_uri": "ee83756f-074d-4aab-8bfc-6ab6e754c2b8",
+        "_type": "Segmentation"
+      },
+      "attributes": {}
+    },
+    {
+      "label": "climatic",
+      "annotation_id": "5ac0d7d5-6738-4c4b-a69a-cd583ff458e1",
+      "data": null,
+      "attributes": {
+        "temparature": "20",
+        "weather": "sunny"
+      }
+    }
+  ]
 }
