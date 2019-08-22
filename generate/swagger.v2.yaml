@@ -1,8 +1,9 @@
 openapi: "3.0.0"
 info:
   description: |
-    [AnnoFab](https://annofab.com) のWeb API, V2です。
-    V1は[こちら](https://annofab.com/docs/api/)です。
+    [AnnoFab](https://annofab.com) のWeb API v2です。
+    v2 はいくつかの主要なAPIでキャッシュが有効になり、日本を含む多くの国からのアクセスが大幅に高速化されます。
+    [API v1はこちら](https://annofab.com/docs/api/)です。
 
     APIベースURL: https://annofab.com/api/v2<br>
     例） /projects というAPIを使う場合、 https://annofab.com/api/v2/projects をリクエストします。
@@ -15,6 +16,13 @@ info:
 
     ■機能の要望や不具合報告 <br>
     「こんな機能が欲しい」というご要望や、「APIが予期せぬ動作をする」といった不具合報告などは、[こちらのお問い合わせフォーム](https://docs.google.com/forms/d/e/1FAIpQLSePryikS_wo_H11pxL2ewUe2d0ud0jxZlBQwH2rVVfcifKyQw/viewform)からご連絡ください。
+
+    # API Client
+
+    APIクライアントも提供しています。
+
+    * https://github.com/kurusugawa-computer/annofab-cli
+    * https://github.com/kurusugawa-computer/annofab-api-python-client
 
     # API Convention
 
@@ -46,7 +54,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし利便性のため指定は必須ではありません。
 
-  version: 0.59.0
+  version: 0.59.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1460,7 +1468,7 @@ components:
           type: string
         overview:
           type: string
-        status:
+        project_status:
           $ref: "#/components/schemas/ProjectStatus"
         input_data_type:
           $ref: "#/components/schemas/InputDataType"
@@ -2012,6 +2020,7 @@ components:
         - segmentation_v2
         - polygon
         - polyline
+        - point
         - classification
         - range
       description: |
@@ -2020,6 +2029,7 @@ components:
         * `segmentation_v2` - 塗りつぶしv2を表します。v2はSemantic Segmentationに特化しています。
         * `polygon` - ポリゴン（閉じた頂点集合）を表します。
         * `polyline` - ポリライン（開いた頂点集合）を表します。
+        * `point` - 点を表します。
         * `classification` - 入力データ全体に対するアノテーションを表します。
         * `range` - 動画の区間を表します。
     AdditionalDataDefinitionType:
@@ -2178,6 +2188,13 @@ components:
           type: boolean
     Task:
       type: object
+      required:
+        - project_id
+        - task_id
+        - phase
+        - status
+        - work_time_span
+        - updated_datetime
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -2201,7 +2218,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/TaskHistoryShort"
-        work_timespan:
+        work_time_span:
           type: integer
           description: 累計実作業時間(ミリ秒)
         number_of_rejections:
@@ -2393,6 +2410,8 @@ components:
     TaskHistoryShort:
       description: タスクのあるフェーズを誰が担当したかを表します。
       type: object
+      required:
+        - phase
       properties:
         phase:
           $ref: "#/components/schemas/TaskPhase"
@@ -2405,6 +2424,10 @@ components:
     TaskHistory:
       description: タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
       type: object
+      required:
+        - project_id
+        - task_id
+        - task_history_id
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -2420,6 +2443,8 @@ components:
           format: date-time
         accumulated_labor_time_milliseconds:
           type: string
+          description: 累計実作業時間（ISO 8601 duration）
+          example: "PT34H17M36.789S"
         phase:
           $ref: "#/components/schemas/TaskPhase"
         phase_stage:
@@ -2570,6 +2595,14 @@ components:
             このオプションを有効にする場合は、`input_data_path`として、AnnoFabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。
     SupplementaryData:
       type: object
+      required:
+        - project_id
+        - input_data_id
+        - supplementary_data_id
+        - supplementary_data_name
+        - supplementary_data_path
+        - supplementary_data_type
+        - supplementary_data_number
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -3035,7 +3068,7 @@ components:
           $ref: "#/components/schemas/InputDataId"
         input_data_name:
           type: string
-        details:
+        detail:
           type: array
           items:
             $ref: "#/components/schemas/FullAnnotationDetail"
@@ -3059,15 +3092,10 @@ components:
           $ref: "#/components/schemas/AnnotationDataHoldingType"
         data:
           $ref: "#/components/schemas/FullAnnotationData"
-        path:
-          type: string
-          description: data_holding_typeがouterの場合のみ存在し、データへのパスが格納される
         additional_data_list:
           type: array
           items:
             $ref: "#/components/schemas/FullAnnotationAdditionalData"
-        comment:
-          type: string
     FullAnnotationData:
       oneOf:
         - type: object
