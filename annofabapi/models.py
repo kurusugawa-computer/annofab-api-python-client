@@ -462,7 +462,7 @@ Kyes of Dict
 
 class AnnotationType(Enum):
     """
-    * `bounding_box` - 矩形を表します。 * `segmentation` - ピクセルレベルでの塗りつぶし（ラスター）を表します。 * `segmentation_v2` - 塗りつぶしv2を表します。v2はSemantic Segmentationに特化しています。 * `polygon` - ポリゴン（閉じた頂点集合）を表します。 * `polyline` - ポリライン（開いた頂点集合）を表します。 * `classification` - 入力データ全体に対するアノテーションを表します。 * `range` - 動画の区間を表します。 
+    * `bounding_box` - 矩形を表します。 * `segmentation` - ピクセルレベルでの塗りつぶし（ラスター）を表します。 * `segmentation_v2` - 塗りつぶしv2を表します。v2はSemantic Segmentationに特化しています。 * `polygon` - ポリゴン（閉じた頂点集合）を表します。 * `polyline` - ポリライン（開いた頂点集合）を表します。 * `point` - 点を表します。 * `classification` - 入力データ全体に対するアノテーションを表します。 * `range` - 動画の区間を表します。 
     """
 
     BOUNDING_BOX = "bounding_box"
@@ -1081,7 +1081,7 @@ Kyes of Dict
     
 * input_data_name: str
     
-* details: List[FullAnnotationDetail]
+* detail: List[FullAnnotationDetail]
     
 * updated_datetime: str
     
@@ -1266,11 +1266,7 @@ Kyes of Dict
     
 * data: FullAnnotationData
     
-* path: str
-    data_holding_typeがouterの場合のみ存在し、データへのパスが格納される
 * additional_data_list: List[FullAnnotationAdditionalData]
-    
-* comment: str
     
 
 """
@@ -2240,7 +2236,7 @@ Kyes of Dict
     
 * overview: str
     
-* status: ProjectStatus
+* project_status: ProjectStatus
     
 * input_data_type: InputDataType
     
@@ -2745,7 +2741,7 @@ Kyes of Dict
     
 * histories_by_phase: List[TaskHistoryShort]
     
-* work_timespan: int
+* work_time_span: int
     累計実作業時間(ミリ秒)
 * number_of_rejections: int
     このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計  このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。 `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。  例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。 
@@ -2833,7 +2829,7 @@ Kyes of Dict
 * ended_datetime: str
     
 * accumulated_labor_time_milliseconds: str
-    
+    累計実作業時間（ISO 8601 duration）
 * phase: TaskPhase
     
 * phase_stage: int

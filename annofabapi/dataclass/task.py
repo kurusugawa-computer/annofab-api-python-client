@@ -23,13 +23,13 @@ class TaskHistory:
     """
     タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
     """
-    project_id: Optional[str]
+    project_id: str
     """"""
 
-    task_id: Optional[str]
+    task_id: str
     """"""
 
-    task_history_id: Optional[str]
+    task_history_id: str
     """"""
 
     started_datetime: Optional[str]
@@ -39,7 +39,7 @@ class TaskHistory:
     """"""
 
     accumulated_labor_time_milliseconds: Optional[str]
-    """"""
+    """累計実作業時間（ISO 8601 duration）"""
 
     phase: Optional[TaskPhase]
     """"""
@@ -55,7 +55,7 @@ class TaskHistoryShort:
     """
     タスクのあるフェーズを誰が担当したかを表します。
     """
-    phase: Optional[TaskPhase]
+    phase: TaskPhase
     """"""
 
     phase_stage: Optional[int]
@@ -69,19 +69,19 @@ class Task:
     """
     
     """
-    project_id: Optional[str]
+    project_id: str
     """"""
 
-    task_id: Optional[str]
+    task_id: str
     """"""
 
-    phase: Optional[TaskPhase]
+    phase: TaskPhase
     """"""
 
     phase_stage: Optional[int]
     """"""
 
-    status: Optional[TaskStatus]
+    status: TaskStatus
     """"""
 
     input_data_id_list: Optional[List[str]]
@@ -93,7 +93,7 @@ class Task:
     histories_by_phase: Optional[List[TaskHistoryShort]]
     """"""
 
-    work_time_span: Optional[int]
+    work_time_span: int
     """累計実作業時間(ミリ秒)"""
 
     number_of_rejections: Optional[int]
@@ -102,7 +102,7 @@ class Task:
     started_datetime: Optional[str]
     """"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str
     """"""
 
     sampling: Optional[str]
