@@ -930,7 +930,7 @@
           type: string
         overview:
           type: string
-        status:
+        project_status:
           $ref: "#/components/schemas/ProjectStatus"
         input_data_type:
           $ref: "#/components/schemas/InputDataType"
@@ -1482,6 +1482,7 @@
         - segmentation_v2
         - polygon
         - polyline
+        - point
         - classification
         - range
       description: |
@@ -1490,6 +1491,7 @@
         * `segmentation_v2` - 塗りつぶしv2を表します。v2はSemantic Segmentationに特化しています。
         * `polygon` - ポリゴン（閉じた頂点集合）を表します。
         * `polyline` - ポリライン（開いた頂点集合）を表します。
+        * `point` - 点を表します。
         * `classification` - 入力データ全体に対するアノテーションを表します。
         * `range` - 動画の区間を表します。
     AdditionalDataDefinitionType:
@@ -1648,6 +1650,13 @@
           type: boolean
     Task:
       type: object
+      required:
+        - project_id
+        - task_id
+        - phase
+        - status
+        - work_time_span
+        - updated_datetime
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -1671,7 +1680,7 @@
           type: array
           items:
             $ref: "#/components/schemas/TaskHistoryShort"
-        work_timespan:
+        work_time_span:
           type: integer
           description: 累計実作業時間(ミリ秒)
         number_of_rejections:
@@ -1863,6 +1872,8 @@
     TaskHistoryShort:
       description: タスクのあるフェーズを誰が担当したかを表します。
       type: object
+      required:
+        - phase
       properties:
         phase:
           $ref: "#/components/schemas/TaskPhase"
@@ -1875,6 +1886,10 @@
     TaskHistory:
       description: タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
       type: object
+      required:
+        - project_id
+        - task_id
+        - task_history_id
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -1890,6 +1905,8 @@
           format: date-time
         accumulated_labor_time_milliseconds:
           type: string
+          description: 累計実作業時間（ISO 8601 duration）
+          example: "PT34H17M36.789S"
         phase:
           $ref: "#/components/schemas/TaskPhase"
         phase_stage:
@@ -2040,6 +2057,14 @@
             このオプションを有効にする場合は、`input_data_path`として、AnnoFabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。
     SupplementaryData:
       type: object
+      required:
+        - project_id
+        - input_data_id
+        - supplementary_data_id
+        - supplementary_data_name
+        - supplementary_data_path
+        - supplementary_data_type
+        - supplementary_data_number
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -2505,7 +2530,7 @@
           $ref: "#/components/schemas/InputDataId"
         input_data_name:
           type: string
-        details:
+        detail:
           type: array
           items:
             $ref: "#/components/schemas/FullAnnotationDetail"
@@ -2529,15 +2554,10 @@
           $ref: "#/components/schemas/AnnotationDataHoldingType"
         data:
           $ref: "#/components/schemas/FullAnnotationData"
-        path:
-          type: string
-          description: data_holding_typeがouterの場合のみ存在し、データへのパスが格納される
         additional_data_list:
           type: array
           items:
             $ref: "#/components/schemas/FullAnnotationAdditionalData"
-        comment:
-          type: string
     FullAnnotationData:
       oneOf:
         - type: object

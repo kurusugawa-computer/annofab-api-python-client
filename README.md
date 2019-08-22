@@ -118,6 +118,27 @@ service.wrapper.copy_project_members(src_project_id, dest_project_id)
 service.wrapper.copy_annotation_specs(src_project_id, dest_project_id)
 ```
 
+## アノテーションzipのパース
+ダウンロードしたアノテーションzipファイルを、JSONファイルごとに遅延読み込みします。
+zipファイルを展開したディレクトリもパースが可能です。
+
+```
+from pathlib import Path
+from annofabapi.parser import parse_simple_annotation_dir, parse_simple_annotation_zip
+
+iter_parser = parse_simple_annotation_zip(Path("simple-annotation.zip"))
+for parser in iter_parser:
+    simple_annotation = parser.parse()
+    print(simple_annotation)
+
+
+iter_parser = parse_simple_annotation_dir(Path("simple-annotation-dir"))
+for parser in iter_parser:
+    simple_annotation = parser.parse()
+    #print()
+
+```
+
 ## 備考
 
 ### `annofabapi`のログを出力する方法（サンプル）
