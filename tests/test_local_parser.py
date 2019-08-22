@@ -42,7 +42,6 @@ def test_simple_annotation_zip():
     index = 0
     for parser in iter_parser:
         simple_annotation = parser.parse()
-        print(simple_annotation)
         assert type(simple_annotation) == SimpleAnnotation
         index += 1
 
@@ -56,7 +55,6 @@ def test_simple_annotation_dir():
     index = 0
     for parser in iter_parser:
         simple_annotation = parser.parse()
-        print(simple_annotation)
         assert type(simple_annotation) == SimpleAnnotation
         index += 1
 
@@ -70,7 +68,6 @@ def test_full_annotation_zip():
     index = 0
     for parser in iter_parser:
         full_annotation = parser.parse()
-        print(full_annotation)
         assert type(full_annotation) == FullAnnotation
         index += 1
 
@@ -84,7 +81,6 @@ def test_full_annotation_dir():
     index = 0
     for parser in iter_parser:
         full_annotation = parser.parse()
-        print(full_annotation)
         assert type(full_annotation) == FullAnnotation
         index += 1
 
