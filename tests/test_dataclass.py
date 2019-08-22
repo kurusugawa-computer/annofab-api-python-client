@@ -62,7 +62,6 @@ def test_annotation():
     assert type(simple_annotation) == SimpleAnnotation
 
 
-
 def test_annotation_specs():
     dict_annotation_specs, _ = service.api.get_annotation_specs(project_id)
     annotation_specs = AnnotationSpecs.from_dict(dict_annotation_specs)
