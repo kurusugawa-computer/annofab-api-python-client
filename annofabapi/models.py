@@ -281,6 +281,7 @@ class AdditionalDataDefinitionType(Enum):
 
     FLAG = "flag"
     INTEGER = "integer"
+    TEXT = "text"
     COMMENT = "comment"
     CHOICE = "choice"
     SELECT = "select"
