@@ -21,19 +21,19 @@ class SupplementaryData:
     """
     
     """
-    project_id: Optional[str]
+    project_id: str
     """"""
 
-    input_data_id: Optional[str]
+    input_data_id: str
     """"""
 
-    supplementary_data_id: Optional[str]
+    supplementary_data_id: str
     """"""
 
-    supplementary_data_name: Optional[str]
+    supplementary_data_name: str
     """表示用の名前"""
 
-    supplementary_data_path: Optional[str]
+    supplementary_data_path: str
     """補助情報の実体が保存されたパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 """
 
     url: Optional[str]
@@ -42,10 +42,10 @@ class SupplementaryData:
     etag: Optional[str]
     """"""
 
-    supplementary_data_type: Optional[str]
+    supplementary_data_type: str
     """"""
 
-    supplementary_data_number: Optional[int]
+    supplementary_data_number: int
     """表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。"""
 
     updated_datetime: Optional[str]

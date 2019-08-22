@@ -75,7 +75,7 @@ class Project:
     overview: Optional[str]
     """"""
 
-    project_status: ProjectStatus
+    project_status: Optional[ProjectStatus]
     """"""
 
     input_data_type: Optional[InputDataType]

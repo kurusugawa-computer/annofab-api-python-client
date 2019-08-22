@@ -106,9 +106,6 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/single_annotation.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/annotation.py  \
  ${model_files[@]} > ../annofabapi/dataclass/annotation.py
-# swagger.yamlの間違いに対する暫定対応
-sed -e "s/details: Optional[List[FullAnnotationDetail]]/detail: Optional[List[FullAnnotationDetail]]/" ../annofabapi/dataclass/annotation.py --in-place
-# FullAnnotationDetailのcommentとpathを削除
 
 # Annotation Specs
 declare -a model_files=(${MODELS_DIR}/keybind.py \
@@ -151,8 +148,6 @@ cat partial-header/dataclass/common.py partial-header/dataclass/organization_mem
 declare -a model_files=(${MODELS_DIR}/project_summary.py ${MODELS_DIR}/project_configuration.py ${MODELS_DIR}/project.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/project.py  \
  ${model_files[@]} > ../annofabapi/dataclass/project.py
-# swagger.yamlの間違いに対する暫定対応
-sed -e "s/status: ProjectStatus/project_status: ProjectStatus/" ../annofabapi/dataclass/project.py --in-place
 
 # Project Member
 declare -a model_files=(${MODELS_DIR}/project_member.py)
@@ -168,8 +163,6 @@ cat partial-header/dataclass/common.py partial-header/dataclass/supplementary.py
 declare -a model_files=(${MODELS_DIR}/task_history.py ${MODELS_DIR}/task_history_short.py ${MODELS_DIR}/task.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/task.py  \
  ${model_files[@]} > ../annofabapi/dataclass/task.py
-# swagger.yamlの間違いに対する暫定対応
-sed -e "s/work_timespan/work_time_span/" ../annofabapi/dataclass/task.py --in-place
 
 
 rm -Rf out/openapi_client
@@ -179,7 +172,7 @@ cd ../
 
 # Format
 FORMATTED_FILE="annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/models.py annofabapi/dataclass/*.py"
-pipenv run isort --verbose ${FORMATTED_FILE}
-pipenv run yapf --verbose --in-place ${FORMATTED_FILE}
+pipenv run isort  ${FORMATTED_FILE}
+pipenv run yapf  --in-place ${FORMATTED_FILE}
 
 popd
