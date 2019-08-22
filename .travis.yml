@@ -6,6 +6,5 @@ install:
   - pipenv install --dev
 script:
   - make lint
+  - pipenv run pytest tests/test_local*.py
   - echo "OK" # dummy
-# FIXME https://github:com/kurusugawa-computer/annofab-api-python-client/issues/25
-#  - pytest
