@@ -1,0 +1,24 @@
+{
+  "project_id": "a2345678-abcd-1234-abcd-1234abcd5678",
+  "organization_id": "b2345678-abcd-1234-abcd-1234abcd5678",
+  "title": "sample",
+  "overview": "",
+  "project_status": "active",
+  "input_data_type": "image",
+  "created_datetime": "2019-04-23T12:03:21.721+09:00",
+  "updated_datetime": "2019-08-22T12:07:48.918+09:00",
+  "configuration": {
+    "project_rule": null,
+    "number_of_inspections": 0,
+    "assignee_rule_of_resubmitted_task": "no_assignee",
+    "max_tasks_per_member": 10,
+    "max_tasks_per_member_including_hold": 20,
+    "private_storage_aws_iam_role_arn": null,
+    "input_data_max_long_side_length": null,
+    "sampling_inspection_rate": null,
+    "sampling_acceptance_rate": null
+  },
+  "summary": {
+    "last_tasks_updated_datetime": "2019-08-22T12:07:31.321+09:00"
+  }
+}

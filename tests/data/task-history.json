@@ -1,0 +1,11 @@
+{
+  "project_id": "a2345678-abcd-1234-abcd-1234abcd5678",
+  "task_id": "sample_1",
+  "task_history_id": "7d830d2a-31b9-49cd-a701-c9eeb4e179b7",
+  "started_datetime": "2019-08-22T12:02:40.392+09:00",
+  "ended_datetime": "2019-08-22T12:04:48.631+09:00",
+  "accumulated_labor_time_milliseconds": "PT2M8.239S",
+  "phase": "annotation",
+  "phase_stage": 1,
+  "account_id": "12345678-abcd-1234-abcd-1234abcd5678"
+}

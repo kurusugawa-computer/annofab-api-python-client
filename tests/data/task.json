@@ -1,0 +1,49 @@
+{
+  "project_id": "a2345678-abcd-1234-abcd-1234abcd5678",
+  "task_id": "sample_1",
+  "phase": "acceptance",
+  "phase_stage": 1,
+  "status": "complete",
+  "input_data_id_list": [
+    "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839",
+    "c86205d1-bdd4-4110-ae46-194e661d622b"
+  ],
+  "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+  "histories_by_phase": [
+    {
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "phase": "annotation",
+      "phase_stage": 1
+    },
+    {
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "phase": "inspection",
+      "phase_stage": 1
+    },
+    {
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "phase": "annotation",
+      "phase_stage": 1
+    },
+    {
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "phase": "inspection",
+      "phase_stage": 1
+    },
+    {
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "phase": "inspection",
+      "phase_stage": 2
+    },
+    {
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "phase": "acceptance",
+      "phase_stage": 1
+    }
+  ],
+  "work_time_span": 193085,
+  "number_of_rejections": 1,
+  "started_datetime": "2019-08-22T12:08:09.266+09:00",
+  "updated_datetime": "2019-08-22T12:08:13.906+09:00",
+  "sampling": null
+}
