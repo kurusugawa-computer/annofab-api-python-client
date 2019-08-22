@@ -13,9 +13,9 @@ def _trim_extension(file_path: str) -> str:
     return os.path.splitext(file_path)[0]
 
 
-class LazyAnnotationParser(abc.ABC):
+class LazySimpleAnnotationParser:
     """
-    Annotation(Simple/Full)の遅延Parser
+    Simple Annotationの遅延Parser
 
     Args:
         task_id:
@@ -57,7 +57,7 @@ class LazyAnnotationParser(abc.ABC):
         """ 引数に与えたinput_data_nameが、parse結果のinput_data_nameと一致し得るかどうかを判定します。
 
         Args:
-            input_data_name: テストしたい input_at_name
+            input_data_name: テストしたい input_data_name
 
         Returns: Trueの場合、input_data_nameが真に一致する可能性がある。 Falseの場合、一致しない
 
@@ -76,11 +76,6 @@ class LazyAnnotationParser(abc.ABC):
 
         """
 
-
-class LazySimpleAnnotationParser(LazyAnnotationParser):
-    """
-    Simple Annotationの遅延Parser
-    """
     @abc.abstractmethod
     def parse(self) -> SimpleAnnotation:
         """
@@ -116,11 +111,15 @@ class LazySimpleAnnotationZipParser(LazySimpleAnnotationParser):
 class LazySimpleAnnotationDirParser(LazySimpleAnnotationParser):
     """
     Simple Annotationのディレクトリの遅延Parser
+
+    Args:
+        json_file: JSONファイルのPath
+        task_id: task_id
+
     """
-    __json_file: Path
 
     def __init__(self, json_file: Path, task_id: str):
-        self.json_file = json_file
+        self.__json_file = json_file
         super().__init__(task_id, json_file.stem)
 
     def parse(self) -> SimpleAnnotation:
@@ -133,10 +132,54 @@ class LazySimpleAnnotationDirParser(LazySimpleAnnotationParser):
         return open(outer_file_path, **kwargs)
 
 
-class LazyFullAnnotationParser(LazyAnnotationParser):
+class LazyFullAnnotationParser:
     """
     Full Annotationの遅延Parser
+
+    Args:
+        task_id:
+        data_name_base: json_fileの拡張子を取り除いた部分
+
     """
+
+    __task_id: str
+    __data_name_base: str
+
+    def __init__(self, task_id: str, data_name_base: str):
+        self.__task_id = task_id
+        self.__data_name_base = data_name_base
+
+    @property
+    def task_id(self) -> str:
+        return self.__task_id
+
+    @property
+    def json_file_basename(self) -> str:
+        """
+        JSONファイルの拡張子を取り除いた部分。
+        """
+        return self.__data_name_base
+
+    @property
+    def expected_input_data_id(self) -> str:
+        """ JSONファイル名から取得した ``input_data_id`` です。
+         """
+        return self.__data_name_base
+
+
+    @abc.abstractmethod
+    def open_outer_file(self, data_uri: str, **kwargs):
+        """
+        外部ファイル（塗りつぶし画像など）を開き、対応する ファイルオブジェクトを返す。
+        Args:
+            data_uri: 外部ファイルのパス(input_data_name ディレクトリからのパス）
+
+        Returns:
+            外部ファイルのファイルオブジェクト
+
+        """
+
+
     @abc.abstractmethod
     def parse(self) -> FullAnnotation:
         """
