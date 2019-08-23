@@ -34,7 +34,6 @@ class SimpleAnnotationParser(abc.ABC):
         p = Path(json_file_path)
         self.__json_file_path = json_file_path
         self.__task_id = p.parent.name
-        self.__json_file_name = p.name
         self.__expected_input_data_name = _trim_extension(p.name).replace("__", "/")
 
     @property
@@ -43,16 +42,9 @@ class SimpleAnnotationParser(abc.ABC):
         return self.__task_id
 
     @property
-    def json_file_name(self) -> str:
-        """
-        JSONファイルの名前
-        """
-        return self.__json_file_name
-
-    @property
     def json_file_path(self) -> str:
         """
-        JSONファイルのパス
+        パースするJSONファイルのパス。
         """
         return self.__json_file_path
 
@@ -74,7 +66,7 @@ class SimpleAnnotationParser(abc.ABC):
         JSONファイルと同階層にある、"JSONファイルの拡張子を除いた名前"のディレクトリ配下を探します。
 
         Args:
-            data_uri: 外部ファイルのパス(input_data_name ディレクトリからのパス）
+            data_uri: 外部ファイルのパス
 
         Returns:
             外部ファイルのファイルオブジェクト
@@ -87,48 +79,57 @@ class SimpleAnnotationParser(abc.ABC):
         """
 
 
-class LazyFullAnnotationParser(abc.ABC):
+class FullAnnotationParser(abc.ABC):
     """
-    Full Annotationの遅延Parser
+    Full Annotationのparser
+
+    以下のフォルダ構成であることを期待します。
+
+    ```
+    ├── {task_id}/
+    │   ├── {input_data_id}.json
+    │   ├── {input_data_id}/
+    │   │   ├── {annotation_id}
+    ```
 
     Args:
-        task_id:
-        data_name_base: json_fileの拡張子を取り除いた部分
+        json_file_path: パースするJSONファイルのパス。
+
 
     """
-
-    __task_id: str
-    __data_name_base: str
-
-    def __init__(self, task_id: str, data_name_base: str):
-        self.__task_id = task_id
-        self.__data_name_base = data_name_base
+    def __init__(self, json_file_path: str):
+        p = Path(json_file_path)
+        self.__json_file_path = json_file_path
+        self.__task_id = p.parent.name
+        self.__input_data_id = _trim_extension(p.name)
 
     @property
     def task_id(self) -> str:
+        """JSONファイルの親ディレクトリ名から決まる task_id """
         return self.__task_id
 
     @property
-    def json_file_basename(self) -> str:
+    def json_file_path(self) -> str:
         """
-        JSONファイルの拡張子を取り除いた部分。
+        パースするJSONファイルのパス。
         """
-        return self.__data_name_base
+        return self.__json_file_path
 
     @property
-    def expected_input_data_id(self) -> str:
-        """ JSONファイル名から取得した ``input_data_id`` です。
+    def input_data_id(self) -> str:
+        """
+        JSONファイルから決まる、input_data_id
          """
-        return self.__data_name_base
+        return self.__input_data_id
 
     @abc.abstractmethod
     def open_outer_file(self, data_uri: str):
         """
-        外部ファイル（塗りつぶし画像など）を開き、ファイルオブジェクトを返す。
-        バイナリモードで読み込み用として開く。
+        外部ファイル（塗りつぶし画像など）を開き、対応するファイルオブジェクトを返す。
+        JSONファイルと同階層にある、"JSONファイルの拡張子を除いた名前"のディレクトリ配下を探します。
 
         Args:
-            data_uri: 外部ファイルのパス(input_data_name ディレクトリからのパス）
+            data_uri: 外部ファイルのパス
 
         Returns:
             外部ファイルのファイルオブジェクト
@@ -137,7 +138,7 @@ class LazyFullAnnotationParser(abc.ABC):
     @abc.abstractmethod
     def parse(self) -> FullAnnotation:
         """
-        入力データのJSONファイルをパースする。
+        JSONファイルをパースする。
         """
 
 
@@ -177,52 +178,44 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
             return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
 
     def open_outer_file(self, data_uri: str):
-        outer_file_path = _trim_extension(str(self.json_file_name)) + "/" + data_uri
+        outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         return open(outer_file_path, mode='rb')
 
 
-class LazyFullAnnotationZipParser(LazyFullAnnotationParser):
+class FullAnnotationZipParser(FullAnnotationParser):
     """
-    Lazy Annotationのzipファイルの遅延Parser
+    Lazy AnnotationのzipファイルのParser
     """
-
-    __file: zipfile.ZipFile
-    __info: zipfile.ZipInfo
-
-    def __init__(self, file: zipfile.ZipFile, info: zipfile.ZipInfo, task_id: str, data_name_base: str):
-        self.__file = file
-        self.__info = info
-        super().__init__(task_id, data_name_base)
+    def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str):
+        self.__zip_file = zip_file
+        super().__init__(json_file_path)
 
     def parse(self) -> FullAnnotation:
-        with self.__file.open(self.__info) as entry:
+        with self.__zip_file.open(self.json_file_path) as entry:
             anno_dict: dict = json.load(entry)
             # mypyの "has no attribute "from_dict" " をignore
             return FullAnnotation.from_dict(anno_dict)  # type: ignore
 
-    def open_outer_file(self, data_uri: str, **kwargs):
-        outer_file_path = _trim_extension(self.__info.filename) + "/" + data_uri
-        return self.__file.open(outer_file_path, **kwargs)
+    def open_outer_file(self, data_uri: str):
+        outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
+        return self.__zip_file.open(outer_file_path)
 
 
-class LazyFullAnnotationDirParser(LazyFullAnnotationParser):
+class FullAnnotationDirParser(FullAnnotationParser):
     """
     Full Annotationのディレクトリの遅延Parser
     """
-    __json_file: Path
-
-    def __init__(self, json_file: Path, task_id: str):
-        self.__json_file = json_file
-        super().__init__(task_id, json_file.stem)
+    def __init__(self, json_file_path: Path):
+        super().__init__(str(json_file_path))
 
     def parse(self) -> FullAnnotation:
-        with self.__json_file.open() as f:
+        with open(self.json_file_path, encoding="utf-8") as f:
             anno_dict: dict = json.load(f)
             return FullAnnotation.from_dict(anno_dict)  # type: ignore
 
-    def open_outer_file(self, data_uri: str, **kwargs):
-        outer_file_path = _trim_extension(str(self.__json_file)) + "/" + data_uri
-        return open(outer_file_path, **kwargs)
+    def open_outer_file(self, data_uri: str):
+        outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
+        return open(outer_file_path, mode='rb')
 
 
 def __parse_annotation_dir(annotaion_dir_path: Path, clazz) -> Iterator[Any]:
@@ -230,7 +223,6 @@ def __parse_annotation_dir(annotaion_dir_path: Path, clazz) -> Iterator[Any]:
         if not task_dir.is_dir():
             continue
 
-        task_id = task_dir.name
         for input_data_file in task_dir.iterdir():
             if not input_data_file.is_file():
                 continue
@@ -264,7 +256,7 @@ def lazy_parse_full_annotation_dir(annotaion_dir_path: Path) -> Iterator[SimpleA
     Yields:
         annotationの遅延Parseが可能なインスタンス列。
     """
-    return __parse_annotation_dir(annotaion_dir_path, LazyFullAnnotationDirParser)
+    return __parse_annotation_dir(annotaion_dir_path, FullAnnotationDirParser)
 
 
 def __parse_annotation_zip(zip_file_path: Path, clazz) -> Iterator[Any]:
@@ -291,9 +283,9 @@ def __parse_annotation_zip(zip_file_path: Path, clazz) -> Iterator[Any]:
 
 
 def lazy_parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[SimpleAnnotationParser]:
-    """ 引数のSimpleアノテーションzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
+    """
+    Simpleアノテーションzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
-    大量のファイルを含むzipファイルを展開せず、task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
 
     Args:
         zip_file_path: annofabからダウンロードしたsimple annotationのzipファイルへのパス
@@ -304,7 +296,7 @@ def lazy_parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[SimpleAnno
     return __parse_annotation_zip(zip_file_path, SimpleAnnotationZipParser)
 
 
-def lazy_parse_full_annotation_zip(zip_file_path: Path) -> Iterator[LazyFullAnnotationParser]:
+def lazy_parse_full_annotation_zip(zip_file_path: Path) -> Iterator[FullAnnotationParser]:
     """ 引数のFullアノテーションzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     大量のファイルを含むzipファイルを展開せず、task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
@@ -315,4 +307,4 @@ def lazy_parse_full_annotation_zip(zip_file_path: Path) -> Iterator[LazyFullAnno
     Yields:
         annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
     """
-    return __parse_annotation_zip(zip_file_path, LazyFullAnnotationZipParser)
+    return __parse_annotation_zip(zip_file_path, FullAnnotationZipParser)
