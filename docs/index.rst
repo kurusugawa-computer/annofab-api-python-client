@@ -18,6 +18,7 @@ annofabapi : AnnoFab API Client Library for Python
    parser
    models
    dataclass
+   exceptions
 
 
 Indices and tables
