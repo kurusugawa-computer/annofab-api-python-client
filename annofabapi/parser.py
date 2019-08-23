@@ -13,7 +13,7 @@ def _trim_extension(file_path: str) -> str:
     return os.path.splitext(file_path)[0]
 
 
-class LazySimpleAnnotationParser:
+class LazySimpleAnnotationParser(abc.ABC):
     """
     Simple Annotationの遅延Parser
 
@@ -81,55 +81,7 @@ class LazySimpleAnnotationParser:
         入力データのJSONファイルをパースする。
         """
 
-
-class LazySimpleAnnotationZipParser(LazySimpleAnnotationParser):
-    """
-    Simple Annotationのzipファイルの遅延Parser
-    """
-
-    __file: zipfile.ZipFile
-    __info: zipfile.ZipInfo
-
-    def __init__(self, file: zipfile.ZipFile, info: zipfile.ZipInfo, task_id: str, data_name_base: str):
-        self.__file = file
-        self.__info = info
-        super().__init__(task_id, data_name_base)
-
-    def parse(self) -> SimpleAnnotation:
-        with self.__file.open(self.__info) as entry:
-            anno_dict: dict = json.load(entry)
-            # mypyの "has no attribute "from_dict" " をignore
-            return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
-
-    def open_outer_file(self, data_uri: str, **kwargs):
-        outer_file_path = _trim_extension(self.__info.filename) + "/" + data_uri
-        return self.__file.open(outer_file_path, **kwargs)
-
-
-class LazySimpleAnnotationDirParser(LazySimpleAnnotationParser):
-    """
-    Simple Annotationのディレクトリの遅延Parser
-
-    Args:
-        json_file: JSONファイルのPath
-        task_id: task_id
-
-    """
-    def __init__(self, json_file: Path, task_id: str):
-        self.__json_file = json_file
-        super().__init__(task_id, json_file.stem)
-
-    def parse(self) -> SimpleAnnotation:
-        with self.__json_file.open() as f:
-            anno_dict: dict = json.load(f)
-            return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
-
-    def open_outer_file(self, data_uri: str, **kwargs):
-        outer_file_path = _trim_extension(str(self.__json_file)) + "/" + data_uri
-        return open(outer_file_path, **kwargs)
-
-
-class LazyFullAnnotationParser:
+class LazyFullAnnotationParser(abc.ABC):
     """
     Full Annotationの遅延Parser
 
@@ -179,6 +131,55 @@ class LazyFullAnnotationParser:
         """
         入力データのJSONファイルをパースする。
         """
+
+
+class LazySimpleAnnotationZipParser(LazySimpleAnnotationParser):
+    """
+    Simple Annotationのzipファイルの遅延Parser
+    """
+
+    __file: zipfile.ZipFile
+    __info: zipfile.ZipInfo
+
+    def __init__(self, file: zipfile.ZipFile, info: zipfile.ZipInfo, task_id: str, data_name_base: str):
+        self.__file = file
+        self.__info = info
+        super().__init__(task_id, data_name_base)
+
+    def parse(self) -> SimpleAnnotation:
+        with self.__file.open(self.__info) as entry:
+            anno_dict: dict = json.load(entry)
+            # mypyの "has no attribute "from_dict" " をignore
+            return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
+
+    def open_outer_file(self, data_uri: str, **kwargs):
+        outer_file_path = _trim_extension(self.__info.filename) + "/" + data_uri
+        return self.__file.open(outer_file_path, **kwargs)
+
+
+class LazySimpleAnnotationDirParser(LazySimpleAnnotationParser):
+    """
+    Simple Annotationのディレクトリの遅延Parser
+
+    Args:
+        json_file: JSONファイルのPath
+        task_id: task_id
+
+    """
+    def __init__(self, json_file: Path, task_id: str):
+        self.__json_file = json_file
+        super().__init__(task_id, json_file.stem)
+
+    def parse(self) -> SimpleAnnotation:
+        with self.__json_file.open() as f:
+            anno_dict: dict = json.load(f)
+            return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
+
+    def open_outer_file(self, data_uri: str, **kwargs):
+        outer_file_path = _trim_extension(str(self.__json_file)) + "/" + data_uri
+        return open(outer_file_path, **kwargs)
+
+
 
 
 class LazyFullAnnotationZipParser(LazyFullAnnotationParser):
