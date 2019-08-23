@@ -3,18 +3,11 @@ AnnofabApi2のテストメソッド
 
 """
 import configparser
-import datetime
 import json
-import logging
 import os
-import time
-import uuid
-from distutils.util import strtobool
 from pathlib import Path
 
-import annofabapi
-import annofabapi.utils
-from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation, SingleAnnotation
+from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
@@ -24,7 +17,6 @@ from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
-from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
