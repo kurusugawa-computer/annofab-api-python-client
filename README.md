@@ -122,7 +122,7 @@ service.wrapper.copy_annotation_specs(src_project_id, dest_project_id)
 ダウンロードしたアノテーションzipファイルを、JSONファイルごとに遅延読み込みします。
 zipファイルを展開したディレクトリもパースが可能です。
 
-```
+```python
 from pathlib import Path
 from annofabapi.parser import parse_simple_annotation_dir, parse_simple_annotation_zip
 
