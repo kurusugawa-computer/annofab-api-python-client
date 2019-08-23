@@ -177,6 +177,12 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
     Args:
         json_file_path: パースするJSONファイルのパス
 
+    Examples:
+        JSONファイルをパースする::
+
+            p = SimpleAnnotationDirParser(Path("task_id/input_data_name.json"))
+            annotation = p.parse()
+
     """
     def __init__(self, json_file_path: Path):
         super().__init__(str(json_file_path))
@@ -225,7 +231,18 @@ class FullAnnotationZipParser(FullAnnotationParser):
 
 class FullAnnotationDirParser(FullAnnotationParser):
     """
-    Full Annotationのディレクトリの遅延Parser
+    Fullアノテーションzipを展開した、ティレクトリのParser
+
+
+    Args:
+        json_file_path: パースするJSONファイルのパス
+
+    Examples:
+        JSONファイルをパースする::
+
+            p = FullAnnotationDirParser(Path("task_id/input_data_name.json"))
+            annotation = p.parse()
+
     """
     def __init__(self, json_file_path: Path):
         super().__init__(str(json_file_path))
