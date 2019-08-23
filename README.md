@@ -1,6 +1,14 @@
 # annofab-api-python-client
 [AnnoFab Web API](https://annofab.com/docs/api/)のPythonクライアントライブラリです。
 
+* **AnnoFab Web API Documentation:** https://annofab.com/docs/api/
+* **Reference Documentation:** https://annofab-api-python-client.readthedocs.io/en/latest/
+* **annofab-cli** ttps://github.com/kurusugawa-computer/annofab-cli
+    * 「タスクの一括差し戻し」や、「プロジェクト間の差分表示」など、AnnoFabの画面で実施するには時間がかかる操作を、CLIツールとして提供しています。
+* **開発者用ドキュメント**: https://github.com/kurusugawa-computer/annofab-api-python-client/blob/master/README_for_developer.md
+
+
+
 
 # 注意
 * 作者または著作権者は、ソフトウェアに関してなんら責任を負いません。
@@ -150,13 +158,3 @@ logging.basicConfig(format=logging_formatter)
 logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 ```
 
-# Documentation
-https://annofab-api-python-client.readthedocs.io/en/latest/
-
-
-# CLIツール
-「タスクの一括差し戻し」や、「プロジェクト間の差分表示」など、AnnoFabの画面で実施するには時間がかかる操作を、CLIツールとして提供しています。
-詳しくは[annofab-cli](https://github.com/kurusugawa-computer/annofab-cli)を参照してください。
-
-# Usage for Develper
-[README_for_developer.md](README_for_developer.md)を参照してください。
