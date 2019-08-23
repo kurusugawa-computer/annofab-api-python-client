@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: "[BUG][command subcommand] Description"
+title: "[BUG][file] Description"
 labels: bug
 assignees: ''
 
@@ -21,7 +21,7 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 ## Environment
- - annofabcli version: ???
+ - annofabapi version: ???
  - Python version: ???
  - OS: ???
 
