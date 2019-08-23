@@ -4,14 +4,15 @@ AnnofabApi2のテストメソッド
 """
 import configparser
 import os
+import zipfile
 from pathlib import Path
 
 import annofabapi
-import zipfile
 import annofabapi.parser
-from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationZipParser, FullAnnotationDirParser, FullAnnotationZipParser
 import annofabapi.utils
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
+from annofabapi.parser import (FullAnnotationDirParser, FullAnnotationZipParser, SimpleAnnotationDirParser,
+                               SimpleAnnotationZipParser)
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -86,6 +87,7 @@ def test_full_annotation_dir():
 
     assert index == 4
 
-    parser = FullAnnotationDirParser(Path(f"{test_dir}/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json"))
+    parser = FullAnnotationDirParser(
+        Path(f"{test_dir}/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json"))
     assert parser.task_id == "sample_1"
     assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
