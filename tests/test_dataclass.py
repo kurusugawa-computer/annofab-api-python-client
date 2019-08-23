@@ -1,7 +1,3 @@
-"""
-AnnofabApi2のテストメソッド
-
-"""
 import configparser
 import logging
 import os
