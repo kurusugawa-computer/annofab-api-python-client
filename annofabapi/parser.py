@@ -13,61 +13,69 @@ def _trim_extension(file_path: str) -> str:
     return os.path.splitext(file_path)[0]
 
 
-class LazySimpleAnnotationParser(abc.ABC):
+class SimpleAnnotationParser(abc.ABC):
     """
-    Simple Annotationの遅延Parser
+    Simple Annotationのparser
+
+    以下のフォルダ構成であることを期待します。
+
+    ```
+    ├── {task_id}/
+    │   ├── {input_data_name}.json
+    │   ├── {input_data_name}/
+    │   │   ├── {annotation_id}
+    ```
 
     Args:
-        task_id:
-        data_name_base: json_fileの拡張子を取り除いた部分
+        json_file_path: パースするJSONファイルのパス。
 
     """
 
-    __task_id: str
-    __data_name_base: str
-    __expected_data_name: str
 
-    def __init__(self, task_id: str, data_name_base: str):
-        self.__task_id = task_id
-        self.__data_name_base = data_name_base
-        self.__expected_data_name = data_name_base.replace("__", "/")
+    def __init__(self, json_file_path: str):
+        p = Path(json_file_path)
+        self.__json_file_path = json_file_path
+        self.__task_id = p.parent.name
+        self.__json_file_name = p.name
+        self.__expected_input_data_name = _trim_extension(p.name).replace("__", "/")
 
     @property
     def task_id(self) -> str:
+        """JSONファイルの親ディレクトリ名から決まる task_id """
         return self.__task_id
 
     @property
-    def json_file_basename(self) -> str:
+    def json_file_name(self) -> str:
         """
-        JSONファイルの拡張子を取り除いた部分。
+        JSONファイルの名前
         """
-        return self.__data_name_base
+        return self.__json_file_name
+
+    @property
+    def json_file_path(self) -> str:
+        """
+        JSONファイルのパス
+        """
+        return self.__json_file_path
 
     @property
     def expected_input_data_name(self) -> str:
-        """ おそらく正しい、input_data_nameです。
+        """
+        JSONファイル名から決まる、おそらく正しい input_data_nameです。
 
          zipファイル内のファイル名は、input_data_nameになっています。
          しかし、'/'がinput_data_nameに含まれる場合'__'に変換されて格納されています。
          そのため、真に正しいinput_data_nameはファイルの中身をparseしないと見つかりません。
          """
-        return self.__expected_data_name
+        return self.__expected_input_data_name
 
-    def can_match_input_data_name(self, input_data_name: str) -> bool:
-        """ 引数に与えたinput_data_nameが、parse結果のinput_data_nameと一致し得るかどうかを判定します。
-
-        Args:
-            input_data_name: テストしたい input_data_name
-
-        Returns: Trueの場合、input_data_nameが真に一致する可能性がある。 Falseの場合、一致しない
-
-        """
-        return input_data_name.replace("/", "__") == self.__data_name_base
 
     @abc.abstractmethod
-    def open_outer_file(self, data_uri: str, **kwargs):
+    def open_outer_file(self, data_uri: str):
         """
-        外部ファイル（塗りつぶし画像など）を開き、対応する ファイルオブジェクトを返す。
+        外部ファイル（塗りつぶし画像など）を開き、対応するファイルオブジェクトを返す。
+        JSONファイルと同階層にある、"JSONファイルの拡張子を除いた名前"のディレクトリ配下を探します。
+
         Args:
             data_uri: 外部ファイルのパス(input_data_name ディレクトリからのパス）
 
@@ -75,10 +83,11 @@ class LazySimpleAnnotationParser(abc.ABC):
             外部ファイルのファイルオブジェクト
 
         """
+
     @abc.abstractmethod
     def parse(self) -> SimpleAnnotation:
         """
-        入力データのJSONファイルをパースする。
+        JSONファイルをパースする。
         """
 
 class LazyFullAnnotationParser(abc.ABC):
@@ -116,9 +125,11 @@ class LazyFullAnnotationParser(abc.ABC):
         return self.__data_name_base
 
     @abc.abstractmethod
-    def open_outer_file(self, data_uri: str, **kwargs):
+    def open_outer_file(self, data_uri: str):
         """
-        外部ファイル（塗りつぶし画像など）を開き、対応する ファイルオブジェクトを返す。
+        外部ファイル（塗りつぶし画像など）を開き、ファイルオブジェクトを返す。
+        バイナリモードで読み込み用として開く。
+
         Args:
             data_uri: 外部ファイルのパス(input_data_name ディレクトリからのパス）
 
@@ -133,9 +144,9 @@ class LazyFullAnnotationParser(abc.ABC):
         """
 
 
-class LazySimpleAnnotationZipParser(LazySimpleAnnotationParser):
+class SimpleAnnotationZipParser(SimpleAnnotationParser):
     """
-    Simple Annotationのzipファイルの遅延Parser
+    Simple AnnotationのzipファイルのParser
     """
 
     __file: zipfile.ZipFile
@@ -157,27 +168,25 @@ class LazySimpleAnnotationZipParser(LazySimpleAnnotationParser):
         return self.__file.open(outer_file_path, **kwargs)
 
 
-class LazySimpleAnnotationDirParser(LazySimpleAnnotationParser):
+class SimpleAnnotationDirParser(SimpleAnnotationParser):
     """
-    Simple Annotationのディレクトリの遅延Parser
+    Simpleアノテーションzipを展開した、ティレクトリのパーサ
 
     Args:
-        json_file: JSONファイルのPath
-        task_id: task_id
+        json_file_path: パースするJSONファイルのパス
 
     """
-    def __init__(self, json_file: Path, task_id: str):
-        self.__json_file = json_file
-        super().__init__(task_id, json_file.stem)
+    def __init__(self, json_file_path: Path):
+        super().__init__(str(json_file_path))
 
     def parse(self) -> SimpleAnnotation:
-        with self.__json_file.open() as f:
+        with open(self.json_file_path, encoding="utf-8") as f:
             anno_dict: dict = json.load(f)
             return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
 
-    def open_outer_file(self, data_uri: str, **kwargs):
-        outer_file_path = _trim_extension(str(self.__json_file)) + "/" + data_uri
-        return open(outer_file_path, **kwargs)
+    def open_outer_file(self, data_uri: str):
+        outer_file_path = _trim_extension(str(self.json_file_name)) + "/" + data_uri
+        return open(outer_file_path, mode='rb')
 
 
 
@@ -239,11 +248,11 @@ def __parse_annotation_dir(annotaion_dir_path: Path, clazz) -> Iterator[Any]:
             if not input_data_file.suffix == ".json":
                 continue
 
-            parser = clazz(input_data_file, task_id)
+            parser = clazz(input_data_file)
             yield parser
 
 
-def parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[LazySimpleAnnotationParser]:
+def lazy_parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[SimpleAnnotationParser]:
     """ Simpleアノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     Args:
@@ -253,10 +262,10 @@ def parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[LazySimple
         annotationの遅延Parseが可能なインスタンス列。
     """
 
-    return __parse_annotation_dir(annotaion_dir_path, LazySimpleAnnotationDirParser)
+    return __parse_annotation_dir(annotaion_dir_path, SimpleAnnotationDirParser)
 
 
-def parse_full_annotation_dir(annotaion_dir_path: Path) -> Iterator[LazySimpleAnnotationParser]:
+def lazy_parse_full_annotation_dir(annotaion_dir_path: Path) -> Iterator[SimpleAnnotationParser]:
     """ Fullアノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     Args:
@@ -293,7 +302,7 @@ def __parse_annotation_zip(zip_file_path: Path, clazz) -> Iterator[Any]:
                 yield parser
 
 
-def parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[LazySimpleAnnotationParser]:
+def lazy_parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[SimpleAnnotationParser]:
     """ 引数のSimpleアノテーションzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     大量のファイルを含むzipファイルを展開せず、task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
@@ -304,10 +313,10 @@ def parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[LazySimpleAnnot
     Yields:
         annotationの遅延Parseが可能なインスタンス列。 順番は（多分）zipファイル内のエントリー順です
     """
-    return __parse_annotation_zip(zip_file_path, LazySimpleAnnotationZipParser)
+    return __parse_annotation_zip(zip_file_path, SimpleAnnotationZipParser)
 
 
-def parse_full_annotation_zip(zip_file_path: Path) -> Iterator[LazyFullAnnotationParser]:
+def lazy_parse_full_annotation_zip(zip_file_path: Path) -> Iterator[LazyFullAnnotationParser]:
     """ 引数のFullアノテーションzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     大量のファイルを含むzipファイルを展開せず、task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。

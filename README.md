@@ -124,15 +124,15 @@ zipファイルを展開したディレクトリもパースが可能です。
 
 ```python
 from pathlib import Path
-from annofabapi.parser import parse_simple_annotation_dir, parse_simple_annotation_zip
+from annofabapi.parser import lazy_parse_simple_annotation_dir, lazy_parse_simple_annotation_zip
 
-iter_parser = parse_simple_annotation_zip(Path("simple-annotation.zip"))
+iter_parser = lazy_parse_simple_annotation_zip(Path("simple-annotation.zip"))
 for parser in iter_parser:
     simple_annotation = parser.parse()
     print(simple_annotation)
 
 
-iter_parser = parse_simple_annotation_dir(Path("simple-annotation-dir"))
+iter_parser = lazy_parse_simple_annotation_dir(Path("simple-annotation-dir"))
 for parser in iter_parser:
     simple_annotation = parser.parse()
     #print()

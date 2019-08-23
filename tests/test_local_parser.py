@@ -37,7 +37,7 @@ test_dir = Path('./tests/data')
 
 def test_simple_annotation_zip():
     zip_path = Path(test_dir / "simple-annotation.zip")
-    iter_parser = annofabapi.parser.parse_simple_annotation_zip(zip_path)
+    iter_parser = annofabapi.parser.lazy_parse_simple_annotation_zip(zip_path)
 
     index = 0
     for parser in iter_parser:
@@ -50,7 +50,7 @@ def test_simple_annotation_zip():
 
 def test_simple_annotation_dir():
     dir_path = Path(test_dir / "simple-annotation")
-    iter_parser = annofabapi.parser.parse_simple_annotation_dir(dir_path)
+    iter_parser = annofabapi.parser.lazy_parse_simple_annotation_dir(dir_path)
 
     index = 0
     for parser in iter_parser:
@@ -63,7 +63,7 @@ def test_simple_annotation_dir():
 
 def test_full_annotation_zip():
     zip_path = Path(test_dir / "full-annotation.zip")
-    iter_parser = annofabapi.parser.parse_full_annotation_zip(zip_path)
+    iter_parser = annofabapi.parser.lazy_parse_full_annotation_zip(zip_path)
 
     index = 0
     for parser in iter_parser:
@@ -76,7 +76,7 @@ def test_full_annotation_zip():
 
 def test_full_annotation_dir():
     dir_path = Path(test_dir / "full-annotation")
-    iter_parser = annofabapi.parser.parse_full_annotation_dir(dir_path)
+    iter_parser = annofabapi.parser.lazy_parse_full_annotation_dir(dir_path)
 
     index = 0
     for parser in iter_parser:
