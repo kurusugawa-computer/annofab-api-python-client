@@ -3,7 +3,7 @@
 
 * **AnnoFab Web API Documentation:** https://annofab.com/docs/api/
 * **Reference Documentation:** https://annofab-api-python-client.readthedocs.io/en/latest/
-* **annofab-cli** ttps://github.com/kurusugawa-computer/annofab-cli
+* **annofab-cli** https://github.com/kurusugawa-computer/annofab-cli
     * 「タスクの一括差し戻し」や、「プロジェクト間の差分表示」など、AnnoFabの画面で実施するには時間がかかる操作を、CLIツールとして提供しています。
 * **開発者用ドキュメント**: https://github.com/kurusugawa-computer/annofab-api-python-client/blob/master/README_for_developer.md
 
@@ -127,23 +127,38 @@ service.wrapper.copy_annotation_specs(src_project_id, dest_project_id)
 ```
 
 ## アノテーションzipのパース
-ダウンロードしたアノテーションzipファイルを、JSONファイルごとに遅延読み込みします。
+ダウンロードしたアノテーションzipをJSONファイルごとにパース（遅延読み込み）します。
 zipファイルを展開したディレクトリもパースが可能です。
 
 ```python
+import zipfile
 from pathlib import Path
-from annofabapi.parser import lazy_parse_simple_annotation_dir, lazy_parse_simple_annotation_zip
+from annofabapi.parser import lazy_parse_simple_annotation_dir, lazy_parse_simple_annotation_zip, SimpleAnnotationZipParser, SimpleAnnotationDirParser
 
+
+# Simpleアノテーションzipのパース
 iter_parser = lazy_parse_simple_annotation_zip(Path("simple-annotation.zip"))
 for parser in iter_parser:
     simple_annotation = parser.parse()
     print(simple_annotation)
 
-
+# Simpleアノテーションzipを展開したディレクトリのパース
 iter_parser = lazy_parse_simple_annotation_dir(Path("simple-annotation-dir"))
 for parser in iter_parser:
     simple_annotation = parser.parse()
-    #print()
+    print(simple_annotation)
+
+
+# Simpleアノテーションzip内の1個のJSONファイルをパース
+with zipfile.ZipFile('simple-annotation.zip', 'r') as zip_file:
+    parser = SimpleAnnotationZipParser(zip_file, "task_id/input_data_name.json")
+    simple_annotation = parser.parse()
+    print(simple_annotation)
+
+# Simpleアノテーションzip内を展開したディレクトリ内の1個のJSONファイルをパース
+parser = SimpleAnnotationDirParser(Path("task_id/input_data_name.json"))
+simple_annotation = p.parse()
+print(simple_annotation)
 
 ```
 
