@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Iterator, List, Optional
 
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
+from annofabapi.exceptions import AnnotationOuterFileNotFoundError
 
 
 def _trim_extension(file_path: str) -> str:
@@ -69,6 +70,9 @@ class SimpleAnnotationParser(abc.ABC):
         Returns:
             外部ファイルのファイルオブジェクト
 
+        Raises:
+            AnnotationOuterFileNotFoundError: 外部ファイルが存在しないときに、例外を発生します。
+
         """
     @abc.abstractmethod
     def parse(self) -> SimpleAnnotation:
@@ -130,6 +134,8 @@ class FullAnnotationParser(abc.ABC):
         Returns:
             外部ファイルのファイルオブジェクト
 
+        Raises:
+            AnnotationOuterFileNotFoundError: 外部ファイルが存在しないときに、例外を発生します。
         """
     @abc.abstractmethod
     def parse(self) -> FullAnnotation:
@@ -167,7 +173,11 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
 
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
-        return self.__zip_file.open(outer_file_path)
+        try:
+            return self.__zip_file.open(outer_file_path, mode="r")
+        except KeyError:
+            # mypyの `error: "ZipFile" has no attribute "filename"` という警告を無視する
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename)  # type: ignore
 
 
 class SimpleAnnotationDirParser(SimpleAnnotationParser):
@@ -194,7 +204,10 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
 
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
-        return open(outer_file_path, mode='rb')
+        try:
+            return open(outer_file_path, mode='rb')
+        except FileNotFoundError:
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path))
 
 
 class FullAnnotationZipParser(FullAnnotationParser):
@@ -226,7 +239,11 @@ class FullAnnotationZipParser(FullAnnotationParser):
 
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
-        return self.__zip_file.open(outer_file_path)
+        try:
+            return self.__zip_file.open(outer_file_path, mode="r")
+        except KeyError:
+            # mypyの `error: "ZipFile" has no attribute "filename"` という警告を無視する
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename)  # type: ignore
 
 
 class FullAnnotationDirParser(FullAnnotationParser):
@@ -254,7 +271,10 @@ class FullAnnotationDirParser(FullAnnotationParser):
 
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
-        return open(outer_file_path, mode='rb')
+        try:
+            return open(outer_file_path, mode='rb')
+        except FileNotFoundError:
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path))
 
 
 def __parse_annotation_dir(annotaion_dir_path: Path, clazz) -> Iterator[Any]:
