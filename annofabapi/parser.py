@@ -17,14 +17,12 @@ class SimpleAnnotationParser(abc.ABC):
     """
     Simple Annotationのparser
 
-    以下のフォルダ構成であることを期待します。
+    以下のフォルダ構成であることを期待します。::
 
-    ```
-    ├── {task_id}/
-    │   ├── {input_data_name}.json
-    │   ├── {input_data_name}/
-    │   │   ├── {annotation_id}
-    ```
+        ├── {task_id}/
+        │   ├── {input_data_name}.json
+        │   ├── {input_data_name}/
+        │   │   ├── {annotation_id}
 
     Args:
         json_file_path: パースするJSONファイルのパス。
@@ -83,14 +81,12 @@ class FullAnnotationParser(abc.ABC):
     """
     Full Annotationのparser
 
-    以下のフォルダ構成であることを期待します。
+    以下のフォルダ構成であることを期待します。::
 
-    ```
-    ├── {task_id}/
-    │   ├── {input_data_id}.json
-    │   ├── {input_data_id}/
-    │   │   ├── {annotation_id}
-    ```
+        ├── {task_id}/
+        │   ├── {input_data_id}.json
+        │   ├── {input_data_id}/
+        │   │   ├── {annotation_id}
 
     Args:
         json_file_path: パースするJSONファイルのパス。
@@ -145,6 +141,19 @@ class FullAnnotationParser(abc.ABC):
 class SimpleAnnotationZipParser(SimpleAnnotationParser):
     """
     Simple AnnotationのzipファイルのParser
+
+    Args:
+        zip_file: ZipFileオブジェクト。
+        json_file_path: パースするJSONファイルのパス。
+
+    Examples:
+        JSONファイルをパースする::
+
+            with zipfile.ZipFile('annotation.zip', 'r') as zip_file:
+                p = SimpleAnnotationZipParser(zip_file, "task_id/input_data_name.json")
+                annotation = p.parse()
+
+
     """
     def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str):
         self.__zip_file = zip_file
@@ -184,7 +193,20 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
 
 class FullAnnotationZipParser(FullAnnotationParser):
     """
-    Lazy AnnotationのzipファイルのParser
+    AnnotationのzipファイルのParser
+
+    Args:
+        zip_file: ZipFileオブジェクト。
+        json_file_path: パースするJSONファイルのパス。
+
+    Examples:
+        JSONファイルをパースする::
+
+            with zipfile.ZipFile('annotation.zip', 'r') as zip_file:
+                p = FullAnnotationZipParser(zip_file, "task_id/input_data_name.json")
+                annotation = p.parse()
+
+
     """
     def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str):
         self.__zip_file = zip_file

@@ -3,29 +3,15 @@ AnnofabApi2のテストメソッド
 
 """
 import configparser
-import datetime
-import json
-import logging
 import os
-import time
-import uuid
-from distutils.util import strtobool
 from pathlib import Path
 
 import annofabapi
+import zipfile
 import annofabapi.parser
+from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationZipParser, FullAnnotationDirParser, FullAnnotationZipParser
 import annofabapi.utils
-from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation, SingleAnnotation
-from annofabapi.dataclass.annotation_specs import AnnotationSpecs
-from annofabapi.dataclass.input import InputData
-from annofabapi.dataclass.inspection import Inspection
-from annofabapi.dataclass.organization import Organization, OrganizationActivity
-from annofabapi.dataclass.organization_member import OrganizationMember
-from annofabapi.dataclass.project import Project
-from annofabapi.dataclass.project_member import ProjectMember
-from annofabapi.dataclass.supplementary import SupplementaryData
-from annofabapi.dataclass.task import Task, TaskHistory
-from tests.utils_for_test import WrapperForTest, create_csv_for_task
+from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -47,6 +33,11 @@ def test_simple_annotation_zip():
 
     assert index == 2
 
+    with zipfile.ZipFile(zip_path) as zip_file:
+        parser = SimpleAnnotationZipParser(zip_file, "sample_1/.__tests__data__lenna.png.json")
+        assert parser.task_id == "sample_1"
+        assert parser.expected_input_data_name == "./tests/data/lenna.png"
+
 
 def test_simple_annotation_dir():
     dir_path = Path(test_dir / "simple-annotation")
@@ -59,6 +50,10 @@ def test_simple_annotation_dir():
         index += 1
 
     assert index == 2
+
+    parser = SimpleAnnotationDirParser(Path(f"{test_dir}/simple-annotation/sample_1/.__tests__data__lenna.png.json"))
+    assert parser.task_id == "sample_1"
+    assert parser.expected_input_data_name == "./tests/data/lenna.png"
 
 
 def test_full_annotation_zip():
@@ -73,6 +68,11 @@ def test_full_annotation_zip():
 
     assert index == 4
 
+    with zipfile.ZipFile(zip_path) as zip_file:
+        parser = FullAnnotationZipParser(zip_file, "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
+        assert parser.task_id == "sample_1"
+        assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
+
 
 def test_full_annotation_dir():
     dir_path = Path(test_dir / "full-annotation")
@@ -85,3 +85,7 @@ def test_full_annotation_dir():
         index += 1
 
     assert index == 4
+
+    parser = FullAnnotationDirParser(Path(f"{test_dir}/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json"))
+    assert parser.task_id == "sample_1"
+    assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
