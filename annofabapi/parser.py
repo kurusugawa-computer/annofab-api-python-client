@@ -30,8 +30,6 @@ class SimpleAnnotationParser(abc.ABC):
         json_file_path: パースするJSONファイルのパス。
 
     """
-
-
     def __init__(self, json_file_path: str):
         p = Path(json_file_path)
         self.__json_file_path = json_file_path
@@ -69,7 +67,6 @@ class SimpleAnnotationParser(abc.ABC):
          """
         return self.__expected_input_data_name
 
-
     @abc.abstractmethod
     def open_outer_file(self, data_uri: str):
         """
@@ -83,12 +80,12 @@ class SimpleAnnotationParser(abc.ABC):
             外部ファイルのファイルオブジェクト
 
         """
-
     @abc.abstractmethod
     def parse(self) -> SimpleAnnotation:
         """
         JSONファイルをパースする。
         """
+
 
 class LazyFullAnnotationParser(abc.ABC):
     """
@@ -148,29 +145,24 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
     """
     Simple AnnotationのzipファイルのParser
     """
-
-    __file: zipfile.ZipFile
-    __info: zipfile.ZipInfo
-
-    def __init__(self, file: zipfile.ZipFile, info: zipfile.ZipInfo, task_id: str, data_name_base: str):
-        self.__file = file
-        self.__info = info
-        super().__init__(task_id, data_name_base)
+    def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str):
+        self.__zip_file = zip_file
+        super().__init__(json_file_path)
 
     def parse(self) -> SimpleAnnotation:
-        with self.__file.open(self.__info) as entry:
+        with self.__zip_file.open(self.json_file_path) as entry:
             anno_dict: dict = json.load(entry)
             # mypyの "has no attribute "from_dict" " をignore
             return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
 
-    def open_outer_file(self, data_uri: str, **kwargs):
-        outer_file_path = _trim_extension(self.__info.filename) + "/" + data_uri
-        return self.__file.open(outer_file_path, **kwargs)
+    def open_outer_file(self, data_uri: str):
+        outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
+        return self.__zip_file.open(outer_file_path)
 
 
 class SimpleAnnotationDirParser(SimpleAnnotationParser):
     """
-    Simpleアノテーションzipを展開した、ティレクトリのパーサ
+    Simpleアノテーションzipを展開した、ティレクトリのParser
 
     Args:
         json_file_path: パースするJSONファイルのパス
@@ -187,8 +179,6 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(str(self.json_file_name)) + "/" + data_uri
         return open(outer_file_path, mode='rb')
-
-
 
 
 class LazyFullAnnotationZipParser(LazyFullAnnotationParser):
@@ -285,9 +275,7 @@ def __parse_annotation_zip(zip_file_path: Path, clazz) -> Iterator[Any]:
         if not paths[1].endswith(".json"):
             return None
 
-        task_id = paths[0]
-        input_data_name = _trim_extension(paths[1])  # .jsonを取り除いたものがdata_name
-        return clazz(zip_file, info, task_id, input_data_name)
+        return clazz(zip_file, info.filename)
 
     with zipfile.ZipFile(zip_file_path, mode="r") as file:
         info_list: List[zipfile.ZipInfo] = file.infolist()
