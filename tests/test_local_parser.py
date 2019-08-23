@@ -4,12 +4,14 @@ AnnofabApi2のテストメソッド
 """
 import configparser
 import os
+import pytest
 import zipfile
 from pathlib import Path
 
 import annofabapi
 import annofabapi.parser
 import annofabapi.utils
+from annofabapi.exceptions import AnnotationOuterFileNotFoundError
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.parser import (FullAnnotationDirParser, FullAnnotationZipParser, SimpleAnnotationDirParser,
                                SimpleAnnotationZipParser)
@@ -38,6 +40,8 @@ def test_simple_annotation_zip():
         parser = SimpleAnnotationZipParser(zip_file, "sample_1/.__tests__data__lenna.png.json")
         assert parser.task_id == "sample_1"
         assert parser.expected_input_data_name == "./tests/data/lenna.png"
+        with pytest.raises(AnnotationOuterFileNotFoundError):
+            parser.open_outer_file("foo")
 
 
 def test_simple_annotation_dir():
@@ -55,6 +59,8 @@ def test_simple_annotation_dir():
     parser = SimpleAnnotationDirParser(Path(f"{test_dir}/simple-annotation/sample_1/.__tests__data__lenna.png.json"))
     assert parser.task_id == "sample_1"
     assert parser.expected_input_data_name == "./tests/data/lenna.png"
+    with pytest.raises(AnnotationOuterFileNotFoundError):
+        parser.open_outer_file("foo")
 
 
 def test_full_annotation_zip():
@@ -73,6 +79,8 @@ def test_full_annotation_zip():
         parser = FullAnnotationZipParser(zip_file, "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
         assert parser.task_id == "sample_1"
         assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
+        with pytest.raises(AnnotationOuterFileNotFoundError):
+            parser.open_outer_file("foo")
 
 
 def test_full_annotation_dir():
@@ -91,3 +99,5 @@ def test_full_annotation_dir():
         Path(f"{test_dir}/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json"))
     assert parser.task_id == "sample_1"
     assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
+    with pytest.raises(AnnotationOuterFileNotFoundError):
+        parser.open_outer_file("foo")
