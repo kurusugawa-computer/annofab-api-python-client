@@ -3,16 +3,13 @@ AnnofabApi2のテストメソッド
 
 """
 import configparser
-import datetime
 import logging
 import os
-import time
-import uuid
 from distutils.util import strtobool
 
 import annofabapi
 import annofabapi.utils
-from tests.utils_for_test import WrapperForTest, create_csv_for_task
+from tests.utils_for_test import WrapperForTest
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
