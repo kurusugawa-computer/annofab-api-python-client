@@ -1,18 +1,15 @@
-"""
-AnnofabApi2のテストメソッド
-
-"""
 import configparser
 import os
-import pytest
 import zipfile
 from pathlib import Path
+
+import pytest
 
 import annofabapi
 import annofabapi.parser
 import annofabapi.utils
-from annofabapi.exceptions import AnnotationOuterFileNotFoundError
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
+from annofabapi.exceptions import AnnotationOuterFileNotFoundError
 from annofabapi.parser import (FullAnnotationDirParser, FullAnnotationZipParser, SimpleAnnotationDirParser,
                                SimpleAnnotationZipParser)
 
