@@ -54,7 +54,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし利便性のため指定は必須ではありません。
 
-  version: 0.59.1
+  version: 0.60.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -2319,9 +2319,6 @@ components:
             - $ref: "#/components/schemas/TaskGenerateRuleByCount"
             - $ref: "#/components/schemas/TaskGenerateRuleByDirectory"
             - $ref: "#/components/schemas/TaskGenerateRuleByInputDataCsv"
-        task_id_prefix:
-          type: string
-          description: 生成するタスクIDのプレフィックス
         project_last_updated_datetime:
           type: string
           format: date-time
@@ -2330,10 +2327,14 @@ components:
       description: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
       type: object
       required:
+        - task_id_prefix
         - allow_duplicate_input_data
         - input_data_count
         - input_data_order
       properties:
+        task_id_prefix:
+          type: string
+          description: 生成するタスクIDのプレフィックス
         allow_duplicate_input_data:
           type: boolean
           description: falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
@@ -2351,7 +2352,12 @@ components:
     TaskGenerateRuleByDirectory:
       description: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。<br>
       type: object
+      required:
+        - task_id_prefix
       properties:
+        task_id_prefix:
+          type: string
+          description: 生成するタスクIDのプレフィックス
         input_data_name_prefix:
           type: string
           description: タスク生成対象の入力データ名プレフィックス

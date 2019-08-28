@@ -1,19 +1,21 @@
 #!/bin/bash -uex
 
 usage_exit() {
-        echo "Usage: $0 [--ownload]" 1>&2
+        echo "Usage: $0 [--download] [--docker-pull]" 1>&2
         exit 1
 }
 
 FLAG_DOWNLOAD=false
+FLAG_DOCKER_PULL=false
 
 if [ $# -gt 0 ]; then
     case ${1} in
         --download)
-            echo "flag"
             FLAG_DOWNLOAD=true
         ;;
-
+        --docker-pull)
+            FLAG_DOCKER_PULL=true
+        ;;
         --help|-h)
             usage_exit
         ;;
@@ -27,6 +29,10 @@ fi
 # このスクリプトの存在するディレクトリに移動する
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 pushd ${SCRIPT_DIR}
+
+if "${FLAG_DOCKER_PULL}"; then
+    docker pull openapitools/openapi-generator-cli
+fi
 
 # swagger.yamlを修正したいときがあるので、
 if "${FLAG_DOWNLOAD}"; then
@@ -134,6 +140,11 @@ declare -a model_files=(${MODELS_DIR}/inspection.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/inspection.py  \
  ${model_files[@]} > ../annofabapi/dataclass/inspection.py
 
+# Job
+declare -a model_files=(${MODELS_DIR}/job_info.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/job.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/job.py
+
 # Organization
 declare -a model_files=(${MODELS_DIR}/organization_activity.py ${MODELS_DIR}/organization_summary.py ${MODELS_DIR}/organization.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/organization.py  \
@@ -154,6 +165,17 @@ declare -a model_files=(${MODELS_DIR}/project_member.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/project_member.py  \
  ${model_files[@]} > ../annofabapi/dataclass/project_member.py
 
+# Statistics
+declare -a model_files=(${MODELS_DIR}/project_task_statistics.py ${MODELS_DIR}/project_task_statistics_history.py \
+ ${MODELS_DIR}/project_account_statistics_history.py ${MODELS_DIR}/project_account_statistics.py \
+ ${MODELS_DIR}/inspection_statistics_phrases.py ${MODELS_DIR}/inspection_statistics_breakdown.py ${MODELS_DIR}/inspection_statistics.py \
+ ${MODELS_DIR}/phase_statistics.py ${MODELS_DIR}/task_phase_statistics.py \
+ ${MODELS_DIR}/label_statistics.py  \
+ ${MODELS_DIR}/histogram_item.py ${MODELS_DIR}/worktime_statistics_item.py ${MODELS_DIR}/account_worktime_statistics.py ${MODELS_DIR}/worktime_statistics.py  \
+)
+cat partial-header/dataclass/common.py partial-header/dataclass/statistics.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/statistics.py
+
 # Supplementary
 declare -a model_files=(${MODELS_DIR}/supplementary_data.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/supplementary.py  \
@@ -164,6 +186,10 @@ declare -a model_files=(${MODELS_DIR}/task_history.py ${MODELS_DIR}/task_history
 cat partial-header/dataclass/common.py partial-header/dataclass/task.py  \
  ${model_files[@]} > ../annofabapi/dataclass/task.py
 
+# Webhook
+declare -a model_files=(${MODELS_DIR}/webhook_header.py ${MODELS_DIR}/webhook.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/webhook.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/webhook.py
 
 rm -Rf out/openapi_client
 
@@ -176,3 +202,7 @@ pipenv run isort  ${FORMATTED_FILE}
 pipenv run yapf  --in-place ${FORMATTED_FILE}
 
 popd
+
+# Dictの型を修正
+# SimpleAnnotationDetail.attributes, JobInfo
+# InspectionStatisticsPhrases, InspectionStatisticsBreakdown

@@ -7,19 +7,23 @@ from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
+from annofabapi.dataclass.job import JobInfo
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember
 from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
+from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatistics, ProjectAccountStatistics,
+                                             ProjectTaskStatisticsHistory, TaskPhaseStatistics, WorktimeStatistics)
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
+from annofabapi.dataclass.webhook import Webhook
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read('./pytest.ini', 'UTF-8')
 
-test_dir = Path('./tests/data')
+test_dir = Path('./tests/data/dataclass')
 
 
 def test_annotation():
@@ -60,6 +64,14 @@ def test_inspection():
     assert type(inspection) == Inspection
 
 
+def test_job():
+    job_json = test_dir / "job.json"
+    with job_json.open(encoding="utf-8") as f:
+        dict_job = json.load(f)
+    job = JobInfo.from_dict(dict_job)
+    assert type(job) == JobInfo
+
+
 def test_organization():
     organization_activity_json = test_dir / "organization.json"
     with organization_activity_json.open(encoding="utf-8") as f:
@@ -98,6 +110,54 @@ def test_project_member():
     assert type(project_member) == ProjectMember
 
 
+def test_statistics_get_task_statistics():
+    statistics_json = test_dir / "task_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = ProjectTaskStatisticsHistory.from_dict(dict_stat)
+    assert type(stat) == ProjectTaskStatisticsHistory
+
+
+def test_statistics_get_account_statistics():
+    statistics_json = test_dir / "account_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = ProjectAccountStatistics.from_dict(dict_stat)
+    assert type(stat) == ProjectAccountStatistics
+
+
+def test_statistics_get_inspection_statistics():
+    statistics_json = test_dir / "inspection_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = InspectionStatistics.from_dict(dict_stat)
+    assert type(stat) == InspectionStatistics
+
+
+def test_statistics_get_task_phase_statistics():
+    statistics_json = test_dir / "task_phase_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = TaskPhaseStatistics.from_dict(dict_stat)
+    assert type(stat) == TaskPhaseStatistics
+
+
+def test_statistics_get_label_statistics():
+    statistics_json = test_dir / "label_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = LabelStatistics.from_dict(dict_stat)
+    assert type(stat) == LabelStatistics
+
+
+def test_statistics_get_worktime_statistics():
+    statistics_json = test_dir / "worktime_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = WorktimeStatistics.from_dict(dict_stat)
+    assert type(stat) == WorktimeStatistics
+
+
 def test_supplementary():
     supplementary_data_json = test_dir / "supplementary-data.json"
     with supplementary_data_json.open(encoding="utf-8") as f:
@@ -118,3 +178,11 @@ def test_task():
         dict_task_history = json.load(f)
     task_history = TaskHistory.from_dict(dict_task_history)
     assert type(task_history) == TaskHistory
+
+
+def test_webhook():
+    webhook_json = test_dir / "webhook.json"
+    with webhook_json.open(encoding="utf-8") as f:
+        dict_webhook = json.load(f)
+    webhook = Webhook.from_dict(dict_webhook)
+    assert type(webhook) == Webhook
