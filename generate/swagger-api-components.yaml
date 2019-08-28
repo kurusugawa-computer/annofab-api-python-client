@@ -1781,9 +1781,6 @@
             - $ref: "#/components/schemas/TaskGenerateRuleByCount"
             - $ref: "#/components/schemas/TaskGenerateRuleByDirectory"
             - $ref: "#/components/schemas/TaskGenerateRuleByInputDataCsv"
-        task_id_prefix:
-          type: string
-          description: 生成するタスクIDのプレフィックス
         project_last_updated_datetime:
           type: string
           format: date-time
@@ -1792,10 +1789,14 @@
       description: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
       type: object
       required:
+        - task_id_prefix
         - allow_duplicate_input_data
         - input_data_count
         - input_data_order
       properties:
+        task_id_prefix:
+          type: string
+          description: 生成するタスクIDのプレフィックス
         allow_duplicate_input_data:
           type: boolean
           description: falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
@@ -1813,7 +1814,12 @@
     TaskGenerateRuleByDirectory:
       description: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。<br>
       type: object
+      required:
+        - task_id_prefix
       properties:
+        task_id_prefix:
+          type: string
+          description: 生成するタスクIDのプレフィックス
         input_data_name_prefix:
           type: string
           description: タスク生成対象の入力データ名プレフィックス
