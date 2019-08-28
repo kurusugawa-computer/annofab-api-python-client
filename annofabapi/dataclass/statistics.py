@@ -195,20 +195,6 @@ class AccountWorktimeStatistics:
     """"""
 @dataclass_json
 @dataclass
-class HistogramItem:
-    """
-    
-    """
-    begin: Optional[float]
-    """"""
-
-    end: Optional[float]
-    """"""
-
-    count: Optional[int]
-    """"""
-@dataclass_json
-@dataclass
 class WorktimeStatistics:
     """
     
