@@ -17,6 +17,7 @@ from annofabapi.dataclass.project_member import ProjectMember
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.job import JobInfo
+from annofabapi.dataclass.webhook import Webhook
 from tests.utils_for_test import WrapperForTest
 
 # プロジェクトトップに移動する
@@ -121,3 +122,8 @@ def test_task():
     task_histories, _ = service.api.get_task_histories(project_id, task_id)
     task_history = TaskHistory.from_dict(task_histories[0])
     assert type(task_history) == TaskHistory
+
+def test_webhook():
+    webhook_list = service.api.get_webhooks(project_id)[0]
+    webhook = Webhook.from_dict(webhook_list[0])
+    assert type(webhook) == Webhook

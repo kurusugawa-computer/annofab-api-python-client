@@ -13,6 +13,9 @@ from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
+from annofabapi.dataclass.job import JobInfo
+from annofabapi.dataclass.webhook import Webhook
+
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -58,6 +61,13 @@ def test_inspection():
         dict_inspection = json.load(f)
     inspection = Inspection.from_dict(dict_inspection)
     assert type(inspection) == Inspection
+
+def test_job():
+    job_json = test_dir / "job.json"
+    with job_json.open(encoding="utf-8") as f:
+        dict_job = json.load(f)
+    job = JobInfo.from_dict(dict_job)
+    assert type(job) == JobInfo
 
 
 def test_organization():
@@ -118,3 +128,11 @@ def test_task():
         dict_task_history = json.load(f)
     task_history = TaskHistory.from_dict(dict_task_history)
     assert type(task_history) == TaskHistory
+
+def test_webhook():
+    webhook_json = test_dir / "webhook.json"
+    with webhook_json.open(encoding="utf-8") as f:
+        dict_webhook = json.load(f)
+    webhook = Webhook.from_dict(dict_webhook)
+    assert type(webhook) == Webhook
+
