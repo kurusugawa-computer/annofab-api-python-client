@@ -54,7 +54,7 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし、利便性のために一部APIを除き指定は必須ではありません。
 
-  version: 0.59.1
+  version: 0.60.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -2635,17 +2635,17 @@ paths:
         これが守られない場合、作成されたタスクで動画を再生できない場合があります。
 
         #### ByInputDataCsv: CSVによるタスク一括生成の使い方
-        以下のように「タスク番号,入力データ名,入力データID」を1行毎に指定したCSVを作成します。
+        以下のように「タスクID,入力データ名,入力データID」を1行毎に指定したCSVを作成します。
 
         ```
-        1,a001.jpg,ca0cb2f9-fec5-49b4-98df-dc34490f9785
-        1,a002.jpg,5ac1987e-ca7c-42a0-9c19-b5b23a41836b
-        1,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee
-        2,b001.jpg,4f2ae4d0-7a38-4f9a-be6f-170ba76aba73
-        2,b002.jpg,45ac5852-f20c-4938-9ee9-cc0274401df7
-        2,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee
-        3,c001.jpg,3260c7a0-4820-424d-a26e-db7e91dbc139
-        3,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee
+        task_1,a001.jpg,ca0cb2f9-fec5-49b4-98df-dc34490f9785
+        task_1,a002.jpg,5ac1987e-ca7c-42a0-9c19-b5b23a41836b
+        task_1,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee
+        task_2,b001.jpg,4f2ae4d0-7a38-4f9a-be6f-170ba76aba73
+        task_2,b002.jpg,45ac5852-f20c-4938-9ee9-cc0274401df7
+        task_2,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee
+        task_3,c001.jpg,3260c7a0-4820-424d-a26e-db7e91dbc139
+        task_3,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee
         ```
         CSVのエンコーディングは UTF-8(BOM付き)、UTF-8(BOMなし)、UTF-16(BOM付きLE) のいずれかのみ対応しています。
 
@@ -6198,9 +6198,6 @@ components:
             - $ref: "#/components/schemas/TaskGenerateRuleByCount"
             - $ref: "#/components/schemas/TaskGenerateRuleByDirectory"
             - $ref: "#/components/schemas/TaskGenerateRuleByInputDataCsv"
-        task_id_prefix:
-          type: string
-          description: 生成するタスクIDのプレフィックス
         project_last_updated_datetime:
           type: string
           format: date-time
@@ -6209,10 +6206,14 @@ components:
       description: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
       type: object
       required:
+        - task_id_prefix
         - allow_duplicate_input_data
         - input_data_count
         - input_data_order
       properties:
+        task_id_prefix:
+          type: string
+          description: 生成するタスクIDのプレフィックス
         allow_duplicate_input_data:
           type: boolean
           description: falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
@@ -6230,7 +6231,12 @@ components:
     TaskGenerateRuleByDirectory:
       description: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。<br>
       type: object
+      required:
+        - task_id_prefix
       properties:
+        task_id_prefix:
+          type: string
+          description: 生成するタスクIDのプレフィックス
         input_data_name_prefix:
           type: string
           description: タスク生成対象の入力データ名プレフィックス
