@@ -16,13 +16,14 @@ from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.job import JobInfo
 from annofabapi.dataclass.webhook import Webhook
 
+from annofabapi.dataclass.statistics import ProjectTaskStatisticsHistory, ProjectAccountStatistics, InspectionStatistics, TaskPhaseStatistics, LabelStatistics, WorktimeStatistics
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read('./pytest.ini', 'UTF-8')
 
-test_dir = Path('./tests/data')
+test_dir = Path('./tests/data/dataclass')
 
 
 def test_annotation():
@@ -106,6 +107,56 @@ def test_project_member():
         dict_project_member = json.load(f)
     project_member = ProjectMember.from_dict(dict_project_member)
     assert type(project_member) == ProjectMember
+
+
+def test_statistics_get_task_statistics():
+    statistics_json = test_dir / "task_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = ProjectTaskStatisticsHistory.from_dict(dict_stat)
+    assert type(stat) == ProjectTaskStatisticsHistory
+
+
+def test_statistics_get_account_statistics():
+    statistics_json = test_dir / "account_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = ProjectAccountStatistics.from_dict(dict_stat)
+    assert type(stat) == ProjectAccountStatistics
+
+
+
+
+
+
+
+def test_statistics_get_inspection_statistics():
+    statistics_json = test_dir / "inspection_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = InspectionStatistics.from_dict(dict_stat)
+    assert type(stat) == InspectionStatistics
+
+def test_statistics_get_task_phase_statistics():
+    statistics_json = test_dir / "task_phase_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = TaskPhaseStatistics.from_dict(dict_stat)
+    assert type(stat) == TaskPhaseStatistics
+
+def test_statistics_get_label_statistics():
+    statistics_json = test_dir / "label_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = LabelStatistics.from_dict(dict_stat)
+    assert type(stat) == LabelStatistics
+
+def test_statistics_get_worktime_statistics():
+    statistics_json = test_dir / "worktime_statistics.json"
+    with statistics_json.open(encoding="utf-8") as f:
+        dict_stat = json.load(f)
+    stat = WorktimeStatistics.from_dict(dict_stat)
+    assert type(stat) == WorktimeStatistics
 
 
 def test_supplementary():
