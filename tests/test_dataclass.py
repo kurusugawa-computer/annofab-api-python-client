@@ -16,6 +16,7 @@ from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
+from annofabapi.dataclass.job import JobInfo
 from tests.utils_for_test import WrapperForTest
 
 # プロジェクトトップに移動する
@@ -70,6 +71,12 @@ def test_inspection():
     inspection_list, _ = service.api.get_inspections(project_id, task_id, input_data_id)
     inspection = Inspection.from_dict(inspection_list[0])
     assert type(inspection) == Inspection
+
+
+def test_job():
+    job_list = service.wrapper.get_all_project_job(project_id, query_params={"type": "gen-tasks"})
+    job = JobInfo.from_dict(job_list[0])
+    assert type(job) == JobInfo
 
 
 def test_organization():
