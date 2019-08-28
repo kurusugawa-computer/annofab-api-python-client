@@ -24,6 +24,7 @@ sphinx = "==1.8.5"
 autoflake = "*"
 # Specify version temporarily
 docutils = "<=0.15.0"
+update = "*"
 
 [pipenv]
 allow_prereleases = true
