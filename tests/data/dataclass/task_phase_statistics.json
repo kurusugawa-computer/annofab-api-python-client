@@ -1,0 +1,18 @@
+{
+  "project_id": "a2345678-abcd-1234-abcd-1234abcd5678",
+  "date": "2019-04-19",
+  "phases": [
+    {
+      "phase": "acceptance",
+      "worktime": "PT25M11.224S"
+    },
+    {
+      "phase": "inspection",
+      "worktime": "PT9.693S"
+    },
+    {
+      "phase": "annotation",
+      "worktime": "PT39.069S"
+    }
+  ]
+}

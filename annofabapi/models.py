@@ -2025,6 +2025,19 @@ Kyes of Dict
 
 """
 
+MyAccountAllOf = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* reset_requested_email: str
+    
+* errors: List[str]
+    
+
+"""
+
 MyOrganization = Dict[str, Any]
 """
 
@@ -2762,8 +2775,6 @@ Kyes of Dict
 
 * task_generate_rule: OneOfTaskGenerateRuleByCountTaskGenerateRuleByDirectoryTaskGenerateRuleByInputDataCsv
     * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。 
-* task_id_prefix: str
-    生成するタスクIDのプレフィックス
 * project_last_updated_datetime: str
     プロジェクトの最終更新日時。タスク生成の排他制御に使用。
 
@@ -2775,6 +2786,8 @@ TaskGenerateRuleByCount = Dict[str, Any]
 
 Kyes of Dict
 
+* task_id_prefix: str
+    生成するタスクIDのプレフィックス
 * allow_duplicate_input_data: bool
     falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
 * input_data_count: int
@@ -2792,6 +2805,8 @@ TaskGenerateRuleByDirectory = Dict[str, Any]
 
 Kyes of Dict
 
+* task_id_prefix: str
+    生成するタスクIDのプレフィックス
 * input_data_name_prefix: str
     タスク生成対象の入力データ名プレフィックス
 * type: str
