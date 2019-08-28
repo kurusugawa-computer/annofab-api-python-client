@@ -1,7 +1,7 @@
 #!/bin/bash -uex
 
 usage_exit() {
-        echo "Usage: $0 [--ownload]" 1>&2
+        echo "Usage: $0 [--download] [--docker-pull]" 1>&2
         exit 1
 }
 
@@ -10,10 +10,11 @@ FLAG_DOWNLOAD=false
 if [ $# -gt 0 ]; then
     case ${1} in
         --download)
-            echo "flag"
             FLAG_DOWNLOAD=true
         ;;
-
+        --docker-pull)
+            FLAG_DOCKER_PULL=true
+        ;;
         --help|-h)
             usage_exit
         ;;
@@ -27,6 +28,10 @@ fi
 # このスクリプトの存在するディレクトリに移動する
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 pushd ${SCRIPT_DIR}
+
+if "${FLAG_DOCKER_PULL}"; then
+    docker pull openapitools/openapi-generator-cli
+fi
 
 # swagger.yamlを修正したいときがあるので、
 if "${FLAG_DOWNLOAD}"; then
@@ -134,6 +139,11 @@ declare -a model_files=(${MODELS_DIR}/inspection.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/inspection.py  \
  ${model_files[@]} > ../annofabapi/dataclass/inspection.py
 
+# Job
+declare -a model_files=(${MODELS_DIR}/job_info.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/job.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/job.py
+
 # Organization
 declare -a model_files=(${MODELS_DIR}/organization_activity.py ${MODELS_DIR}/organization_summary.py ${MODELS_DIR}/organization.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/organization.py  \
@@ -164,6 +174,10 @@ declare -a model_files=(${MODELS_DIR}/task_history.py ${MODELS_DIR}/task_history
 cat partial-header/dataclass/common.py partial-header/dataclass/task.py  \
  ${model_files[@]} > ../annofabapi/dataclass/task.py
 
+# Webhook
+declare -a model_files=(${MODELS_DIR}/webhook_header.py ${MODELS_DIR}/webhook.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/webhook.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/webhook.py
 
 rm -Rf out/openapi_client
 
