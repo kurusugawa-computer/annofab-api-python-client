@@ -6,6 +6,7 @@ usage_exit() {
 }
 
 FLAG_DOWNLOAD=false
+FLAG_DOCKER_PULL=false
 
 if [ $# -gt 0 ]; then
     case ${1} in
@@ -201,3 +202,6 @@ pipenv run isort  ${FORMATTED_FILE}
 pipenv run yapf  --in-place ${FORMATTED_FILE}
 
 popd
+
+# Dictの型を修正
+# SimpleAnnotationDetail.attributes
