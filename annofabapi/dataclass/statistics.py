@@ -10,11 +10,11 @@ Note:
 
 import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
-from annofabapi.models import TaskPhase, TaskStatus
-
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
 from dataclasses_json import dataclass_json
+
+from annofabapi.models import TaskPhase, TaskStatus
 
 
 @dataclass_json
@@ -162,13 +162,11 @@ class HistogramItem:
 
     count: Optional[int]
     """"""
-
-
 @dataclass_json
 @dataclass
 class WorktimeStatisticsItem:
     """
-
+    
     """
     phase: Optional[TaskPhase]
     """"""
@@ -181,8 +179,6 @@ class WorktimeStatisticsItem:
 
     standard_deviation: Optional[str]
     """"""
-
-
 @dataclass_json
 @dataclass
 class AccountWorktimeStatistics:
