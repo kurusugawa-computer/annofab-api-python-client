@@ -18,6 +18,8 @@ from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.job import JobInfo
 from annofabapi.dataclass.webhook import Webhook
+from annofabapi.dataclass.statistics import ProjectTaskStatisticsHistory, ProjectAccountStatistics, InspectionStatistics, TaskPhaseStatistics, LabelStatistics, WorktimeStatistics
+
 from tests.utils_for_test import WrapperForTest
 
 # プロジェクトトップに移動する
@@ -106,6 +108,38 @@ def test_project_member():
     dict_project_member, _ = service.api.get_project_member(project_id, annofab_user_id)
     project_member = ProjectMember.from_dict(dict_project_member)
     assert type(project_member) == ProjectMember
+
+
+def test_statistics_get_task_statistics():
+    stat_list, _ = service.api.get_task_statistics(project_id)
+    stat = ProjectTaskStatisticsHistory.from_dict(stat_list[0])
+    assert type(stat) == ProjectTaskStatisticsHistory
+
+def test_statistics_get_account_statistics():
+    stat_list, _ = service.api.get_account_statistics(project_id)
+    stat = ProjectAccountStatistics.from_dict(stat_list[0])
+    assert type(stat) == ProjectAccountStatistics
+
+def test_statistics_get_inspection_statistics():
+    stat_list, _ = service.api.get_inspection_statistics(project_id)
+    stat = InspectionStatistics.from_dict(stat_list[0])
+    assert type(stat) == InspectionStatistics
+
+def test_statistics_get_task_phase_statistics():
+    stat_list, _ = service.api.get_task_phase_statistics(project_id)
+    stat = TaskPhaseStatistics.from_dict(stat_list[0])
+    assert type(stat) == TaskPhaseStatistics
+
+def test_statistics_get_label_statistics():
+    stat_list, _ = service.api.get_label_statistics(project_id)
+    stat = LabelStatistics.from_dict(stat_list[0])
+    assert type(stat) == LabelStatistics
+
+def test_statistics_get_worktime_statistics():
+    stat_list, _ = service.api.get_worktime_statistics(project_id)
+    stat = WorktimeStatistics.from_dict(stat_list[0])
+    assert type(stat) == WorktimeStatistics
+
 
 
 def test_supplementary():

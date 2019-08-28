@@ -143,10 +143,10 @@ class LabelStatistics:
     label_id: Optional[str]
     """"""
 
-    completed_labels: Optional[int]
+    completed: Optional[int]
     """ラベルごとの受入が完了したアノテーション数"""
 
-    wip_labels: Optional[int]
+    wip: Optional[int]
     """ラベルごとの受入が完了していないアノテーション数"""
 @dataclass_json
 @dataclass
