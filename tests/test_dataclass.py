@@ -10,16 +10,16 @@ from annofabapi.dataclass.annotation import SimpleAnnotation, SingleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
+from annofabapi.dataclass.job import JobInfo
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember
 from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
+from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatistics, ProjectAccountStatistics,
+                                             ProjectTaskStatisticsHistory, TaskPhaseStatistics, WorktimeStatistics)
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
-from annofabapi.dataclass.job import JobInfo
 from annofabapi.dataclass.webhook import Webhook
-from annofabapi.dataclass.statistics import ProjectTaskStatisticsHistory, ProjectAccountStatistics, InspectionStatistics, TaskPhaseStatistics, LabelStatistics, WorktimeStatistics
-
 from tests.utils_for_test import WrapperForTest
 
 # プロジェクトトップに移動する
@@ -115,31 +115,35 @@ def test_statistics_get_task_statistics():
     stat = ProjectTaskStatisticsHistory.from_dict(stat_list[0])
     assert type(stat) == ProjectTaskStatisticsHistory
 
+
 def test_statistics_get_account_statistics():
     stat_list, _ = service.api.get_account_statistics(project_id)
     stat = ProjectAccountStatistics.from_dict(stat_list[0])
     assert type(stat) == ProjectAccountStatistics
+
 
 def test_statistics_get_inspection_statistics():
     stat_list, _ = service.api.get_inspection_statistics(project_id)
     stat = InspectionStatistics.from_dict(stat_list[0])
     assert type(stat) == InspectionStatistics
 
+
 def test_statistics_get_task_phase_statistics():
     stat_list, _ = service.api.get_task_phase_statistics(project_id)
     stat = TaskPhaseStatistics.from_dict(stat_list[0])
     assert type(stat) == TaskPhaseStatistics
+
 
 def test_statistics_get_label_statistics():
     stat_list, _ = service.api.get_label_statistics(project_id)
     stat = LabelStatistics.from_dict(stat_list[0])
     assert type(stat) == LabelStatistics
 
+
 def test_statistics_get_worktime_statistics():
     stat_list, _ = service.api.get_worktime_statistics(project_id)
     stat = WorktimeStatistics.from_dict(stat_list[0])
     assert type(stat) == WorktimeStatistics
-
 
 
 def test_supplementary():
@@ -156,6 +160,7 @@ def test_task():
     task_histories, _ = service.api.get_task_histories(project_id, task_id)
     task_history = TaskHistory.from_dict(task_histories[0])
     assert type(task_history) == TaskHistory
+
 
 def test_webhook():
     webhook_list = service.api.get_webhooks(project_id)[0]
