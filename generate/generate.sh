@@ -56,7 +56,7 @@ JAVA_OPTS="-Dlog.level=info"
 
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --output /local/out \
-    --type-mappings array=List,DateTime=str,date=str,object=Dict"
+    --type-mappings array=List,DateTime=str,date=str,object=Dict,dict=Dict"
 
 # v1 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} openapitools/openapi-generator-cli generate \
@@ -171,7 +171,7 @@ declare -a model_files=(${MODELS_DIR}/project_task_statistics.py ${MODELS_DIR}/p
  ${MODELS_DIR}/inspection_statistics_phrases.py ${MODELS_DIR}/inspection_statistics_breakdown.py ${MODELS_DIR}/inspection_statistics.py \
  ${MODELS_DIR}/phase_statistics.py ${MODELS_DIR}/task_phase_statistics.py \
  ${MODELS_DIR}/label_statistics.py  \
- ${MODELS_DIR}/histogram_item.py ${MODELS_DIR}/account_worktime_statistics.py ${MODELS_DIR}/worktime_statistics_item.py ${MODELS_DIR}/histogram_item.py ${MODELS_DIR}/worktime_statistics.py  \
+ ${MODELS_DIR}/histogram_item.py ${MODELS_DIR}/worktime_statistics_item.py ${MODELS_DIR}/account_worktime_statistics.py ${MODELS_DIR}/histogram_item.py ${MODELS_DIR}/worktime_statistics.py  \
 )
 cat partial-header/dataclass/common.py partial-header/dataclass/statistics.py  \
  ${model_files[@]} > ../annofabapi/dataclass/statistics.py
@@ -204,4 +204,5 @@ pipenv run yapf  --in-place ${FORMATTED_FILE}
 popd
 
 # Dictの型を修正
-# SimpleAnnotationDetail.attributes
+# SimpleAnnotationDetail.attributes, JobInfo
+# InspectionStatisticsPhrases, InspectionStatisticsBreakdown
