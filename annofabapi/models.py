@@ -284,6 +284,7 @@ class AdditionalDataDefinitionType(Enum):
     COMMENT = "comment"
     CHOICE = "choice"
     SELECT = "select"
+    TEXT = "text"
     TRACKING = "tracking"
     LINK = "link"
 
