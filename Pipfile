@@ -22,8 +22,7 @@ twine = "*"
 # Match sphinx version at ReadTheDocs
 sphinx = "==1.8.5"
 autoflake = "*"
-# Specify version temporarily
-docutils = "<=0.15.0"
+docutils = "*"
 
 [pipenv]
 allow_prereleases = true

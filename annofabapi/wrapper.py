@@ -5,6 +5,8 @@ import urllib
 import urllib.parse
 from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
 
+import requests
+
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
@@ -152,6 +154,22 @@ class Wrapper:
     #########################################
     # Public Method : AfAnnotationSpecsApi
     #########################################
+    def get_annotation_specs_from_url(self, project_id: str, url: str) -> AnnotationSpecs:
+        """
+        アノテーション仕様の履歴から取得したURLから、アノテーション仕様を取得する
+
+        Args:
+            project_id: プロジェクトID
+            url: アノテーション仕様の履歴から取得したURL
+
+        Returns:
+            put_annotation_specsのContent
+        """
+        cookies, _ = self.api._get_signed_cookie(project_id)
+        kwargs = self.api._create_kwargs()
+        kwargs.update({"cookies": cookies})
+        return requests.get(url, **kwargs).json()
+
     def copy_annotation_specs(self, src_project_id: str, dest_project_id: str,
                               comment: Optional[str] = None) -> AnnotationSpecs:
         """
@@ -261,6 +279,25 @@ class Wrapper:
             copied_request_body["input_data_name"] = file_path
 
         return self.api.put_input_data(project_id, input_data_id, request_body=copied_request_body)[0]
+
+    #########################################
+    # Public Method : AfStatisticsApi
+    #########################################
+    def get_worktime_statistics(self, project_id: str) -> Dict[str, Any]:
+        """
+        タスク作業時間集計取得.
+        Location Headerに記載されたURLのレスポンスをJSON形式で返す。
+
+        Args:
+            project_id:  プロジェクトID
+
+        Returns:
+            タスク作業時間集計
+
+        """
+        _, response = self.api.get_worktime_statistics(project_id)
+        url = response.headers['Location']
+        return requests.get(url).json()
 
     #########################################
     # Public Method : AfSupplementaryApi
