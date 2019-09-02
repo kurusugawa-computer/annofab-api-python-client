@@ -129,6 +129,10 @@ def test_annotation_specs():
     annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
     assert type(annotation_specs_histories) == list
 
+    old_annotation_specs_url = annotation_specs_histories[0]["url"]
+    old_annotation_specs = wrapper.get_annotation_specs_from_url(project_id, old_annotation_specs_url)
+    assert type(old_annotation_specs) == dict
+
 
 def test_login():
     print(f"login")
