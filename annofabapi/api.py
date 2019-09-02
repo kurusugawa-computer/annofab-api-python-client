@@ -1,6 +1,7 @@
 import functools
 import json
 import logging
+import warnings
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import backoff
@@ -176,6 +177,26 @@ class AnnofabApi(AbstractAnnofabApi):
 
         content = self._response_to_content(response)
         return content, response
+
+    def _get_signed_cookie(self, project_id):
+        """
+        アノテーション仕様の履歴情報を取得するために、非公開APIにアクセスする。
+        変更される可能性あり.
+
+        .. deprecated:: X
+
+        Args:
+            project_id: プロジェクトID
+
+        Returns:
+            Tuple[Content, Reponse)
+
+        """
+        warnings.warn("deprecated", DeprecationWarning)
+        url_path = f'/private/projects/{project_id}/sign-headers'
+        http_method = 'GET'
+        keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
     # Public Method : Login

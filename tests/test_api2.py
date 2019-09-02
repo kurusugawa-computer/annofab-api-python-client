@@ -3,13 +3,12 @@ AnnofabApi2のテストメソッド
 
 """
 import configparser
-import logging
 import os
 from distutils.util import strtobool
 
 import annofabapi
 import annofabapi.utils
-from tests.utils_for_test import WrapperForTest
+from tests.utils_for_test import WrapperForTest, set_logging_from_inifile
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -17,15 +16,11 @@ inifile = configparser.ConfigParser()
 inifile.read('./pytest.ini', 'UTF-8')
 project_id = inifile.get('annofab', 'project_id')
 should_execute_job_api: bool = strtobool(inifile.get('annofab', 'should_execute_job_api'))
-should_print_log_message: bool = strtobool(inifile.get('annofab', 'should_print_log_message'))
 
 test_dir = './tests/data'
 out_dir = './tests/out'
 
-if should_print_log_message:
-    logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
-    logging.basicConfig(format=logging_formatter)
-    logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
+set_logging_from_inifile(inifile)
 
 service = annofabapi.build_from_netrc()
 test_wrapper = WrapperForTest(service.api)

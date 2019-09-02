@@ -1,5 +1,4 @@
 import configparser
-import logging
 import os
 from distutils.util import strtobool
 from pathlib import Path
@@ -20,7 +19,7 @@ from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatisti
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.webhook import Webhook
-from tests.utils_for_test import WrapperForTest
+from tests.utils_for_test import WrapperForTest, set_logging_from_inifile
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -30,14 +29,10 @@ project_id = inifile.get('annofab', 'project_id')
 task_id = inifile.get('annofab', 'task_id')
 input_data_id = inifile.get('annofab', 'input_data_id')
 should_execute_job_api: bool = strtobool(inifile.get('annofab', 'should_execute_job_api'))
-should_print_log_message: bool = strtobool(inifile.get('annofab', 'should_print_log_message'))
+
+set_logging_from_inifile(inifile)
 
 test_dir = Path('./tests/data')
-
-if should_print_log_message:
-    logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
-    logging.basicConfig(format=logging_formatter)
-    logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 
 service = annofabapi.build_from_netrc()
 test_wrapper = WrapperForTest(service.api)
@@ -141,7 +136,7 @@ def test_statistics_get_label_statistics():
 
 
 def test_statistics_get_worktime_statistics():
-    stat_list, _ = service.api.get_worktime_statistics(project_id)
+    stat_list = service.wrapper.get_worktime_statistics(project_id)
     stat = WorktimeStatistics.from_dict(stat_list[0])
     assert type(stat) == WorktimeStatistics
 
