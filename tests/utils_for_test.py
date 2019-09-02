@@ -1,5 +1,8 @@
+import configparser
 import csv
+import logging
 import os
+from distutils.util import strtobool
 
 from annofabapi import AnnofabApi
 
@@ -15,6 +18,21 @@ def create_csv_for_task(file_path, first_input_data):
     with open(file_path, 'w') as f:
         writer = csv.writer(f, delimiter=',', lineterminator='\n')
         writer.writerows(lines)
+
+
+def set_logging_from_inifile(inifile: configparser.ConfigParser):
+    """
+    読み込み済の inifile から、ロギングを設定する。
+
+    Args:
+        inifile: 読み込み済の inifile
+
+    """
+    should_print_log_message: bool = strtobool(inifile.get('annofab', 'should_print_log_message'))
+    if should_print_log_message:
+        logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
+        logging.basicConfig(format=logging_formatter)
+        logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 
 
 class WrapperForTest:

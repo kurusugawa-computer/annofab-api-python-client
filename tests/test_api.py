@@ -8,7 +8,6 @@ AnnofabApi, Wrapperのテストコード
 """
 import configparser
 import datetime
-import logging
 import os
 import time
 import uuid
@@ -16,7 +15,7 @@ from distutils.util import strtobool
 
 import annofabapi
 import annofabapi.utils
-from tests.utils_for_test import WrapperForTest, create_csv_for_task
+from tests.utils_for_test import WrapperForTest, create_csv_for_task, set_logging_from_inifile
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -29,10 +28,7 @@ should_print_log_message: bool = strtobool(inifile.get('annofab', 'should_print_
 test_dir = './tests/data'
 out_dir = './tests/out'
 
-if should_print_log_message:
-    logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
-    logging.basicConfig(format=logging_formatter)
-    logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
+set_logging_from_inifile(inifile)
 
 service = annofabapi.build_from_netrc()
 api = service.api
@@ -314,7 +310,7 @@ def test_statistics():
     assert type(api.get_label_statistics(project_id)[0]) == list
 
     print("get_worktime_statistics")
-    assert type(api.get_worktime_statistics(project_id)[0]) == list
+    assert type(wrapper.get_worktime_statistics(project_id)) == list
 
 
 def test_task():

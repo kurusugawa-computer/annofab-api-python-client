@@ -5,6 +5,8 @@ import urllib
 import urllib.parse
 from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
 
+import requests
+
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
@@ -261,6 +263,25 @@ class Wrapper:
             copied_request_body["input_data_name"] = file_path
 
         return self.api.put_input_data(project_id, input_data_id, request_body=copied_request_body)[0]
+
+    #########################################
+    # Public Method : AfStatisticsApi
+    #########################################
+    def get_worktime_statistics(self, project_id: str) -> Dict[str, Any]:
+        """
+        タスク作業時間集計取得.
+        Location Headerに記載されたURLのレスポンスをJSON形式で返す。
+
+        Args:
+            project_id:  プロジェクトID
+
+        Returns:
+            タスク作業時間集計
+
+        """
+        _, response = self.api.get_worktime_statistics(project_id)
+        url = response.headers['Location']
+        return requests.get(url).json()
 
     #########################################
     # Public Method : AfSupplementaryApi
