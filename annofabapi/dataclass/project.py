@@ -64,7 +64,7 @@ class Project:
     
     """
     project_id: str
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     organization_id: str
     """"""

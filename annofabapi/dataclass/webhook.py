@@ -33,13 +33,13 @@ class Webhook:
     
     """
     project_id: Optional[str]
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     event_type: Optional[str]
     """"""
 
     webhook_id: Optional[str]
-    """"""
+    """WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     webhook_status: Optional[str]
     """"""

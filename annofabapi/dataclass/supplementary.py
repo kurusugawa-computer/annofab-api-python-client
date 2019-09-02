@@ -22,10 +22,10 @@ class SupplementaryData:
     
     """
     project_id: str
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     input_data_id: str
-    """"""
+    """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     supplementary_data_id: str
     """"""
