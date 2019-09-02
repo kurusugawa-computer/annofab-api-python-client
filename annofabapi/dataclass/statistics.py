@@ -102,7 +102,7 @@ class InspectionStatistics:
     
     """
     project_id: Optional[str]
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     date: Optional[str]
     """集計日"""
@@ -127,7 +127,7 @@ class TaskPhaseStatistics:
     
     """
     project_id: Optional[str]
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     date: Optional[str]
     """"""
@@ -200,7 +200,7 @@ class WorktimeStatistics:
     
     """
     project_id: Optional[str]
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     date: Optional[str]
     """"""

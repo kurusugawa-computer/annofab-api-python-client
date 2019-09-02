@@ -26,16 +26,16 @@ class Inspection:
     検査コメント
     """
     project_id: str
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     task_id: str
-    """"""
+    """タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     input_data_id: str
-    """"""
+    """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     inspection_id: str
-    """"""
+    """検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     phase: TaskPhase
     """"""
@@ -53,7 +53,7 @@ class Inspection:
     """"""
 
     parent_inspection_id: Optional[str]
-    """"""
+    """検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     phrases: Optional[List[str]]
     """選択された定型指摘ID. 未選択時は空"""
