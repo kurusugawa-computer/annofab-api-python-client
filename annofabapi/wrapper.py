@@ -10,8 +10,8 @@ import requests
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationSpecs, InputData, Inspection, JobInfo, OrganizationMember, Project,
-                               ProjectMember, SupplementaryData, Task, MyOrganization)
+from annofabapi.models import (AnnotationSpecs, InputData, Inspection, JobInfo, MyOrganization, OrganizationMember,
+                               Project, ProjectMember, SupplementaryData, Task)
 
 logger = logging.getLogger(__name__)
 
@@ -398,7 +398,6 @@ class Wrapper:
             すべての所属一覧
         """
         return self._get_all_objects(self.api.get_my_organizations, limit=200)
-
 
     #########################################
     # Public Method : AfOrganizationApi

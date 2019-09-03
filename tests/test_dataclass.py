@@ -10,6 +10,7 @@ from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
 from annofabapi.dataclass.job import JobInfo
+from annofabapi.dataclass.my import MyAccount, MyOrganization
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember
 from annofabapi.dataclass.project import Project
@@ -19,8 +20,6 @@ from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatisti
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.webhook import Webhook
-from annofabapi.dataclass.my import MyAccount,MyOrganization
-
 from tests.utils_for_test import WrapperForTest, set_logging_from_inifile
 
 # プロジェクトトップに移動する
@@ -77,6 +76,7 @@ def test_job():
     job_list = service.wrapper.get_all_project_job(project_id, query_params={"type": "gen-tasks"})
     job = JobInfo.from_dict(job_list[0])
     assert type(job) == JobInfo
+
 
 class TestMy:
     def test_my_organization(self):
