@@ -146,6 +146,11 @@ declare -a model_files=(${MODELS_DIR}/job_info.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/job.py  \
  ${model_files[@]} > ../annofabapi/dataclass/job.py
 
+# My
+declare -a model_files=(${MODELS_DIR}/my_organization.py ${MODELS_DIR}/my_account.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/my.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/my.py
+
 # Organization
 declare -a model_files=(${MODELS_DIR}/organization_activity.py ${MODELS_DIR}/organization_summary.py ${MODELS_DIR}/organization.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/organization.py  \
