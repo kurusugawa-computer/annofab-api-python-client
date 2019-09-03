@@ -269,10 +269,7 @@ class AnnofabApi(AbstractAnnofabApi):
     # Public Method : 労務関係API (将来的に大きく変更される可能性があります）
     # 労務管理がりようできる組織は限られています。利用する場合は、AnnoFabにお問い合わせください。
     #########################################
-    def get_labor_control(
-            self,
-            query_params: Optional[Dict[str, Any]] = None
-    ) -> Tuple[Any, requests.Response]:
+    def get_labor_control(self, query_params: Optional[Dict[str, Any]] = None) -> Tuple[Any, requests.Response]:
         """労務管理関連データを一括で取得します。
 
 
@@ -291,10 +288,7 @@ class AnnofabApi(AbstractAnnofabApi):
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def put_labor_control(
-            self,
-            request_body: Dict[str, Any]
-    ) -> Tuple[Any, requests.Response]:
+    def put_labor_control(self, request_body: Dict[str, Any]) -> Tuple[Any, requests.Response]:
         """労務管理関連データを更新します。
 
 
@@ -313,10 +307,7 @@ class AnnofabApi(AbstractAnnofabApi):
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def delete_labor_control(
-            self,
-            data_id: str
-    ) -> Tuple[Any, requests.Response]:
+    def delete_labor_control(self, data_id: str) -> Tuple[Any, requests.Response]:
         """労務管理関連データを削除します。
 
 
