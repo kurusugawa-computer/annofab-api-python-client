@@ -17,6 +17,7 @@ from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatisti
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.webhook import Webhook
+from annofabapi.dataclass.my import MyAccount,MyOrganization
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -70,6 +71,23 @@ def test_job():
         dict_job = json.load(f)
     job = JobInfo.from_dict(dict_job)
     assert type(job) == JobInfo
+
+
+
+class TestMy:
+    def test_my_organization(self):
+        json_path = test_dir / "my-organization.json"
+        with json_path.open(encoding="utf-8") as f:
+            dict_data = json.load(f)
+        data = MyOrganization.from_dict(dict_data)
+        assert type(data) == MyOrganization
+
+    def test_my_account(self):
+        json_path = test_dir / "my-account.json"
+        with json_path.open(encoding="utf-8") as f:
+            dict_data = json.load(f)
+        data = MyAccount.from_dict(dict_data)
+        assert type(data) == MyAccount
 
 
 def test_organization():
