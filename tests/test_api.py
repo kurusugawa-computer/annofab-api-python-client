@@ -65,9 +65,9 @@ def test_my():
     my_project_members, _ = api.get_my_project_members()
     assert len(my_project_members) > 0
 
-    print(f"get_my_organizations")
-    my_organizations, _ = api.get_my_organizations()
-    assert len(my_organizations['list']) > 0
+    print(f"get_my_organizations in wrapper.get_all_my_organizations")
+    my_organizations = wrapper.get_all_my_organizations()
+    assert len(my_organizations) > 0
 
     print(f"get_my_projects")
     my_projects, _ = api.get_my_projects()

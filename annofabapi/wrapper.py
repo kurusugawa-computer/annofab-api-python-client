@@ -10,8 +10,8 @@ import requests
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationSpecs, InputData, Inspection, JobInfo, OrganizationMember, Project,
-                               ProjectMember, SupplementaryData, Task)
+from annofabapi.models import (AnnotationSpecs, InputData, Inspection, JobInfo, MyOrganization, OrganizationMember,
+                               Project, ProjectMember, SupplementaryData, Task)
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +75,7 @@ class Wrapper:
             get_XXX関数で取得した情報の一覧
 
         """
-        arg_query_params = kwargs_for_func_get_list['query_params']
+        arg_query_params = kwargs_for_func_get_list.get('query_params')
         copied_query_params = copy.deepcopy(arg_query_params) if arg_query_params is not None else {}
 
         all_objects: List[Dict[str, Any]] = []
@@ -386,6 +386,18 @@ class Wrapper:
         req_inspection = [{"data": e, "_type": "Put"} for e in target_inspections]
         content = self.api.batch_update_inspections(project_id, task_id, input_data_id, req_inspection)[0]
         return content
+
+    #########################################
+    # Public Method : AfMyApi
+    #########################################
+    def get_all_my_organizations(self) -> List[MyOrganization]:
+        """
+        所属しているすべての組織一覧を取得する
+
+        Returns:
+            すべての所属一覧
+        """
+        return self._get_all_objects(self.api.get_my_organizations, limit=200)
 
     #########################################
     # Public Method : AfOrganizationApi
