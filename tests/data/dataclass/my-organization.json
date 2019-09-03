@@ -1,0 +1,13 @@
+{
+  "organization_id": "32345678-abcd-1234-abcd-1234abcd5678",
+  "name": "test-organization",
+  "email": "test@example.com",
+  "price_plan": "free",
+  "summary": {
+    "last_tasks_updated_datetime": "2019-09-03T18:05:01.508+09:00"
+  },
+  "created_datetime": "2018-05-09T07:47:47.913+09:00",
+  "updated_datetime": "2018-05-09T07:47:47.913+09:00",
+  "my_role": "owner",
+  "my_status": "active"
+}
