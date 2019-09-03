@@ -36,20 +36,21 @@ fi
 
 # swagger.yamlを修正したいときがあるので、
 if "${FLAG_DOWNLOAD}"; then
-    curl https://annofab.com/docs/api/swagger.yaml --output swagger.yaml
-    curl https://annofab.com/docs/api/swagger.v2.yaml --output swagger.v2.yaml
-    curl https://annofab.com/docs/api/swagger-api-components.yaml  --output swagger-api-components.yaml
+    curl https://annofab.com/docs/api/swagger.yaml --output swagger/swagger.yaml
+    curl https://annofab.com/docs/api/swagger.v2.yaml --output swagger/swagger.v2.yaml
+    curl https://annofab.com/docs/api/swagger-api-components.yaml  --output swagger/swagger-api-components.yaml
+#    curl https://annofab.com/docs/api/swagger.internal.yaml  --output swagger.internal.yaml
 
   # インデントを１つ深くする
-  sed -e "s/#\/schemas/#\/components\/schemas/g" -e "s/^/  /g" swagger-api-components.yaml --in-place
+  sed -e "s/#\/schemas/#\/components\/schemas/g" -e "s/^/  /g" swagger/swagger-api-components.yaml --in-place
 
-  sed '/swagger-api-components.yaml/d' swagger.yaml > swagger-tmp.yaml
-  cat swagger-tmp.yaml  swagger-api-components.yaml > swagger.yaml
+  sed '/swagger-api-components.yaml/d' swagger/swagger.yaml > swagger/swagger-tmp.yaml
+  cat swagger/swagger-tmp.yaml  swagger/swagger-api-components.yaml > swagger/swagger.yaml
 
-  sed '/swagger-api-components.yaml/d' swagger.v2.yaml > swagger-tmp.v2.yaml
-  cat swagger-tmp.v2.yaml swagger-api-components.yaml > swagger.v2.yaml
+  sed '/swagger-api-components.yaml/d' swagger/swagger.v2.yaml > swagger/swagger-tmp.v2.yaml
+  cat swagger/swagger-tmp.v2.yaml swagger/swagger-api-components.yaml > swagger/swagger.v2.yaml
 
-  rm swagger-tmp.yaml swagger-tmp.v2.yaml
+  rm swagger/swagger-tmp.yaml swagger/swagger-tmp.v2.yaml
 fi
 
 JAVA_OPTS="-Dlog.level=info"
@@ -60,7 +61,7 @@ OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
 
 # v1 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} openapitools/openapi-generator-cli generate \
-    --input-spec swagger.yaml \
+    --input-spec swagger/swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template \
     -Dapis -DapiTests=false -DapiDocs=false \
@@ -75,7 +76,7 @@ rm -Rf out/openapi_client
 
 # v2 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} openapitools/openapi-generator-cli generate \
-    --input-spec swagger.v2.yaml \
+    --input-spec swagger/swagger.v2.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template \
     -Dapis -DapiTests=false -DapiDocs=false \
@@ -88,7 +89,7 @@ rm -Rf out/openapi_client
 # v1 apiのmodelからDataClass用のpythonファイルを生成する。
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} \
     openapitools/openapi-generator-cli generate \
-    --input-spec swagger.yaml \
+    --input-spec swagger/swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template_dataclass \
     -Dmodels -DmodelTests=false -DmodelDocs=false \
