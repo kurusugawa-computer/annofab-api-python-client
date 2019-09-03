@@ -281,10 +281,10 @@ class AdditionalDataDefinitionType(Enum):
 
     FLAG = "flag"
     INTEGER = "integer"
-    TEXT = "text"
     COMMENT = "comment"
     CHOICE = "choice"
     SELECT = "select"
+    TEXT = "text"
     TRACKING = "tracking"
     LINK = "link"
 
@@ -313,11 +313,11 @@ Annotation = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * details: List[AnnotationDetail]
     
 * comment: str
@@ -344,7 +344,7 @@ AnnotationDetail = Dict[str, Any]
 Kyes of Dict
 
 * annotation_id: str
-    annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * account_id: str
     
 * label_id: str
@@ -396,11 +396,11 @@ AnnotationQuery = Dict[str, Any]
 Kyes of Dict
 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * exact_match_task_id: bool
     タスクIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は中間一致検索です。 
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * exact_match_input_data_id: bool
     入力データIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は中間一致検索です。 
 * label_id: str
@@ -417,7 +417,7 @@ AnnotationSpecs = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * labels: List[Label]
     
 * inspection_phrases: List[InspectionPhrase]
@@ -432,7 +432,7 @@ AnnotationSpecsHistory = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * updated_datetime: str
     
 * url: str
@@ -491,13 +491,13 @@ BatchAnnotation = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * annotation_id: str
-    annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * label_id: str
     
 * additional_data_list: List[FullAnnotationAdditionalData]
@@ -514,13 +514,13 @@ BatchAnnotationRequestItemDelete = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * annotation_id: str
-    annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * updated_datetime: str
     
 * type: str
@@ -548,9 +548,9 @@ BatchInputDataRequestItemDelete = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * type: str
     [詳しくはこちら](#section/API-Convention/API-_type) 
 
@@ -563,13 +563,13 @@ BatchInspectionRequestItemDelete = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * inspection_id: str
-    
+    検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * type: str
     [詳しくはこちら](#section/API-Convention/API-_type) 
 
@@ -595,9 +595,9 @@ BatchTaskRequestItemDelete = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * type: str
     [詳しくはこちら](#section/API-Convention/API-_type) 
 
@@ -835,7 +835,7 @@ Kyes of Dict
     
 * message: str
     エラーの概要
-* ext: Dict
+* ext: __DictStrKeyAnyValue__
     補足情報
 
 """
@@ -848,7 +848,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -861,7 +861,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -874,7 +874,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -887,7 +887,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -900,7 +900,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -913,7 +913,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -926,7 +926,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -939,7 +939,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -952,7 +952,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -965,7 +965,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -978,7 +978,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -991,7 +991,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -1004,7 +1004,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -1017,7 +1017,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -1030,7 +1030,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -1043,7 +1043,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -1056,7 +1056,7 @@ Kyes of Dict
 
 * errors: List[Error]
     
-* context: Dict
+* context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
@@ -1068,9 +1068,9 @@ FullAnnotation = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_phase: TaskPhase
     
 * task_phase_stage: int
@@ -1078,7 +1078,7 @@ Kyes of Dict
 * task_status: TaskStatus
     
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
     
 * detail: List[FullAnnotationDetail]
@@ -1253,7 +1253,7 @@ FullAnnotationDetail = Dict[str, Any]
 Kyes of Dict
 
 * annotation_id: str
-    annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * user_id: str
     
 * label_id: str
@@ -1477,9 +1477,9 @@ InputData = Dict[str, Any]
 Kyes of Dict
 
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
     表示用の名前です。
 * input_data_path: str
@@ -1536,7 +1536,7 @@ InputDataSummary = Dict[str, Any]
 Kyes of Dict
 
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * inspection_summary: str
     
 * annotation_summaries: List[ValidationError]
@@ -1561,13 +1561,13 @@ Inspection = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * inspection_id: str
-    
+    検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * phase: TaskPhase
     
 * phase_stage: int
@@ -1579,7 +1579,7 @@ Kyes of Dict
 * data: OneOfInspectionDataPointInspectionDataPolylineInspectionDataTime
     
 * parent_inspection_id: str
-    
+    検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * phrases: List[str]
     選択された定型指摘ID. 未選択時は空
 * comment: str
@@ -1669,7 +1669,7 @@ InspectionStatistics = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * date: str
     集計日
 * breakdown: InspectionStatisticsBreakdown
@@ -1842,16 +1842,16 @@ JobInfo = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * job_type: str
     
 * job_id: str
     
 * job_status: str
     
-* job_execution: Dict
+* job_execution: __DictStrKeyAnyValue__
     ジョブの内部情報
-* job_detail: Dict
+* job_detail: __DictStrKeyAnyValue__
     ジョブ結果の内部情報
 * created_datetime: str
     
@@ -2155,7 +2155,7 @@ OrganizationRegistrationRequest = Dict[str, Any]
 Kyes of Dict
 
 * organization_name: str
-    
+    組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * organization_email: str
     
 * price_plan: PricePlan
@@ -2242,7 +2242,7 @@ Project = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * organization_id: str
     
 * title: str
@@ -2328,7 +2328,7 @@ ProjectCopyRequest = Dict[str, Any]
 Kyes of Dict
 
 * dest_project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * dest_title: str
     
 * dest_overview: str
@@ -2357,7 +2357,7 @@ ProjectMember = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * account_id: str
     
 * user_id: str
@@ -2504,7 +2504,7 @@ Kyes of Dict
 * organization_id: str
     
 * organization_name: str
-    
+    組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * last_updated_datetime: str
     
 
@@ -2601,9 +2601,9 @@ Kyes of Dict
 * annotation_format_version: str
     アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_phase: TaskPhase
     
 * task_phase_stage: int
@@ -2611,7 +2611,7 @@ Kyes of Dict
 * task_status: TaskStatus
     
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
     
 * details: List[SimpleAnnotationDetail]
@@ -2631,7 +2631,7 @@ Kyes of Dict
     個々のアノテーションにつけられたIDです。 
 * data: FullAnnotationData
     
-* attributes: Dict
+* attributes: __DictStrKeyAnyValue__
     キーに属性の名前、値に各属性の値が入った辞書構造です。 
 
 """
@@ -2643,11 +2643,11 @@ SingleAnnotation = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * detail: SingleAnnotationDetail
     
 * updated_datetime: str
@@ -2662,7 +2662,7 @@ SingleAnnotationDetail = Dict[str, Any]
 Kyes of Dict
 
 * annotation_id: str
-    annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * account_id: str
     
 * label_id: str
@@ -2691,9 +2691,9 @@ SupplementaryData = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
-    
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * supplementary_data_id: str
     
 * supplementary_data_name: str
@@ -2739,9 +2739,9 @@ Task = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * phase: TaskPhase
     
 * phase_stage: int
@@ -2787,7 +2787,7 @@ TaskGenerateRuleByCount = Dict[str, Any]
 Kyes of Dict
 
 * task_id_prefix: str
-    生成するタスクIDのプレフィックス
+    生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * allow_duplicate_input_data: bool
     falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
 * input_data_count: int
@@ -2806,7 +2806,7 @@ TaskGenerateRuleByDirectory = Dict[str, Any]
 Kyes of Dict
 
 * task_id_prefix: str
-    生成するタスクIDのプレフィックス
+    生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name_prefix: str
     タスク生成対象の入力データ名プレフィックス
 * type: str
@@ -2834,9 +2834,9 @@ TaskHistory = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_history_id: str
     
 * started_datetime: str
@@ -2861,9 +2861,9 @@ TaskHistoryEvent = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_history_id: str
     
 * created_datetime: str
@@ -2927,7 +2927,7 @@ TaskPhaseStatistics = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * date: str
     
 * phases: List[PhaseStatistics]
@@ -2979,9 +2979,9 @@ TaskValidation = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * inputs: List[InputDataSummary]
     
 
@@ -2994,7 +2994,7 @@ TasksInputs = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * tasks: List[TasksInputsTask]
     
 
@@ -3007,7 +3007,7 @@ TasksInputsTask = Dict[str, Any]
 Kyes of Dict
 
 * task_id: str
-    
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * phase: TaskPhase
     
 * status: TaskStatus
@@ -3122,11 +3122,11 @@ Webhook = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * event_type: str
     
 * webhook_id: str
-    
+    WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * webhook_status: str
     
 * method: str
@@ -3163,7 +3163,7 @@ WebhookTestRequest = Dict[str, Any]
 
 Kyes of Dict
 
-* placeholders: Dict
+* placeholders: __DictStrKeyAnyValue__
     プレースホルダ名と置換する値
 
 """
@@ -3194,7 +3194,7 @@ WorktimeStatistics = Dict[str, Any]
 Kyes of Dict
 
 * project_id: str
-    
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * date: str
     
 * by_tasks: List[WorktimeStatisticsItem]

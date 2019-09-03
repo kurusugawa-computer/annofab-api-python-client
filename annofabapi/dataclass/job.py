@@ -22,7 +22,7 @@ class JobInfo:
     
     """
     project_id: Optional[str]
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     job_type: Optional[str]
     """"""

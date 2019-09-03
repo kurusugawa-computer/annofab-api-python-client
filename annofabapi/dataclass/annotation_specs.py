@@ -117,7 +117,7 @@ class AnnotationSpecsHistory:
     
     """
     project_id: Optional[str]
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     updated_datetime: Optional[str]
     """"""
@@ -255,7 +255,7 @@ class AnnotationSpecs:
     
     """
     project_id: Optional[str]
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     labels: Optional[List[Label]]
     """"""
