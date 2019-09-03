@@ -823,7 +823,7 @@
         - price_plan
       properties:
         organization_name:
-          type: string
+          $ref: "#/components/schemas/OrganizationName"
         organization_email:
           type: string
           format: email
@@ -839,7 +839,7 @@
         organization_id:
           type: string
         organization_name:
-          type: string
+          $ref: "#/components/schemas/OrganizationName"
         last_updated_datetime:
           type: string
           format: date-time
@@ -866,9 +866,16 @@
     OrganizationId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+    OrganizationName:
+      type: string
+      example: "sample-organization"
+      description: |
+        組織名。[値の制約についてはこちら。](#section/API-Convention/APIID)
     ProjectId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     LabelId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -884,9 +891,13 @@
     TaskId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     InputDataId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     SupplementaryDataId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -897,16 +908,21 @@
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
+        アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br>
         annotation_type が classification の場合は label_id と同じ値が格納されます。
     InspectionId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     JobId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
     WebhookId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     Duration:
       type: string
       example: "PT34H17M36.789S"
@@ -1796,7 +1812,8 @@
       properties:
         task_id_prefix:
           type: string
-          description: 生成するタスクIDのプレフィックス
+          description: |
+            生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID)
         allow_duplicate_input_data:
           type: boolean
           description: falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
@@ -1819,7 +1836,8 @@
       properties:
         task_id_prefix:
           type: string
-          description: 生成するタスクIDのプレフィックス
+          description: |
+            生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID)
         input_data_name_prefix:
           type: string
           description: タスク生成対象の入力データ名プレフィックス

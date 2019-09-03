@@ -56,7 +56,7 @@ JAVA_OPTS="-Dlog.level=info"
 
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --output /local/out \
-    --type-mappings array=List,DateTime=str,date=str,object=Dict"
+    --type-mappings array=List,DateTime=str,date=str,object=__DictStrKeyAnyValue__"
 
 # v1 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} openapitools/openapi-generator-cli generate \
@@ -190,6 +190,11 @@ cat partial-header/dataclass/common.py partial-header/dataclass/task.py  \
 declare -a model_files=(${MODELS_DIR}/webhook_header.py ${MODELS_DIR}/webhook.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/webhook.py  \
  ${model_files[@]} > ../annofabapi/dataclass/webhook.py
+
+
+sed  -e "s/__DictStrKeyAnyValue__/Dict[str,Any]/g"  ../annofabapi/dataclass/*.py  --in-place
+
+
 
 rm -Rf out/openapi_client
 

@@ -54,7 +54,28 @@ info:
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし利便性のため指定は必須ではありません。
 
-  version: 0.60.0
+    ## APIに指定するIDの制約
+
+    * APIで使用する各データのIDに使用できる文字種は次の通りです。
+      * 半角英数字
+      * `_` (アンダースコア)
+      * `-` (ハイフン)
+      * `.` (ドット)
+    * 特に制限がない限りUUID version4形式とすることを推奨します。
+      * 例） `b048c6b3-b36f-4c8d-97ea-96828a50a44c`
+    * 各データのIDは、以下のように特定のデータに対して一意な値である必要があります。
+
+    ID | 一意制約
+    ---|---
+    組織名 | AnnoFab内で一意
+    プロジェクトID | AnnoFab内で一意
+    タスクID（プレフィックス含む） | プロジェクト内で一意
+    入力データID | プロジェクト内で一意
+    アノテーションID | プロジェクト内で一意
+    検査ID | プロジェクト内で一意
+    WebhookID | プロジェクト内で一意
+
+  version: 0.61.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1361,7 +1382,7 @@ components:
         - price_plan
       properties:
         organization_name:
-          type: string
+          $ref: "#/components/schemas/OrganizationName"
         organization_email:
           type: string
           format: email
@@ -1377,7 +1398,7 @@ components:
         organization_id:
           type: string
         organization_name:
-          type: string
+          $ref: "#/components/schemas/OrganizationName"
         last_updated_datetime:
           type: string
           format: date-time
@@ -1404,9 +1425,16 @@ components:
     OrganizationId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+    OrganizationName:
+      type: string
+      example: "sample-organization"
+      description: |
+        組織名。[値の制約についてはこちら。](#section/API-Convention/APIID)
     ProjectId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     LabelId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -1422,9 +1450,13 @@ components:
     TaskId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     InputDataId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     SupplementaryDataId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -1435,16 +1467,21 @@ components:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
+        アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br>
         annotation_type が classification の場合は label_id と同じ値が格納されます。
     InspectionId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     JobId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
     WebhookId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     Duration:
       type: string
       example: "PT34H17M36.789S"
@@ -2334,7 +2371,8 @@ components:
       properties:
         task_id_prefix:
           type: string
-          description: 生成するタスクIDのプレフィックス
+          description: |
+            生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID)
         allow_duplicate_input_data:
           type: boolean
           description: falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
@@ -2357,7 +2395,8 @@ components:
       properties:
         task_id_prefix:
           type: string
-          description: 生成するタスクIDのプレフィックス
+          description: |
+            生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID)
         input_data_name_prefix:
           type: string
           description: タスク生成対象の入力データ名プレフィックス

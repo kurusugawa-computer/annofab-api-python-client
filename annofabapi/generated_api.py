@@ -779,7 +779,7 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            input_data_id (str):  入力データID (required)
+            input_data_id (str):  入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
             request_body (Any): Request Body
                 input_data_request (InputDataRequest):  (required)
 
@@ -1815,7 +1815,7 @@ class AbstractAnnofabApi(abc.ABC):
         プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。 
 
         Args:
-            project_id (str):  プロジェクトID (required)
+            project_id (str):  プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
             request_body (Any): Request Body
                 put_project_request (PutProjectRequest):  (required)
 
@@ -2490,7 +2490,7 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            task_id (str):  タスクID (required)
+            task_id (str):  タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
             request_body (Any): Request Body
                 task_request (TaskRequest):  (required)
 
@@ -2599,7 +2599,7 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            webhook_id (str):  WebhookID (required)
+            webhook_id (str):  WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
             request_body (Any): Request Body
                 webhook (Webhook):  (required)
 

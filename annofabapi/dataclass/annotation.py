@@ -88,7 +88,7 @@ class FullAnnotationDetail:
     
     """
     annotation_id: Optional[str]
-    """annotation_type が classification の場合は label_id と同じ値が格納されます。 """
+    """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
     user_id: Optional[str]
     """"""
@@ -117,10 +117,10 @@ class FullAnnotation:
     
     """
     project_id: Optional[str]
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     task_id: Optional[str]
-    """"""
+    """タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     task_phase: Optional[TaskPhase]
     """"""
@@ -132,7 +132,7 @@ class FullAnnotation:
     """"""
 
     input_data_id: Optional[str]
-    """"""
+    """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     input_data_name: Optional[str]
     """"""
@@ -169,10 +169,10 @@ class SimpleAnnotation:
     """アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 """
 
     project_id: Optional[str]
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     task_id: Optional[str]
-    """"""
+    """タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     task_phase: Optional[TaskPhase]
     """"""
@@ -184,7 +184,7 @@ class SimpleAnnotation:
     """"""
 
     input_data_id: Optional[str]
-    """"""
+    """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     input_data_name: Optional[str]
     """"""
@@ -198,7 +198,7 @@ class SingleAnnotationDetail:
     
     """
     annotation_id: Optional[str]
-    """annotation_type が classification の場合は label_id と同じ値が格納されます。 """
+    """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
     account_id: Optional[str]
     """"""
@@ -233,13 +233,13 @@ class SingleAnnotation:
     
     """
     project_id: Optional[str]
-    """"""
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     task_id: Optional[str]
-    """"""
+    """タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     input_data_id: Optional[str]
-    """"""
+    """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     detail: Optional[SingleAnnotationDetail]
     """"""
