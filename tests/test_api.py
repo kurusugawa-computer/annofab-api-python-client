@@ -404,12 +404,17 @@ def test_instruction():
     api.delete_instruction_image(project_id, test_image_id)
 
 
-def test_job():
-    print("get_project_job in wrapper.get_all_project_job")
-    assert len(wrapper.get_all_project_job(project_id, {"type": "gen-inputs"})) >= 0
+class TestJob:
+    def test_wait_for_completion(self):
+        # 実行中のジョブはないので、必ずTrue
+        result = wrapper.wait_for_completion(project_id, "gen-tasks", job_access_interval=1, max_job_access=1)
+        assert result == True
 
-    print("wrapper.delete_all_succeeded_job")
-    assert len(wrapper.delete_all_succeeded_job(project_id, "gen-tasks")) >= 0
+    def test_get_all_project_job(self):
+        assert len(wrapper.get_all_project_job(project_id, {"type": "gen-inputs"})) >= 0
+
+    def test_delete_all_succeeded_job(self):
+        assert len(wrapper.delete_all_succeeded_job(project_id, "gen-tasks")) >= 0
 
 
 def test_webhook():
