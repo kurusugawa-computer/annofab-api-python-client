@@ -1,6 +1,7 @@
 import copy
 import logging
 import mimetypes
+import time
 import urllib
 import urllib.parse
 from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
@@ -789,3 +790,50 @@ class Wrapper:
         r = self.api.get_project_job(project_id, query_params=copied_params)[0]
         all_jobs.extend(r["list"])
         return all_jobs
+
+    def wait_for_completion(self, project_id: str, job_type: str, job_access_interval: int = 60,
+                            max_job_access: int = 10) -> bool:
+        """
+        ジョブが完了するまで待つ。
+
+        Args:
+            project_id: プロジェクトID
+            job_type: 取得するジョブ種別
+            job_access_interval: ジョブにアクセスする間隔[sec]
+            max_job_access: ジョブに最大何回アクセスするか
+
+        Returns:
+            True: ジョブが成功した or 実行中のジョブがない。
+            False: ジョブが失敗 or ``max_job_access`` 回アクセスしても、ジョブが完了しなかった。
+
+        """
+        def get_latest_job():
+            job_list = self.api.get_project_job(project_id, query_params={"type": job_type})[0]["list"]
+            assert len(job_list) == 1
+            return job_list[0]
+
+        job_access_count = 0
+        while True:
+            job = get_latest_job()
+            if job_access_count == 0 and job["job_status"] != "progress":
+                logger.debug(f"進行中のジョブはありませんでした。")
+                return True
+
+            job_access_count += 1
+
+            if job["job_status"] == "succeeded":
+                logger.debug(f"job_id = {job['job_id']} のジョブが成功しました。")
+                return True
+
+            elif job["job_status"] == "failed":
+                logger.info(f"job_id = {job['job_id']} のジョブが失敗しました。")
+                return False
+
+            else:
+                # 進行中
+                if job_access_count < max_job_access:
+                    logger.debug(f"job_id = {job['job_id']} のジョブが進行中です。{job_access_interval} 秒間待ちます。")
+                    time.sleep(job_access_interval)
+                else:
+                    logger.debug(f"job_id = {job['job_id']} のジョブに {job_access_interval} 回アクセスしましたが、完了しませんでした。")
+                    return False
