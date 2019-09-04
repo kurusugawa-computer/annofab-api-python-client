@@ -1,9 +1,9 @@
 import copy
 import logging
 import mimetypes
+import time
 import urllib
 import urllib.parse
-import time
 from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
 
 import requests
@@ -791,10 +791,8 @@ class Wrapper:
         all_jobs.extend(r["list"])
         return all_jobs
 
-
-    def wait_for_completion(self, project_id: str, job_type: str,
-                                                  job_access_interval: int = 60,
-                                                  max_job_access: int=10) -> bool:
+    def wait_for_completion(self, project_id: str, job_type: str, job_access_interval: int = 60,
+                            max_job_access: int = 10) -> bool:
         """
         ジョブが完了するまで待つ。
 
@@ -805,7 +803,8 @@ class Wrapper:
             max_job_access: ジョブに最大何回アクセスするか
 
         Returns:
-            True: ジョブが成功した。False: ジョブが失敗 or ``max_job_access`` 回アクセスしても、上部が完了しなかった。
+            True: ジョブが成功した or 実行中のジョブがない。
+            False: ジョブが失敗 or ``max_job_access`` 回アクセスしても、ジョブが完了しなかった。
 
         """
         def get_latest_job():
