@@ -14,6 +14,8 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
+from annofabapi.models import SupplementaryDataType
+
 
 @dataclass_json
 @dataclass
@@ -42,7 +44,7 @@ class SupplementaryData:
     etag: Optional[str]
     """"""
 
-    supplementary_data_type: str
+    supplementary_data_type: SupplementaryDataType
     """"""
 
     supplementary_data_number: int
