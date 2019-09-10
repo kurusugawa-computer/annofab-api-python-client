@@ -17,6 +17,10 @@ import annofabapi
 import annofabapi.utils
 from tests.utils_for_test import WrapperForTest, create_csv_for_task, set_logging_from_inifile
 
+from annofabapi.models import JobType
+
+
+
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
@@ -407,14 +411,14 @@ def test_instruction():
 class TestJob:
     def test_wait_for_completion(self):
         # 実行中のジョブはないので、必ずTrue
-        result = wrapper.wait_for_completion(project_id, "gen-tasks", job_access_interval=1, max_job_access=1)
+        result = wrapper.wait_for_completion(project_id, JobType.GEN_TASKS.value, job_access_interval=1, max_job_access=1)
         assert result == True
 
     def test_get_all_project_job(self):
-        assert len(wrapper.get_all_project_job(project_id, {"type": "gen-inputs"})) >= 0
+        assert len(wrapper.get_all_project_job(project_id, {"type": JobType.GEN_INPUTS.value})) >= 0
 
     def test_delete_all_succeeded_job(self):
-        assert len(wrapper.delete_all_succeeded_job(project_id, "gen-tasks")) >= 0
+        assert len(wrapper.delete_all_succeeded_job(project_id, JobType.GEN_TASKS)) >= 0
 
 
 def test_webhook():

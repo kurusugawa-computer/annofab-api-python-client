@@ -12,7 +12,7 @@ import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (AnnotationSpecs, InputData, Inspection, JobInfo, MyOrganization, OrganizationMember,
-                               Project, ProjectMember, SupplementaryData, Task)
+                               Project, ProjectMember, SupplementaryData, Task, JobType)
 
 logger = logging.getLogger(__name__)
 
@@ -744,19 +744,19 @@ class Wrapper:
     #########################################
     # Public Method : AfJobApi
     #########################################
-    def delete_all_succeeded_job(self, project_id: str, job_type: str) -> List[JobInfo]:
+    def delete_all_succeeded_job(self, project_id: str, job_type: JobType) -> List[JobInfo]:
         """
         成功したジョブをすべて削除する
 
         Args:
             project_id: プロジェクトID
-            job_type: ジョブ種別("copy-project" "gen-inputs" "gen-tasks" "gen-annotation")
+            job_type: ジョブ種別
 
         Returns:
             削除したジョブの一覧
         """
 
-        jobs = self.get_all_project_job(project_id, {'type': job_type})
+        jobs = self.get_all_project_job(project_id, {'type': job_type.value})
         deleted_jobs = []
         for job in jobs:
             if job['job_status'] == 'succeeded':
