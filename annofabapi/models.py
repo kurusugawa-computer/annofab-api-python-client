@@ -276,15 +276,15 @@ Kyes of Dict
 
 class AdditionalDataDefinitionType(Enum):
     """
-    * `flag` - 真偽値 * `integer` - 整数値 * `comment` - 自由記述 * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - 自由記述 (トラッキングID自動挿入) * `link` - アノテーションリンク 
+    * `flag` - 真偽値 * `integer` - 整数値 * `text` - 自由記述（1行） * `comment` - 自由記述（複数行） * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - 自由記述 (トラッキングID自動挿入) * `link` - アノテーションリンク 
     """
 
     FLAG = "flag"
     INTEGER = "integer"
+    TEXT = "text"
     COMMENT = "comment"
     CHOICE = "choice"
     SELECT = "select"
-    TEXT = "text"
     TRACKING = "tracking"
     LINK = "link"
 
@@ -295,14 +295,6 @@ AggregationResult = Dict[str, Any]
 
 Kyes of Dict
 
-* type: str
-    他と区別するために `CountResult` を指定します 
-* name: str
-    
-* field: str
-    
-* items: List[Count]
-    
 
 """
 
@@ -1115,7 +1107,7 @@ Kyes of Dict
 
 FullAnnotationData = Dict[str, Any]
 """
-
+アノテーションのデータが格納されます。   * `FullAnnotationDataClassification`: 入力データ全体に対するアノテーションデータです。   * `FullAnnotationDataSegmentation`: ピクセルレベルでの塗りつぶし（ラスター）のアノテーションデータです。   * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2ののアノテーションデータです。塗りつぶしv2はSemantic Segmentationに特化しています。   * `FullAnnotationDataBoundingBox`: 矩形のアノテーションデータです。   * `FullAnnotationDataPoints`: ポリゴン（閉じた頂点集合）のアノテーションデータです。   * `FullAnnotationDataSegmentation`: 点のアノテーションデータです。   * `FullAnnotationDataRange`: 動画区間のアノテーションデータです。 
 
 Kyes of Dict
 
@@ -1537,7 +1529,7 @@ Kyes of Dict
 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* inspection_summary: str
+* inspection_summary: InspectionSummary
     
 * annotation_summaries: List[ValidationError]
     
@@ -1715,6 +1707,19 @@ class InspectionStatus(Enum):
     NO_COMMENT_INSPECTION = "no_comment_inspection"
 
 
+class InspectionSummary(Enum):
+    """
+    - `no_inspection` - 入力データに検査コメントが付けられていない。 - `no_comment_inspection` - 入力データに空の検査コメントが付けられている。 - `new_reply_to_unprocessed` - 現在進行中の検査・受入フェーズで未処理の検査コメントに対して新たに返信が付けられている。 - `new_unprocessed_inspection` - 現在進行中の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。 - `unprocessed` - 過去の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。 - `complete` - 入力データにつけられた検査コメントで未処理のものがない。 
+    """
+
+    NO_INSPECTION = "no_inspection"
+    NO_COMMENT_INSPECTION = "no_comment_inspection"
+    NEW_REPLY_TO_UNPROCESSED = "new_reply_to_unprocessed"
+    NEW_UNPROCESSED_INSPECTION = "new_unprocessed_inspection"
+    UNPROCESSED = "unprocessed"
+    COMPLETE = "complete"
+
+
 InstructionHistory = Dict[str, Any]
 """
 
@@ -1843,11 +1848,11 @@ Kyes of Dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* job_type: str
+* job_type: JobType
     
 * job_id: str
     
-* job_status: str
+* job_status: JobStatus
     
 * job_execution: __DictStrKeyAnyValue__
     ジョブの内部情報
@@ -1859,6 +1864,28 @@ Kyes of Dict
     
 
 """
+
+
+class JobStatus(Enum):
+    """
+    """
+
+    PROGRESS = "progress"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+
+
+class JobType(Enum):
+    """
+    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 
+    """
+
+    COPY_PROJECT = "copy-project"
+    GEN_INPUTS = "gen-inputs"
+    GEN_TASKS = "gen-tasks"
+    GEN_ANNOTATION = "gen-annotation"
+    INVOKE_HOOK = "invoke-hook"
+
 
 Keybind = Dict[str, Any]
 """
@@ -1954,9 +1981,9 @@ Kyes of Dict
 
 * label_id: str
     
-* completed_labels: int
+* completed: int
     ラベルごとの受入が完了したアノテーション数
-* wip_labels: int
+* wip: int
     ラベルごとの受入が完了していないアノテーション数
 
 """
@@ -2704,7 +2731,7 @@ Kyes of Dict
     このフィールドはAF内部での利用のみを想定しており、依存しないでください。
 * etag: str
     
-* supplementary_data_type: str
+* supplementary_data_type: SupplementaryDataType
     
 * supplementary_data_number: int
     表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
@@ -2723,7 +2750,7 @@ Kyes of Dict
     表示用の名前
 * supplementary_data_path: str
     AnnoFabに登録する補助情報の実体が保存されたパスです。  対応スキーマ：s3, https  * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードしたファイルパスの場合     * `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA`     * 補助情報作成/更新API成功時、アップロードしたファイルが一時データ保存先からコピーされます。         * APIのレスポンスからアップロードしたファイルのコピー先パス（s3スキーマ）を取得できます。 * すでにAFに登録されている補助情報のパスの場合     * `s3://ANNOFAB-SUPPLEMENTARY-BUCKET/PATH/TO/INPUT_DATA`     * ファイルはコピーされません。 * [プライベートストレージ](/docs/faq/#prst9c)のパスの場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。     * AFにファイルはコピーされません。 
-* supplementary_data_type: str
+* supplementary_data_type: SupplementaryDataType
     
 * supplementary_data_number: int
     表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
@@ -2731,6 +2758,15 @@ Kyes of Dict
     
 
 """
+
+
+class SupplementaryDataType(Enum):
+    """
+    """
+
+    IMAGE = "image"
+    TEXT = "text"
+
 
 Task = Dict[str, Any]
 """
@@ -2774,7 +2810,7 @@ TaskGenerateRequest = Dict[str, Any]
 Kyes of Dict
 
 * task_generate_rule: OneOfTaskGenerateRuleByCountTaskGenerateRuleByDirectoryTaskGenerateRuleByInputDataCsv
-    * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。 
+    * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。 * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。 
 * project_last_updated_datetime: str
     プロジェクトの最終更新日時。タスク生成の排他制御に使用。
 
@@ -3123,13 +3159,13 @@ Kyes of Dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* event_type: str
+* event_type: WebhookEventType
     
 * webhook_id: str
     WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* webhook_status: str
+* webhook_status: WebhookStatus
     
-* method: str
+* method: WebhookHttpMethod
     
 * headers: List[WebhookHeader]
     
@@ -3144,6 +3180,18 @@ Kyes of Dict
 
 """
 
+
+class WebhookEventType(Enum):
+    """
+    * `task-completed` - タスク受入完了 * `annotation-archive-updated` - アノテーションZIP作成完了 * `input-data-zip-registered` - 入力データZIP登録完了 * `project-copy-completed` - プロジェクトコピー完了 
+    """
+
+    TASK_COMPLETED = "task-completed"
+    ANNOTATION_ARCHIVE_UPDATED = "annotation-archive-updated"
+    INPUT_DATA_ZIP_REGISTERED = "input-data-zip-registered"
+    PROJECT_COPY_COMPLETED = "project-copy-completed"
+
+
 WebhookHeader = Dict[str, Any]
 """
 
@@ -3156,6 +3204,27 @@ Kyes of Dict
     
 
 """
+
+
+class WebhookHttpMethod(Enum):
+    """
+    """
+
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"
+    PATCH = "PATCH"
+    GET = "GET"
+    HEAD = "HEAD"
+
+
+class WebhookStatus(Enum):
+    """
+    """
+
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+
 
 WebhookTestRequest = Dict[str, Any]
 """

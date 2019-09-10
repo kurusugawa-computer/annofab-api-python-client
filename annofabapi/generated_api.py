@@ -381,6 +381,7 @@ class AbstractAnnofabApi(abc.ABC):
             query_params (Dict[str, Any]): Query Parameters
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
+                aggregate_by_task_and_input (bool):  trueを指定した場合に「タスクIDと入力IDの組」ごとに検索結果を集計するようにする。
                 query (AnnotationQuery):  絞り込み条件。[AnnotationQuery](#/components/schemas/AnnotationQuery)** をURIエンコードしたもの。 
                 sort (str):  ソート順の指定。 使用可能キーはtask_id, input_data_id, detail.annotation_id, detail.account_id, detail.label_id, detail.data_holding_type, detail.created_datetime, detail.updated_datetimeのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
 
@@ -721,8 +722,8 @@ class AbstractAnnofabApi(abc.ABC):
                 input_data_name (str):  入力データ名での部分一致検索で使用。1文字以上あれば使用します。
                 input_data_path (str):  入力データパスでの部分一致検索で使用。1文字以上あれば使用します。
                 task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。条件に合致した先頭100件のタスクに使われている入力データを検索します。
-                _from (str):  更新日時での範囲検索で使用
-                to (str):  更新日時での範囲検索で使用
+                _from (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
+                to (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
 
@@ -1079,7 +1080,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                type (str):  取得するジョブ種別 (required)
+                type (JobType):  取得するジョブ種別 (required)
                 page (int):  検索結果のうち、取得したいページの番号(1始まり)  現在は未実装のパラメータです。(今後対応予定) 
                 limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。 
                 exclusive_start_created_datetime (str):  取得するデータの直前の作成日時

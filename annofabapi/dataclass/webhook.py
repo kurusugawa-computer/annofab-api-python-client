@@ -14,6 +14,8 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
+from annofabapi.models import WebhookEventType, WebhookHttpMethod, WebhookStatus
+
 
 @dataclass_json
 @dataclass
@@ -35,16 +37,16 @@ class Webhook:
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    event_type: Optional[str]
+    event_type: Optional[WebhookEventType]
     """"""
 
     webhook_id: Optional[str]
     """WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    webhook_status: Optional[str]
+    webhook_status: Optional[WebhookStatus]
     """"""
 
-    method: Optional[str]
+    method: Optional[WebhookHttpMethod]
     """"""
 
     headers: Optional[List[WebhookHeader]]
