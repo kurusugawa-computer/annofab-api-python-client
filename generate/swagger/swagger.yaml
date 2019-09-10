@@ -75,7 +75,7 @@ info:
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
 
-  version: 0.61.0
+  version: 0.61.2
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1926,14 +1926,7 @@ paths:
         description: 取得するジョブ種別
         required: true
         schema:
-          type: string
-          enum:
-          - copy-project
-          - delete-project
-          - gen-inputs
-          - gen-tasks
-          - gen-annotation
-          - invoke-hook
+          $ref: "#/components/schemas/JobType"
       - name: page
         in: query
         description: |
@@ -3138,6 +3131,13 @@ paths:
           minimum: 1
           maximum: 200
           default: 30
+      - name: aggregate_by_task_and_input
+        in: query
+        description: trueを指定した場合に「タスクIDと入力IDの組」ごとに検索結果を集計するようにする。
+        required: false
+        schema:
+          type: boolean
+          default: false
       - name: query
         in: query
         description: |
@@ -3718,18 +3718,18 @@ paths:
           type: string
       - name: from
         in: query
-        description: 更新日時での範囲検索で使用
+        description: 更新日時での範囲検索で使用（ISO 8601 拡張形式）
         required: false
         schema:
           type: string
-          format: "yyyy-MM-dd HH:mm:ss"
+          format: date-time
       - name: to
         in: query
-        description: 更新日時での範囲検索で使用
+        description: 更新日時での範囲検索で使用（ISO 8601 拡張形式）
         required: false
         schema:
           type: string
-          format: "yyyy-MM-dd HH:mm:ss"
+          format: date-time
       - name: page
         in: query
         description: 検索結果のうち、取得したいページの番号(1始まり）
@@ -5486,21 +5486,11 @@ components:
         project_id:
           $ref: "#/components/schemas/ProjectId"
         job_type:
-          type: string
-          enum:
-            - copy-project
-            - gen-inputs
-            - gen-tasks
-            - gen-annotation
-            - invoke-hook
+          $ref: "#/components/schemas/JobType"
         job_id:
           $ref: "#/components/schemas/JobId"
         job_status:
-          type: string
-          enum:
-            - progress
-            - succeeded
-            - failed
+          $ref: "#/components/schemas/JobStatus"
         job_execution:
           type: object
           description: ジョブの内部情報
@@ -5513,34 +5503,39 @@ components:
         updated_datetime:
           type: string
           format: date-time
+    JobType:
+      type: string
+      enum:
+        - copy-project
+        - gen-inputs
+        - gen-tasks
+        - gen-annotation
+        - invoke-hook
+      description: |
+        * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。
+        * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。
+        * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。
+        * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。
+        * `invoke-hook` - Webhookの起動。
+    JobStatus:
+        type: string
+        enum:
+          - progress
+          - succeeded
+          - failed
     Webhook:
       type: object
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
         event_type:
-          type: string
-          enum:
-            - task-completed
-            - annotation-archive-updated
-            - input-data-zip-registered
-            - project-copy-completed
+          $ref: "#/components/schemas/WebhookEventType"
         webhook_id:
           $ref: "#/components/schemas/WebhookId"
         webhook_status:
-          type: string
-          enum:
-            - active
-            - inactive
+          $ref: "#/components/schemas/WebhookStatus"
         method:
-          type: string
-          enum:
-            - POST
-            - PUT
-            - DELETE
-            - PATCH
-            - GET
-            - HEAD
+          $ref: "#/components/schemas/WebhookHttpMethod"
         headers:
           type: array
           items:
@@ -5564,6 +5559,32 @@ components:
           type: string
         value:
           type: string
+    WebhookStatus:
+      type: string
+      enum:
+        - active
+        - inactive
+    WebhookHttpMethod:
+      type: string
+      enum:
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        - GET
+        - HEAD
+    WebhookEventType:
+      type: string
+      enum:
+        - task-completed
+        - annotation-archive-updated
+        - input-data-zip-registered
+        - project-copy-completed
+      description: |
+        * `task-completed` - タスク受入完了
+        * `annotation-archive-updated` - アノテーションZIP作成完了
+        * `input-data-zip-registered` - 入力データZIP登録完了
+        * `project-copy-completed` - プロジェクトコピー完了
     PutProjectRequest:
       type: object
       required:
@@ -5818,11 +5839,11 @@ components:
       properties:
         label_id:
           $ref: "#/components/schemas/LabelId"
-        completed_labels:
+        completed:
           type: integer
           minimum: 0
           description: ラベルごとの受入が完了したアノテーション数
-        wip_labels:
+        wip:
           type: integer
           minimum: 0
           description: ラベルごとの受入が完了していないアノテーション数
@@ -5957,6 +5978,7 @@ components:
       enum:
         - flag
         - integer
+        - text
         - comment
         - choice
         - select
@@ -5965,7 +5987,8 @@ components:
       description: |
         * `flag` - 真偽値
         * `integer` - 整数値
-        * `comment` - 自由記述
+        * `text` - 自由記述（1行）
+        * `comment` - 自由記述（複数行）
         * `choice` - 選択肢（ラジオボタン式）
         * `select` - 選択肢（ドロップダウン式）
         * `tracking` - 自由記述 (トラッキングID自動挿入)
@@ -6235,6 +6258,7 @@ components:
           description: |
             * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
             * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。
+            * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。
           oneOf:
             - $ref: "#/components/schemas/TaskGenerateRuleByCount"
             - $ref: "#/components/schemas/TaskGenerateRuleByDirectory"
@@ -6422,18 +6446,27 @@ components:
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
         inspection_summary:
-          type: string
-          enum:
-            - no_inspection
-            - no_comment_inspection
-            - new_reply_to_unprocessed
-            - new_unprocessed_inspection
-            - unprocessed
-            - complete
+          $ref: "#/components/schemas/InspectionSummary"
         annotation_summaries:
           type: array
           items:
             $ref: "#/components/schemas/ValidationError"
+    InspectionSummary:
+      type: string
+      enum:
+        - no_inspection
+        - no_comment_inspection
+        - new_reply_to_unprocessed
+        - new_unprocessed_inspection
+        - unprocessed
+        - complete
+      description: |
+        - `no_inspection` - 入力データに検査コメントが付けられていない。
+        - `no_comment_inspection` - 入力データに空の検査コメントが付けられている。
+        - `new_reply_to_unprocessed` - 現在進行中の検査・受入フェーズで未処理の検査コメントに対して新たに返信が付けられている。
+        - `new_unprocessed_inspection` - 現在進行中の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。
+        - `unprocessed` - 過去の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。
+        - `complete` - 入力データにつけられた検査コメントで未処理のものがない。
     InputData:
       type: object
       required:
@@ -6555,16 +6588,18 @@ components:
         etag:
           type: string
         supplementary_data_type:
-          type: string
-          enum:
-            - image
-            - text
+          $ref: "#/components/schemas/SupplementaryDataType"
         supplementary_data_number:
           type: integer
           description: 表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
         updated_datetime:
           type: string
           format: date-time
+    SupplementaryDataType:
+      type: string
+      enum:
+        - image
+        - text
     SupplementaryDataRequest:
       type: object
       required:
@@ -6597,10 +6632,8 @@ components:
                     * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。
                 * AFにファイルはコピーされません。
         supplementary_data_type:
-          type: string
-          enum:
-            - image
-            - text
+          $ref: "#/components/schemas/SupplementaryDataType"
+  
         supplementary_data_number:
           type: integer
           description: 表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
@@ -7035,6 +7068,15 @@ components:
         - $ref: "#/components/schemas/FullAnnotationDataSinglePoint"
         - $ref: "#/components/schemas/FullAnnotationDataRange"
         - $ref: "#/components/schemas/FullAnnotationDataUnknown"
+      description: |
+        アノテーションのデータが格納されます。
+          * `FullAnnotationDataClassification`: 入力データ全体に対するアノテーションデータです。
+          * `FullAnnotationDataSegmentation`: ピクセルレベルでの塗りつぶし（ラスター）のアノテーションデータです。
+          * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2ののアノテーションデータです。塗りつぶしv2はSemantic Segmentationに特化しています。
+          * `FullAnnotationDataBoundingBox`: 矩形のアノテーションデータです。
+          * `FullAnnotationDataPoints`: ポリゴン（閉じた頂点集合）のアノテーションデータです。
+          * `FullAnnotationDataSegmentation`: 点のアノテーションデータです。
+          * `FullAnnotationDataRange`: 動画区間のアノテーションデータです。
     FullAnnotationAdditionalData:
       type: object
       properties:

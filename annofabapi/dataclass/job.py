@@ -14,6 +14,8 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
+from annofabapi.models import JobStatus, JobType
+
 
 @dataclass_json
 @dataclass
@@ -24,13 +26,13 @@ class JobInfo:
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    job_type: Optional[str]
+    job_type: Optional[JobType]
     """"""
 
     job_id: Optional[str]
     """"""
 
-    job_status: Optional[str]
+    job_status: Optional[JobStatus]
     """"""
 
     job_execution: Optional[Dict[str, Any]]
