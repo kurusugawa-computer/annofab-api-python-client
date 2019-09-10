@@ -791,7 +791,7 @@ class Wrapper:
         all_jobs.extend(r["list"])
         return all_jobs
 
-    def wait_for_completion(self, project_id: str, job_type: str, job_access_interval: int = 60,
+    def wait_for_completion(self, project_id: str, job_type: JobType, job_access_interval: int = 60,
                             max_job_access: int = 10) -> bool:
         """
         ジョブが完了するまで待つ。
@@ -808,7 +808,7 @@ class Wrapper:
 
         """
         def get_latest_job():
-            job_list = self.api.get_project_job(project_id, query_params={"type": job_type})[0]["list"]
+            job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
             assert len(job_list) == 1
             return job_list[0]
 

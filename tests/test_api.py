@@ -411,7 +411,7 @@ def test_instruction():
 class TestJob:
     def test_wait_for_completion(self):
         # 実行中のジョブはないので、必ずTrue
-        result = wrapper.wait_for_completion(project_id, JobType.GEN_TASKS.value, job_access_interval=1, max_job_access=1)
+        result = wrapper.wait_for_completion(project_id, JobType.GEN_TASKS, job_access_interval=1, max_job_access=1)
         assert result == True
 
     def test_get_all_project_job(self):
