@@ -199,7 +199,8 @@ cat partial-header/dataclass/common.py partial-header/dataclass/webhook.py  \
 
 
 sed  -e "s/__DictStrKeyAnyValue__/Dict[str,Any]/g"  ../annofabapi/dataclass/*.py  --in-place
-
+# dict(str, int) -> Dict[str, int]
+sed -E -e "s/dict\((.*)\)/Dict\[\1\]/g"  ../annofabapi/dataclass/*.py  --in-place
 
 
 rm -Rf out/openapi_client
