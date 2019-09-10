@@ -1,7 +1,6 @@
 import functools
 import json
 import logging
-import warnings
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import backoff
