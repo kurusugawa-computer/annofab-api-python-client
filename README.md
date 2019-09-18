@@ -82,7 +82,7 @@ service = build_from_netrc()
 ## `service.api`のサンプルコード
 
 * `service.api`には、Web APIに対応するメソッドが定義されています。
-* メソッド名は、[AnnoFab Web APIのOpenAPI specification](https://annofab.com/docs/api/swagger.yaml)に記載されている`operationId`をスネークケースに変換したものです。
+* メソッド名は、[AnnoFab Web APIのOpenAPI specification](https://annofab.com/docs/api/swagger.yaml)に記載されている`operationId`を、スネークケースに変換したものです。
 * 各メソッドの戻り値の型は`Tupple[Content, Response]`です。
 Responseは[requestsモジュールのReponseオブジェクト](https://2.python-requests.org/en/master/api/#requests.Response)です。
 ContentはReponseの中身です。
@@ -101,7 +101,7 @@ url = response.headers['Location']
 
 ## `service.wrapper`のサンプルコード
 
-`service.wrapper`は、APIを組み合わせたメソッドが定義されています。
+`service.wrapper`には、`server.api`を組み合わせたメソッドが定義されています。
 
 
 ```python
@@ -126,9 +126,9 @@ service.wrapper.copy_project_members(src_project_id, dest_project_id)
 service.wrapper.copy_annotation_specs(src_project_id, dest_project_id)
 ```
 
-## アノテーションzipのパース
-ダウンロードしたアノテーションzipをJSONファイルごとにパース（遅延読み込み）します。
-zipファイルを展開したディレクトリもパースが可能です。
+## アノテーションzipの読み込み
+ダウンロードしたアノテーションzipを、JSONファイルごとに読み込みます。
+zipファイルを展開したディレクトリも読み込み可能です。
 
 ```python
 import zipfile
@@ -136,26 +136,26 @@ from pathlib import Path
 from annofabapi.parser import lazy_parse_simple_annotation_dir, lazy_parse_simple_annotation_zip, SimpleAnnotationZipParser, SimpleAnnotationDirParser
 
 
-# Simpleアノテーションzipのパース
+# Simpleアノテーションzipの読み込み
 iter_parser = lazy_parse_simple_annotation_zip(Path("simple-annotation.zip"))
 for parser in iter_parser:
     simple_annotation = parser.parse()
     print(simple_annotation)
 
-# Simpleアノテーションzipを展開したディレクトリのパース
+# Simpleアノテーションzipを展開したディレクトリの読み込み
 iter_parser = lazy_parse_simple_annotation_dir(Path("simple-annotation-dir"))
 for parser in iter_parser:
     simple_annotation = parser.parse()
     print(simple_annotation)
 
 
-# Simpleアノテーションzip内の1個のJSONファイルをパース
+# Simpleアノテーションzip内の1個のJSONファイルを読み込み
 with zipfile.ZipFile('simple-annotation.zip', 'r') as zip_file:
     parser = SimpleAnnotationZipParser(zip_file, "task_id/input_data_name.json")
     simple_annotation = parser.parse()
     print(simple_annotation)
 
-# Simpleアノテーションzip内を展開したディレクトリ内の1個のJSONファイルをパース
+# Simpleアノテーションzip内を展開したディレクトリ内の1個のJSONファイルを読み込み
 parser = SimpleAnnotationDirParser(Path("task_id/input_data_name.json"))
 simple_annotation = p.parse()
 print(simple_annotation)
