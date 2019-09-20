@@ -140,42 +140,42 @@ class TestProjectMember:
 
 class TestStatistics:
     def test_statistics_get_task_statistics(self):
-        statistics_json = test_dir / "task_statistics.json"
+        statistics_json = test_dir / "task-statistics.json"
         with statistics_json.open(encoding="utf-8") as f:
             dict_stat = json.load(f)
         stat = ProjectTaskStatisticsHistory.from_dict(dict_stat)
         assert type(stat) == ProjectTaskStatisticsHistory
 
     def test_statistics_get_account_statistics(self):
-        statistics_json = test_dir / "account_statistics.json"
+        statistics_json = test_dir / "account-statistics.json"
         with statistics_json.open(encoding="utf-8") as f:
             dict_stat = json.load(f)
         stat = ProjectAccountStatistics.from_dict(dict_stat)
         assert type(stat) == ProjectAccountStatistics
 
     def test_statistics_get_inspection_statistics(self):
-        statistics_json = test_dir / "inspection_statistics.json"
+        statistics_json = test_dir / "inspection-statistics.json"
         with statistics_json.open(encoding="utf-8") as f:
             dict_stat = json.load(f)
         stat = InspectionStatistics.from_dict(dict_stat)
         assert type(stat) == InspectionStatistics
 
     def test_statistics_get_task_phase_statistics(self):
-        statistics_json = test_dir / "task_phase_statistics.json"
+        statistics_json = test_dir / "task-phase-statistics.json"
         with statistics_json.open(encoding="utf-8") as f:
             dict_stat = json.load(f)
         stat = TaskPhaseStatistics.from_dict(dict_stat)
         assert type(stat) == TaskPhaseStatistics
 
     def test_statistics_get_label_statistics(self):
-        statistics_json = test_dir / "label_statistics.json"
+        statistics_json = test_dir / "label-statistics.json"
         with statistics_json.open(encoding="utf-8") as f:
             dict_stat = json.load(f)
         stat = LabelStatistics.from_dict(dict_stat)
         assert type(stat) == LabelStatistics
 
     def test_statistics_get_worktime_statistics(self):
-        statistics_json = test_dir / "worktime_statistics.json"
+        statistics_json = test_dir / "worktime-statistics.json"
         with statistics_json.open(encoding="utf-8") as f:
             dict_stat = json.load(f)
         stat = WorktimeStatistics.from_dict(dict_stat)
