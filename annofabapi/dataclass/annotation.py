@@ -191,6 +191,9 @@ class SimpleAnnotation:
 
     details: Optional[List[SimpleAnnotationDetail]]
     """"""
+
+    updated_datetime: Optional[str]
+    """"""
 @dataclass_json
 @dataclass
 class SingleAnnotationDetail:

@@ -75,7 +75,7 @@ info:
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
 
-  version: 0.61.2
+  version: 0.62.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -3141,8 +3141,9 @@ paths:
       - name: query
         in: query
         description: |
-          絞り込み条件。[AnnotationQuery](#/components/schemas/AnnotationQuery)** をURIエンコードしたもの。
+          絞り込み条件をJSON形式で表したもの。
         required: false
+        example: {"label_id":"b048c6b3-b36f-4c8d-97ea-96828a50a44c"}
         schema:
           $ref: "#/components/schemas/AnnotationQuery"
       - name: sort
@@ -6899,6 +6900,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/SimpleAnnotationDetail"
+        updated_datetime:
+          type: string
+          format: date-time
     BatchAnnotation:
       type: object
       properties:

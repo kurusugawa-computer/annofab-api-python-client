@@ -2643,6 +2643,8 @@ Kyes of Dict
     
 * details: List[SimpleAnnotationDetail]
     
+* updated_datetime: str
+    
 
 """
 

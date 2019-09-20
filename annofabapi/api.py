@@ -321,3 +321,28 @@ class AnnofabApi(AbstractAnnofabApi):
         http_method = 'DELETE'
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def _get_annotations_for_annotation_editor(self, project_id: str, task_id: str,
+                                               input_data_id: str) -> Tuple[Any, requests.Response]:
+        """【エディタ用】タスク/入力データのアノテーション一括取得
+
+        このAPIが返すアノテーションは、エディタ用です。 機械学習などで利用する成果物としてのアノテーションを取得するには、以下をご利用いただけます。
+        * getAnnotation: 特定のタスク - 入力データのアノテーション取得
+        * getAnnotationArchive: プロジェクト全体のアノテーション（ZIP）
+
+        Notes:
+            非公開のAPIのため、メソッド仕様が変わる可能性があります。
+
+        Args:
+            project_id:
+            task_id:
+            input_data_id:
+
+        Returns:
+            Tuple[Annotation, requests.Response]
+
+        """
+        url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation'
+        http_method = 'GET'
+        keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
