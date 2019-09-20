@@ -15,11 +15,8 @@ from distutils.util import strtobool
 
 import annofabapi
 import annofabapi.utils
-from tests.utils_for_test import WrapperForTest, create_csv_for_task, set_logging_from_inifile
-
 from annofabapi.models import JobType
-
-
+from tests.utils_for_test import WrapperForTest, create_csv_for_task, set_logging_from_inifile
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
