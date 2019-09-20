@@ -9,7 +9,9 @@ FLAG_DOWNLOAD=false
 FLAG_DOCKER_PULL=false
 
 if [ $# -gt 0 ]; then
-    case ${1} in
+    for OPT in "$@"
+    do
+    case ${OPT} in
         --download)
             FLAG_DOWNLOAD=true
         ;;
@@ -24,6 +26,7 @@ if [ $# -gt 0 ]; then
             usage_exit
         ;;
     esac
+    done
 fi
 
 # このスクリプトの存在するディレクトリに移動する
