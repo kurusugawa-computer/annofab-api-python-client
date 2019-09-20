@@ -2457,6 +2457,9 @@
           type: array
           items:
             $ref: "#/components/schemas/SimpleAnnotationDetail"
+        updated_datetime:
+          type: string
+          format: date-time
     BatchAnnotation:
       type: object
       properties:
