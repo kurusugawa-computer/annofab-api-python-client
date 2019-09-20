@@ -11,8 +11,8 @@ import requests
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationSpecs, InputData, Inspection, JobInfo, MyOrganization, OrganizationMember,
-                               Project, ProjectMember, SupplementaryData, Task, JobType)
+from annofabapi.models import (AnnotationSpecs, InputData, Inspection, JobInfo, JobType, MyOrganization,
+                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task)
 
 logger = logging.getLogger(__name__)
 
