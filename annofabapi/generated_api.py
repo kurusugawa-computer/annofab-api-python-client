@@ -382,7 +382,7 @@ class AbstractAnnofabApi(abc.ABC):
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
                 aggregate_by_task_and_input (bool):  trueを指定した場合に「タスクIDと入力IDの組」ごとに検索結果を集計するようにする。
-                query (AnnotationQuery):  絞り込み条件。[AnnotationQuery](#/components/schemas/AnnotationQuery)** をURIエンコードしたもの。 
+                query (AnnotationQuery):  絞り込み条件をJSON形式で表したもの。 
                 sort (str):  ソート順の指定。 使用可能キーはtask_id, input_data_id, detail.annotation_id, detail.account_id, detail.label_id, detail.data_holding_type, detail.created_datetime, detail.updated_datetimeのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
 
         Returns:
