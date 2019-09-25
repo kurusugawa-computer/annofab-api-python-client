@@ -100,6 +100,35 @@ class FullAnnotationDetail:
     """"""
 @dataclass_json
 @dataclass
+class FullAnnotationDetailOld:
+    """
+    for v1
+    """
+    annotation_id: Optional[str]
+    """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
+
+    user_id: Optional[str]
+    """"""
+
+    label_id: Optional[str]
+    """"""
+
+    label_name: Optional[InternationalizationMessage]
+    """"""
+
+    annotation_type: Optional[AnnotationType]
+    """"""
+
+    data_holding_type: Optional[AnnotationDataHoldingType]
+    """"""
+
+    data: Optional[FullAnnotationData]
+    """"""
+
+    additional_data_list: Optional[List[AdditionalData]]
+    """"""
+@dataclass_json
+@dataclass
 class FullAnnotation:
     """
     
