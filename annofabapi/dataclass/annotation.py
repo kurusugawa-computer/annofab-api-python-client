@@ -19,6 +19,7 @@ from annofabapi.models import (AdditionalDataDefinitionType, AnnotationDataHoldi
 
 OneOfstringFullAnnotationData = Dict[str, Any]
 FullAnnotationData = Dict[str, Any]
+AdditionalDataValue = Dict[str, Any]
 
 
 @dataclass_json
