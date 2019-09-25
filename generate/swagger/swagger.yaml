@@ -75,7 +75,7 @@ info:
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
 
-  version: 0.62.0
+  version: 0.63.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1472,6 +1472,42 @@ paths:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
           $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+    post:
+      tags:
+      - af-project
+      summary: プロジェクトのタスク全件ファイル更新開始
+      description: |
+        プロジェクト内のタスク全件ファイルの更新を開始します。
+        ファイルの更新は、データ量に応じて数分程度かかります。
+
+        タスク全件ファイルは日本時間AM02:00ごろに自動更新されます。
+        本APIを用いると、自動更新を待たずに更新を要求できます。
+        ただし、タスク全件ファイル以外は更新されません。
+      security:
+        - ProjectOwner: []
+      operationId: postProjectTasksUpdate
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProjectId"
+      responses:
+        202:
+          $ref: "#/components/responses/SuccessMessage"
+        400:
+          $ref: "#/components/responses/ErrorInvalidRequest"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        409:
+          description: 停止中プロジェクトに対する操作のため失敗
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStateMismatch"
         503:
           $ref: "#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/rawdata/inspections:
@@ -3383,13 +3419,10 @@ paths:
           $ref: "#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/archive/full:
     get:
-      deprecated: true
       tags:
       - af-annotation
       summary: fullアノテーションZIP取得
       description: |
-        **このAPIは廃止予定です。fullアノテーションZIPにある情報で、simpleアノテーションZIPにも欲しいものがあれば、ご連絡ください。**
-
         プロジェクト内のアノテーション（full版）がまとめられたZIPを取得します。
 
         full版のアノテーションJSONデータは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。機械学習での一般的な利用には、[詳細情報を省いた扱いやすい構造の simple版](#operation/getAnnotationArchive) を推奨します。
@@ -5369,6 +5402,19 @@ components:
     Duration:
       type: string
       example: "PT34H17M36.789S"
+    AnnotationFormatVersion:
+      type: string
+      example: "1.0.0"
+      description: |
+        アノテーションフォーマットのバージョンです。
+        アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。
+        したがって、アノテーション仕様を更新しても、このバージョンは変化しません。
+  
+        バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。
+  
+        JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。
+        すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。
+        バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。
     Project:
       type: object
       required:
@@ -5511,12 +5557,14 @@ components:
         - gen-inputs
         - gen-tasks
         - gen-annotation
+        - gen-tasks-list
         - invoke-hook
       description: |
         * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。
         * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。
         * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。
         * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。
+        * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。
         * `invoke-hook` - Webhookの起動。
     JobStatus:
         type: string
@@ -6844,12 +6892,107 @@ components:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
         flag:
           type: boolean
-        interger:
+        integer:
           type: integer
         comment:
           type: string
         choice:
           $ref: "#/components/schemas/ChoiceId"
+    AdditionalDataValue:
+      oneOf:
+        - type: object
+        - $ref: "#/components/schemas/AdditionalDataValueFlag"
+        - $ref: "#/components/schemas/AdditionalDataValueInteger"
+        - $ref: "#/components/schemas/AdditionalDataValueComment"
+        - $ref: "#/components/schemas/AdditionalDataValueChoice"
+        - $ref: "#/components/schemas/AdditionalDataValueTracking"
+        - $ref: "#/components/schemas/AdditionalDataValueLink"
+    AdditionalDataValueFlag:
+      type: object
+      required:
+        - _type
+        - value
+      properties:
+        _type:
+          type: string
+          description: Flag
+          example: "Flag"
+        value:
+          type: boolean
+          description: フラグのON(true)またはOFF(false)
+    AdditionalDataValueInteger:
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          description: Integer
+          example: "Integer"
+        value:
+          type: integer
+          description: 整数値
+    AdditionalDataValueComment:
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          description: Comment
+          example: "Comment"
+        value:
+          type: string
+          description: 自由記述
+    AdditionalDataValueChoice:
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          description: Choice
+          example: "Choice"
+        value:
+          $ref: "#/components/schemas/AdditionalDataChoiceValue"
+    AdditionalDataChoiceValue:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          allOf:
+            - $ref: "#/components/schemas/ChoiceId"
+            - description: 選択された選択肢のID
+        name:
+          allOf:
+            - $ref: "#/components/schemas/InternationalizationMessage"
+            - description: 選択された選択肢の表示名
+    AdditionalDataValueTracking:
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          description: Tracking
+          example: "Tracking"
+        value:
+          type: string
+          description: トラッキングID
+    AdditionalDataValueLink:
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          description: Link
+          example: "Link"
+        value:
+          type: string
+          description: リンク先アノテーションID
     SingleAnnotation:
       type: object
       properties:
@@ -6868,18 +7011,7 @@ components:
       type: object
       properties:
         annotation_format_version:
-          type: string
-          example: "1.0.0"
-          description: |
-            アノテーションフォーマットのバージョンです。
-            アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。
-            したがって、アノテーション仕様を更新しても、このバージョンは変化しません。
-  
-            バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。
-  
-            JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。
-            すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。
-            バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。
+          $ref: "#/components/schemas/AnnotationFormatVersion"
         project_id:
           $ref: "#/components/schemas/ProjectId"
         task_id:
@@ -6919,7 +7051,7 @@ components:
         additional_data_list:
           type: array
           items:
-            $ref: "#/components/schemas/FullAnnotationAdditionalData"
+            $ref: "#/components/schemas/AdditionalData"
         updated_datetime:
           type: string
           format: date-time
@@ -6984,7 +7116,7 @@ components:
         additional_data_list:
           type: array
           items:
-            $ref: "#/components/schemas/FullAnnotationAdditionalData"
+            $ref: "#/components/schemas/AdditionalData"
         created_datetime:
           type: string
           format: date-time
@@ -7033,13 +7165,21 @@ components:
           $ref: "#/components/schemas/InputDataId"
         input_data_name:
           type: string
-        detail:
+        details:
           type: array
           items:
             $ref: "#/components/schemas/FullAnnotationDetail"
+        detail:
+          deprecated: true
+          description: use details
+          type: array
+          items:
+            $ref: "#/components/schemas/FullAnnotationDetailOld"
         updated_datetime:
           type: string
           format: date-time
+        annotation_format_version:
+          $ref: "#/components/schemas/AnnotationFormatVersion"
     FullAnnotationDetail:
       type: object
       properties:
@@ -7061,6 +7201,29 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/FullAnnotationAdditionalData"
+    FullAnnotationDetailOld:
+      deprecated: true
+      description: for v1
+      type: object
+      properties:
+        annotation_id:
+          $ref: "#/components/schemas/AnnotationId"
+        user_id:
+          $ref: "#/components/schemas/UserId"
+        label_id:
+          $ref: "#/components/schemas/LabelId"
+        label_name:
+          $ref: "#/components/schemas/InternationalizationMessage"
+        annotation_type:
+          $ref: "#/components/schemas/AnnotationType"
+        data_holding_type:
+          $ref: "#/components/schemas/AnnotationDataHoldingType"
+        data:
+          $ref: "#/components/schemas/FullAnnotationData"
+        additional_data_list:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalData"
     FullAnnotationData:
       oneOf:
         - type: object
@@ -7081,39 +7244,6 @@ components:
           * `FullAnnotationDataPoints`: ポリゴン（閉じた頂点集合）のアノテーションデータです。
           * `FullAnnotationDataSegmentation`: 点のアノテーションデータです。
           * `FullAnnotationDataRange`: 動画区間のアノテーションデータです。
-    FullAnnotationAdditionalData:
-      type: object
-      properties:
-        additional_data_definition_id:
-          allOf:
-            - $ref: "#/components/schemas/AdditionalDataDefinitionId"
-            - description: 属性ID
-        additional_data_definition_name:
-          allOf:
-            - $ref: "#/components/schemas/InternationalizationMessage"
-            - description: 属性表示名
-        type:
-          $ref: "#/components/schemas/AdditionalDataDefinitionType"
-        flag:
-          type: boolean
-          description: typeがflagの場合に、フラグのON(true)またはOFF(false)が格納される
-        integer:
-          type: integer
-          description: typeがintegerの場合に、整数値が格納される
-        comment:
-          type: string
-          description: |
-            * typeがcommentの場合、コメントの値
-            * typeがtrackingの場合、トラッキングID
-            * typeがlinkの場合、リンク先のアノテーションID
-        choice:
-          allOf:
-            - $ref: "#/components/schemas/ChoiceId"
-            - description: typeがchoice・selectの場合に、選択肢のIDが格納される
-        choice_name:
-          allOf:
-            - $ref: "#/components/schemas/InternationalizationMessage"
-            - description: typeがchoice・selectの場合に、選択肢の表示名が格納される
     FullAnnotationDataClassification:
       type: object
       required:
@@ -7237,6 +7367,56 @@ components:
           type: integer
         y:
           type: integer
+    FullAnnotationAdditionalData:
+      type: object
+      properties:
+        additional_data_definition_id:
+          allOf:
+            - $ref: "#/components/schemas/AdditionalDataDefinitionId"
+            - description: 属性ID
+        additional_data_definition_name:
+          allOf:
+            - $ref: "#/components/schemas/InternationalizationMessage"
+            - description: 属性表示名
+        type:
+          $ref: "#/components/schemas/AdditionalDataDefinitionType"
+        value:
+          $ref: "#/components/schemas/AdditionalDataValue"
+    FullAnnotationAdditionalDataOld:
+      deprecated: true
+      description: for v1
+      type: object
+      properties:
+        additional_data_definition_id:
+          allOf:
+            - $ref: "#/components/schemas/AdditionalDataDefinitionId"
+            - description: 属性ID
+        additional_data_definition_name:
+          allOf:
+            - $ref: "#/components/schemas/InternationalizationMessage"
+            - description: 属性表示名
+        type:
+          $ref: "#/components/schemas/AdditionalDataDefinitionType"
+        flag:
+          type: boolean
+          description: typeがflagの場合に、フラグのON(true)またはOFF(false)が格納される
+        integer:
+          type: integer
+          description: typeがintegerの場合に、整数値が格納される
+        comment:
+          type: string
+          description: |
+            * typeがcommentの場合、コメントの値
+            * typeがtrackingの場合、トラッキングID
+            * typeがlinkの場合、リンク先のアノテーションID
+        choice:
+          allOf:
+            - $ref: "#/components/schemas/ChoiceId"
+            - description: typeがchoice・selectの場合に、選択肢のIDが格納される
+        choice_name:
+          allOf:
+            - $ref: "#/components/schemas/InternationalizationMessage"
+            - description: typeがchoice・selectの場合に、選択肢の表示名が格納される
     BatchInspectionRequestItemPut:
       type: object
       description: 検査コメント更新

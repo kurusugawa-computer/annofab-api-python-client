@@ -403,12 +403,11 @@ class AbstractAnnofabApi(abc.ABC):
     ) -> Tuple[Any, requests.Response]:
         """fullアノテーションZIP取得
 
-        .. deprecated:: X
 
         authorizations: ProjectDataUser
 
 
-        **このAPIは廃止予定です。fullアノテーションZIPにある情報で、simpleアノテーションZIPにも欲しいものがあれば、ご連絡ください。**  プロジェクト内のアノテーション（full版）がまとめられたZIPを取得します。  full版のアノテーションJSONデータは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。機械学習での一般的な利用には、[詳細情報を省いた扱いやすい構造の simple版](#operation/getAnnotationArchive) を推奨します。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データID}.json       * アノテーションJSONデータ (詳細は 200レスポンス を参照)     * {入力データID}/ (塗りつぶしアノテーション時のみ)       * {アノテーションデータID} (塗りつぶしのPNG画像) 
+        プロジェクト内のアノテーション（full版）がまとめられたZIPを取得します。  full版のアノテーションJSONデータは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。機械学習での一般的な利用には、[詳細情報を省いた扱いやすい構造の simple版](#operation/getAnnotationArchive) を推奨します。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データID}.json       * アノテーションJSONデータ (詳細は 200レスポンス を参照)     * {入力データID}/ (塗りつぶしアノテーション時のみ)       * {アノテーションデータID} (塗りつぶしのPNG画像) 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -418,7 +417,6 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/projects/{project_id}/archive/full'
         http_method = 'GET'
         keyword_params: Dict[str, Any] = {}
@@ -1804,6 +1802,31 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             'request_body': request_body,
         }
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def post_project_tasks_update(
+            self,
+            project_id: str,
+    ) -> Tuple[Any, requests.Response]:
+        """プロジェクトのタスク全件ファイル更新開始
+
+
+        authorizations: ProjectOwner
+
+
+        プロジェクト内のタスク全件ファイルの更新を開始します。 ファイルの更新は、データ量に応じて数分程度かかります。  タスク全件ファイルは日本時間AM02:00ごろに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、タスク全件ファイル以外は更新されません。 
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+
+        Returns:
+            Tuple[Message, requests.Response]
+
+
+        """
+        url_path = f'/projects/{project_id}/rawdata/tasks'
+        http_method = 'POST'
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_project(self, project_id: str, request_body: Optional[Any] = None) -> Tuple[Any, requests.Response]:
