@@ -286,6 +286,7 @@ def test_project():
 
     # assert api.post_project_tasks_update(project_id)
 
+
 def test_project_member():
     print(f"get_project_member")
     my_member = api.get_project_member(project_id, annofab_user_id)[0]
