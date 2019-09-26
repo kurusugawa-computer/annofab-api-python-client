@@ -1,143 +1,129 @@
 {
   "project_id": "1186bb00-16e6-4d20-8e24-310322911850",
-  "annotation_format_version": "1.1.0",
+  "annotation_format_version": "1.2.0",
   "task_id": "sample_1",
   "task_phase": "acceptance",
   "task_phase_stage": 1,
   "task_status": "complete",
-  "input_data_id": "c86205d1-bdd4-4110-ae46-194e661d622b",
+  "input_data_id": "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839",
   "input_data_name": "./tests/data/lenna.png",
   "details": [
-    {
-      "label": "bird",
-      "annotation_id": "02a9eab8-264b-4b92-b3b7-6e6c377a10ee",
-      "data": {
-        "points": [
-          {
-            "x": 55,
-            "y": 18
+      {
+          "label": "bird",
+          "annotation_id": "9a15fac0-736f-454f-a50d-7da094bc133d",
+          "data": {
+              "points": [
+                  {
+                      "x": 15,
+                      "y": 55
+                  },
+                  {
+                      "x": 12,
+                      "y": 49
+                  },
+                  {
+                      "x": 9,
+                      "y": 43
+                  },
+                  {
+                      "x": 16,
+                      "y": 36
+                  },
+                  {
+                      "x": 21,
+                      "y": 39
+                  },
+                  {
+                      "x": 24,
+                      "y": 53
+                  }
+              ],
+              "_type": "Points"
           },
-          {
-            "x": 58,
-            "y": 27
+          "attributes": {}
+      },
+      {
+          "label": "human",
+          "annotation_id": "762f113a-5e17-4b49-861e-dfbea1dda09d",
+          "data": {
+              "data_uri": "762f113a-5e17-4b49-861e-dfbea1dda09d",
+              "_type": "SegmentationV2"
           },
-          {
-            "x": 57,
-            "y": 33
+          "attributes": {}
+      },
+      {
+          "label": "dog",
+          "annotation_id": "1e2931d2-de34-4956-ab75-81f710dc0108",
+          "data": {
+              "data_uri": "1e2931d2-de34-4956-ab75-81f710dc0108",
+              "_type": "Segmentation"
           },
-          {
-            "x": 57,
-            "y": 35
+          "attributes": {}
+      },
+      {
+          "label": "eye",
+          "annotation_id": "a05019fd-6e23-456b-9971-641a45979d98",
+          "data": {
+              "point": {
+                  "x": 25,
+                  "y": 18
+              },
+              "_type": "SinglePoint"
           },
-          {
-            "x": 53,
-            "y": 60
+          "attributes": {}
+      },
+      {
+          "label": "leg",
+          "annotation_id": "c9c688d1-6c05-4118-94c7-308185cdb60a",
+          "data": {
+              "points": [
+                  {
+                      "x": 22,
+                      "y": 29
+                  },
+                  {
+                      "x": 33,
+                      "y": 41
+                  }
+              ],
+              "_type": "Points"
           },
-          {
-            "x": 50,
-            "y": 60
+          "attributes": {}
+      },
+      {
+          "label": "Cat",
+          "annotation_id": "6602c86c-5e22-42b9-b5a4-8a77c7bade01",
+          "data": {
+              "left_top": {
+                  "x": 10,
+                  "y": 7
+              },
+              "right_bottom": {
+                  "x": 36,
+                  "y": 36
+              },
+              "_type": "BoundingBox"
           },
-          {
-            "x": 40,
-            "y": 61
-          },
-          {
-            "x": 38,
-            "y": 34
-          },
-          {
-            "x": 47,
-            "y": 33
-          },
-          {
-            "x": 39,
-            "y": 30
+          "attributes": {
+              "weight": 3,
+              "name": "lena",
+              "link-eye": "a05019fd-6e23-456b-9971-641a45979d98",
+              "occluded": true,
+              "object id": "6602c86c-5e22-42b9-b5a4-8a77c7bade01",
+              "memo": "テスト"
           }
-        ],
-        "_type": "Points"
       },
-      "attributes": {}
-    },
-    {
-      "label": "human",
-      "annotation_id": "e2a1fbe3-fa8e-413c-be31-882f12ef62b9",
-      "data": {
-        "data_uri": "e2a1fbe3-fa8e-413c-be31-882f12ef62b9",
-        "_type": "SegmentationV2"
-      },
-      "attributes": {}
-    },
-    {
-      "label": "eye",
-      "annotation_id": "2280a89f-986c-4184-82df-feaec37a9149",
-      "data": {
-        "point": {
-          "x": 25,
-          "y": 18
-        },
-        "_type": "SinglePoint"
-      },
-      "attributes": {}
-    },
-    {
-      "label": "Cat",
-      "annotation_id": "226b49a4-c8ef-4016-9e90-99107d8a623b",
-      "data": {
-        "left_top": {
-          "x": 10,
-          "y": 7
-        },
-        "right_bottom": {
-          "x": 36,
-          "y": 36
-        },
-        "_type": "BoundingBox"
-      },
-      "attributes": {
-        "weight": 3,
-        "name": "lena",
-        "link-eye": "2280a89f-986c-4184-82df-feaec37a9149",
-        "occluded": true,
-        "object id": "6602c86c-5e22-42b9-b5a4-8a77c7bade01",
-        "memo": "テスト"
-      }
-    },
-    {
-      "label": "leg",
-      "annotation_id": "60a18a10-5d8a-4c1a-90b3-aa67226249c6",
-      "data": {
-        "points": [
-          {
-            "x": 22,
-            "y": 29
+      {
+          "label": "climatic",
+          "annotation_id": "5ac0d7d5-6738-4c4b-a69a-cd583ff458e1",
+          "data": {
+              "_type": "Classification"
           },
-          {
-            "x": 33,
-            "y": 41
+          "attributes": {
+              "temparature": "20",
+              "weather": "sunny"
           }
-        ],
-        "_type": "Points"
-      },
-      "attributes": {}
-    },
-    {
-      "label": "dog",
-      "annotation_id": "ee83756f-074d-4aab-8bfc-6ab6e754c2b8",
-      "data": {
-        "data_uri": "ee83756f-074d-4aab-8bfc-6ab6e754c2b8",
-        "_type": "Segmentation"
-      },
-      "attributes": {}
-    },
-    {
-      "label": "climatic",
-      "annotation_id": "5ac0d7d5-6738-4c4b-a69a-cd583ff458e1",
-      "data": null,
-      "attributes": {
-        "temparature": "20",
-        "weather": "sunny"
       }
-    }
   ],
-  "updated_datetime": "2019-08-22T12:02:40.392+09:00"
+  "updated_datetime": "2019-08-22T14:10:14.758+09:00"
 }

@@ -222,11 +222,24 @@ Kyes of Dict
     
 * flag: bool
     
-* interger: int
+* integer: int
     
 * comment: str
     
 * choice: str
+    
+
+"""
+
+AdditionalDataChoiceValue = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* id: str
+    
+* name: InternationalizationMessage
     
 
 """
@@ -288,6 +301,97 @@ class AdditionalDataDefinitionType(Enum):
     TRACKING = "tracking"
     LINK = "link"
 
+
+AdditionalDataValue = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Link
+* value: str
+    リンク先アノテーションID
+
+"""
+
+AdditionalDataValueChoice = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Choice
+* value: AdditionalDataChoiceValue
+    
+
+"""
+
+AdditionalDataValueComment = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Comment
+* value: str
+    自由記述
+
+"""
+
+AdditionalDataValueFlag = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Flag
+* value: bool
+    フラグのON(true)またはOFF(false)
+
+"""
+
+AdditionalDataValueInteger = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Integer
+* value: int
+    整数値
+
+"""
+
+AdditionalDataValueLink = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Link
+* value: str
+    リンク先アノテーションID
+
+"""
+
+AdditionalDataValueTracking = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Tracking
+* value: str
+    トラッキングID
+
+"""
 
 AggregationResult = Dict[str, Any]
 """
@@ -492,7 +596,7 @@ Kyes of Dict
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * label_id: str
     
-* additional_data_list: List[FullAnnotationAdditionalData]
+* additional_data_list: List[AdditionalData]
     
 * updated_datetime: str
     
@@ -1073,16 +1177,37 @@ Kyes of Dict
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
     
-* detail: List[FullAnnotationDetail]
+* details: List[FullAnnotationDetail]
     
+* detail: List[FullAnnotationDetailOld]
+    use details
 * updated_datetime: str
     
+* annotation_format_version: str
+    アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 
 
 """
 
 FullAnnotationAdditionalData = Dict[str, Any]
 """
 
+
+Kyes of Dict
+
+* additional_data_definition_id: str
+    
+* additional_data_definition_name: InternationalizationMessage
+    
+* type: AdditionalDataDefinitionType
+    
+* value: AdditionalDataValue
+    
+
+"""
+
+FullAnnotationAdditionalDataOld = Dict[str, Any]
+"""
+for v1
 
 Kyes of Dict
 
@@ -1259,6 +1384,31 @@ Kyes of Dict
 * data: FullAnnotationData
     
 * additional_data_list: List[FullAnnotationAdditionalData]
+    
+
+"""
+
+FullAnnotationDetailOld = Dict[str, Any]
+"""
+for v1
+
+Kyes of Dict
+
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+* user_id: str
+    
+* label_id: str
+    
+* label_name: InternationalizationMessage
+    
+* annotation_type: AnnotationType
+    
+* data_holding_type: AnnotationDataHoldingType
+    
+* data: FullAnnotationData
+    
+* additional_data_list: List[AdditionalData]
     
 
 """
@@ -1877,13 +2027,14 @@ class JobStatus(Enum):
 
 class JobType(Enum):
     """
-    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 
+    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 
     """
 
     COPY_PROJECT = "copy-project"
     GEN_INPUTS = "gen-inputs"
     GEN_TASKS = "gen-tasks"
     GEN_ANNOTATION = "gen-annotation"
+    GEN_TASKS_LIST = "gen-tasks-list"
     INVOKE_HOOK = "invoke-hook"
 
 
@@ -2704,7 +2855,7 @@ Kyes of Dict
     data_holding_typeがouterの場合のみ存在し、データのETagが格納される
 * url: str
     data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
-* additional_data_list: List[FullAnnotationAdditionalData]
+* additional_data_list: List[AdditionalData]
     
 * created_datetime: str
     

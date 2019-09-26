@@ -108,7 +108,7 @@ html_show_sourcelink=True
 
 html_logo = "img/logo_landscape.png"
 
-html_favicon = "img/favicon.ico"
+#html_favicon = "img/favicon.ico"
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
