@@ -805,8 +805,8 @@ class Wrapper:
             max_job_access: ジョブに最大何回アクセスするか
 
         Returns:
-            True: ジョブが成功した or 実行中のジョブがない。
-            False: ジョブが失敗 or ``max_job_access`` 回アクセスしても、ジョブが完了しなかった。
+            Trueならば、ジョブが成功した or 実行中のジョブがない。
+            Falseならば、ジョブが失敗 or ``max_job_access`` 回アクセスしても、ジョブが完了しなかった。
 
         """
         def get_latest_job():
