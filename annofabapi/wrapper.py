@@ -51,7 +51,7 @@ class Wrapper:
         if content_type is None:
             new_content_type = mimetypes.guess_type(file_path)[0]
             if new_content_type is None:
-                logger.info(f"mimetypes.guess_type function can't guess type. file_path = {file_path}")
+                logger.info("mimetypes.guess_type function can't guess type. file_path = %s", file_path)
                 new_content_type = content_type
 
         else:
@@ -85,7 +85,7 @@ class Wrapper:
         kwargs_for_func_get_list['query_params'] = copied_query_params
         content, _ = func_get_list(**kwargs_for_func_get_list)
         if content.get('over_limit'):
-            logger.warning(f"検索結果が10,000件を超えてますが、Web APIの都合上10,000件までしか取得できません。")
+            logger.warning("検索結果が10,000件を超えてますが、Web APIの都合上10,000件までしか取得できません。")
 
         all_objects.extend(content["list"])
 
@@ -95,7 +95,8 @@ class Wrapper:
             kwargs_for_func_get_list['query_params'] = copied_query_params
             content, _ = func_get_list(**kwargs_for_func_get_list)
             all_objects.extend(content["list"])
-            logger.debug(f"{func_get_list.__name__} {content['page_no']} / {content['total_page_no']} page")
+            logger.debug("%s %d / %d page",
+                         func_get_list.__name__, content['page_no'], content['total_page_no'])
 
         return all_objects
 
@@ -549,9 +550,10 @@ class Wrapper:
                                                                  request_body=request_body)[0]
             updated_project_members.append(updated_project_member)
 
-            logger.debug(f"プロジェクトメンバの{'追加' if last_updated_datetime is None else '更新'} 完了."
-                         f" project_id={project_id}, user_id={member['user_id']}, "
-                         f"last_updated_datetime={last_updated_datetime}")
+            logger.debug("プロジェクトメンバの{'追加' if last_updated_datetime is None else '更新'} 完了."
+                         " project_id=%s, user_id=%s, "
+                         "last_updated_datetime=%s",
+                         project_id, member['user_id'], last_updated_datetime)
 
         return updated_project_members
 
@@ -803,8 +805,8 @@ class Wrapper:
             max_job_access: ジョブに最大何回アクセスするか
 
         Returns:
-            True: ジョブが成功した or 実行中のジョブがない。
-            False: ジョブが失敗 or ``max_job_access`` 回アクセスしても、ジョブが完了しなかった。
+            Trueならば、ジョブが成功した or 実行中のジョブがない。
+            Falseならば、ジョブが失敗 or ``max_job_access`` 回アクセスしても、ジョブが完了しなかった。
 
         """
         def get_latest_job():
@@ -816,24 +818,26 @@ class Wrapper:
         while True:
             job = get_latest_job()
             if job_access_count == 0 and job["job_status"] != "progress":
-                logger.debug(f"進行中のジョブはありませんでした。")
+                logger.debug("進行中のジョブはありませんでした。")
                 return True
 
             job_access_count += 1
 
             if job["job_status"] == "succeeded":
-                logger.debug(f"job_id = {job['job_id']} のジョブが成功しました。")
+                logger.debug("job_id = %s のジョブが成功しました。", job['job_id'])
                 return True
 
             elif job["job_status"] == "failed":
-                logger.info(f"job_id = {job['job_id']} のジョブが失敗しました。")
+                logger.info("job_id = %s のジョブが失敗しました。", job['job_id'])
                 return False
 
             else:
                 # 進行中
                 if job_access_count < max_job_access:
-                    logger.debug(f"job_id = {job['job_id']} のジョブが進行中です。{job_access_interval} 秒間待ちます。")
+                    logger.debug("job_id = %s のジョブが進行中です。%d 秒間待ちます。",
+                                 job['job_id'], job_access_interval)
                     time.sleep(job_access_interval)
                 else:
-                    logger.debug(f"job_id = {job['job_id']} のジョブに {job_access_interval} 回アクセスしましたが、完了しませんでした。")
+                    logger.debug("job_id = %s のジョブに %d 回アクセスしましたが、完了しませんでした。",
+                                 job['job_id'], job_access_interval)
                     return False

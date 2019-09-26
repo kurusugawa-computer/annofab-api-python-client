@@ -19,6 +19,7 @@ from annofabapi.models import (AdditionalDataDefinitionType, AnnotationDataHoldi
 
 OneOfstringFullAnnotationData = Dict[str, Any]
 FullAnnotationData = Dict[str, Any]
+AdditionalDataValue = Dict[str, Any]
 
 
 @dataclass_json
@@ -44,7 +45,7 @@ class AdditionalData:
     flag: Optional[bool]
     """"""
 
-    interger: Optional[int]
+    integer: Optional[int]
     """"""
 
     comment: Optional[str]
@@ -67,19 +68,7 @@ class FullAnnotationAdditionalData:
     type: Optional[AdditionalDataDefinitionType]
     """"""
 
-    flag: Optional[bool]
-    """typeがflagの場合に、フラグのON(true)またはOFF(false)が格納される"""
-
-    integer: Optional[int]
-    """typeがintegerの場合に、整数値が格納される"""
-
-    comment: Optional[str]
-    """* typeがcommentの場合、コメントの値 * typeがtrackingの場合、トラッキングID * typeがlinkの場合、リンク先のアノテーションID """
-
-    choice: Optional[str]
-    """"""
-
-    choice_name: Optional[InternationalizationMessage]
+    value: Optional[AdditionalDataValue]
     """"""
 @dataclass_json
 @dataclass
@@ -112,6 +101,35 @@ class FullAnnotationDetail:
     """"""
 @dataclass_json
 @dataclass
+class FullAnnotationDetailOld:
+    """
+    for v1
+    """
+    annotation_id: Optional[str]
+    """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
+
+    user_id: Optional[str]
+    """"""
+
+    label_id: Optional[str]
+    """"""
+
+    label_name: Optional[InternationalizationMessage]
+    """"""
+
+    annotation_type: Optional[AnnotationType]
+    """"""
+
+    data_holding_type: Optional[AnnotationDataHoldingType]
+    """"""
+
+    data: Optional[FullAnnotationData]
+    """"""
+
+    additional_data_list: Optional[List[AdditionalData]]
+    """"""
+@dataclass_json
+@dataclass
 class FullAnnotation:
     """
     
@@ -137,11 +155,17 @@ class FullAnnotation:
     input_data_name: Optional[str]
     """"""
 
-    detail: Optional[List[FullAnnotationDetail]]
+    details: Optional[List[FullAnnotationDetail]]
     """"""
+
+    detail: Optional[List[FullAnnotationDetailOld]]
+    """use details"""
 
     updated_datetime: Optional[str]
     """"""
+
+    annotation_format_version: Optional[str]
+    """アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 """
 @dataclass_json
 @dataclass
 class SimpleAnnotationDetail:
@@ -221,7 +245,7 @@ class SingleAnnotationDetail:
     url: Optional[str]
     """data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される"""
 
-    additional_data_list: Optional[List[FullAnnotationAdditionalData]]
+    additional_data_list: Optional[List[AdditionalData]]
     """"""
 
     created_datetime: Optional[str]

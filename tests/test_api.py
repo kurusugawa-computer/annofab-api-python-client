@@ -284,6 +284,8 @@ def test_project():
 
     assert wrapper.download_project_inspections_url(project_id, f'{out_dir}/inspections.json').startswith("https://")
 
+    # assert api.post_project_tasks_update(project_id)
+
 
 def test_project_member():
     print(f"get_project_member")
