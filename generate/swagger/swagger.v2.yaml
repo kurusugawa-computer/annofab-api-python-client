@@ -75,7 +75,7 @@ info:
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
 
-  version: 0.63.0
+  version: 0.64.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1554,8 +1554,6 @@ components:
     ProjectConfiguration:
       type: object
       properties:
-        project_rule:
-          type: string
         number_of_inspections:
           description: |
             検査回数。
@@ -2641,9 +2639,17 @@ components:
             AF外部のストレージから登録された場合、その外部ストレージ中のパス。
             それ以外の場合は値なし
         original_resolution:
-          $ref: "#/components/schemas/Resolution"
+          allOf:
+            - $ref: "#/components/schemas/Resolution"
+            - description: |
+                入力データの元画像サイズ。
+                入力データ登録時に画像がリサイズされた場合のみ設定される。
         resized_resolution:
-          $ref: "#/components/schemas/Resolution"
+          allOf:
+            - $ref: "#/components/schemas/Resolution"
+            - description: |
+                入力データのリサイズ後サイズ。
+                入力データ登録時に画像がリサイズされた場合のみ設定される。
         updated_datetime:
           type: string
           format: date-time
@@ -3650,8 +3656,6 @@ components:
           example: "Time"
     Resolution:
       type: object
-      description: |
-        画像などの解像度
       required:
         - width
         - height
@@ -3703,6 +3707,17 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AggregationResult"
+    Instruction:
+      type: object
+      properties:
+        html:
+          type: string
+        last_updated_datetime:
+          type: string
+          format: date-time
+          description: |
+            * `GetInstruction` の場合: 最後に作業ガイドを更新した日時。
+            * `PutInstruction` の場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。
     InstructionHistory:
       type: object
       properties:
