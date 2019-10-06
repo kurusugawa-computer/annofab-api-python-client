@@ -31,9 +31,6 @@ class ProjectConfiguration:
     """
     
     """
-    project_rule: Optional[str]
-    """"""
-
     number_of_inspections: Optional[int]
     """検査回数。 * 0回：教師付け -> 受入 * 1回：教師付け -> 検査 -> 受入 * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入 """
 
