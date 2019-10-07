@@ -103,20 +103,27 @@ class Wrapper:
     #########################################
     # Public Method : AfAnnotationApi
     #########################################
-    def download_annotation_archive(self, project_id: str, dest_path: str) -> str:
+    def download_annotation_archive(self, project_id: str, dest_path: str, v2: bool = False) -> str:
         """
         simpleアノテーションZIPをダウンロードする。
 
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先のファイルパス
+            v2: True:v2形式(JSONファイル名がinput_data_id)をダウンロード.
+                False: v1形式(JSONファイル名がinput_data_name) をダウンロード.
+                v1形式はいずれ廃止される。v1形式が廃止されたら、引数v2のデフォルト値はTrueにする予定。
 
         Returns:
             ダウンロード元のURL
 
         """
+        if v2:
+            query_params = {"v2": True}
+        else:
+            query_params = None
 
-        _, response = self.api.get_annotation_archive(project_id)
+        _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
         url = response.headers['Location']
         annofabapi.utils.download(url, dest_path)
         return url
