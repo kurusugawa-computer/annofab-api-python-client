@@ -11,8 +11,8 @@ import requests
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationSpecs, InputData, Inspection, JobInfo, JobType, MyOrganization,
-                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task, Instruction)
+from annofabapi.models import (AnnotationSpecs, InputData, Inspection, Instruction, JobInfo, JobType, MyOrganization,
+                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task)
 
 logger = logging.getLogger(__name__)
 
@@ -95,8 +95,7 @@ class Wrapper:
             kwargs_for_func_get_list['query_params'] = copied_query_params
             content, _ = func_get_list(**kwargs_for_func_get_list)
             all_objects.extend(content["list"])
-            logger.debug("%s %d / %d page",
-                         func_get_list.__name__, content['page_no'], content['total_page_no'])
+            logger.debug("%s %d / %d page", func_get_list.__name__, content['page_no'], content['total_page_no'])
 
         return all_objects
 
@@ -118,10 +117,9 @@ class Wrapper:
             ダウンロード元のURL
 
         """
+        query_params = None
         if v2:
             query_params = {"v2": True}
-        else:
-            query_params = None
 
         _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
         url = response.headers['Location']
@@ -557,10 +555,10 @@ class Wrapper:
                                                                  request_body=request_body)[0]
             updated_project_members.append(updated_project_member)
 
-            logger.debug("プロジェクトメンバの{'追加' if last_updated_datetime is None else '更新'} 完了."
-                         " project_id=%s, user_id=%s, "
-                         "last_updated_datetime=%s",
-                         project_id, member['user_id'], last_updated_datetime)
+            logger.debug(
+                "プロジェクトメンバの{'追加' if last_updated_datetime is None else '更新'} 完了."
+                " project_id=%s, user_id=%s, "
+                "last_updated_datetime=%s", project_id, member['user_id'], last_updated_datetime)
 
         return updated_project_members
 
@@ -711,7 +709,7 @@ class Wrapper:
             return None
 
         latest_history_id = histories[0]['history_id']
-        return self.api.get_instruction(project_id, {'history_id':latest_history_id})[0]
+        return self.api.get_instruction(project_id, {'history_id': latest_history_id})[0]
 
     def upload_instruction_image(self, project_id: str, image_id: str, file_path: str,
                                  content_type: Optional[str] = None) -> str:
@@ -840,10 +838,8 @@ class Wrapper:
             else:
                 # 進行中
                 if job_access_count < max_job_access:
-                    logger.debug("job_id = %s のジョブが進行中です。%d 秒間待ちます。",
-                                 job['job_id'], job_access_interval)
+                    logger.debug("job_id = %s のジョブが進行中です。%d 秒間待ちます。", job['job_id'], job_access_interval)
                     time.sleep(job_access_interval)
                 else:
-                    logger.debug("job_id = %s のジョブに %d 回アクセスしましたが、完了しませんでした。",
-                                 job['job_id'], job_access_interval)
+                    logger.debug("job_id = %s のジョブに %d 回アクセスしましたが、完了しませんでした。", job['job_id'], job_access_interval)
                     return False
