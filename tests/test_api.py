@@ -385,10 +385,7 @@ def test_instruction():
     assert len(histories) > 0
 
     print("put_instruction")
-    put_request_body = {
-        'html': html_data,
-        'last_updated_datetime': histories[0]['updated_datetime']
-    }
+    put_request_body = {'html': html_data, 'last_updated_datetime': histories[0]['updated_datetime']}
     assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict
 
     print("wrapper.get_latest_instruction")

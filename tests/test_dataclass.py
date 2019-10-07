@@ -9,6 +9,7 @@ from annofabapi.dataclass.annotation import SimpleAnnotation, SingleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
+from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
 from annofabapi.dataclass.job import JobInfo
 from annofabapi.dataclass.my import MyAccount, MyOrganization
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
@@ -20,7 +21,6 @@ from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatisti
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.webhook import Webhook
-from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
 from tests.utils_for_test import WrapperForTest, set_logging_from_inifile
 
 # プロジェクトトップに移動する
@@ -79,6 +79,7 @@ class TestInspection:
         inspection_list, _ = service.api.get_inspections(project_id, task_id, input_data_id)
         inspection = Inspection.from_dict(inspection_list[0])
         assert type(inspection) == Inspection
+
 
 class TestInstruction:
     def test_instruction(self):

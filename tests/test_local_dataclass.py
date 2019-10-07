@@ -7,6 +7,7 @@ from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
+from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
 from annofabapi.dataclass.job import JobInfo
 from annofabapi.dataclass.my import MyAccount, MyOrganization
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
@@ -18,8 +19,6 @@ from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatisti
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.webhook import Webhook
-from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
-
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -71,6 +70,7 @@ class TestInspection:
         inspection = Inspection.from_dict(dict_inspection)
         assert type(inspection) == Inspection
 
+
 class TestInstruction:
     def test_instruction(self):
         json_path = test_dir / "instruction.json"
@@ -92,6 +92,7 @@ class TestInstruction:
             dict_data = json.load(f)
         data = InstructionImage.from_dict(dict_data)
         assert type(data) == InstructionImage
+
 
 class TestJob:
     def test_job(self):
