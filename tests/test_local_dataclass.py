@@ -18,6 +18,8 @@ from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatisti
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.webhook import Webhook
+from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
+
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -69,6 +71,27 @@ class TestInspection:
         inspection = Inspection.from_dict(dict_inspection)
         assert type(inspection) == Inspection
 
+class TestInstruction:
+    def test_instruction(self):
+        json_path = test_dir / "instruction.json"
+        with json_path.open(encoding="utf-8") as f:
+            dict_data = json.load(f)
+        data = Instruction.from_dict(dict_data)
+        assert type(data) == Instruction
+
+    def test_instruction_history(self):
+        json_path = test_dir / "instruction-history.json"
+        with json_path.open(encoding="utf-8") as f:
+            dict_data = json.load(f)
+        data = InstructionHistory.from_dict(dict_data)
+        assert type(data) == InstructionHistory
+
+    def test_instruction_image(self):
+        json_path = test_dir / "instruction-image.json"
+        with json_path.open(encoding="utf-8") as f:
+            dict_data = json.load(f)
+        data = InstructionImage.from_dict(dict_data)
+        assert type(data) == InstructionImage
 
 class TestJob:
     def test_job(self):
