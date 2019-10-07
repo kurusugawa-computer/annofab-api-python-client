@@ -97,6 +97,10 @@ def test_annotation():
     content, response = api.get_annotation_archive(project_id)
     assert response.headers["Location"].startswith("https://")
 
+    print("get_annotation_archive(v2)")
+    content, response = api.get_annotation_archive(project_id, query_params={"v2": True})
+    assert response.headers["Location"].startswith("https://")
+
     print("wrapper.download_annotation_archive")
     wrapper.download_annotation_archive(project_id, f'{out_dir}/simple-annotation.zip')
 
