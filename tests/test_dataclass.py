@@ -9,6 +9,7 @@ from annofabapi.dataclass.annotation import SimpleAnnotation, SingleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
+from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
 from annofabapi.dataclass.job import JobInfo
 from annofabapi.dataclass.my import MyAccount, MyOrganization
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
@@ -78,6 +79,23 @@ class TestInspection:
         inspection_list, _ = service.api.get_inspections(project_id, task_id, input_data_id)
         inspection = Inspection.from_dict(inspection_list[0])
         assert type(inspection) == Inspection
+
+
+class TestInstruction:
+    def test_instruction(self):
+        dict_instruction = service.wrapper.get_latest_instruction(project_id)
+        instruction = Instruction.from_dict(dict_instruction)
+        assert type(instruction) == Instruction
+
+    def test_instruction_history(self):
+        instruction_history_list, _ = service.api.get_instruction_history(project_id)
+        instruction_history = InstructionHistory.from_dict(instruction_history_list[0])
+        assert type(instruction_history) == InstructionHistory
+
+    def test_instruction_image(self):
+        instruction_image_list, _ = service.api.get_instruction_images(project_id)
+        instruction_image = InstructionImage.from_dict(instruction_image_list[0])
+        assert type(instruction_image) == InstructionImage
 
 
 class TestJob:

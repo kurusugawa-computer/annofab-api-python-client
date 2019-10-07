@@ -145,6 +145,11 @@ declare -a model_files=(${MODELS_DIR}/inspection.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/inspection.py  \
  ${model_files[@]} > ../annofabapi/dataclass/inspection.py
 
+# Instruction
+declare -a model_files=(${MODELS_DIR}/instruction.py ${MODELS_DIR}/instruction_history.py ${MODELS_DIR}/instruction_image.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/instruction.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/instruction.py
+
 # Job
 declare -a model_files=(${MODELS_DIR}/job_info.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/job.py  \

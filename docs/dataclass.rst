@@ -22,6 +22,11 @@ annofabapi.dataclass.inspection module
 .. automodule:: annofabapi.dataclass.inspection
     :members:
 
+annofabapi.dataclass.instruction module
+---------------------------------------
+.. automodule:: annofabapi.dataclass.instruction
+    :members:
+
 annofabapi.dataclass.job module
 -------------------------------
 .. automodule:: annofabapi.dataclass.job

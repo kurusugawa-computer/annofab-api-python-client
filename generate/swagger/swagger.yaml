@@ -75,7 +75,30 @@ info:
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
 
-  version: 0.63.0
+    # データ構造
+
+    ## アノテーション
+
+    AnnoFab で作成したアノテーションは、元となった入力データ（画像や動画など）に対応する形で1ファイルのJSONとなります。
+    これらのJSONはZIP形式で圧縮され、一括で取得できます。
+
+    アノテーションの構造は、AnnoFabの改良にともなって現在2つあります。
+    各アノテーション構造の詳細は、リンク先APIのレスポンス構造を確認ください。
+
+    1. Simple
+      * バウンディングボックスや属性など、いわゆるアノテーションにしぼった軽量な構造
+      * いかなるプロジェクトでも取得できます。
+      * API: [getArchiveFullWithProId](#operation/getArchiveFullWithProId)
+      * 推奨版です。
+    2. Full
+      * バウンディングボックスや属性に加え、アノテーションを作成したタスクに関する構造が含まれる重厚長大な構造
+      * Businessプラン組織のプロジェクトでのみ取得できます。
+      * API: [getAnnotationArchive](#operation/getAnnotationArchive)
+      * 非推奨版です。長期的には廃止予定なので、新規の使用は控え、Simpleへ移行してください。
+
+    アノテーションは、各プロジェクトのトップページでダウンロードできます。また、上記リンク先のAPIでも取得できます。
+
+  version: 0.64.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -3499,6 +3522,16 @@ paths:
         required: true
         schema:
           $ref: "#/components/schemas/ProjectId"
+      - name: v2
+        in: query
+        description: |
+          このクエリパラメータのキーだけを指定（`?v2`）、または値 `true` も指定（`?v2=true`）すると、アノテーションJSONのファイル名は `{入力データID}.json` になります。
+          この v2 形式は、入力データ名がファイル名の長さ上限を上回ってもよいように再設計されたものです。
+          以前の v1 形式（アノテーションJSONのファイル名は `{入力データ名}.json` ）はいずれ廃止され、クエリパラメータ `v2` があってもなくても v2 形式に置き換わる予定です。
+        required: false
+        schema:
+          type: string
+          example: "true"
       responses:
         200:
           description: |
@@ -4271,12 +4304,9 @@ paths:
         200:
           description: 正常
           content:
-            text/html:
+            application/json:
               schema:
-                type: string
-                example: |
-                  <h1>Header</h1>
-                  <p>example</div>
+                $ref: "#/components/schemas/Instruction"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         503:
@@ -4301,12 +4331,9 @@ paths:
       requestBody:
         required: true
         content:
-          text/html:
+          application/json:
             schema:
-              type: string
-              example: |
-                <h1>Header</h1>
-                <p>example</div>
+              $ref: "#/components/schemas/Instruction"
       responses:
         200:
           description: 作業ガイドの更新が成功した。
@@ -5471,8 +5498,6 @@ components:
     ProjectConfiguration:
       type: object
       properties:
-        project_rule:
-          type: string
         number_of_inspections:
           description: |
             検査回数。
@@ -6558,9 +6583,17 @@ components:
             AF外部のストレージから登録された場合、その外部ストレージ中のパス。
             それ以外の場合は値なし
         original_resolution:
-          $ref: "#/components/schemas/Resolution"
+          allOf:
+            - $ref: "#/components/schemas/Resolution"
+            - description: |
+                入力データの元画像サイズ。
+                入力データ登録時に画像がリサイズされた場合のみ設定される。
         resized_resolution:
-          $ref: "#/components/schemas/Resolution"
+          allOf:
+            - $ref: "#/components/schemas/Resolution"
+            - description: |
+                入力データのリサイズ後サイズ。
+                入力データ登録時に画像がリサイズされた場合のみ設定される。
         updated_datetime:
           type: string
           format: date-time
@@ -7567,8 +7600,6 @@ components:
           example: "Time"
     Resolution:
       type: object
-      description: |
-        画像などの解像度
       required:
         - width
         - height
@@ -7620,6 +7651,17 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AggregationResult"
+    Instruction:
+      type: object
+      properties:
+        html:
+          type: string
+        last_updated_datetime:
+          type: string
+          format: date-time
+          description: |
+            * `GetInstruction` の場合: 最後に作業ガイドを更新した日時。
+            * `PutInstruction` の場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。
     InstructionHistory:
       type: object
       properties:
