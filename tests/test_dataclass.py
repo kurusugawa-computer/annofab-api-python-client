@@ -20,6 +20,7 @@ from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatisti
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.webhook import Webhook
+from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
 from tests.utils_for_test import WrapperForTest, set_logging_from_inifile
 
 # プロジェクトトップに移動する
@@ -78,6 +79,22 @@ class TestInspection:
         inspection_list, _ = service.api.get_inspections(project_id, task_id, input_data_id)
         inspection = Inspection.from_dict(inspection_list[0])
         assert type(inspection) == Inspection
+
+class TestInstruction:
+    def test_instruction(self):
+        dict_instruction = service.wrapper.get_latest_instruction(project_id)
+        instruction = Instruction.from_dict(dict_instruction)
+        assert type(instruction) == Instruction
+
+    def test_instruction_history(self):
+        instruction_history_list, _ = service.api.get_instruction_history(project_id)
+        instruction_history = InstructionHistory.from_dict(instruction_history_list[0])
+        assert type(instruction_history) == InstructionHistory
+
+    def test_instruction_image(self):
+        instruction_image_list, _ = service.api.get_instruction_images(project_id)
+        instruction_image = InstructionImage.from_dict(instruction_image_list[0])
+        assert type(instruction_image) == InstructionImage
 
 
 class TestJob:

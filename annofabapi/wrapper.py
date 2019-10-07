@@ -12,7 +12,7 @@ import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (AnnotationSpecs, InputData, Inspection, JobInfo, JobType, MyOrganization,
-                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task)
+                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task, Instruction)
 
 logger = logging.getLogger(__name__)
 
@@ -689,23 +689,22 @@ class Wrapper:
     #########################################
     # Public Method : AfInstructionApi
     #########################################
-    def get_latest_instruction(self, project_id: str) -> str:
+    def get_latest_instruction(self, project_id: str) -> Optional[Instruction]:
         """
         最新の作業ガイドの取得.
-        ガイドが設定されていない場合は空文字を返す。
 
         Args:
             project_id: プロジェクトID
 
         Returns:
-            作業ガイドのHTML
+            作業ガイド情報。作業ガイドが登録されいてない場合はNone。
         """
         histories = self.api.get_instruction_history(project_id)[0]
         if len(histories) == 0:
-            return ''
+            return None
 
         latest_history_id = histories[0]['history_id']
-        return self.api.get_instruction(project_id, latest_history_id)[0]
+        return self.api.get_instruction(project_id, {'history_id':latest_history_id})[0]
 
     def upload_instruction_image(self, project_id: str, image_id: str, file_path: str,
                                  content_type: Optional[str] = None) -> str:

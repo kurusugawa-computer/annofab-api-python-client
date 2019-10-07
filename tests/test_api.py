@@ -380,20 +380,19 @@ def test_instruction():
     str_now = datetime.datetime.now().isoformat()
     html_data = f"<h1>時間 {str_now}</h1>"
 
-    print("put_instruction")
-    assert type(api.put_instruction(project_id, request_body=html_data)[0]) == dict
-
     print("get_instruction_history")
     histories = api.get_instruction_history(project_id)[0]
     assert len(histories) > 0
 
-    # print("get_instruction")
-    # history_id = histories[0]['history_id']
-    # 2019/05/02 時点ではAPIのcontent-typeがoctet-streamのため、型が異なるというエラーになる
-    # assert api.get_instruction(project_id, {"history_id": history_id})[0] == html_data
+    print("put_instruction")
+    put_request_body = {
+        'html': html_data,
+        'last_updated_datetime': histories[0]['updated_datetime']
+    }
+    assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict
 
-    # print("wrapper.get_latest_instruction")
-    # assert wrapper.get_latest_instruction(project_id) == html_data
+    print("wrapper.get_latest_instruction")
+    assert wrapper.get_latest_instruction(project_id)['html'] == html_data
 
     print("upload_instruction_image. 内部でget_instruction_image_url_for_put を実行している")
     test_image_id = str(uuid.uuid4())
