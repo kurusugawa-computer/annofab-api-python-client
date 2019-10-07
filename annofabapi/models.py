@@ -1870,6 +1870,19 @@ class InspectionSummary(Enum):
     COMPLETE = "complete"
 
 
+Instruction = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* html: str
+    
+* last_updated_datetime: str
+    * `GetInstruction` の場合: 最後に作業ガイドを更新した日時。 * `PutInstruction` の場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。 
+
+"""
+
 InstructionHistory = Dict[str, Any]
 """
 
@@ -2478,8 +2491,6 @@ ProjectConfiguration = Dict[str, Any]
 
 Kyes of Dict
 
-* project_rule: str
-    
 * number_of_inspections: int
     検査回数。 * 0回：教師付け -> 受入 * 1回：教師付け -> 検査 -> 受入 * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入 
 * assignee_rule_of_resubmitted_task: AssigneeRuleOfResubmittedTask
@@ -2748,7 +2759,7 @@ Kyes of Dict
 
 Resolution = Dict[str, Any]
 """
-画像などの解像度 
+
 
 Kyes of Dict
 

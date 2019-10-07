@@ -19,7 +19,7 @@ from dataclasses_json import dataclass_json
 @dataclass
 class Resolution:
     """
-    画像などの解像度 
+    
     """
     width: float
     """"""

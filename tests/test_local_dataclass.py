@@ -7,6 +7,7 @@ from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecs
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
+from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
 from annofabapi.dataclass.job import JobInfo
 from annofabapi.dataclass.my import MyAccount, MyOrganization
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
@@ -68,6 +69,29 @@ class TestInspection:
             dict_inspection = json.load(f)
         inspection = Inspection.from_dict(dict_inspection)
         assert type(inspection) == Inspection
+
+
+class TestInstruction:
+    def test_instruction(self):
+        json_path = test_dir / "instruction.json"
+        with json_path.open(encoding="utf-8") as f:
+            dict_data = json.load(f)
+        data = Instruction.from_dict(dict_data)
+        assert type(data) == Instruction
+
+    def test_instruction_history(self):
+        json_path = test_dir / "instruction-history.json"
+        with json_path.open(encoding="utf-8") as f:
+            dict_data = json.load(f)
+        data = InstructionHistory.from_dict(dict_data)
+        assert type(data) == InstructionHistory
+
+    def test_instruction_image(self):
+        json_path = test_dir / "instruction-image.json"
+        with json_path.open(encoding="utf-8") as f:
+            dict_data = json.load(f)
+        data = InstructionImage.from_dict(dict_data)
+        assert type(data) == InstructionImage
 
 
 class TestJob:
