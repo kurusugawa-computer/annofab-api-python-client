@@ -6,6 +6,7 @@ Annofab APIのutils
 import datetime
 import logging
 from pathlib import Path
+from typing import Optional
 
 import dateutil
 import dateutil.tz
@@ -78,13 +79,19 @@ def str_now() -> str:
     return to_iso8601_extension(datetime.datetime.now())
 
 
-def to_iso8601_extension(d: datetime.datetime) -> str:
+def to_iso8601_extension(d: datetime.datetime, tz: Optional[datetime.tzinfo] = None) -> str:
     """
     datetime.datetimeを、ISO8601 拡張形式のstringに変換する。
     ``2019-05-08T10:00:00.000+09:00``
 
+    Args:
+        d: datetimeオブジェクト
+        tz: タイムゾーンオブジェクト。Noneの場合、ローカルのタイムゾーンを設定する。
+
     Returns:
         ISO 8601 拡張形式の日時
     """
-    d.astimezone(dateutil.tz.tzlocal())
+    if tz is None:
+        tz = dateutil.tz.tzlocal()
+    d = d.astimezone(tz)
     return d.isoformat(timespec='milliseconds')
