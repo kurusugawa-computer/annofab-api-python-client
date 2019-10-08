@@ -84,6 +84,8 @@ class Wrapper:
         copied_query_params.update({"page": 1, "limit": limit})
         kwargs_for_func_get_list['query_params'] = copied_query_params
         content, _ = func_get_list(**kwargs_for_func_get_list)
+
+        logger.debug(f"{content.get('total_count')} 件 取得します。")
         if content.get('over_limit'):
             logger.warning("検索結果が10,000件を超えてますが、Web APIの都合上10,000件までしか取得できません。")
 
