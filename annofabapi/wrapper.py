@@ -766,6 +766,7 @@ class Wrapper:
         deleted_jobs = []
         for job in jobs:
             if job['job_status'] == 'succeeded':
+                logger.debug(f"job_id={job['job_id']} のジョブを削除します。")
                 self.api.delete_project_job(project_id, job['job_id'])
                 deleted_jobs.append(job)
 
