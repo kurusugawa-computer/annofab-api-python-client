@@ -77,6 +77,7 @@ def str_now() -> str:
     """
     return to_iso8601_extension(datetime.datetime.now())
 
+
 def to_iso8601_extension(d: datetime.datetime) -> str:
     """
     datetime.datetimeを、ISO8601 拡張形式のstringに変換する。
