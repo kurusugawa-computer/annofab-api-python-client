@@ -6,12 +6,12 @@ Annofab APIのutils
 import datetime
 import logging
 from pathlib import Path
+from typing import Optional
 
 import dateutil
 import dateutil.tz
 import requests
 
-from typing import Optional
 
 def raise_for_status(response: requests.Response):
     """
@@ -79,7 +79,7 @@ def str_now() -> str:
     return to_iso8601_extension(datetime.datetime.now())
 
 
-def to_iso8601_extension(d: datetime.datetime, tz: Optional[datetime.tzinfo]=None) -> str:
+def to_iso8601_extension(d: datetime.datetime, tz: Optional[datetime.tzinfo] = None) -> str:
     """
     datetime.datetimeを、ISO8601 拡張形式のstringに変換する。
     ``2019-05-08T10:00:00.000+09:00``
