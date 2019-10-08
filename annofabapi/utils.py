@@ -86,5 +86,5 @@ def to_iso8601_extension(d: datetime.datetime) -> str:
     Returns:
         ISO 8601 拡張形式の日時
     """
-    d.astimezone(dateutil.tz.tzlocal())
+    d = d.astimezone(dateutil.tz.tzlocal())
     return d.isoformat(timespec='milliseconds')
