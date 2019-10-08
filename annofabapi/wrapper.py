@@ -85,7 +85,7 @@ class Wrapper:
         kwargs_for_func_get_list['query_params'] = copied_query_params
         content, _ = func_get_list(**kwargs_for_func_get_list)
 
-        logger.debug(f"{content.get('total_count')} 件 取得します。")
+        logger.debug("%d 件 取得します。", content.get('total_count'))
         if content.get('over_limit'):
             logger.warning("検索結果が10,000件を超えてますが、Web APIの都合上10,000件までしか取得できません。")
 
@@ -768,7 +768,7 @@ class Wrapper:
         deleted_jobs = []
         for job in jobs:
             if job['job_status'] == 'succeeded':
-                logger.debug(f"job_id={job['job_id']} のジョブを削除します。")
+                logger.debug("job_id=%s のジョブを削除します。", job['job_id'])
                 self.api.delete_project_job(project_id, job['job_id'])
                 deleted_jobs.append(job)
 
