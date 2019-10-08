@@ -69,13 +69,22 @@ def download(url: str, dest_path: str):
 
 def str_now() -> str:
     """
-    現在日時をISO8601 formatで取得する。
-
-
+    現在日時をISO8601 拡張形式で取得する。
 
     Returns:
         ISO 8601 formatの現在日時
 
     """
-    d = datetime.datetime.now(dateutil.tz.tzlocal())
+    return to_iso8601_extension(datetime.datetime.now())
+
+
+def to_iso8601_extension(d: datetime.datetime) -> str:
+    """
+    datetime.datetimeを、ISO8601 拡張形式のstringに変換する。
+    ``2019-05-08T10:00:00.000+09:00``
+
+    Returns:
+        ISO 8601 拡張形式の日時
+    """
+    d.astimezone(dateutil.tz.tzlocal())
     return d.isoformat(timespec='milliseconds')
