@@ -98,7 +98,7 @@ info:
 
     アノテーションは、各プロジェクトのトップページでダウンロードできます。また、上記リンク先のAPIでも取得できます。
 
-  version: 0.64.0
+  version: 0.64.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -2265,6 +2265,15 @@ paths:
         required: true
         schema:
           $ref: "#/components/schemas/ProjectId"
+      - name: history_id
+        in: query
+        description: |
+          過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。
+          未指定時は最新のアノテーション仕様を取得します。
+        required: false
+        schema:
+          type: string
+          example: "123456789"
       responses:
         200:
           description: 正常
@@ -3008,11 +3017,13 @@ paths:
           $ref: "#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/tasks/{task_id}/validation:
     get:
+      deprecated: true
       tags:
       - af-task
       summary: タスク自動検査
       description: |
         指定したタスクの自動検査で見つかった警告やエラーを一括で取得します。
+        [タスクの状態遷移](#operation/operateTask)の際に検査を行うようになったので、本APIは非推奨となります。
       security:
       - AllProjectMember: []
       operationId: getTaskValidation
@@ -6009,6 +6020,8 @@ components:
     AnnotationSpecsHistory:
       type: object
       properties:
+        history_id:
+          type: string
         project_id:
           $ref: "#/components/schemas/ProjectId"
         updated_datetime:
