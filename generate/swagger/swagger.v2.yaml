@@ -75,7 +75,7 @@ info:
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
 
-  version: 0.64.0
+  version: 0.64.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -539,6 +539,15 @@ paths:
           in: query
           description: |
             CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
+        - name: history_id
+          in: query
+          description: |
+            過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。
+            未指定時は最新のアノテーション仕様を取得します。
           required: false
           schema:
             type: string
@@ -2065,6 +2074,8 @@ components:
     AnnotationSpecsHistory:
       type: object
       properties:
+        history_id:
+          type: string
         project_id:
           $ref: "#/components/schemas/ProjectId"
         updated_datetime:
