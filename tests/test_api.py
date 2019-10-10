@@ -134,9 +134,9 @@ def test_annotation_specs():
     annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
     assert type(annotation_specs_histories) == list
 
-    old_annotation_specs_url = annotation_specs_histories[0]["url"]
-    old_annotation_specs = wrapper.get_annotation_specs_from_url(project_id, old_annotation_specs_url)
-    assert type(old_annotation_specs) == dict
+    old_annotation_spec, _ = api.get_annotation_specs(
+        project_id, query_params={"history_id": annotation_specs_histories[1]["history_id"]})
+    assert type(old_annotation_spec) == dict
 
 
 def test_login():
@@ -355,9 +355,6 @@ def test_task():
 
     print(f"get_task_histories")
     assert len(api.get_task_histories(project_id, test_task_id)[0]) > 0
-
-    print(f"get_task_validation")
-    assert type(api.get_task_validation(project_id, test_task_id)[0]) == dict
 
     print(f"delete_task")
     assert type(api.delete_task(project_id, test_task_id)[0]) == dict

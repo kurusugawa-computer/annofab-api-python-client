@@ -1506,6 +1506,8 @@
     AnnotationSpecsHistory:
       type: object
       properties:
+        history_id:
+          type: string
         project_id:
           $ref: "#/components/schemas/ProjectId"
         updated_datetime:

@@ -527,6 +527,8 @@ AnnotationSpecsHistory = Dict[str, Any]
 
 Kyes of Dict
 
+* history_id: str
+    
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * updated_datetime: str
