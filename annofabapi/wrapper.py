@@ -4,6 +4,7 @@ import mimetypes
 import time
 import urllib
 import urllib.parse
+import warnings
 from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
 
 import requests
@@ -167,6 +168,8 @@ class Wrapper:
         """
         アノテーション仕様の履歴から取得したURLから、アノテーション仕様を取得する
 
+        .. deprecated:: `get_annotation_specs`から過去のアノテーション仕様を取得できるようになったので、廃止する。2019/11/01以降に廃止する予定。
+
         Args:
             project_id: プロジェクトID
             url: アノテーション仕様の履歴から取得したURL
@@ -174,6 +177,7 @@ class Wrapper:
         Returns:
             put_annotation_specsのContent
         """
+        warnings.warn("deprecated", DeprecationWarning)
         cookies, _ = self.api._get_signed_cookie(project_id)
         kwargs = self.api._create_kwargs()
         kwargs.update({"cookies": cookies})
