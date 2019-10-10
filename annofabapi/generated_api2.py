@@ -44,6 +44,7 @@ class AbstractAnnofabApi2(abc.ABC):
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
                 cache (str):  CACHE TIMESTAMP 
+                history_id (str):  過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。 未指定時は最新のアノテーション仕様を取得します。 
 
         Returns:
             Tuple[AnnotationSpecs, requests.Response]
