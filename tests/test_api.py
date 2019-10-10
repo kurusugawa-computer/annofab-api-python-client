@@ -134,6 +134,10 @@ def test_annotation_specs():
     annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
     assert type(annotation_specs_histories) == list
 
+    annotation_spec, _ = api.get_annotation_specs(
+        project_id, query_params={"history_id": annotation_specs_histories[0]["history_id"]})
+    assert type(annotation_spec) == dict
+
     old_annotation_specs_url = annotation_specs_histories[0]["url"]
     old_annotation_specs = wrapper.get_annotation_specs_from_url(project_id, old_annotation_specs_url)
     assert type(old_annotation_specs) == dict
