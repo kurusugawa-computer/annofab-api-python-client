@@ -116,6 +116,9 @@ class AnnotationSpecsHistory:
     """
     
     """
+    history_id: Optional[str]
+    """"""
+
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
