@@ -1,7 +1,9 @@
 #!/bin/bash -uex
 
+PROGNAME=$(basename $0)
+
 usage_exit() {
-        echo "Usage: $0 [--download] [--docker-pull]" 1>&2
+        echo "Usage: ${PROGNAME} [--download] [--docker-pull]" 1>&2
         exit 1
 }
 
@@ -12,18 +14,26 @@ if [ $# -gt 0 ]; then
     for OPT in "$@"
     do
     case ${OPT} in
-        --download)
+        "--download")
             FLAG_DOWNLOAD=true
+            shift 1
         ;;
-        --docker-pull)
+        "--docker-pull")
             FLAG_DOCKER_PULL=true
+            shift 1
         ;;
-        --help|-h)
+        "-h" | "--help")
             usage_exit
         ;;
-
+        -*)
+            echo "${PROGNAME}: illegal option $1" 1>&2
+            exit 1
+        ;;
         *)
-            usage_exit
+            if [ -n "$1" ] && [[ ! "$1" =~ ^-+ ]]; then
+                echo "${PROGNAME}: illegal parameter $1" 1>&2
+                exit 1
+            fi
         ;;
     esac
     done
