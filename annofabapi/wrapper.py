@@ -562,10 +562,9 @@ class Wrapper:
             updated_project_members.append(updated_project_member)
 
             command_name = '追加' if last_updated_datetime is None else '更新'
-            logger.debug(
-                "プロジェクトメンバの'%s' 完了."
-                " project_id=%s, user_id=%s, "
-                "last_updated_datetime=%s", command_name, project_id, member['user_id'], last_updated_datetime)
+            logger.debug("プロジェクトメンバの'%s' 完了."
+                         " project_id=%s, user_id=%s, "
+                         "last_updated_datetime=%s", command_name, project_id, member['user_id'], last_updated_datetime)
 
         return updated_project_members
 
