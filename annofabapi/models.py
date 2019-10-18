@@ -2711,7 +2711,7 @@ Kyes of Dict
     
 * overview: str
     
-* status: str
+* status: ProjectStatus
     
 * input_data_type: InputDataType
     
@@ -3185,36 +3185,6 @@ Kyes of Dict
 * task_id: str
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * inputs: List[InputDataSummary]
-    
-
-"""
-
-TasksInputs = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* tasks: List[TasksInputsTask]
-    
-
-"""
-
-TasksInputsTask = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* task_id: str
-    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* phase: TaskPhase
-    
-* status: TaskStatus
-    
-* input_data_id_list: List[str]
     
 
 """
