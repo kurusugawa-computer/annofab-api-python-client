@@ -611,7 +611,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        「複数の入力データを圧縮したZIPファイル」や「4MBを超える画像」などをAnnoFabに一時的に保存するための、URLと登録用データパスを発行します。  このAPIと他のAPIを以下に示すように使うことで、ZIPファイルなどをAFにアップロードできます。   1. 本APIを実行して、URLを取得する。   * `curl -X POST -H 'Content-Type: CONTENT_TYPE_HERE' 'https://annofab.com/api/v1/projects/（プロジェクトID）/create-temp-path` 2. 1で取得したURLに、一時保存したいファイルをPUTする。   * `curl -X PUT -H \"Content-Type: CONTENT_TYPE_HERE' --data-binary @/hoge.zip 'https://（発行されたURL）'` 3. 1で取得した登録用データパスを [入力データ登録API](#operation/putInputData)のリクエストボディ `input_data_path` に指定する。   * `curl -X PUT -H 'Content-Type: text/json\" -d '{\"input_data_name\":\"...\", \"input_data_path\":\"(登録用データパス)\" }' '/projects/{project_id}/inputs/{input_data_id}'`  ここで、1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。 ZIPファイルの場合は `application/zip` 、画像ファイルの場合は `image/png` など、適切な Content-Type を指定します。  登録するファイルはどのような内容であれ、アップロードから24時間経過すると削除されます。 したがって、ZIP圧縮した入力データを登録する場合は、URL発行から24時間以内に完了してください。 
+        「複数の入力データを圧縮したZIPファイル」や「4MBを超える画像」などをAnnoFabに一時的に保存するための、URLと登録用データパスを発行します。  このAPIと他のAPIを以下に示すように使うことで、ZIPファイルなどをAFにアップロードできます。   1. 本APIを実行して、URLを取得する。   * `curl -X POST -H 'Content-Type: CONTENT_TYPE_HERE' 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'` 2. 1で取得したURLに、一時保存したいファイルをPUTする。   * `curl -X PUT -H 'Content-Type: CONTENT_TYPE_HERE' --data-binary @/hoge.zip 'https://(発行されたURL)'` 3. 1で取得した登録用データパスを [入力データ登録API](#operation/putInputData)のリクエストボディ `input_data_path` に指定する。   * `curl -X PUT -H 'Content-Type: text/json' -d '{\"input_data_name\":\"(表示名)\", \"input_data_path\":\"(登録用データパス)\" }' 'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}'`  ここで、1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。 ZIPファイルの場合は `application/zip` 、画像ファイルの場合は `image/png` など、適切な Content-Type を指定します。  登録するファイルはどのような内容であれ、アップロードから24時間経過すると削除されます。 したがって、ZIP圧縮した入力データを登録する場合は、URL発行から24時間以内に完了してください。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2094,58 +2094,6 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_histories_with_pro_id_tas_id_tas_his_id(self, project_id: str, task_id: str, task_history_id: str,
-                                                    **kwargs) -> Tuple[Any, requests.Response]:
-        """タスク履歴取得
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-            task_id (str):  タスクID (required)
-            task_history_id (str):  タスク履歴ID (required)
-
-        Returns:
-            Tuple[List[TaskHistory], requests.Response]
-
-
-        """
-        warnings.warn("deprecated", DeprecationWarning)
-        url_path = f'/projects/{project_id}/tasks/{task_id}/histories/{task_history_id}'
-        http_method = 'GET'
-        keyword_params: Dict[str, Any] = {}
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def get_history_events_with_pro_id_tas_id(self, project_id: str, task_id: str,
-                                              **kwargs) -> Tuple[Any, requests.Response]:
-        """タスク履歴イベント取得
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        作業時間を計算したタスク履歴ではなく、その元となったタスク履歴イベントを一括で取得します。 
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-            task_id (str):  タスクID (required)
-
-        Returns:
-            Tuple[List[TaskHistoryEvent], requests.Response]
-
-
-        """
-        warnings.warn("deprecated", DeprecationWarning)
-        url_path = f'/projects/{project_id}/tasks/{task_id}/history-events'
-        http_method = 'GET'
-        keyword_params: Dict[str, Any] = {}
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
     def get_task(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """タスク取得
 
@@ -2255,29 +2203,6 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             'query_params': query_params,
         }
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def get_tasks_inputs_with_pro_id(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """【非推奨】タスク-入力データ一括取得
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-
-        Returns:
-            Tuple[TasksInputs, requests.Response]
-
-
-        """
-        warnings.warn("deprecated", DeprecationWarning)
-        url_path = f'/projects/{project_id}/tasks-inputs'
-        http_method = 'GET'
-        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_tasks_generation(self, project_id: str, request_body: Optional[Any] = None,
