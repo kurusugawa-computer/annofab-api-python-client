@@ -154,13 +154,13 @@ for parser in iter_parser:
 
 # Simpleアノテーションzip内の1個のJSONファイルを読み込み
 with zipfile.ZipFile('simple-annotation.zip', 'r') as zip_file:
-    parser = SimpleAnnotationZipParser(zip_file, "task_id/input_data_name.json")
+    parser = SimpleAnnotationZipParser(zip_file, "task01/12345678-abcd-1234-abcd-1234abcd5678.json")
     simple_annotation = parser.parse()
     print(simple_annotation)
 
 # Simpleアノテーションzip内を展開したディレクトリ内の1個のJSONファイルを読み込み
-parser = SimpleAnnotationDirParser(Path("task_id/input_data_name.json"))
-simple_annotation = p.parse()
+parser = SimpleAnnotationDirParser(Path("task01/12345678-abcd-1234-abcd-1234abcd5678.json"))
+simple_annotation = parser.parse()
 print(simple_annotation)
 
 ```

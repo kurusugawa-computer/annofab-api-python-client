@@ -98,7 +98,7 @@ info:
 
     アノテーションは、各プロジェクトのトップページでダウンロードできます。また、上記リンク先のAPIでも取得できます。
 
-  version: 0.64.1
+  version: 0.65.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -2616,34 +2616,6 @@ paths:
                 $ref: "#/components/schemas/Errors"
         503:
           $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/tasks-inputs:
-    get:
-      deprecated: true
-      tags:
-      - af-task
-      summary: 【非推奨】タスク-入力データ一括取得
-      description: |
-      security:
-      - AllProjectMember: []
-      operationId: getTasksInputsWithProId
-      parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
-      responses:
-        200:
-          description: 正常
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TasksInputs"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/generate-tasks:
     post:
       tags:
@@ -3084,87 +3056,6 @@ paths:
                   $ref: "#/components/schemas/TaskHistory"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/tasks/{task_id}/history-events:
-    get:
-      deprecated: true
-      tags:
-      - af-task
-      summary: タスク履歴イベント取得
-      description: |
-        作業時間を計算したタスク履歴ではなく、その元となったタスク履歴イベントを一括で取得します。
-      security:
-      - AllProjectMember: []
-      operationId: getHistoryEventsWithProIdTasId
-      parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
-      - name: task_id
-        in: path
-        description: タスクID
-        required: true
-        schema:
-          $ref: "#/components/schemas/TaskId"
-      responses:
-        200:
-          description: 正常
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/TaskHistoryEvent"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/tasks/{task_id}/histories/{task_history_id}:
-    get:
-      deprecated: true
-      tags:
-      - af-task
-      summary: タスク履歴取得
-      description: |
-      security:
-      - AllProjectMember: []
-      operationId: getHistoriesWithProIdTasIdTasHisId
-      parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
-      - name: task_id
-        in: path
-        description: タスクID
-        required: true
-        schema:
-          $ref: "#/components/schemas/TaskId"
-      - name: task_history_id
-        in: path
-        description: タスク履歴ID
-        required: true
-        schema:
-          $ref: "#/components/schemas/TaskHistoryId"
-      responses:
-        200:
-          description: 正常
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/TaskHistory"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
         503:
           $ref: "#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/annotations:
@@ -4245,11 +4136,11 @@ paths:
 
 
         1. 本APIを実行して、URLを取得する。
-          * `curl -X POST -H 'Content-Type: CONTENT_TYPE_HERE' 'https://annofab.com/api/v1/projects/（プロジェクトID）/create-temp-path`
+          * `curl -X POST -H 'Content-Type: CONTENT_TYPE_HERE' 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'`
         2. 1で取得したURLに、一時保存したいファイルをPUTする。
-          * `curl -X PUT -H "Content-Type: CONTENT_TYPE_HERE' --data-binary @/hoge.zip 'https://（発行されたURL）'`
+          * `curl -X PUT -H 'Content-Type: CONTENT_TYPE_HERE' --data-binary @/hoge.zip 'https://(発行されたURL)'`
         3. 1で取得した登録用データパスを [入力データ登録API](#operation/putInputData)のリクエストボディ `input_data_path` に指定する。
-          * `curl -X PUT -H 'Content-Type: text/json" -d '{"input_data_name":"...", "input_data_path":"(登録用データパス)" }' '/projects/{project_id}/inputs/{input_data_id}'`
+          * `curl -X PUT -H 'Content-Type: text/json' -d '{"input_data_name":"(表示名)", "input_data_path":"(登録用データパス)" }' 'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}'`
 
         ここで、1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。
         ZIPファイルの場合は `application/zip` 、画像ファイルの場合は `image/png` など、適切な Content-Type を指定します。
@@ -5683,7 +5574,7 @@ components:
         overview:
           type: string
         status:
-          type: string
+          $ref: "#/components/schemas/ProjectStatus"
         input_data_type:
           $ref: "#/components/schemas/InputDataType"
         organization_name:
@@ -6312,28 +6203,6 @@ components:
     TaskRequest:
       type: object
       properties:
-        input_data_id_list:
-          type: array
-          items:
-            $ref: "#/components/schemas/InputDataId"
-    TasksInputs:
-      type: object
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        tasks:
-          type: array
-          items:
-            $ref: "#/components/schemas/TasksInputsTask"
-    TasksInputsTask:
-      type: object
-      properties:
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        phase:
-          $ref: "#/components/schemas/TaskPhase"
-        status:
-          $ref: "#/components/schemas/TaskStatus"
         input_data_id_list:
           type: array
           items:

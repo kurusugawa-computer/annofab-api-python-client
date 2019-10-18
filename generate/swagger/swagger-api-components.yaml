@@ -1169,7 +1169,7 @@
         overview:
           type: string
         status:
-          type: string
+          $ref: "#/components/schemas/ProjectStatus"
         input_data_type:
           $ref: "#/components/schemas/InputDataType"
         organization_name:
@@ -1798,28 +1798,6 @@
     TaskRequest:
       type: object
       properties:
-        input_data_id_list:
-          type: array
-          items:
-            $ref: "#/components/schemas/InputDataId"
-    TasksInputs:
-      type: object
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        tasks:
-          type: array
-          items:
-            $ref: "#/components/schemas/TasksInputsTask"
-    TasksInputsTask:
-      type: object
-      properties:
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        phase:
-          $ref: "#/components/schemas/TaskPhase"
-        status:
-          $ref: "#/components/schemas/TaskStatus"
         input_data_id_list:
           type: array
           items:
