@@ -11,3 +11,6 @@ script:
    - mypy annofabapi --config-file setup.cfg
    - pylint annofabapi --rcfile setup.cfg
    - pytest tests/test_local*.py
+branches:
+  only:
+  - master
