@@ -15,7 +15,7 @@ from distutils.util import strtobool
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.models import JobType, GraphType
+from annofabapi.models import GraphType, JobType
 from tests.utils_for_test import WrapperForTest, create_csv_for_task, set_logging_from_inifile
 
 # プロジェクトトップに移動する
@@ -303,6 +303,7 @@ def test_project_member():
     content = wrapper.copy_project_members(src_project_id=project_id, dest_project_id=project_id, delete_dest=False)
     assert type(content) == list
 
+
 class TestStatistics:
     def test_statistics(self):
         print("get_task_statistics")
@@ -335,13 +336,9 @@ class TestStatistics:
             "graph_type": GraphType.TASK_PROGRESS.value,
             "marked_at": annofabapi.utils.str_now()
         }]
-        request_body = {
-            "markers": markers,
-            "last_updated_datetime": content["updated_datetime"]
-        }
+        request_body = {"markers": markers, "last_updated_datetime": content["updated_datetime"]}
         print("put_markers")
         assert type(api.put_markers(project_id, request_body=request_body)[0]) == dict
-
 
 
 def test_task():

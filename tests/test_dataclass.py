@@ -16,7 +16,7 @@ from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember
 from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
-from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatistics, ProjectAccountStatistics,
+from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatistics, Markers, ProjectAccountStatistics,
                                              ProjectTaskStatisticsHistory, TaskPhaseStatistics, WorktimeStatistics)
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
@@ -180,6 +180,11 @@ class TestStatistics:
         stat_list = service.wrapper.get_worktime_statistics(project_id)
         stat = WorktimeStatistics.from_dict(stat_list[0])
         assert type(stat) == WorktimeStatistics
+
+    def test_markers(self):
+        content, _ = service.api.get_markers(project_id)
+        markers = Markers.from_dict(content)
+        assert type(markers) == Markers
 
 
 class TestSupplementary:
