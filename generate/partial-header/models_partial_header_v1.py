@@ -129,6 +129,14 @@ Example:
 
 """
 
+MakerId = NewType('MakerId', str)
+"""
+
+Example:
+    ``12345678-abcd-1234-abcd-1234abcd5678``
+
+"""
+
 JobId = NewType('JobId', str)
 """
 

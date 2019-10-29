@@ -13,6 +13,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 
 
 def test_build():
+    # ".netrc"ファイルが存在すること前提
     assert isinstance(annofabapi.build_from_netrc(), annofabapi.Resource)
 
     with pytest.raises(ValueError):

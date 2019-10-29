@@ -197,6 +197,7 @@ declare -a model_files=(${MODELS_DIR}/project_task_statistics.py ${MODELS_DIR}/p
  ${MODELS_DIR}/phase_statistics.py ${MODELS_DIR}/task_phase_statistics.py \
  ${MODELS_DIR}/label_statistics.py  \
  ${MODELS_DIR}/histogram_item.py ${MODELS_DIR}/worktime_statistics_item.py ${MODELS_DIR}/account_worktime_statistics.py ${MODELS_DIR}/worktime_statistics.py  \
+ ${MODELS_DIR}/graph_type.py ${MODELS_DIR}/marker.py ${MODELS_DIR}/markers.py
 )
 cat partial-header/dataclass/common.py partial-header/dataclass/statistics.py  \
  ${model_files[@]} > ../annofabapi/dataclass/statistics.py

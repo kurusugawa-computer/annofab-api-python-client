@@ -75,7 +75,7 @@ info:
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
 
-  version: 0.65.0
+  version: 0.66.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -86,15 +86,28 @@ servers:
 - url: https://annofab.com/api/v2
 tags:
 - name: af-annotation-specs-v2
+  x-displayName: Annotation Specs
   description: アノテーション仕様に対する操作
 - name: af-cache-v2
+  x-displayName: Cache
   description: キャッシュに関係
 - name: af-project-member-v2
+  x-displayName: Project Member
   description: プロジェクトメンバーに対する操作
 - name: af-project-v2
+  x-displayName: Project
   description: プロジェクトに対する操作
 - name: af-statistics-v2
+  x-displayName: Statistics
   description: 統計
+x-tagGroups:
+  - name: API
+    tags:
+      - af-annotation-specs-v2
+      - af-cache-v2
+      - af-project-member-v2
+      - af-project-v2
+      - af-statistics-v2
 paths:
   /sign-url:
     get:
@@ -1483,6 +1496,11 @@ components:
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
         検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+    MarkerId:
+      type: string
+      example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     JobId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -2041,6 +2059,63 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
+    Marker:
+      type: object
+      properties:
+        marker_id:
+          $ref: "#/components/schemas/MarkerId"
+        title:
+          type: string
+        graph_type:
+          description: マーカーの配置先グラフ
+          $ref: "#/components/schemas/GraphType"
+        markedAt:
+          description: グラフ上のマーカー位置(x軸)
+          type: string
+          format: date
+    Markers:
+      type: object
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        markers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Marker"
+        updated_datetime:
+          type: string
+          format: date
+    GraphType:
+      type: string
+      enum:
+        - task_progress
+        - cumulative_labor_time_By_task_phase
+        - number_of_inspections_per_inspection_phrase
+        - number_of_task_rejections_by_member
+        - labor_time_per_member
+        - mean_labor_time_per_image
+        - mean_labor_time_per_minute_of_movie
+        - mean_labor_time_per_image_by_member
+        - mean_labor_time_per_minute_of_movie_by_member
+      description: |
+        * `task_progress` - タスク進捗状況
+        * `cumulative_labor_time_by_task_phase` - タスクフェーズ別累積作業時間
+        * `number_of_inspections_per_inspection_phrase` - 検査コメント内容別指摘回数
+        * `number_of_task_rejections_by_member` - メンバー別タスクが差戻された回数
+        * `labor_time_per_member` - メンバー別作業時間
+        * `mean_labor_time_per_image` - 画像一枚当たりの作業時間平均
+        * `mean_labor_time_per_minute_of_movie` - 動画一分当たりの作業時間平均
+        * `mean_labor_time_per_image_by_member` - メンバー別画像一枚当たりの作業時間平均
+        * `mean_labor_time_per_minute_of_movie_by_member` - メンバー別動画一分当たりの作業時間平均
+    PutMarkersRequest:
+      type: object
+      properties:
+        markers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Marker"
+        last_updated_datetime:
+          $ref: "#/components/schemas/LastUpdatedDatetime"
     AnnotationSpecs:
       type: object
       properties:
@@ -2329,8 +2404,8 @@ components:
             - acceptance_skipped
             - inspection_and_acceptance_skipped
           description: |
-            * 'inspection_skipped' - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。
-            * 'inspection_stages_skipped' - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。
+            * `inspection_skipped` - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。
+            * `inspection_stages_skipped` - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。
             * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。
             * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す
   
