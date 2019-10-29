@@ -14,7 +14,7 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
-from annofabapi.models import TaskPhase, TaskStatus
+from annofabapi.models import GraphType, TaskPhase, TaskStatus
 
 
 @dataclass_json
@@ -212,4 +212,35 @@ class WorktimeStatistics:
     """"""
 
     accounts: Optional[List[AccountWorktimeStatistics]]
+    """"""
+@dataclass_json
+@dataclass
+class Marker:
+    """
+    
+    """
+    marker_id: Optional[str]
+    """マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    title: Optional[str]
+    """"""
+
+    graph_type: Optional[GraphType]
+    """"""
+
+    marked_at: Optional[str]
+    """グラフ上のマーカー位置(x軸)"""
+@dataclass_json
+@dataclass
+class Markers:
+    """
+    
+    """
+    project_id: Optional[str]
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    markers: Optional[List[Marker]]
+    """"""
+
+    updated_datetime: Optional[str]
     """"""
