@@ -15,7 +15,7 @@ from distutils.util import strtobool
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.models import JobType
+from annofabapi.models import JobType, GraphType
 from tests.utils_for_test import WrapperForTest, create_csv_for_task, set_logging_from_inifile
 
 # プロジェクトトップに移動する
@@ -303,25 +303,45 @@ def test_project_member():
     content = wrapper.copy_project_members(src_project_id=project_id, dest_project_id=project_id, delete_dest=False)
     assert type(content) == list
 
+class TestStatistics:
+    def test_statistics(self):
+        print("get_task_statistics")
+        assert type(api.get_task_statistics(project_id)[0]) == list
 
-def test_statistics():
-    print("get_task_statistics")
-    assert type(api.get_task_statistics(project_id)[0]) == list
+        print("get_account_statistics")
+        assert type(api.get_account_statistics(project_id)[0]) == list
 
-    print("get_account_statistics")
-    assert type(api.get_account_statistics(project_id)[0]) == list
+        print("get_inspection_statistics")
+        assert type(api.get_inspection_statistics(project_id)[0]) == list
 
-    print("get_inspection_statistics")
-    assert type(api.get_inspection_statistics(project_id)[0]) == list
+        print("get_task_phase_statistics")
+        assert type(api.get_task_phase_statistics(project_id)[0]) == list
 
-    print("get_task_phase_statistics")
-    assert type(api.get_task_phase_statistics(project_id)[0]) == list
+        print("get_label_statistics")
+        assert type(api.get_label_statistics(project_id)[0]) == list
 
-    print("get_label_statistics")
-    assert type(api.get_label_statistics(project_id)[0]) == list
+        print("get_worktime_statistics")
+        assert type(wrapper.get_worktime_statistics(project_id)) == list
 
-    print("get_worktime_statistics")
-    assert type(wrapper.get_worktime_statistics(project_id)) == list
+    def test_graph_marker(self):
+        print("get_markers")
+        content, _ = api.get_markers(project_id)
+        print(content)
+        assert type(content) == dict
+
+        markers = [{
+            "marker_id": str(uuid.uuid4()),
+            "title": "add in test code",
+            "graph_type": GraphType.TASK_PROGRESS.value,
+            "marked_at": annofabapi.utils.str_now()
+        }]
+        request_body = {
+            "markers": markers,
+            "last_updated_datetime": content["updated_datetime"]
+        }
+        print("put_markers")
+        assert type(api.put_markers(project_id, request_body=request_body)[0]) == dict
+
 
 
 def test_task():
