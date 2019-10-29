@@ -87,7 +87,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: EveryoneRequestBody
 
 
-        新しいパスワードに変更します。 本人確認のため、[パスワードリセットを要求](#operation/resetPassoword)で受信したメールに記載された検証コードを使用します。  パスワードリセットプロセスの最終ステップです。 
+        新しいパスワードに変更します。 本人確認のため、[パスワードリセットを要求](#operation/resetPassword)で受信したメールに記載された検証コードを使用します。  パスワードリセットプロセスの最終ステップです。 
 
         Args:
             request_body (Any): Request Body
@@ -136,7 +136,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        [受け取った確認コード](#operation/verifyEmail)を使い、メールアドレスが有効であることを確認します。 
+        [受け取った確認コード](#operation/initiateVerifyEmail)を使い、メールアドレスが有効であることを確認します。 
 
         Args:
             request_body (Any): Request Body
@@ -161,7 +161,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: EveryoneRequestBody
 
 
-        パスワードリセットプロセスを開始します。  このAPIを実行した後、後続の[古いパスワードを無効化](#operation/resetPassoword)を実行するまでは、古いパスワードでログインできます。 
+        パスワードリセットプロセスを開始します。  このAPIを実行した後、後続の[古いパスワードを無効化](#operation/resetPassword)を実行するまでは、古いパスワードでログインできます。 
 
         Args:
             request_body (Any): Request Body
@@ -259,7 +259,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: EveryoneRequestBody
 
 
-        古いパスワードを無効化し、パスワードリセットに必要な確認コードをメールで送付します。 本人確認のため、[パスワードリセットを要求](#operation/initiatePasswordReset)して取得したトークンを使用します。  後続の[新しいパスワードに変更](#operation/confirmResetPassoword)を実行することで、新しいパスワードに変更できます。 
+        古いパスワードを無効化し、パスワードリセットに必要な確認コードをメールで送付します。 本人確認のため、[パスワードリセットを要求](#operation/initiatePasswordReset)して取得したトークンを使用します。  後続の[新しいパスワードに変更](#operation/confirmResetPassword)を実行することで、新しいパスワードに変更できます。 
 
         Args:
             request_body (Any): Request Body
@@ -342,7 +342,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーション（simple版）をZIPにまとめて、一括で取得します。  simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データ名}.json       * アノテーションJSONデータ (詳細は 200レスポンス を参照)     * {入力データ名}/ (塗りつぶしアノテーション時のみ)       * {アノテーションデータID} (塗りつぶしのPNG画像)  IDが異なる入力データで {入力データ名}が一致するときは、重複ファイル名には {入力データ名__入力データID} のように接尾辞がつきます。 AnnoFabの画像アップロード機能を使うとこのようなケースは発生しませんが、[入力データ更新API](#operation/putInputData)で入力名を重複させると発生します。 入力名の重複を解消してアノテーションZIPを再作成すれば、接尾辞を解消できます。  特定のタスクのsimpleアノテーションを取得したい場合は、[getAnnotation](#operation/getAnnotation) を使用できます。 
+        プロジェクト内のアノテーション（simple版）をZIPにまとめて、一括で取得します。  simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データ名}.json       * アノテーションJSONデータ (詳細は [SimpleAnnotation](#section/SimpleAnnotation) を参照)     * {入力データ名}/ (塗りつぶしアノテーション時のみ)       * {アノテーションデータID} (塗りつぶしのPNG画像)  IDが異なる入力データで {入力データ名}が一致するときは、重複ファイル名には {入力データ名__入力データID} のように接尾辞がつきます。 AnnoFabの画像アップロード機能を使うとこのようなケースは発生しませんが、[入力データ更新API](#operation/putInputData)で入力名を重複させると発生します。 入力名の重複を解消してアノテーションZIPを再作成すれば、接尾辞を解消できます。  特定のタスクのsimpleアノテーションを取得したい場合は、[getAnnotation](#operation/getAnnotation) を使用できます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -350,7 +350,7 @@ class AbstractAnnofabApi(abc.ABC):
                 v2 (str):  このクエリパラメータのキーだけを指定（`?v2`）、または値 `true` も指定（`?v2=true`）すると、アノテーションJSONのファイル名は `{入力データID}.json` になります。 この v2 形式は、入力データ名がファイル名の長さ上限を上回ってもよいように再設計されたものです。 以前の v1 形式（アノテーションJSONのファイル名は `{入力データ名}.json` ）はいずれ廃止され、クエリパラメータ `v2` があってもなくても v2 形式に置き換わる予定です。 
 
         Returns:
-            Tuple[SimpleAnnotation, requests.Response]
+            Tuple[InlineResponse2004, requests.Response]
 
 
         """
@@ -399,13 +399,13 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーション（full版）がまとめられたZIPを取得します。  full版のアノテーションJSONデータは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。機械学習での一般的な利用には、[詳細情報を省いた扱いやすい構造の simple版](#operation/getAnnotationArchive) を推奨します。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データID}.json       * アノテーションJSONデータ (詳細は 200レスポンス を参照)     * {入力データID}/ (塗りつぶしアノテーション時のみ)       * {アノテーションデータID} (塗りつぶしのPNG画像) 
+        プロジェクト内のアノテーション（full版）がまとめられたZIPを取得します。  full版のアノテーションJSONデータは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。機械学習での一般的な利用には、[詳細情報を省いた扱いやすい構造の simple版](#operation/getAnnotationArchive) を推奨します。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データID}.json       * アノテーションJSONデータ (詳細は [FullAnnotation](#section/FullAnnotation) を参照)     * {入力データID}/ (塗りつぶしアノテーション時のみ)       * {アノテーションデータID} (塗りつぶしのPNG画像) 
 
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[FullAnnotation, requests.Response]
+            Tuple[InlineResponse2004, requests.Response]
 
 
         """
@@ -1895,6 +1895,27 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
+    def get_markers(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+        """統計グラフマーカー取得
+
+
+        authorizations: AllProjectMember
+
+
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+
+        Returns:
+            Tuple[Markers, requests.Response]
+
+
+        """
+        url_path = f'/projects/{project_id}/statistics/markers'
+        http_method = 'GET'
+        keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
     def get_task_phase_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """フェーズ別タスク集計取得
 
@@ -1957,6 +1978,32 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f'/projects/{project_id}/statistics/worktimes'
         http_method = 'GET'
         keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def put_markers(self, project_id: str, request_body: Optional[Any] = None,
+                    **kwargs) -> Tuple[Any, requests.Response]:
+        """統計グラフマーカー更新
+
+
+        authorizations: ProjectOwner
+
+
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+            request_body (Any): Request Body
+                put_markers_request (PutMarkersRequest):  (required)
+
+        Returns:
+            Tuple[Markers, requests.Response]
+
+
+        """
+        url_path = f'/projects/{project_id}/statistics/markers'
+        http_method = 'PUT'
+        keyword_params: Dict[str, Any] = {
+            'request_body': request_body,
+        }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################

@@ -14,7 +14,7 @@ from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember
 from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
-from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatistics, ProjectAccountStatistics,
+from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatistics, Markers, ProjectAccountStatistics,
                                              ProjectTaskStatisticsHistory, TaskPhaseStatistics, WorktimeStatistics)
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
@@ -204,6 +204,13 @@ class TestStatistics:
             dict_stat = json.load(f)
         stat = WorktimeStatistics.from_dict(dict_stat)
         assert type(stat) == WorktimeStatistics
+
+    def test_markers(self):
+        markers_json = test_dir / "markers.json"
+        with markers_json.open(encoding="utf-8") as f:
+            dict_markers = json.load(f)
+        markers = Markers.from_dict(dict_markers)
+        assert type(markers) == Markers
 
 
 class TestSupplementary:

@@ -915,6 +915,11 @@
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
         検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+    MarkerId:
+      type: string
+      example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     JobId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -1473,6 +1478,63 @@
           type: array
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
+    Marker:
+      type: object
+      properties:
+        marker_id:
+          $ref: "#/components/schemas/MarkerId"
+        title:
+          type: string
+        graph_type:
+          description: マーカーの配置先グラフ
+          $ref: "#/components/schemas/GraphType"
+        markedAt:
+          description: グラフ上のマーカー位置(x軸)
+          type: string
+          format: date
+    Markers:
+      type: object
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        markers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Marker"
+        updated_datetime:
+          type: string
+          format: date
+    GraphType:
+      type: string
+      enum:
+        - task_progress
+        - cumulative_labor_time_By_task_phase
+        - number_of_inspections_per_inspection_phrase
+        - number_of_task_rejections_by_member
+        - labor_time_per_member
+        - mean_labor_time_per_image
+        - mean_labor_time_per_minute_of_movie
+        - mean_labor_time_per_image_by_member
+        - mean_labor_time_per_minute_of_movie_by_member
+      description: |
+        * `task_progress` - タスク進捗状況
+        * `cumulative_labor_time_by_task_phase` - タスクフェーズ別累積作業時間
+        * `number_of_inspections_per_inspection_phrase` - 検査コメント内容別指摘回数
+        * `number_of_task_rejections_by_member` - メンバー別タスクが差戻された回数
+        * `labor_time_per_member` - メンバー別作業時間
+        * `mean_labor_time_per_image` - 画像一枚当たりの作業時間平均
+        * `mean_labor_time_per_minute_of_movie` - 動画一分当たりの作業時間平均
+        * `mean_labor_time_per_image_by_member` - メンバー別画像一枚当たりの作業時間平均
+        * `mean_labor_time_per_minute_of_movie_by_member` - メンバー別動画一分当たりの作業時間平均
+    PutMarkersRequest:
+      type: object
+      properties:
+        markers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Marker"
+        last_updated_datetime:
+          $ref: "#/components/schemas/LastUpdatedDatetime"
     AnnotationSpecs:
       type: object
       properties:
@@ -1761,8 +1823,8 @@
             - acceptance_skipped
             - inspection_and_acceptance_skipped
           description: |
-            * 'inspection_skipped' - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。
-            * 'inspection_stages_skipped' - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。
+            * `inspection_skipped` - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。
+            * `inspection_stages_skipped` - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。
             * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。
             * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す
   
