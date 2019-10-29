@@ -1415,6 +1415,23 @@ Kyes of Dict
 
 """
 
+
+class GraphType(Enum):
+    """
+    * `task_progress` - タスク進捗状況 * `cumulative_labor_time_by_task_phase` - タスクフェーズ別累積作業時間 * `number_of_inspections_per_inspection_phrase` - 検査コメント内容別指摘回数 * `number_of_task_rejections_by_member` - メンバー別タスクが差戻された回数 * `labor_time_per_member` - メンバー別作業時間 * `mean_labor_time_per_image` - 画像一枚当たりの作業時間平均 * `mean_labor_time_per_minute_of_movie` - 動画一分当たりの作業時間平均 * `mean_labor_time_per_image_by_member` - メンバー別画像一枚当たりの作業時間平均 * `mean_labor_time_per_minute_of_movie_by_member` - メンバー別動画一分当たりの作業時間平均 
+    """
+
+    TASK_PROGRESS = "task_progress"
+    CUMULATIVE_LABOR_TIME_BY_TASK_PHASE = "cumulative_labor_time_By_task_phase"
+    NUMBER_OF_INSPECTIONS_PER_INSPECTION_PHRASE = "number_of_inspections_per_inspection_phrase"
+    NUMBER_OF_TASK_REJECTIONS_BY_MEMBER = "number_of_task_rejections_by_member"
+    LABOR_TIME_PER_MEMBER = "labor_time_per_member"
+    MEAN_LABOR_TIME_PER_IMAGE = "mean_labor_time_per_image"
+    MEAN_LABOR_TIME_PER_MINUTE_OF_MOVIE = "mean_labor_time_per_minute_of_movie"
+    MEAN_LABOR_TIME_PER_IMAGE_BY_MEMBER = "mean_labor_time_per_image_by_member"
+    MEAN_LABOR_TIME_PER_MINUTE_OF_MOVIE_BY_MEMBER = "mean_labor_time_per_minute_of_movie_by_member"
+
+
 HistogramItem = Dict[str, Any]
 """
 
@@ -2178,6 +2195,38 @@ Kyes of Dict
 
 """
 
+Marker = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* marker_id: str
+    マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* title: str
+    
+* graph_type: GraphType
+    
+* marked_at: str
+    グラフ上のマーカー位置(x軸)
+
+"""
+
+Markers = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* markers: List[Marker]
+    
+* updated_datetime: str
+    
+
+"""
+
 Message = Dict[str, Any]
 """
 
@@ -2652,6 +2701,19 @@ Kyes of Dict
 
 """
 
+PutMarkersRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* markers: List[Marker]
+    
+* last_updated_datetime: str
+    新規作成時は未指定、更新時は必須（更新前の日時） 
+
+"""
+
 PutMyAccountRequest = Dict[str, Any]
 """
 
@@ -2965,7 +3027,7 @@ Kyes of Dict
 * updated_datetime: str
     
 * sampling: str
-    * 'inspection_skipped' - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。 * 'inspection_stages_skipped' - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。 * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する) 
+    * `inspection_skipped` - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。 * `inspection_stages_skipped` - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。 * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する) 
 
 """
 
