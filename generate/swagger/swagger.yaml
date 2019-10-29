@@ -75,30 +75,7 @@ info:
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
 
-    # データ構造
-
-    ## アノテーション
-
-    AnnoFab で作成したアノテーションは、元となった入力データ（画像や動画など）に対応する形で1ファイルのJSONとなります。
-    これらのJSONはZIP形式で圧縮され、一括で取得できます。
-
-    アノテーションの構造は、AnnoFabの改良にともなって現在2つあります。
-    各アノテーション構造の詳細は、リンク先APIのレスポンス構造を確認ください。
-
-    1. Simple
-      * バウンディングボックスや属性など、いわゆるアノテーションにしぼった軽量な構造
-      * いかなるプロジェクトでも取得できます。
-      * API: [getArchiveFullWithProId](#operation/getArchiveFullWithProId)
-      * 推奨版です。
-    2. Full
-      * バウンディングボックスや属性に加え、アノテーションを作成したタスクに関する構造が含まれる重厚長大な構造
-      * Businessプラン組織のプロジェクトでのみ取得できます。
-      * API: [getAnnotationArchive](#operation/getAnnotationArchive)
-      * 非推奨版です。長期的には廃止予定なので、新規の使用は控え、Simpleへ移行してください。
-
-    アノテーションは、各プロジェクトのトップページでダウンロードできます。また、上記リンク先のAPIでも取得できます。
-
-  version: 0.65.0
+  version: 0.66.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -109,12 +86,16 @@ servers:
 - url: https://annofab.com/api/v1
 tags:
 - name: af-account
+  x-displayName: Account
   description: ユーザーアカウントに対する操作
 - name: af-annotation
+  x-displayName: Annotation
   description: アノテーションに対する操作
 - name: af-annotation-specs
+  x-displayName: Annotation Specs
   description: アノテーション仕様に対する操作
 - name: af-input
+  x-displayName: Input
   description: |
     **入力データ（input data）**に対する操作です。
 
@@ -133,26 +114,37 @@ tags:
     関連
     * [af-supplementary](#tag/af-supplementary): 入力データを補う補助情報
 - name: af-inspection
+  x-displayName: Inspection
   description: 検査コメントに対する操作
 - name: af-instruction
+  x-displayName: Instruction
   description: 作業ガイドに対する操作
 - name: af-job
+  x-displayName: Job
   description: バッチ処理ジョブに対する操作
 - name: af-login
+  x-displayName: Login
   description: ログイン関連の操作
 - name: af-my
+  x-displayName: My
   description: 自身のリソースに対する操作
 - name: af-organization
+  x-displayName: Organization
   description: 組織に対する操作
 - name: af-organization-member
+  x-displayName: Organization Member
   description: 組織メンバーに対する操作
 - name: af-project
+  x-displayName: Project
   description: プロジェクトに対する操作
 - name: af-project-member
+  x-displayName: Project Member
   description: プロジェクトメンバーに対する操作
 - name: af-statistics
+  x-displayName: Statistics
   description: 集計に関する操作
 - name: af-supplementary
+  x-displayName: Supplementary
   description: |
     **補助情報（supprementary data）**に対する操作です。
 
@@ -171,9 +163,73 @@ tags:
     * [af-input](#tag/af-input): 補助情報をひもづける入力データ
     * [af-project](#tag/af-project): 補助情報をひもづけるプロジェクト
 - name: af-task
+  x-displayName: Task
   description: タスクに対する操作
 - name: af-webhook
+  x-displayName: Webhook
   description: Webhookに対する操作
+- name: x-data-types
+  x-displayName: Data Types
+  description: |
+    # Annotation ZIP
+
+    AnnoFab で作成したアノテーションは、元となった入力データ（画像や動画など）に対応する形で1ファイルのJSONとなります。
+    これらのJSONはZIP形式で圧縮され、一括で取得できます。
+
+    アノテーションの構造は、AnnoFabの改良にともなって現在2つあります。
+    各アノテーション構造の詳細は、リンク先APIから確認ください。
+
+    1. Simple
+      * バウンディングボックスや属性など、いわゆるアノテーションにしぼった軽量な構造
+      * いかなるプロジェクトでも取得できます。
+      * API: [getAnnotationArchive](#operation/getAnnotationArchive)
+      * 推奨版です。
+    2. Full
+      * バウンディングボックスや属性に加え、アノテーションを作成したタスクに関する構造が含まれる重厚長大な構造
+      * Businessプラン組織のプロジェクトでのみ取得できます。
+      * API: [getArchiveFullWithProId](#operation/getArchiveFullWithProId)
+      * 非推奨版です。長期的には廃止予定なので、新規の使用は控え、Simpleへ移行してください。
+
+    アノテーションは、各プロジェクトのトップページでダウンロードできます。また、上記リンク先のAPIでも取得できます。
+
+    # Task
+    <SchemaDefinition schemaRef="#/components/schemas/Task" />
+
+    # TaskHistoryEvent
+    <SchemaDefinition schemaRef="#/components/schemas/TaskHistoryEvent" />
+
+    # Inspection
+    <SchemaDefinition schemaRef="#/components/schemas/Inspection" />
+
+    # FullAnnotation
+    <SchemaDefinition schemaRef="#/components/schemas/FullAnnotation" />
+
+    # SimpleAnnotation
+    <SchemaDefinition schemaRef="#/components/schemas/SimpleAnnotation" />
+x-tagGroups:
+  - name: API
+    tags:
+      - af-account
+      - af-annotation
+      - af-annotation-specs
+      - af-input
+      - af-inspection
+      - af-instruction
+      - af-job
+      - af-login
+      - af-my
+      - af-organization
+      - af-organization-member
+      - af-project
+      - af-project-member
+      - af-statistics
+      - af-supplementary
+      - af-task
+      - af-webhook
+  - name: Appendix
+    tags:
+      - x-data-types
+
 paths:
   /login:
     post:
@@ -319,7 +375,7 @@ paths:
       description: |
         パスワードリセットプロセスを開始します。
 
-        このAPIを実行した後、後続の[古いパスワードを無効化](#operation/resetPassoword)を実行するまでは、古いパスワードでログインできます。
+        このAPIを実行した後、後続の[古いパスワードを無効化](#operation/resetPassword)を実行するまでは、古いパスワードでログインできます。
       security:
       - EveryoneRequestBody: []
       operationId: initiatePasswordReset
@@ -343,7 +399,7 @@ paths:
         古いパスワードを無効化し、パスワードリセットに必要な確認コードをメールで送付します。
         本人確認のため、[パスワードリセットを要求](#operation/initiatePasswordReset)して取得したトークンを使用します。
 
-        後続の[新しいパスワードに変更](#operation/confirmResetPassoword)を実行することで、新しいパスワードに変更できます。
+        後続の[新しいパスワードに変更](#operation/confirmResetPassword)を実行することで、新しいパスワードに変更できます。
       security:
       - EveryoneRequestBody: []
       operationId: resetPassword
@@ -373,7 +429,7 @@ paths:
       summary: パスワードリセットstep3（新しいパスワードに変更）
       description: |
         新しいパスワードに変更します。
-        本人確認のため、[パスワードリセットを要求](#operation/resetPassoword)で受信したメールに記載された検証コードを使用します。
+        本人確認のため、[パスワードリセットを要求](#operation/resetPassword)で受信したメールに記載された検証コードを使用します。
 
         パスワードリセットプロセスの最終ステップです。
       security:
@@ -479,7 +535,7 @@ paths:
       - af-account
       summary: メールアドレス検証step2（確定）
       description: |
-        [受け取った確認コード](#operation/verifyEmail)を使い、メールアドレスが有効であることを確認します。
+        [受け取った確認コード](#operation/initiateVerifyEmail)を使い、メールアドレスが有効であることを確認します。
       security:
       - Everyone: []
       operationId: confirmVerifyEmail
@@ -1482,7 +1538,7 @@ paths:
             正常
 
             `Response Body`と`Location Header`にはAWS S3のPre-Signed URLが格納されています。
-            Pre-signed URLを取得すると、Task形式のJSON配列が取得されます。
+            Pre-signed URLを取得すると、[Task](#section/Task)形式のJSON配列が取得されます。
             このURLは一時間で失効します。
           content:
             application/json:
@@ -1556,7 +1612,7 @@ paths:
             正常
 
             `Response Body`と`Location Header`にはAWS S3のPre-Signed URLが格納されています。
-            Pre-signed URLを取得すると、Inspection形式のJSON配列が取得されます。
+            Pre-signed URLを取得すると、[Inspection](#section/Inspection)形式のJSON配列が取得されます。
             このURLは一時間で失効します。
           content:
             application/json:
@@ -1594,7 +1650,7 @@ paths:
             正常
 
             `Response Body`と`Location Header`にはAWS S3のPre-Signed URLが格納されています。
-            Pre-signed URLを取得すると、TaskHistoryEvent形式のJSON配列が取得されます。
+            Pre-signed URLを取得すると、[TaskHistoryEvent](#section/TaskHistoryEvent)形式のJSON配列が取得されます。
             このURLは一時間で失効します。
           content:
             application/json:
@@ -1960,6 +2016,69 @@ paths:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
           $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/markers:
+    get:
+      tags:
+      - af-statistics
+      summary: 統計グラフマーカー取得
+      description: |
+      security:
+      - AllProjectMember: []
+      operationId: getMarkers
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "#/components/schemas/ProjectId"
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Markers"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+    put:
+      tags:
+      - af-statistics
+      summary: 統計グラフマーカー更新
+      description: |
+      security:
+      - ProjectOwner: []
+      operationId: putMarkers
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+            $ref: "#/components/schemas/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutMarkersRequest"
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Markers"
+        400:
+          $ref: "#/components/responses/ErrorInvalidRequest"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        403:
+          $ref: "#/components/responses/ErrorForbiddenResource"
         503:
           $ref: "#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/jobs:
@@ -3358,7 +3477,7 @@ paths:
         * 内容: /
           * {タスクID}/
             * {入力データID}.json
-              * アノテーションJSONデータ (詳細は 200レスポンス を参照)
+              * アノテーションJSONデータ (詳細は [FullAnnotation](#section/FullAnnotation) を参照)
             * {入力データID}/ (塗りつぶしアノテーション時のみ)
               * {アノテーションデータID} (塗りつぶしのPNG画像)
       security:
@@ -3382,7 +3501,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FullAnnotation"
+                type: object
+                properties:
+                  url:
+                    type: string
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -3405,7 +3527,7 @@ paths:
         * 内容: /
           * {タスクID}/
             * {入力データ名}.json
-              * アノテーションJSONデータ (詳細は 200レスポンス を参照)
+              * アノテーションJSONデータ (詳細は [SimpleAnnotation](#section/SimpleAnnotation) を参照)
             * {入力データ名}/ (塗りつぶしアノテーション時のみ)
               * {アノテーションデータID} (塗りつぶしのPNG画像)
 
@@ -3445,7 +3567,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SimpleAnnotation"
+                type: object
+                properties:
+                  url:
+                    type: string
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -5320,6 +5445,11 @@ components:
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
         検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+    MarkerId:
+      type: string
+      example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     JobId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -5878,6 +6008,63 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
+    Marker:
+      type: object
+      properties:
+        marker_id:
+          $ref: "#/components/schemas/MarkerId"
+        title:
+          type: string
+        graph_type:
+          description: マーカーの配置先グラフ
+          $ref: "#/components/schemas/GraphType"
+        markedAt:
+          description: グラフ上のマーカー位置(x軸)
+          type: string
+          format: date
+    Markers:
+      type: object
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        markers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Marker"
+        updated_datetime:
+          type: string
+          format: date
+    GraphType:
+      type: string
+      enum:
+        - task_progress
+        - cumulative_labor_time_By_task_phase
+        - number_of_inspections_per_inspection_phrase
+        - number_of_task_rejections_by_member
+        - labor_time_per_member
+        - mean_labor_time_per_image
+        - mean_labor_time_per_minute_of_movie
+        - mean_labor_time_per_image_by_member
+        - mean_labor_time_per_minute_of_movie_by_member
+      description: |
+        * `task_progress` - タスク進捗状況
+        * `cumulative_labor_time_by_task_phase` - タスクフェーズ別累積作業時間
+        * `number_of_inspections_per_inspection_phrase` - 検査コメント内容別指摘回数
+        * `number_of_task_rejections_by_member` - メンバー別タスクが差戻された回数
+        * `labor_time_per_member` - メンバー別作業時間
+        * `mean_labor_time_per_image` - 画像一枚当たりの作業時間平均
+        * `mean_labor_time_per_minute_of_movie` - 動画一分当たりの作業時間平均
+        * `mean_labor_time_per_image_by_member` - メンバー別画像一枚当たりの作業時間平均
+        * `mean_labor_time_per_minute_of_movie_by_member` - メンバー別動画一分当たりの作業時間平均
+    PutMarkersRequest:
+      type: object
+      properties:
+        markers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Marker"
+        last_updated_datetime:
+          $ref: "#/components/schemas/LastUpdatedDatetime"
     AnnotationSpecs:
       type: object
       properties:
@@ -6166,8 +6353,8 @@ components:
             - acceptance_skipped
             - inspection_and_acceptance_skipped
           description: |
-            * 'inspection_skipped' - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。
-            * 'inspection_stages_skipped' - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。
+            * `inspection_skipped` - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。
+            * `inspection_stages_skipped` - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。
             * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。
             * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す
   
