@@ -6,6 +6,7 @@ python:
   - "3.8"
 install:
   - pip install . flake8 mypy pylint pytest
+  - touch ~/.netrc
 script:
    - flake8 annofabapi
    - mypy annofabapi --config-file setup.cfg
