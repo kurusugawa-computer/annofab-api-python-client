@@ -1,1 +1,1 @@
-from annofabapi.models import TaskPhase, TaskStatus
+from annofabapi.models import TaskPhase, TaskStatus, GraphType
