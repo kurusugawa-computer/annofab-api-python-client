@@ -181,11 +181,10 @@ class TestStatistics:
         stat = WorktimeStatistics.from_dict(stat_list[0])
         assert type(stat) == WorktimeStatistics
 
-    # Annofab v0.66.0ではエラーがあるためテストしない
-    # def test_markers(self):
-    #     content, _ = service.api.get_markers(project_id)
-    #     markers = Markers.from_dict(content)
-    #     assert type(markers) == Markers
+    def test_markers(self):
+        content, _ = service.api.get_markers(project_id)
+        markers = Markers.from_dict(content)
+        assert type(markers) == Markers
 
 
 class TestSupplementary:

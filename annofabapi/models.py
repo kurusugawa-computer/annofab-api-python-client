@@ -1538,7 +1538,7 @@ InlineResponse2004 = Dict[str, Any]
 Kyes of Dict
 
 * url: str
-    
+    認証済み一時URL
 
 """
 

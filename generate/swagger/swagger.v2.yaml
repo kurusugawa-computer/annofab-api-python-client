@@ -75,7 +75,7 @@ info:
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
 
-  version: 0.66.0
+  version: 0.66.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
