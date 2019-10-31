@@ -15,7 +15,7 @@ from distutils.util import strtobool
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.models import GraphType, JobType
+from annofabapi.models import JobType
 from tests.utils_for_test import WrapperForTest, create_csv_for_task, set_logging_from_inifile
 
 # プロジェクトトップに移動する

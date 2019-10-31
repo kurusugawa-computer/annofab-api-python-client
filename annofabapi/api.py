@@ -20,11 +20,39 @@ def my_backoff(function):
     @functools.wraps(function)
     def wrapped(*args, **kwargs):
         def fatal_code(e):
-            """Too many Requests(429)のときはリトライする。それ以外の4XXはretryしない"""
-            if e.response is None:
-                return True
-            code = e.response.status_code
-            return 400 <= code < 500 and code != 429
+            """
+            リトライするかどうか
+            HTTPErrorのとき、Too many Requests(429)のときはリトライする。それ以外の4XXはretryしない
+            https://requests.kennethreitz.org/en/master/user/quickstart/#errors-and-exceptions
+
+            Args:
+                e: exception
+
+            Returns:
+                True: giveup(リトライしない), False: リトライする
+
+            """
+            if isinstance(e, requests.exceptions.HTTPError):
+                if e.response is None:
+                    return True
+                code = e.response.status_code
+                return 400 <= code < 500 and code != 429
+
+            elif isinstance(e, requests.exceptions.ConnectionError):
+                # the event of a network problem (e.g. DNS failure, refused connection, etc)
+                return False
+
+            elif isinstance(e, requests.exceptions.Timeout):
+                # request times out
+                return False
+
+            elif isinstance(e, requests.exceptions.TooManyRedirects):
+                # a request exceeds the configured number of maximum redirections
+                return False
+
+            else:
+                # giveup
+                return False
 
         return backoff.on_exception(backoff.expo, requests.exceptions.RequestException, jitter=backoff.full_jitter,
                                     max_time=300, giveup=fatal_code)(function)(*args, **kwargs)
