@@ -51,7 +51,7 @@ def my_backoff(function):
                 return False
 
             else:
-                # giveup
+                # リトライする
                 return False
 
         return backoff.on_exception(backoff.expo, requests.exceptions.RequestException, jitter=backoff.full_jitter,

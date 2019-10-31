@@ -15,7 +15,7 @@ from distutils.util import strtobool
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.models import JobType
+from annofabapi.models import JobType, GraphType
 from tests.utils_for_test import WrapperForTest, create_csv_for_task, set_logging_from_inifile
 
 # プロジェクトトップに移動する
@@ -324,22 +324,21 @@ class TestStatistics:
         print("get_worktime_statistics")
         assert type(wrapper.get_worktime_statistics(project_id)) == list
 
-    # Annofab v0.66.0ではエラーがあるためテストしない
-    # def test_graph_marker(self):
-    #     print("get_markers")
-    #     content, _ = api.get_markers(project_id)
-    #     print(content)
-    #     assert type(content) == dict
-    #
-    #     markers = [{
-    #         "marker_id": str(uuid.uuid4()),
-    #         "title": "add in test code",
-    #         "graph_type": GraphType.TASK_PROGRESS.value,
-    #         "marked_at": annofabapi.utils.str_now()
-    #     }]
-    #     request_body = {"markers": markers, "last_updated_datetime": content["updated_datetime"]}
-    #     print("put_markers")
-    #     assert type(api.put_markers(project_id, request_body=request_body)[0]) == dict
+    def test_graph_marker(self):
+        print("get_markers")
+        content, _ = api.get_markers(project_id)
+        print(content)
+        assert type(content) == dict
+
+        markers = [{
+            "marker_id": str(uuid.uuid4()),
+            "title": "add in test code",
+            "graph_type": GraphType.TASK_PROGRESS.value,
+            "marked_at": annofabapi.utils.str_now()
+        }]
+        request_body = {"markers": markers, "last_updated_datetime": content["updated_datetime"]}
+        print("put_markers")
+        assert type(api.put_markers(project_id, request_body=request_body)[0]) == dict
 
 
 def test_task():
