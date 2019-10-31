@@ -75,7 +75,7 @@ info:
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
 
-  version: 0.66.0
+  version: 0.66.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -168,30 +168,75 @@ tags:
 - name: af-webhook
   x-displayName: Webhook
   description: Webhookに対する操作
+- name: x-annotation-zip
+  x-displayName: Annotation ZIP
+  description: |
+    AnnoFabで作成したアノテーションは、元となった入力データ（画像や動画など）に対応する形で1ファイルのJSONとなります。
+    これらのJSONはZIP形式で圧縮され、一括で取得できます。
+
+    AnnoFabから取得できるアノテーションの構造は、現在2種類あります。
+
+    1. Simple
+      * バウンディングボックスや属性など、いわゆるアノテーションにしぼった軽量な構造。
+      * いかなるプロジェクトでも取得できます。
+      * 推奨版です。
+      * アノテーションZIPおよびアノテーション構造の詳細は、 [Simple Annotation ZIP](#section/Simple-Annotation-ZIP) を参照ください。
+    2. Full
+      * バウンディングボックスや属性に加え、アノテーションを作成したタスクに関する構造が含まれる重厚長大な構造。
+      * Businessプラン組織のプロジェクトでのみ取得できます。
+      * 非推奨版です。長期的には廃止予定なので、新規の使用は控え、Simpleへ移行してください。
+      * アノテーションZIPおよびアノテーション構造の詳細は、 [Full Annotation ZIP](#section/Full-Annotation-ZIP) を参照ください。
+
+    アノテーションは、各プロジェクトのトップページでダウンロードできます。また、次のAPIを利用して取得することもできます。
+
+    * Simple版アノテーションZIP取得API: [getAnnotationArchive](#operation/getAnnotationArchive)
+    * Full版アノテーションZIP取得API: [getArchiveFullWithProId](#operation/getArchiveFullWithProId)
+
+    なお、アノテーションZIPは毎日AM 03:00 JSTごろに自動更新されます。
+
+    ## Simple Annotation ZIP
+    ### ファイル名
+    `af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip`
+
+    ### ZIPファイル内の構造
+    * / (ZIPファイルのルートディレクトリ)
+      * {タスクID}/
+        * {入力データ名}.json
+          * アノテーションJSONデータ (詳細は次節を参照)
+        * {入力データ名}/ (塗りつぶしアノテーション時のみ)
+          * {アノテーションデータID} (塗りつぶしのPNG画像)
+
+    ### アノテーションJSONデータの構造
+    Simple版アノテーションZIPに含まれるアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。
+    <SchemaDefinition schemaRef="#/components/schemas/SimpleAnnotation" />
+
+    ### 注意事項
+    同じ入力データ名を持つ入力データが複数存在する場合、Simple版アノテーションZIP内のファイル名およびディレクトリ名が `{入力データ名__入力データID}` となる場合があります。
+
+    この現象は[入力データ更新API](#operation/putInputData)を使用して、複数の入力データの入力データ名を重複させた場合に発生することがあります。
+    AnnoFabの画像アップロード機能のみ使用していた場合には発生しません。
+
+    この現象を回避したい場合、入力データ更新APIを使用して入力データ名の重複を解消した後、アノテーションZIPを再作成してください。
+
+    ## Full Annotation ZIP
+    ### ファイル名
+    `af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip`
+
+    ### ZIPファイル内の構造
+    * / (ZIPファイルのルートディレクトリ)
+      * {タスクID}/
+        * {入力データID}.json
+          * アノテーションJSONデータ (詳細は次節を参照)
+        * {入力データID}/ (塗りつぶしアノテーション時のみ)
+          * {アノテーションデータID} (塗りつぶしのPNG画像)
+
+    ### アノテーションJSONデータの構造
+    Full版アノテーションZIPに含まれるアノテーションJSONは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。
+    <SchemaDefinition schemaRef="#/components/schemas/FullAnnotation" />
+
 - name: x-data-types
   x-displayName: Data Types
   description: |
-    # Annotation ZIP
-
-    AnnoFab で作成したアノテーションは、元となった入力データ（画像や動画など）に対応する形で1ファイルのJSONとなります。
-    これらのJSONはZIP形式で圧縮され、一括で取得できます。
-
-    アノテーションの構造は、AnnoFabの改良にともなって現在2つあります。
-    各アノテーション構造の詳細は、リンク先APIから確認ください。
-
-    1. Simple
-      * バウンディングボックスや属性など、いわゆるアノテーションにしぼった軽量な構造
-      * いかなるプロジェクトでも取得できます。
-      * API: [getAnnotationArchive](#operation/getAnnotationArchive)
-      * 推奨版です。
-    2. Full
-      * バウンディングボックスや属性に加え、アノテーションを作成したタスクに関する構造が含まれる重厚長大な構造
-      * Businessプラン組織のプロジェクトでのみ取得できます。
-      * API: [getArchiveFullWithProId](#operation/getArchiveFullWithProId)
-      * 非推奨版です。長期的には廃止予定なので、新規の使用は控え、Simpleへ移行してください。
-
-    アノテーションは、各プロジェクトのトップページでダウンロードできます。また、上記リンク先のAPIでも取得できます。
-
     # Task
     <SchemaDefinition schemaRef="#/components/schemas/Task" />
 
@@ -200,12 +245,6 @@ tags:
 
     # Inspection
     <SchemaDefinition schemaRef="#/components/schemas/Inspection" />
-
-    # FullAnnotation
-    <SchemaDefinition schemaRef="#/components/schemas/FullAnnotation" />
-
-    # SimpleAnnotation
-    <SchemaDefinition schemaRef="#/components/schemas/SimpleAnnotation" />
 x-tagGroups:
   - name: API
     tags:
@@ -228,8 +267,8 @@ x-tagGroups:
       - af-webhook
   - name: Appendix
     tags:
+      - x-annotation-zip
       - x-data-types
-
 paths:
   /login:
     post:
@@ -1521,7 +1560,13 @@ paths:
       - af-project
       summary: プロジェクトのタスク全件URLの取得
       description: |
-        タスク全件ファイルは、毎日AM 02:00 JSTに更新されます。
+        タスク全件ファイルにアクセスするための、認証済み一時URLを取得します。
+        取得したURLは1時間で失効し、アクセスできなくなります。
+
+        ### タスク全件ファイル
+        タスク全件ファイルには、プロジェクトのタスク情報がJSON形式（[Task](#section/Task)の配列）で記録されています。
+        このファイルは毎日AM 02:00 JSTに更新されます。
+        また、[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを利用することで、手動でタスク全件ファイルを更新することも可能です。
       security:
       - ProjectOwner: []
       operationId: getProjectTasksUrl
@@ -1534,12 +1579,12 @@ paths:
           $ref: "#/components/schemas/ProjectId"
       responses:
         200:
-          description: |
-            正常
-
-            `Response Body`と`Location Header`にはAWS S3のPre-Signed URLが格納されています。
-            Pre-signed URLを取得すると、[Task](#section/Task)形式のJSON配列が取得されます。
-            このURLは一時間で失効します。
+          description: 正常
+          headers:
+            Location:
+              description: 認証済み一時URL
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1547,6 +1592,7 @@ paths:
                 properties:
                   url:
                     type: string
+                    description: 認証済み一時URL
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -1559,11 +1605,13 @@ paths:
       summary: プロジェクトのタスク全件ファイル更新開始
       description: |
         プロジェクト内のタスク全件ファイルの更新を開始します。
-        ファイルの更新は、データ量に応じて数分程度かかります。
+        ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。
 
-        タスク全件ファイルは日本時間AM02:00ごろに自動更新されます。
+        タスク全件ファイルは毎日AM 02:00 JSTに自動更新されます。
         本APIを用いると、自動更新を待たずに更新を要求できます。
         ただし、タスク全件ファイル以外は更新されません。
+
+        タスク全件ファイルについては、[getProjectTasksUrl](#operation/getProjectTasksUrl) APIを参照ください。
       security:
         - ProjectOwner: []
       operationId: postProjectTasksUpdate
@@ -1595,7 +1643,12 @@ paths:
       - af-project
       summary: プロジェクトの検査コメント全件URLの取得
       description: |
-        検査コメント全件ファイルは、毎日AM 02:00 JSTに更新されます。
+        検査コメント全件ファイルにアクセスするための、認証済み一時URLを取得します。
+        取得したURLは1時間で失効し、アクセスできなくなります。
+
+        ### 検査コメント全件ファイル
+        検査コメント全件ファイルには、プロジェクトの検査コメント情報がJSON形式（[Inspection](#section/Inspection)の配列）で記録されています。
+        このファイルは毎日AM 02:00 JSTに更新されます。
       security:
       - ProjectOwner: []
       operationId: getProjectInspectionsUrl
@@ -1608,12 +1661,12 @@ paths:
           $ref: "#/components/schemas/ProjectId"
       responses:
         200:
-          description: |
-            正常
-
-            `Response Body`と`Location Header`にはAWS S3のPre-Signed URLが格納されています。
-            Pre-signed URLを取得すると、[Inspection](#section/Inspection)形式のJSON配列が取得されます。
-            このURLは一時間で失効します。
+          description: 正常
+          headers:
+            Location:
+              description: 認証済み一時URL
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1621,6 +1674,7 @@ paths:
                 properties:
                   url:
                     type: string
+                    description: 認証済み一時URL
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -1633,7 +1687,12 @@ paths:
       - af-project
       summary: プロジェクトのタスク履歴イベント全件URLの取得
       description: |
-        タスク履歴イベント全件ファイルは、毎日AM 02:00 JSTに更新されます。
+        タスク履歴イベント全件ファイルにアクセスするための、認証済み一時URLを取得します。
+        取得したURLは1時間で失効し、アクセスできなくなります。
+
+        ### タスク履歴イベント全件ファイル
+        タスク履歴イベント全件ファイルには、プロジェクトのタスク履歴イベント情報がJSON形式（[TaskHistoryEvent](#section/TaskHistoryEvent)の配列）で記録されています。
+        このファイルは毎日AM 02:00 JSTに更新されます。
       security:
       - ProjectOwner: []
       operationId: getProjectTaskHistoryEventsUrl
@@ -1646,12 +1705,12 @@ paths:
           $ref: "#/components/schemas/ProjectId"
       responses:
         200:
-          description: |
-            正常
-
-            `Response Body`と`Location Header`にはAWS S3のPre-Signed URLが格納されています。
-            Pre-signed URLを取得すると、[TaskHistoryEvent](#section/TaskHistoryEvent)形式のJSON配列が取得されます。
-            このURLは一時間で失効します。
+          description: 正常
+          headers:
+            Location:
+              description: 認証済み一時URL
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1659,6 +1718,7 @@ paths:
                 properties:
                   url:
                     type: string
+                    description: 認証済み一時URL
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -3423,9 +3483,9 @@ paths:
       summary: タスク-入力データのSimpleアノテーション一括取得
       description: |
         指定したタスク - 入力データにつけられたアノテーションを一括で取得します。
-        simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。
+        Simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。
 
-        プロジェクト全体のアノテーションを一括で取得する場合は、[getAnnotationArchive](#operation/getAnnotationArchive) を使用できます。
+        なお、プロジェクト全体のアノテーションを一括で取得したい場合には、 [getAnnotationArchive](#operation/getAnnotationArchive) APIを使用することもできます。
       security:
       - AllProjectMember: []
       operationId: getAnnotation
@@ -3465,21 +3525,12 @@ paths:
     get:
       tags:
       - af-annotation
-      summary: fullアノテーションZIP取得
+      summary: FullアノテーションZIP取得
       description: |
-        プロジェクト内のアノテーション（full版）がまとめられたZIPを取得します。
+        プロジェクト内のアノテーション（Full版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。
+        取得したURLは1時間で失効し、アクセスできなくなります。
 
-        full版のアノテーションJSONデータは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。機械学習での一般的な利用には、[詳細情報を省いた扱いやすい構造の simple版](#operation/getAnnotationArchive) を推奨します。
-
-        取得できるZIPファイルの構造は以下のとおりです。
-
-        * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip
-        * 内容: /
-          * {タスクID}/
-            * {入力データID}.json
-              * アノテーションJSONデータ (詳細は [FullAnnotation](#section/FullAnnotation) を参照)
-            * {入力データID}/ (塗りつぶしアノテーション時のみ)
-              * {アノテーションデータID} (塗りつぶしのPNG画像)
+        FullアノテーションZIPのデータ構造については、 [Full Annotation ZIP](#section/Full-Annotation-ZIP) を参照ください。
       security:
       - ProjectDataUser: []
       operationId: getArchiveFullWithProId #getFullAnnotationArchiveByProjectId
@@ -3492,12 +3543,12 @@ paths:
           $ref: "#/components/schemas/ProjectId"
       responses:
         200:
-          description: |
-            正常 (LocationヘッダにAWS S3のPre-Signed URL)
-
-            レスポンスボディにはLocationヘッダを参照する旨の固定メッセージのみが含まれる。
-            Pre-signed URLを取得すると、例示されたJSONファイルを含んだZIPが取得される。
-            このURLは一時間で失効する。
+          description: 正常
+          headers:
+            Location:
+              description: 認証済み一時URL
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -3505,6 +3556,7 @@ paths:
                 properties:
                   url:
                     type: string
+                    description: 認証済み一時URL
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -3515,27 +3567,14 @@ paths:
     get:
       tags:
       - af-annotation
-      summary: simpleアノテーションZIP取得
+      summary: SimpleアノテーションZIP取得
       description: |
-        プロジェクト内のアノテーション（simple版）をZIPにまとめて、一括で取得します。
+        プロジェクト内のアノテーション（Simple版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。
+        取得したURLは1時間で失効し、アクセスできなくなります。
 
-        simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。
+        SimpleアノテーションZIPのデータ構造については、 [Simple Annotation ZIP](#section/Simple-Annotation-ZIP) を参照ください。
 
-        取得できるZIPファイルの構造は以下のとおりです。
-
-        * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip
-        * 内容: /
-          * {タスクID}/
-            * {入力データ名}.json
-              * アノテーションJSONデータ (詳細は [SimpleAnnotation](#section/SimpleAnnotation) を参照)
-            * {入力データ名}/ (塗りつぶしアノテーション時のみ)
-              * {アノテーションデータID} (塗りつぶしのPNG画像)
-
-        IDが異なる入力データで {入力データ名}が一致するときは、重複ファイル名には {入力データ名__入力データID} のように接尾辞がつきます。
-        AnnoFabの画像アップロード機能を使うとこのようなケースは発生しませんが、[入力データ更新API](#operation/putInputData)で入力名を重複させると発生します。
-        入力名の重複を解消してアノテーションZIPを再作成すれば、接尾辞を解消できます。
-
-        特定のタスクのsimpleアノテーションを取得したい場合は、[getAnnotation](#operation/getAnnotation) を使用できます。
+        なお、特定のタスクのSimpleアノテーションを取得したい場合には、 [getAnnotation](#operation/getAnnotation) APIを使用することもできます。
       security:
       - ProjectDataUser: []
       operationId: getAnnotationArchive
@@ -3558,12 +3597,12 @@ paths:
           example: "true"
       responses:
         200:
-          description: |
-            正常 (LocationヘッダにAWS S3のPre-Signed URL)
-
-            レスポンスボディにはLocationヘッダを参照する旨の固定メッセージのみが含まれる。
-            Pre-signed URLを取得すると、例示されたJSONファイルを含んだZIPが取得される。
-            このURLは一時間で失効する。
+          description: 正常
+          headers:
+            Location:
+              description: 認証済み一時URL
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -3571,6 +3610,7 @@ paths:
                 properties:
                   url:
                     type: string
+                    description: 認証済み一時URL
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -3583,10 +3623,10 @@ paths:
       - af-annotation
       summary: アノテーションZIP更新開始
       description: |
-        プロジェクト内のアノテーションZIP（simple版とfull版の両方）の更新を開始します。
+        プロジェクト内のアノテーションZIP（Simple版とFull版の両方）の更新を開始します。
         ZIPの更新は、データ量に応じて数分〜数十分かかります。
 
-        ZIPは日本時間AM03:00ごろに自動更新されます。
+        アノテーションZIPは毎日AM 03:00 JSTごろに自動更新されます。
         本APIを用いると、自動更新を待たずに更新を要求できます。
       security:
       - ProjectDataUser: []
@@ -4113,16 +4153,17 @@ paths:
           $ref: "#/components/schemas/InputDataId"
       responses:
         200:
-          description: |
-            正常 (LocationヘッダにAWS S3のPre-Signed URL)
-
-            レスポンスボディには、AWS S3のPre-Signed URLが格納されています。
-            Pre-signed URLを取得すると、入力データの実体（画像や動画などのファイルそのもの）が取得されます。
-            このURLは一時間で失効します。
+          description: 正常
+          headers:
+            Location:
+              description: 認証済み一時URL
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 type: string
+                description: 認証済み一時URL
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:

@@ -317,7 +317,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定したタスク - 入力データにつけられたアノテーションを一括で取得します。 simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  プロジェクト全体のアノテーションを一括で取得する場合は、[getAnnotationArchive](#operation/getAnnotationArchive) を使用できます。 
+        指定したタスク - 入力データにつけられたアノテーションを一括で取得します。 Simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  なお、プロジェクト全体のアノテーションを一括で取得したい場合には、 [getAnnotationArchive](#operation/getAnnotationArchive) APIを使用することもできます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -336,13 +336,13 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_annotation_archive(self, project_id: str, query_params: Optional[Dict[str, Any]] = None,
                                **kwargs) -> Tuple[Any, requests.Response]:
-        """simpleアノテーションZIP取得
+        """SimpleアノテーションZIP取得
 
 
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーション（simple版）をZIPにまとめて、一括で取得します。  simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データ名}.json       * アノテーションJSONデータ (詳細は [SimpleAnnotation](#section/SimpleAnnotation) を参照)     * {入力データ名}/ (塗りつぶしアノテーション時のみ)       * {アノテーションデータID} (塗りつぶしのPNG画像)  IDが異なる入力データで {入力データ名}が一致するときは、重複ファイル名には {入力データ名__入力データID} のように接尾辞がつきます。 AnnoFabの画像アップロード機能を使うとこのようなケースは発生しませんが、[入力データ更新API](#operation/putInputData)で入力名を重複させると発生します。 入力名の重複を解消してアノテーションZIPを再作成すれば、接尾辞を解消できます。  特定のタスクのsimpleアノテーションを取得したい場合は、[getAnnotation](#operation/getAnnotation) を使用できます。 
+        プロジェクト内のアノテーション（Simple版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  SimpleアノテーションZIPのデータ構造については、 [Simple Annotation ZIP](#section/Simple-Annotation-ZIP) を参照ください。  なお、特定のタスクのSimpleアノテーションを取得したい場合には、 [getAnnotation](#operation/getAnnotation) APIを使用することもできます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -393,13 +393,13 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_archive_full_with_pro_id(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """fullアノテーションZIP取得
+        """FullアノテーションZIP取得
 
 
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーション（full版）がまとめられたZIPを取得します。  full版のアノテーションJSONデータは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。機械学習での一般的な利用には、[詳細情報を省いた扱いやすい構造の simple版](#operation/getAnnotationArchive) を推奨します。  取得できるZIPファイルの構造は以下のとおりです。  * ファイル名: af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip * 内容: /   * {タスクID}/     * {入力データID}.json       * アノテーションJSONデータ (詳細は [FullAnnotation](#section/FullAnnotation) を参照)     * {入力データID}/ (塗りつぶしアノテーション時のみ)       * {アノテーションデータID} (塗りつぶしのPNG画像) 
+        プロジェクト内のアノテーション（Full版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  FullアノテーションZIPのデータ構造については、 [Full Annotation ZIP](#section/Full-Annotation-ZIP) を参照ください。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -449,7 +449,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーションZIP（simple版とfull版の両方）の更新を開始します。 ZIPの更新は、データ量に応じて数分〜数十分かかります。  ZIPは日本時間AM03:00ごろに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 
+        プロジェクト内のアノテーションZIP（Simple版とFull版の両方）の更新を開始します。 ZIPの更新は、データ量に応じて数分〜数十分かかります。  アノテーションZIPは毎日AM 03:00 JSTごろに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1611,7 +1611,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        検査コメント全件ファイルは、毎日AM 02:00 JSTに更新されます。 
+        検査コメント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### 検査コメント全件ファイル 検査コメント全件ファイルには、プロジェクトの検査コメント情報がJSON形式（[Inspection](#section/Inspection)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1633,7 +1633,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        タスク履歴イベント全件ファイルは、毎日AM 02:00 JSTに更新されます。 
+        タスク履歴イベント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク履歴イベント全件ファイル タスク履歴イベント全件ファイルには、プロジェクトのタスク履歴イベント情報がJSON形式（[TaskHistoryEvent](#section/TaskHistoryEvent)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1655,7 +1655,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        タスク全件ファイルは、毎日AM 02:00 JSTに更新されます。 
+        タスク全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク全件ファイル タスク全件ファイルには、プロジェクトのタスク情報がJSON形式（[Task](#section/Task)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 また、[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを利用することで、手動でタスク全件ファイルを更新することも可能です。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1704,7 +1704,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        プロジェクト内のタスク全件ファイルの更新を開始します。 ファイルの更新は、データ量に応じて数分程度かかります。  タスク全件ファイルは日本時間AM02:00ごろに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、タスク全件ファイル以外は更新されません。 
+        プロジェクト内のタスク全件ファイルの更新を開始します。 ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。  タスク全件ファイルは毎日AM 02:00 JSTに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、タスク全件ファイル以外は更新されません。  タスク全件ファイルについては、[getProjectTasksUrl](#operation/getProjectTasksUrl) APIを参照ください。 
 
         Args:
             project_id (str):  プロジェクトID (required)
