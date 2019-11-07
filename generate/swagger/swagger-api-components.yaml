@@ -1488,7 +1488,7 @@
         graph_type:
           description: マーカーの配置先グラフ
           $ref: "#/components/schemas/GraphType"
-        markedAt:
+        marked_at:
           description: グラフ上のマーカー位置(x軸)
           type: string
           format: date
