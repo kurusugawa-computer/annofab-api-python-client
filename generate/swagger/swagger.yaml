@@ -75,7 +75,7 @@ info:
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
 
-  version: 0.66.1
+  version: 0.66.2
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -6059,7 +6059,7 @@ components:
         graph_type:
           description: マーカーの配置先グラフ
           $ref: "#/components/schemas/GraphType"
-        markedAt:
+        marked_at:
           description: グラフ上のマーカー位置(x軸)
           type: string
           format: date
