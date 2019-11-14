@@ -133,6 +133,8 @@ class Wrapper:
         """
         FullアノテーションZIPをダウンロードする。
 
+        .. deprecated:: 0.21.1
+
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先のファイルパス
@@ -141,6 +143,7 @@ class Wrapper:
             ダウンロード元のURL
 
         """
+        warnings.warn("deprecated", DeprecationWarning)
         _, response = self.api.get_archive_full_with_pro_id(project_id)
         url = response.headers['Location']
         annofabapi.utils.download(url, dest_path)
@@ -164,25 +167,6 @@ class Wrapper:
     #########################################
     # Public Method : AfAnnotationSpecsApi
     #########################################
-    def get_annotation_specs_from_url(self, project_id: str, url: str) -> AnnotationSpecs:
-        """
-        アノテーション仕様の履歴から取得したURLから、アノテーション仕様を取得する
-
-        .. deprecated:: `get_annotation_specs`から過去のアノテーション仕様を取得できるようになったので、廃止する。2019/11/01以降に廃止する予定。
-
-        Args:
-            project_id: プロジェクトID
-            url: アノテーション仕様の履歴から取得したURL
-
-        Returns:
-            put_annotation_specsのContent
-        """
-        warnings.warn("deprecated", DeprecationWarning)
-        cookies, _ = self.api._get_signed_cookie(project_id)
-        kwargs = self.api._create_kwargs()
-        kwargs.update({"cookies": cookies})
-        return requests.get(url, **kwargs).json()
-
     def copy_annotation_specs(self, src_project_id: str, dest_project_id: str,
                               comment: Optional[str] = None) -> AnnotationSpecs:
         """
@@ -267,9 +251,8 @@ class Wrapper:
                                  request_body: Optional[Dict[str, Any]] = None,
                                  content_type: Optional[str] = None) -> InputData:
         """
-        ファイル（画像 or zip）を入力データとして登録する。
+        ファイル（画像データ、動画データ、 zipファイル）を入力データとして登録する。
 
-        zipファイルを指定した場合は、登録が完了した後「ZIPアップロードジョブエラー削除」(delete_project_job)を実施する必要がある。
 
         Args:
             project_id: プロジェクトID

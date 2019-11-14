@@ -1,6 +1,7 @@
 import functools
 import json
 import logging
+import warnings
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import backoff
@@ -219,6 +220,7 @@ class AnnofabApi(AbstractAnnofabApi):
             Tuple[Content, Reponse)
 
         """
+        warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/private/projects/{project_id}/sign-headers'
         http_method = 'GET'
         keyword_params: Dict[str, Any] = {}
