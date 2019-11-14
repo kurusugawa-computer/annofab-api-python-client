@@ -267,9 +267,8 @@ class Wrapper:
                                  request_body: Optional[Dict[str, Any]] = None,
                                  content_type: Optional[str] = None) -> InputData:
         """
-        ファイル（画像 or zip）を入力データとして登録する。
+        ファイル（画像データ、動画データ、 zipファイル）を入力データとして登録する。
 
-        zipファイルを指定した場合は、登録が完了した後「ZIPアップロードジョブエラー削除」(delete_project_job)を実施する必要がある。
 
         Args:
             project_id: プロジェクトID
