@@ -167,25 +167,6 @@ class Wrapper:
     #########################################
     # Public Method : AfAnnotationSpecsApi
     #########################################
-    def get_annotation_specs_from_url(self, project_id: str, url: str) -> AnnotationSpecs:
-        """
-        アノテーション仕様の履歴から取得したURLから、アノテーション仕様を取得する
-
-        .. deprecated:: `get_annotation_specs`から過去のアノテーション仕様を取得できるようになったので、廃止する。2019/11/01以降に廃止する予定。
-
-        Args:
-            project_id: プロジェクトID
-            url: アノテーション仕様の履歴から取得したURL
-
-        Returns:
-            put_annotation_specsのContent
-        """
-        warnings.warn("deprecated", DeprecationWarning)
-        cookies, _ = self.api._get_signed_cookie(project_id)
-        kwargs = self.api._create_kwargs()
-        kwargs.update({"cookies": cookies})
-        return requests.get(url, **kwargs).json()
-
     def copy_annotation_specs(self, src_project_id: str, dest_project_id: str,
                               comment: Optional[str] = None) -> AnnotationSpecs:
         """
