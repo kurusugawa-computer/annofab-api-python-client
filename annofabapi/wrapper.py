@@ -133,6 +133,8 @@ class Wrapper:
         """
         FullアノテーションZIPをダウンロードする。
 
+        .. deprecated:: 0.21.1
+
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先のファイルパス
@@ -141,6 +143,7 @@ class Wrapper:
             ダウンロード元のURL
 
         """
+        warnings.warn("deprecated", DeprecationWarning)
         _, response = self.api.get_archive_full_with_pro_id(project_id)
         url = response.headers['Location']
         annofabapi.utils.download(url, dest_path)
