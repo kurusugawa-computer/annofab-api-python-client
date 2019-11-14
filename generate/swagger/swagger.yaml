@@ -74,8 +74,9 @@ info:
     アノテーションID | プロジェクト内で一意
     検査ID | プロジェクト内で一意
     WebhookID | プロジェクト内で一意
+    入力データセットID | 組織内で一意
 
-  version: 0.66.2
+  version: 0.66.4
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -5469,6 +5470,11 @@ components:
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
         入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+    InputDataSetId:
+      type: string
+      example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     SupplementaryDataId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -5596,6 +5602,12 @@ components:
           default: 20
           minimum: 1
           maximum: 100
+        input_data_set_id_list:
+          description: このフィールドは内部用でまだ何も意味を成しません。今は空配列を指定してください。
+          type: array
+          items:
+            $ref: "#/components/schemas/InputDataSetId"
+          example: "[]"
         input_data_max_long_side_length:
           description: |
             入力データ画像の長辺の最大値（未指定時は4096px）。
