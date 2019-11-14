@@ -5,6 +5,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: 
 
 import backoff
 import requests
+import warnings
 from requests.auth import AuthBase
 
 import annofabapi.utils
@@ -219,6 +220,7 @@ class AnnofabApi(AbstractAnnofabApi):
             Tuple[Content, Reponse)
 
         """
+        warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/private/projects/{project_id}/sign-headers'
         http_method = 'GET'
         keyword_params: Dict[str, Any] = {}
