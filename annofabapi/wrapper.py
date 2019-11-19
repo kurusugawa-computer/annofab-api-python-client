@@ -803,17 +803,23 @@ class Wrapper:
             Falseならば、ジョブが失敗 or ``max_job_access`` 回アクセスしても、ジョブが完了しなかった。
 
         """
-        def get_latest_job():
+        def get_latest_job() -> Optional[JobInfo]:
             job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
-            assert len(job_list) == 1
-            return job_list[0]
+            if len(job_list) > 0:
+                return job_list[0]
+            else:
+                return None
 
         job_access_count = 0
         while True:
             job = get_latest_job()
-            if job_access_count == 0 and job["job_status"] != "progress":
-                logger.debug("進行中のジョブはありませんでした。")
+            if job is None:
+                logger.debug("ジョブは存在しませんでした。")
                 return True
+            else:
+                if job_access_count == 0 and job["job_status"] != "progress":
+                    logger.debug("進行中のジョブはありませんでした。")
+                    return True
 
             job_access_count += 1
 
@@ -831,5 +837,5 @@ class Wrapper:
                     logger.debug("job_id = %s のジョブが進行中です。%d 秒間待ちます。", job['job_id'], job_access_interval)
                     time.sleep(job_access_interval)
                 else:
-                    logger.debug("job_id = %s のジョブに %d 回アクセスしましたが、完了しませんでした。", job['job_id'], job_access_interval)
+                    logger.debug("job_id = %s のジョブに %d 回アクセスしましたが、完了しませんでした。", job['job_id'], job_access_count)
                     return False
