@@ -29,11 +29,18 @@ test_dir = Path('./tests/data/dataclass')
 
 
 class TestAnnotation:
-    def test_simple_annotation(self):
+    def test_simple_annotation_for_image(self):
         simple_annotaion_json = test_dir / "simple-annotation.json"
         with simple_annotaion_json.open(encoding="utf-8") as f:
-            dict_full_annotation = json.load(f)
-        simple_annotion = SimpleAnnotation.from_dict(dict_full_annotation)
+            dict_simple_annotation = json.load(f)
+        simple_annotion = SimpleAnnotation.from_dict(dict_simple_annotation)
+        assert type(simple_annotion) == SimpleAnnotation
+
+    def test_simple_annotation_for_movie(self):
+        simple_annotaion_json = test_dir / "simple-annotation-movie.json"
+        with simple_annotaion_json.open(encoding="utf-8") as f:
+            dict_simple_annotation = json.load(f)
+        simple_annotion = SimpleAnnotation.from_dict(dict_simple_annotation)
         assert type(simple_annotion) == SimpleAnnotation
 
     def test_full_annotation(self):
