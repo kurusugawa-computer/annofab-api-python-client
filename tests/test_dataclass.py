@@ -100,9 +100,12 @@ class TestInstruction:
 
 class TestJob:
     def test_job(self):
-        job_list = service.wrapper.get_all_project_job(project_id, query_params={"type": "gen-tasks"})
-        job = JobInfo.from_dict(job_list[0])
-        assert type(job) == JobInfo
+        job_list = service.wrapper.get_all_project_job(project_id, query_params={"type": "gen-annotation"})
+        if len(job_list) > 0:
+            job = JobInfo.from_dict(job_list[0])
+            assert type(job) == JobInfo
+        else:
+            print(f"'gen-annotation'のジョブが存在しませんでした。")
 
 
 class TestMy:
