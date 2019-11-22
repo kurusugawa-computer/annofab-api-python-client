@@ -2558,6 +2558,8 @@ Kyes of Dict
     保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
 * max_tasks_per_member_including_hold: int
     保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は20件として扱う。
+* input_data_set_id_list: List[str]
+    このフィールドは内部用でまだ何も意味を成しません。今は空配列を指定してください。
 * input_data_max_long_side_length: int
     入力データ画像の長辺の最大値（未指定時は4096px）。  画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。 アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。  大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。 
 * sampling_inspection_rate: int
@@ -2621,7 +2623,9 @@ Kyes of Dict
 * created_datetime: str
     
 * sampling_inspection_rate: int
-    メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。
+    メンバー固有の抜取検査率（0-100のパーセント値）。
+* sampling_acceptance_rate: int
+    メンバー固有の抜取受入率（0-100のパーセント値）。
 
 """
 
@@ -2635,6 +2639,10 @@ Kyes of Dict
     
 * member_role: ProjectMemberRole
     
+* sampling_inspection_rate: int
+    メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。
+* sampling_acceptance_rate: int
+    メンバー固有の抜取受入率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取受入率を指定の値で上書きする。
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
