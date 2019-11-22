@@ -76,7 +76,7 @@ info:
     WebhookID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.66.4
+  version: 0.66.7
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1878,7 +1878,10 @@ components:
           type: string
           format: date-time
         sampling_inspection_rate:
-          description: メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。
+          description: メンバー固有の抜取検査率（0-100のパーセント値）。
+          type: integer
+        sampling_acceptance_rate:
+          description: メンバー固有の抜取受入率（0-100のパーセント値）。
           type: integer
     ProjectMemberStatus:
       type: string
@@ -1902,6 +1905,12 @@ components:
           $ref: "#/components/schemas/ProjectMemberStatus"
         member_role:
           $ref: "#/components/schemas/ProjectMemberRole"
+        sampling_inspection_rate:
+          description: メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。
+          type: integer
+        sampling_acceptance_rate:
+          description: メンバー固有の抜取受入率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取受入率を指定の値で上書きする。
+          type: integer
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
     ProjectTaskStatisticsHistory:
