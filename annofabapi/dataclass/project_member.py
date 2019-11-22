@@ -48,7 +48,7 @@ class ProjectMember:
     """"""
 
     sampling_inspection_rate: Optional[int]
-    """メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。"""
+    """メンバー固有の抜取検査率（0-100のパーセント値）。"""
 
     sampling_acceptance_rate: Optional[int]
-    """メンバー固有の抜取受入率。"""
+    """メンバー固有の抜取受入率（0-100のパーセント値）。"""
