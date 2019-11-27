@@ -13,7 +13,7 @@ import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (AnnotationSpecs, InputData, Inspection, Instruction, JobInfo, JobType, MyOrganization,
-                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task)
+                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task, InspectionStatus)
 
 logger = logging.getLogger(__name__)
 
@@ -348,7 +348,7 @@ class Wrapper:
     #########################################
     def update_status_of_inspections(self, project_id: str, task_id: str, input_data_id: str,
                                      filter_inspection: Callable[[Inspection], bool],
-                                     inspection_status: str) -> List[Inspection]:
+                                     inspection_status: InspectionStatus) -> List[Inspection]:
         """
         検査コメント（返信コメント以外）のstatusを変更する。
 
@@ -375,9 +375,11 @@ class Wrapper:
         target_inspections = [e for e in inspections if search_updated_inspections(e)]
 
         for inspection in target_inspections:
-            inspection["status"] = inspection_status
+            inspection["status"] = inspection_status.value
             if inspection["updated_datetime"] is None:
                 inspection["updated_datetime"] = inspection["created_datetime"]
+            else:
+                inspection["updated_datetime"] = annofabapi.utils.str_now()
 
         req_inspection = [{"data": e, "_type": "Put"} for e in target_inspections]
         content = self.api.batch_update_inspections(project_id, task_id, input_data_id, req_inspection)[0]
