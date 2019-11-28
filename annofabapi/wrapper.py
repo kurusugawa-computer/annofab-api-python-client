@@ -10,11 +10,12 @@ from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable
 import requests
 
 import annofabapi.utils
-from annofabapi.utils import allow_404_error
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationSpecs, InputData, Inspection, Instruction, JobInfo, JobType, MyOrganization, Organization,
-                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task, InspectionStatus)
+from annofabapi.models import (AnnotationSpecs, InputData, Inspection, InspectionStatus, Instruction, JobInfo, JobType,
+                               MyOrganization, Organization, OrganizationMember, Project, ProjectMember,
+                               SupplementaryData, Task)
+from annofabapi.utils import allow_404_error
 
 logger = logging.getLogger(__name__)
 
@@ -213,7 +214,6 @@ class Wrapper:
         """
         input_data, _ = self.api.get_input_data(project_id, input_data_id)
         return input_data
-
 
     def get_all_input_data_list(self, project_id: str,
                                 query_params: Optional[Dict[str, Any]] = None) -> List[InputData]:
@@ -431,8 +431,6 @@ class Wrapper:
         content, _ = self.api.get_organization(organization_name)
         return content
 
-
-
     def get_all_projects_of_organization(self, organization_name: str,
                                          query_params: Optional[Dict[str, Any]] = None) -> List[Project]:
         """
@@ -497,7 +495,6 @@ class Wrapper:
         """
         content, _ = self.api.get_project(project_id)
         return content
-
 
     def download_project_tasks_url(self, project_id: str, dest_path: str) -> str:
         """
@@ -573,7 +570,6 @@ class Wrapper:
         """
         content, _ = self.api.get_project_member(project_id, user_id)
         return content
-
 
     def get_all_project_members(self, project_id: str,
                                 query_params: Optional[Dict[str, Any]] = None) -> List[ProjectMember]:
@@ -762,7 +758,6 @@ class Wrapper:
         """
         content, _ = self.api.get_task(project_id, task_id)
         return content
-
 
     def get_all_tasks(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[Task]:
         """
