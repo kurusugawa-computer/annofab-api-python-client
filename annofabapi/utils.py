@@ -6,7 +6,7 @@ Annofab APIのutils
 import datetime
 import logging
 from pathlib import Path
-from typing import Optional, Callable
+from typing import Optional
 
 import dateutil
 import dateutil.tz
