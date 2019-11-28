@@ -6,7 +6,7 @@ Annofab APIのutils
 import datetime
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Callable
 
 import dateutil
 import dateutil.tz
@@ -95,3 +95,33 @@ def to_iso8601_extension(d: datetime.datetime, tz: Optional[datetime.tzinfo] = N
         tz = dateutil.tz.tzlocal()
     d = d.astimezone(tz)
     return d.isoformat(timespec='milliseconds')
+
+
+def allow_404_error(function):
+    """
+    Not Found Error(404)を無視(許容)して、処理する。Not Foundのとき戻りはNoneになる。
+    リソースの存在確認などに利用する。
+    try-exceptを行う。また404 Errorが発生したときのエラーログを無効化する
+    """
+    def wrapped(*args, **kwargs):
+        annofabapi_logger_level = logging.getLogger("annofabapi").level
+        backoff_logger_level = logging.getLogger("backoff").level
+
+        try:
+            # 不要なログが出力されないようにする
+            logging.getLogger("annofabapi").setLevel(level=logging.INFO)
+            logging.getLogger("backoff").setLevel(level=logging.CRITICAL)
+
+            return function(*args, **kwargs)
+
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code != requests.codes.not_found:
+                raise e
+            else:
+                return None
+        finally:
+            # ロガーの設定を元に戻す
+            logging.getLogger("annofabapi").setLevel(level=annofabapi_logger_level)
+            logging.getLogger("backoff").setLevel(level=backoff_logger_level)
+
+    return wrapped
