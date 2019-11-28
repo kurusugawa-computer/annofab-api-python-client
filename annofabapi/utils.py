@@ -115,10 +115,10 @@ def allow_404_error(function):
             return function(*args, **kwargs)
 
         except requests.exceptions.HTTPError as e:
-            if e.response.status_code != requests.codes.not_found:
-                raise e
-            else:
+            if e.response.status_code == requests.codes.not_found:
                 return None
+            else:
+                raise e
         finally:
             # ロガーの設定を元に戻す
             logging.getLogger("annofabapi").setLevel(level=annofabapi_logger_level)
