@@ -449,8 +449,23 @@ class Wrapper:
                                      organization_name=organization_name, query_params=query_params)
 
     #########################################
-    # Public Method : AfOrganizationMemberApi
+    # Public Method : OrganizationMember
     #########################################
+    @allow_404_error
+    def get_organization_member_or_none(self, organization_name: str, user_id: str) -> Optional[OrganizationMember]:
+        """
+        組織メンバを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            organization_name: 組織名
+            user_id:
+
+        Returns:
+            組織メンバ
+        """
+        content, _ = self.api.get_organization_member(organization_name, user_id)
+        return content
+
     def get_all_organization_members(self, organization_name: str) -> List[OrganizationMember]:
         """
         すべての組織メンバ一覧を取得する
@@ -467,8 +482,23 @@ class Wrapper:
         return content["list"]
 
     #########################################
-    # Public Method : AfProjectApi
+    # Public Method : Project
     #########################################
+    @allow_404_error
+    def get_project_or_none(self, project_id: str) -> Optional[Project]:
+        """
+        プロジェクトを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            project_id:
+
+        Returns:
+            プロジェクト
+        """
+        content, _ = self.api.get_project(project_id)
+        return content
+
+
     def download_project_tasks_url(self, project_id: str, dest_path: str) -> str:
         """
         プロジェクトのタスク全件ファイルをダウンロードする。
@@ -527,8 +557,24 @@ class Wrapper:
         return url
 
     #########################################
-    # Public Method : AfProjectMemberApi
+    # Public Method : ProjectMember
     #########################################
+    @allow_404_error
+    def get_project_member_or_none(self, project_id: str, user_id: str) -> Optional[ProjectMember]:
+        """
+        プロジェクトメンバを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            project_id:
+            user_id:
+
+        Returns:
+            プロジェクトメンバ
+        """
+        content, _ = self.api.get_project_member(project_id, user_id)
+        return content
+
+
     def get_all_project_members(self, project_id: str,
                                 query_params: Optional[Dict[str, Any]] = None) -> List[ProjectMember]:
         """
@@ -673,7 +719,7 @@ class Wrapper:
             return self.put_project_members(dest_project_id, src_project_members)
 
     #########################################
-    # Public Method : AfTaskApi
+    # Public Method : Task
     #########################################
     def initiate_tasks_generation_by_csv(self, project_id: str, csvfile_path: str,
                                          task_id_prefix: str) -> Dict[str, Any]:
@@ -701,6 +747,22 @@ class Wrapper:
             'project_last_updated_datetime': project_last_updated_datetime
         }
         return self.api.initiate_tasks_generation(project_id, request_body=request_body)[0]
+
+    @allow_404_error
+    def get_task_or_none(self, project_id: str, task_id: str) -> Optional[Task]:
+        """
+        タスクを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            project_id:
+            task_id:
+
+        Returns:
+            タスク
+        """
+        content, _ = self.api.get_task(project_id, task_id)
+        return content
+
 
     def get_all_tasks(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[Task]:
         """
