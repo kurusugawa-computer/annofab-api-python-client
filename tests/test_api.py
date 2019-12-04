@@ -41,6 +41,9 @@ organization_name = api.get_organization_of_project(project_id)[0]['organization
 
 annofab_user_id = service.api.login_user_id
 
+task_id = test_wrapper.get_first_task_id(project_id)
+input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
 
 def test_account():
     pass
@@ -464,3 +467,46 @@ def test_webhook():
 
     print("delete_webhook")
     assert type(api.delete_webhook(project_id, test_webhook_id)[0]) == dict
+
+
+class TestGetObjOrNone:
+    """
+    wrapper.get_xxx_or_none メソッドの確認
+    """
+    def test_get_input_data_or_none(self):
+        assert type(wrapper.get_input_data_or_none(project_id, input_data_id)) == dict
+
+        assert wrapper.get_input_data_or_none(project_id, "not-exists") is None
+
+        assert wrapper.get_input_data_or_none("not-exists", input_data_id) is None
+
+    def test_get_organization_or_none(self):
+        assert type(wrapper.get_organization_or_none(organization_name)) == dict
+
+        assert wrapper.get_organization_or_none("not-exists") is None
+
+    def test_get_organization_member_or_none(self):
+        assert type(wrapper.get_organization_member_or_none(organization_name, annofab_user_id)) == dict
+
+        assert wrapper.get_organization_member_or_none("not-exists", annofab_user_id) is None
+
+        assert wrapper.get_organization_member_or_none(organization_name, "not-exists") is None
+
+    def test_get_project_or_none(self):
+        assert type(wrapper.get_project_or_none(project_id)) == dict
+
+        assert wrapper.get_project_or_none("not-exists") is None
+
+    def test_get_project_member_or_none(self):
+        assert type(wrapper.get_project_member_or_none(project_id, annofab_user_id)) == dict
+
+        assert wrapper.get_project_member_or_none(project_id, "not-exists") is None
+
+        assert wrapper.get_project_member_or_none("not-exists", annofab_user_id) is None
+
+    def test_get_task_or_none(self):
+        assert type(wrapper.get_task_or_none(project_id, task_id)) == dict
+
+        assert wrapper.get_task_or_none(project_id, "not-exists") is None
+
+        assert wrapper.get_task_or_none("not-exists", task_id) is None
