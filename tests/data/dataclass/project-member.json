@@ -5,6 +5,7 @@
   "username": "Alice",
   "member_status": "active",
   "member_role": "owner",
+  "biography": "my-org",
   "updated_datetime": "2019-05-03T16:43:34.796+09:00",
   "created_datetime": "2019-04-23T12:03:21.795+09:00",
   "sampling_inspection_rate": null,

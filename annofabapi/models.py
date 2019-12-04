@@ -187,6 +187,8 @@ Kyes of Dict
     
 * lang: str
     
+* biography: str
+    人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * keylayout: str
     
 * authority: AccountAuthority
@@ -562,6 +564,8 @@ Kyes of Dict
     定型指摘 
 * comment: str
     
+* auto_marking: bool
+    trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
 
 """
 
@@ -2262,6 +2266,8 @@ Kyes of Dict
     
 * lang: str
     
+* biography: str
+    人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * keylayout: str
     
 * authority: AccountAuthority
@@ -2371,6 +2377,8 @@ Kyes of Dict
     
 * status: OrganizationMemberStatus
     
+* biography: str
+    人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * created_datetime: str
     
 * updated_datetime: str
@@ -2618,6 +2626,8 @@ Kyes of Dict
     
 * member_role: ProjectMemberRole
     
+* biography: str
+    人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * updated_datetime: str
     
 * created_datetime: str
@@ -2744,6 +2754,8 @@ Kyes of Dict
     
 * keylayout: str
     
+* biography: str
+    人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * token: Token
     
 * last_updated_datetime: str

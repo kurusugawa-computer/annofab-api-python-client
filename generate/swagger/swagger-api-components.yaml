@@ -637,6 +637,8 @@
           format: email
         lang:
           type: string
+        biography:
+          $ref: "#/components/schemas/UserBiography"
         keylayout:
           type: string
         authority:
@@ -680,6 +682,8 @@
           type: string
         keylayout:
           type: string
+        biography:
+          $ref: "#/components/schemas/UserBiography"
         token:
           $ref: "#/components/schemas/Token"
         last_updated_datetime:
@@ -769,6 +773,8 @@
           $ref: "#/components/schemas/OrganizationMemberRole"
         status:
           $ref: "#/components/schemas/OrganizationMemberStatus"
+        biography:
+          $ref: "#/components/schemas/UserBiography"
         created_datetime:
           type: string
           format: date-time
@@ -936,6 +942,16 @@
     Duration:
       type: string
       example: "PT34H17M36.789S"
+    UserBiography:
+      type: string
+      description: |
+        人物紹介、略歴。
+  
+        この属性は、AnnoFab外の所属先や肩書などを表すために用います。
+        AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。
+      minLength: 0
+      maxLength: 100
+      example: "Annotation Manager, ABC Company"
     AnnotationFormatVersion:
       type: string
       example: "1.0.0"
@@ -1289,7 +1305,9 @@
           $ref: "#/components/schemas/ProjectMemberStatus"
         member_role:
           $ref: "#/components/schemas/ProjectMemberRole"
-        updated_datetime:
+        biography:
+          $ref: "#/components/schemas/UserBiography"
+        pdated_datetime:
           type: string
           format: date-time
         created_datetime:
@@ -1585,6 +1603,13 @@
             定型指摘
         comment:
           type: string
+        autoMarking:
+          type: boolean
+          default: false
+          description: |
+            trueが指定された場合、各統計グラフにマーカーを自動追加します。
+            マーカーのタイトルには `comment` に指定された文字列が設定されます。
+            `comment` が指定されていなかった場合は "アノテーション仕様の変更" という文字列が設定されます。
     AnnotationSpecsHistory:
       type: object
       properties:
@@ -1801,9 +1826,7 @@
         phase:
           $ref: "#/components/schemas/TaskPhase"
         phase_stage:
-          type: integer
-          default: 1
-          minimum: 1
+          $ref: "#/components/schemas/TaskPhaseStage"
         status:
           $ref: "#/components/schemas/TaskStatus"
         input_data_id_list:
@@ -1859,6 +1882,9 @@
         * `annotation` - 教師付け。
         * `inspection` - 中間検査。ワークフローが3フェーズのときのみ。
         * `acceptance` - 受入。
+    TaskPhaseStage:
+      type: integer
+      minimum: 1
     TaskStatus:
       type: string
       enum:

@@ -5,6 +5,7 @@
   "email": "test_user@example.com",
   "reset_requested_email": null,
   "lang": "ja-JP",
+  "biography": "my-org",
   "keylayout": "ja-JP",
   "authority": "user",
   "errors": [],
