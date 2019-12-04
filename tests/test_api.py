@@ -41,6 +41,9 @@ organization_name = api.get_organization_of_project(project_id)[0]['organization
 
 annofab_user_id = service.api.login_user_id
 
+task_id = test_wrapper.get_first_task_id(project_id)
+input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
 
 def test_account():
     pass
@@ -83,9 +86,6 @@ def test_annotation():
     """
     batchUpdateAnnotations, putAnnotationはテストしない.
     """
-
-    task_id = test_wrapper.get_first_task_id(project_id)
-    input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
     print("get_annotation_list in wrapper.get_all_annotation_list")
     assert len(wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}})) >= 0
@@ -182,8 +182,6 @@ def test_input():
 
 
 def test_supplementary():
-    input_data_id = test_wrapper.get_first_input_data(project_id)['input_data_id']
-
     print("wrapper.put_supplementary_data_from_file（内部でput_supplementary_dataが実行される）")
     supplementary_data_id = str(uuid.uuid4())
     request_body = {'supplementary_data_number': 1}
@@ -205,9 +203,6 @@ def test_inspection():
     """
     batchUpdateInspectionsはテストしない.
     """
-
-    task_id = test_wrapper.get_first_task_id(project_id)
-    input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
     # # 作業中のタスクでなくても、検査コメントは付与できる
     # req_inspection = [{
@@ -327,7 +322,6 @@ class TestStatistics:
     def test_graph_marker(self):
         print("get_markers")
         content, _ = api.get_markers(project_id)
-        print(content)
         assert type(content) == dict
 
         markers = [{
@@ -464,3 +458,46 @@ def test_webhook():
 
     print("delete_webhook")
     assert type(api.delete_webhook(project_id, test_webhook_id)[0]) == dict
+
+
+class TestGetObjOrNone:
+    """
+    wrapper.get_xxx_or_none メソッドの確認
+    """
+    def test_get_input_data_or_none(self):
+        assert type(wrapper.get_input_data_or_none(project_id, input_data_id)) == dict
+
+        assert wrapper.get_input_data_or_none(project_id, "not-exists") is None
+
+        assert wrapper.get_input_data_or_none("not-exists", input_data_id) is None
+
+    def test_get_organization_or_none(self):
+        assert type(wrapper.get_organization_or_none(organization_name)) == dict
+
+        assert wrapper.get_organization_or_none("not-exists") is None
+
+    def test_get_organization_member_or_none(self):
+        assert type(wrapper.get_organization_member_or_none(organization_name, annofab_user_id)) == dict
+
+        assert wrapper.get_organization_member_or_none("not-exists", annofab_user_id) is None
+
+        assert wrapper.get_organization_member_or_none(organization_name, "not-exists") is None
+
+    def test_get_project_or_none(self):
+        assert type(wrapper.get_project_or_none(project_id)) == dict
+
+        assert wrapper.get_project_or_none("not-exists") is None
+
+    def test_get_project_member_or_none(self):
+        assert type(wrapper.get_project_member_or_none(project_id, annofab_user_id)) == dict
+
+        assert wrapper.get_project_member_or_none(project_id, "not-exists") is None
+
+        assert wrapper.get_project_member_or_none("not-exists", annofab_user_id) is None
+
+    def test_get_task_or_none(self):
+        assert type(wrapper.get_task_or_none(project_id, task_id)) == dict
+
+        assert wrapper.get_task_or_none(project_id, "not-exists") is None
+
+        assert wrapper.get_task_or_none("not-exists", task_id) is None
