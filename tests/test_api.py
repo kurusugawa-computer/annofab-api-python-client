@@ -87,9 +87,6 @@ def test_annotation():
     batchUpdateAnnotations, putAnnotationはテストしない.
     """
 
-    task_id = test_wrapper.get_first_task_id(project_id)
-    input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
-
     print("get_annotation_list in wrapper.get_all_annotation_list")
     assert len(wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}})) >= 0
 
@@ -185,8 +182,6 @@ def test_input():
 
 
 def test_supplementary():
-    input_data_id = test_wrapper.get_first_input_data(project_id)['input_data_id']
-
     print("wrapper.put_supplementary_data_from_file（内部でput_supplementary_dataが実行される）")
     supplementary_data_id = str(uuid.uuid4())
     request_body = {'supplementary_data_number': 1}
@@ -208,9 +203,6 @@ def test_inspection():
     """
     batchUpdateInspectionsはテストしない.
     """
-
-    task_id = test_wrapper.get_first_task_id(project_id)
-    input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
     # # 作業中のタスクでなくても、検査コメントは付与できる
     # req_inspection = [{
@@ -330,7 +322,6 @@ class TestStatistics:
     def test_graph_marker(self):
         print("get_markers")
         content, _ = api.get_markers(project_id)
-        print(content)
         assert type(content) == dict
 
         markers = [{
