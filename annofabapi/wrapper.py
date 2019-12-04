@@ -12,8 +12,10 @@ import requests
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationSpecs, InputData, Inspection, Instruction, JobInfo, JobType, MyOrganization,
-                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task, InspectionStatus)
+from annofabapi.models import (AnnotationSpecs, InputData, Inspection, InspectionStatus, Instruction, JobInfo, JobType,
+                               MyOrganization, Organization, OrganizationMember, Project, ProjectMember,
+                               SupplementaryData, Task)
+from annofabapi.utils import allow_404_error
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +105,7 @@ class Wrapper:
         return all_objects
 
     #########################################
-    # Public Method : AfAnnotationApi
+    # Public Method : Annotation
     #########################################
     def download_annotation_archive(self, project_id: str, dest_path: str, v2: bool = False) -> str:
         """
@@ -165,7 +167,7 @@ class Wrapper:
                                      query_params=query_params)
 
     #########################################
-    # Public Method : AfAnnotationSpecsApi
+    # Public Method : AnnotationSpecs
     #########################################
     def copy_annotation_specs(self, src_project_id: str, dest_project_id: str,
                               comment: Optional[str] = None) -> AnnotationSpecs:
@@ -196,8 +198,23 @@ class Wrapper:
         return self.api.put_annotation_specs(dest_project_id, request_body=request_body)[0]
 
     #########################################
-    # Public Method : AfInputApi
+    # Public Method : Input
     #########################################
+    @allow_404_error
+    def get_input_data_or_none(self, project_id: str, input_data_id: str) -> Optional[InputData]:
+        """
+        入力データを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            project_id:
+            input_data_id:
+
+        Returns:
+            入力データ
+        """
+        input_data, _ = self.api.get_input_data(project_id, input_data_id)
+        return input_data
+
     def get_all_input_data_list(self, project_id: str,
                                 query_params: Optional[Dict[str, Any]] = None) -> List[InputData]:
         """
@@ -277,7 +294,7 @@ class Wrapper:
         return self.api.put_input_data(project_id, input_data_id, request_body=copied_request_body)[0]
 
     #########################################
-    # Public Method : AfStatisticsApi
+    # Public Method : Statistics
     #########################################
     def get_worktime_statistics(self, project_id: str) -> Dict[str, Any]:
         """
@@ -296,7 +313,7 @@ class Wrapper:
         return requests.get(url).json()
 
     #########################################
-    # Public Method : AfSupplementaryApi
+    # Public Method : Supplementary
     #########################################
     def put_supplementary_data_from_file(self, project_id, input_data_id: str, supplementary_data_id: str,
                                          file_path: str, request_body: Dict[str, Any],
@@ -344,7 +361,7 @@ class Wrapper:
                                                request_body=copied_request_body)[0]
 
     #########################################
-    # Public Method : AfInspection
+    # Public Method : Inspection
     #########################################
     def update_status_of_inspections(self, project_id: str, task_id: str, input_data_id: str,
                                      filter_inspection: Callable[[Inspection], bool],
@@ -386,7 +403,7 @@ class Wrapper:
         return content
 
     #########################################
-    # Public Method : AfMyApi
+    # Public Method : My
     #########################################
     def get_all_my_organizations(self) -> List[MyOrganization]:
         """
@@ -398,8 +415,22 @@ class Wrapper:
         return self._get_all_objects(self.api.get_my_organizations, limit=200)
 
     #########################################
-    # Public Method : AfOrganizationApi
+    # Public Method : Organization
     #########################################
+    @allow_404_error
+    def get_organization_or_none(self, organization_name: str) -> Optional[Organization]:
+        """
+        組織情報を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            organization_name: 組織名
+
+        Returns:
+            組織情報
+        """
+        content, _ = self.api.get_organization(organization_name)
+        return content
+
     def get_all_projects_of_organization(self, organization_name: str,
                                          query_params: Optional[Dict[str, Any]] = None) -> List[Project]:
         """
@@ -416,8 +447,23 @@ class Wrapper:
                                      organization_name=organization_name, query_params=query_params)
 
     #########################################
-    # Public Method : AfOrganizationMemberApi
+    # Public Method : OrganizationMember
     #########################################
+    @allow_404_error
+    def get_organization_member_or_none(self, organization_name: str, user_id: str) -> Optional[OrganizationMember]:
+        """
+        組織メンバを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            organization_name: 組織名
+            user_id:
+
+        Returns:
+            組織メンバ
+        """
+        content, _ = self.api.get_organization_member(organization_name, user_id)
+        return content
+
     def get_all_organization_members(self, organization_name: str) -> List[OrganizationMember]:
         """
         すべての組織メンバ一覧を取得する
@@ -434,8 +480,22 @@ class Wrapper:
         return content["list"]
 
     #########################################
-    # Public Method : AfProjectApi
+    # Public Method : Project
     #########################################
+    @allow_404_error
+    def get_project_or_none(self, project_id: str) -> Optional[Project]:
+        """
+        プロジェクトを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            project_id:
+
+        Returns:
+            プロジェクト
+        """
+        content, _ = self.api.get_project(project_id)
+        return content
+
     def download_project_tasks_url(self, project_id: str, dest_path: str) -> str:
         """
         プロジェクトのタスク全件ファイルをダウンロードする。
@@ -494,8 +554,23 @@ class Wrapper:
         return url
 
     #########################################
-    # Public Method : AfProjectMemberApi
+    # Public Method : ProjectMember
     #########################################
+    @allow_404_error
+    def get_project_member_or_none(self, project_id: str, user_id: str) -> Optional[ProjectMember]:
+        """
+        プロジェクトメンバを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            project_id:
+            user_id:
+
+        Returns:
+            プロジェクトメンバ
+        """
+        content, _ = self.api.get_project_member(project_id, user_id)
+        return content
+
     def get_all_project_members(self, project_id: str,
                                 query_params: Optional[Dict[str, Any]] = None) -> List[ProjectMember]:
         """
@@ -640,7 +715,7 @@ class Wrapper:
             return self.put_project_members(dest_project_id, src_project_members)
 
     #########################################
-    # Public Method : AfTaskApi
+    # Public Method : Task
     #########################################
     def initiate_tasks_generation_by_csv(self, project_id: str, csvfile_path: str,
                                          task_id_prefix: str) -> Dict[str, Any]:
@@ -668,6 +743,21 @@ class Wrapper:
             'project_last_updated_datetime': project_last_updated_datetime
         }
         return self.api.initiate_tasks_generation(project_id, request_body=request_body)[0]
+
+    @allow_404_error
+    def get_task_or_none(self, project_id: str, task_id: str) -> Optional[Task]:
+        """
+        タスクを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            project_id:
+            task_id:
+
+        Returns:
+            タスク
+        """
+        content, _ = self.api.get_task(project_id, task_id)
+        return content
 
     def get_all_tasks(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[Task]:
         """
