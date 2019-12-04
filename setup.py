@@ -43,5 +43,8 @@ setup(
         "Topic :: Utilities",
         "Operating System :: OS Independent",
     ],
-    packages=find_packages(exclude=["tests"])
+    packages=find_packages(exclude=["tests"]),
+    package_data={
+        "annofabapi": ["py.typed"]
+    }
 )
