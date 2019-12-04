@@ -76,7 +76,7 @@ info:
     WebhookID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.66.7
+  version: 0.67.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -2144,6 +2144,7 @@ paths:
       description: |
         バックグラウンドジョブの情報を取得する。
         取得されるジョブの情報は作成日付の新しい順にソートされる。
+        バックグラウンドジョブ情報は完了(失敗含む)から14日経過後に削除される。
       security:
       - AllProjectMember: []
       operationId: getProjectJob
@@ -2629,19 +2630,19 @@ paths:
         description: 絞り込み条件となるフェーズ名。未指定時は全フェーズ
         required: false
         schema:
-          type: string
+          $ref: "#/components/schemas/TaskPhase"
       - name: phase_stage
         in: query
         description: 絞り込み条件となるステージ。未指定時は全ステージ
         required: false
         schema:
-          type: string
+          $ref: "#/components/schemas/TaskPhaseStage"
       - name: status
         in: query
         description: 絞り込み条件となる状態名。未指定時は全ステータス。
         required: false
         schema:
-          type: string
+          $ref: "#/components/schemas/TaskStatus"
       - name: account_id
         in: query
         description: 絞り込み条件となる作業中のアカウントID。未指定時は全アカウント
@@ -2672,7 +2673,7 @@ paths:
         description: そのタスクがこれまでに遷移したことのあるステージ（現在のステージ含む）。未指定時は全ステージ
         required: false
         schema:
-          type: string
+          $ref: "#/components/schemas/TaskPhaseStage"
       - name: rejected_only
         in: query
         description: 差し戻されたタスクだけを絞り込む時に、キーのみ指定します（値は無視されます）。
@@ -5203,6 +5204,8 @@ components:
           format: email
         lang:
           type: string
+        biography:
+          $ref: "#/components/schemas/UserBiography"
         keylayout:
           type: string
         authority:
@@ -5246,6 +5249,8 @@ components:
           type: string
         keylayout:
           type: string
+        biography:
+          $ref: "#/components/schemas/UserBiography"
         token:
           $ref: "#/components/schemas/Token"
         last_updated_datetime:
@@ -5335,6 +5340,8 @@ components:
           $ref: "#/components/schemas/OrganizationMemberRole"
         status:
           $ref: "#/components/schemas/OrganizationMemberStatus"
+        biography:
+          $ref: "#/components/schemas/UserBiography"
         created_datetime:
           type: string
           format: date-time
@@ -5502,6 +5509,16 @@ components:
     Duration:
       type: string
       example: "PT34H17M36.789S"
+    UserBiography:
+      type: string
+      description: |
+        人物紹介、略歴。
+  
+        この属性は、AnnoFab外の所属先や肩書などを表すために用います。
+        AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。
+      minLength: 0
+      maxLength: 100
+      example: "Annotation Manager, ABC Company"
     AnnotationFormatVersion:
       type: string
       example: "1.0.0"
@@ -5855,7 +5872,9 @@ components:
           $ref: "#/components/schemas/ProjectMemberStatus"
         member_role:
           $ref: "#/components/schemas/ProjectMemberRole"
-        updated_datetime:
+        biography:
+          $ref: "#/components/schemas/UserBiography"
+        pdated_datetime:
           type: string
           format: date-time
         created_datetime:
@@ -6151,6 +6170,13 @@ components:
             定型指摘
         comment:
           type: string
+        autoMarking:
+          type: boolean
+          default: false
+          description: |
+            trueが指定された場合、各統計グラフにマーカーを自動追加します。
+            マーカーのタイトルには `comment` に指定された文字列が設定されます。
+            `comment` が指定されていなかった場合は "アノテーション仕様の変更" という文字列が設定されます。
     AnnotationSpecsHistory:
       type: object
       properties:
@@ -6367,9 +6393,7 @@ components:
         phase:
           $ref: "#/components/schemas/TaskPhase"
         phase_stage:
-          type: integer
-          default: 1
-          minimum: 1
+          $ref: "#/components/schemas/TaskPhaseStage"
         status:
           $ref: "#/components/schemas/TaskStatus"
         input_data_id_list:
@@ -6425,6 +6449,9 @@ components:
         * `annotation` - 教師付け。
         * `inspection` - 中間検査。ワークフローが3フェーズのときのみ。
         * `acceptance` - 受入。
+    TaskPhaseStage:
+      type: integer
+      minimum: 1
     TaskStatus:
       type: string
       enum:
