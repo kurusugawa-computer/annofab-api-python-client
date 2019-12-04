@@ -5,6 +5,7 @@
   "username": "Alice",
   "role": "owner",
   "status": "active",
+  "biography": "my-org",
   "updated_datetime": "2019-08-17T21:19:43.787+09:00",
   "created_datetime": "2018-06-07T15:48:15.133+09:00"
 }

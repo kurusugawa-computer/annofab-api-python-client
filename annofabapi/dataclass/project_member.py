@@ -44,7 +44,7 @@ class ProjectMember:
     biography: Optional[str]
     """人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 """
 
-    pdated_datetime: Optional[str]
+    updated_datetime: Optional[str]
     """"""
 
     created_datetime: Optional[str]
