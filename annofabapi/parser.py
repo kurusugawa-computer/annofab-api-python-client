@@ -87,6 +87,7 @@ class SimpleAnnotationParser(abc.ABC):
             AnnotationOuterFileNotFoundError: 外部ファイルが存在しないときに、例外を発生します。
 
         """
+
     @abc.abstractmethod
     def parse(self) -> SimpleAnnotation:
         """
@@ -150,6 +151,7 @@ class FullAnnotationParser(abc.ABC):
         Raises:
             AnnotationOuterFileNotFoundError: 外部ファイルが存在しないときに、例外を発生します。
         """
+
     @abc.abstractmethod
     def parse(self) -> FullAnnotation:
         """
