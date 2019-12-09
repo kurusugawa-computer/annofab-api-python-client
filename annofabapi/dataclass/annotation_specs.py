@@ -16,6 +16,8 @@ from dataclasses_json import dataclass_json
 
 from annofabapi.models import AdditionalDataDefinitionType, AnnotationType
 
+OneOfbooleanintegerstring = Union[bool, int, str]
+
 
 @dataclass_json
 @dataclass
