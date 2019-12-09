@@ -26,6 +26,8 @@ class Resolution:
 
     height: float
     """"""
+
+
 @dataclass_json
 @dataclass
 class InputData:

@@ -216,9 +216,11 @@ Kyes of Dict
 * account_id: str
     
 * by_tasks: List[WorktimeStatisticsItem]
-    
+    ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
 * by_inputs: List[WorktimeStatisticsItem]
-    
+    ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+* by_minutes: List[WorktimeStatisticsItem]
+    ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
 
 """
 
@@ -266,6 +268,8 @@ Kyes of Dict
     
 * name: InternationalizationMessage
     
+* default: OneOfbooleanintegerstring
+    属性の初期値です。  初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。  * type が flag の場合: 真偽値(`true` or `false`) * type が integer の場合: 整数値 * type が text の場合: 文字列 * type が comment の場合: 文字列 * type が choice の場合: 選択肢(`choices`)の `choice_id` * type が select の場合: 選択肢(`choices`)の `choice_id`  属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。  なお、トラッキングとリンクには初期値を設定できません。 
 * keybind: List[Keybind]
     
 * type: AdditionalDataDefinitionType
@@ -1852,12 +1856,12 @@ Kyes of Dict
 
 InspectionStatisticsBreakdown = Dict[str, Any]
 """
-
+検査コメント数の集計結果
 
 Kyes of Dict
 
 * labels: dict(str, InspectionStatisticsPhrases)
-    ラベルごとの指摘集計結果
+    ラベルごとの指摘集計結果。キーは`label_id`
 * no_label: InspectionStatisticsPhrases
     
 
@@ -1865,12 +1869,12 @@ Kyes of Dict
 
 InspectionStatisticsPhrases = Dict[str, Any]
 """
-
+ラベル外指摘の集計結果
 
 Kyes of Dict
 
 * phrases: dict(str, int)
-    定型指摘ごとの合計数
+    定型指摘ごとの合計数。キーは定型指摘ID、値は指摘数
 * no_phrase: int
     非定型指摘の合計数
 
@@ -2464,10 +2468,10 @@ PhaseStatistics = Dict[str, Any]
 
 Kyes of Dict
 
-* phase: str
+* phase: TaskPhase
     
 * worktime: str
-    
+    累積作業時間（ISO 8601 duration）
 
 """
 
@@ -2544,11 +2548,11 @@ Kyes of Dict
 * date: str
     
 * tasks_completed: int
-    
+    教師付を担当したタスクが完了状態になった回数
 * tasks_rejected: int
-    
+    教師付を担当したタスクが差し戻された回数
 * worktime: str
-    
+    作業時間（ISO 8601 duration）
 
 """
 
@@ -2594,15 +2598,15 @@ Kyes of Dict
 * copy_inputs: bool
     「入力データ」をコピーするかどうかを指定します。 
 * copy_tasks: bool
-    「タスク」をコピーするかどうかを指定します。  以下の場合、copy_tasks を true に設定するとエラーとなります。 * copy_tasks_with_annotations が true に設定されているとき * copy_inputs が false に設定されているとき 
+    「タスク」をコピーするかどうかを指定します。  この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_inputs の値を true とする 
 * copy_annotations: bool
-    「アノテーション」をコピーするかどうかを指定します。  以下の場合、copy_annotations を true に設定するとエラーとなります。 * copy_tasks_with_annotations が true に設定されているとき * copy_inputs が false に設定されているとき * copy_tasks が false に設定されているとき 
+    「アノテーション」をコピーするかどうかを指定します。  この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_inputs の値を true とする * copy_tasks の値を true とする 
 * copy_webhooks: bool
     「Webhook」をコピーするかどうかを指定します。 
 * copy_tasks_with_annotations: bool
-    「タスク」「アノテーション」をコピーするかどうかを指定します。  以下の場合、copy_tasks_with_annotations を true に設定するとエラーとなります。 * copy_inputs が false に設定されているとき * copy_tasks が true に設定されているとき 
+    「タスク」および「アノテーション」をコピーするかどうかを指定します。  廃止予定の属性のためこの属性は使用せず、「タスク」および「アノテーション」をコピーする場合には他の属性の値を必ず次のように指定してください。  * copy_tasks の値を true とする * copy_inputs の値を true とする * copy_annotations の値を true とする  やむを得ない理由でこの属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_tasks の値を false とする * copy_inputs の値を true とする * copy_annotations の値を false とする 
 * copy_supplementaly_data: bool
-    「補助情報」をコピーするかどうかを指定します。  以下の場合、copy_supplementaly_data を true に設定するとエラーとなります。 * copy_inputs が false に設定されているとき 
+    「補助情報」をコピーするかどうかを指定します。  この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_inputs の値を true とする 
 * copy_instructions: bool
     「作業ガイド」をコピーするかどうかを指定します。 
 
@@ -2708,7 +2712,7 @@ Kyes of Dict
 * status: TaskStatus
     
 * count: int
-    
+    タスク数
 * work_timespan: int
     累計実作業時間(ミリ秒)
 
@@ -2834,17 +2838,6 @@ ResetEmailRequest = Dict[str, Any]
 Kyes of Dict
 
 * email: str
-    
-
-"""
-
-ResetPasswordRequest = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* token: str
     
 
 """
@@ -3223,7 +3216,7 @@ Kyes of Dict
 * date: str
     
 * phases: List[PhaseStatistics]
-    
+    タスクのフェーズごとの集計結果
 
 """
 
@@ -3493,11 +3486,13 @@ Kyes of Dict
 * date: str
     
 * by_tasks: List[WorktimeStatisticsItem]
-    
+    タスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
 * by_inputs: List[WorktimeStatisticsItem]
-    
+    画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+* by_minutes: List[WorktimeStatisticsItem]
+    動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
 * accounts: List[AccountWorktimeStatistics]
-    
+    ユーザごとの作業時間情報
 
 """
 
@@ -3512,8 +3507,8 @@ Kyes of Dict
 * histogram: List[HistogramItem]
     
 * average: str
-    
+    作業時間の平均（ISO 8601 duration）
 * standard_deviation: str
-    
+    作業時間の標準偏差（ISO 8601 duration）
 
 """

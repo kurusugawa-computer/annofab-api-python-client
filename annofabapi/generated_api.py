@@ -81,13 +81,13 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def confirm_reset_password(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
-        """パスワードリセットstep3（新しいパスワードに変更）
+        """パスワードリセットstep2（新しいパスワードに変更）
 
 
         authorizations: EveryoneRequestBody
 
 
-        新しいパスワードに変更します。 本人確認のため、[パスワードリセットを要求](#operation/resetPassword)で受信したメールに記載された検証コードを使用します。  パスワードリセットプロセスの最終ステップです。 
+        新しいパスワードに変更します。 本人確認のため、[パスワードリセットを要求](#operation/initiateResetPassword)で受信したメールに記載された検証コードを使用します。  パスワードリセットプロセスの最終ステップです。 
 
         Args:
             request_body (Any): Request Body
@@ -161,7 +161,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: EveryoneRequestBody
 
 
-        パスワードリセットプロセスを開始します。  このAPIを実行した後、後続の[古いパスワードを無効化](#operation/resetPassword)を実行するまでは、古いパスワードでログインできます。 
+        パスワードリセットに必要な確認コードをメールで送付します。 後続の[新しいパスワードに変更](#operation/confirmResetPassword)を実行することで、新しいパスワードに変更できます。 
 
         Args:
             request_body (Any): Request Body
@@ -246,31 +246,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         """
         url_path = f'/verify-email'
-        http_method = 'POST'
-        keyword_params: Dict[str, Any] = {
-            'request_body': request_body,
-        }
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def reset_password(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
-        """パスワードリセットstep2（古いパスワードを無効化）
-
-
-        authorizations: EveryoneRequestBody
-
-
-        古いパスワードを無効化し、パスワードリセットに必要な確認コードをメールで送付します。 本人確認のため、[パスワードリセットを要求](#operation/initiatePasswordReset)して取得したトークンを使用します。  後続の[新しいパスワードに変更](#operation/confirmResetPassword)を実行することで、新しいパスワードに変更できます。 
-
-        Args:
-            request_body (Any): Request Body
-                reset_password_request (ResetPasswordRequest):  (required)
-
-        Returns:
-            Tuple[Message, requests.Response]
-
-
-        """
-        url_path = f'/reset-password'
         http_method = 'POST'
         keyword_params: Dict[str, Any] = {
             'request_body': request_body,
@@ -1678,7 +1653,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator, ProjectOwner
 
 
-        プロジェクトのアノテーション仕様やメンバーを引き継いで、別のプロジェクトを作成します。 設定によらず、プロジェクト、プロジェクトメンバー、アノテーション仕様は引き継がれます。 設定により、アノテーション、タスク、補助情報、作業ガイド、Webhookも引き継がせる事が可能です。  このAPIを利用するには、プロジェクトを登録する組織の[OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) かつ コピー元プロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 
+        指定したプロジェクトのデータを引き継いだ新しいプロジェクトを作成します。 新しいプロジェクトに引き継がれるデータは次の通りです。  * プロジェクト設定 * プロジェクトメンバー * アノテーション仕様  また、オプションを指定することで新しいプロジェクトに次のデータを引き継ぐことも可能です。  |引き継ぎ対象|同時に引き継ぐ必要があるデータ| |:--|:--| |入力データ|| |タスク|入力データ| |アノテーション|入力データ、タスク| |補助情報|入力データ| |作業ガイド|| |Webhook||  このAPIを利用するには、プロジェクトを登録する組織の[OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) かつ コピー元プロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 
 
         Args:
             project_id (str):  コピー元となるプロジェクトID (required)
@@ -1880,7 +1855,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        ラベルごとの以下集計データを取得します。 * `completed_labels`：受入が完了したアノテーション数 * `wip_labels`：受入が完了していないアノテーション数 
+        ラベルごとの以下集計データを取得します。 * 受入が完了したアノテーション数 * 受入が完了していないアノテーション数 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1965,7 +1940,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。 アカウント毎の集計のby_tasks、by_inputsには、最終日であってもヒストグラムを返却しない。 
+        単位当たり（タスク1個、画像1個、動画1分）の作業時間情報が格納されたファイルに対して、認証済み一時URLを取得します。認証済み一時URLはLocationヘッダに格納されています。  ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。 アカウント毎の集計のby_tasks、by_inputsには、最終日であってもヒストグラムを返却しない。 
 
         Args:
             project_id (str):  プロジェクトID (required)
