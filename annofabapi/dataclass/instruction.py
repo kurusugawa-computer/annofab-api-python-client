@@ -26,6 +26,8 @@ class Instruction:
 
     last_updated_datetime: Optional[str]
     """* `GetInstruction` の場合: 最後に作業ガイドを更新した日時。 * `PutInstruction` の場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。 """
+
+
 @dataclass_json
 @dataclass
 class InstructionHistory:
@@ -40,6 +42,8 @@ class InstructionHistory:
 
     updated_datetime: Optional[str]
     """"""
+
+
 @dataclass_json
 @dataclass
 class InstructionImage:

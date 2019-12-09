@@ -50,6 +50,8 @@ class MyOrganization:
 
     my_status: Optional[OrganizationMemberStatus]
     """"""
+
+
 @dataclass_json
 @dataclass
 class MyAccount:

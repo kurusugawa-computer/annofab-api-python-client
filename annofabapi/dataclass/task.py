@@ -49,6 +49,8 @@ class TaskHistory:
 
     account_id: Optional[str]
     """"""
+
+
 @dataclass_json
 @dataclass
 class TaskHistoryShort:
@@ -63,6 +65,8 @@ class TaskHistoryShort:
 
     account_id: Optional[str]
     """"""
+
+
 @dataclass_json
 @dataclass
 class Task:

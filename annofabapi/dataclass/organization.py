@@ -31,6 +31,8 @@ class OrganizationActivity:
 
     storage_usage_bytes: float
     """"""
+
+
 @dataclass_json
 @dataclass
 class OrganizationSummary:
@@ -39,6 +41,8 @@ class OrganizationSummary:
     """
     last_tasks_updated_datetime: Optional[str]
     """"""
+
+
 @dataclass_json
 @dataclass
 class Organization:

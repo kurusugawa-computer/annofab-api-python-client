@@ -28,6 +28,8 @@ class WebhookHeader:
 
     value: Optional[str]
     """"""
+
+
 @dataclass_json
 @dataclass
 class Webhook:
