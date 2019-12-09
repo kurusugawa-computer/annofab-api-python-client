@@ -556,13 +556,6 @@
         email:
           type: string
           format: email
-    ResetPasswordRequest:
-      type: object
-      required:
-        - token
-      properties:
-        token:
-          type: string
     ConfirmResetPasswordRequest:
       type: object
       required:
@@ -1242,18 +1235,19 @@
           description: |
             「タスク」をコピーするかどうかを指定します。
   
-            以下の場合、copy_tasks を true に設定するとエラーとなります。
-            * copy_tasks_with_annotations が true に設定されているとき
-            * copy_inputs が false に設定されているとき
+            この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。
+  
+            * copy_inputs の値を true とする
+          default: false
         copy_annotations:
           type: boolean
           description: |
             「アノテーション」をコピーするかどうかを指定します。
   
-            以下の場合、copy_annotations を true に設定するとエラーとなります。
-            * copy_tasks_with_annotations が true に設定されているとき
-            * copy_inputs が false に設定されているとき
-            * copy_tasks が false に設定されているとき
+            この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。
+  
+            * copy_inputs の値を true とする
+            * copy_tasks の値を true とする
           default: false
         copy_webhooks:
           type: boolean
@@ -1264,19 +1258,28 @@
           deprecated: true
           type: boolean
           description: |
-            「タスク」「アノテーション」をコピーするかどうかを指定します。
+            「タスク」および「アノテーション」をコピーするかどうかを指定します。
   
-            以下の場合、copy_tasks_with_annotations を true に設定するとエラーとなります。
-            * copy_inputs が false に設定されているとき
-            * copy_tasks が true に設定されているとき
+            廃止予定の属性のためこの属性は使用せず、「タスク」および「アノテーション」をコピーする場合には他の属性の値を必ず次のように指定してください。
+  
+            * copy_tasks の値を true とする
+            * copy_inputs の値を true とする
+            * copy_annotations の値を true とする
+  
+            やむを得ない理由でこの属性の値を true とする場合、他の属性の値を必ず次のように指定してください。
+  
+            * copy_tasks の値を false とする
+            * copy_inputs の値を true とする
+            * copy_annotations の値を false とする
           default: false
         copy_supplementaly_data:
           type: boolean
           description: |
             「補助情報」をコピーするかどうかを指定します。
   
-            以下の場合、copy_supplementaly_data を true に設定するとエラーとなります。
-            * copy_inputs が false に設定されているとき
+            この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。
+  
+            * copy_inputs の値を true とする
           default: false
         copy_instructions:
           type: boolean
@@ -1307,7 +1310,7 @@
           $ref: "#/components/schemas/ProjectMemberRole"
         biography:
           $ref: "#/components/schemas/UserBiography"
-        pdated_datetime:
+        updated_datetime:
           type: string
           format: date-time
         created_datetime:
@@ -1361,6 +1364,11 @@
             $ref: "#/components/schemas/ProjectTaskStatistics"
     ProjectTaskStatistics:
       type: object
+      required:
+        - phase
+        - status
+        - count
+        - work_timespan
       properties:
         phase:
           $ref: "#/components/schemas/TaskPhase"
@@ -1369,11 +1377,15 @@
         count:
           type: integer
           minimum: 0
+          description: タスク数
         work_timespan:
           type: integer
           description: 累計実作業時間(ミリ秒)
     ProjectAccountStatistics:
       type: object
+      required:
+        - account_id
+        - histories
       properties:
         account_id:
           $ref: "#/components/schemas/AccountId"
@@ -1383,18 +1395,31 @@
             $ref: "#/components/schemas/ProjectAccountStatisticsHistory"
     ProjectAccountStatisticsHistory:
       type: object
+      required:
+        - date
+        - tasks_completed
+        - tasks_rejected
+        - worktime
       properties:
         date:
           type: string
           format: date
         tasks_completed:
           type: integer
+          description: 教師付を担当したタスクが完了状態になった回数
         tasks_rejected:
           type: integer
+          description: 教師付を担当したタスクが差し戻された回数
         worktime:
-          $ref: "#/components/schemas/Duration"
+          type: string
+          example: "PT34H17M36.789S"
+          description: 作業時間（ISO 8601 duration）
     InspectionStatistics:
       type: object
+      required:
+        - project_id
+        - date
+        - breakdown
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -1403,25 +1428,31 @@
           type: string
           format: date
         breakdown:
-          description: 集計結果
           $ref: "#/components/schemas/InspectionStatisticsBreakdown"
     InspectionStatisticsBreakdown:
       type: object
+      description: 検査コメント数の集計結果
+      required:
+        - labels
+        - no_label
       properties:
         labels:
-          description: ラベルごとの指摘集計結果
+          description: ラベルごとの指摘集計結果。キーは`label_id`
           type: object
           additionalProperties: {
             $ref: "#/components/schemas/InspectionStatisticsPhrases"
           }
         no_label:
-          description: ラベル外指摘の集計結果
           $ref: "#/components/schemas/InspectionStatisticsPhrases"
     InspectionStatisticsPhrases:
       type: object
+      description: ラベル外指摘の集計結果
+      required:
+        - phrases
+        - no_phrase
       properties:
         phrases:
-          description: 定型指摘ごとの合計数
+          description: 定型指摘ごとの合計数。キーは定型指摘ID、値は指摘数
           type: object
           additionalProperties: {
             type: integer
@@ -1431,6 +1462,10 @@
           type: integer
     TaskPhaseStatistics:
       type: object
+      required:
+        - project_id
+        - date
+        - phases
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -1438,18 +1473,28 @@
           type: string
           format: date
         phases:
+          description: タスクのフェーズごとの集計結果
           type: array
           items:
             $ref: "#/components/schemas/PhaseStatistics"
     PhaseStatistics:
       type: object
+      required:
+        - phase
+        - worktime
       properties:
         phase:
-          type: string
+          $ref: "#/components/schemas/TaskPhase"
         worktime:
-          $ref: "#/components/schemas/Duration"
+          description: 累積作業時間（ISO 8601 duration）
+          type: string
+          example: "PT34H17M36.789S"
     LabelStatistics:
       type: object
+      required:
+        - label_id
+        - completed
+        - wip
       properties:
         label_id:
           $ref: "#/components/schemas/LabelId"
@@ -1463,6 +1508,13 @@
           description: ラベルごとの受入が完了していないアノテーション数
     WorktimeStatistics:
       type: object
+      required:
+        - project_id
+        - date
+        - by_tasks
+        - by_inputs
+        - by_minutes
+        - accounts
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -1471,18 +1523,31 @@
           format: date
         by_tasks:
           type: array
+          description: タスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
         by_inputs:
           type: array
+          description: 画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsItem"
+        by_minutes:
+          type: array
+          description: 動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
         accounts:
           type: array
+          description: ユーザごとの作業時間情報
           items:
             $ref: "#/components/schemas/AccountWorktimeStatistics"
     WorktimeStatisticsItem:
       type: object
+      required:
+        - phase
+        - histogram
+        - average
+        - standard_deviation
       properties:
         phase:
           $ref: "#/components/schemas/TaskPhase"
@@ -1491,11 +1556,19 @@
           items:
             $ref: "#/components/schemas/HistogramItem"
         average:
-          $ref: "#/components/schemas/Duration"
+          description: 作業時間の平均（ISO 8601 duration）
+          type: string
+          example: "PT34H17M36.789S"
         standard_deviation:
-          $ref: "#/components/schemas/Duration"
+          description: 作業時間の標準偏差（ISO 8601 duration）
+          type: string
+          example: "PT34H17M36.789S"
     HistogramItem:
       type: object
+      required:
+        - begin
+        - end
+        - count
       properties:
         begin:
           type: number
@@ -1505,14 +1578,26 @@
           type: integer
     AccountWorktimeStatistics:
       type: object
+      required:
+        - account_id
+        - by_tasks
+        - by_inputs
+        - by_minutes
       properties:
         account_id:
           $ref: "#/components/schemas/AccountId"
         by_tasks:
+          description: ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
           type: array
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
         by_inputs:
+          description: ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+          type: array
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsItem"
+        by_minutes:
+          description: ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
           type: array
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
@@ -1769,6 +1854,26 @@
           default: false
         name:
           $ref: "#/components/schemas/InternationalizationMessage"
+        default:
+          oneOf:
+            - type: boolean
+            - type: integer
+            - type: string
+          description: |
+            属性の初期値です。
+  
+            初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。
+  
+            * type が flag の場合: 真偽値(`true` or `false`)
+            * type が integer の場合: 整数値
+            * type が text の場合: 文字列
+            * type が comment の場合: 文字列
+            * type が choice の場合: 選択肢(`choices`)の `choice_id`
+            * type が select の場合: 選択肢(`choices`)の `choice_id`
+  
+            属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。
+  
+            なお、トラッキングとリンクには初期値を設定できません。
         keybind:
           type: array
           items:
@@ -2613,6 +2718,12 @@
           description: リンク先アノテーションID
     SingleAnnotation:
       type: object
+      required:
+        - project_id
+        - task_id
+        - input_data_id
+        - detail
+        - updated_datetime
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -2627,6 +2738,17 @@
           format: date-time
     SimpleAnnotation:
       type: object
+      required:
+        - annotation_format_version
+        - project_id
+        - task_id
+        - task_phase
+        - task_phase_stage
+        - task_status
+        - input_data_id
+        - input_data_name
+        - details
+        - updated_datetime
       properties:
         annotation_format_version:
           $ref: "#/components/schemas/AnnotationFormatVersion"
@@ -2713,6 +2835,14 @@
           example: "Delete"
     SingleAnnotationDetail:
       type: object
+      required:
+        - annotation_id
+        - account_id
+        - label_id
+        - data_holding_type
+        - additional_data_list
+        - created_datetime
+        - updated_datetime
       properties:
         annotation_id:
           $ref: "#/components/schemas/AnnotationId"
@@ -2743,6 +2873,11 @@
           format: date-time
     SimpleAnnotationDetail:
       type: object
+      required:
+        - label
+        - annotation_id
+        - data
+        - attributes
       properties:
         label:
           type: string
