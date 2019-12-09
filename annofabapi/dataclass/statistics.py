@@ -23,17 +23,19 @@ class ProjectTaskStatistics:
     """
     
     """
-    phase: Optional[TaskPhase]
+    phase: TaskPhase
     """"""
 
-    status: Optional[TaskStatus]
+    status: TaskStatus
     """"""
 
-    count: Optional[int]
-    """"""
+    count: int
+    """タスク数"""
 
-    work_timespan: Optional[int]
+    work_timespan: int
     """累計実作業時間(ミリ秒)"""
+
+
 @dataclass_json
 @dataclass
 class ProjectTaskStatisticsHistory:
@@ -45,174 +47,206 @@ class ProjectTaskStatisticsHistory:
 
     tasks: Optional[List[ProjectTaskStatistics]]
     """"""
+
+
 @dataclass_json
 @dataclass
 class ProjectAccountStatisticsHistory:
     """
     
     """
-    date: Optional[str]
+    date: str
     """"""
 
-    tasks_completed: Optional[int]
-    """"""
+    tasks_completed: int
+    """教師付を担当したタスクが完了状態になった回数"""
 
-    tasks_rejected: Optional[int]
-    """"""
+    tasks_rejected: int
+    """教師付を担当したタスクが差し戻された回数"""
 
-    worktime: Optional[str]
-    """"""
+    worktime: str
+    """作業時間（ISO 8601 duration）"""
+
+
 @dataclass_json
 @dataclass
 class ProjectAccountStatistics:
     """
     
     """
-    account_id: Optional[str]
+    account_id: str
     """"""
 
-    histories: Optional[List[ProjectAccountStatisticsHistory]]
+    histories: List[ProjectAccountStatisticsHistory]
     """"""
+
+
 @dataclass_json
 @dataclass
 class InspectionStatisticsPhrases:
     """
-    
+    ラベル外指摘の集計結果
     """
-    phrases: Optional[Dict[str, int]]
-    """定型指摘ごとの合計数"""
+    phrases: Dict[str, int]
+    """定型指摘ごとの合計数。キーは定型指摘ID、値は指摘数"""
 
-    no_phrase: Optional[int]
+    no_phrase: int
     """非定型指摘の合計数"""
+
+
 @dataclass_json
 @dataclass
 class InspectionStatisticsBreakdown:
     """
-    
+    検査コメント数の集計結果
     """
-    labels: Optional[Dict[str, InspectionStatisticsPhrases]]
-    """ラベルごとの指摘集計結果"""
+    labels: Dict[str, InspectionStatisticsPhrases]
+    """ラベルごとの指摘集計結果。キーは`label_id`"""
 
-    no_label: Optional[InspectionStatisticsPhrases]
+    no_label: InspectionStatisticsPhrases
     """"""
+
+
 @dataclass_json
 @dataclass
 class InspectionStatistics:
     """
     
     """
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    date: Optional[str]
+    date: str
     """集計日"""
 
-    breakdown: Optional[InspectionStatisticsBreakdown]
+    breakdown: InspectionStatisticsBreakdown
     """"""
+
+
 @dataclass_json
 @dataclass
 class PhaseStatistics:
     """
     
     """
-    phase: Optional[str]
+    phase: TaskPhase
     """"""
 
-    worktime: Optional[str]
-    """"""
+    worktime: str
+    """累積作業時間（ISO 8601 duration）"""
+
+
 @dataclass_json
 @dataclass
 class TaskPhaseStatistics:
     """
     
     """
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    date: Optional[str]
+    date: str
     """"""
 
-    phases: Optional[List[PhaseStatistics]]
-    """"""
+    phases: List[PhaseStatistics]
+    """タスクのフェーズごとの集計結果"""
+
+
 @dataclass_json
 @dataclass
 class LabelStatistics:
     """
     
     """
-    label_id: Optional[str]
+    label_id: str
     """"""
 
-    completed: Optional[int]
+    completed: int
     """ラベルごとの受入が完了したアノテーション数"""
 
-    wip: Optional[int]
+    wip: int
     """ラベルごとの受入が完了していないアノテーション数"""
+
+
 @dataclass_json
 @dataclass
 class HistogramItem:
     """
     
     """
-    begin: Optional[float]
+    begin: float
     """"""
 
-    end: Optional[float]
+    end: float
     """"""
 
-    count: Optional[int]
+    count: int
     """"""
+
+
 @dataclass_json
 @dataclass
 class WorktimeStatisticsItem:
     """
     
     """
-    phase: Optional[TaskPhase]
+    phase: TaskPhase
     """"""
 
-    histogram: Optional[List[HistogramItem]]
+    histogram: List[HistogramItem]
     """"""
 
-    average: Optional[str]
-    """"""
+    average: str
+    """作業時間の平均（ISO 8601 duration）"""
 
-    standard_deviation: Optional[str]
-    """"""
+    standard_deviation: str
+    """作業時間の標準偏差（ISO 8601 duration）"""
+
+
 @dataclass_json
 @dataclass
 class AccountWorktimeStatistics:
     """
     
     """
-    account_id: Optional[str]
+    account_id: str
     """"""
 
-    by_tasks: Optional[List[WorktimeStatisticsItem]]
-    """"""
+    by_tasks: List[WorktimeStatisticsItem]
+    """ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）"""
 
-    by_inputs: Optional[List[WorktimeStatisticsItem]]
-    """"""
+    by_inputs: List[WorktimeStatisticsItem]
+    """ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）"""
+
+    by_minutes: List[WorktimeStatisticsItem]
+    """ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）"""
+
+
 @dataclass_json
 @dataclass
 class WorktimeStatistics:
     """
     
     """
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    date: Optional[str]
+    date: str
     """"""
 
-    by_tasks: Optional[List[WorktimeStatisticsItem]]
-    """"""
+    by_tasks: List[WorktimeStatisticsItem]
+    """タスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）"""
 
-    by_inputs: Optional[List[WorktimeStatisticsItem]]
-    """"""
+    by_inputs: List[WorktimeStatisticsItem]
+    """画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）"""
 
-    accounts: Optional[List[AccountWorktimeStatistics]]
-    """"""
+    by_minutes: List[WorktimeStatisticsItem]
+    """動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）"""
+
+    accounts: List[AccountWorktimeStatistics]
+    """ユーザごとの作業時間情報"""
+
+
 @dataclass_json
 @dataclass
 class Marker:
@@ -230,6 +264,8 @@ class Marker:
 
     marked_at: Optional[str]
     """グラフ上のマーカー位置(x軸)"""
+
+
 @dataclass_json
 @dataclass
 class Markers:

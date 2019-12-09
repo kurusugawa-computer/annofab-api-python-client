@@ -34,6 +34,8 @@ class Keybind:
 
     alt: Optional[bool]
     """"""
+
+
 @dataclass_json
 @dataclass
 class LabelBoundingBoxMetadata:
@@ -60,6 +62,8 @@ class LabelBoundingBoxMetadata:
 
     tolerance: Optional[int]
     """"""
+
+
 @dataclass_json
 @dataclass
 class LabelSegmentationMetadata:
@@ -77,6 +81,8 @@ class LabelSegmentationMetadata:
 
     tolerance: Optional[int]
     """"""
+
+
 @dataclass_json
 @dataclass
 class InternationalizationMessageMessages:
@@ -88,6 +94,8 @@ class InternationalizationMessageMessages:
 
     message: Optional[str]
     """"""
+
+
 @dataclass_json
 @dataclass
 class InternationalizationMessage:
@@ -99,6 +107,8 @@ class InternationalizationMessage:
 
     default_lang: Optional[str]
     """"""
+
+
 @dataclass_json
 @dataclass
 class InspectionPhrase:
@@ -110,6 +120,8 @@ class InspectionPhrase:
 
     text: Optional[InternationalizationMessage]
     """"""
+
+
 @dataclass_json
 @dataclass
 class AnnotationSpecsHistory:
@@ -133,6 +145,8 @@ class AnnotationSpecsHistory:
 
     comment: Optional[str]
     """"""
+
+
 @dataclass_json
 @dataclass
 class Color:
@@ -147,6 +161,8 @@ class Color:
 
     blue: Optional[int]
     """"""
+
+
 @dataclass_json
 @dataclass
 class AdditionalDataDefinitionChoices:
@@ -161,6 +177,8 @@ class AdditionalDataDefinitionChoices:
 
     keybind: Optional[List[Keybind]]
     """"""
+
+
 @dataclass_json
 @dataclass
 class AdditionalDataDefinition:
@@ -175,6 +193,9 @@ class AdditionalDataDefinition:
 
     name: Optional[InternationalizationMessage]
     """"""
+
+    default: Optional[OneOfbooleanintegerstring]
+    """属性の初期値です。  初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。  * type が flag の場合: 真偽値(`true` or `false`) * type が integer の場合: 整数値 * type が text の場合: 文字列 * type が comment の場合: 文字列 * type が choice の場合: 選択肢(`choices`)の `choice_id` * type が select の場合: 選択肢(`choices`)の `choice_id`  属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。  なお、トラッキングとリンクには初期値を設定できません。 """
 
     keybind: Optional[List[Keybind]]
     """"""
@@ -193,6 +214,8 @@ class AdditionalDataDefinition:
 
     required: Optional[bool]
     """リンク属性において、入力を必須とするかどうか"""
+
+
 @dataclass_json
 @dataclass
 class AnnotationEditorFeature:
@@ -216,6 +239,8 @@ class AnnotationEditorFeature:
 
     fill_near: Optional[bool]
     """"""
+
+
 @dataclass_json
 @dataclass
 class Label:
@@ -251,6 +276,8 @@ class Label:
 
     allow_out_of_image_bounds: Optional[bool]
     """"""
+
+
 @dataclass_json
 @dataclass
 class AnnotationSpecs:
