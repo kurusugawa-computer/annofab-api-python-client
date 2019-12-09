@@ -1,5 +1,5 @@
 {
-  "project_id": "a2345678-abcd-1234-abcd-1234abcd5678",
+  "project_id": "12345678-abcd-1234-abcd-1234abcd5678",
   "labels": [
     {
       "label_id": "15ba7932-24b9-4cf3-95bd-9bf6deede4fa",
@@ -61,6 +61,7 @@
             }
           ],
           "type": "flag",
+          "default": true,
           "choices": [],
           "regex": null,
           "required": null,
@@ -84,6 +85,7 @@
           },
           "keybind": [],
           "type": "link",
+          "default": "",
           "choices": [],
           "regex": null,
           "required": null,
@@ -109,6 +111,7 @@
           },
           "keybind": [],
           "type": "integer",
+          "default": "",
           "choices": [],
           "regex": null,
           "required": null,
@@ -132,6 +135,7 @@
           },
           "keybind": [],
           "type": "comment",
+          "default": "",
           "choices": [],
           "regex": null,
           "required": null,
@@ -155,6 +159,7 @@
           },
           "keybind": [],
           "type": "text",
+          "default": "",
           "choices": [],
           "regex": null,
           "required": null,
@@ -178,6 +183,7 @@
           },
           "keybind": [],
           "type": "tracking",
+          "default": "",
           "choices": [],
           "regex": null,
           "required": null,
@@ -440,6 +446,7 @@
           },
           "keybind": [],
           "type": "choice",
+          "default": "",
           "choices": [
             {
               "choice_id": "c9615782-b872-4641-9be4-0fb4f905d966",
@@ -498,6 +505,7 @@
           },
           "keybind": [],
           "type": "select",
+          "default": "",
           "choices": [
             {
               "choice_id": "89b3577d-a245-4b85-82ef-6569ecbf8ad7",
