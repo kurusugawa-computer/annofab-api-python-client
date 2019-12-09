@@ -215,8 +215,8 @@ class Wrapper:
         input_data, _ = self.api.get_input_data(project_id, input_data_id)
         return input_data
 
-    def get_all_input_data_list(self, project_id: str,
-                                query_params: Optional[Dict[str, Any]] = None) -> List[InputData]:
+    def get_all_input_data_list(self, project_id: str, query_params: Optional[Dict[str,
+                                                                                   Any]] = None) -> List[InputData]:
         """
         すべての入力データを取得する。
 
@@ -571,8 +571,8 @@ class Wrapper:
         content, _ = self.api.get_project_member(project_id, user_id)
         return content
 
-    def get_all_project_members(self, project_id: str,
-                                query_params: Optional[Dict[str, Any]] = None) -> List[ProjectMember]:
+    def get_all_project_members(self, project_id: str, query_params: Optional[Dict[str,
+                                                                                   Any]] = None) -> List[ProjectMember]:
         """
         すべてのプロジェクトメンバを取得する.
 

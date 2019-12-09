@@ -33,6 +33,8 @@ class Point:
 
     y: int
     """"""
+
+
 @dataclass_json
 @dataclass
 class AdditionalData:
@@ -53,6 +55,8 @@ class AdditionalData:
 
     choice: Optional[str]
     """"""
+
+
 @dataclass_json
 @dataclass
 class FullAnnotationAdditionalData:
@@ -70,6 +74,8 @@ class FullAnnotationAdditionalData:
 
     value: Optional[AdditionalDataValue]
     """"""
+
+
 @dataclass_json
 @dataclass
 class FullAnnotationDetail:
@@ -99,6 +105,8 @@ class FullAnnotationDetail:
 
     additional_data_list: Optional[List[FullAnnotationAdditionalData]]
     """"""
+
+
 @dataclass_json
 @dataclass
 class FullAnnotationDetailOld:
@@ -128,6 +136,8 @@ class FullAnnotationDetailOld:
 
     additional_data_list: Optional[List[AdditionalData]]
     """"""
+
+
 @dataclass_json
 @dataclass
 class FullAnnotation:
@@ -166,74 +176,80 @@ class FullAnnotation:
 
     annotation_format_version: Optional[str]
     """アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 """
+
+
 @dataclass_json
 @dataclass
 class SimpleAnnotationDetail:
     """
     
     """
-    label: Optional[str]
+    label: str
     """アノテーション仕様のラベル名です。 """
 
-    annotation_id: Optional[str]
+    annotation_id: str
     """個々のアノテーションにつけられたIDです。 """
 
-    data: Optional[FullAnnotationData]
+    data: FullAnnotationData
     """"""
 
-    attributes: Optional[Dict[str, Any]]
+    attributes: Dict[str, Any]
     """キーに属性の名前、値に各属性の値が入った辞書構造です。 """
+
+
 @dataclass_json
 @dataclass
 class SimpleAnnotation:
     """
     
     """
-    annotation_format_version: Optional[str]
+    annotation_format_version: str
     """アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 """
 
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    task_id: Optional[str]
+    task_id: str
     """タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    task_phase: Optional[TaskPhase]
+    task_phase: TaskPhase
     """"""
 
-    task_phase_stage: Optional[int]
+    task_phase_stage: int
     """"""
 
-    task_status: Optional[TaskStatus]
+    task_status: TaskStatus
     """"""
 
-    input_data_id: Optional[str]
+    input_data_id: str
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    input_data_name: Optional[str]
+    input_data_name: str
     """"""
 
-    details: Optional[List[SimpleAnnotationDetail]]
+    details: List[SimpleAnnotationDetail]
     """"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str
     """"""
+
+
 @dataclass_json
 @dataclass
 class SingleAnnotationDetail:
     """
     
     """
-    annotation_id: Optional[str]
+    annotation_id: str
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
-    account_id: Optional[str]
+    account_id: str
     """"""
 
-    label_id: Optional[str]
+    label_id: str
     """"""
 
-    data_holding_type: Optional[AnnotationDataHoldingType]
+    data_holding_type: AnnotationDataHoldingType
     """"""
 
     data: Optional[FullAnnotationData]
@@ -245,31 +261,33 @@ class SingleAnnotationDetail:
     url: Optional[str]
     """data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される"""
 
-    additional_data_list: Optional[List[AdditionalData]]
+    additional_data_list: List[AdditionalData]
     """"""
 
-    created_datetime: Optional[str]
+    created_datetime: str
     """"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str
     """"""
+
+
 @dataclass_json
 @dataclass
 class SingleAnnotation:
     """
     
     """
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    task_id: Optional[str]
+    task_id: str
     """タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    input_data_id: Optional[str]
+    input_data_id: str
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    detail: Optional[SingleAnnotationDetail]
+    detail: SingleAnnotationDetail
     """"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str
     """"""

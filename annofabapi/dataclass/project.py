@@ -25,6 +25,8 @@ class ProjectSummary:
     """
     last_tasks_updated_datetime: Optional[str]
     """"""
+
+
 @dataclass_json
 @dataclass
 class ProjectConfiguration:
@@ -57,6 +59,8 @@ class ProjectConfiguration:
 
     private_storage_aws_iam_role_arn: Optional[str]
     """AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 """
+
+
 @dataclass_json
 @dataclass
 class Project:
