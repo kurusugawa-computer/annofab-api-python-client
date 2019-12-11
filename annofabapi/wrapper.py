@@ -296,7 +296,7 @@ class Wrapper:
     #########################################
     # Public Method : Statistics
     #########################################
-    def get_worktime_statistics(self, project_id: str) -> Dict[str, Any]:
+    def get_worktime_statistics(self, project_id: str) -> List[Any]:
         """
         タスク作業時間集計取得.
         Location Headerに記載されたURLのレスポンスをJSON形式で返す。
