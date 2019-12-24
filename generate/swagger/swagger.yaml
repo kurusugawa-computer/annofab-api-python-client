@@ -76,7 +76,7 @@ info:
     WebhookID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.68.0
+  version: 0.68.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -8108,3 +8108,18 @@ components:
           type: string
           description: UnknownLabel
           example: "UnknownLabel"
+    ProjectTaskCounts:
+      type: object
+      properties:
+        task_counts:
+          type: array
+          items:
+            type: object
+            properties:
+              phase:
+                $ref: "#/components/schemas/TaskPhase"
+              status:
+                $ref: "#/components/schemas/TaskStatus"
+              count:
+                description: 該当するタスクの数
+                type: number

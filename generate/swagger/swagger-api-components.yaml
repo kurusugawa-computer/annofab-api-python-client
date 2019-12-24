@@ -3553,3 +3553,18 @@
           type: string
           description: UnknownLabel
           example: "UnknownLabel"
+    ProjectTaskCounts:
+      type: object
+      properties:
+        task_counts:
+          type: array
+          items:
+            type: object
+            properties:
+              phase:
+                $ref: "#/components/schemas/TaskPhase"
+              status:
+                $ref: "#/components/schemas/TaskStatus"
+              count:
+                description: 該当するタスクの数
+                type: number
