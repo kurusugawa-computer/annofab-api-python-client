@@ -76,7 +76,7 @@ info:
     WebhookID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.68.0
+  version: 0.68.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -92,6 +92,9 @@ tags:
 - name: af-cache-v2
   x-displayName: Cache
   description: キャッシュに関係
+- name: af-organization-v2
+  x-displayName: Organization
+  description: 組織に対する操作
 - name: af-project-member-v2
   x-displayName: Project Member
   description: プロジェクトメンバーに対する操作
@@ -106,6 +109,7 @@ x-tagGroups:
     tags:
       - af-annotation-specs-v2
       - af-cache-v2
+      - af-organization-v2
       - af-project-member-v2
       - af-project-v2
       - af-statistics-v2
@@ -573,6 +577,43 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnnotationSpecs"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        404:
+          $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+  /organizations/{organization_id}/projects/{project_id}/task-counts:
+    get:
+      tags:
+      - af-organization-v2
+      summary: プロジェクトのタスク件数取得
+      description: |
+      security:
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
+      operationId: getProjectTaskCountV2
+      parameters:
+      - name: organization_id
+        in: path
+        description: 組織ID
+        required: true
+        schema:
+          $ref: "#/components/schemas/OrganizationId"
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "#/components/schemas/ProjectId"
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectTaskCounts"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -4135,3 +4176,18 @@ components:
           type: string
           description: UnknownLabel
           example: "UnknownLabel"
+    ProjectTaskCounts:
+      type: object
+      properties:
+        task_counts:
+          type: array
+          items:
+            type: object
+            properties:
+              phase:
+                $ref: "#/components/schemas/TaskPhase"
+              status:
+                $ref: "#/components/schemas/TaskStatus"
+              count:
+                description: 該当するタスクの数
+                type: number

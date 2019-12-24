@@ -2701,6 +2701,32 @@ Kyes of Dict
 
 """
 
+ProjectTaskCounts = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* task_counts: List[ProjectTaskCountsTaskCounts]
+    
+
+"""
+
+ProjectTaskCountsTaskCounts = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* phase: TaskPhase
+    
+* status: TaskStatus
+    
+* count: float
+    該当するタスクの数
+
+"""
+
 ProjectTaskStatistics = Dict[str, Any]
 """
 
