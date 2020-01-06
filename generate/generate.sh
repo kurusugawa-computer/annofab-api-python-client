@@ -130,18 +130,22 @@ cat partial-header/dataclass/common.py partial-header/dataclass/annotation.py  \
 
 # Annotation Specs
 declare -a model_files=(${MODELS_DIR}/keybind.py \
- ${MODELS_DIR}/label_bounding_box_metadata.py \
- ${MODELS_DIR}/label_segmentation_metadata.py \
+ ${MODELS_DIR}/label_v1_bounding_box_metadata.py \
+ ${MODELS_DIR}/label_v1_segmentation_metadata.py \
  ${MODELS_DIR}/internationalization_message_messages.py \
  ${MODELS_DIR}/internationalization_message.py \
  ${MODELS_DIR}/inspection_phrase.py \
  ${MODELS_DIR}/annotation_specs_history.py \
  ${MODELS_DIR}/color.py \
- ${MODELS_DIR}/additional_data_definition_choices.py \
- ${MODELS_DIR}/additional_data_definition.py \
+ ${MODELS_DIR}/additional_data_definition_v1_choices.py \
+ ${MODELS_DIR}/additional_data_definition_v1.py \
+ ${MODELS_DIR}/additional_data_definition_v2.py \
  ${MODELS_DIR}/annotation_editor_feature.py \
- ${MODELS_DIR}/label.py \
- ${MODELS_DIR}/annotation_specs.py)
+ ${MODELS_DIR}/label_v1.py \
+ ${MODELS_DIR}/label_v2.py \
+ ${MODELS_DIR}/annotation_specs_v1.py \
+ ${MODELS_DIR}/annotation_specs_v2.py \
+)
 cat partial-header/dataclass/common.py partial-header/dataclass/annotation_specs.py  \
  ${model_files[@]} > ../annofabapi/dataclass/annotation_specs.py
 
