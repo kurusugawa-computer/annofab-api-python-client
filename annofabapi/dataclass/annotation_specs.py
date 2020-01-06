@@ -18,6 +18,8 @@ from annofabapi.models import AdditionalDataDefinitionType, AnnotationType
 
 OneOfbooleanintegerstring = Union[bool, int, str]
 
+AdditionalDataRestrictionCondition = Dict[str, Any]
+
 
 @dataclass_json
 @dataclass
@@ -342,6 +344,19 @@ class LabelV2:
     """"""
 
     allow_out_of_image_bounds: Optional[bool]
+    """"""
+
+
+@dataclass_json
+@dataclass
+class AdditionalDataRestriction:
+    """
+    
+    """
+    additional_data_definition_id: Optional[str]
+    """"""
+
+    condition: Optional[AdditionalDataRestrictionCondition]
     """"""
 
 
