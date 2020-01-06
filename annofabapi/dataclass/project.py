@@ -14,7 +14,7 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
-from annofabapi.models import AssigneeRuleOfResubmittedTask, InputDataType, ProjectStatus
+from annofabapi.models import AssigneeRuleOfResubmittedTask, InputDataType, ProjectStatus, TaskAssignmentType
 
 
 @dataclass_json
@@ -37,6 +37,9 @@ class ProjectConfiguration:
     """検査回数。 * 0回：教師付け -> 受入 * 1回：教師付け -> 検査 -> 受入 * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入 """
 
     assignee_rule_of_resubmitted_task: Optional[AssigneeRuleOfResubmittedTask]
+    """"""
+
+    task_assignment_type: Optional[TaskAssignmentType]
     """"""
 
     max_tasks_per_member: Optional[int]
