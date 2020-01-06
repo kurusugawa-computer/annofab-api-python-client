@@ -104,9 +104,6 @@ def test_annotation():
     print("wrapper.download_annotation_archive")
     wrapper.download_annotation_archive(project_id, f'{out_dir}/simple-annotation.zip')
 
-    print("wrapper.download_full_annotation_archive")
-    wrapper.download_full_annotation_archive(project_id, f'{out_dir}/full-annotation.zip')
-
     if should_execute_job_api:
         print("post_annotation_archive_update")
         assert type(api.post_annotation_archive_update(project_id)[0]) == dict
@@ -125,10 +122,6 @@ def test_annotation_specs():
     }
     puted_annotation_spec, _ = api.put_annotation_specs(project_id, request_body=request_body)
     assert type(puted_annotation_spec) == dict
-
-    print("wrapper.copy_annotation_specs")
-    content = wrapper.copy_annotation_specs(src_project_id=project_id, dest_project_id=project_id)
-    assert type(content) == dict
 
     print("get_annotation_specs_histories")
     annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
