@@ -6,7 +6,7 @@ from pathlib import Path
 import annofabapi
 import annofabapi.utils
 from annofabapi.dataclass.annotation import SimpleAnnotation, SingleAnnotation
-from annofabapi.dataclass.annotation_specs import AnnotationSpecs
+from annofabapi.dataclass.annotation_specs import AnnotationSpecsV1
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
 from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
@@ -60,11 +60,11 @@ class TestAnnotation:
         assert type(simple_annotation) == SimpleAnnotation
 
 
-class TestAnnotationSpecs:
+class TestAnnotationSpecsV1:
     def test_annotation_specs(self):
         dict_annotation_specs, _ = service.api.get_annotation_specs(project_id)
-        annotation_specs = AnnotationSpecs.from_dict(dict_annotation_specs)
-        assert type(annotation_specs) == AnnotationSpecs
+        annotation_specs = AnnotationSpecsV1.from_dict(dict_annotation_specs)
+        assert type(annotation_specs) == AnnotationSpecsV1
 
 
 class TestInput:

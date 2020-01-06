@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
-from annofabapi.dataclass.annotation_specs import AnnotationSpecs
+from annofabapi.dataclass.annotation_specs import AnnotationSpecsV1
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
 from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
@@ -51,13 +51,13 @@ class TestAnnotation:
         assert type(full_annotion) == FullAnnotation
 
 
-class TestAnnotationSpecs:
+class TestAnnotationSpecsV1:
     def test_annotation_specs(self):
-        annotaion_specs_json = test_dir / "annotation-specs.json"
+        annotaion_specs_json = test_dir / "annotation-specs-v1.json"
         with annotaion_specs_json.open(encoding="utf-8") as f:
             dict_annotation_specs = json.load(f)
-        annotation_specs = AnnotationSpecs.from_dict(dict_annotation_specs)
-        assert type(annotation_specs) == AnnotationSpecs
+        annotation_specs = AnnotationSpecsV1.from_dict(dict_annotation_specs)
+        assert type(annotation_specs) == AnnotationSpecsV1
 
 
 class TestInput:
