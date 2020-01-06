@@ -347,7 +347,7 @@ class TestTask:
         assert len(wrapper.get_all_tasks(project_id, query_params={'task_id': test_task_id})) == 1
 
         print(f"assign_tasks")
-        request_body = {"request_type":{"task_ids":[test_task_id], "user_id": annofab_user_id, "_type": "Selection"}}
+        request_body = {"request_type": {"task_ids": [test_task_id], "user_id": annofab_user_id, "_type": "Selection"}}
         assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == list
 
         print(f"operate_task")
