@@ -16,9 +16,6 @@
 * put, post, delete系のメソッドを間違えて実行してしまわないよう、注意してください。特に「プロジェクト削除」や「アノテーション仕様更新」のAPIには十分注意してください。
  
 ## 廃止予定
-* `wraapper.py get_annotation_specs_from_url`
-    * 廃止理由：過去のアノテーション仕様を`get_annotation_specs`メソッドから取得できるようになったため
-    * 廃止予定日：2019/11/01以降
 
 # Features
 cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます。
