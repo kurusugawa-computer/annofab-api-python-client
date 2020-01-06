@@ -10,6 +10,7 @@
   "configuration": {
     "number_of_inspections": 0,
     "assignee_rule_of_resubmitted_task": "no_assignee",
+    "task_assignment_type": "random_and_selection",
     "max_tasks_per_member": 10,
     "max_tasks_per_member_including_hold": 20,
     "private_storage_aws_iam_role_arn": null,

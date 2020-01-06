@@ -256,7 +256,23 @@ Kyes of Dict
 
 """
 
-AdditionalDataDefinition = Dict[str, Any]
+
+class AdditionalDataDefinitionType(Enum):
+    """
+    * `flag` - 真偽値 * `integer` - 整数値 * `text` - 自由記述（1行） * `comment` - 自由記述（複数行） * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - 自由記述 (トラッキングID自動挿入) * `link` - アノテーションリンク 
+    """
+
+    FLAG = "flag"
+    INTEGER = "integer"
+    TEXT = "text"
+    COMMENT = "comment"
+    CHOICE = "choice"
+    SELECT = "select"
+    TRACKING = "tracking"
+    LINK = "link"
+
+
+AdditionalDataDefinitionV1 = Dict[str, Any]
 """
 
 
@@ -274,7 +290,7 @@ Kyes of Dict
     
 * type: AdditionalDataDefinitionType
     
-* choices: List[AdditionalDataDefinitionChoices]
+* choices: List[AdditionalDataDefinitionV1Choices]
     
 * regex: str
     
@@ -285,7 +301,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataDefinitionChoices = Dict[str, Any]
+AdditionalDataDefinitionV1Choices = Dict[str, Any]
 """
 
 
@@ -300,21 +316,153 @@ Kyes of Dict
 
 """
 
+AdditionalDataDefinitionV2 = Dict[str, Any]
+"""
 
-class AdditionalDataDefinitionType(Enum):
-    """
-    * `flag` - 真偽値 * `integer` - 整数値 * `text` - 自由記述（1行） * `comment` - 自由記述（複数行） * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - 自由記述 (トラッキングID自動挿入) * `link` - アノテーションリンク 
-    """
 
-    FLAG = "flag"
-    INTEGER = "integer"
-    TEXT = "text"
-    COMMENT = "comment"
-    CHOICE = "choice"
-    SELECT = "select"
-    TRACKING = "tracking"
-    LINK = "link"
+Kyes of Dict
 
+* additional_data_definition_id: str
+    
+* read_only: bool
+    
+* name: InternationalizationMessage
+    
+* default: OneOfbooleanintegerstring
+    属性の初期値です。  初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。  * type が flag の場合: 真偽値(`true` or `false`) * type が integer の場合: 整数値 * type が text の場合: 文字列 * type が comment の場合: 文字列 * type が choice の場合: 選択肢(`choices`)の `choice_id` * type が select の場合: 選択肢(`choices`)の `choice_id`  属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。  なお、トラッキングとリンクには初期値を設定できません。 
+* keybind: List[Keybind]
+    
+* type: AdditionalDataDefinitionType
+    
+* choices: List[AdditionalDataDefinitionV1Choices]
+    
+
+"""
+
+AdditionalDataRestriction = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* additional_data_definition_id: str
+    
+* condition: AdditionalDataRestrictionCondition
+    
+
+"""
+
+AdditionalDataRestrictionCondition = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    
+* enable: bool
+    
+* value: str
+    
+* values: str
+    
+* premise: AdditionalDataRestriction
+    
+* condition: AdditionalDataRestrictionCondition
+    
+
+"""
+
+AdditionalDataRestrictionConditionCanInput = Dict[str, Any]
+"""
+enable=false とすることで、入力を許可しないようにできます。 Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
+
+Kyes of Dict
+
+* type: str
+    
+* enable: bool
+    
+
+"""
+
+AdditionalDataRestrictionConditionEquals = Dict[str, Any]
+"""
+指定された値と等しいことを要求します。
+
+Kyes of Dict
+
+* type: str
+    
+* value: str
+    
+
+"""
+
+AdditionalDataRestrictionConditionHasLabel = Dict[str, Any]
+"""
+リンク属性において、リンク先として指定可能なラベルIDを制限します。
+
+Kyes of Dict
+
+* type: str
+    
+* values: str
+    
+
+"""
+
+AdditionalDataRestrictionConditionImply = Dict[str, Any]
+"""
+premise で指定された条件を満たすとき、condition で指定された条件を満たすことを要求します。 
+
+Kyes of Dict
+
+* premise: AdditionalDataRestriction
+    
+* condition: AdditionalDataRestrictionCondition
+    
+
+"""
+
+AdditionalDataRestrictionConditionMatches = Dict[str, Any]
+"""
+指定された正規表現に合致することを要求します。
+
+Kyes of Dict
+
+* type: str
+    
+* value: str
+    
+
+"""
+
+AdditionalDataRestrictionConditionNotEquals = Dict[str, Any]
+"""
+指定された値と異なることを要求します。 value に \"\" を指定することで、入力を必須とすることができます。 
+
+Kyes of Dict
+
+* type: str
+    
+* value: str
+    
+
+"""
+
+AdditionalDataRestrictionConditionNotMatches = Dict[str, Any]
+"""
+指定された正規表現に合致しないことを要求します。
+
+Kyes of Dict
+
+* type: str
+    
+* value: str
+    
+
+"""
 
 AdditionalDataValue = Dict[str, Any]
 """
@@ -520,21 +668,6 @@ Kyes of Dict
 
 """
 
-AnnotationSpecs = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* labels: List[Label]
-    
-* inspection_phrases: List[InspectionPhrase]
-    
-
-"""
-
 AnnotationSpecsHistory = Dict[str, Any]
 """
 
@@ -556,20 +689,75 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsRequest = Dict[str, Any]
+AnnotationSpecsRequestV1 = Dict[str, Any]
 """
 
 
 Kyes of Dict
 
-* labels: List[Label]
-    ラベル 
+* labels: List[LabelV1]
+    
 * inspection_phrases: List[InspectionPhrase]
-    定型指摘 
+    
 * comment: str
     
 * auto_marking: bool
     trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
+
+"""
+
+AnnotationSpecsRequestV2 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* labels: List[LabelV2]
+    
+* additionals: List[AdditionalDataDefinitionV2]
+    
+* restrictions: List[AdditionalDataRestriction]
+    
+* inspection_phrases: List[InspectionPhrase]
+    
+* comment: str
+    
+* auto_marking: bool
+    trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
+
+"""
+
+AnnotationSpecsV1 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* labels: List[LabelV1]
+    
+* inspection_phrases: List[InspectionPhrase]
+    
+
+"""
+
+AnnotationSpecsV2 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* labels: List[LabelV2]
+    
+* additionals: List[AdditionalDataDefinitionV2]
+    
+* restrictions: List[AdditionalDataRestriction]
+    
+* inspection_phrases: List[InspectionPhrase]
+    
 
 """
 
@@ -2103,7 +2291,22 @@ Kyes of Dict
 
 """
 
-Label = Dict[str, Any]
+LabelStatistics = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* label_id: str
+    
+* completed: int
+    ラベルごとの受入が完了したアノテーション数
+* wip: int
+    ラベルごとの受入が完了していないアノテーション数
+
+"""
+
+LabelV1 = Dict[str, Any]
 """
 
 
@@ -2117,11 +2320,11 @@ Kyes of Dict
     
 * annotation_type: AnnotationType
     
-* bounding_box_metadata: LabelBoundingBoxMetadata
+* bounding_box_metadata: LabelV1BoundingBoxMetadata
     
-* segmentation_metadata: LabelSegmentationMetadata
+* segmentation_metadata: LabelV1SegmentationMetadata
     
-* additional_data_definitions: List[AdditionalDataDefinition]
+* additional_data_definitions: List[AdditionalDataDefinitionV1]
     
 * color: Color
     
@@ -2132,7 +2335,7 @@ Kyes of Dict
 
 """
 
-LabelBoundingBoxMetadata = Dict[str, Any]
+LabelV1BoundingBoxMetadata = Dict[str, Any]
 """
 
 
@@ -2155,7 +2358,7 @@ Kyes of Dict
 
 """
 
-LabelSegmentationMetadata = Dict[str, Any]
+LabelV1SegmentationMetadata = Dict[str, Any]
 """
 
 
@@ -2172,7 +2375,7 @@ Kyes of Dict
 
 """
 
-LabelStatistics = Dict[str, Any]
+LabelV2 = Dict[str, Any]
 """
 
 
@@ -2180,10 +2383,24 @@ Kyes of Dict
 
 * label_id: str
     
-* completed: int
-    ラベルごとの受入が完了したアノテーション数
-* wip: int
-    ラベルごとの受入が完了していないアノテーション数
+* label_name: InternationalizationMessage
+    
+* keybind: List[Keybind]
+    
+* annotation_type: AnnotationType
+    
+* bounding_box_metadata: LabelV1BoundingBoxMetadata
+    
+* segmentation_metadata: LabelV1SegmentationMetadata
+    
+* additional_data_definitions: List[str]
+    
+* color: Color
+    
+* annotation_editor_feature: AnnotationEditorFeature
+    
+* allow_out_of_image_bounds: bool
+    
 
 """
 
@@ -2565,6 +2782,8 @@ Kyes of Dict
 * number_of_inspections: int
     検査回数。 * 0回：教師付け -> 受入 * 1回：教師付け -> 検査 -> 受入 * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入 
 * assignee_rule_of_resubmitted_task: AssigneeRuleOfResubmittedTask
+    
+* task_assignment_type: TaskAssignmentType
     
 * max_tasks_per_member: int
     保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
@@ -3078,6 +3297,66 @@ Kyes of Dict
 
 """
 
+
+class TaskAssginmentType(Enum):
+    """
+    * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。 * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。 * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。 
+    """
+
+    RANDOM = "random"
+    SELECTION = "selection"
+    RANDOM_AND_SELECTION = "random_and_selection"
+
+
+TaskAssignRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* request_type: OneOfTaskAssignRequestTypeRandomTaskAssignRequestTypeSelection
+    * `TaskAssignRequestTypeRandom`: タスクフェーズのみを指定してランダムにタスクを自身に割当します。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: 担当者とタスクを明示的に指定してタスクを割当します。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 
+
+"""
+
+TaskAssignRequestTypeRandom = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* phase: TaskPhase
+    割当するタスクフェーズ
+* type: str
+    Random
+
+"""
+
+TaskAssignRequestTypeSelection = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* user_id: str
+    タスクを誰に割当するか
+* task_ids: List[str]
+    割当するタスクのID
+* type: str
+    Selection
+
+"""
+
+
+class TaskAssignmentType(Enum):
+    """
+    """
+
+    RANDOM = "random"
+    SELECTION = "selection"
+    RANDOM_AND_SELECTION = "random_and_selection"
+
+
 TaskGenerateRequest = Dict[str, Any]
 """
 
@@ -3216,7 +3495,7 @@ Kyes of Dict
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * account_id: str
-    
+    変更後の担当者のアカウントID
 
 """
 
