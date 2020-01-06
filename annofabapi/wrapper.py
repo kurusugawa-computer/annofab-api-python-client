@@ -12,7 +12,7 @@ import requests
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationSpecs, InputData, Inspection, InspectionStatus, Instruction, JobInfo, JobType,
+from annofabapi.models import (AnnotationSpecsV1, InputData, Inspection, InspectionStatus, Instruction, JobInfo, JobType,
                                MyOrganization, Organization, OrganizationMember, Project, ProjectMember,
                                SupplementaryData, Task)
 from annofabapi.utils import allow_404_error
@@ -170,9 +170,11 @@ class Wrapper:
     # Public Method : AnnotationSpecs
     #########################################
     def copy_annotation_specs(self, src_project_id: str, dest_project_id: str,
-                              comment: Optional[str] = None) -> AnnotationSpecs:
+                              comment: Optional[str] = None) -> AnnotationSpecsV1:
         """
         アノテーション仕様を、別のプロジェクトにコピーする。
+
+        .. deprecated:: XXXXX
 
         Note:
             誤って実行しないようにすること
@@ -185,6 +187,7 @@ class Wrapper:
         Returns:
             put_annotation_specsのContent
         """
+        warnings.warn("deprecated", DeprecationWarning)
         src_annotation_specs = self.api.get_annotation_specs(src_project_id)[0]
 
         if comment is None:
@@ -717,15 +720,13 @@ class Wrapper:
     #########################################
     # Public Method : Task
     #########################################
-    def initiate_tasks_generation_by_csv(self, project_id: str, csvfile_path: str,
-                                         task_id_prefix: str) -> Dict[str, Any]:
+    def initiate_tasks_generation_by_csv(self, project_id: str, csvfile_path: str) -> Dict[str, Any]:
         """
-        CSV Fileでタスクを生成する
+        タスクID,入力データ名,入力データID」を1行毎に指定したCSVを使って、タスクを生成する
 
         Args:
             project_id: プロジェクトID
             csvfile_path: CSVファイルのパス
-            task_id_prefix: 生成するタスクIDのプレフィックス
 
         Returns:
             `initiate_tasks_generation` APIのContent
@@ -739,7 +740,6 @@ class Wrapper:
                 '_type': 'ByInputDataCsv',
                 'csv_data_path': s3_path,
             },
-            'task_id_prefix': task_id_prefix,
             'project_last_updated_datetime': project_last_updated_datetime
         }
         return self.api.initiate_tasks_generation(project_id, request_body=request_body)[0]

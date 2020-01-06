@@ -352,9 +352,9 @@ def test_task():
     time.sleep(3)  # sleepしないと失敗したため
     assert len(wrapper.get_all_tasks(project_id, query_params={'task_id': test_task_id})) == 1
 
-    print(f"start_task (annotation)")
-    request_body = {"phase": "annotation"}
-    assert type(api.start_task(project_id, request_body=request_body)[0]) == dict
+    print(f"assign_tasks")
+    request_body = {"task_ids":[test_task_id], "user_id": annofab_user_id, "_type": "Selection"}
+    assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == dict
 
     print(f"operate_task")
     request_body1 = {
