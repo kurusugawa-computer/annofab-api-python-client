@@ -143,6 +143,7 @@ declare -a model_files=(${MODELS_DIR}/keybind.py \
  ${MODELS_DIR}/annotation_editor_feature.py \
  ${MODELS_DIR}/label_v1.py \
  ${MODELS_DIR}/label_v2.py \
+ ${MODELS_DIR}/additional_data_restriction.py \
  ${MODELS_DIR}/annotation_specs_v1.py \
  ${MODELS_DIR}/annotation_specs_v2.py \
 )
