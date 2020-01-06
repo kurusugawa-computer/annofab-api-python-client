@@ -12,8 +12,8 @@ import requests
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationSpecsV1, InputData, Inspection, InspectionStatus, Instruction, JobInfo, JobType,
-                               MyOrganization, Organization, OrganizationMember, Project, ProjectMember,
+from annofabapi.models import (AnnotationSpecsV1, InputData, Inspection, InspectionStatus, Instruction, JobInfo,
+                               JobType, MyOrganization, Organization, OrganizationMember, Project, ProjectMember,
                                SupplementaryData, Task)
 from annofabapi.utils import allow_404_error
 
@@ -174,8 +174,6 @@ class Wrapper:
         """
         アノテーション仕様を、別のプロジェクトにコピーする。
 
-        .. deprecated:: XXXXX
-
         Note:
             誤って実行しないようにすること
 
@@ -187,7 +185,6 @@ class Wrapper:
         Returns:
             put_annotation_specsのContent
         """
-        warnings.warn("deprecated", DeprecationWarning)
         src_annotation_specs = self.api.get_annotation_specs(src_project_id)[0]
 
         if comment is None:
