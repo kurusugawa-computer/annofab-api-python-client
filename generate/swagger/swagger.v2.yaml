@@ -76,7 +76,7 @@ info:
     WebhookID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.68.1
+  version: 0.69.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -570,13 +570,24 @@ paths:
           schema:
             type: string
             example: "123456789"
+        - name: v
+          in: query
+          description: |
+            取得するアノテーション仕様のフォーマットバージョンを指定します。
+          required: false
+          schema:
+            type: string
+            default: "1"
+            example: "2"
       responses:
         200:
           description: 正常
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AnnotationSpecs"
+                oneOf:
+                - $ref: "#/components/schemas/AnnotationSpecsV1"
+                - $ref: "#/components/schemas/AnnotationSpecsV2"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -1531,6 +1542,12 @@ components:
     TaskHistoryId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+    TaskAssignmentType:
+      type: string
+      enum:
+        - random
+        - selection
+        - random_and_selection
     AnnotationId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -1650,6 +1667,10 @@ components:
           description: 再提出されたタスクの検査/受入担当者ルール。
           $ref: "#/components/schemas/AssigneeRuleOfResubmittedTask"
           default: no_assignee
+        task_assignment_type:
+          description: タスクの割当方式。
+          $ref: "#/components/schemas/TaskAssignmentType"
+          default: random
         max_tasks_per_member:
           description: 保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
           type: integer
@@ -1697,6 +1718,16 @@ components:
         last_tasks_updated_datetime:
           type: string
           format: date-time
+    TaskAssginmentType:
+      type: string
+      enum:
+        - random
+        - selection
+        - random_and_selection
+      description: |
+        * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。
+        * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。
+        * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。
     JobInfo:
       type: object
       properties:
@@ -2281,7 +2312,7 @@ components:
             $ref: "#/components/schemas/Marker"
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
-    AnnotationSpecs:
+    AnnotationSpecsV1:
       type: object
       properties:
         project_id:
@@ -2289,26 +2320,71 @@ components:
         labels:
           type: array
           items:
-            $ref: "#/components/schemas/Label"
+            $ref: "#/components/schemas/LabelV1"
         inspection_phrases:
           type: array
           items:
             $ref: "#/components/schemas/InspectionPhrase"
-    AnnotationSpecsRequest:
+    AnnotationSpecsV2:
+      type: object
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        labels:
+          type: array
+          items:
+            $ref: "#/components/schemas/LabelV2"
+        additionals:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalDataDefinitionV2"
+        restrictions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalDataRestriction"
+        inspection_phrases:
+          type: array
+          items:
+            $ref: "#/components/schemas/InspectionPhrase"
+    AnnotationSpecsRequestV1:
       type: object
       properties:
         labels:
           type: array
           items:
-            $ref: "#/components/schemas/Label"
-          description: |
-            ラベル
+            $ref: "#/components/schemas/LabelV1"
         inspection_phrases:
           type: array
           items:
             $ref: "#/components/schemas/InspectionPhrase"
+        comment:
+          type: string
+        autoMarking:
+          type: boolean
+          default: false
           description: |
-            定型指摘
+            trueが指定された場合、各統計グラフにマーカーを自動追加します。
+            マーカーのタイトルには `comment` に指定された文字列が設定されます。
+            `comment` が指定されていなかった場合は "アノテーション仕様の変更" という文字列が設定されます。
+    AnnotationSpecsRequestV2:
+      type: object
+      properties:
+        labels:
+          type: array
+          items:
+            $ref: "#/components/schemas/LabelV2"
+        additionals:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalDataDefinitionV2"
+        restrictions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalDataRestriction"
+        inspection_phrases:
+          type: array
+          items:
+            $ref: "#/components/schemas/InspectionPhrase"
         comment:
           type: string
         autoMarking:
@@ -2381,7 +2457,7 @@ components:
         * `select` - 選択肢（ドロップダウン式）
         * `tracking` - 自由記述 (トラッキングID自動挿入)
         * `link` - アノテーションリンク
-    Label:
+    LabelV1:
       type: object
       properties:
         label_id:
@@ -2429,7 +2505,63 @@ components:
         additional_data_definitions:
           type: array
           items:
-            $ref: "#/components/schemas/AdditionalDataDefinition"
+            $ref: "#/components/schemas/AdditionalDataDefinitionV1"
+        color:
+          $ref: "#/components/schemas/Color"
+        annotation_editor_feature:
+          $ref: "#/components/schemas/AnnotationEditorFeature"
+        allow_out_of_image_bounds:
+          type: boolean
+          default: false
+    LabelV2:
+      type: object
+      properties:
+        label_id:
+          $ref: "#/components/schemas/LabelId"
+        label_name:
+          $ref: "#/components/schemas/InternationalizationMessage"
+        keybind:
+          type: array
+          items:
+            $ref: "#/components/schemas/Keybind"
+        annotation_type:
+          $ref: "#/components/schemas/AnnotationType"
+        bounding_box_metadata:
+          type: object
+          properties:
+            min_width:
+              type: integer
+            min_height:
+              type: integer
+            min_warn_rule:
+              type: string
+              default: or
+            min_area:
+              type: integer
+              minimum: 1
+              maximum: 1000000
+            max_vertices:
+              type: integer
+            min_vertices:
+              type: integer
+            tolerance:
+              type: integer
+        segmentation_metadata:
+          type: object
+          properties:
+            min_width:
+              type: integer
+            min_height:
+              type: integer
+            min_warn_rule:
+              type: string
+              default: or
+            tolerance:
+              type: integer
+        additional_data_definitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalDataDefinitionId"
         color:
           $ref: "#/components/schemas/Color"
         annotation_editor_feature:
@@ -2467,7 +2599,7 @@ components:
           type: boolean
         fill_near:
           type: boolean
-    AdditionalDataDefinition:
+    AdditionalDataDefinitionV1:
       type: object
       properties:
         additional_data_definition_id:
@@ -2526,6 +2658,138 @@ components:
         required:
           type: boolean
           description: リンク属性において、入力を必須とするかどうか
+    AdditionalDataDefinitionV2:
+      type: object
+      properties:
+        additional_data_definition_id:
+          $ref: "#/components/schemas/AdditionalDataDefinitionId"
+        read_only:
+          type: boolean
+          default: false
+        name:
+          $ref: "#/components/schemas/InternationalizationMessage"
+        default:
+          oneOf:
+            - type: boolean
+            - type: integer
+            - type: string
+          description: |
+            属性の初期値です。
+  
+            初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。
+  
+            * type が flag の場合: 真偽値(`true` or `false`)
+            * type が integer の場合: 整数値
+            * type が text の場合: 文字列
+            * type が comment の場合: 文字列
+            * type が choice の場合: 選択肢(`choices`)の `choice_id`
+            * type が select の場合: 選択肢(`choices`)の `choice_id`
+  
+            属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。
+  
+            なお、トラッキングとリンクには初期値を設定できません。
+        keybind:
+          type: array
+          items:
+            $ref: "#/components/schemas/Keybind"
+        type:
+          $ref: "#/components/schemas/AdditionalDataDefinitionType"
+        choices:
+          type: array
+          items:
+            type: object
+            properties:
+              choice_id:
+                $ref: "#/components/schemas/ChoiceId"
+              name:
+                $ref: "#/components/schemas/InternationalizationMessage"
+              keybind:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Keybind"
+    AdditionalDataRestriction:
+      type: object
+      properties:
+        additional_data_definition_id:
+          $ref: "#/components/schemas/AdditionalDataDefinitionId"
+        condition:
+          $ref: "#/components/schemas/AdditionalDataRestrictionCondition"
+    AdditionalDataRestrictionCondition:
+      oneOf:
+        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionCanInput"
+        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionEquals"
+        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionNotEquals"
+        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionMatches"
+        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionNotMatches"
+        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionHasLabel"
+        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionImply"
+    AdditionalDataRestrictionConditionCanInput:
+      type: object
+      description: |
+        enable=false とすることで、入力を許可しないようにできます。
+        Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。
+      properties:
+        _type:
+          type: string
+          example: "CanInput"
+        enable:
+          type: boolean
+    AdditionalDataRestrictionConditionEquals:
+      type: object
+      description: 指定された値と等しいことを要求します。
+      properties:
+        _type:
+          type: string
+          example: "Equals"
+        value:
+          type: string
+    AdditionalDataRestrictionConditionNotEquals:
+      type: object
+      description: |
+        指定された値と異なることを要求します。
+        value に "" を指定することで、入力を必須とすることができます。
+      properties:
+        _type:
+          type: string
+          example: "NotEquals"
+        value:
+          type: string
+    AdditionalDataRestrictionConditionMatches:
+      type: object
+      description: 指定された正規表現に合致することを要求します。
+      properties:
+        _type:
+          type: string
+          example: "Matches"
+        value:
+          type: string
+    AdditionalDataRestrictionConditionNotMatches:
+      type: object
+      description: 指定された正規表現に合致しないことを要求します。
+      properties:
+        _type:
+          type: string
+          example: "NotMatches"
+        value:
+          type: string
+    AdditionalDataRestrictionConditionHasLabel:
+      type: object
+      description: リンク属性において、リンク先として指定可能なラベルIDを制限します。
+      properties:
+        _type:
+          type: string
+          example: "HasLabel"
+        values:
+          type: string
+    AdditionalDataRestrictionConditionImply:
+      type: object
+      description: |
+        premise で指定された条件を満たすとき、condition で指定された条件を満たすことを要求します。
+      properties:
+        premise:
+          $ref: "#/components/schemas/AdditionalDataRestriction"
+        condition:
+          $ref: "#/components/schemas/AdditionalDataRestrictionCondition"
     Keybind:
       type: object
       properties:
@@ -2738,7 +3002,7 @@ components:
         account_id:
           allOf:
             - $ref: "#/components/schemas/AccountId"
-            - description: 変更後の担当者のアカウントID
+          description: 変更後の担当者のアカウントID
     TaskStart:
       type: object
       properties:
@@ -2746,6 +3010,50 @@ components:
           allOf:
             - $ref: "#/components/schemas/TaskPhase"
             - description: 開始するタスクのフェーズ
+    TaskAssignRequest:
+      type: object
+      required:
+        - request_type
+      properties:
+        request_type:
+          description: |
+            * `TaskAssignRequestTypeRandom`: タスクフェーズのみを指定してランダムにタスクを自身に割当します。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。
+            * `TaskAssignRequestTypeSelection`: 担当者とタスクを明示的に指定してタスクを割当します。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。
+          oneOf:
+            - $ref: "#/components/schemas/TaskAssignRequestTypeRandom"
+            - $ref: "#/components/schemas/TaskAssignRequestTypeSelection"
+    TaskAssignRequestTypeRandom:
+      type: object
+      required:
+        - phase
+      properties:
+        phase:
+          description: 割当するタスクフェーズ
+          allOf:
+            - $ref: "#/components/schemas/TaskPhase"
+        _type:
+          type: string
+          description: Random
+          example: "Random"
+    TaskAssignRequestTypeSelection:
+      type: object
+      required:
+        - user_id
+        - task_ids
+      properties:
+        user_id:
+          description: タスクを誰に割当するか
+          allOf:
+            - $ref: "#/components/schemas/UserId"
+        task_ids:
+          description: 割当するタスクのID
+          type: array
+          items:
+            $ref: "#/components/schemas/TaskId"
+        _type:
+          type: string
+          description: Selection
+          example: "Selection"
     TaskHistoryShort:
       description: タスクのあるフェーズを誰が担当したかを表します。
       type: object
