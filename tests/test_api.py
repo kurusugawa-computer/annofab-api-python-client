@@ -104,8 +104,8 @@ class TestAnnotationSpecs:
 
 
 class TestInput:
-    def test_get_input_data_list(self):
-        assert type(api.get_input_data_list(project_id, {"input_data_name": "foo"})) == dict
+    def test_wrapper_get_input_data_list(self):
+        assert type(wrapper.get_all_input_data_list(project_id, {"input_data_name": "foo"})) == list
 
     def test_get_input_data(self):
         test_input_data = api.get_input_data(project_id, input_data_id)[0]
@@ -354,7 +354,7 @@ class TestTask:
         assert type(api.delete_task(project_id, test_task_id)[0]) == dict
 
     def test_assign_task(self):
-        request_body = {"request_type": {"task_ids": [task_id], "user_id": annofab_user_id, "_type": "Selection"}}
+        request_body = {"request_type": {"phase": "annotation", "_type": "Random"}}
         assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == list
 
     def test_operate_task(self):
