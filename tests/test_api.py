@@ -84,35 +84,23 @@ class TestAnnotation:
 
 
 class TestMy:
-    def test_my(self):
-        print(f"get_my_account")
+    def test_get_my_account(self):
         my_account, _ = api.get_my_account()
         assert type(my_account) == dict
 
-        # print(f"put_my_account")
-        # my_account_request_body = {
-        #     'user_id': my_account['user_id'],
-        #     'username': my_account['username'],
-        #     'lang': my_account['lang'],
-        #     'keylayout': my_account['keylayout'],
-        #     'last_updated_datetime': my_account['updated_datetime']
-        # }
-        # puted_my_account, _ = api.put_my_account(request_body=my_account_request_body)
-        # assert type(puted_my_account) == dict
-
-        print(f"get_my_project_members")
+    def test_get_my_project_members(self):
         my_project_members, _ = api.get_my_project_members()
         assert len(my_project_members) > 0
 
-        print(f"get_my_organizations in wrapper.get_all_my_organizations")
+    def test_wrapper_get_all_my_organizations(self):
         my_organizations = wrapper.get_all_my_organizations()
         assert len(my_organizations) > 0
 
-        print(f"get_my_projects")
+    def test_get_my_projects(self):
         my_projects, _ = api.get_my_projects()
         assert len(my_projects['list']) > 0
 
-        print(f"get_my_member_by_project_id")
+    def test_get_my_member_in_project(self):
         my_member_in_project, _ = api.get_my_member_in_project(project_id)
         assert type(my_member_in_project) == dict
 
