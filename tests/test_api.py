@@ -13,6 +13,8 @@ import time
 import uuid
 from distutils.util import strtobool
 
+import pytest
+
 import annofabapi
 import annofabapi.utils
 from annofabapi.models import GraphType, JobType
@@ -44,69 +46,75 @@ annofab_user_id = service.api.login_user_id
 task_id = test_wrapper.get_first_task_id(project_id)
 input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
+submitting_job = pytest.mark.skipif(not should_execute_job_api, reason="ジョブが投入されるテストのため、スキップします")
+"""
+ジョブが投入されるテスト
+"""
 
-def test_account():
+
+class TestAccount:
     pass
 
 
-def test_my():
-    print(f"get_my_account")
-    my_account, _ = api.get_my_account()
-    assert type(my_account) == dict
+class TestAnnotation:
+    def test_wrapper_get_all_annotation_list(self):
+        assert len(wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}})) >= 0
 
-    # print(f"put_my_account")
-    # my_account_request_body = {
-    #     'user_id': my_account['user_id'],
-    #     'username': my_account['username'],
-    #     'lang': my_account['lang'],
-    #     'keylayout': my_account['keylayout'],
-    #     'last_updated_datetime': my_account['updated_datetime']
-    # }
-    # puted_my_account, _ = api.put_my_account(request_body=my_account_request_body)
-    # assert type(puted_my_account) == dict
+    def test_get_annotation(self):
+        assert type(api.get_annotation(project_id, task_id, input_data_id)[0]) == dict
 
-    print(f"get_my_project_members")
-    my_project_members, _ = api.get_my_project_members()
-    assert len(my_project_members) > 0
+    def test_get_annotation_archive(self):
+        content, response = api.get_annotation_archive(project_id)
+        assert response.headers["Location"].startswith("https://")
 
-    print(f"get_my_organizations in wrapper.get_all_my_organizations")
-    my_organizations = wrapper.get_all_my_organizations()
-    assert len(my_organizations) > 0
+        # v2版の確認
+        content, response = api.get_annotation_archive(project_id, query_params={"v2": True})
+        assert response.headers["Location"].startswith("https://")
 
-    print(f"get_my_projects")
-    my_projects, _ = api.get_my_projects()
-    assert len(my_projects['list']) > 0
+    def test_get_archive_full_with_pro_id(self):
+        content, response = api.get_archive_full_with_pro_id(project_id)
+        assert response.headers["Location"].startswith("https://")
 
-    print(f"get_my_member_by_project_id")
-    my_member_in_project, _ = api.get_my_member_in_project(project_id)
-    assert type(my_member_in_project) == dict
+    def test_wrapper_download_annotation_archive(self):
+        wrapper.download_annotation_archive(project_id, f'{out_dir}/simple-annotation.zip')
 
-
-def test_annotation():
-    """
-    batchUpdateAnnotations, putAnnotationはテストしない.
-    """
-
-    print("get_annotation_list in wrapper.get_all_annotation_list")
-    assert len(wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}})) >= 0
-
-    print("get_annotation")
-    assert type(api.get_annotation(project_id, task_id, input_data_id)[0]) == dict
-
-    print("get_annotation_archive")
-    content, response = api.get_annotation_archive(project_id)
-    assert response.headers["Location"].startswith("https://")
-
-    print("get_annotation_archive(v2)")
-    content, response = api.get_annotation_archive(project_id, query_params={"v2": True})
-    assert response.headers["Location"].startswith("https://")
-
-    print("wrapper.download_annotation_archive")
-    wrapper.download_annotation_archive(project_id, f'{out_dir}/simple-annotation.zip')
-
-    if should_execute_job_api:
-        print("post_annotation_archive_update")
+    @submitting_job
+    def test_post_annotation_archive_update(self):
         assert type(api.post_annotation_archive_update(project_id)[0]) == dict
+
+
+class TestMy:
+    def test_my(self):
+        print(f"get_my_account")
+        my_account, _ = api.get_my_account()
+        assert type(my_account) == dict
+
+        # print(f"put_my_account")
+        # my_account_request_body = {
+        #     'user_id': my_account['user_id'],
+        #     'username': my_account['username'],
+        #     'lang': my_account['lang'],
+        #     'keylayout': my_account['keylayout'],
+        #     'last_updated_datetime': my_account['updated_datetime']
+        # }
+        # puted_my_account, _ = api.put_my_account(request_body=my_account_request_body)
+        # assert type(puted_my_account) == dict
+
+        print(f"get_my_project_members")
+        my_project_members, _ = api.get_my_project_members()
+        assert len(my_project_members) > 0
+
+        print(f"get_my_organizations in wrapper.get_all_my_organizations")
+        my_organizations = wrapper.get_all_my_organizations()
+        assert len(my_organizations) > 0
+
+        print(f"get_my_projects")
+        my_projects, _ = api.get_my_projects()
+        assert len(my_projects['list']) > 0
+
+        print(f"get_my_member_by_project_id")
+        my_member_in_project, _ = api.get_my_member_in_project(project_id)
+        assert type(my_member_in_project) == dict
 
 
 def test_annotation_specs():
