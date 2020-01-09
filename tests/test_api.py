@@ -128,6 +128,45 @@ class TestInput:
 
 
 
+
+class TestInspection:
+    def test_get_inspections(self):
+        assert len(api.get_inspections(project_id, task_id, input_data_id)[0]) >= 0
+
+
+class TestInstruction:
+    def test_wrapper_get_latest_instruction(self):
+        assert type(wrapper.get_latest_instruction(project_id)) == dict
+
+    def test_get_instruction_history(self):
+        histories = api.get_instruction_history(project_id)[0]
+        assert len(histories) > 0
+
+    def test_wrapper_upload_instruction_image_and_delete_instruction_image(self):
+        test_image_id = str(uuid.uuid4())
+        print(f"wrapper.upload_instruction_image: image_id={test_image_id}")
+        wrapper.upload_instruction_image(project_id, test_image_id, f'{test_dir}/lenna.png')
+
+        print(f"delete_instruction_image: image_id={test_image_id}")
+        api.delete_instruction_image(project_id, test_image_id)
+
+    def test_get_instruction_images(self):
+        image_list = api.get_instruction_images(project_id)[0]
+        assert type(image_list) == list
+
+    def test_put_instruction(self):
+        str_now = datetime.datetime.now().isoformat()
+        html_data = f"<h1>時間 {str_now}</h1>"
+
+        histories = api.get_instruction_history(project_id)[0]
+        put_request_body = {'html': html_data, 'last_updated_datetime': histories[0]['updated_datetime']}
+        assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict
+
+
+
+
+
+
 class TestMy:
     def test_get_my_account(self):
         my_account, _ = api.get_my_account()
@@ -183,38 +222,6 @@ def test_supplementary():
     api.delete_supplementary_data(project_id, input_data_id, supplementary_data_id)
     supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
     assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 0
-
-
-def test_inspection():
-    """
-    batchUpdateInspectionsはテストしない.
-    """
-
-    # # 作業中のタスクでなくても、検査コメントは付与できる
-    # req_inspection = [{
-    #     "data": {
-    #         "project_id": project_id,
-    #         "comment": f"test comment by test code {annofabapi.utils.str_now()}",
-    #         "task_id": task_id,
-    #         "input_data_id": input_data_id,
-    #         "inspection_id": str(uuid.uuid4()),
-    #         "phase": "acceptance",
-    #         "commenter_account_id": my_account_id,
-    #         "data": {
-    #             "x": 0,
-    #             "y": 0,
-    #             "_type": "Point"
-    #         },
-    #         "status": "annotator_action_required",
-    #         "created_datetime": annofabapi.utils.str_now()
-    #     },
-    #     "_type": "Put",
-    # }]
-    #
-    # api.batch_update_inspections(project_id, task_id, input_data_id,
-    #                                             request_body=req_inspection)
-    print("get_inspections")
-    assert len(api.get_inspections(project_id, task_id, input_data_id)[0]) >= 0
 
 
 def test_organization():
@@ -373,33 +380,6 @@ class TestTask:
             task_id_prefix = str(uuid.uuid4())
             content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path, task_id_prefix)
             assert type(content) == dict
-
-
-def test_instruction():
-    str_now = datetime.datetime.now().isoformat()
-    html_data = f"<h1>時間 {str_now}</h1>"
-
-    print("get_instruction_history")
-    histories = api.get_instruction_history(project_id)[0]
-    assert len(histories) > 0
-
-    print("put_instruction")
-    put_request_body = {'html': html_data, 'last_updated_datetime': histories[0]['updated_datetime']}
-    assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict
-
-    print("wrapper.get_latest_instruction")
-    assert wrapper.get_latest_instruction(project_id)['html'] == html_data
-
-    print("upload_instruction_image. 内部でget_instruction_image_url_for_put を実行している")
-    test_image_id = str(uuid.uuid4())
-    wrapper.upload_instruction_image(project_id, test_image_id, f'{test_dir}/lenna.png')
-
-    print("get_instruction_images")
-    images = api.get_instruction_images(project_id)[0]
-    assert len([e for e in images if e["image_id"] == test_image_id]) == 1
-
-    print("delete_instruction_image")
-    api.delete_instruction_image(project_id, test_image_id)
 
 
 class TestJob:
