@@ -327,57 +327,56 @@ class Testsupplementary:
         assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 0
 
 class TestTask:
-    def test_task(self):
-        test_task_id = str(uuid.uuid4())
+    def test_wraper_get_all_tasks(self):
+        assert type(wrapper.get_all_tasks(project_id, query_params={'task_id': "foo"})) == list
 
-        print(f"put_task. test_task_id={test_task_id}")
-        first_input_data = test_wrapper.get_first_input_data(project_id)
-        input_data_id_list = [first_input_data['input_data_id']]
-        request_body = {"input_data_id_list": input_data_id_list}
+    @submitting_job
+    def test_initiate_tasks_generation_by_csv(self):
+        csv_file_path = f'{test_dir}/tmp/create_task.csv'
+        test_task_id = str(uuid.uuid4())
+        create_csv_for_task(csv_file_path, test_task_id, input_data_id)
+        content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path)
+        assert type(content) == dict
+
+    def test_get_task(self):
+        assert type(api.get_task(project_id, task_id)[0]) == dict
+
+    def test_put_task_and_delete_task(self):
+        test_task_id = str(uuid.uuid4())
+        request_body = {"input_data_id_list": [input_data_id]}
+        print("")
+        print(f"put_task: task_id={task_id}")
         test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]
         assert type(test_task_data) == dict
 
-        print(f"get_task")
-        assert type(api.get_task(project_id, test_task_id)[0]) == dict
-
-        print(f"get_tasks in wrapper.get_all_tasks")
-        time.sleep(3)  # sleepしないと失敗したため
-        assert len(wrapper.get_all_tasks(project_id, query_params={'task_id': test_task_id})) == 1
-
-        print(f"assign_tasks")
-        request_body = {"request_type": {"task_ids": [test_task_id], "user_id": annofab_user_id, "_type": "Selection"}}
-        assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == list
-
-        print(f"operate_task")
-        request_body1 = {
-            'status': 'not_started',
-            'last_updated_datetime': test_task_data['updated_datetime'],
-            'account_id': my_account_id
-        }
-        assert type(api.operate_task(project_id, test_task_id, request_body=request_body1)[0]) == dict
-
-        print(f"get_task_histories")
-        assert len(api.get_task_histories(project_id, test_task_id)[0]) > 0
-
-        print(f"delete_task")
         assert type(api.delete_task(project_id, test_task_id)[0]) == dict
 
-        test2_task_id = str(uuid.uuid4())
-        print(f"batch_update_tasks. test_task_id={test2_task_id}")
-        request_body = {"input_data_id_list": input_data_id_list}
-        test_task_data = api.put_task(project_id, test2_task_id, request_body=request_body)[0]
+    def test_assign_task(self):
+        request_body = {"request_type": {"task_ids": [task_id], "user_id": annofab_user_id, "_type": "Selection"}}
+        assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == list
 
-        request_body = [{'project_id': project_id, 'task_id': test2_task_id, '_type': 'Delete'}]
+    def test_operate_task(self):
+        task, _ = api.get_task(project_id, task_id)
+        request_body = {
+            'status': 'not_started',
+            'last_updated_datetime': task['updated_datetime'],
+            'account_id': my_account_id
+        }
+        assert type(api.operate_task(project_id, task_id, request_body=request_body)[0]) == dict
+
+    def test_get_task_histories(self):
+        assert len(api.get_task_histories(project_id, task_id)[0]) > 0
+
+    def test_batch_update_tasks(self):
+        test_task_id = str(uuid.uuid4())
+        request_body = {"input_data_id_list": [input_data_id]}
+        print("")
+        print(f"put_task: task_id={task_id}")
+        test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]
+
+        request_body = [{'project_id': project_id, 'task_id': test_task_id, '_type': 'Delete'}]
         content = api.batch_update_tasks(project_id, request_body=request_body)[0]
         assert type(content) == list
-
-        if should_execute_job_api:
-            print(f"initiate_tasks_generation in wrapper.initiate_tasks_generation_by_csv")
-            csv_file_path = f'{test_dir}/tmp/create_task.csv'
-            create_csv_for_task(csv_file_path, first_input_data)
-            task_id_prefix = str(uuid.uuid4())
-            content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path, task_id_prefix)
-            assert type(content) == dict
 
 
 def test_webhook():
