@@ -113,6 +113,7 @@ class TestInput:
 
     def test_wrapper_put_input_data_from_file_and_delete_input_data(self):
         test_input_data_id = str(uuid.uuid4())
+        print("")
         print(f"put_input_data: input_data_id={test_input_data_id}")
         assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f'{test_dir}/lenna.png')) == dict
         print(f"delete_input_data: input_data_id={test_input_data_id}")
@@ -120,6 +121,7 @@ class TestInput:
 
     def test_batch_update_inputs(self):
         test_input_data_id = str(uuid.uuid4())
+        print("")
         print(f"put_input_data: input_data_id={test_input_data_id}")
         wrapper.put_input_data_from_file(project_id, test_input_data_id, f'{test_dir}/lenna.png')
 
@@ -144,6 +146,7 @@ class TestInstruction:
 
     def test_wrapper_upload_instruction_image_and_delete_instruction_image(self):
         test_image_id = str(uuid.uuid4())
+        print("")
         print(f"wrapper.upload_instruction_image: image_id={test_image_id}")
         wrapper.upload_instruction_image(project_id, test_image_id, f'{test_dir}/lenna.png')
 
@@ -163,6 +166,33 @@ class TestInstruction:
         assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict
 
 
+class TestJob:
+    def test_wait_for_completion(self):
+        # 実行中のジョブはないので、必ずTrue
+        result = wrapper.wait_for_completion(project_id, JobType.GEN_TASKS, job_access_interval=1, max_job_access=1)
+        assert result == True
+
+    def test_get_all_project_job(self):
+        assert len(wrapper.get_all_project_job(project_id, {"type": JobType.GEN_INPUTS.value})) >= 0
+
+    def test_delete_all_succeeded_job(self):
+        assert len(wrapper.delete_all_succeeded_job(project_id, JobType.GEN_TASKS)) >= 0
+
+    def test_job_in_progress(self):
+        assert type(wrapper.job_in_progress(project_id, JobType.GEN_TASKS)) == bool
+
+
+class TestLogin:
+    def test_login(self):
+        assert api.login()[0]['token'].keys() >= {'id_token', 'access_token', 'refresh_token'}
+
+        assert api.refresh_token()[0].keys() >= {'id_token', 'access_token', 'refresh_token'}
+
+        assert type(api.logout()[0]) == dict
+
+        assert api.refresh_token() is None, "ログアウト状態では、refresh_tokenメソッドはNoneを返す"
+
+        assert api.logout() is None, "ログアウト状態では、logoutメソッドはNoneを返す"
 
 
 
@@ -189,21 +219,29 @@ class TestMy:
         assert type(my_member_in_project) == dict
 
 
+class TestOrganization:
+    def test_get_organization(self):
+        assert type(api.get_organization(organization_name)[0]) == dict
 
+    def test_get_organization_activity(self):
+        assert type(api.get_organization_activity(organization_name)[0]) == dict
 
-def test_login():
-    print(f"login")
-    assert api.login()[0]['token'].keys() >= {'id_token', 'access_token', 'refresh_token'}
-    print(f"refresh_token with logging in")
-    assert api.refresh_token()[0].keys() >= {'id_token', 'access_token', 'refresh_token'}
-    print(f"logout with logging in")
-    assert type(api.logout()[0]) == dict
+    def test_wrapper_get_all_projects_of_organization(self):
+        assert len(wrapper.get_all_projects_of_organization(organization_name)) > 0
 
-    print(f"refresh_token with logging out")
-    assert api.refresh_token() is None
+class TestOrganizationMember:
+    def test_wrapper_get_all_organization_members(self):
+        assert len(wrapper.get_all_organization_members(organization_name)) > 0
 
-    print(f"logout with logging out")
-    assert api.logout() is None
+    def test_get_organization_member(self):
+        organization_member = api.get_organization_member(organization_name, annofab_user_id)[0]
+        assert type(organization_member) == dict
+
+    def test_update_organization_member_role(self):
+        organization_member = api.get_organization_member(organization_name, annofab_user_id)[0]
+        request_body = {'role': 'owner', 'last_updated_datetime': organization_member['updated_datetime']}
+        api.update_organization_member_role(organization_name, annofab_user_id, request_body=request_body)
+
 
 
 def test_supplementary():
@@ -223,37 +261,6 @@ def test_supplementary():
     supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
     assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 0
 
-
-def test_organization():
-    """
-    createNewOrganization はテストしない
-    """
-
-    print("get_organization")
-    assert type(api.get_organization(organization_name)[0]) == dict
-
-    print("get_projects_of_organization in wrapper.get_all_projects_of_organization")
-    assert len(wrapper.get_all_projects_of_organization(organization_name)) > 0
-
-    print("get_organization_activity")
-    assert type(api.get_organization_activity(organization_name)[0]) == dict
-
-
-def test_organization_member():
-    """
-    招待関係のAPI、削除関係のAPIはテストしない
-    """
-
-    print("api.get_organization_members in wrapper.get_all_organization_members")
-    assert len(wrapper.get_all_organization_members(organization_name)) > 0
-
-    print("api.get_organization_member")
-    organization_member = api.get_organization_member(organization_name, annofab_user_id)[0]
-    assert type(organization_member) == dict
-
-    print("api.put_role_of_organization_member")
-    request_body = {'role': 'owner', 'last_updated_datetime': organization_member['updated_datetime']}
-    api.update_organization_member_role(organization_name, annofab_user_id, request_body=request_body)
 
 
 def test_project():
@@ -381,21 +388,6 @@ class TestTask:
             content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path, task_id_prefix)
             assert type(content) == dict
 
-
-class TestJob:
-    def test_wait_for_completion(self):
-        # 実行中のジョブはないので、必ずTrue
-        result = wrapper.wait_for_completion(project_id, JobType.GEN_TASKS, job_access_interval=1, max_job_access=1)
-        assert result == True
-
-    def test_get_all_project_job(self):
-        assert len(wrapper.get_all_project_job(project_id, {"type": JobType.GEN_INPUTS.value})) >= 0
-
-    def test_delete_all_succeeded_job(self):
-        assert len(wrapper.delete_all_succeeded_job(project_id, JobType.GEN_TASKS)) >= 0
-
-    def test_job_in_progress(self):
-        assert type(wrapper.job_in_progress(project_id, JobType.GEN_TASKS)) == bool
 
 
 def test_webhook():
