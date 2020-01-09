@@ -615,6 +615,8 @@ class Wrapper:
             request_body = {
                 "member_status": member["member_status"],
                 "member_role": member["member_role"],
+                "sampling_inspection_rate": member.get("sampling_inspection_rate"),
+                "sampling_acceptance_rate": member.get("sampling_acceptance_rate"),
                 "last_updated_datetime": last_updated_datetime,
             }
             updated_project_member = self.api.put_project_member(project_id, member["user_id"],
