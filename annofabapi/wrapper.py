@@ -887,7 +887,7 @@ class Wrapper:
             job_type: ジョブ種別
 
         Returns:
-            True: ジョブが進行中かどうか
+            ジョブが進行中かどうか
 
         """
         job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
