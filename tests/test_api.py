@@ -103,6 +103,7 @@ class TestAnnotationSpecs:
         annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
         assert type(annotation_specs_histories) == list
 
+
 class TestInput:
     def test_get_input_data_list(self):
         assert type(api.get_input_data_list(project_id, {"input_data_name": "foo"})) == dict
@@ -116,7 +117,6 @@ class TestInput:
         print("")
         print(f"put_input_data: input_data_id={test_input_data_id}")
         assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f'{test_dir}/lenna.png')) == dict
-        print(f"delete_input_data: input_data_id={test_input_data_id}")
         assert type(api.delete_input_data(project_id, test_input_data_id)[0]) == dict
 
     def test_batch_update_inputs(self):
@@ -127,8 +127,6 @@ class TestInput:
 
         request_body = [{'project_id': project_id, 'input_data_id': test_input_data_id, '_type': 'Delete'}]
         assert type(api.batch_update_inputs(project_id, request_body=request_body)[0]) == list
-
-
 
 
 class TestInspection:
@@ -150,7 +148,6 @@ class TestInstruction:
         print(f"wrapper.upload_instruction_image: image_id={test_image_id}")
         wrapper.upload_instruction_image(project_id, test_image_id, f'{test_dir}/lenna.png')
 
-        print(f"delete_instruction_image: image_id={test_image_id}")
         api.delete_instruction_image(project_id, test_image_id)
 
     def test_get_instruction_images(self):
@@ -195,8 +192,6 @@ class TestLogin:
         assert api.logout() is None, "ログアウト状態では、logoutメソッドはNoneを返す"
 
 
-
-
 class TestMy:
     def test_get_my_account(self):
         my_account, _ = api.get_my_account()
@@ -229,6 +224,7 @@ class TestOrganization:
     def test_wrapper_get_all_projects_of_organization(self):
         assert len(wrapper.get_all_projects_of_organization(organization_name)) > 0
 
+
 class TestOrganizationMember:
     def test_wrapper_get_all_organization_members(self):
         assert len(wrapper.get_all_organization_members(organization_name)) > 0
@@ -243,81 +239,57 @@ class TestOrganizationMember:
         api.update_organization_member_role(organization_name, annofab_user_id, request_body=request_body)
 
 
+class TestProject:
+    def test_get_project(self):
+        assert type(api.get_project(project_id)[0]) == dict
 
-def test_supplementary():
-    print("wrapper.put_supplementary_data_from_file（内部でput_supplementary_dataが実行される）")
-    supplementary_data_id = str(uuid.uuid4())
-    request_body = {'supplementary_data_number': 1}
-    content = wrapper.put_supplementary_data_from_file(project_id, input_data_id, supplementary_data_id,
-                                                       f'{test_dir}/sample.txt', request_body=request_body)
-    assert type(content) == dict
+    def test_get_organization_of_project(self):
+        assert type(api.get_organization_of_project(project_id)[0]) == dict
 
-    print("get_supplementary_data_list")
-    supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
-    assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 1
+    def test_wrapper_download_project_tasks_url(self):
+        assert wrapper.download_project_tasks_url(project_id, f'{out_dir}/tasks.json').startswith("https://")
 
-    print("delete_supplementary_data")
-    api.delete_supplementary_data(project_id, input_data_id, supplementary_data_id)
-    supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
-    assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 0
+    def test_wrapper_download_project_task_history_events_url(self):
+        assert wrapper.download_project_task_history_events_url(
+            project_id, f'{out_dir}/task_history_events.json').startswith("https://")
 
-
-
-def test_project():
-    """
-
-    間違って操作してしまうと危険なので、プロジェクトの複製、作成、削除はテストしない。
-
-    """
-    print("get_project")
-    assert type(api.get_project(project_id)[0]) == dict
-
-    print("get_organization_of_project")
-    assert type(api.get_organization_of_project(project_id)[0]) == dict
-
-    print("wrapper.download_....")
-    assert wrapper.download_project_tasks_url(project_id, f'{out_dir}/tasks.json').startswith("https://")
-
-    assert wrapper.download_project_task_history_events_url(
-        project_id, f'{out_dir}/task_history_events.json').startswith("https://")
-
-    assert wrapper.download_project_inspections_url(project_id, f'{out_dir}/inspections.json').startswith("https://")
-
-    # assert api.post_project_tasks_update(project_id)
+    def test_wrapper_download_project_inspections_url(self):
+        assert wrapper.download_project_inspections_url(project_id,
+                                                        f'{out_dir}/inspections.json').startswith("https://")
 
 
-def test_project_member():
-    print(f"get_project_member")
-    my_member = api.get_project_member(project_id, annofab_user_id)[0]
-    assert type(my_member) == dict
+class TestProjectMember:
+    def test_get_project_member(self):
+        my_member = api.get_project_member(project_id, annofab_user_id)[0]
+        assert type(my_member) == dict
 
-    print(f"get_project_members in wrapper.get_all_project_members")
-    assert len(wrapper.get_all_project_members(project_id)) >= 0
+    def test_wrapper_get_all_project_members(self):
+        assert len(wrapper.get_all_project_members(project_id)) >= 0
 
-    print("wrapper.copy_project_member -> wrapper.put_project_members -> put_project_member")
-    content = wrapper.copy_project_members(src_project_id=project_id, dest_project_id=project_id, delete_dest=False)
-    assert type(content) == list
+    def test_wrapper_copy_project_member(self):
+        content = wrapper.copy_project_members(src_project_id=project_id, dest_project_id=project_id, delete_dest=False)
+        assert type(content) == list
 
 
 class TestStatistics:
     def test_statistics(self):
-        print("get_task_statistics")
         assert type(api.get_task_statistics(project_id)[0]) == list
 
-        print("get_account_statistics")
+    def test_get_account_statistics(self):
         assert type(api.get_account_statistics(project_id)[0]) == list
 
-        print("get_inspection_statistics")
+    def test_get_inspection_statistics(self):
         assert type(api.get_inspection_statistics(project_id)[0]) == list
 
-        print("get_task_phase_statistics")
+    def test_get_task_phase_statistics(self):
         assert type(api.get_task_phase_statistics(project_id)[0]) == list
 
-        print("get_label_statistics")
+    def test_get_label_statistics(self):
         assert type(api.get_label_statistics(project_id)[0]) == list
 
-        print("get_worktime_statistics")
+    def test_wrapper_get_worktime_statistics(self):
         assert type(wrapper.get_worktime_statistics(project_id)) == list
+
 
     def test_graph_marker(self):
         print("get_markers")
@@ -334,6 +306,25 @@ class TestStatistics:
         print("put_markers")
         assert type(api.put_markers(project_id, request_body=request_body)[0]) == dict
 
+
+
+class Testsupplementary:
+    def test_supplementary(self):
+        supplementary_data_id = str(uuid.uuid4())
+        request_body = {'supplementary_data_number': 1}
+
+        print("")
+        print(f"wrapper.put_supplementary_data_from_file: supplementary_data_id={supplementary_data_id}")
+        content = wrapper.put_supplementary_data_from_file(project_id, input_data_id, supplementary_data_id,
+                                                           f'{test_dir}/sample.txt', request_body=request_body)
+        assert type(content) == dict
+
+        supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
+        assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 1
+
+        api.delete_supplementary_data(project_id, input_data_id, supplementary_data_id)
+        supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
+        assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 0
 
 class TestTask:
     def test_task(self):
@@ -387,7 +378,6 @@ class TestTask:
             task_id_prefix = str(uuid.uuid4())
             content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path, task_id_prefix)
             assert type(content) == dict
-
 
 
 def test_webhook():
