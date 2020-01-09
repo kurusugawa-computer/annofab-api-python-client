@@ -83,6 +83,51 @@ class TestAnnotation:
         assert type(api.post_annotation_archive_update(project_id)[0]) == dict
 
 
+class TestAnnotationSpecs:
+    def test_get_annotation_specs(self):
+        annotation_spec, _ = api.get_annotation_specs(project_id)
+        assert type(annotation_spec) == dict
+
+    def test_put_annotation_specs(self):
+        annotation_spec, _ = api.get_annotation_specs(project_id)
+
+        request_body = {
+            "labels": annotation_spec["labels"],
+            "inspection_phrases": annotation_spec["inspection_phrases"],
+            "comment": f"{annofabapi.utils.str_now()} に更新しました。",
+        }
+        puted_annotation_spec, _ = api.put_annotation_specs(project_id, request_body=request_body)
+        assert type(puted_annotation_spec) == dict
+
+    def test_get_annotation_specs_histories(self):
+        annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
+        assert type(annotation_specs_histories) == list
+
+class TestInput:
+    def test_get_input_data_list(self):
+        assert type(api.get_input_data_list(project_id, {"input_data_name": "foo"})) == dict
+
+    def test_get_input_data(self):
+        test_input_data = api.get_input_data(project_id, input_data_id)[0]
+        assert type(test_input_data) == dict
+
+    def test_wrapper_put_input_data_from_file_and_delete_input_data(self):
+        test_input_data_id = str(uuid.uuid4())
+        print(f"put_input_data: input_data_id={test_input_data_id}")
+        assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f'{test_dir}/lenna.png')) == dict
+        print(f"delete_input_data: input_data_id={test_input_data_id}")
+        assert type(api.delete_input_data(project_id, test_input_data_id)[0]) == dict
+
+    def test_batch_update_inputs(self):
+        test_input_data_id = str(uuid.uuid4())
+        print(f"put_input_data: input_data_id={test_input_data_id}")
+        wrapper.put_input_data_from_file(project_id, test_input_data_id, f'{test_dir}/lenna.png')
+
+        request_body = [{'project_id': project_id, 'input_data_id': test_input_data_id, '_type': 'Delete'}]
+        assert type(api.batch_update_inputs(project_id, request_body=request_body)[0]) == list
+
+
+
 class TestMy:
     def test_get_my_account(self):
         my_account, _ = api.get_my_account()
@@ -105,27 +150,6 @@ class TestMy:
         assert type(my_member_in_project) == dict
 
 
-def test_annotation_specs():
-    print(f"get_annotation_specs")
-    annotation_spec, _ = api.get_annotation_specs(project_id)
-    assert type(annotation_spec) == dict
-
-    print(f"put_annotation_specs")
-    request_body = {
-        "labels": annotation_spec["labels"],
-        "inspection_phrases": annotation_spec["inspection_phrases"],
-        "comment": f"{annofabapi.utils.str_now()} に更新しました。",
-    }
-    puted_annotation_spec, _ = api.put_annotation_specs(project_id, request_body=request_body)
-    assert type(puted_annotation_spec) == dict
-
-    print("get_annotation_specs_histories")
-    annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
-    assert type(annotation_specs_histories) == list
-
-    old_annotation_spec, _ = api.get_annotation_specs(
-        project_id, query_params={"history_id": annotation_specs_histories[1]["history_id"]})
-    assert type(old_annotation_spec) == dict
 
 
 def test_login():
@@ -141,33 +165,6 @@ def test_login():
 
     print(f"logout with logging out")
     assert api.logout() is None
-
-
-def test_input():
-    test_input_data_id = str(uuid.uuid4())
-    print(f"wrapper.put_input_data_from_file (内部でput_input_dataとcreate_temp_pathが実行される）. test_id={test_input_data_id}")
-    assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f'{test_dir}/lenna.png')) == dict
-
-    print(f"get_input_data")
-    test_input_data = api.get_input_data(project_id, test_input_data_id)[0]
-    assert type(test_input_data) == dict
-
-    print(f"get_input_data_list in wrapper.get_all_input_data_list")
-    # すぐには反映されないので、少し待つ
-    time.sleep(5)
-    assert len(wrapper.get_all_input_data_list(project_id, {"input_data_id": test_input_data_id})) == 1
-
-    print(f"delete_input_data")
-    assert type(api.delete_input_data(project_id, test_input_data_id)[0]) == dict
-    time.sleep(3)
-    content, _ = api.get_input_data_list(project_id, query_params={'input_data_id': test_input_data_id})
-    assert len(content['list']) == 0
-
-    test2_input_data_id = str(uuid.uuid4())
-    print(f"入力データの一括更新（削除）(batch_update_inputs). test_id2={test2_input_data_id}")
-    wrapper.put_input_data_from_file(project_id, test2_input_data_id, f'{test_dir}/lenna.png')
-    request_body1 = [{'project_id': project_id, 'input_data_id': test2_input_data_id, '_type': 'Delete'}]
-    assert type(api.batch_update_inputs(project_id, request_body=request_body1)[0]) == list
 
 
 def test_supplementary():
