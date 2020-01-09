@@ -421,6 +421,9 @@ class TestJob:
     def test_delete_all_succeeded_job(self):
         assert len(wrapper.delete_all_succeeded_job(project_id, JobType.GEN_TASKS)) >= 0
 
+    def test_job_in_progress(self):
+        assert type(wrapper.job_in_progress(project_id, JobType.GEN_TASKS)) == bool
+
 
 def test_webhook():
     print("put_webhook")
