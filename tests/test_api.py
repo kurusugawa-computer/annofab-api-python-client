@@ -9,9 +9,10 @@ AnnofabApi, Wrapperのテストコード
 import configparser
 import datetime
 import os
-import time
 import uuid
 from distutils.util import strtobool
+
+import pytest
 
 import annofabapi
 import annofabapi.utils
@@ -44,272 +45,252 @@ annofab_user_id = service.api.login_user_id
 task_id = test_wrapper.get_first_task_id(project_id)
 input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
+submitting_job = pytest.mark.skipif(not should_execute_job_api, reason="ジョブが投入されるテストのため、スキップします")
+"""
+ジョブが投入されるテスト
+"""
 
-def test_account():
+
+class TestAccount:
     pass
 
 
-def test_my():
-    print(f"get_my_account")
-    my_account, _ = api.get_my_account()
-    assert type(my_account) == dict
+class TestAnnotation:
+    def test_wrapper_get_all_annotation_list(self):
+        assert len(wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}})) >= 0
 
-    # print(f"put_my_account")
-    # my_account_request_body = {
-    #     'user_id': my_account['user_id'],
-    #     'username': my_account['username'],
-    #     'lang': my_account['lang'],
-    #     'keylayout': my_account['keylayout'],
-    #     'last_updated_datetime': my_account['updated_datetime']
-    # }
-    # puted_my_account, _ = api.put_my_account(request_body=my_account_request_body)
-    # assert type(puted_my_account) == dict
+    def test_get_annotation(self):
+        assert type(api.get_annotation(project_id, task_id, input_data_id)[0]) == dict
 
-    print(f"get_my_project_members")
-    my_project_members, _ = api.get_my_project_members()
-    assert len(my_project_members) > 0
+    def test_get_annotation_archive(self):
+        content, response = api.get_annotation_archive(project_id)
+        assert response.headers["Location"].startswith("https://")
 
-    print(f"get_my_organizations in wrapper.get_all_my_organizations")
-    my_organizations = wrapper.get_all_my_organizations()
-    assert len(my_organizations) > 0
+        # v2版の確認
+        content, response = api.get_annotation_archive(project_id, query_params={"v2": True})
+        assert response.headers["Location"].startswith("https://")
 
-    print(f"get_my_projects")
-    my_projects, _ = api.get_my_projects()
-    assert len(my_projects['list']) > 0
+    def test_get_archive_full_with_pro_id(self):
+        content, response = api.get_archive_full_with_pro_id(project_id)
+        assert response.headers["Location"].startswith("https://")
 
-    print(f"get_my_member_by_project_id")
-    my_member_in_project, _ = api.get_my_member_in_project(project_id)
-    assert type(my_member_in_project) == dict
+    def test_wrapper_download_annotation_archive(self):
+        wrapper.download_annotation_archive(project_id, f'{out_dir}/simple-annotation.zip')
 
-
-def test_annotation():
-    """
-    batchUpdateAnnotations, putAnnotationはテストしない.
-    """
-
-    print("get_annotation_list in wrapper.get_all_annotation_list")
-    assert len(wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}})) >= 0
-
-    print("get_annotation")
-    assert type(api.get_annotation(project_id, task_id, input_data_id)[0]) == dict
-
-    print("get_annotation_archive")
-    content, response = api.get_annotation_archive(project_id)
-    assert response.headers["Location"].startswith("https://")
-
-    print("get_annotation_archive(v2)")
-    content, response = api.get_annotation_archive(project_id, query_params={"v2": True})
-    assert response.headers["Location"].startswith("https://")
-
-    print("wrapper.download_annotation_archive")
-    wrapper.download_annotation_archive(project_id, f'{out_dir}/simple-annotation.zip')
-
-    if should_execute_job_api:
-        print("post_annotation_archive_update")
+    @submitting_job
+    def test_post_annotation_archive_update(self):
         assert type(api.post_annotation_archive_update(project_id)[0]) == dict
 
 
-def test_annotation_specs():
-    print(f"get_annotation_specs")
-    annotation_spec, _ = api.get_annotation_specs(project_id)
-    assert type(annotation_spec) == dict
+class TestAnnotationSpecs:
+    def test_get_annotation_specs(self):
+        annotation_spec, _ = api.get_annotation_specs(project_id)
+        assert type(annotation_spec) == dict
 
-    print(f"put_annotation_specs")
-    request_body = {
-        "labels": annotation_spec["labels"],
-        "inspection_phrases": annotation_spec["inspection_phrases"],
-        "comment": f"{annofabapi.utils.str_now()} に更新しました。",
-    }
-    puted_annotation_spec, _ = api.put_annotation_specs(project_id, request_body=request_body)
-    assert type(puted_annotation_spec) == dict
+    def test_put_annotation_specs(self):
+        annotation_spec, _ = api.get_annotation_specs(project_id)
 
-    print("get_annotation_specs_histories")
-    annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
-    assert type(annotation_specs_histories) == list
+        request_body = {
+            "labels": annotation_spec["labels"],
+            "inspection_phrases": annotation_spec["inspection_phrases"],
+            "comment": f"{annofabapi.utils.str_now()} に更新しました。",
+        }
+        puted_annotation_spec, _ = api.put_annotation_specs(project_id, request_body=request_body)
+        assert type(puted_annotation_spec) == dict
 
-    old_annotation_spec, _ = api.get_annotation_specs(
-        project_id, query_params={"history_id": annotation_specs_histories[1]["history_id"]})
-    assert type(old_annotation_spec) == dict
+    def test_get_annotation_specs_histories(self):
+        annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
+        assert type(annotation_specs_histories) == list
 
 
-def test_login():
-    print(f"login")
-    assert api.login()[0]['token'].keys() >= {'id_token', 'access_token', 'refresh_token'}
-    print(f"refresh_token with logging in")
-    assert api.refresh_token()[0].keys() >= {'id_token', 'access_token', 'refresh_token'}
-    print(f"logout with logging in")
-    assert type(api.logout()[0]) == dict
+class TestInput:
+    def test_wrapper_get_input_data_list(self):
+        assert type(wrapper.get_all_input_data_list(project_id, {"input_data_name": "foo"})) == list
 
-    print(f"refresh_token with logging out")
-    assert api.refresh_token() is None
+    def test_get_input_data(self):
+        test_input_data = api.get_input_data(project_id, input_data_id)[0]
+        assert type(test_input_data) == dict
 
-    print(f"logout with logging out")
-    assert api.logout() is None
+    def test_wrapper_put_input_data_from_file_and_delete_input_data(self):
+        test_input_data_id = str(uuid.uuid4())
+        print("")
+        print(f"put_input_data: input_data_id={test_input_data_id}")
+        assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f'{test_dir}/lenna.png')) == dict
+        assert type(api.delete_input_data(project_id, test_input_data_id)[0]) == dict
 
+    def test_batch_update_inputs(self):
+        test_input_data_id = str(uuid.uuid4())
+        print("")
+        print(f"put_input_data: input_data_id={test_input_data_id}")
+        wrapper.put_input_data_from_file(project_id, test_input_data_id, f'{test_dir}/lenna.png')
 
-def test_input():
-    test_input_data_id = str(uuid.uuid4())
-    print(f"wrapper.put_input_data_from_file (内部でput_input_dataとcreate_temp_pathが実行される）. test_id={test_input_data_id}")
-    assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f'{test_dir}/lenna.png')) == dict
-
-    print(f"get_input_data")
-    test_input_data = api.get_input_data(project_id, test_input_data_id)[0]
-    assert type(test_input_data) == dict
-
-    print(f"get_input_data_list in wrapper.get_all_input_data_list")
-    # すぐには反映されないので、少し待つ
-    time.sleep(5)
-    assert len(wrapper.get_all_input_data_list(project_id, {"input_data_id": test_input_data_id})) == 1
-
-    print(f"delete_input_data")
-    assert type(api.delete_input_data(project_id, test_input_data_id)[0]) == dict
-    time.sleep(3)
-    content, _ = api.get_input_data_list(project_id, query_params={'input_data_id': test_input_data_id})
-    assert len(content['list']) == 0
-
-    test2_input_data_id = str(uuid.uuid4())
-    print(f"入力データの一括更新（削除）(batch_update_inputs). test_id2={test2_input_data_id}")
-    wrapper.put_input_data_from_file(project_id, test2_input_data_id, f'{test_dir}/lenna.png')
-    request_body1 = [{'project_id': project_id, 'input_data_id': test2_input_data_id, '_type': 'Delete'}]
-    assert type(api.batch_update_inputs(project_id, request_body=request_body1)[0]) == list
+        request_body = [{'project_id': project_id, 'input_data_id': test_input_data_id, '_type': 'Delete'}]
+        assert type(api.batch_update_inputs(project_id, request_body=request_body)[0]) == list
 
 
-def test_supplementary():
-    print("wrapper.put_supplementary_data_from_file（内部でput_supplementary_dataが実行される）")
-    supplementary_data_id = str(uuid.uuid4())
-    request_body = {'supplementary_data_number': 1}
-    content = wrapper.put_supplementary_data_from_file(project_id, input_data_id, supplementary_data_id,
-                                                       f'{test_dir}/sample.txt', request_body=request_body)
-    assert type(content) == dict
-
-    print("get_supplementary_data_list")
-    supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
-    assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 1
-
-    print("delete_supplementary_data")
-    api.delete_supplementary_data(project_id, input_data_id, supplementary_data_id)
-    supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
-    assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 0
+class TestInspection:
+    def test_get_inspections(self):
+        assert len(api.get_inspections(project_id, task_id, input_data_id)[0]) >= 0
 
 
-def test_inspection():
-    """
-    batchUpdateInspectionsはテストしない.
-    """
+class TestInstruction:
+    def test_wrapper_get_latest_instruction(self):
+        assert type(wrapper.get_latest_instruction(project_id)) == dict
 
-    # # 作業中のタスクでなくても、検査コメントは付与できる
-    # req_inspection = [{
-    #     "data": {
-    #         "project_id": project_id,
-    #         "comment": f"test comment by test code {annofabapi.utils.str_now()}",
-    #         "task_id": task_id,
-    #         "input_data_id": input_data_id,
-    #         "inspection_id": str(uuid.uuid4()),
-    #         "phase": "acceptance",
-    #         "commenter_account_id": my_account_id,
-    #         "data": {
-    #             "x": 0,
-    #             "y": 0,
-    #             "_type": "Point"
-    #         },
-    #         "status": "annotator_action_required",
-    #         "created_datetime": annofabapi.utils.str_now()
-    #     },
-    #     "_type": "Put",
-    # }]
-    #
-    # api.batch_update_inspections(project_id, task_id, input_data_id,
-    #                                             request_body=req_inspection)
-    print("get_inspections")
-    assert len(api.get_inspections(project_id, task_id, input_data_id)[0]) >= 0
+    def test_get_instruction_history(self):
+        histories = api.get_instruction_history(project_id)[0]
+        assert len(histories) > 0
+
+    def test_wrapper_upload_instruction_image_and_delete_instruction_image(self):
+        test_image_id = str(uuid.uuid4())
+        print("")
+        print(f"wrapper.upload_instruction_image: image_id={test_image_id}")
+        wrapper.upload_instruction_image(project_id, test_image_id, f'{test_dir}/lenna.png')
+
+        api.delete_instruction_image(project_id, test_image_id)
+
+    def test_get_instruction_images(self):
+        image_list = api.get_instruction_images(project_id)[0]
+        assert type(image_list) == list
+
+    def test_put_instruction(self):
+        str_now = datetime.datetime.now().isoformat()
+        html_data = f"<h1>時間 {str_now}</h1>"
+
+        histories = api.get_instruction_history(project_id)[0]
+        put_request_body = {'html': html_data, 'last_updated_datetime': histories[0]['updated_datetime']}
+        assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict
 
 
-def test_organization():
-    """
-    createNewOrganization はテストしない
-    """
+class TestJob:
+    def test_wait_for_completion(self):
+        # 実行中のジョブはないので、必ずTrue
+        result = wrapper.wait_for_completion(project_id, JobType.GEN_TASKS, job_access_interval=1, max_job_access=1)
+        assert result == True
 
-    print("get_organization")
-    assert type(api.get_organization(organization_name)[0]) == dict
+    def test_get_all_project_job(self):
+        assert len(wrapper.get_all_project_job(project_id, {"type": JobType.GEN_INPUTS.value})) >= 0
 
-    print("get_projects_of_organization in wrapper.get_all_projects_of_organization")
-    assert len(wrapper.get_all_projects_of_organization(organization_name)) > 0
+    def test_delete_all_succeeded_job(self):
+        assert len(wrapper.delete_all_succeeded_job(project_id, JobType.GEN_TASKS)) >= 0
 
-    print("get_organization_activity")
-    assert type(api.get_organization_activity(organization_name)[0]) == dict
-
-
-def test_organization_member():
-    """
-    招待関係のAPI、削除関係のAPIはテストしない
-    """
-
-    print("api.get_organization_members in wrapper.get_all_organization_members")
-    assert len(wrapper.get_all_organization_members(organization_name)) > 0
-
-    print("api.get_organization_member")
-    organization_member = api.get_organization_member(organization_name, annofab_user_id)[0]
-    assert type(organization_member) == dict
-
-    print("api.put_role_of_organization_member")
-    request_body = {'role': 'owner', 'last_updated_datetime': organization_member['updated_datetime']}
-    api.update_organization_member_role(organization_name, annofab_user_id, request_body=request_body)
+    def test_job_in_progress(self):
+        assert type(wrapper.job_in_progress(project_id, JobType.GEN_TASKS)) == bool
 
 
-def test_project():
-    """
+class TestLogin:
+    def test_login(self):
+        assert api.login()[0]['token'].keys() >= {'id_token', 'access_token', 'refresh_token'}
 
-    間違って操作してしまうと危険なので、プロジェクトの複製、作成、削除はテストしない。
+        assert api.refresh_token()[0].keys() >= {'id_token', 'access_token', 'refresh_token'}
 
-    """
-    print("get_project")
-    assert type(api.get_project(project_id)[0]) == dict
+        assert type(api.logout()[0]) == dict
 
-    print("get_organization_of_project")
-    assert type(api.get_organization_of_project(project_id)[0]) == dict
+        assert api.refresh_token() is None, "ログアウト状態では、refresh_tokenメソッドはNoneを返す"
 
-    print("wrapper.download_....")
-    assert wrapper.download_project_tasks_url(project_id, f'{out_dir}/tasks.json').startswith("https://")
-
-    assert wrapper.download_project_task_history_events_url(
-        project_id, f'{out_dir}/task_history_events.json').startswith("https://")
-
-    assert wrapper.download_project_inspections_url(project_id, f'{out_dir}/inspections.json').startswith("https://")
-
-    # assert api.post_project_tasks_update(project_id)
+        assert api.logout() is None, "ログアウト状態では、logoutメソッドはNoneを返す"
 
 
-def test_project_member():
-    print(f"get_project_member")
-    my_member = api.get_project_member(project_id, annofab_user_id)[0]
-    assert type(my_member) == dict
+class TestMy:
+    def test_get_my_account(self):
+        my_account, _ = api.get_my_account()
+        assert type(my_account) == dict
 
-    print(f"get_project_members in wrapper.get_all_project_members")
-    assert len(wrapper.get_all_project_members(project_id)) >= 0
+    def test_get_my_project_members(self):
+        my_project_members, _ = api.get_my_project_members()
+        assert len(my_project_members) > 0
 
-    print("wrapper.copy_project_member -> wrapper.put_project_members -> put_project_member")
-    content = wrapper.copy_project_members(src_project_id=project_id, dest_project_id=project_id, delete_dest=False)
-    assert type(content) == list
+    def test_wrapper_get_all_my_organizations(self):
+        my_organizations = wrapper.get_all_my_organizations()
+        assert len(my_organizations) > 0
+
+    def test_get_my_projects(self):
+        my_projects, _ = api.get_my_projects()
+        assert len(my_projects['list']) > 0
+
+    def test_get_my_member_in_project(self):
+        my_member_in_project, _ = api.get_my_member_in_project(project_id)
+        assert type(my_member_in_project) == dict
+
+
+class TestOrganization:
+    def test_get_organization(self):
+        assert type(api.get_organization(organization_name)[0]) == dict
+
+    def test_get_organization_activity(self):
+        assert type(api.get_organization_activity(organization_name)[0]) == dict
+
+    def test_wrapper_get_all_projects_of_organization(self):
+        assert len(wrapper.get_all_projects_of_organization(organization_name)) > 0
+
+
+class TestOrganizationMember:
+    def test_wrapper_get_all_organization_members(self):
+        assert len(wrapper.get_all_organization_members(organization_name)) > 0
+
+    def test_get_organization_member(self):
+        organization_member = api.get_organization_member(organization_name, annofab_user_id)[0]
+        assert type(organization_member) == dict
+
+    def test_update_organization_member_role(self):
+        organization_member = api.get_organization_member(organization_name, annofab_user_id)[0]
+        request_body = {'role': 'owner', 'last_updated_datetime': organization_member['updated_datetime']}
+        api.update_organization_member_role(organization_name, annofab_user_id, request_body=request_body)
+
+
+class TestProject:
+    def test_get_project(self):
+        assert type(api.get_project(project_id)[0]) == dict
+
+    def test_get_organization_of_project(self):
+        assert type(api.get_organization_of_project(project_id)[0]) == dict
+
+    @submitting_job
+    def test_post_project_tasks_update(self):
+        assert type(api.post_project_tasks_update(project_id)[0]) == dict
+
+    def test_wrapper_download_project_tasks_url(self):
+        assert wrapper.download_project_tasks_url(project_id, f'{out_dir}/tasks.json').startswith("https://")
+
+    def test_wrapper_download_project_task_history_events_url(self):
+        assert wrapper.download_project_task_history_events_url(
+            project_id, f'{out_dir}/task_history_events.json').startswith("https://")
+
+    def test_wrapper_download_project_inspections_url(self):
+        assert wrapper.download_project_inspections_url(project_id,
+                                                        f'{out_dir}/inspections.json').startswith("https://")
+
+
+class TestProjectMember:
+    def test_get_project_member(self):
+        my_member = api.get_project_member(project_id, annofab_user_id)[0]
+        assert type(my_member) == dict
+
+    def test_wrapper_get_all_project_members(self):
+        assert len(wrapper.get_all_project_members(project_id)) >= 0
+
+    def test_wrapper_copy_project_member(self):
+        content = wrapper.copy_project_members(src_project_id=project_id, dest_project_id=project_id, delete_dest=False)
+        assert type(content) == list
 
 
 class TestStatistics:
     def test_statistics(self):
-        print("get_task_statistics")
         assert type(api.get_task_statistics(project_id)[0]) == list
 
-        print("get_account_statistics")
+    def test_get_account_statistics(self):
         assert type(api.get_account_statistics(project_id)[0]) == list
 
-        print("get_inspection_statistics")
+    def test_get_inspection_statistics(self):
         assert type(api.get_inspection_statistics(project_id)[0]) == list
 
-        print("get_task_phase_statistics")
+    def test_get_task_phase_statistics(self):
         assert type(api.get_task_phase_statistics(project_id)[0]) == list
 
-        print("get_label_statistics")
+    def test_get_label_statistics(self):
         assert type(api.get_label_statistics(project_id)[0]) == list
 
-        print("get_worktime_statistics")
+    def test_wrapper_get_worktime_statistics(self):
         assert type(wrapper.get_worktime_statistics(project_id)) == list
 
     def test_graph_marker(self):
@@ -328,130 +309,105 @@ class TestStatistics:
         assert type(api.put_markers(project_id, request_body=request_body)[0]) == dict
 
 
-class TestTask:
-    def test_task(self):
-        test_task_id = str(uuid.uuid4())
+class Testsupplementary:
+    def test_supplementary(self):
+        supplementary_data_id = str(uuid.uuid4())
+        request_body = {'supplementary_data_number': 1}
 
-        print(f"put_task. test_task_id={test_task_id}")
-        first_input_data = test_wrapper.get_first_input_data(project_id)
-        input_data_id_list = [first_input_data['input_data_id']]
-        request_body = {"input_data_id_list": input_data_id_list}
+        print("")
+        print(f"wrapper.put_supplementary_data_from_file: supplementary_data_id={supplementary_data_id}")
+        content = wrapper.put_supplementary_data_from_file(project_id, input_data_id, supplementary_data_id,
+                                                           f'{test_dir}/sample.txt', request_body=request_body)
+        assert type(content) == dict
+
+        supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
+        assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 1
+
+        api.delete_supplementary_data(project_id, input_data_id, supplementary_data_id)
+        supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
+        assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 0
+
+
+class TestTask:
+    def test_wraper_get_all_tasks(self):
+        assert type(wrapper.get_all_tasks(project_id, query_params={'task_id': "foo"})) == list
+
+    @submitting_job
+    def test_initiate_tasks_generation_by_csv(self):
+        csv_file_path = f'{test_dir}/tmp/create_task.csv'
+        test_task_id = str(uuid.uuid4())
+        create_csv_for_task(csv_file_path, test_task_id, input_data_id)
+        content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path)
+        assert type(content) == dict
+
+    def test_get_task(self):
+        assert type(api.get_task(project_id, task_id)[0]) == dict
+
+    def test_put_task_and_delete_task(self):
+        test_task_id = str(uuid.uuid4())
+        request_body = {"input_data_id_list": [input_data_id]}
+        print("")
+        print(f"put_task: task_id={task_id}")
         test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]
         assert type(test_task_data) == dict
 
-        print(f"get_task")
-        assert type(api.get_task(project_id, test_task_id)[0]) == dict
-
-        print(f"get_tasks in wrapper.get_all_tasks")
-        time.sleep(3)  # sleepしないと失敗したため
-        assert len(wrapper.get_all_tasks(project_id, query_params={'task_id': test_task_id})) == 1
-
-        print(f"assign_tasks")
-        request_body = {"request_type": {"task_ids": [test_task_id], "user_id": annofab_user_id, "_type": "Selection"}}
-        assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == list
-
-        print(f"operate_task")
-        request_body1 = {
-            'status': 'not_started',
-            'last_updated_datetime': test_task_data['updated_datetime'],
-            'account_id': my_account_id
-        }
-        assert type(api.operate_task(project_id, test_task_id, request_body=request_body1)[0]) == dict
-
-        print(f"get_task_histories")
-        assert len(api.get_task_histories(project_id, test_task_id)[0]) > 0
-
-        print(f"delete_task")
         assert type(api.delete_task(project_id, test_task_id)[0]) == dict
 
-        test2_task_id = str(uuid.uuid4())
-        print(f"batch_update_tasks. test_task_id={test2_task_id}")
-        request_body = {"input_data_id_list": input_data_id_list}
-        test_task_data = api.put_task(project_id, test2_task_id, request_body=request_body)[0]
+    def test_assign_task(self):
+        request_body = {"request_type": {"phase": "annotation", "_type": "Random"}}
+        assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == list
 
-        request_body = [{'project_id': project_id, 'task_id': test2_task_id, '_type': 'Delete'}]
+    def test_operate_task(self):
+        task, _ = api.get_task(project_id, task_id)
+        request_body = {
+            'status': 'not_started',
+            'last_updated_datetime': task['updated_datetime'],
+            'account_id': my_account_id
+        }
+        assert type(api.operate_task(project_id, task_id, request_body=request_body)[0]) == dict
+
+    def test_get_task_histories(self):
+        assert len(api.get_task_histories(project_id, task_id)[0]) > 0
+
+    def test_batch_update_tasks(self):
+        test_task_id = str(uuid.uuid4())
+        request_body = {"input_data_id_list": [input_data_id]}
+        print("")
+        print(f"put_task: task_id={task_id}")
+        test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]
+
+        request_body = [{'project_id': project_id, 'task_id': test_task_id, '_type': 'Delete'}]
         content = api.batch_update_tasks(project_id, request_body=request_body)[0]
         assert type(content) == list
 
-        if should_execute_job_api:
-            print(f"initiate_tasks_generation in wrapper.initiate_tasks_generation_by_csv")
-            csv_file_path = f'{test_dir}/tmp/create_task.csv'
-            create_csv_for_task(csv_file_path, first_input_data)
-            task_id_prefix = str(uuid.uuid4())
-            content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path, task_id_prefix)
-            assert type(content) == dict
 
+class TestWebhook:
+    def test_get_webhooks(self):
+        webhook_list = api.get_webhooks(project_id)[0]
+        assert type(webhook_list) == list
 
-def test_instruction():
-    str_now = datetime.datetime.now().isoformat()
-    html_data = f"<h1>時間 {str_now}</h1>"
+    def test_put_webhook_and_delete_webhook(self):
+        test_webhook_id = str(uuid.uuid4())
+        request_body = {
+            "project_id": project_id,
+            "event_type": "task-completed",
+            "webhook_id": test_webhook_id,
+            "webhook_status": "active",
+            "method": "POST",
+            "headers": [{
+                "name": "Content-Type",
+                "value": "application/json"
+            }],
+            "body": "test",
+            "url": "https://annofab.com/",
+            "created_datetime": None,
+            "updated_datetime": None,
+        }
+        print("")
+        print(f"put_webhook: webhook_id={test_webhook_id}")
+        assert type(api.put_webhook(project_id, test_webhook_id, request_body=request_body)[0]) == dict
 
-    print("get_instruction_history")
-    histories = api.get_instruction_history(project_id)[0]
-    assert len(histories) > 0
-
-    print("put_instruction")
-    put_request_body = {'html': html_data, 'last_updated_datetime': histories[0]['updated_datetime']}
-    assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict
-
-    print("wrapper.get_latest_instruction")
-    assert wrapper.get_latest_instruction(project_id)['html'] == html_data
-
-    print("upload_instruction_image. 内部でget_instruction_image_url_for_put を実行している")
-    test_image_id = str(uuid.uuid4())
-    wrapper.upload_instruction_image(project_id, test_image_id, f'{test_dir}/lenna.png')
-
-    print("get_instruction_images")
-    images = api.get_instruction_images(project_id)[0]
-    assert len([e for e in images if e["image_id"] == test_image_id]) == 1
-
-    print("delete_instruction_image")
-    api.delete_instruction_image(project_id, test_image_id)
-
-
-class TestJob:
-    def test_wait_for_completion(self):
-        # 実行中のジョブはないので、必ずTrue
-        result = wrapper.wait_for_completion(project_id, JobType.GEN_TASKS, job_access_interval=1, max_job_access=1)
-        assert result == True
-
-    def test_get_all_project_job(self):
-        assert len(wrapper.get_all_project_job(project_id, {"type": JobType.GEN_INPUTS.value})) >= 0
-
-    def test_delete_all_succeeded_job(self):
-        assert len(wrapper.delete_all_succeeded_job(project_id, JobType.GEN_TASKS)) >= 0
-
-
-def test_webhook():
-    print("put_webhook")
-    test_webhook_id = str(uuid.uuid4())
-    request_body = {
-        "project_id": project_id,
-        "event_type": "task-completed",
-        "webhook_id": test_webhook_id,
-        "webhook_status": "active",
-        "method": "POST",
-        "headers": [{
-            "name": "Content-Type",
-            "value": "application/json"
-        }],
-        "body": "test",
-        "url": "https://annofab.com/",
-        "created_datetime": None,
-        "updated_datetime": None,
-    }
-    assert type(api.put_webhook(project_id, test_webhook_id, request_body=request_body)[0]) == dict
-
-    print("get_webhooks")
-    webhook_list = api.get_webhooks(project_id)[0]
-    assert len([e for e in webhook_list if e["webhook_id"] == test_webhook_id]) == 1
-
-    # Errorが発生するので実行しない
-    # print("test_webhook")
-    # assert type(api.test_webhook(project_id, test_webhook_id)[0]) == dict
-
-    print("delete_webhook")
-    assert type(api.delete_webhook(project_id, test_webhook_id)[0]) == dict
+        assert type(api.delete_webhook(project_id, test_webhook_id)[0]) == dict
 
 
 class TestGetObjOrNone:
