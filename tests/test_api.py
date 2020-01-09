@@ -9,7 +9,6 @@ AnnofabApi, Wrapperのテストコード
 import configparser
 import datetime
 import os
-import time
 import uuid
 from distutils.util import strtobool
 
@@ -246,6 +245,10 @@ class TestProject:
     def test_get_organization_of_project(self):
         assert type(api.get_organization_of_project(project_id)[0]) == dict
 
+    @submitting_job
+    def test_post_project_tasks_update(self):
+        assert type(api.post_project_tasks_update(project_id)[0]) == dict
+
     def test_wrapper_download_project_tasks_url(self):
         assert wrapper.download_project_tasks_url(project_id, f'{out_dir}/tasks.json').startswith("https://")
 
@@ -290,7 +293,6 @@ class TestStatistics:
     def test_wrapper_get_worktime_statistics(self):
         assert type(wrapper.get_worktime_statistics(project_id)) == list
 
-
     def test_graph_marker(self):
         print("get_markers")
         content, _ = api.get_markers(project_id)
@@ -305,7 +307,6 @@ class TestStatistics:
         request_body = {"markers": markers, "last_updated_datetime": content["updated_datetime"]}
         print("put_markers")
         assert type(api.put_markers(project_id, request_body=request_body)[0]) == dict
-
 
 
 class Testsupplementary:
@@ -325,6 +326,7 @@ class Testsupplementary:
         api.delete_supplementary_data(project_id, input_data_id, supplementary_data_id)
         supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
         assert len([e for e in supplementary_data_list if e['supplementary_data_id'] == supplementary_data_id]) == 0
+
 
 class TestTask:
     def test_wraper_get_all_tasks(self):
@@ -379,36 +381,33 @@ class TestTask:
         assert type(content) == list
 
 
-def test_webhook():
-    print("put_webhook")
-    test_webhook_id = str(uuid.uuid4())
-    request_body = {
-        "project_id": project_id,
-        "event_type": "task-completed",
-        "webhook_id": test_webhook_id,
-        "webhook_status": "active",
-        "method": "POST",
-        "headers": [{
-            "name": "Content-Type",
-            "value": "application/json"
-        }],
-        "body": "test",
-        "url": "https://annofab.com/",
-        "created_datetime": None,
-        "updated_datetime": None,
-    }
-    assert type(api.put_webhook(project_id, test_webhook_id, request_body=request_body)[0]) == dict
+class TestWebhook:
+    def test_get_webhooks(self):
+        webhook_list = api.get_webhooks(project_id)[0]
+        assert type(webhook_list) == list
 
-    print("get_webhooks")
-    webhook_list = api.get_webhooks(project_id)[0]
-    assert len([e for e in webhook_list if e["webhook_id"] == test_webhook_id]) == 1
+    def test_put_webhook_and_delete_webhook(self):
+        test_webhook_id = str(uuid.uuid4())
+        request_body = {
+            "project_id": project_id,
+            "event_type": "task-completed",
+            "webhook_id": test_webhook_id,
+            "webhook_status": "active",
+            "method": "POST",
+            "headers": [{
+                "name": "Content-Type",
+                "value": "application/json"
+            }],
+            "body": "test",
+            "url": "https://annofab.com/",
+            "created_datetime": None,
+            "updated_datetime": None,
+        }
+        print("")
+        print(f"put_webhook: webhook_id={test_webhook_id}")
+        assert type(api.put_webhook(project_id, test_webhook_id, request_body=request_body)[0]) == dict
 
-    # Errorが発生するので実行しない
-    # print("test_webhook")
-    # assert type(api.test_webhook(project_id, test_webhook_id)[0]) == dict
-
-    print("delete_webhook")
-    assert type(api.delete_webhook(project_id, test_webhook_id)[0]) == dict
+        assert type(api.delete_webhook(project_id, test_webhook_id)[0]) == dict
 
 
 class TestGetObjOrNone:
