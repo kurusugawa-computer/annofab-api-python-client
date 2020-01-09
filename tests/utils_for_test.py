@@ -7,11 +7,11 @@ from distutils.util import strtobool
 from annofabapi import AnnofabApi
 
 
-def create_csv_for_task(file_path, first_input_data):
+def create_csv_for_task(file_path, task_id: str, input_data_id: str):
     """
     タスク生成用のCSVを作成する
     """
-    first_line = ["1", first_input_data['input_data_name'], first_input_data['input_data_id']]
+    first_line = [task_id, "", input_data_id]
     lines = [first_line]
 
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
