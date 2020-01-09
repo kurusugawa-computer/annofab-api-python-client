@@ -13,8 +13,8 @@ import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (AnnotationSpecsV1, InputData, Inspection, InspectionStatus, Instruction, JobInfo,
-                               JobType, MyOrganization, Organization, OrganizationMember, Project, ProjectMember,
-                               SupplementaryData, Task)
+                               JobStatus, JobType, MyOrganization, Organization, OrganizationMember, Project,
+                               ProjectMember, SupplementaryData, Task)
 from annofabapi.utils import allow_404_error
 
 logger = logging.getLogger(__name__)
@@ -770,7 +770,7 @@ class Wrapper:
         return self._get_all_objects(self.api.get_tasks, limit=200, project_id=project_id, query_params=query_params)
 
     #########################################
-    # Public Method : AfInstructionApi
+    # Public Method : Instruction
     #########################################
     def get_latest_instruction(self, project_id: str) -> Optional[Instruction]:
         """
@@ -826,7 +826,7 @@ class Wrapper:
         return content["path"]
 
     #########################################
-    # Public Method : AfJobApi
+    # Public Method : Job
     #########################################
     def delete_all_succeeded_job(self, project_id: str, job_type: JobType) -> List[JobInfo]:
         """
@@ -875,6 +875,25 @@ class Wrapper:
         r = self.api.get_project_job(project_id, query_params=copied_params)[0]
         all_jobs.extend(r["list"])
         return all_jobs
+
+    def job_in_progress(self, project_id: str, job_type: JobType) -> bool:
+        """
+        ジョブが進行中かどうか
+
+        Args:
+            project_id: プロジェクトID
+            job_type: ジョブ種別
+
+        Returns:
+            True: ジョブが進行中かどうか
+
+        """
+        job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
+        if len(job_list) == 0:
+            return False
+
+        job = job_list[0]
+        return job["job_status"] == JobStatus.PROGRESS.value
 
     def wait_for_completion(self, project_id: str, job_type: JobType, job_access_interval: int = 60,
                             max_job_access: int = 10) -> bool:
