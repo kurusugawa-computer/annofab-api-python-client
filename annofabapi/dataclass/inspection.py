@@ -47,7 +47,7 @@ class Inspection:
     """"""
 
     annotation_id: Optional[str]
-    """"""
+    """特定のアノテーションに対するコメントの場合はそのアノテーションのID、座標に対する場合は値なし。 [詳細はこちら](#section/AnnotationId)。 """
 
     data: OneOfInspectionDataPointInspectionDataPolylineInspectionDataTime
     """"""
