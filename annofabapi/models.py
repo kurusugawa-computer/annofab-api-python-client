@@ -1940,7 +1940,7 @@ Kyes of Dict
 * commenter_account_id: str
     
 * annotation_id: str
-    
+    特定のアノテーションに対するコメントの場合はそのアノテーションのID、座標に対する場合は値なし。 [詳細はこちら](#section/AnnotationId)。 
 * data: OneOfInspectionDataPointInspectionDataPolylineInspectionDataTime
     
 * parent_inspection_id: str
@@ -2822,8 +2822,6 @@ Kyes of Dict
     「アノテーション」をコピーするかどうかを指定します。  この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_inputs の値を true とする * copy_tasks の値を true とする 
 * copy_webhooks: bool
     「Webhook」をコピーするかどうかを指定します。 
-* copy_tasks_with_annotations: bool
-    「タスク」および「アノテーション」をコピーするかどうかを指定します。  廃止予定の属性のためこの属性は使用せず、「タスク」および「アノテーション」をコピーする場合には他の属性の値を必ず次のように指定してください。  * copy_tasks の値を true とする * copy_inputs の値を true とする * copy_annotations の値を true とする  やむを得ない理由でこの属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_tasks の値を false とする * copy_inputs の値を true とする * copy_annotations の値を false とする 
 * copy_supplementaly_data: bool
     「補助情報」をコピーするかどうかを指定します。  この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_inputs の値を true とする 
 * copy_instructions: bool
@@ -3297,17 +3295,6 @@ Kyes of Dict
 
 """
 
-
-class TaskAssginmentType(Enum):
-    """
-    * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。 * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。 * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。 
-    """
-
-    RANDOM = "random"
-    SELECTION = "selection"
-    RANDOM_AND_SELECTION = "random_and_selection"
-
-
 TaskAssignRequest = Dict[str, Any]
 """
 
@@ -3326,7 +3313,7 @@ TaskAssignRequestTypeRandom = Dict[str, Any]
 Kyes of Dict
 
 * phase: TaskPhase
-    割当するタスクフェーズ
+    割当するタスクフェーズ。[詳細はこちら](#section/TaskPhase)
 * type: str
     Random
 
@@ -3350,6 +3337,7 @@ Kyes of Dict
 
 class TaskAssignmentType(Enum):
     """
+    プロジェクトで使用するタスクの割当方式。  * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。 * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。 * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。 
     """
 
     RANDOM = "random"
@@ -3491,7 +3479,7 @@ TaskOperation = Dict[str, Any]
 Kyes of Dict
 
 * status: TaskStatus
-    
+    次に遷移させるタスクの状態。[詳細はこちら](#section/TaskStatus)。 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * account_id: str
