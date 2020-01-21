@@ -13,6 +13,9 @@ from annofabapi.generated_api import AbstractAnnofabApi
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_ENDPOINT_URL = "https://annofab.com/api"
+"""AnnoFab WebAPIのデフォルトのエンドポイントURL"""
+
 
 def my_backoff(function):
     """
@@ -68,20 +71,21 @@ class AnnofabApi(AbstractAnnofabApi):
     Args:
         login_user_id: AnnoFabにログインするときのユーザID
         login_password: AnnoFabにログインするときのパスワード
-
+        endpoint_url: AnnoFab APIのエンドポイント。
     """
-    def __init__(self, login_user_id: str, login_password: str):
+    def __init__(self, login_user_id: str, login_password: str, endpoint_url: str = DEFAULT_ENDPOINT_URL):
 
         if not login_user_id or not login_password:
             raise ValueError("login_user_id or login_password is empty.")
 
         self.login_user_id = login_user_id
         self.login_password = login_password
-
+        self.endpoint_url = endpoint_url
+        self.URL_PREFIX = f"{endpoint_url}/v1"
         self.session = requests.Session()
 
     #: アクセスするURL
-    URL_PREFIX = "https://annofab.com/api/v1"
+    URL_PREFIX = f"{DEFAULT_ENDPOINT_URL}/v1"
 
     #: login, refresh_tokenで取得したtoken情報
     token_dict: Optional[Dict[str, Any]] = None
