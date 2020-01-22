@@ -76,7 +76,7 @@ info:
     WebhookID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.69.1
+  version: 0.70.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -246,6 +246,16 @@ tags:
 
     # Inspection
     <SchemaDefinition schemaRef="#/components/schemas/Inspection" />
+
+    # TaskStatus
+    <SchemaDefinition schemaRef="#/components/schemas/TaskStatus" />
+
+    # TaskPhase
+    <SchemaDefinition schemaRef="#/components/schemas/TaskPhase" />
+
+    # AnnotationId
+    <SchemaDefinition schemaRef="#/components/schemas/AnnotationId" />
+
 x-tagGroups:
   - name: API
     tags:
@@ -1383,7 +1393,6 @@ paths:
         schema:
           $ref: "#/components/schemas/ProjectId"
       requestBody:
-        required: true
         content:
           application/json:
             schema:
@@ -1565,12 +1574,15 @@ paths:
           headers:
             Location:
               description: 認証済み一時URL
+              required: true
               schema:
                 type: string
           content:
             application/json:
               schema:
                 type: object
+                required:
+                  - url
                 properties:
                   url:
                     type: string
@@ -1588,6 +1600,7 @@ paths:
       description: |
         プロジェクト内のタスク全件ファイルの更新を開始します。
         ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。
+        本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks-list`）。
 
         タスク全件ファイルは毎日AM 02:00 JSTに自動更新されます。
         本APIを用いると、自動更新を待たずに更新を要求できます。
@@ -1640,6 +1653,7 @@ paths:
           description: 正常
           headers:
             Location:
+              required: true
               description: 認証済み一時URL
               schema:
                 type: string
@@ -1647,6 +1661,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - url
                 properties:
                   url:
                     type: string
@@ -1684,6 +1700,7 @@ paths:
           description: 正常
           headers:
             Location:
+              required: true
               description: 認証済み一時URL
               schema:
                 type: string
@@ -1691,6 +1708,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - url
                 properties:
                   url:
                     type: string
@@ -2707,6 +2726,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - list
+                  - page_no
+                  - total_page_no
+                  - total_count
+                  - over_limit
+                  - aggregations
                 properties:
                   list:
                     type: array
@@ -3396,9 +3422,12 @@ paths:
 
         更新対象のアノテーションのうち、属性配列に含まれない属性は更新されません。
 
-        更新対象のアノテーションのラベルを変更する場合、変更後のラベルに含まれない属性は削除されます。
+        更新対象のアノテーションのラベルを変更する場合、異なるアノテーション種別のラベルに変更することはできません。
+        また、変更後のラベルに含まれない属性は削除されます。
 
-        また、画像全体アノテーションのラベルは変更することができません。
+        画像全体のアノテーションは、他のラベルに変更することはできません。
+
+        塗りつぶしv2アノテーションは、1ラベル1アノテーションの制約のため、他の塗りつぶしv2ラベルに変更することはできません。
 
         複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。
 
@@ -5478,12 +5507,6 @@ components:
     TaskHistoryId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
-    TaskAssignmentType:
-      type: string
-      enum:
-        - random
-        - selection
-        - random_and_selection
     AnnotationId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -5540,7 +5563,8 @@ components:
         - project_id
         - organization_id
         - title
-        - status
+        - project_status
+        - input_data_type
         - created_datetime
         - updated_datetime
         - configuration
@@ -5552,8 +5576,10 @@ components:
           $ref: "#/components/schemas/OrganizationId"
         title:
           type: string
+          description: プロジェクトのタイトル
         overview:
           type: string
+          description: プロジェクトの概要
         project_status:
           $ref: "#/components/schemas/ProjectStatus"
         input_data_type:
@@ -5573,17 +5599,25 @@ components:
       enum:
         - active
         - suspended
+      description: |
+        プロジェクトの状態
+        * `active` - プロジェクトが進行中
+        * `suspended` - プロジェクトが停止中
     AssigneeRuleOfResubmittedTask:
       type: string
       enum:
         - no_assignee
         - fixed
       description: |
+        再提出されたタスクの検査/受入担当者の割当方法
         * `no_assignee` - 以前の担当者で固定せず、未割当てにします。
         * `fixed` - 以前の担当者が再度担当します。以前の担当者がいない(1回目の検査/受入)場合は未割当てになります。
     InputDataType:
       type: string
-      description: プロジェクトの作成時のみ指定可能（未指定の場合は image）です。更新時は無視されます
+      description: |
+        アノテーションする入力データの種類。プロジェクトの作成時のみ指定可能（未指定の場合は `image`）です。更新時は無視されます。
+        * `image` - 画像
+        * `movie` - 動画
       enum:
         - image
         - movie
@@ -5604,9 +5638,7 @@ components:
           $ref: "#/components/schemas/AssigneeRuleOfResubmittedTask"
           default: no_assignee
         task_assignment_type:
-          description: タスクの割当方式。
           $ref: "#/components/schemas/TaskAssignmentType"
-          default: random
         max_tasks_per_member:
           description: 保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
           type: integer
@@ -5654,13 +5686,17 @@ components:
         last_tasks_updated_datetime:
           type: string
           format: date-time
-    TaskAssginmentType:
+          description: タスクの最終更新日時
+    TaskAssignmentType:
       type: string
+      default: random
       enum:
         - random
         - selection
         - random_and_selection
       description: |
+        プロジェクトで使用するタスクの割当方式。
+  
         * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。
         * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。
         * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。
@@ -5781,8 +5817,10 @@ components:
       properties:
         title:
           type: string
+          description: プロジェクトのタイトル
         overview:
           type: string
+          description: プロジェクトの概要
         status:
           $ref: "#/components/schemas/ProjectStatus"
         input_data_type:
@@ -5813,8 +5851,10 @@ components:
           $ref: "#/components/schemas/ProjectId"
         dest_title:
           type: string
+          description: コピー先プロジェクトのタイトル
         dest_overview:
           type: string
+          description: コピー先プロジェクトの概要
         copy_inputs:
           type: boolean
           description: |
@@ -5843,24 +5883,6 @@ components:
           type: boolean
           description: |
             「Webhook」をコピーするかどうかを指定します。
-          default: false
-        copy_tasks_with_annotations:
-          deprecated: true
-          type: boolean
-          description: |
-            「タスク」および「アノテーション」をコピーするかどうかを指定します。
-  
-            廃止予定の属性のためこの属性は使用せず、「タスク」および「アノテーション」をコピーする場合には他の属性の値を必ず次のように指定してください。
-  
-            * copy_tasks の値を true とする
-            * copy_inputs の値を true とする
-            * copy_annotations の値を true とする
-  
-            やむを得ない理由でこの属性の値を true とする場合、他の属性の値を必ず次のように指定してください。
-  
-            * copy_tasks の値を false とする
-            * copy_inputs の値を true とする
-            * copy_annotations の値を false とする
           default: false
         copy_supplementaly_data:
           type: boolean
@@ -6743,7 +6765,9 @@ components:
         - project_id
         - task_id
         - phase
+        - phase_stage
         - status
+        - input_data_id_list
         - work_time_span
         - updated_datetime
       properties:
@@ -6759,12 +6783,14 @@ components:
           $ref: "#/components/schemas/TaskStatus"
         input_data_id_list:
           type: array
+          description: タスクに含まれる入力データのID
           items:
             $ref: "#/components/schemas/InputDataId"
         account_id:
           $ref: "#/components/schemas/AccountId"
         histories_by_phase:
           type: array
+          description: 簡易的なタスク履歴（あるフェーズを誰が担当したか）
           items:
             $ref: "#/components/schemas/TaskHistoryShort"
         work_time_span:
@@ -6833,6 +6859,8 @@ components:
         * `cancelled` - 提出取消し。修正のため、前フェーズへ戻る。
     TaskRequest:
       type: object
+      required:
+        - input_data_id_list
       properties:
         input_data_id_list:
           type: array
@@ -6840,6 +6868,9 @@ components:
             $ref: "#/components/schemas/InputDataId"
     TaskGenerateRequest:
       type: object
+      required:
+        - task_generate_rule
+        - project_last_updated_datetime
       properties:
         task_generate_rule:
           description: |
@@ -6853,7 +6884,7 @@ components:
         project_last_updated_datetime:
           type: string
           format: date-time
-          description: プロジェクトの最終更新日時。タスク生成の排他制御に使用。
+          description: プロジェクトの最終更新日時（[getProject](#operation/getProject) APIのレスポンス `updated_datetime`）。タスク生成の排他制御に使用。
     TaskGenerateRuleByCount:
       description: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
       type: object
@@ -6930,9 +6961,10 @@ components:
       type: object
       properties:
         status:
+          description: |
+            次に遷移させるタスクの状態。[詳細はこちら](#section/TaskStatus)。
           allOf:
             - $ref: "#/components/schemas/TaskStatus"
-            - description: 次に遷移させるタスクの状態
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
         account_id:
@@ -6964,7 +6996,7 @@ components:
         - phase
       properties:
         phase:
-          description: 割当するタスクフェーズ
+          description: 割当するタスクフェーズ。[詳細はこちら](#section/TaskPhase)
           allOf:
             - $ref: "#/components/schemas/TaskPhase"
         _type:
@@ -6995,6 +7027,8 @@ components:
       type: object
       required:
         - phase
+        - phase_stage
+        - account_id
       properties:
         phase:
           $ref: "#/components/schemas/TaskPhase"
@@ -7011,6 +7045,9 @@ components:
         - project_id
         - task_id
         - task_history_id
+        - accumulated_labor_time_milliseconds
+        - phase
+        - phase_stage
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -8103,10 +8140,11 @@ components:
         commenter_account_id:
           $ref: "#/components/schemas/AccountId"
         annotation_id:
+          description: |
+            特定のアノテーションに対するコメントの場合はそのアノテーションのID、座標に対する場合は値なし。
+            [詳細はこちら](#section/AnnotationId)。
           allOf:
             - $ref: "#/components/schemas/AnnotationId"
-            - description: |
-                特定のアノテーションに対するコメントの場合はそのアノテーションのID、座標に対する場合は値なし
         data:
           oneOf:
             - $ref: "#/components/schemas/InspectionDataPoint"
