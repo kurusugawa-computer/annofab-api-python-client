@@ -38,13 +38,13 @@ class TaskHistory:
     ended_datetime: Optional[str]
     """"""
 
-    accumulated_labor_time_milliseconds: Optional[str]
+    accumulated_labor_time_milliseconds: str
     """累計実作業時間（ISO 8601 duration）"""
 
-    phase: Optional[TaskPhase]
+    phase: TaskPhase
     """"""
 
-    phase_stage: Optional[int]
+    phase_stage: int
     """"""
 
     account_id: Optional[str]
@@ -60,10 +60,10 @@ class TaskHistoryShort:
     phase: TaskPhase
     """"""
 
-    phase_stage: Optional[int]
+    phase_stage: int
     """"""
 
-    account_id: Optional[str]
+    account_id: str
     """"""
 
 
@@ -82,20 +82,20 @@ class Task:
     phase: TaskPhase
     """"""
 
-    phase_stage: Optional[int]
+    phase_stage: int
     """"""
 
     status: TaskStatus
     """"""
 
-    input_data_id_list: Optional[List[str]]
-    """"""
+    input_data_id_list: List[str]
+    """タスクに含まれる入力データのID"""
 
     account_id: Optional[str]
     """"""
 
     histories_by_phase: Optional[List[TaskHistoryShort]]
-    """"""
+    """簡易的なタスク履歴（あるフェーズを誰が担当したか）"""
 
     work_time_span: int
     """累計実作業時間(ミリ秒)"""
