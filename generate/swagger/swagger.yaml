@@ -76,7 +76,7 @@ info:
     WebhookID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.69.2
+  version: 0.70.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1393,7 +1393,6 @@ paths:
         schema:
           $ref: "#/components/schemas/ProjectId"
       requestBody:
-        required: true
         content:
           application/json:
             schema:
@@ -1575,12 +1574,15 @@ paths:
           headers:
             Location:
               description: 認証済み一時URL
+              required: true
               schema:
                 type: string
           content:
             application/json:
               schema:
                 type: object
+                required:
+                  - url
                 properties:
                   url:
                     type: string
@@ -1598,6 +1600,7 @@ paths:
       description: |
         プロジェクト内のタスク全件ファイルの更新を開始します。
         ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。
+        本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks-list`）。
 
         タスク全件ファイルは毎日AM 02:00 JSTに自動更新されます。
         本APIを用いると、自動更新を待たずに更新を要求できます。
@@ -1650,6 +1653,7 @@ paths:
           description: 正常
           headers:
             Location:
+              required: true
               description: 認証済み一時URL
               schema:
                 type: string
@@ -1657,6 +1661,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - url
                 properties:
                   url:
                     type: string
@@ -1694,6 +1700,7 @@ paths:
           description: 正常
           headers:
             Location:
+              required: true
               description: 認証済み一時URL
               schema:
                 type: string
@@ -1701,6 +1708,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - url
                 properties:
                   url:
                     type: string
@@ -2717,6 +2726,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - list
+                  - page_no
+                  - total_page_no
+                  - total_count
+                  - over_limit
+                  - aggregations
                 properties:
                   list:
                     type: array
@@ -5547,7 +5563,8 @@ components:
         - project_id
         - organization_id
         - title
-        - status
+        - project_status
+        - input_data_type
         - created_datetime
         - updated_datetime
         - configuration
@@ -5559,8 +5576,10 @@ components:
           $ref: "#/components/schemas/OrganizationId"
         title:
           type: string
+          description: プロジェクトのタイトル
         overview:
           type: string
+          description: プロジェクトの概要
         project_status:
           $ref: "#/components/schemas/ProjectStatus"
         input_data_type:
@@ -5580,17 +5599,25 @@ components:
       enum:
         - active
         - suspended
+      description: |
+        プロジェクトの状態
+        * `active` - プロジェクトが進行中
+        * `suspended` - プロジェクトが停止中
     AssigneeRuleOfResubmittedTask:
       type: string
       enum:
         - no_assignee
         - fixed
       description: |
+        再提出されたタスクの検査/受入担当者の割当方法
         * `no_assignee` - 以前の担当者で固定せず、未割当てにします。
         * `fixed` - 以前の担当者が再度担当します。以前の担当者がいない(1回目の検査/受入)場合は未割当てになります。
     InputDataType:
       type: string
-      description: プロジェクトの作成時のみ指定可能（未指定の場合は image）です。更新時は無視されます
+      description: |
+        アノテーションする入力データの種類。プロジェクトの作成時のみ指定可能（未指定の場合は `image`）です。更新時は無視されます。
+        * `image` - 画像
+        * `movie` - 動画
       enum:
         - image
         - movie
@@ -5659,6 +5686,7 @@ components:
         last_tasks_updated_datetime:
           type: string
           format: date-time
+          description: タスクの最終更新日時
     TaskAssignmentType:
       type: string
       default: random
@@ -5789,8 +5817,10 @@ components:
       properties:
         title:
           type: string
+          description: プロジェクトのタイトル
         overview:
           type: string
+          description: プロジェクトの概要
         status:
           $ref: "#/components/schemas/ProjectStatus"
         input_data_type:
@@ -5821,8 +5851,10 @@ components:
           $ref: "#/components/schemas/ProjectId"
         dest_title:
           type: string
+          description: コピー先プロジェクトのタイトル
         dest_overview:
           type: string
+          description: コピー先プロジェクトの概要
         copy_inputs:
           type: boolean
           description: |
@@ -6733,7 +6765,9 @@ components:
         - project_id
         - task_id
         - phase
+        - phase_stage
         - status
+        - input_data_id_list
         - work_time_span
         - updated_datetime
       properties:
@@ -6749,12 +6783,14 @@ components:
           $ref: "#/components/schemas/TaskStatus"
         input_data_id_list:
           type: array
+          description: タスクに含まれる入力データのID
           items:
             $ref: "#/components/schemas/InputDataId"
         account_id:
           $ref: "#/components/schemas/AccountId"
         histories_by_phase:
           type: array
+          description: 簡易的なタスク履歴（あるフェーズを誰が担当したか）
           items:
             $ref: "#/components/schemas/TaskHistoryShort"
         work_time_span:
@@ -6823,6 +6859,8 @@ components:
         * `cancelled` - 提出取消し。修正のため、前フェーズへ戻る。
     TaskRequest:
       type: object
+      required:
+        - input_data_id_list
       properties:
         input_data_id_list:
           type: array
@@ -6830,6 +6868,9 @@ components:
             $ref: "#/components/schemas/InputDataId"
     TaskGenerateRequest:
       type: object
+      required:
+        - task_generate_rule
+        - project_last_updated_datetime
       properties:
         task_generate_rule:
           description: |
@@ -6843,7 +6884,7 @@ components:
         project_last_updated_datetime:
           type: string
           format: date-time
-          description: プロジェクトの最終更新日時。タスク生成の排他制御に使用。
+          description: プロジェクトの最終更新日時（[getProject](#operation/getProject) APIのレスポンス `updated_datetime`）。タスク生成の排他制御に使用。
     TaskGenerateRuleByCount:
       description: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
       type: object
@@ -6986,6 +7027,8 @@ components:
       type: object
       required:
         - phase
+        - phase_stage
+        - account_id
       properties:
         phase:
           $ref: "#/components/schemas/TaskPhase"
@@ -7002,6 +7045,9 @@ components:
         - project_id
         - task_id
         - task_history_id
+        - accumulated_labor_time_milliseconds
+        - phase
+        - phase_stage
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"

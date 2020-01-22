@@ -325,7 +325,7 @@ class AbstractAnnofabApi(abc.ABC):
                 v2 (str):  このクエリパラメータのキーだけを指定（`?v2`）、または値 `true` も指定（`?v2=true`）すると、アノテーションJSONのファイル名は `{入力データID}.json` になります。 この v2 形式は、入力データ名がファイル名の長さ上限を上回ってもよいように再設計されたものです。 以前の v1 形式（アノテーションJSONのファイル名は `{入力データ名}.json` ）はいずれ廃止され、クエリパラメータ `v2` があってもなくても v2 形式に置き換わる予定です。 
 
         Returns:
-            Tuple[InlineResponse2004, requests.Response]
+            Tuple[InlineResponse2009, requests.Response]
 
 
         """
@@ -380,7 +380,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[InlineResponse2004, requests.Response]
+            Tuple[InlineResponse2009, requests.Response]
 
 
         """
@@ -644,7 +644,7 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  1ページあたりの取得するデータ件数
 
         Returns:
-            Tuple[InlineResponse2009, requests.Response]
+            Tuple[InlineResponse20010, requests.Response]
 
 
         """
@@ -1652,7 +1652,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        プロジェクト内のタスク全件ファイルの更新を開始します。 ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。  タスク全件ファイルは毎日AM 02:00 JSTに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、タスク全件ファイル以外は更新されません。  タスク全件ファイルについては、[getProjectTasksUrl](#operation/getProjectTasksUrl) APIを参照ください。 
+        プロジェクト内のタスク全件ファイルの更新を開始します。 ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。 本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks-list`）。  タスク全件ファイルは毎日AM 02:00 JSTに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、タスク全件ファイル以外は更新されません。  タスク全件ファイルについては、[getProjectTasksUrl](#operation/getProjectTasksUrl) APIを参照ください。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1680,7 +1680,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
             request_body (Any): Request Body
-                put_project_request (PutProjectRequest):  (required)
+                put_project_request (PutProjectRequest): 
 
         Returns:
             Tuple[Project, requests.Response]

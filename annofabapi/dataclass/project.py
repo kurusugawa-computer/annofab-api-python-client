@@ -24,7 +24,7 @@ class ProjectSummary:
     
     """
     last_tasks_updated_datetime: Optional[str]
-    """"""
+    """タスクの最終更新日時"""
 
 
 @dataclass_json
@@ -77,15 +77,15 @@ class Project:
     """"""
 
     title: str
-    """"""
+    """プロジェクトのタイトル"""
 
     overview: Optional[str]
+    """プロジェクトの概要"""
+
+    project_status: ProjectStatus
     """"""
 
-    project_status: Optional[ProjectStatus]
-    """"""
-
-    input_data_type: Optional[InputDataType]
+    input_data_type: InputDataType
     """"""
 
     configuration: ProjectConfiguration
