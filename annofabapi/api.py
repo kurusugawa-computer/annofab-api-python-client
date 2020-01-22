@@ -81,11 +81,8 @@ class AnnofabApi(AbstractAnnofabApi):
         self.login_user_id = login_user_id
         self.login_password = login_password
         self.endpoint_url = endpoint_url
-        self.URL_PREFIX = f"{endpoint_url}/v1"
+        self.url_prefix = f"{endpoint_url}/v1"
         self.session = requests.Session()
-
-    #: アクセスするURL
-    URL_PREFIX = f"{DEFAULT_ENDPOINT_URL}/v1"
 
     #: login, refresh_tokenで取得したtoken情報
     token_dict: Optional[Dict[str, Any]] = None
@@ -191,7 +188,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         """
 
-        url = f'{self.URL_PREFIX}{url_path}'
+        url = f'{self.url_prefix}{url_path}'
         kwargs = self._create_kwargs(query_params, header_params, request_body)
 
         # HTTP Requestを投げる
@@ -246,7 +243,7 @@ class AnnofabApi(AbstractAnnofabApi):
         """
         login_info = {'user_id': self.login_user_id, 'password': self.login_password}
 
-        url = f"{self.URL_PREFIX}/login"
+        url = f"{self.url_prefix}/login"
         response = self.session.post(url, json=login_info)
         annofabapi.utils.raise_for_status(response)
 
