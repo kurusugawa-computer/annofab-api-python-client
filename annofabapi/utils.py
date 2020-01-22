@@ -148,14 +148,19 @@ def get_task_history_index_skipped_acceptance(task_history_list: List[TaskHistor
     """
     index_list = []
     for index, history in enumerate(task_history_list):
-        if not (TaskPhase(history["phase"]) == TaskPhase.ACCEPTANCE and history["account_id"] is None):
+        if not (TaskPhase(history["phase"]) == TaskPhase.ACCEPTANCE and history["account_id"] is None
+                and history["accumulated_labor_time_milliseconds"] == "PT0S" and history["started_datetime"] is not None
+                and history["ended_datetime"] is not None):
             continue
 
         if index + 1 < len(task_history_list):
             # 直後の履歴あり
             next_history = task_history_list[index + 1]
-            # 直後の履歴が受入の場合、受入がスキップされた履歴（提出取り消しではない）
-            if TaskPhase(next_history["phase"]) == TaskPhase.ACCEPTANCE:
+            if TaskPhase(next_history["phase"]) in [TaskPhase.ANNOTATION, TaskPhase.INSPECTION]:
+                # 教師付フェーズ or 検査フェーズでの提出取消（直後が前段のフェーズ）
+                pass
+            else:
+                # 受入スキップ
                 index_list.append(index)
         else:
             # 直後の履歴がない
@@ -177,14 +182,19 @@ def get_task_history_index_skipped_inspection(task_history_list: List[TaskHistor
     """
     index_list = []
     for index, history in enumerate(task_history_list):
-        if not (TaskPhase(history["phase"]) == TaskPhase.INSPECTION and history["account_id"] is None):
+        if not (TaskPhase(history["phase"]) == TaskPhase.INSPECTION and history["account_id"] is None
+                and history["accumulated_labor_time_milliseconds"] == "PT0S" and history["started_datetime"] is not None
+                and history["ended_datetime"] is not None):
             continue
 
         if index + 1 < len(task_history_list):
             # 直後の履歴あり
             next_history = task_history_list[index + 1]
-            # 直後の履歴が受入/検査の場合、検査がスキップされた履歴（提出取り消しではない）
-            if TaskPhase(next_history["phase"]) in [TaskPhase.ACCEPTANCE, TaskPhase.INSPECTION]:
+            if TaskPhase(next_history["phase"]) in [TaskPhase.ANNOTATION, TaskPhase.INSPECTION]:
+                # 教師付フェーズ or 検査フェーズでの提出取消（直後が前段のフェーズ）
+                pass
+            else:
+                # 検査スキップ
                 index_list.append(index)
         else:
             # 直後の履歴がない
