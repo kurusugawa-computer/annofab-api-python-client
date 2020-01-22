@@ -34,5 +34,5 @@ class TestBuild:
 
     def test_build_with_endpoint(self):
         resource = annofabapi.build("test_user", "password", "https://localhost:8080")
-        assert resource.api.URL_PREFIX == "https://localhost:8080/v1"
-        assert resource.api2.URL_PREFIX == "https://localhost:8080/v2"
+        assert resource.api.url_prefix == "https://localhost:8080/v1"
+        assert resource.api2.url_prefix == "https://localhost:8080/v2"
