@@ -779,7 +779,7 @@ class AnnotationType(Enum):
 
 class AssigneeRuleOfResubmittedTask(Enum):
     """
-    * `no_assignee` - 以前の担当者で固定せず、未割当てにします。 * `fixed` - 以前の担当者が再度担当します。以前の担当者がいない(1回目の検査/受入)場合は未割当てになります。 
+    再提出されたタスクの検査/受入担当者の割当方法 * `no_assignee` - 以前の担当者で固定せず、未割当てにします。 * `fixed` - 以前の担当者が再度担当します。以前の担当者がいない(1回目の検査/受入)場合は未割当てになります。 
     """
 
     NO_ASSIGNEE = "no_assignee"
@@ -1693,6 +1693,27 @@ Kyes of Dict
 
 """
 
+InlineResponse20010 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[InputData]
+    現在のページ番号に含まれる0件以上の入力データです。
+* page_no: float
+    現在のページ番号です。
+* total_page_no: float
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる入力データが0件であっても、総ページ数は1となります。
+* total_count: float
+    検索結果の総件数。
+* over_limit: bool
+    検索結果が1万件を超えた場合にtrueとなる。
+* aggregations: List[AggregationResult]
+    Aggregationによる集約結果。
+
+"""
+
 InlineResponse2002 = Dict[str, Any]
 """
 
@@ -1820,18 +1841,8 @@ InlineResponse2009 = Dict[str, Any]
 
 Kyes of Dict
 
-* list: List[InputData]
-    現在のページ番号に含まれる0件以上の入力データです。
-* page_no: float
-    現在のページ番号です。
-* total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる入力データが0件であっても、総ページ数は1となります。
-* total_count: float
-    検索結果の総件数。
-* over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
-    Aggregationによる集約結果。
+* url: str
+    認証済み一時URL
 
 """
 
@@ -1912,7 +1923,7 @@ Kyes of Dict
 
 class InputDataType(Enum):
     """
-    プロジェクトの作成時のみ指定可能（未指定の場合は image）です。更新時は無視されます
+    アノテーションする入力データの種類。プロジェクトの作成時のみ指定可能（未指定の場合は `image`）です。更新時は無視されます。 * `image` - 画像 * `movie` - 動画 
     """
 
     IMAGE = "image"
@@ -2725,9 +2736,9 @@ Kyes of Dict
 * organization_id: str
     
 * title: str
-    
+    プロジェクトのタイトル
 * overview: str
-    
+    プロジェクトの概要
 * project_status: ProjectStatus
     
 * input_data_type: InputDataType
@@ -2811,9 +2822,9 @@ Kyes of Dict
 * dest_project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * dest_title: str
-    
+    コピー先プロジェクトのタイトル
 * dest_overview: str
-    
+    コピー先プロジェクトの概要
 * copy_inputs: bool
     「入力データ」をコピーするかどうかを指定します。 
 * copy_tasks: bool
@@ -2901,6 +2912,7 @@ class ProjectMemberStatus(Enum):
 
 class ProjectStatus(Enum):
     """
+    プロジェクトの状態 * `active` - プロジェクトが進行中 * `suspended` - プロジェクトが停止中 
     """
 
     ACTIVE = "active"
@@ -2914,7 +2926,7 @@ ProjectSummary = Dict[str, Any]
 Kyes of Dict
 
 * last_tasks_updated_datetime: str
-    
+    タスクの最終更新日時
 
 """
 
@@ -3045,9 +3057,9 @@ PutProjectRequest = Dict[str, Any]
 Kyes of Dict
 
 * title: str
-    
+    プロジェクトのタイトル
 * overview: str
-    
+    プロジェクトの概要
 * status: ProjectStatus
     
 * input_data_type: InputDataType
@@ -3277,11 +3289,11 @@ Kyes of Dict
 * status: TaskStatus
     
 * input_data_id_list: List[str]
-    
+    タスクに含まれる入力データのID
 * account_id: str
     
 * histories_by_phase: List[TaskHistoryShort]
-    
+    簡易的なタスク履歴（あるフェーズを誰が担当したか）
 * work_time_span: int
     累計実作業時間(ミリ秒)
 * number_of_rejections: int
@@ -3354,7 +3366,7 @@ Kyes of Dict
 * task_generate_rule: OneOfTaskGenerateRuleByCountTaskGenerateRuleByDirectoryTaskGenerateRuleByInputDataCsv
     * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。 * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。 
 * project_last_updated_datetime: str
-    プロジェクトの最終更新日時。タスク生成の排他制御に使用。
+    プロジェクトの最終更新日時（[getProject](#operation/getProject) APIのレスポンス `updated_datetime`）。タスク生成の排他制御に使用。
 
 """
 
