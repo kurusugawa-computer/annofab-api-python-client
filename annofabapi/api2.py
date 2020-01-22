@@ -22,11 +22,8 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
     """
     def __init__(self, api: AnnofabApi):
-
         self.api = api
-
-    #: アクセスするURL
-    URL_PREFIX = "https://annofab.com/api/v2"
+        self.url_prefix = f"{api.endpoint_url}/v2"
 
     #: Signed Cookie情報
     cookies: Optional[Dict[str, Any]] = None
@@ -54,7 +51,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
         """
 
-        url = f'{self.URL_PREFIX}{url_path}'
+        url = f'{self.url_prefix}{url_path}'
         kwargs = self.api._create_kwargs(query_params, header_params)
 
         if url_path == "/sign-url":
