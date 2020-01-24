@@ -5,13 +5,15 @@ Annofab APIのutils
 
 import copy
 import datetime
+import json
 import logging
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import dateutil
 import dateutil.tz
 import requests
+from requests.structures import CaseInsensitiveDict
 
 from annofabapi.models import TaskHistory, TaskPhase
 
@@ -36,7 +38,7 @@ def raise_for_status(response: requests.Response):
         raise e
 
 
-def log_error_response(arg_logger: logging.Logger, response: requests.Response):
+def log_error_response(arg_logger: logging.Logger, response: requests.Response) -> None:
     """
     HTTP Statusが400以上ならば、loggerにresponse/request情報を出力する
 
@@ -45,17 +47,36 @@ def log_error_response(arg_logger: logging.Logger, response: requests.Response):
         response: Response
 
     """
+    MyDict = Union[Dict[str, Any], CaseInsensitiveDict[str]]
+
+    def mask_key(d: MyDict, key: str) -> MyDict:
+        if key in d:
+            d[key] = "***"
+        return d
+
+    def mask_password(d: MyDict) -> MyDict:
+        d = mask_key(d, "password")
+        d = mask_key(d, "old_password")
+        d = mask_key(d, "new_password")
+        return d
 
     if 400 <= response.status_code < 600:
         headers = copy.deepcopy(response.request.headers)
-        if "Authorization" in headers:
-            # logにAuthorizationを出力しないようにマスクする
-            headers["Authorization"] = "***"
 
         arg_logger.debug(f"status_code = %s, response.text = %s", response.status_code, response.text)
         arg_logger.debug(f"request.url = %s %s", response.request.method, response.request.url)
+
+        # logにAuthorizationを出力しないようにマスクする
+        mask_key(headers, "Authorization")
         arg_logger.debug("request.headers = %s", headers)
-        arg_logger.debug("request.body = %s", response.request.body)
+
+        # request_bodyのpassword関係をマスクして、logに出力する
+        if response.request.body is None or response.request.body == "":
+            dict_request_body = {}
+        else:
+            dict_request_body = json.loads(response.request.body)
+
+        arg_logger.debug("request.body = %s", mask_password(dict_request_body))
 
 
 def download(url: str, dest_path: str):
