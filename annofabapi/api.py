@@ -13,7 +13,7 @@ from annofabapi.generated_api import AbstractAnnofabApi
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_ENDPOINT_URL = "https://annofab.com/api"
+DEFAULT_ENDPOINT_URL = "https://annofab.com"
 """AnnoFab WebAPIのデフォルトのエンドポイントURL"""
 
 
@@ -81,7 +81,7 @@ class AnnofabApi(AbstractAnnofabApi):
         self.login_user_id = login_user_id
         self.login_password = login_password
         self.endpoint_url = endpoint_url
-        self.url_prefix = f"{endpoint_url}/v1"
+        self.url_prefix = f"{endpoint_url}/api/v1"
         self.session = requests.Session()
 
     #: login, refresh_tokenで取得したtoken情報
@@ -245,6 +245,8 @@ class AnnofabApi(AbstractAnnofabApi):
 
         url = f"{self.url_prefix}/login"
         response = self.session.post(url, json=login_info)
+
+        annofabapi.utils.log_error_response(logger, response)
         annofabapi.utils.raise_for_status(response)
 
         json_obj = response.json()
