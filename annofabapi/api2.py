@@ -23,7 +23,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
     """
     def __init__(self, api: AnnofabApi):
         self.api = api
-        self.url_prefix = f"{api.endpoint_url}/v2"
+        self.url_prefix = f"{api.endpoint_url}/api/v2"
 
     #: Signed Cookie情報
     cookies: Optional[Dict[str, Any]] = None
