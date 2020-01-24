@@ -157,10 +157,14 @@ class AnnofabApi(AbstractAnnofabApi):
         """
 
         content_type = response.headers['Content-Type']
-        if content_type == 'application/json':
+        # `Content-Type: application/json;charset=utf-8`などcharsetが含まれている場合にも対応できるようにする。
+        tokens = content_type.split(';')
+        media_type = tokens[0].strip()
+
+        if media_type == 'application/json':
             content = response.json() if len(response.content) != 0 else {}
 
-        elif content_type.find('text/') >= 0:
+        elif media_type.find('text/') >= 0:
             content = response.text
 
         else:
