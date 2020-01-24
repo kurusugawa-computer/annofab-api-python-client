@@ -47,14 +47,14 @@ def log_error_response(arg_logger: logging.Logger, response: requests.Response) 
         response: Response
 
     """
-    MyDict = Union[Dict[str, Any], CaseInsensitiveDict[str]]
+    RequestBodyHeader = Union[Dict[str, Any], CaseInsensitiveDict]
 
-    def mask_key(d: MyDict, key: str) -> MyDict:
+    def mask_key(d: RequestBodyHeader, key: str) -> RequestBodyHeader:
         if key in d:
             d[key] = "***"
         return d
 
-    def mask_password(d: MyDict) -> MyDict:
+    def mask_password(d: RequestBodyHeader) -> RequestBodyHeader:
         d = mask_key(d, "password")
         d = mask_key(d, "old_password")
         d = mask_key(d, "new_password")
