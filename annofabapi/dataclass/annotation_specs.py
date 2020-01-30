@@ -64,6 +64,9 @@ class LabelV1BoundingBoxMetadata:
     min_vertices: Optional[int]
     """"""
 
+    position_for_minimum_bounding_box_insertion: Optional[PositionForMinimumBoundingBoxInsertion]
+    """"""
+
     tolerance: Optional[int]
     """"""
 
