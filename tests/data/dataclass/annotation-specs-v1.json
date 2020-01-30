@@ -32,6 +32,7 @@
         "min_area": null,
         "max_vertices": null,
         "min_vertices": null,
+        "position_for_minimum_bounding_box_insertion": null,
         "tolerance": null
       },
       "segmentation_metadata": null,
@@ -236,6 +237,7 @@
         "min_area": null,
         "max_vertices": 2,
         "min_vertices": null,
+        "position_for_minimum_bounding_box_insertion": null,
         "tolerance": null
       },
       "segmentation_metadata": null,
@@ -389,6 +391,7 @@
         "min_area": 100,
         "max_vertices": 10,
         "min_vertices": 5,
+        "position_for_minimum_bounding_box_insertion": null,
         "tolerance": null
       },
       "segmentation_metadata": null,
