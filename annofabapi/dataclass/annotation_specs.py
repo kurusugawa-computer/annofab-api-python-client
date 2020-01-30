@@ -42,6 +42,19 @@ class Keybind:
 
 @dataclass_json
 @dataclass
+class PositionForMinimumBoundingBoxInsertion:
+    """
+    `annotation_type` が `bounding_box` かつ `min_warn_rule` が `and` または `or` の場合のみ、挿入する最小矩形アノテーションの原点を指定できます。 画像左上の座標が「x=0, y=0」です。 未指定、もしくは「画像外に飛び出たアノテーション」を許可していないにも関わらず飛び出してしまう場合は、表示範囲の中央に挿入されます。 「スキャンした帳票の記入欄」や「定点カメラで撮影した製品ラベル」など、アノテーションしたい位置やサイズが多くの画像で共通している場合に便利です。  `annotation_type` が `bounding_box` 以外の場合は必ず未指定となります。 
+    """
+    x: int
+    """"""
+
+    y: int
+    """"""
+
+
+@dataclass_json
+@dataclass
 class LabelV1BoundingBoxMetadata:
     """
     
@@ -62,6 +75,9 @@ class LabelV1BoundingBoxMetadata:
     """"""
 
     min_vertices: Optional[int]
+    """"""
+
+    position_for_minimum_bounding_box_insertion: Optional[PositionForMinimumBoundingBoxInsertion]
     """"""
 
     tolerance: Optional[int]
