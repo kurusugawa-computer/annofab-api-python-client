@@ -61,6 +61,9 @@ class InputData:
     resized_resolution: Optional[Resolution]
     """"""
 
+    input_duration: Optional[float]
+    """入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。  動画の長さが取得できなかった場合、あるいは入力データが画像の場合は値なし。 """
+
     updated_datetime: str
     """"""
 

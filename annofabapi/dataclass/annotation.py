@@ -225,13 +225,13 @@ class SimpleAnnotation:
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     input_data_name: str
-    """"""
+    """入力データ名"""
 
     details: List[SimpleAnnotationDetail]
-    """"""
+    """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。"""
 
-    updated_datetime: str
-    """"""
+    updated_datetime: Optional[str]
+    """更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。"""
 
 
 @dataclass_json
