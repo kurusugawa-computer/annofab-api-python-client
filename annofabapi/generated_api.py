@@ -389,6 +389,31 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
+    def get_editor_annotation(self, project_id: str, task_id: str, input_data_id: str,
+                              **kwargs) -> Tuple[Any, requests.Response]:
+        """タスク/入力データのアノテーション一括取得
+
+
+        authorizations: AllProjectMember
+
+
+        [putAnnotation](#operation/putAnnotation)が要求する構造のアノテーションを取得します。 このAPIは、[putAnnotation](#operation/putAnnotation)をより利用しやすくする目的で提供しています。 機械学習などで利用する成果物としてのアノテーションを取得するには、以下をご利用いただけます。  * [getAnnotation](#operation/getAnnotation): 特定のタスク - 入力データのアノテーション取得 * [getAnnotationArchive](#operation/getAnnotationArchive): プロジェクト全体のアノテーション（ZIP） 
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+            task_id (str):  タスクID (required)
+            input_data_id (str):  入力データID (required)
+
+        Returns:
+            Tuple[Annotation, requests.Response]
+
+
+        """
+        url_path = f'/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation'
+        http_method = 'GET'
+        keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
     def post_annotation_archive_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """アノテーションZIP更新開始
 
@@ -1786,6 +1811,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        ユーザごと、日ごとに集計した以下のデータを取得します。 * 教師付を担当したタスクが完了状態になった回数 * 教師付を担当したタスクが差し戻された回数 * 作業時間 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1807,6 +1833,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        ラベルごと、定型指摘ごとに集計した検査コメント数を取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1871,6 +1898,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        日ごと、フェーズごとに集計した以下のデータを取得します。 * 累積作業時間 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1892,6 +1920,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        日ごと、タスクフェーズごと、タスクステータスごとに集計した以下のデータを取得します。 * タスク数 * 累計作業時間 
 
         Args:
             project_id (str):  プロジェクトID (required)

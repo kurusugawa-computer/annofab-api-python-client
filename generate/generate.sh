@@ -130,6 +130,7 @@ cat partial-header/dataclass/common.py partial-header/dataclass/annotation.py  \
 
 # Annotation Specs
 declare -a model_files=(${MODELS_DIR}/keybind.py \
+ ${MODELS_DIR}/position_for_minimum_bounding_box_insertion.py \
  ${MODELS_DIR}/label_v1_bounding_box_metadata.py \
  ${MODELS_DIR}/label_v1_segmentation_metadata.py \
  ${MODELS_DIR}/internationalization_message_messages.py \

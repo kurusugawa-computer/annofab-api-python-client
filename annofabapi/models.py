@@ -1870,6 +1870,8 @@ Kyes of Dict
     
 * resized_resolution: Resolution
     
+* input_duration: float
+    入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。  動画の長さが取得できなかった場合、あるいは入力データが画像の場合は値なし。 
 * updated_datetime: str
     
 * sign_required: bool
@@ -2364,6 +2366,8 @@ Kyes of Dict
     
 * min_vertices: int
     
+* position_for_minimum_bounding_box_insertion: PositionForMinimumBoundingBoxInsertion
+    
 * tolerance: int
     
 
@@ -2706,6 +2710,19 @@ Kyes of Dict
 Point = Dict[str, Any]
 """
 座標
+
+Kyes of Dict
+
+* x: int
+    
+* y: int
+    
+
+"""
+
+PositionForMinimumBoundingBoxInsertion = Dict[str, Any]
+"""
+`annotation_type` が `bounding_box` かつ `min_warn_rule` が `and` または `or` の場合のみ、挿入する最小矩形アノテーションの原点を指定できます。 画像左上の座標が「x=0, y=0」です。 未指定、もしくは「画像外に飛び出たアノテーション」を許可していないにも関わらず飛び出してしまう場合は、表示範囲の中央に挿入されます。 「スキャンした帳票の記入欄」や「定点カメラで撮影した製品ラベル」など、アノテーションしたい位置やサイズが多くの画像で共通している場合に便利です。  `annotation_type` が `bounding_box` 以外の場合は必ず未指定となります。 
 
 Kyes of Dict
 
@@ -3142,11 +3159,11 @@ Kyes of Dict
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
-    
+    入力データ名
 * details: List[SimpleAnnotationDetail]
-    
+    矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
-    
+    更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。
 
 """
 

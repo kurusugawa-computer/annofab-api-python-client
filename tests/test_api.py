@@ -62,6 +62,9 @@ class TestAnnotation:
     def test_get_annotation(self):
         assert type(api.get_annotation(project_id, task_id, input_data_id)[0]) == dict
 
+    def test_get_editor_annotation(self):
+        assert type(api.get_editor_annotation(project_id, task_id, input_data_id)[0]) == dict
+
     def test_get_annotation_archive(self):
         content, response = api.get_annotation_archive(project_id)
         assert response.headers["Location"].startswith("https://")
