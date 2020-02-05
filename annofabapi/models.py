@@ -1078,6 +1078,19 @@ Kyes of Dict
 
 """
 
+DeleteProjectResponse = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* job: JobInfo
+    
+* project: Project
+    
+
+"""
+
 Duplicated = Dict[str, Any]
 """
 値の重複が許可されていない属性の重複エラー
@@ -1848,7 +1861,7 @@ Kyes of Dict
 
 InputData = Dict[str, Any]
 """
-
+入力データの情報を表すデータ構造です。
 
 Kyes of Dict
 
@@ -1899,7 +1912,7 @@ Kyes of Dict
 * input_data_name: str
     表示用の名前
 * input_data_path: str
-    AnnoFabに登録する入力データの実体が保存されたパスです。  対応スキーマ： * s3 * https * data（廃止予定）  場面別の使い分け： * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA` * [プライベートストレージ](/docs/faq/#prst9c)の場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。 * dataスキーマでアップロードする場合: `data://....`     * dataスキーマは、4MB以内の画像であれば[一時データ保存先取得API](#operation/createTempPath)を使わずに直接アップロードできるので便利です。 
+    AnnoFabに登録する入力データの実体が保存されたパスです。  対応スキーマ： * s3 * https  場面別の使い分け： * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA` * [プライベートストレージ](/docs/faq/#prst9c)の場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * sign_required: bool
@@ -2733,6 +2746,17 @@ Kyes of Dict
 
 """
 
+PostAnnotationArchiveUpdateResponse = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* job: JobInfo
+    
+
+"""
+
 
 class PricePlan(Enum):
     """
@@ -2854,6 +2878,19 @@ Kyes of Dict
     「補助情報」をコピーするかどうかを指定します。  この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_inputs の値を true とする 
 * copy_instructions: bool
     「作業ガイド」をコピーするかどうかを指定します。 
+
+"""
+
+ProjectCopyResponse = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* job: JobInfo
+    
+* dest_project: Project
+    
 
 """
 
@@ -3384,6 +3421,19 @@ Kyes of Dict
     * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。 * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。 
 * project_last_updated_datetime: str
     プロジェクトの最終更新日時（[getProject](#operation/getProject) APIのレスポンス `updated_datetime`）。タスク生成の排他制御に使用。
+
+"""
+
+TaskGenerateResponse = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* job: JobInfo
+    
+* project: Project
+    
 
 """
 
