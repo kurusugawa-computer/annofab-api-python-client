@@ -15,7 +15,7 @@ lint:
 	pipenv run pylint annofabapi --rcfile setup.cfg
 
 test:
-	pipenv run pytest tests -rs -v --cov=annofabapi --cov-report=html
+	pipenv run pytest tests
 
 publish_test:
 	rm -fr build/ dist/ annofabapi.egg-info

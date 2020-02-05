@@ -45,11 +45,6 @@ annofab_user_id = service.api.login_user_id
 task_id = test_wrapper.get_first_task_id(project_id)
 input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
-submitting_job = pytest.mark.skipif(not should_execute_job_api, reason="ジョブが投入されるテストのため、スキップします")
-"""
-ジョブが投入されるテスト
-"""
-
 
 class TestAccount:
     pass
@@ -80,9 +75,11 @@ class TestAnnotation:
     def test_wrapper_download_annotation_archive(self):
         wrapper.download_annotation_archive(project_id, f'{out_dir}/simple-annotation.zip')
 
-    @submitting_job
+    @pytest.mark.submitting_job
     def test_post_annotation_archive_update(self):
-        assert type(api.post_annotation_archive_update(project_id)[0]) == dict
+        content = api.post_annotation_archive_update(project_id, query_params={"v": "2"})[0]
+        job = content["job"]
+        assert job["job_type"] == JobType.GEN_ANNOTATION.value
 
 
 class TestAnnotationSpecs:
@@ -248,9 +245,12 @@ class TestProject:
     def test_get_organization_of_project(self):
         assert type(api.get_organization_of_project(project_id)[0]) == dict
 
-    @submitting_job
+    @pytest.mark.submitting_job
     def test_post_project_tasks_update(self):
         assert type(api.post_project_tasks_update(project_id)[0]) == dict
+
+    def test_wrapper_download_project_inputs_url(self):
+        assert wrapper.download_project_inputs_url(project_id, f'{out_dir}/inputs.json').startswith("https://")
 
     def test_wrapper_download_project_tasks_url(self):
         assert wrapper.download_project_tasks_url(project_id, f'{out_dir}/tasks.json').startswith("https://")
@@ -335,7 +335,7 @@ class TestTask:
     def test_wraper_get_all_tasks(self):
         assert type(wrapper.get_all_tasks(project_id, query_params={'task_id': "foo"})) == list
 
-    @submitting_job
+    @pytest.mark.submitting_job
     def test_initiate_tasks_generation_by_csv(self):
         csv_file_path = f'{test_dir}/tmp/create_task.csv'
         test_task_id = str(uuid.uuid4())
