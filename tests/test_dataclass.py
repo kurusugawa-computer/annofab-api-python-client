@@ -21,7 +21,7 @@ from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatisti
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.webhook import Webhook
-from tests.utils_for_test import WrapperForTest, set_logging_from_inifile
+from tests.utils_for_test import WrapperForTest
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -30,9 +30,6 @@ inifile.read('./pytest.ini', 'UTF-8')
 project_id = inifile.get('annofab', 'project_id')
 task_id = inifile.get('annofab', 'task_id')
 input_data_id = inifile.get('annofab', 'input_data_id')
-should_execute_job_api: bool = strtobool(inifile.get('annofab', 'should_execute_job_api'))
-
-set_logging_from_inifile(inifile)
 
 test_dir = Path('./tests/data')
 

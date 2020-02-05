@@ -165,7 +165,6 @@ def get_task_history_index_skipped_acceptance(task_history_list: List[TaskHistor
 ​
     Returns:
         受入フェーズがスキップされた履歴のインデックス番号（0始まり）。受入がスキップされていない場合は空リストを返す。
-​
     """
     index_list = []
     for index, history in enumerate(task_history_list):
@@ -199,7 +198,6 @@ def get_task_history_index_skipped_inspection(task_history_list: List[TaskHistor
 ​
     Returns:
         検査フェーズがスキップされた履歴のインデックス番号（0始まり）。検査がスキップされていない場合は空リストを返す。
-​
     """
     index_list = []
     for index, history in enumerate(task_history_list):

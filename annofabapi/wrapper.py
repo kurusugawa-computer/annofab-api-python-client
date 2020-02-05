@@ -496,6 +496,24 @@ class Wrapper:
         content, _ = self.api.get_project(project_id)
         return content
 
+    def download_project_inputs_url(self, project_id: str, dest_path: str) -> str:
+        """
+        プロジェクトの入力データ全件ファイルをダウンロードする。
+        ファイルの中身はJSON。
+
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先ファイルのパス
+
+        Returns:
+            ダウンロード元のURL
+
+        """
+        content, _ = self.api.get_project_inputs_url(project_id)
+        url = content["url"]
+        annofabapi.utils.download(url, dest_path)
+        return url
+
     def download_project_tasks_url(self, project_id: str, dest_path: str) -> str:
         """
         プロジェクトのタスク全件ファイルをダウンロードする。

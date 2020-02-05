@@ -11,6 +11,7 @@ name = "pypi"
 [dev-packages]
 annofabapi = {editable = true,path = "."} # For reading setup.py
 pytest = "*"
+pytest-xdist = "*"
 pytest-cov = "*"
 tox = "*"
 isort = "*"
