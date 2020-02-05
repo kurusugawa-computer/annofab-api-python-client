@@ -10,27 +10,22 @@ import configparser
 import datetime
 import os
 import uuid
-from distutils.util import strtobool
 
 import pytest
 
 import annofabapi
 import annofabapi.utils
 from annofabapi.models import GraphType, JobType
-from tests.utils_for_test import WrapperForTest, create_csv_for_task, set_logging_from_inifile
+from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read('./pytest.ini', 'UTF-8')
 project_id = inifile.get('annofab', 'project_id')
-should_execute_job_api: bool = strtobool(inifile.get('annofab', 'should_execute_job_api'))
-should_print_log_message: bool = strtobool(inifile.get('annofab', 'should_print_log_message'))
 
 test_dir = './tests/data'
 out_dir = './tests/out'
-
-set_logging_from_inifile(inifile)
 
 service = annofabapi.build_from_netrc()
 api = service.api
