@@ -30,7 +30,6 @@ inifile.read('./pytest.ini', 'UTF-8')
 project_id = inifile.get('annofab', 'project_id')
 task_id = inifile.get('annofab', 'task_id')
 input_data_id = inifile.get('annofab', 'input_data_id')
-should_execute_job_api: bool = strtobool(inifile.get('annofab', 'should_execute_job_api'))
 
 test_dir = Path('./tests/data')
 
