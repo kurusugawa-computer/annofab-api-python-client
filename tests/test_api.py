@@ -10,27 +10,22 @@ import configparser
 import datetime
 import os
 import uuid
-from distutils.util import strtobool
 
 import pytest
 
 import annofabapi
 import annofabapi.utils
 from annofabapi.models import GraphType, JobType
-from tests.utils_for_test import WrapperForTest, create_csv_for_task, set_logging_from_inifile
+from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read('./pytest.ini', 'UTF-8')
 project_id = inifile.get('annofab', 'project_id')
-should_execute_job_api: bool = strtobool(inifile.get('annofab', 'should_execute_job_api'))
-should_print_log_message: bool = strtobool(inifile.get('annofab', 'should_print_log_message'))
 
 test_dir = './tests/data'
 out_dir = './tests/out'
-
-set_logging_from_inifile(inifile)
 
 service = annofabapi.build_from_netrc()
 api = service.api
@@ -44,11 +39,6 @@ annofab_user_id = service.api.login_user_id
 
 task_id = test_wrapper.get_first_task_id(project_id)
 input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
-
-submitting_job = pytest.mark.skipif(not should_execute_job_api, reason="ジョブが投入されるテストのため、スキップします")
-"""
-ジョブが投入されるテスト
-"""
 
 
 class TestAccount:
@@ -80,9 +70,11 @@ class TestAnnotation:
     def test_wrapper_download_annotation_archive(self):
         wrapper.download_annotation_archive(project_id, f'{out_dir}/simple-annotation.zip')
 
-    @submitting_job
+    @pytest.mark.submitting_job
     def test_post_annotation_archive_update(self):
-        assert type(api.post_annotation_archive_update(project_id)[0]) == dict
+        content = api.post_annotation_archive_update(project_id, query_params={"v": "2"})[0]
+        job = content["job"]
+        assert job["job_type"] == JobType.GEN_ANNOTATION.value
 
 
 class TestAnnotationSpecs:
@@ -248,9 +240,12 @@ class TestProject:
     def test_get_organization_of_project(self):
         assert type(api.get_organization_of_project(project_id)[0]) == dict
 
-    @submitting_job
+    @pytest.mark.submitting_job
     def test_post_project_tasks_update(self):
         assert type(api.post_project_tasks_update(project_id)[0]) == dict
+
+    def test_wrapper_download_project_inputs_url(self):
+        assert wrapper.download_project_inputs_url(project_id, f'{out_dir}/inputs.json').startswith("https://")
 
     def test_wrapper_download_project_tasks_url(self):
         assert wrapper.download_project_tasks_url(project_id, f'{out_dir}/tasks.json').startswith("https://")
@@ -335,7 +330,7 @@ class TestTask:
     def test_wraper_get_all_tasks(self):
         assert type(wrapper.get_all_tasks(project_id, query_params={'task_id': "foo"})) == list
 
-    @submitting_job
+    @pytest.mark.submitting_job
     def test_initiate_tasks_generation_by_csv(self):
         csv_file_path = f'{test_dir}/tmp/create_task.csv'
         test_task_id = str(uuid.uuid4())
