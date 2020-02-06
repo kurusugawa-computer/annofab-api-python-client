@@ -358,4 +358,3 @@ class AnnofabApi(AbstractAnnofabApi):
         http_method = 'DELETE'
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
-
