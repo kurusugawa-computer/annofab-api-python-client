@@ -1,0 +1,164 @@
+{
+  "project_id": "a2345678-abcd-1234-abcd-1234abcd5678",
+  "task_id": "sample_1",
+  "input_data_id": "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839",
+  "details": [
+    {
+      "annotation_id": "9a15fac0-736f-454f-a50d-7da094bc133d",
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "label_id": "ded52dcb-bcd6-4e77-9626-61e546f635d0",
+      "is_protected": false,
+      "data_holding_type": "inner",
+      "data": "15,55,12,49,9,43,16,36,21,39,24,53",
+      "path": null,
+      "etag": null,
+      "url": null,
+      "additional_data_list": [],
+      "created_datetime": "2019-08-22T12:04:19.256+09:00",
+      "updated_datetime": "2019-08-22T12:04:19.256+09:00"
+    },
+    {
+      "annotation_id": "762f113a-5e17-4b49-861e-dfbea1dda09d",
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "label_id": "2ffb4c74-106b-44ac-81ce-3c3df77518e0",
+      "is_protected": false,
+      "data_holding_type": "outer",
+      "data": null,
+      "path": "762f113a-5e17-4b49-861e-dfbea1dda09d",
+      "etag": "\"c4132827dd8cbd28faf3048c6a84ad02\"",
+      "url": "https://s3.ap-northeast-1.amazonaws.com/annotationfactory.production.annotation/foo1",
+      "additional_data_list": [],
+      "created_datetime": "2019-08-22T12:04:19.256+09:00",
+      "updated_datetime": "2019-08-22T12:04:19.256+09:00"
+    },
+    {
+      "annotation_id": "1e2931d2-de34-4956-ab75-81f710dc0108",
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "label_id": "108ce1f7-217b-43e9-a407-8d0ac6aad87e",
+      "is_protected": false,
+      "data_holding_type": "outer",
+      "data": null,
+      "path": "1e2931d2-de34-4956-ab75-81f710dc0108",
+      "etag": "\"51add6e8b7684d3c8327de3a70cdad93\"",
+      "url": "https://s3.ap-northeast-1.amazonaws.com/annotationfactory.production.annotation/foo2",
+      "additional_data_list": [],
+      "created_datetime": "2019-08-22T12:04:19.256+09:00",
+      "updated_datetime": "2019-08-22T12:04:19.256+09:00"
+    },
+    {
+      "annotation_id": "a05019fd-6e23-456b-9971-641a45979d98",
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "label_id": "f50aa88d-36c7-43f5-8728-247a49b4f4d8",
+      "is_protected": false,
+      "data_holding_type": "inner",
+      "data": "25,18",
+      "path": null,
+      "etag": null,
+      "url": null,
+      "additional_data_list": [],
+      "created_datetime": "2019-08-22T12:04:19.256+09:00",
+      "updated_datetime": "2019-08-22T12:04:19.256+09:00"
+    },
+    {
+      "annotation_id": "c9c688d1-6c05-4118-94c7-308185cdb60a",
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "label_id": "c754f724-5f8c-48eb-81ec-ea77e55efee7",
+      "is_protected": false,
+      "data_holding_type": "inner",
+      "data": "22,29,33,41",
+      "path": null,
+      "etag": null,
+      "url": null,
+      "additional_data_list": [],
+      "created_datetime": "2019-08-22T12:04:19.256+09:00",
+      "updated_datetime": "2019-08-22T12:04:19.256+09:00"
+    },
+    {
+      "annotation_id": "6602c86c-5e22-42b9-b5a4-8a77c7bade01",
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "label_id": "15ba7932-24b9-4cf3-95bd-9bf6deede4fa",
+      "is_protected": false,
+      "data_holding_type": "inner",
+      "data": "10,7,36,36",
+      "path": null,
+      "etag": null,
+      "url": null,
+      "additional_data_list": [
+        {
+          "additional_data_definition_id": "e6864d96-78fa-45f3-a786-6c8c900c92ae",
+          "flag": true,
+          "integer": null,
+          "comment": null,
+          "choice": null
+        },
+        {
+          "additional_data_definition_id": "51e8c91f-5de1-450b-a0f3-94fec582f5ce",
+          "flag": null,
+          "integer": null,
+          "comment": "a05019fd-6e23-456b-9971-641a45979d98",
+          "choice": null
+        },
+        {
+          "additional_data_definition_id": "aff2855e-2e3d-47a2-8c27-c7652e4dfb2f",
+          "flag": null,
+          "integer": 3,
+          "comment": null,
+          "choice": null
+        },
+        {
+          "additional_data_definition_id": "7e6a577a-3410-4c8a-9624-2904bb2e6666",
+          "flag": null,
+          "integer": null,
+          "comment": "lena",
+          "choice": null
+        },
+        {
+          "additional_data_definition_id": "a63a0513-a96e-4c7c-8754-88a24fef9ca9",
+          "flag": null,
+          "integer": null,
+          "comment": "テスト",
+          "choice": null
+        },
+        {
+          "additional_data_definition_id": "649abf45-1ed7-459a-8282-a58228e9a302",
+          "flag": null,
+          "integer": null,
+          "comment": "6602c86c-5e22-42b9-b5a4-8a77c7bade01",
+          "choice": null
+        }
+      ],
+      "created_datetime": "2019-08-22T12:04:19.256+09:00",
+      "updated_datetime": "2019-08-22T12:04:33.37+09:00"
+    },
+    {
+      "annotation_id": "5ac0d7d5-6738-4c4b-a69a-cd583ff458e1",
+      "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
+      "label_id": "5ac0d7d5-6738-4c4b-a69a-cd583ff458e1",
+      "is_protected": false,
+      "data_holding_type": "inner",
+      "data": null,
+      "path": null,
+      "etag": null,
+      "url": null,
+      "additional_data_list": [
+        {
+          "additional_data_definition_id": "896d7eeb-9c60-4fbf-b7c4-8f4209261049",
+          "flag": null,
+          "integer": null,
+          "comment": null,
+          "choice": "c9615782-b872-4641-9be4-0fb4f905d966"
+        },
+        {
+          "additional_data_definition_id": "60caffa5-6300-4819-9a99-c43ce49008c2",
+          "flag": null,
+          "integer": null,
+          "comment": null,
+          "choice": "bdcd4d5b-cecc-4ec9-9038-d9284cd4f475"
+        }
+      ],
+      "created_datetime": "2019-08-22T12:04:19.256+09:00",
+      "updated_datetime": "2019-08-22T12:04:19.256+09:00"
+    }
+  ],
+  "updated_datetime": "2019-08-22T14:10:14.758+09:00"
+}
