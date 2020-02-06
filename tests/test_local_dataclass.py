@@ -3,7 +3,7 @@ import json
 import os
 from pathlib import Path
 
-from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
+from annofabapi.dataclass.annotation import Annotation, FullAnnotation, SimpleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecsV1
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
@@ -29,6 +29,14 @@ test_dir = Path('./tests/data/dataclass')
 
 
 class TestAnnotation:
+    def test_annotation(self):
+        json_path = test_dir / "annotation.json"
+        with json_path.open(encoding="utf-8") as f:
+            dict_obj = json.load(f)
+            print(dict_obj)
+        dataclass_obj = Annotation.from_dict(dict_obj)
+        assert type(dataclass_obj) == Annotation
+
     def test_simple_annotation_for_image(self):
         simple_annotaion_json = test_dir / "simple-annotation.json"
         with simple_annotaion_json.open(encoding="utf-8") as f:
