@@ -124,7 +124,10 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/simple_annotation_detail.py \
  ${MODELS_DIR}/simple_annotation.py \
  ${MODELS_DIR}/single_annotation_detail.py \
- ${MODELS_DIR}/single_annotation.py)
+ ${MODELS_DIR}/single_annotation.py \
+ ${MODELS_DIR}/annotation_detail.py \
+ ${MODELS_DIR}/annotation.py \
+)
 cat partial-header/dataclass/common.py partial-header/dataclass/annotation.py  \
  ${model_files[@]} > ../annofabapi/dataclass/annotation.py
 

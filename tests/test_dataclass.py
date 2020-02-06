@@ -1,11 +1,10 @@
 import configparser
 import os
-from distutils.util import strtobool
 from pathlib import Path
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.dataclass.annotation import SimpleAnnotation, SingleAnnotation
+from annofabapi.dataclass.annotation import Annotation, SimpleAnnotation, SingleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecsV1
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
@@ -43,6 +42,11 @@ annofab_user_id = service.api.login_user_id
 
 
 class TestAnnotation:
+    def test_get_editor_annotation(self):
+        dict_obj, _ = service.api.get_editor_annotation(project_id, task_id, input_data_id)
+        dataclass_obj = Annotation.from_dict(dict_obj)
+        assert type(dataclass_obj) == Annotation
+
     def test_simple_annotation(self):
         annotation_list = service.wrapper.get_all_annotation_list(project_id,
                                                                   query_params={'query': {
