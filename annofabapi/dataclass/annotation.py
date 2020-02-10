@@ -109,37 +109,6 @@ class FullAnnotationDetail:
 
 @dataclass_json
 @dataclass
-class FullAnnotationDetailOld:
-    """
-    for v1
-    """
-    annotation_id: Optional[str]
-    """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
-
-    user_id: Optional[str]
-    """"""
-
-    label_id: Optional[str]
-    """"""
-
-    label_name: Optional[InternationalizationMessage]
-    """"""
-
-    annotation_type: Optional[AnnotationType]
-    """"""
-
-    data_holding_type: Optional[AnnotationDataHoldingType]
-    """"""
-
-    data: Optional[FullAnnotationData]
-    """"""
-
-    additional_data_list: Optional[List[AdditionalData]]
-    """"""
-
-
-@dataclass_json
-@dataclass
 class FullAnnotation:
     """
     
@@ -167,9 +136,6 @@ class FullAnnotation:
 
     details: Optional[List[FullAnnotationDetail]]
     """"""
-
-    detail: Optional[List[FullAnnotationDetailOld]]
-    """use details"""
 
     updated_datetime: Optional[str]
     """"""
@@ -329,9 +295,8 @@ class AnnotationDetail:
     additional_data_list: List[AdditionalData]
     """各要素は、 [アノテーション仕様](#operation/getAnnotationSpecs)で定義された属性（`additional_data_definitions`内）のいずれかの要素と対応づけます。 各要素は、どの属性なのかを表す`additional_data_definition_id`、値が必要です。値は、属性の種類に対応するキーに格納します（下表）。  <table> <tr><th>アノテーション属性の種類<br>（`additional_data_definition`の`type`）</th><th>属性の値を格納するキー</th><th>データ型</th></tr> <tr><td>`comment` または `tracking`</td><td>`comment`</td><td>string</td></tr> <tr><td>`flag`</td><td>`flag`</td><td>boolean</td></tr> <tr><td>`integer`</td><td>`integer`</td><td>integer</td></tr> <tr><td>`choice` または `select`</td><td>`choice`</td><td>string（選択肢ID）</td></tr> <tr><td>`link`</td><td>`comment`</td><td>string（アノテーションID）</td></tr> </table> """
 
-    created_datetime: Optional[str]
-
-    updated_datetime: Optional[str]
+    comment: str
+    """"""
 
 
 @dataclass_json
@@ -350,6 +315,9 @@ class Annotation:
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     details: List[AnnotationDetail]
+    """"""
+
+    comment: Optional[str]
     """"""
 
     updated_datetime: Optional[str]
