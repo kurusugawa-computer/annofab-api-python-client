@@ -1398,8 +1398,6 @@ Kyes of Dict
     
 * details: List[FullAnnotationDetail]
     
-* detail: List[FullAnnotationDetailOld]
-    use details
 * updated_datetime: str
     
 * annotation_format_version: str
@@ -1420,31 +1418,6 @@ Kyes of Dict
 * type: AdditionalDataDefinitionType
     
 * value: AdditionalDataValue
-    
-
-"""
-
-FullAnnotationAdditionalDataOld = Dict[str, Any]
-"""
-for v1
-
-Kyes of Dict
-
-* additional_data_definition_id: str
-    
-* additional_data_definition_name: InternationalizationMessage
-    
-* type: AdditionalDataDefinitionType
-    
-* flag: bool
-    typeがflagの場合に、フラグのON(true)またはOFF(false)が格納される
-* integer: int
-    typeがintegerの場合に、整数値が格納される
-* comment: str
-    * typeがcommentの場合、コメントの値 * typeがtrackingの場合、トラッキングID * typeがlinkの場合、リンク先のアノテーションID 
-* choice: str
-    
-* choice_name: InternationalizationMessage
     
 
 """
@@ -1603,31 +1576,6 @@ Kyes of Dict
 * data: FullAnnotationData
     
 * additional_data_list: List[FullAnnotationAdditionalData]
-    
-
-"""
-
-FullAnnotationDetailOld = Dict[str, Any]
-"""
-for v1
-
-Kyes of Dict
-
-* annotation_id: str
-    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
-* user_id: str
-    
-* label_id: str
-    
-* label_name: InternationalizationMessage
-    
-* annotation_type: AnnotationType
-    
-* data_holding_type: AnnotationDataHoldingType
-    
-* data: FullAnnotationData
-    
-* additional_data_list: List[AdditionalData]
     
 
 """
