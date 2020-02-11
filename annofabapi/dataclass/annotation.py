@@ -37,6 +37,100 @@ class Point:
 
 @dataclass_json
 @dataclass
+class FullAnnotationDataClassification:
+    """
+    
+    """
+    type: str
+    """Classification"""
+
+
+@dataclass_json
+@dataclass
+class FullAnnotationDataSegmentation:
+    """
+    塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
+    """
+    data_uri: str
+    """"""
+
+    type: str
+    """Segmentation"""
+
+
+@dataclass_json
+@dataclass
+class FullAnnotationDataSegmentationV2:
+    """
+    
+    """
+    data_uri: str
+    """"""
+
+    type: str
+    """SegmentationV2"""
+
+
+@dataclass_json
+@dataclass
+class FullAnnotationDataBoundingBox:
+    """
+    annotation_type が bounding_boxの場合に、[左上頂点座標, 右下頂点座標]を {\"x\":int, \"y\":int} の形式で記述したもの。
+    """
+    left_top: Point
+    """"""
+
+    right_bottom: Point
+    """"""
+
+    type: str
+    """BoundingBox"""
+
+
+@dataclass_json
+@dataclass
+class FullAnnotationDataPoints:
+    """
+    頂点座標 {\"x\":int, \"y\":int} の配列。  * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。 
+    """
+    points: List[Point]
+    """"""
+
+    type: str
+    """Points"""
+
+
+@dataclass_json
+@dataclass
+class FullAnnotationDataSinglePoint:
+    """
+    annotation_type が pointの場合。
+    """
+    point: Point
+    """"""
+
+    type: str
+    """SinglePoint。"""
+
+
+@dataclass_json
+@dataclass
+class FullAnnotationDataRange:
+    """
+    annotation_type が rangeの場合に、[開始時間, 終了時間]を {\"begin\":number, \"end\":number} の形式で記述したもの。開始時間・終了時間の単位は秒で、精度はミリ秒まで。
+    """
+    begin: float
+    """開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。"""
+
+    end: float
+    """終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。"""
+
+    type: str
+    """Range"""
+
+
+@dataclass_json
+@dataclass
 class AdditionalData:
     """
     
