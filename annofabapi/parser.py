@@ -391,7 +391,7 @@ def lazy_parse_simple_annotation_zip_by_task(
         task_info_list = [e for e in info_list if e.is_dir() and len(re.findall("/", e.filename)) == 1]
 
         for task_info in task_info_list:
-            task_id = task_info.filename
+            task_id = task_info.filename.split("/")[0]
             parser_list = [
                 SimpleAnnotationZipParser(file, e.filename)
                 for e in info_list
