@@ -1,6 +1,7 @@
 import abc
 import json
 import os
+import re
 import warnings
 import zipfile
 from pathlib import Path
@@ -292,6 +293,29 @@ class FullAnnotationDirParser(FullAnnotationParser):
             raise AnnotationOuterFileNotFoundError(str(outer_file_path))
 
 
+class SimpleAnnotationParserGroupByTask:
+    """
+    Simple Annotationのparserをタスクごとにまとめたもの。
+
+
+    Args:
+        task_id: タスクID
+        parser_list: タスク配下のJSONに関するパーサのList
+
+    """
+    def __init__(self, task_id: str, parser_list: List[SimpleAnnotationParser]):
+        self.__task_id = task_id
+        self.__parser_list = parser_list
+
+    @property
+    def task_id(self) -> str:
+        return self.__task_id
+
+    @property
+    def parser_list(self) -> List[SimpleAnnotationParser]:
+        return self.__parser_list
+
+
 def __parse_annotation_dir(annotaion_dir_path: Path, clazz) -> Iterator[Any]:
     for task_dir in annotaion_dir_path.iterdir():
         if not task_dir.is_dir():
@@ -331,6 +355,75 @@ def lazy_parse_full_annotation_dir(annotaion_dir_path: Path) -> Iterator[SimpleA
         annotationの遅延Parseが可能なインスタンス列。
     """
     return __parse_annotation_dir(annotaion_dir_path, FullAnnotationDirParser)
+
+
+def lazy_parse_simple_annotation_zip_by_task(zip_file_path: Path) -> Iterator[SimpleAnnotationParserGroupByTask]:
+    """
+    Simpleアノテーションzipファイル内を探索し、タスクごとに各annotationをparse可能なオブジェクトの列を返します。
+
+    Args:
+        zip_file_path: annofabからダウンロードしたsimple annotationのzipファイルへのパス
+
+    Yields:
+        対象タスク内の、annotationの遅延Parseが可能なインスタンス列
+    """
+    def is_input_data_info_in_task(zip_info: zipfile.ZipInfo, task_id: str) -> bool:
+        """
+        指定されたtask_id配下の入力データJSONかどうか
+        """
+        paths = [p for p in zip_info.filename.split("/") if len(p) != 0]
+        if len(paths) != 2:
+            return False
+        if paths[0] != task_id:
+            return False
+        if not paths[1].endswith(".json"):
+            return False
+
+        return True
+
+    with zipfile.ZipFile(zip_file_path, mode="r") as file:
+        info_list: List[zipfile.ZipInfo] = file.infolist()
+        # 1階層目のディレクトリをtask_idとみなす
+        task_info_list = [e for e in info_list if e.is_dir() and len(re.findall("/", e.filename)) == 1]
+
+        for task_info in task_info_list:
+            task_id = task_info.filename
+            parser_list = [
+                SimpleAnnotationZipParser(file, e.filename)
+                for e in info_list
+                if is_input_data_info_in_task(e, task_id)
+            ]
+
+            yield SimpleAnnotationParserGroupByTask(task_id, parser_list)
+
+
+def lazy_parse_simple_annotation_dir_by_task(annotaion_dir_path: Path) -> Iterator[SimpleAnnotationParserGroupByTask]:
+    """
+    Simpleアノテーションzipを展開したディレクトリ内を探索し、タスクごとに各annotationをparse可能なオブジェクトの列を返します。
+
+    Args:
+        annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
+
+    Yields:
+        対象タスク内の、annotationの遅延Parseが可能なインスタンス列
+    """
+    """
+    Simpleアノテーションzipファイル内を探索し、タスクごとに各annotationをparse可能なオブジェクトの列を返します。
+
+    Args:
+        zip_file_path: annofabからダウンロードしたsimple annotationのzipファイルへのパス
+
+    Yields:
+        annotationの遅延Parseが可能なインスタンスを、タスクごとにまとめたもの。
+    """
+
+    for task_dir in annotaion_dir_path.iterdir():
+        if not task_dir.is_dir():
+            continue
+
+        task_id = task_dir.name
+        parser_list = [SimpleAnnotationDirParser(e) for e in task_dir.iterdir() if e.is_file() and e.suffix == ".json"]
+        yield SimpleAnnotationParserGroupByTask(task_id, parser_list)
 
 
 def __parse_annotation_zip(zip_file_path: Path, clazz) -> Iterator[Any]:
