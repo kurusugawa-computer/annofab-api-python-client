@@ -133,7 +133,7 @@ zipファイルを展開したディレクトリも読み込み可能です。
 ```python
 import zipfile
 from pathlib import Path
-from annofabapi.parser import lazy_parse_simple_annotation_dir, lazy_parse_simple_annotation_zip, SimpleAnnotationZipParser, SimpleAnnotationDirParser
+from annofabapi.parser import lazy_parse_simple_annotation_dir, lazy_parse_simple_annotation_zip, SimpleAnnotationZipParser, SimpleAnnotationDirParser, lazy_parse_simple_annotation_zip_by_task
 
 
 # Simpleアノテーションzipの読み込み
@@ -148,6 +148,14 @@ for parser in iter_parser:
     simple_annotation = parser.parse()
     print(simple_annotation)
 
+# Simpleアノテーションzipをタスク単位で読み込む
+task_iter_parser = lazy_parse_simple_annotation_zip_by_task(Path("simple-annotation.zip"))
+for task_parser in task_iter_parser:
+    print(task_parser.task_id)
+    for parser in task_parser.parser_list:
+        simple_annotation = parser.parse()
+        print(simple_annotation)
+        
 
 # Simpleアノテーションzip内の1個のJSONファイルを読み込み
 with zipfile.ZipFile('simple-annotation.zip', 'r') as zip_file:
@@ -159,6 +167,8 @@ with zipfile.ZipFile('simple-annotation.zip', 'r') as zip_file:
 parser = SimpleAnnotationDirParser(Path("task01/12345678-abcd-1234-abcd-1234abcd5678.json"))
 simple_annotation = parser.parse()
 print(simple_annotation)
+
+
 
 ```
 
