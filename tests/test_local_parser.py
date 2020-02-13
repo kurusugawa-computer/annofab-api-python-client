@@ -108,7 +108,7 @@ class TestSimpleAnnotationV2:
         assert len([e for e in task_parser_list if e.task_id == "sample_0"]) == 1
 
         task_parser = [e for e in task_parser_list if e.task_id == "sample_1"][0]
-        parser_list = task_parser.parser_list
+        parser_list = list(task_parser.lazy_parse())
         assert len(parser_list) == 2
         assert len([e for e in parser_list if e.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"]) == 1
         assert len([e for e in parser_list if e.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"]) == 1
@@ -122,7 +122,7 @@ class TestSimpleAnnotationV2:
         assert len([e for e in task_parser_list if e.task_id == "sample_0"]) == 1
 
         task_parser = [e for e in task_parser_list if e.task_id == "sample_1"][0]
-        parser_list = task_parser.parser_list
+        parser_list = list(task_parser.lazy_parse())
         assert len(parser_list) == 2
         assert len([e for e in parser_list if e.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"]) == 1
         assert len([e for e in parser_list if e.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"]) == 1
