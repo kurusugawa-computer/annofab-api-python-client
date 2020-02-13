@@ -76,7 +76,7 @@ info:
     WebhookID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.72.1
+  version: 0.73.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -255,6 +255,12 @@ tags:
 
     # AnnotationId
     <SchemaDefinition schemaRef="#/components/schemas/AnnotationId" />
+
+    # InputData
+    <SchemaDefinition schemaRef="#/components/schemas/InputData" />
+
+    # JobType
+    <SchemaDefinition schemaRef="#/components/schemas/JobType" />
 
 x-tagGroups:
   - name: API
@@ -1527,6 +1533,8 @@ paths:
         |Webhook||
 
         このAPIを利用するには、プロジェクトを登録する組織の[OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) かつ コピー元プロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。
+
+        本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`copy-project`）。
       security:
       - OrganizationAdministrator: []
         ProjectOwner: []
@@ -2250,7 +2258,7 @@ paths:
           $ref: "#/components/schemas/ProjectId"
       - name: type
         in: query
-        description: 取得するジョブ種別
+        description: 取得するジョブの種別。[詳細はこちら](#section/JobType)。
         required: true
         schema:
           $ref: "#/components/schemas/JobType"
@@ -2918,6 +2926,7 @@ paths:
         `ByDirectory` を指定した場合、入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。この作成ルールは、動画などから切り出した画像をディレクトリ別に格納し、、その動画（ディレクトリ）の単位でタスクを作りたい場合に便利です。
         `ByInputDataCsv` を指定した場合、入力データを各タスクに割り振ったCSVへのS3パスを指定してタスクを生成できます。この作成ルールは特定のデータの組み合わせを持ったタスクを作成したい場合に便利です。<br>
 
+        本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks`）。
 
         #### ByDirectory: ディレクトリ単位でのタスク一括生成の使い方
         例えば、次のような `input_data_name_` の入力データが登録されているとします。
@@ -3849,8 +3858,10 @@ paths:
         プロジェクト内のアノテーションZIP（Simple版とFull版の両方）の更新を開始します。
         ZIPの更新は、データ量に応じて数分〜数十分かかります。
 
-        アノテーションZIPは毎日AM 03:00 JSTごろに自動更新されます。
-        本APIを用いると、自動更新を待たずに更新を要求できます。
+        アノテーションZIPは毎日AM 03:00 JSTごろに自動更新されますが、本APIを用いると、自動更新を待たずに更新を要求できます。
+
+        本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-annotation`）。
+
       security:
       - ProjectDataUser: []
       operationId: postAnnotationArchiveUpdate
@@ -4217,6 +4228,8 @@ paths:
         また、複数のストリーミング形式の動画をアップロードすることもできます。<br>
         この場合はZIP形式必須で、同一のZIPファイル内にm3u8ファイルとtsファイルを両方含めてください。<br>
         なお、このm3u8ファイルに記述された相対パスでtsファイルが参照可能である必要があります。
+
+        ZIPファイルを登録するとバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。
 
         ### ディレクトリ例
         ```
@@ -5895,6 +5908,7 @@ components:
         - gen-tasks
         - gen-annotation
         - gen-tasks-list
+        - delete-project
         - invoke-hook
       description: |
         * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。
@@ -5902,6 +5916,7 @@ components:
         * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。
         * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。
         * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。
+        * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。
         * `invoke-hook` - Webhookの起動。
     JobStatus:
         type: string
