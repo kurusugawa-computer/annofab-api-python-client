@@ -152,7 +152,7 @@ for parser in iter_parser:
 task_iter_parser = lazy_parse_simple_annotation_zip_by_task(Path("simple-annotation.zip"))
 for task_parser in task_iter_parser:
     print(task_parser.task_id)
-    for parser in task_parser.parser_list:
+    for parser in task_parser.lazy_parse():
         simple_annotation = parser.parse()
         print(simple_annotation)
         
