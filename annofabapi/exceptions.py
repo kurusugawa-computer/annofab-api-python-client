@@ -24,8 +24,8 @@ class AnnotationOuterFileNotFoundError(AnnofabApiException):
     """
     def __init__(self, outer_file_path: str, zipfile_path: Optional[str] = None):
         if zipfile_path is None:
-            message = f"There is no item named '{str(outer_file_path)}' in the archive '{zipfile_path}'"
-        else:
             message = f"No such file or directory: '{outer_file_path}'"
+        else:
+            message = f"There is no item named '{str(outer_file_path)}' in the archive '{zipfile_path}'"
 
         super().__init__(message)
