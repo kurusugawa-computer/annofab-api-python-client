@@ -1,11 +1,10 @@
 import abc
 import json
 import os
-import re
 import warnings
 import zipfile
 from pathlib import Path
-from typing import Any, Iterator, List, Optional
+from typing import Any, Dict, Iterator, List, Optional
 
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
@@ -383,28 +382,48 @@ def lazy_parse_simple_annotation_zip_by_task(zip_file_path: Path) -> Iterator[Si
     Yields:
         対象タスク内の、annotationの遅延Parseが可能なインスタンス列
     """
-    def is_input_data_info_in_task(zip_info: zipfile.ZipInfo, task_id: str) -> bool:
+    def get_task_id_from_path(path: str) -> str:
         """
-        指定されたtask_id配下の入力データJSONかどうか
+        1階層目のディレクトリをtask_idとみなして、task_idを取得する。
+        """
+        return path.split("/")[0]
+
+    def is_input_data_json(zip_info: zipfile.ZipInfo) -> bool:
+        """
+        task_idディレクトリ配下の入力データJSONかどうか
         """
         paths = [p for p in zip_info.filename.split("/") if len(p) != 0]
         if len(paths) != 2:
             return False
-        if paths[0] != task_id:
-            return False
         if not paths[1].endswith(".json"):
             return False
-
         return True
+
+    def create_task_dict(arg_info_list: List[zipfile.ZipInfo]) -> Dict[str, List[str]]:
+        task_dict: Dict[str, List[str]] = {}
+        sorted_path_list = sorted([e.filename for e in arg_info_list if is_input_data_json(e)])
+
+        before_task_id = None
+        start_index = len(sorted_path_list)  # 初期値として無効な値を設定する
+        for index, path in enumerate(sorted_path_list):
+            task_id = get_task_id_from_path(path)
+            if before_task_id != task_id:
+                if before_task_id is not None:
+                    task_dict[before_task_id] = sorted_path_list[start_index:index]
+
+                start_index = index
+                before_task_id = task_id
+
+        if before_task_id is not None:
+            task_dict[before_task_id] = sorted_path_list[start_index:]
+
+        return task_dict
 
     with zipfile.ZipFile(zip_file_path, mode="r") as file:
         info_list: List[zipfile.ZipInfo] = file.infolist()
-        # 1階層目のディレクトリをtask_idとみなす
-        task_info_list = [e for e in info_list if e.is_dir() and len(re.findall("/", e.filename)) == 1]
 
-        for task_info in task_info_list:
-            task_id = task_info.filename.split("/")[0]
-            json_path_list = [e.filename for e in info_list if is_input_data_info_in_task(e, task_id)]
+        task_dict: Dict[str, List[str]] = create_task_dict(info_list)
+        for task_id, json_path_list in task_dict.items():
             yield SimpleAnnotationZipParserByTask(zip_file=file, task_id=task_id, json_path_list=json_path_list)
 
 
