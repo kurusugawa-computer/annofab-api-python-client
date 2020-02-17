@@ -2,10 +2,11 @@ import copy
 import logging
 import mimetypes
 import time
+import typing
 import urllib
 import urllib.parse
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Tuple  # pylint: disable=unused-import
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import requests
 
@@ -245,9 +246,11 @@ class Wrapper:
 
         # content_type を推測
         new_content_type = self._get_content_type(file_path, content_type)
+        return self._upload_file_to_s3(project_id, file_path, content_type=new_content_type)
 
+    def _upload_file_to_s3(self, project_id: str, fp: Union[str, typing.IO], content_type: str) -> str:
         # 一時データ保存先を取得
-        content = self.api.create_temp_path(project_id, header_params={'content-type': new_content_type})[0]
+        content = self.api.create_temp_path(project_id, header_params={'content-type': content_type})[0]
 
         url_parse_result = urllib.parse.urlparse(content["url"])
         query_dict = urllib.parse.parse_qs(url_parse_result.query)
@@ -256,9 +259,12 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        with open(file_path, 'rb') as f:
-            res_put = self.api.session.put(s3_url, params=query_dict, data=f,
-                                           headers={'content-type': new_content_type})
+        if isinstance(fp, str):
+            with open(fp, 'rb') as f:
+                res_put = self.api.session.put(s3_url, params=query_dict, data=f,
+                                               headers={'content-type': content_type})
+        else:
+            res_put = self.api.session.put(s3_url, params=query_dict, data=fp, headers={'content-type': content_type})
 
         annofabapi.utils.log_error_response(logger, res_put)
         annofabapi.utils.raise_for_status(res_put)

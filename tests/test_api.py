@@ -113,7 +113,7 @@ class TestInput:
         assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f'{test_dir}/lenna.png')) == dict
         assert type(api.delete_input_data(project_id, test_input_data_id)[0]) == dict
 
-    def test_batch_update_inputs(self):
+    def test_put_input_data_from_file_and_batch_update_inputs(self):
         test_input_data_id = str(uuid.uuid4())
         print("")
         print(f"put_input_data: input_data_id={test_input_data_id}")
