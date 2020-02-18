@@ -94,6 +94,12 @@ class SimpleAnnotationParser(abc.ABC):
         JSONファイルをパースする。
         """
 
+    @abc.abstractmethod
+    def load_json(self) -> Any:
+        """
+        JSONファイルをloadします。
+        """
+
 
 class FullAnnotationParser(abc.ABC):
     """
@@ -181,10 +187,11 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
         super().__init__(json_file_path)
 
     def parse(self) -> SimpleAnnotation:
+        return SimpleAnnotation.from_dict(self.load_json())  # type: ignore
+
+    def load_json(self) -> Any:
         with self.__zip_file.open(self.json_file_path) as entry:
-            anno_dict: dict = json.load(entry)
-            # mypyの "has no attribute "from_dict" " をignore
-            return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
+            return json.load(entry)
 
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
@@ -213,9 +220,11 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
         super().__init__(str(json_file_path))
 
     def parse(self) -> SimpleAnnotation:
+        return SimpleAnnotation.from_dict(self.load_json())  # type: ignore
+
+    def load_json(self) -> Any:
         with open(self.json_file_path, encoding="utf-8") as f:
-            anno_dict: dict = json.load(f)
-            return SimpleAnnotation.from_dict(anno_dict)  # type: ignore
+            return json.load(f)
 
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
