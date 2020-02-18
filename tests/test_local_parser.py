@@ -72,6 +72,10 @@ class TestSimpleAnnotationV2:
             assert type(simple_annotation) == SimpleAnnotation
             index += 1
 
+            dict_simple_annotation = parser.load_json()
+            assert type(dict_simple_annotation) == dict
+            assert "details" in dict_simple_annotation
+
         assert index == 4
 
         with zipfile.ZipFile(zip_path) as zip_file:
