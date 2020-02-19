@@ -222,7 +222,7 @@ class AnnofabApi(AbstractAnnofabApi):
             project_id: プロジェクトID
 
         Returns:
-            Tuple[Content, Reponse)
+            Tuple[Content, Response)
 
         """
         warnings.warn("deprecated", DeprecationWarning)
