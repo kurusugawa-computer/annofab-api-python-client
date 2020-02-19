@@ -6,7 +6,7 @@ import typing
 import urllib
 import urllib.parse
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 
 import requests
 
@@ -241,14 +241,26 @@ class Wrapper:
             content_type: アップロードするファイルのMIME Type. Noneの場合、ファイルパスから推測する。
 
         Returns:
-            AnnoFabに登録するときのpath
+            一時データ保存先であるS3パス
         """
 
         # content_type を推測
         new_content_type = self._get_content_type(file_path, content_type)
-        return self._upload_file_to_s3(project_id, file_path, content_type=new_content_type)
+        with open(file_path, 'rb') as f:
+            return self.upload_file_object_to_s3(project_id, fp=f, content_type=new_content_type)
 
-    def _upload_file_to_s3(self, project_id: str, fp: Union[str, typing.IO], content_type: str) -> str:
+    def upload_file_object_to_s3(self, project_id: str, fp: typing.IO, content_type: str) -> str:
+        """
+        createTempPath APIを使ってアップロード用のURLとS3パスを取得して、"file object"をアップロードする。
+
+        Args:
+            project_id: プロジェクトID
+            fp: アップロードするファイルのfile object
+            content_type: アップロードするfile objectのMIME Type.
+
+        Returns:
+            一時データ保存先であるS3パス
+        """
         # 一時データ保存先を取得
         content = self.api.create_temp_path(project_id, header_params={'content-type': content_type})[0]
 
@@ -259,12 +271,7 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        if isinstance(fp, str):
-            with open(fp, 'rb') as f:
-                res_put = self.api.session.put(s3_url, params=query_dict, data=f,
-                                               headers={'content-type': content_type})
-        else:
-            res_put = self.api.session.put(s3_url, params=query_dict, data=fp, headers={'content-type': content_type})
+        res_put = self.api.session.put(s3_url, params=query_dict, data=fp, headers={'content-type': content_type})
 
         annofabapi.utils.log_error_response(logger, res_put)
         annofabapi.utils.raise_for_status(res_put)
@@ -818,7 +825,7 @@ class Wrapper:
     def upload_instruction_image(self, project_id: str, image_id: str, file_path: str,
                                  content_type: Optional[str] = None) -> str:
         """
-        作業ガイドの画像をアップロードする。image_idはUUIDv4
+        作業ガイドの画像をアップロードする。
 
         Args:
             project_id: プロジェクトID
@@ -827,15 +834,30 @@ class Wrapper:
             content_type: アップロードするファイルのMIME Type. Noneの場合、ファイルパスから推測する。
 
         Returns:
-            AnnoFabに登録するときのpath
+            一時データ保存先であるS3パス
         """
-
-        # content_type を推測
         new_content_type = self._get_content_type(file_path, content_type)
+        with open(file_path, 'rb') as f:
+            return self.upload_file_object_as_instruction_image(project_id, image_id, fp=f,
+                                                                content_type=new_content_type)
 
+    def upload_file_object_as_instruction_image(self, project_id: str, image_id: str, fp: typing.IO,
+                                                content_type: str) -> str:
+        """
+        file objectを作業ガイドの画像としてアップロードする。
+
+        Args:
+            project_id: プロジェクトID
+            image_id: 作業ガイド画像ID
+            fp: アップロードするファイルのfile object
+            content_type: アップロードするファイルのMIME Type.
+
+        Returns:
+            一時データ保存先であるS3パス
+        """
         # 作業ガイド登録用/更新用のURLを取得
         content = self.api.get_instruction_image_url_for_put(project_id, image_id,
-                                                             header_params={'content-type': new_content_type})[0]
+                                                             header_params={'content-type': content_type})[0]
 
         url_parse_result = urllib.parse.urlparse(content["url"])
         query_dict = urllib.parse.parse_qs(url_parse_result.query)
@@ -844,9 +866,7 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        with open(file_path, 'rb') as f:
-            res_put = self.api.session.put(s3_url, params=query_dict, data=f,
-                                           headers={'content-type': new_content_type})
+        res_put = self.api.session.put(s3_url, params=query_dict, data=fp, headers={'content-type': content_type})
         annofabapi.utils.log_error_response(logger, res_put)
         annofabapi.utils.raise_for_status(res_put)
         return content["path"]
