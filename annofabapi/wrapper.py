@@ -7,8 +7,6 @@ import urllib.parse
 import warnings
 from typing import Any, Callable, Dict, List, Optional
 
-import requests
-
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
@@ -322,7 +320,14 @@ class Wrapper:
         """
         _, response = self.api.get_worktime_statistics(project_id)
         url = response.headers['Location']
-        return requests.get(url).json()
+
+        response = self.api.session.get(url)
+        annofabapi.utils.log_error_response(logger, response)
+
+        response.encoding = 'utf-8'
+        annofabapi.utils.raise_for_status(response)
+        content = self.api._response_to_content(response)
+        return content
 
     #########################################
     # Public Method : Supplementary

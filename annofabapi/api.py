@@ -245,7 +245,7 @@ class AnnofabApi(AbstractAnnofabApi):
         """
         def request(cookies):
             kwargs = {"cookies": cookies}
-            return requests.get(url, **kwargs)
+            return self.session.get(url, **kwargs)
 
         if self.cookies is None:
             self.cookies, _ = self._get_signed_cookie(project_id)
