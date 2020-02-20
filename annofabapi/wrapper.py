@@ -2,7 +2,6 @@ import copy
 import logging
 import mimetypes
 import time
-import typing
 import urllib
 import urllib.parse
 import warnings
@@ -247,15 +246,15 @@ class Wrapper:
         # content_type を推測
         new_content_type = self._get_content_type(file_path, content_type)
         with open(file_path, 'rb') as f:
-            return self.upload_file_object_to_s3(project_id, fp=f, content_type=new_content_type)
+            return self.upload_data_to_s3(project_id, data=f, content_type=new_content_type)
 
-    def upload_file_object_to_s3(self, project_id: str, fp: typing.IO, content_type: str) -> str:
+    def upload_data_to_s3(self, project_id: str, data: Any, content_type: str) -> str:
         """
-        createTempPath APIを使ってアップロード用のURLとS3パスを取得して、"file object"をアップロードする。
+        createTempPath APIを使ってアップロード用のURLとS3パスを取得して、"data" をアップロードする。
 
         Args:
             project_id: プロジェクトID
-            fp: アップロードするファイルのfile object
+            data: アップロード対象のdata. ``requests.put`` メソッドの ``data``引数にそのまま渡す。
             content_type: アップロードするfile objectのMIME Type.
 
         Returns:
@@ -271,7 +270,7 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self.api.session.put(s3_url, params=query_dict, data=fp, headers={'content-type': content_type})
+        res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={'content-type': content_type})
 
         annofabapi.utils.log_error_response(logger, res_put)
         annofabapi.utils.raise_for_status(res_put)
@@ -838,18 +837,16 @@ class Wrapper:
         """
         new_content_type = self._get_content_type(file_path, content_type)
         with open(file_path, 'rb') as f:
-            return self.upload_file_object_as_instruction_image(project_id, image_id, fp=f,
-                                                                content_type=new_content_type)
+            return self.upload_data_as_instruction_image(project_id, image_id, data=f, content_type=new_content_type)
 
-    def upload_file_object_as_instruction_image(self, project_id: str, image_id: str, fp: typing.IO,
-                                                content_type: str) -> str:
+    def upload_data_as_instruction_image(self, project_id: str, image_id: str, data: Any, content_type: str) -> str:
         """
-        file objectを作業ガイドの画像としてアップロードする。
+        data を作業ガイドの画像としてアップロードする。
 
         Args:
             project_id: プロジェクトID
             image_id: 作業ガイド画像ID
-            fp: アップロードするファイルのfile object
+            data: アップロード対象のdata. ``requests.put`` メソッドの ``data``引数にそのまま渡す。
             content_type: アップロードするファイルのMIME Type.
 
         Returns:
@@ -866,7 +863,7 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self.api.session.put(s3_url, params=query_dict, data=fp, headers={'content-type': content_type})
+        res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={'content-type': content_type})
         annofabapi.utils.log_error_response(logger, res_put)
         annofabapi.utils.raise_for_status(res_put)
         return content["path"]
