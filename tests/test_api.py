@@ -449,3 +449,11 @@ class TestGetObjOrNone:
         assert wrapper.get_task_or_none(project_id, "not-exists") is None
 
         assert wrapper.get_task_or_none("not-exists", task_id) is None
+
+
+class TestProtectedMethod:
+    def test__request_get_with_cookie(self):
+        images, _ = api.get_instruction_images(project_id)
+        url = images[0]["url"]
+        r = api._request_get_with_cookie(project_id, url)
+        assert r.headers["Content-Type"].startswith("image/")
