@@ -243,18 +243,24 @@ class AnnofabApi(AbstractAnnofabApi):
             Response
 
         """
+        def request(cookies):
+            kwargs = {"cookies": cookies}
+            return requests.get(url, **kwargs)
+
         if self.cookies is None:
             self.cookies, _ = self._get_signed_cookie(project_id)
 
-        kwargs = {"cookies": self.cookies}
-        response = requests.get(url, **kwargs)
+        response = request(self.cookies)
 
-        # CloudFrontから403 Errorが発生したとき
+        # CloudFrontから403 Errorが発生したときは、別プロジェクトのcookieを渡している可能性があるので、
+        # Signed Cookieを発行して、再度リクエストを投げる
         if response.status_code == requests.codes.forbidden and response.headers.get("server") == "CloudFront":
             self.cookies, _ = self._get_signed_cookie(project_id)
-            return self._request_get_with_cookie(project_id, url)
-        else:
-            return response
+            response = request(self.cookies)
+
+        annofabapi.utils.log_error_response(logger, response)
+        annofabapi.utils.raise_for_status(response)
+        return response
 
     #########################################
     # Public Method : Login
