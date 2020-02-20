@@ -12,6 +12,7 @@ import os
 import uuid
 
 import pytest
+import requests
 
 import annofabapi
 import annofabapi.utils
@@ -457,3 +458,9 @@ class TestProtectedMethod:
         url = images[0]["url"]
         r = api._request_get_with_cookie(project_id, url)
         assert r.headers["Content-Type"].startswith("image/")
+
+    def test_request_get_with_cookie_failed(self):
+        # SignedCookieに対応するプロジェクトと、アクセス対象のプロジェクトが異なっているときの対応
+        url = "https://annofab.com/projects/foo/annotation_specs_histories/foo.json"
+        with pytest.raises(requests.HTTPError):
+            api._request_get_with_cookie(project_id, url)
