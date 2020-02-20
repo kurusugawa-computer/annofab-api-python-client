@@ -1,7 +1,6 @@
 import functools
 import json
 import logging
-import warnings
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import backoff
@@ -87,6 +86,9 @@ class AnnofabApi(AbstractAnnofabApi):
     #: login, refresh_tokenで取得したtoken情報
     token_dict: Optional[Dict[str, Any]] = None
 
+    #: Signed Cookie情報
+    cookies: Optional[Dict[str, Any]] = None
+
     class __MyToken(AuthBase):
         """
         requestsモジュールのauthに渡す情報。
@@ -106,6 +108,7 @@ class AnnofabApi(AbstractAnnofabApi):
                        request_body: Optional[Any] = None) -> Dict[str, Any]:
         """
         requestsモジュールのget,...メソッドに渡すkwargsを生成する。
+
         Args:
             params: クエリパラメタに設定する情報
             headers: リクエストヘッダに設定する情報
@@ -211,12 +214,10 @@ class AnnofabApi(AbstractAnnofabApi):
         content = self._response_to_content(response)
         return content, response
 
-    def _get_signed_cookie(self, project_id):
+    def _get_signed_cookie(self, project_id) -> Tuple[Dict[str, Any], requests.Response]:
         """
         アノテーション仕様の履歴情報を取得するために、非公開APIにアクセスする。
         変更される可能性あり.
-
-        .. deprecated:: X
 
         Args:
             project_id: プロジェクトID
@@ -225,11 +226,35 @@ class AnnofabApi(AbstractAnnofabApi):
             Tuple[Content, Response)
 
         """
-        warnings.warn("deprecated", DeprecationWarning)
         url_path = f'/private/projects/{project_id}/sign-headers'
         http_method = 'GET'
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def _request_get_with_cookie(self, project_id: str, url: str) -> requests.Response:
+        """
+        Signed Cookie を使って、AnnoFabのURLにGET requestを投げる。
+
+        Args:
+            project_id: プロジェクトID
+            url: アクセス対象のURL
+
+        Returns:
+            Response
+
+        """
+        if self.cookies is None:
+            self.cookies, _ = self._get_signed_cookie(project_id)
+
+        kwargs = {"cookies": self.cookies}
+        response = requests.get(url, **kwargs)
+
+        # CloudFrontから403 Errorが発生したとき
+        if response.status_code == requests.codes.forbidden and response.headers.get("server") == "CloudFront":
+            self.cookies, _ = self._get_signed_cookie(project_id)
+            return self._request_get_with_cookie(project_id, url)
+        else:
+            return response
 
     #########################################
     # Public Method : Login
