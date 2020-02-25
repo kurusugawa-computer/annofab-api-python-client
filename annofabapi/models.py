@@ -231,15 +231,15 @@ AdditionalData = Dict[str, Any]
 Kyes of Dict
 
 * additional_data_definition_id: str
-    
+    属性ID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。
 * flag: bool
-    
+    `additional_data_definition`の`type`が`flag`のときの属性値。 
 * integer: int
-    
+    `additional_data_definition`の`type`が`integer`のときの属性値。 
 * comment: str
-    
+    `additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 
 * choice: str
-    
+    `additional_data_definition`の`type`が`choice` または `select `のときの属性値（選択肢ID）。 
 
 """
 
@@ -577,9 +577,7 @@ Kyes of Dict
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * details: List[AnnotationDetail]
-    
-* comment: str
-    
+    矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
@@ -604,24 +602,26 @@ Kyes of Dict
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * account_id: str
-    
+    アノテーションを作成したユーザのアカウントID。
 * label_id: str
-    
+    ラベルID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。
 * is_protected: bool
-    
+    `true`の場合、アノテーションをアノテーションエディタ上での削除から保護できます。 外部から取り込んだアノテーションに属性を追加するときなどに指定すると、データの削除を防げます。 
 * data_holding_type: AnnotationDataHoldingType
     
 * data: OneOfstringFullAnnotationData
-    data_holding_type が inner の場合のみ存在し、annotation_type に応じたデータの値が格納されます。 `string`もしくは`object`の値を指定することができ、`string`の形式は次の通りです。   * annotation_type が bounding_box の場合: 左上x,左上y,右下x,右下y のCSV文字列形式。   * annotation_type が polygon/polyline の場合: x1,y1,x2,y2, ... のCSV文字列形式。   * annotation_type が segmentation または segmentation_v2 の場合: 塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。   * annotation_type が classification の場合: data 属性は存在しない。   * annotation_type が range の場合: 開始時間,終了時間 のCSV文字列形式。 
+    アノテーションの座標値や区間などのデータ。レスポンスの場合は`string`形式、[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は`string`または`object`形式です。 `annotation_type`に応じて`string`,`object`の形式が変わります。  <table> <tr><th>annotation_type</th><th>data_holding_type</th><th>string形式</th><th>object形式</th></tr> <tr><td>bounding_box </td><td>inner</td><td><code>左上x,左上y,右下x,右下y</code></td><td><code>FullAnnotationDataBoundingBox</code></td></tr> <tr><td>point</td><td>inner</td><td><code>x1,y1</code></td><td><code>FullAnnotationDataSinglePoint</code></td></tr> <tr><td>polygon / polyline  </td><td>inner</td><td><code>x1,y1,x2,y2, ... </code></td><td><code>FullAnnotationDataPoints</code></td></tr> <tr><td>range </td><td>inner</td><td><code>開始時間(ミリ秒),終了時間(ミリ秒) </code></td><td><code>FullAnnotationDataRange</code></td></tr> <tr><td>classification  </td><td>inner</td><td><code>null </code></td><td><code>FullAnnotationDataClassification</code> / <code>null </code></td></tr> <tr><td>segmentation</td><td>outer</td><td><code>null </code></td><td><code>FullAnnotationDataSegmentation</code> / <code>null </code></td></tr> <tr><td>segmentation_v2   </td><td>outer</td><td><code>null </code></td><td><code>FullAnnotationDataSegmentationV2</code> / <code>null </code></td></tr> </table> 
 * path: str
-    data_holding_typeがouterの場合のみ存在し、データのパスが格納される (現在はアノテーションIDと等しい)
+    外部ファイルに保存されたアノテーションのパス。`data_holding_type`が`inner`の場合は未指定です。 レスポンスの場合は`annotation_id`と同じ値が格納されます。  [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は、[createTempPath](#operation/createTempPath) APIで取得できる一時データ保存先S3パスを格納してください。 更新しない場合は、[getEditorAnnotation](#operation/getEditorAnnotation) APIで取得した`path`をそのまま渡せます。  外部ファイルのフォーマットは下表の通りです。  <table> <tr><th>annotation_type</th><th>形式</th></tr> <tr><td>segmentation / segmentation_v2   </td><td>PNG画像。塗りつぶした部分は<code>rgba(255, 255, 255, 1) </code>、塗りつぶしていない部分は<code>rgba(0, 0, 0, 0) </code>。</td></tr> </table> 
 * etag: str
-    data_holding_typeがouterの場合のみ存在し、データのETagが格納される
+    外部ファイルに保存されたアノテーションのETag。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
 * url: str
-    data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
+    外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
 * additional_data_list: List[AdditionalData]
-    各要素は、 [アノテーション仕様](#operation/getAnnotationSpecs)で定義された属性（`additional_data_definitions`内）のいずれかの要素と対応づけます。 各要素は、どの属性なのかを表す`additional_data_definition_id`、値が必要です。値は、属性の種類に対応するキーに格納します（下表）。  <table> <tr><th>アノテーション属性の種類<br>（`additional_data_definition`の`type`）</th><th>属性の値を格納するキー</th><th>データ型</th></tr> <tr><td>`comment` または `tracking`</td><td>`comment`</td><td>string</td></tr> <tr><td>`flag`</td><td>`flag`</td><td>boolean</td></tr> <tr><td>`integer`</td><td>`integer`</td><td>integer</td></tr> <tr><td>`choice` または `select`</td><td>`choice`</td><td>string（選択肢ID）</td></tr> <tr><td>`link`</td><td>`comment`</td><td>string（アノテーションID）</td></tr> </table> 
-* comment: str
+    各要素は、 [アノテーション仕様](#operation/getAnnotationSpecs)で定義された属性（`additional_data_definitions`内）のいずれかの要素と対応づけます。 各要素は、どの属性なのかを表す`additional_data_definition_id`と値が必要です。値は、属性の種類に対応するキーに格納します（下表）。  <table> <tr><th>アノテーション属性の種類<br>（<code>additional_data_definition</code>の<code>type</code>）</th><th>属性の値を格納するキー</th><th>データ型</th></tr> <tr><td><code>text</code>, <code>comment</code> または <code>tracking</code></td><td><code>comment</code></td><td>string</td></tr> <tr><td><code>flag<c/ode></td><td><code>flag</code></td><td>boolean</td></tr> <tr><td><code>integer</code></td><td><code>integer</code></td><td>integer</td></tr> <tr><td><code>choice</code> または <code>select</code></td><td><code>choice</code></td><td>string（選択肢ID）</td></tr> <tr><td><code>link</code></td><td><code>comment</code></td><td>string（アノテーションID）</td></tr> </table> 
+* created_datetime: str
+    
+* updated_datetime: str
     
 
 """
@@ -703,6 +703,8 @@ Kyes of Dict
     
 * auto_marking: bool
     trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
+* last_updated_datetime: str
+    更新前アノテーション仕様の時刻( `updated_datetime` )を指定する。 新規作成時は未指定。 
 
 """
 
@@ -724,6 +726,10 @@ Kyes of Dict
     
 * auto_marking: bool
     trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
+* format_version: str
+    
+* last_updated_datetime: str
+    更新前アノテーション仕様の時刻( `updated_datetime` )を指定する。 新規作成時は未指定。 
 
 """
 
@@ -739,6 +745,8 @@ Kyes of Dict
     
 * inspection_phrases: List[InspectionPhrase]
     
+* updated_datetime: str
+    アノテーション仕様の最終更新時刻 
 
 """
 
@@ -758,6 +766,10 @@ Kyes of Dict
     
 * inspection_phrases: List[InspectionPhrase]
     
+* format_version: str
+    
+* updated_datetime: str
+    アノテーション仕様の最終更新時刻 
 
 """
 
@@ -2237,7 +2249,7 @@ class JobStatus(Enum):
 
 class JobType(Enum):
     """
-    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 
+    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 
     """
 
     COPY_PROJECT = "copy-project"
@@ -2245,6 +2257,7 @@ class JobType(Enum):
     GEN_TASKS = "gen-tasks"
     GEN_ANNOTATION = "gen-annotation"
     GEN_TASKS_LIST = "gen-tasks-list"
+    GEN_INPUTS_LIST = "gen-inputs-list"
     DELETE_PROJECT = "delete-project"
     INVOKE_HOOK = "invoke-hook"
 
@@ -2839,6 +2852,17 @@ Kyes of Dict
 * job: JobInfo
     
 * dest_project: Project
+    
+
+"""
+
+ProjectInputsUpdateResponse = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* job: JobInfo
     
 
 """
@@ -3497,6 +3521,8 @@ Kyes of Dict
     
 * account_id: str
     
+* worked: bool
+    そのフェーズでタスクの作業を行ったかどうか（行った場合はtrue）
 
 """
 
