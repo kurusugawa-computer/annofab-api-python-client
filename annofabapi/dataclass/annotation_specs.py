@@ -391,6 +391,9 @@ class AnnotationSpecsV1:
     inspection_phrases: Optional[List[InspectionPhrase]]
     """"""
 
+    updated_datetime: Optional[str]
+    """アノテーション仕様の最終更新時刻 """
+
 
 @dataclass_json
 @dataclass
@@ -412,3 +415,9 @@ class AnnotationSpecsV2:
 
     inspection_phrases: Optional[List[InspectionPhrase]]
     """"""
+
+    format_version: Optional[str]
+    """"""
+
+    updated_datetime: Optional[str]
+    """アノテーション仕様の最終更新時刻 """
