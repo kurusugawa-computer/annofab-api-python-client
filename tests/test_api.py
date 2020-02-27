@@ -85,11 +85,12 @@ class TestAnnotationSpecs:
 
     def test_put_annotation_specs(self):
         annotation_spec, _ = api.get_annotation_specs(project_id)
-
+        last_updated_datetime = annotation_spec["updated_datetime"] if annotation_spec is not None else None
         request_body = {
             "labels": annotation_spec["labels"],
             "inspection_phrases": annotation_spec["inspection_phrases"],
             "comment": f"{annofabapi.utils.str_now()} に更新しました。",
+            "last_updated_datetime": last_updated_datetime
         }
         puted_annotation_spec, _ = api.put_annotation_specs(project_id, request_body=request_body)
         assert type(puted_annotation_spec) == dict
@@ -457,7 +458,7 @@ class TestProtectedMethod:
         images, _ = api.get_instruction_images(project_id)
         url = images[0]["url"]
         r = api._request_get_with_cookie(project_id, url)
-        assert r.headers["Content-Type"].startswith("image/")
+        # エラーがないことを確認する
 
     def test_request_get_with_cookie_failed(self):
         # SignedCookieに対応するプロジェクトと、アクセス対象のプロジェクトが異なっているときの対応
