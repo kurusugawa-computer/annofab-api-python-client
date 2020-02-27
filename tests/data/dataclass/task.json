@@ -13,32 +13,38 @@
     {
       "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
       "phase": "annotation",
-      "phase_stage": 1
+      "phase_stage": 1,
+      "worked": true
     },
     {
       "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
       "phase": "inspection",
-      "phase_stage": 1
+      "phase_stage": 1,
+      "worked": true
     },
     {
       "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
       "phase": "annotation",
-      "phase_stage": 1
+      "phase_stage": 1,
+      "worked": true
     },
     {
       "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
       "phase": "inspection",
-      "phase_stage": 1
+      "phase_stage": 1,
+      "worked": true
     },
     {
       "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
       "phase": "inspection",
-      "phase_stage": 2
+      "phase_stage": 2,
+      "worked": true
     },
     {
       "account_id": "12345678-abcd-1234-abcd-1234abcd5678",
       "phase": "acceptance",
-      "phase_stage": 1
+      "phase_stage": 1,
+      "worked": true
     }
   ],
   "work_time_span": 193085,

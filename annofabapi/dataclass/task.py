@@ -66,6 +66,9 @@ class TaskHistoryShort:
     account_id: str
     """"""
 
+    worked: Optional[bool]
+    """そのフェーズでタスクの作業を行ったかどうか（行った場合はtrue）"""
+
 
 @dataclass_json
 @dataclass

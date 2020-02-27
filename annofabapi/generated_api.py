@@ -1145,7 +1145,10 @@ class AbstractAnnofabApi(abc.ABC):
             query_params (Dict[str, Any]): Query Parameters
                 page (int):  表示するページ番号 
                 limit (int):  1ページあたりの取得するデータ件数 
+                organization_id (str):  指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。 
+                title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。 
                 status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。 
+                input_data_type (InputDataType):  指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト 
                 sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。 
 
         Returns:
@@ -1705,6 +1708,28 @@ class AbstractAnnofabApi(abc.ABC):
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
+    def post_project_inputs_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+        """プロジェクトの入力データ情報全件ファイル更新開始
+
+
+        authorizations: ProjectOwner
+
+
+        プロジェクト内の入力データ情報全件ファイルの更新を開始します。 ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。 本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs-list`）。  入力データ情報全件ファイルは毎日AM 02:00 JSTに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、入力データ情報全件ファイル以外は更新されません。  入力データ情報全件ファイルについては、[getProjectInputsUrl](#operation/getProjectInputsUrl) APIを参照ください。 
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+
+        Returns:
+            Tuple[ProjectInputsUpdateResponse, requests.Response]
+
+
+        """
+        url_path = f'/projects/{project_id}/rawdata/inputs'
+        http_method = 'POST'
+        keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
     def post_project_tasks_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトのタスク全件ファイル更新開始
 
@@ -1789,6 +1814,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        備考: 組織に加入していないメンバーも取得できることがあります（[プロジェクト更新](#operation/putProject)でプロジェクトの組織移動をおこなった場合）。 
 
         Args:
             project_id (str):  プロジェクトID (required)
