@@ -76,7 +76,7 @@ info:
     WebhookID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.75.0
+  version: 0.76.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1306,6 +1306,13 @@ paths:
           type: integer
           minimum: 0
           maximum: 200
+      - name: organization_id
+        in: query
+        description: |
+          指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。
+        required: false
+        schema:
+          $ref: "#/components/schemas/OrganizationId"
       - name: title
         in: query
         description: |
