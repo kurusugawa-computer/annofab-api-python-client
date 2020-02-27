@@ -1145,6 +1145,7 @@ class AbstractAnnofabApi(abc.ABC):
             query_params (Dict[str, Any]): Query Parameters
                 page (int):  表示するページ番号 
                 limit (int):  1ページあたりの取得するデータ件数 
+                organization_id (str):  指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。 
                 title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。 
                 status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。 
                 input_data_type (InputDataType):  指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト 
