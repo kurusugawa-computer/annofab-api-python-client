@@ -1344,7 +1344,9 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  1ページあたりの取得するデータ件数 
                 account_id (str):  指定したアカウントIDをメンバーに持つプロジェクトで絞り込む。 
                 except_account_id (str):  指定したアカウントIDをメンバーに持たないプロジェクトで絞り込む。 
+                title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。 
                 status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。 
+                input_data_type (InputDataType):  指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト。 
                 sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。 
 
         Returns:
