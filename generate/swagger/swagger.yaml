@@ -76,7 +76,7 @@ info:
     WebhookID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.76.0
+  version: 0.77.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -946,6 +946,13 @@ paths:
         required: false
         schema:
           $ref: "#/components/schemas/AccountId"
+      - name: title
+        in: query
+        description: |
+          プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。
+        required: false
+        schema:
+          type: string
       - name: status
         in: query
         description: |
@@ -953,6 +960,12 @@ paths:
         required: false
         schema:
           $ref: "#/components/schemas/ProjectStatus"
+      - name: input_data_type
+        in: query
+        description: |
+          指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト。
+        schema:
+          $ref: "#/components/schemas/InputDataType"
       - name: sort_by
         in: query
         description: |
@@ -5501,7 +5514,6 @@ components:
         - username
         - lang
         - keylayout
-        - token
       properties:
         user_id:
           $ref: "#/components/schemas/UserId"
@@ -5513,8 +5525,6 @@ components:
           type: string
         biography:
           $ref: "#/components/schemas/UserBiography"
-        token:
-          $ref: "#/components/schemas/Token"
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
     LastUpdatedDatetime:
@@ -7189,8 +7199,8 @@ components:
         * `on_hold` - 保留。作業ルールの確認などで作業できない状態。
         * `break` - 休憩中。
         * `complete` - 完了。次のフェーズへ進む
-        * `rejected` - 差戻し。修正のため、`annotation`フェーズへ戻る。
-        * `cancelled` - 提出取消し。修正のため、前フェーズへ戻る。
+        * `rejected` - 差戻し。修正のため、`annotation`フェーズへ戻る。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
+        * `cancelled` - 提出取消し。修正のため、前フェーズへ戻る。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
     TaskRequest:
       type: object
       required:
@@ -7293,6 +7303,9 @@ components:
         * `random` - ランダム
     TaskOperation:
       type: object
+      required:
+        - status
+        - last_updated_datetime
       properties:
         status:
           description: |
@@ -7300,11 +7313,14 @@ components:
           allOf:
             - $ref: "#/components/schemas/TaskStatus"
         last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
+          allOf:
+            - $ref: "#/components/schemas/LastUpdatedDatetime"
+          description: |
+            タスクの最終更新日時
         account_id:
           allOf:
             - $ref: "#/components/schemas/AccountId"
-          description: 変更後の担当者のアカウントID
+          description: 変更後の担当者のアカウントID。担当者を未割り当てにする場合は未指定。
     TaskStart:
       type: object
       properties:
