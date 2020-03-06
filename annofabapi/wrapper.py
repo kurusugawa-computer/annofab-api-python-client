@@ -7,7 +7,7 @@ import urllib
 import urllib.parse
 import uuid
 import warnings
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import annofabapi.utils
 from dataclasses import dataclass
@@ -26,6 +26,12 @@ class TaskFrameKey:
     task_id: str
     input_data_id: str
 
+
+@dataclass(frozen=True)
+class AnnotationSpecsRelation:
+    label_id: List[Tuple[str, str]]
+    additional_data_definition_id: List[Tuple[str, str]]
+    choice_id: List[Tuple[str, str]]
 
 
 class Wrapper:
@@ -187,10 +193,12 @@ class Wrapper:
         """
         コピー元の１個のアノテーションを、コピー先用に変換する。
         塗りつぶし画像の場合、S3にアップロードする。
+
+        Notes:
+            annotation_id をUUIDv4で生成すると、アノテーションリンク属性をコピーしたときに対応できないので、暫定的にannotation_idは維持するようにする。
         """
         logger.debug(src_detail)
         dest_detail = copy.deepcopy(src_detail)
-        dest_detail["annotation_id"] = self.__create_annotation_id(src_detail)
         if account_id is not None:
             dest_detail["account_id"] = account_id
 
@@ -223,7 +231,7 @@ class Wrapper:
         }
         return request_body
 
-    def copy_annotation(self, src: TaskFrameKey, dest: TaskFrameKey, overwrite: bool = False) -> bool:
+    def copy_annotation(self, src: TaskFrameKey, dest: TaskFrameKey, annotation_specs_relation) -> bool:
         """
         annotation_id はコピーしない
 
@@ -245,17 +253,10 @@ class Wrapper:
         old_dest_annotation, _ = self.api.get_editor_annotation(dest.project_id, dest.task_id, dest.input_data_id)
         updated_datetime = old_dest_annotation["updated_datetime"]
 
-        if overwrite:
-            request_body = self._create_request_body_for_copy_annotation(dest.project_id, dest.task_id,
+        request_body = self.__create_request_body_for_copy_annotation(dest.project_id, dest.task_id,
                                                                          dest.input_data_id,
                                                                          src_details=src_annotation_details,
                                                                          updated_datetime=updated_datetime)
-        else:
-            details = old_dest_annotation["details"] + src_annotation_details
-            request_body = self._create_request_body_for_copy_annotation(dest.project_id, dest.task_id,
-                                                                         dest.input_data_id, src_details=details,
-                                                                         updated_datetime=updated_datetime)
-
         self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
         return True
 
