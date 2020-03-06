@@ -1,18 +1,20 @@
+# pylint: disable=too-many-lines
 import copy
 import logging
 import mimetypes
 import time
 import urllib
 import urllib.parse
+import uuid
 import warnings
 from typing import Any, Callable, Dict, List, Optional
 
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationSpecsV1, InputData, Inspection, InspectionStatus, Instruction, JobInfo,
-                               JobStatus, JobType, MyOrganization, Organization, OrganizationMember, Project,
-                               ProjectMember, SupplementaryData, Task)
+from annofabapi.models import (AnnotationDataHoldingType, AnnotationSpecsV1, InputData, Inspection, InspectionStatus,
+                               Instruction, JobInfo, JobStatus, JobType, MyOrganization, Organization,
+                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task)
 from annofabapi.utils import allow_404_error
 
 logger = logging.getLogger(__name__)
@@ -163,6 +165,88 @@ class Wrapper:
         """
         return self._get_all_objects(self.api.get_annotation_list, limit=200, project_id=project_id,
                                      query_params=query_params)
+
+    def _to_dest_annotation_detail(self, dest_project_id: str, src_detail: Dict[str, Any],
+                                   account_id: Optional[str] = None) -> Dict[str, Any]:
+        """
+        コピー元の１個のアノテーションを、コピー先用に変換する。
+        塗りつぶし画像の場合、S3にアップロードする。
+        """
+        src_detail["annotation_id"] = str(uuid.uuid4())
+        # TODO
+        src_detail["account_id"] = account_id
+
+        if src_detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
+            outer_file_url = src_detail["data"]["url"]
+            src_response = self.api.session.get(outer_file_url)
+            s3_path = self.upload_data_to_s3(dest_project_id, data=src_response.content,
+                                             content_type=src_response.headers["Content-Type"])
+            src_detail["data"]["path"] = s3_path
+            logger.debug("%s に塗りつぶし画像をアップロードしました。", s3_path)
+
+        return src_detail
+
+    def _create_request_body_for_copy_annotation(self, project_id: str, task_id: str, input_data_id: str,
+                                                 src_details: List[Dict[str, Any]], updated_datetime: Optional[str],
+                                                 account_id: Optional[str] = None) -> Dict[str, Any]:
+        dest_details: List[Dict[str, Any]] = []
+
+        for src_detail in src_details:
+            dest_detail = self._to_dest_annotation_detail(project_id, src_detail, account_id=account_id)
+            dest_details.append(dest_detail)
+
+        request_body = {
+            "project_id": project_id,
+            "task_id": task_id,
+            "input_data_id": input_data_id,
+            "details": dest_details,
+            "updated_datetime": updated_datetime,
+        }
+        return request_body
+
+    def copy_annotation(self, src: Dict[str, str], dest: Dict[str, str], overwrite: bool = False) -> bool:
+        """
+        annotation_id はコピーしない
+
+        Args:
+            project_id:
+            parser:
+            overwrite:
+
+        Returns:
+
+        """
+        src_project_id = src["project_id"]
+        src_task_id = src["task_id"]
+        src_input_data_id = src["input_data_id"]
+
+        dest_project_id = dest["project_id"]
+        dest_task_id = dest["task_id"]
+        dest_input_data_id = dest["input_data_id"]
+
+        src_annotation, _ = self.api.get_editor_annotation(src_project_id, src_task_id, src_input_data_id)
+        src_annotation_details: List[Dict[str, Any]] = src_annotation["details"]
+
+        if len(src_annotation_details) == 0:
+            logger.debug("コピー元にアノテーションが１つもないため、アノテーションのコピーをスキップします。")
+            return False
+
+        old_dest_annotation, _ = self.api.get_editor_annotation(dest_project_id, dest_task_id, dest_input_data_id)
+        updated_datetime = old_dest_annotation["updated_datetime"]
+
+        if overwrite:
+            request_body = self._create_request_body_for_copy_annotation(dest_project_id, dest_task_id,
+                                                                         dest_input_data_id,
+                                                                         src_details=src_annotation_details,
+                                                                         updated_datetime=updated_datetime)
+        else:
+            details = old_dest_annotation["details"] + src_annotation_details
+            request_body = self._create_request_body_for_copy_annotation(dest_project_id, dest_task_id,
+                                                                         dest_input_data_id, src_details=details,
+                                                                         updated_datetime=updated_datetime)
+
+        self.api.put_annotation(dest_project_id, dest_task_id, dest_input_data_id, request_body=request_body)
+        return True
 
     #########################################
     # Public Method : AnnotationSpecs
