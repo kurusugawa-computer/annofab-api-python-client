@@ -10,6 +10,7 @@ import warnings
 from typing import Any, Callable, Dict, List, Optional
 
 import annofabapi.utils
+from dataclasses import dataclass
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (AnnotationDataHoldingType, AnnotationSpecsV1, InputData, Inspection, InspectionStatus,
@@ -18,6 +19,13 @@ from annofabapi.models import (AnnotationDataHoldingType, AnnotationSpecsV1, Inp
 from annofabapi.utils import allow_404_error
 
 logger = logging.getLogger(__name__)
+
+@dataclass(frozen=True)
+class TaskFrameKey:
+    project_id: str
+    task_id: str
+    input_data_id: str
+
 
 
 class Wrapper:
@@ -70,7 +78,7 @@ class Wrapper:
         """
         get_all_XXX関数の共通処理
 
-        Args:
+        Args:ｃ
             func_get_list: AnnofabApiのget_XXX関数
             limit: 1ページあたりの取得するデータ件数
             **kwargs_for_func_get_list: `func_get_list`に渡す引数。
@@ -204,7 +212,7 @@ class Wrapper:
         }
         return request_body
 
-    def copy_annotation(self, src: Dict[str, str], dest: Dict[str, str], overwrite: bool = False) -> bool:
+    def copy_annotation(self, src: TaskFrameKey, dest: TaskFrameKey, overwrite: bool = False) -> bool:
         """
         annotation_id はコピーしない
 
@@ -216,36 +224,28 @@ class Wrapper:
         Returns:
 
         """
-        src_project_id = src["project_id"]
-        src_task_id = src["task_id"]
-        src_input_data_id = src["input_data_id"]
-
-        dest_project_id = dest["project_id"]
-        dest_task_id = dest["task_id"]
-        dest_input_data_id = dest["input_data_id"]
-
-        src_annotation, _ = self.api.get_editor_annotation(src_project_id, src_task_id, src_input_data_id)
+        src_annotation, _ = self.api.get_editor_annotation(src.project_id, src.task_id, src.input_data_id)
         src_annotation_details: List[Dict[str, Any]] = src_annotation["details"]
 
         if len(src_annotation_details) == 0:
             logger.debug("コピー元にアノテーションが１つもないため、アノテーションのコピーをスキップします。")
             return False
 
-        old_dest_annotation, _ = self.api.get_editor_annotation(dest_project_id, dest_task_id, dest_input_data_id)
+        old_dest_annotation, _ = self.api.get_editor_annotation(dest.project_id, dest.task_id, dest.input_data_id)
         updated_datetime = old_dest_annotation["updated_datetime"]
 
         if overwrite:
-            request_body = self._create_request_body_for_copy_annotation(dest_project_id, dest_task_id,
-                                                                         dest_input_data_id,
+            request_body = self._create_request_body_for_copy_annotation(dest.project_id, dest.task_id,
+                                                                         dest.input_data_id,
                                                                          src_details=src_annotation_details,
                                                                          updated_datetime=updated_datetime)
         else:
             details = old_dest_annotation["details"] + src_annotation_details
-            request_body = self._create_request_body_for_copy_annotation(dest_project_id, dest_task_id,
-                                                                         dest_input_data_id, src_details=details,
+            request_body = self._create_request_body_for_copy_annotation(dest.project_id, dest.task_id,
+                                                                         dest.input_data_id, src_details=details,
                                                                          updated_datetime=updated_datetime)
 
-        self.api.put_annotation(dest_project_id, dest_task_id, dest_input_data_id, request_body=request_body)
+        self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
         return True
 
     #########################################
