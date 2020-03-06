@@ -174,33 +174,44 @@ class Wrapper:
         return self._get_all_objects(self.api.get_annotation_list, limit=200, project_id=project_id,
                                      query_params=query_params)
 
-    def _to_dest_annotation_detail(self, dest_project_id: str, src_detail: Dict[str, Any],
+    @staticmethod
+    def __create_annotation_id(detail: Dict[str, Any]) -> str:
+        if detail["data_holding_type"] == AnnotationDataHoldingType.INNER.value and detail["data"] is None:
+            # annotation_typeがclassificationのときは、label_idとannotation_idを一致させる必要がある。
+            return detail["label_id"]
+        else:
+            return str(uuid.uuid4())
+
+    def __to_dest_annotation_detail(self, dest_project_id: str, src_detail: Dict[str, Any],
                                    account_id: Optional[str] = None) -> Dict[str, Any]:
         """
         コピー元の１個のアノテーションを、コピー先用に変換する。
         塗りつぶし画像の場合、S3にアップロードする。
         """
-        src_detail["annotation_id"] = str(uuid.uuid4())
-        # TODO
-        src_detail["account_id"] = account_id
+        logger.debug(src_detail)
+        dest_detail = copy.deepcopy(src_detail)
+        dest_detail["annotation_id"] = self.__create_annotation_id(src_detail)
+        if account_id is not None:
+            dest_detail["account_id"] = account_id
 
         if src_detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
-            outer_file_url = src_detail["data"]["url"]
+            outer_file_url = src_detail["url"]
             src_response = self.api.session.get(outer_file_url)
             s3_path = self.upload_data_to_s3(dest_project_id, data=src_response.content,
                                              content_type=src_response.headers["Content-Type"])
-            src_detail["data"]["path"] = s3_path
             logger.debug("%s に塗りつぶし画像をアップロードしました。", s3_path)
+            dest_detail["path"] = s3_path
+            dest_detail["url"] = None
+            dest_detail["etag"] = None
+        return dest_detail
 
-        return src_detail
-
-    def _create_request_body_for_copy_annotation(self, project_id: str, task_id: str, input_data_id: str,
+    def __create_request_body_for_copy_annotation(self, project_id: str, task_id: str, input_data_id: str,
                                                  src_details: List[Dict[str, Any]], updated_datetime: Optional[str],
                                                  account_id: Optional[str] = None) -> Dict[str, Any]:
         dest_details: List[Dict[str, Any]] = []
 
         for src_detail in src_details:
-            dest_detail = self._to_dest_annotation_detail(project_id, src_detail, account_id=account_id)
+            dest_detail = self.__to_dest_annotation_detail(project_id, src_detail, account_id=account_id)
             dest_details.append(dest_detail)
 
         request_body = {
