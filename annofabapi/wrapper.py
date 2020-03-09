@@ -11,6 +11,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import annofabapi.utils
 from dataclasses import dataclass
+from annofabapi.utils import first_true
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (AnnotationDataHoldingType, AnnotationSpecsV1, InputData, Inspection, InspectionStatus,
@@ -26,12 +27,16 @@ class TaskFrameKey:
     task_id: str
     input_data_id: str
 
+@dataclass(frozen=True)
+class ChoiceKey:
+    additional_data_definition_id: str
+    choice_id: str
 
 @dataclass(frozen=True)
 class AnnotationSpecsRelation:
-    label_id: List[Tuple[str, str]]
-    additional_data_definition_id: List[Tuple[str, str]]
-    choice_id: List[Tuple[str, str]]
+    label_id: Dict[str, str]
+    additional_data_definition_id: Dict[str, str]
+    choice_id: Dict[ChoiceKey, ChoiceKey]
 
 
 class Wrapper:
@@ -174,7 +179,7 @@ class Wrapper:
             project_id: プロジェクトID
             query_params: `api.get_annotation_list` メソッドのQuery Parameter
 
-        Returns:
+        Returns:l
             すべてのアノテーション一覧
         """
         return self._get_all_objects(self.api.get_annotation_list, limit=200, project_id=project_id,
@@ -188,8 +193,45 @@ class Wrapper:
         else:
             return str(uuid.uuid4())
 
-    def __to_dest_annotation_detail(self, dest_project_id: str, src_detail: Dict[str, Any],
-                                   account_id: Optional[str] = None) -> Dict[str, Any]:
+    def __replace_annotation_specs_id(self, detail: Dict[str, Any],  annotation_specs_relation: AnnotationSpecsRelation) -> Dict[str, Any]:
+        """
+        アノテーション仕様関係のIDを、新しいIDに置換する。
+
+        Args:
+            detail: (IN/OUT) １個のアノテーション詳細情報
+
+        Returns:
+            IDを置換した後のアノテーション詳細情報
+        """
+        label_id = detail["label_id"]
+
+        new_label_id = annotation_specs_relation.label_id.get(old_label_id)
+        if new_label_id is None:
+            return None
+        else:
+            detail["label_id"] = new_label_id
+
+        additional_data_list = detail["additional_data_list"]
+        new_additional_data_list = []
+        for additional_data in additional_data_list:
+            additional_data_definition_id = detail["additional_data_definition_id"]
+            new_additional_data_definition_id = annotation_specs_relation.additional_data_definition_id.get(additional_data_definition_id)
+            if new_additional_data_definition_id is None:
+                continue
+            additional_data["additional_data_definition_id"] = new_additional_data_definition_id
+
+            if additional_data["choice"] is not None:
+                new_choice = annotation_specs_relation.choice_id.get(ChoiceKey(additional_data_definition_id, additional_data["choice"]))
+                additional_data["choice"] = new_choice if new_choice is not None:
+
+
+            new_additional_data_list.append(additional_data)
+
+        detail["additional_data_list"] = new_additional_data_list
+        return detail
+
+    def l(self, dest_project_id: str, src_detail: Dict[str, Any],
+                                   account_id: Optional[str] = None, annotation_specs_relation: Optional[AnnotationSpecsRelation]=None) -> Dict[str, Any]:
         """
         コピー元の１個のアノテーションを、コピー先用に変換する。
         塗りつぶし画像の場合、S3にアップロードする。
@@ -211,11 +253,15 @@ class Wrapper:
             dest_detail["path"] = s3_path
             dest_detail["url"] = None
             dest_detail["etag"] = None
+
+        if annotation_specs_relation is not None:
+            label_id
+
         return dest_detail
 
     def __create_request_body_for_copy_annotation(self, project_id: str, task_id: str, input_data_id: str,
                                                  src_details: List[Dict[str, Any]], updated_datetime: Optional[str],
-                                                 account_id: Optional[str] = None) -> Dict[str, Any]:
+                                                 account_id: Optional[str] = None, annotation_specs_relation: Optional[AnnotationSpecsRelation]=None) -> Dict[str, Any]:
         dest_details: List[Dict[str, Any]] = []
 
         for src_detail in src_details:
@@ -231,13 +277,14 @@ class Wrapper:
         }
         return request_body
 
-    def copy_annotation(self, src: TaskFrameKey, dest: TaskFrameKey, annotation_specs_relation) -> bool:
+    def copy_annotation(self, src: TaskFrameKey, dest: TaskFrameKey, annotation_specs_relation: Optional[AnnotationSpecsRelation]=None) -> bool:
         """
-        annotation_id はコピーしない
+        annotation_id もコピーする。
 
         Args:
             project_id:
             parser:
+            annotation_specs_relation: コピーしない
             overwrite:
 
         Returns:
@@ -256,7 +303,8 @@ class Wrapper:
         request_body = self.__create_request_body_for_copy_annotation(dest.project_id, dest.task_id,
                                                                          dest.input_data_id,
                                                                          src_details=src_annotation_details,
-                                                                         updated_datetime=updated_datetime)
+                                                                         updated_datetime=updated_datetime,
+                                                                      annotation_specs_relation=annotation_specs_relation)
         self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
         return True
 
