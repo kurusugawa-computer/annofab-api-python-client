@@ -74,7 +74,7 @@ def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     if login_user_id is None or login_password is None:
         raise AnnofabApiException("User ID or password in the .netrc file are None.")
 
-    logger.debug(".netrcファイルからAnnoFab認証情報を読み込んだ。")
+    logger.debug(".netrcファイルからAnnoFab認証情報を読み込みました。")
     return Resource(login_user_id, login_password, endpoint_url=endpoint_url)
 
 
@@ -94,5 +94,5 @@ def build_from_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     if login_user_id is None or login_password is None:
         raise AnnofabApiException("`ANNOFAB_USER_ID` or `ANNOFAB_PASSWORD`  environment variable are empty.")
 
-    logger.debug("環境変数からAnnoFab認証情報を読み込んだ。")
+    logger.debug("環境変数からAnnoFab認証情報を読み込みました。")
     return Resource(login_user_id, login_password, endpoint_url=endpoint_url)

@@ -1,21 +1,44 @@
+# pylint: disable=too-many-lines
 import copy
 import logging
 import mimetypes
 import time
 import urllib
 import urllib.parse
+import uuid
 import warnings
+from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional
 
 import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationSpecsV1, InputData, Inspection, InspectionStatus, Instruction, JobInfo,
-                               JobStatus, JobType, MyOrganization, Organization, OrganizationMember, Project,
-                               ProjectMember, SupplementaryData, Task)
-from annofabapi.utils import allow_404_error
+from annofabapi.models import (AnnotationDataHoldingType, AnnotationSpecsV1, InputData, Inspection, InspectionStatus,
+                               Instruction, JobInfo, JobStatus, JobType, MyOrganization, Organization,
+                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task)
+from annofabapi.utils import allow_404_error, first_true
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class TaskFrameKey:
+    project_id: str
+    task_id: str
+    input_data_id: str
+
+
+@dataclass(frozen=True)
+class ChoiceKey:
+    additional_data_definition_id: str
+    choice_id: str
+
+
+@dataclass(frozen=True)
+class AnnotationSpecsRelation:
+    label_id: Dict[str, str]
+    additional_data_definition_id: Dict[str, str]
+    choice_id: Dict[ChoiceKey, ChoiceKey]
 
 
 class Wrapper:
@@ -68,7 +91,7 @@ class Wrapper:
         """
         get_all_XXX関数の共通処理
 
-        Args:
+        Args:ｃ
             func_get_list: AnnofabApiのget_XXX関数
             limit: 1ページあたりの取得するデータ件数
             **kwargs_for_func_get_list: `func_get_list`に渡す引数。
@@ -158,11 +181,142 @@ class Wrapper:
             project_id: プロジェクトID
             query_params: `api.get_annotation_list` メソッドのQuery Parameter
 
-        Returns:
+        Returns:l
             すべてのアノテーション一覧
         """
         return self._get_all_objects(self.api.get_annotation_list, limit=200, project_id=project_id,
                                      query_params=query_params)
+
+    @staticmethod
+    def __create_annotation_id(detail: Dict[str, Any]) -> str:
+        if detail["data_holding_type"] == AnnotationDataHoldingType.INNER.value and detail["data"] is None:
+            # annotation_typeがclassificationのときは、label_idとannotation_idを一致させる必要がある。
+            return detail["label_id"]
+        else:
+            return str(uuid.uuid4())
+
+    @staticmethod
+    def __replace_annotation_specs_id(detail: Dict[str, Any],
+                                      annotation_specs_relation: AnnotationSpecsRelation) -> Optional[Dict[str, Any]]:
+        """
+        アノテーション仕様関係のIDを、新しいIDに置換する。
+
+        Args:
+            detail: (IN/OUT) １個のアノテーション詳細情報
+
+        Returns:
+            IDを置換した後のアノテーション詳細情報.
+        """
+        label_id = detail["label_id"]
+
+        new_label_id = annotation_specs_relation.label_id.get(label_id)
+        if new_label_id is None:
+            return None
+        else:
+            detail["label_id"] = new_label_id
+
+        additional_data_list = detail["additional_data_list"]
+        new_additional_data_list = []
+        for additional_data in additional_data_list:
+            additional_data_definition_id = additional_data["additional_data_definition_id"]
+            new_additional_data_definition_id = annotation_specs_relation.additional_data_definition_id.get(
+                additional_data_definition_id)
+            if new_additional_data_definition_id is None:
+                continue
+            additional_data["additional_data_definition_id"] = new_additional_data_definition_id
+
+            if additional_data["choice"] is not None:
+                new_choice = annotation_specs_relation.choice_id.get(
+                    ChoiceKey(additional_data_definition_id, additional_data["choice"]))
+                additional_data["choice"] = new_choice.choice_id if new_choice is not None else None
+
+            new_additional_data_list.append(additional_data)
+
+        detail["additional_data_list"] = new_additional_data_list
+        return detail
+
+    def __to_dest_annotation_detail(
+            self,
+            dest_project_id: str,
+            detail: Dict[str, Any],
+            account_id: str,
+    ) -> Dict[str, Any]:
+        """
+        コピー元の１個のアノテーションを、コピー先用に変換する。
+        塗りつぶし画像の場合、S3にアップロードする。
+
+        Notes:
+            annotation_id をUUIDv4で生成すると、アノテーションリンク属性をコピーしたときに対応できないので、暫定的にannotation_idは維持するようにする。
+        """
+        dest_detail = detail
+        dest_detail["account_id"] = account_id
+
+        if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
+            outer_file_url = detail["url"]
+            src_response = self.api.session.get(outer_file_url)
+            s3_path = self.upload_data_to_s3(dest_project_id, data=src_response.content,
+                                             content_type=src_response.headers["Content-Type"])
+            logger.debug("%s に塗りつぶし画像をアップロードしました。", s3_path)
+            dest_detail["path"] = s3_path
+            dest_detail["url"] = None
+            dest_detail["etag"] = None
+
+        return dest_detail
+
+    def __create_request_body_for_copy_annotation(
+            self, project_id: str, task_id: str, input_data_id: str, src_details: List[Dict[str, Any]], account_id: str,
+            annotation_specs_relation: Optional[AnnotationSpecsRelation] = None) -> Dict[str, Any]:
+        dest_details: List[Dict[str, Any]] = []
+
+        for src_detail in src_details:
+            if annotation_specs_relation is not None:
+                tmp_detail = self.__replace_annotation_specs_id(src_detail, annotation_specs_relation)
+                if tmp_detail is None:
+                    continue
+                src_detail = tmp_detail
+
+            dest_detail = self.__to_dest_annotation_detail(project_id, src_detail, account_id=account_id)
+            dest_details.append(dest_detail)
+
+        request_body = {
+            "project_id": project_id,
+            "task_id": task_id,
+            "input_data_id": input_data_id,
+            "details": dest_details,
+        }
+        return request_body
+
+    def copy_annotation(self, src: TaskFrameKey, dest: TaskFrameKey, account_id: str,
+                        annotation_specs_relation: Optional[AnnotationSpecsRelation] = None) -> bool:
+        """
+        アノテーションをコピーする。
+
+        Args:
+            src: コピー元のTaskFrame情報
+            dest: コピー先のTaskFrame情報
+            account_id: アノテーションを登録するユーザのアカウントID
+            annotation_specs_relation: アノテーション仕様間の紐付け情報
+
+        Returns:
+            アノテーションのコピー実施したかどうか
+
+        """
+        src_annotation, _ = self.api.get_editor_annotation(src.project_id, src.task_id, src.input_data_id)
+        src_annotation_details: List[Dict[str, Any]] = src_annotation["details"]
+
+        if len(src_annotation_details) == 0:
+            logger.debug("コピー元にアノテーションが１つもないため、アノテーションのコピーをスキップします。")
+            return False
+
+        old_dest_annotation, _ = self.api.get_editor_annotation(dest.project_id, dest.task_id, dest.input_data_id)
+        updated_datetime = old_dest_annotation["updated_datetime"]
+
+        request_body = self.__create_request_body_for_copy_annotation(
+            dest.project_id, dest.task_id, dest.input_data_id, src_details=src_annotation_details,
+            account_id=account_id, annotation_specs_relation=annotation_specs_relation)
+        request_body["updated_datetime"] = updated_datetime
+        self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
+        return True
 
     #########################################
     # Public Method : AnnotationSpecs
@@ -194,6 +348,78 @@ class Wrapper:
             "comment": comment,
         }
         return self.api.put_annotation_specs(dest_project_id, request_body=request_body)[0]
+
+    @staticmethod
+    def __get_label_name_en(label: Dict[str, Any]) -> str:
+        """label情報から英語名を取得する"""
+        label_name_messages = label["label_name"]["messages"]
+        return [e["message"] for e in label_name_messages if e["lang"] == "en-US"][0]
+
+    @staticmethod
+    def __get_additional_data_definition_name_en(additional_data_definition: Dict[str, Any]) -> str:
+        """additional_data_definitionから英語名を取得する"""
+        messages = additional_data_definition["name"]["messages"]
+        return [e["message"] for e in messages if e["lang"] == "en-US"][0]
+
+    @staticmethod
+    def __get_choice_name_en(choice: Dict[str, Any]) -> str:
+        """choiceから英語名を取得する"""
+        messages = choice["name"]["messages"]
+        return [e["message"] for e in messages if e["lang"] == "en-US"][0]
+
+    def get_annotation_specs_relation(self, src_project_id: str, dest_project_id: str) -> AnnotationSpecsRelation:
+        """
+        プロジェクト間のアノテーション仕様の紐付け情報を取得する。ラベル、属性、選択肢の英語名で紐付ける。
+        紐付け先がない場合は無視する。
+        ``copy_annotation`` メソッドで利用する。
+
+        Args:
+            src_project_id: 紐付け元のプロジェクトID
+            dest_project_id: 紐付け先のプロジェクトID
+
+        Returns:
+            アノテーション仕様の紐付け情報
+
+        """
+        src_annotation_specs, _ = self.api.get_annotation_specs(src_project_id, query_params={"v": "2"})
+        dest_annotation_specs, _ = self.api.get_annotation_specs(dest_project_id, query_params={"v": "2"})
+        dest_labels = dest_annotation_specs["labels"]
+        dest_additionals = dest_annotation_specs["additionals"]
+
+        dict_label_id: Dict[str, str] = {}
+        for src_label in src_annotation_specs["labels"]:
+            src_label_name_en = self.__get_label_name_en(src_label)
+            dest_label = first_true(dest_labels, pred=lambda e, f=src_label_name_en: self.__get_label_name_en(e) == f)
+            if dest_label is not None:
+                dict_label_id[src_label["label_id"]] = dest_label["label_id"]
+
+        dict_additional_data_definition_id: Dict[str, str] = {}
+        dict_choice_id: Dict[ChoiceKey, ChoiceKey] = {}
+        for src_additional in src_annotation_specs["additionals"]:
+            src_additional_name_en = self.__get_additional_data_definition_name_en(src_additional)
+            dest_additional = first_true(
+                dest_additionals,
+                pred=lambda e, f=src_additional_name_en: self.__get_additional_data_definition_name_en(e) == f)
+            if dest_additional is None:
+                continue
+
+            dict_additional_data_definition_id[
+                src_additional["additional_data_definition_id"]] = dest_additional["additional_data_definition_id"]
+
+            dest_choices = dest_additional["choices"]
+            for src_choice in src_additional["choices"]:
+                src_choice_name_en = self.__get_choice_name_en(src_choice)
+                dest_choice = first_true(dest_choices,
+                                         pred=lambda e, f=src_choice_name_en: self.__get_choice_name_en(e) == f)
+                if dest_choice is not None:
+                    dict_choice_id[ChoiceKey(src_additional["additional_data_definition_id"],
+                                             src_choice["choice_id"])] = ChoiceKey(
+                                                 dest_additional["additional_data_definition_id"],
+                                                 dest_choice["choice_id"])
+
+        return AnnotationSpecsRelation(label_id=dict_label_id,
+                                       additional_data_definition_id=dict_additional_data_definition_id,
+                                       choice_id=dict_choice_id)
 
     #########################################
     # Public Method : Input
