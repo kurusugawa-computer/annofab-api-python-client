@@ -3042,8 +3042,6 @@ Kyes of Dict
     
 * biography: str
     人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
-* token: Token
-    
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
@@ -3535,9 +3533,9 @@ Kyes of Dict
 * status: TaskStatus
     次に遷移させるタスクの状態。[詳細はこちら](#section/TaskStatus)。 
 * last_updated_datetime: str
-    新規作成時は未指定、更新時は必須（更新前の日時） 
+    タスクの最終更新日時 
 * account_id: str
-    変更後の担当者のアカウントID
+    変更後の担当者のアカウントID。担当者を未割り当てにする場合は未指定。
 
 """
 
@@ -3592,7 +3590,7 @@ Kyes of Dict
 
 class TaskStatus(Enum):
     """
-    * `not_started` - 未着手。 * `working` - 作業中。誰かが実際にエディタ上で作業している状態。 * `on_hold` - 保留。作業ルールの確認などで作業できない状態。 * `break` - 休憩中。 * `complete` - 完了。次のフェーズへ進む * `rejected` - 差戻し。修正のため、`annotation`フェーズへ戻る。 * `cancelled` - 提出取消し。修正のため、前フェーズへ戻る。 
+    * `not_started` - 未着手。 * `working` - 作業中。誰かが実際にエディタ上で作業している状態。 * `on_hold` - 保留。作業ルールの確認などで作業できない状態。 * `break` - 休憩中。 * `complete` - 完了。次のフェーズへ進む * `rejected` - 差戻し。修正のため、`annotation`フェーズへ戻る。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。 * `cancelled` - 提出取消し。修正のため、前フェーズへ戻る。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。 
     """
 
     NOT_STARTED = "not_started"
