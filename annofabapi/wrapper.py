@@ -16,7 +16,7 @@ from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (AnnotationDataHoldingType, AnnotationSpecsV1, InputData, Inspection, InspectionStatus,
                                Instruction, JobInfo, JobStatus, JobType, MyOrganization, Organization,
                                OrganizationMember, Project, ProjectMember, SupplementaryData, Task)
-from annofabapi.utils import allow_404_error
+from annofabapi.utils import allow_404_error, first_true
 
 logger = logging.getLogger(__name__)
 
@@ -195,7 +195,8 @@ class Wrapper:
         else:
             return str(uuid.uuid4())
 
-    def __replace_annotation_specs_id(self, detail: Dict[str, Any],
+    @staticmethod
+    def __replace_annotation_specs_id(detail: Dict[str, Any],
                                       annotation_specs_relation: AnnotationSpecsRelation) -> Optional[Dict[str, Any]]:
         """
         アノテーション仕様関係のIDを、新しいIDに置換する。
@@ -235,8 +236,11 @@ class Wrapper:
         return detail
 
     def __to_dest_annotation_detail(
-            self, dest_project_id: str, detail: Dict[str, Any], account_id: Optional[str] = None,
-            annotation_specs_relation: Optional[AnnotationSpecsRelation] = None) -> Dict[str, Any]:
+            self,
+            dest_project_id: str,
+            detail: Dict[str, Any],
+            account_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """
         コピー元の１個のアノテーションを、コピー先用に変換する。
         塗りつぶし画像の場合、S3にアップロードする。
@@ -271,11 +275,9 @@ class Wrapper:
                 tmp_detail = self.__replace_annotation_specs_id(src_detail, annotation_specs_relation)
                 if tmp_detail is None:
                     continue
-                else:
-                    src_detail = tmp_detail
+                src_detail = tmp_detail
 
-            dest_detail = self.__to_dest_annotation_detail(project_id, src_detail, account_id=account_id,
-                                                           annotation_specs_relation=annotation_specs_relation)
+            dest_detail = self.__to_dest_annotation_detail(project_id, src_detail, account_id=account_id)
             dest_details.append(dest_detail)
 
         request_body = {
@@ -316,6 +318,78 @@ class Wrapper:
         request_body["updated_datetime"] = updated_datetime
         self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
         return True
+
+    @staticmethod
+    def __get_label_name_en(label: Dict[str, Any]) -> str:
+        """label情報から英語名を取得する"""
+        label_name_messages = label["label_name"]["messages"]
+        return [e["message"] for e in label_name_messages if e["lang"] == "en-US"][0]
+
+    @staticmethod
+    def __get_additional_data_definition_name_en(additional_data_definition: Dict[str, Any]) -> str:
+        """additional_data_definitionから英語名を取得する"""
+        messages = additional_data_definition["name"]["messages"]
+        return [e["message"] for e in messages if e["lang"] == "en-US"][0]
+
+    @staticmethod
+    def __get_choice_name_en(choice: Dict[str, Any]) -> str:
+        """choiceから英語名を取得する"""
+        messages = choice["name"]["messages"]
+        return [e["message"] for e in messages if e["lang"] == "en-US"][0]
+
+    def get_annotation_specs_relation(self, src_project_id: str, dest_project_id: str) -> AnnotationSpecsRelation:
+        """
+        プロジェクト間のアノテーション仕様の紐付け情報を取得する。ラベル、属性、選択肢の英語名で紐付ける。
+        紐付け先がない場合は無視する。
+        ``copy_annotation`` メソッドで利用する。
+
+        Args:
+            src_project_id: 紐付け元のプロジェクトID
+            dest_project_id: 紐付け先のプロジェクトID
+
+        Returns:
+            アノテーション仕様の紐付け情報
+
+        """
+        src_annotation_specs, _ = self.api.get_annotation_specs(src_project_id, query_params={"v": "2"})
+        dest_annotation_specs, _ = self.api.get_annotation_specs(dest_project_id, query_params={"v": "2"})
+        dest_labels = dest_annotation_specs["labels"]
+        dest_additionals = dest_annotation_specs["additionals"]
+
+        dict_label_id: Dict[str, str] = {}
+        for src_label in src_annotation_specs["labels"]:
+            src_label_name_en = self.__get_label_name_en(src_label)
+            dest_label = first_true(dest_labels, pred=lambda e, f=src_label_name_en: self.__get_label_name_en(e) == f)
+            if dest_label is not None:
+                dict_label_id[src_label["label_id"]] = dest_label["label_id"]
+
+        dict_additional_data_definition_id: Dict[str, str] = {}
+        dict_choice_id: Dict[ChoiceKey, ChoiceKey] = {}
+        for src_additional in src_annotation_specs["additionals"]:
+            src_additional_name_en = self.__get_additional_data_definition_name_en(src_additional)
+            dest_additional = first_true(
+                dest_additionals,
+                pred=lambda e, f=src_additional_name_en: self.__get_additional_data_definition_name_en(e) == f)
+            if dest_additional is None:
+                continue
+
+            dict_additional_data_definition_id[
+                src_additional["additional_data_definition_id"]] = dest_additional["additional_data_definition_id"]
+
+            dest_choices = dest_additional["choices"]
+            for src_choice in src_additional["choices"]:
+                src_choice_name_en = self.__get_choice_name_en(src_choice)
+                dest_choice = first_true(dest_choices,
+                                         pred=lambda e, f=src_choice_name_en: self.__get_choice_name_en(e) == f)
+                if dest_choice is not None:
+                    dict_choice_id[ChoiceKey(src_additional["additional_data_definition_id"],
+                                             src_choice["choice_id"])] = ChoiceKey(
+                                                 dest_additional["additional_data_definition_id"],
+                                                 dest_choice["choice_id"])
+
+        return AnnotationSpecsRelation(label_id=dict_label_id,
+                                       additional_data_definition_id=dict_additional_data_definition_id,
+                                       choice_id=dict_choice_id)
 
     #########################################
     # Public Method : AnnotationSpecs
