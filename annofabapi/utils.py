@@ -221,6 +221,7 @@ def get_task_history_index_skipped_inspection(task_history_list: List[TaskHistor
 
     return index_list
 
+
 def first_true(iterable, default=None, pred=None):
     """
     Returns the first true value in the iterable.

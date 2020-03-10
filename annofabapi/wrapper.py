@@ -7,11 +7,10 @@ import urllib
 import urllib.parse
 import uuid
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Optional
 
 import annofabapi.utils
-from dataclasses import dataclass
-from annofabapi.utils import first_true
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (AnnotationDataHoldingType, AnnotationSpecsV1, InputData, Inspection, InspectionStatus,
@@ -21,16 +20,19 @@ from annofabapi.utils import allow_404_error
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass(frozen=True)
 class TaskFrameKey:
     project_id: str
     task_id: str
     input_data_id: str
 
+
 @dataclass(frozen=True)
 class ChoiceKey:
     additional_data_definition_id: str
     choice_id: str
+
 
 @dataclass(frozen=True)
 class AnnotationSpecsRelation:
@@ -193,7 +195,8 @@ class Wrapper:
         else:
             return str(uuid.uuid4())
 
-    def __replace_annotation_specs_id(self, detail: Dict[str, Any],  annotation_specs_relation: AnnotationSpecsRelation) -> Dict[str, Any]:
+    def __replace_annotation_specs_id(self, detail: Dict[str, Any],
+                                      annotation_specs_relation: AnnotationSpecsRelation) -> Optional[Dict[str, Any]]:
         """
         アノテーション仕様関係のIDを、新しいIDに置換する。
 
@@ -201,11 +204,11 @@ class Wrapper:
             detail: (IN/OUT) １個のアノテーション詳細情報
 
         Returns:
-            IDを置換した後のアノテーション詳細情報
+            IDを置換した後のアノテーション詳細情報.
         """
         label_id = detail["label_id"]
 
-        new_label_id = annotation_specs_relation.label_id.get(old_label_id)
+        new_label_id = annotation_specs_relation.label_id.get(label_id)
         if new_label_id is None:
             return None
         else:
@@ -215,23 +218,25 @@ class Wrapper:
         new_additional_data_list = []
         for additional_data in additional_data_list:
             additional_data_definition_id = detail["additional_data_definition_id"]
-            new_additional_data_definition_id = annotation_specs_relation.additional_data_definition_id.get(additional_data_definition_id)
+            new_additional_data_definition_id = annotation_specs_relation.additional_data_definition_id.get(
+                additional_data_definition_id)
             if new_additional_data_definition_id is None:
                 continue
             additional_data["additional_data_definition_id"] = new_additional_data_definition_id
 
             if additional_data["choice"] is not None:
-                new_choice = annotation_specs_relation.choice_id.get(ChoiceKey(additional_data_definition_id, additional_data["choice"]))
-                additional_data["choice"] = new_choice if new_choice is not None:
-
+                new_choice = annotation_specs_relation.choice_id.get(
+                    ChoiceKey(additional_data_definition_id, additional_data["choice"]))
+                additional_data["choice"] = new_choice.choice_id if new_choice is not None else None
 
             new_additional_data_list.append(additional_data)
 
         detail["additional_data_list"] = new_additional_data_list
         return detail
 
-    def l(self, dest_project_id: str, src_detail: Dict[str, Any],
-                                   account_id: Optional[str] = None, annotation_specs_relation: Optional[AnnotationSpecsRelation]=None) -> Dict[str, Any]:
+    def __to_dest_annotation_detail(
+            self, dest_project_id: str, detail: Dict[str, Any], account_id: Optional[str] = None,
+            annotation_specs_relation: Optional[AnnotationSpecsRelation] = None) -> Dict[str, Any]:
         """
         コピー元の１個のアノテーションを、コピー先用に変換する。
         塗りつぶし画像の場合、S3にアップロードする。
@@ -239,13 +244,12 @@ class Wrapper:
         Notes:
             annotation_id をUUIDv4で生成すると、アノテーションリンク属性をコピーしたときに対応できないので、暫定的にannotation_idは維持するようにする。
         """
-        logger.debug(src_detail)
-        dest_detail = copy.deepcopy(src_detail)
+        dest_detail = detail
         if account_id is not None:
             dest_detail["account_id"] = account_id
 
-        if src_detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
-            outer_file_url = src_detail["url"]
+        if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
+            outer_file_url = detail["url"]
             src_response = self.api.session.get(outer_file_url)
             s3_path = self.upload_data_to_s3(dest_project_id, data=src_response.content,
                                              content_type=src_response.headers["Content-Type"])
@@ -254,18 +258,24 @@ class Wrapper:
             dest_detail["url"] = None
             dest_detail["etag"] = None
 
-        if annotation_specs_relation is not None:
-            label_id
-
         return dest_detail
 
-    def __create_request_body_for_copy_annotation(self, project_id: str, task_id: str, input_data_id: str,
-                                                 src_details: List[Dict[str, Any]], updated_datetime: Optional[str],
-                                                 account_id: Optional[str] = None, annotation_specs_relation: Optional[AnnotationSpecsRelation]=None) -> Dict[str, Any]:
+    def __create_request_body_for_copy_annotation(
+            self, project_id: str, task_id: str, input_data_id: str, src_details: List[Dict[str, Any]],
+            account_id: Optional[str] = None,
+            annotation_specs_relation: Optional[AnnotationSpecsRelation] = None) -> Dict[str, Any]:
         dest_details: List[Dict[str, Any]] = []
 
         for src_detail in src_details:
-            dest_detail = self.__to_dest_annotation_detail(project_id, src_detail, account_id=account_id)
+            if annotation_specs_relation is not None:
+                tmp_detail = self.__replace_annotation_specs_id(src_detail, annotation_specs_relation)
+                if tmp_detail is None:
+                    continue
+                else:
+                    src_detail = tmp_detail
+
+            dest_detail = self.__to_dest_annotation_detail(project_id, src_detail, account_id=account_id,
+                                                           annotation_specs_relation=annotation_specs_relation)
             dest_details.append(dest_detail)
 
         request_body = {
@@ -273,11 +283,11 @@ class Wrapper:
             "task_id": task_id,
             "input_data_id": input_data_id,
             "details": dest_details,
-            "updated_datetime": updated_datetime,
         }
         return request_body
 
-    def copy_annotation(self, src: TaskFrameKey, dest: TaskFrameKey, annotation_specs_relation: Optional[AnnotationSpecsRelation]=None) -> bool:
+    def copy_annotation(self, src: TaskFrameKey, dest: TaskFrameKey,
+                        annotation_specs_relation: Optional[AnnotationSpecsRelation] = None) -> bool:
         """
         annotation_id もコピーする。
 
@@ -300,11 +310,10 @@ class Wrapper:
         old_dest_annotation, _ = self.api.get_editor_annotation(dest.project_id, dest.task_id, dest.input_data_id)
         updated_datetime = old_dest_annotation["updated_datetime"]
 
-        request_body = self.__create_request_body_for_copy_annotation(dest.project_id, dest.task_id,
-                                                                         dest.input_data_id,
-                                                                         src_details=src_annotation_details,
-                                                                         updated_datetime=updated_datetime,
-                                                                      annotation_specs_relation=annotation_specs_relation)
+        request_body = self.__create_request_body_for_copy_annotation(
+            dest.project_id, dest.task_id, dest.input_data_id, src_details=src_annotation_details,
+            annotation_specs_relation=annotation_specs_relation)
+        request_body["updated_datetime"] = updated_datetime
         self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
         return True
 
