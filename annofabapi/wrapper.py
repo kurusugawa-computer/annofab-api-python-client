@@ -218,7 +218,7 @@ class Wrapper:
         additional_data_list = detail["additional_data_list"]
         new_additional_data_list = []
         for additional_data in additional_data_list:
-            additional_data_definition_id = detail["additional_data_definition_id"]
+            additional_data_definition_id = additional_data["additional_data_definition_id"]
             new_additional_data_definition_id = annotation_specs_relation.additional_data_definition_id.get(
                 additional_data_definition_id)
             if new_additional_data_definition_id is None:
@@ -239,7 +239,7 @@ class Wrapper:
             self,
             dest_project_id: str,
             detail: Dict[str, Any],
-            account_id: Optional[str] = None,
+            account_id: str,
     ) -> Dict[str, Any]:
         """
         コピー元の１個のアノテーションを、コピー先用に変換する。
@@ -249,8 +249,7 @@ class Wrapper:
             annotation_id をUUIDv4で生成すると、アノテーションリンク属性をコピーしたときに対応できないので、暫定的にannotation_idは維持するようにする。
         """
         dest_detail = detail
-        if account_id is not None:
-            dest_detail["account_id"] = account_id
+        dest_detail["account_id"] = account_id
 
         if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
             outer_file_url = detail["url"]
@@ -265,8 +264,7 @@ class Wrapper:
         return dest_detail
 
     def __create_request_body_for_copy_annotation(
-            self, project_id: str, task_id: str, input_data_id: str, src_details: List[Dict[str, Any]],
-            account_id: Optional[str] = None,
+            self, project_id: str, task_id: str, input_data_id: str, src_details: List[Dict[str, Any]], account_id: str,
             annotation_specs_relation: Optional[AnnotationSpecsRelation] = None) -> Dict[str, Any]:
         dest_details: List[Dict[str, Any]] = []
 
@@ -288,18 +286,19 @@ class Wrapper:
         }
         return request_body
 
-    def copy_annotation(self, src: TaskFrameKey, dest: TaskFrameKey,
+    def copy_annotation(self, src: TaskFrameKey, dest: TaskFrameKey, account_id: str,
                         annotation_specs_relation: Optional[AnnotationSpecsRelation] = None) -> bool:
         """
-        annotation_id もコピーする。
+        アノテーションをコピーする。
 
         Args:
-            project_id:
-            parser:
-            annotation_specs_relation: コピーしない
-            overwrite:
+            src: コピー元のTaskFrame情報
+            dest: コピー先のTaskFrame情報
+            account_id: アノテーションを登録するユーザのアカウントID
+            annotation_specs_relation: アノテーション仕様間の紐付け情報
 
         Returns:
+            アノテーションのコピー実施したかどうか
 
         """
         src_annotation, _ = self.api.get_editor_annotation(src.project_id, src.task_id, src.input_data_id)
@@ -314,10 +313,41 @@ class Wrapper:
 
         request_body = self.__create_request_body_for_copy_annotation(
             dest.project_id, dest.task_id, dest.input_data_id, src_details=src_annotation_details,
-            annotation_specs_relation=annotation_specs_relation)
+            account_id=account_id, annotation_specs_relation=annotation_specs_relation)
         request_body["updated_datetime"] = updated_datetime
         self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
         return True
+
+    #########################################
+    # Public Method : AnnotationSpecs
+    #########################################
+    def copy_annotation_specs(self, src_project_id: str, dest_project_id: str,
+                              comment: Optional[str] = None) -> AnnotationSpecsV1:
+        """
+        アノテーション仕様を、別のプロジェクトにコピーする。
+
+        Note:
+            誤って実行しないようにすること
+
+        Args:
+            src_project_id: コピー元のproject_id
+            dest_project_id: コピー先のproject_id
+            comment: アノテーション仕様を保存するときのコメント。Noneならば、コピーした旨を記載する。
+
+        Returns:
+            put_annotation_specsのContent
+        """
+        src_annotation_specs = self.api.get_annotation_specs(src_project_id)[0]
+
+        if comment is None:
+            comment = f"Copied the annotation specification of project {src_project_id} on {annofabapi.utils.str_now()}"
+
+        request_body = {
+            "labels": src_annotation_specs["labels"],
+            "inspection_phrases": src_annotation_specs["inspection_phrases"],
+            "comment": comment,
+        }
+        return self.api.put_annotation_specs(dest_project_id, request_body=request_body)[0]
 
     @staticmethod
     def __get_label_name_en(label: Dict[str, Any]) -> str:
@@ -390,37 +420,6 @@ class Wrapper:
         return AnnotationSpecsRelation(label_id=dict_label_id,
                                        additional_data_definition_id=dict_additional_data_definition_id,
                                        choice_id=dict_choice_id)
-
-    #########################################
-    # Public Method : AnnotationSpecs
-    #########################################
-    def copy_annotation_specs(self, src_project_id: str, dest_project_id: str,
-                              comment: Optional[str] = None) -> AnnotationSpecsV1:
-        """
-        アノテーション仕様を、別のプロジェクトにコピーする。
-
-        Note:
-            誤って実行しないようにすること
-
-        Args:
-            src_project_id: コピー元のproject_id
-            dest_project_id: コピー先のproject_id
-            comment: アノテーション仕様を保存するときのコメント。Noneならば、コピーした旨を記載する。
-
-        Returns:
-            put_annotation_specsのContent
-        """
-        src_annotation_specs = self.api.get_annotation_specs(src_project_id)[0]
-
-        if comment is None:
-            comment = f"Copied the annotation specification of project {src_project_id} on {annofabapi.utils.str_now()}"
-
-        request_body = {
-            "labels": src_annotation_specs["labels"],
-            "inspection_phrases": src_annotation_specs["inspection_phrases"],
-            "comment": comment,
-        }
-        return self.api.put_annotation_specs(dest_project_id, request_body=request_body)[0]
 
     #########################################
     # Public Method : Input
