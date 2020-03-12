@@ -76,7 +76,7 @@ info:
     WebhookID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.77.2
+  version: 0.78.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1772,9 +1772,27 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/ProjectId"
+        - name: v
+          in: query
+          description: |
+            APIの戻り型のバージョンを指定します。
+            値と戻り型の対応は以下です。
+            - "1"：Message
+            - "2"：PostProjectTasksUpdateResponse
+          required: false
+          schema:
+            type: string
+            default: "1"
+            example: "2"
       responses:
         202:
-          $ref: "#/components/responses/SuccessMessage"
+          description: 正常
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/Message"
+                - $ref: "#/components/schemas/PostProjectTasksUpdateResponse"
         400:
           $ref: "#/components/responses/ErrorInvalidRequest"
         401:
@@ -3977,7 +3995,6 @@ paths:
       tags:
       - af-inspection
       summary: 検査コメント一括取得
-      description: |
       security:
       - AllProjectMember: []
       operationId: getInspections
@@ -4019,7 +4036,7 @@ paths:
       summary: 検査コメント一括更新
       description: |
         検査コメントを一括更新します。
-        タスクの現在の担当者でない場合、409エラーになります。
+        タスクの現在の担当者でない場合、またはタスクの状態が「作業中」でない場合は409エラーになります。
 
         リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。
         操作オブジェクトには、「更新（作成含む）」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。
@@ -4850,19 +4867,19 @@ components:
   securitySchemes:
     SignedCookieKeyPairId:
       description: |
-        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名済みCookieを使います。
+        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
       type: "apiKey"
       in: "cookie"
       name: "CloudFront-Key-Pair-Id"
     SignedCookiePolicy:
       description: |
-        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名済みCookieを使います。
+        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
       type: "apiKey"
       in: "cookie"
       name: "CloudFront-Policy"
     SignedCookieSignature:
       description: |
-        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名済みCookieを使います。
+        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
       type: "apiKey"
       in: "cookie"
       name: "CloudFront-Signature"
@@ -5997,6 +6014,11 @@ components:
           - succeeded
           - failed
     PostAnnotationArchiveUpdateResponse:
+      type: object
+      properties:
+        job:
+          $ref: "#/components/schemas/JobInfo"
+    PostProjectTasksUpdateResponse:
       type: object
       properties:
         job:
@@ -8452,9 +8474,11 @@ components:
         - input_data_id
         - inspection_id
         - phase
+        - phase_stage
         - commenter_account_id
         - data
         - status
+        - comment
         - created_datetime
       properties:
         project_id:
@@ -8466,40 +8490,58 @@ components:
         inspection_id:
           $ref: "#/components/schemas/InspectionId"
         phase:
-          $ref: "#/components/schemas/TaskPhase"
+          description: 検査コメントを付与したときのタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+          allOf:
+            - $ref: "#/components/schemas/TaskPhase"
         phase_stage:
           type: integer
+          description: 検査コメントを付与したときのフェーズのステージ
           default: 1
           minimum: 1
         commenter_account_id:
-          $ref: "#/components/schemas/AccountId"
+          allOf:
+            - $ref: "#/components/schemas/AccountId"
+          description: 検査コメントを付与したユーザのアカウントID
         annotation_id:
           description: |
-            特定のアノテーションに対するコメントの場合はそのアノテーションのID、座標に対する場合は値なし。
+            検査コメントに紐づくアノテーションのID。アノテーションに紐付けられていない場合（アノテーションの付け忘れに対する指定など）は未指定。
             [詳細はこちら](#section/AnnotationId)。
           allOf:
             - $ref: "#/components/schemas/AnnotationId"
         data:
+          description: |
+            検査コメントの座標値や区間。
+  
+            * `InspectionDataPoint`：点で検査コメントを付与したときの座標値
+            * `InspectionDataPolyline`：ポリラインで検査コメントを付与したときの座標値
+            * `InspectionDataTime`：検査コメントを付与した区間（動画プロジェクトの場合）
           oneOf:
             - $ref: "#/components/schemas/InspectionDataPoint"
             - $ref: "#/components/schemas/InspectionDataPolyline"
             - $ref: "#/components/schemas/InspectionDataTime"
         parent_inspection_id:
-          $ref: "#/components/schemas/InspectionId"
+          description: |
+            返信先の検査コメントの検査ID。返信先の検査コメントは「スレッド内の直前のコメント」ではなく「スレッドの先頭のコメント」を指します。
+          allOf:
+            - $ref: "#/components/schemas/InspectionId"
         phrases:
           type: array
-          description: 選択された定型指摘ID. 未選択時は空
+          description: 参照している定型指摘のID。
           items:
             $ref: "#/components/schemas/PhraseId"
         comment:
+          description: |
+            検査コメントの中身
           type: string
+          example: 枠がズレています
         status:
           $ref: "#/components/schemas/InspectionStatus"
         created_datetime:
           type: string
           format: date-time
         updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
+          type: string
+          format: date-time
     InspectionDataPoint:
       type: object
       description: |
@@ -8515,6 +8557,7 @@ components:
         _type:
           type: string
           description: |
+            `Point`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Point"
     InspectionDataPolyline:
@@ -8538,6 +8581,7 @@ components:
         _type:
           type: string
           description: |
+            `Polyline`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Polyline"
     InspectionDataTime:
@@ -8550,11 +8594,14 @@ components:
       properties:
         start:
           type: number
+          description: 開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
         end:
           type: number
+          description: 終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。
         _type:
           type: string
           description: |
+            `Time`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Time"
     Resolution:

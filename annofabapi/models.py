@@ -1920,27 +1920,27 @@ Kyes of Dict
 * inspection_id: str
     検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * phase: TaskPhase
-    
+    検査コメントを付与したときのタスクフェーズ。[詳細はこちら](#section/TaskPhase)
 * phase_stage: int
-    
+    検査コメントを付与したときのフェーズのステージ
 * commenter_account_id: str
-    
+    検査コメントを付与したユーザのアカウントID
 * annotation_id: str
-    特定のアノテーションに対するコメントの場合はそのアノテーションのID、座標に対する場合は値なし。 [詳細はこちら](#section/AnnotationId)。 
+    検査コメントに紐づくアノテーションのID。アノテーションに紐付けられていない場合（アノテーションの付け忘れに対する指定など）は未指定。 [詳細はこちら](#section/AnnotationId)。 
 * data: OneOfInspectionDataPointInspectionDataPolylineInspectionDataTime
-    
+    検査コメントの座標値や区間。  * `InspectionDataPoint`：点で検査コメントを付与したときの座標値 * `InspectionDataPolyline`：ポリラインで検査コメントを付与したときの座標値 * `InspectionDataTime`：検査コメントを付与した区間（動画プロジェクトの場合） 
 * parent_inspection_id: str
-    検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+    返信先の検査コメントの検査ID。返信先の検査コメントは「スレッド内の直前のコメント」ではなく「スレッドの先頭のコメント」を指します。 
 * phrases: List[str]
-    選択された定型指摘ID. 未選択時は空
+    参照している定型指摘のID。
 * comment: str
-    
+    検査コメントの中身 
 * status: InspectionStatus
     
 * created_datetime: str
     
 * updated_datetime: str
-    新規作成時は未指定、更新時は必須（更新前の日時） 
+    
 
 """
 
@@ -1955,7 +1955,7 @@ Kyes of Dict
 * y: int
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `Point` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -1968,7 +1968,7 @@ Kyes of Dict
 * coordinates: List[InspectionDataPolylineCoordinates]
     ポリラインを構成する頂点の配列 
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `Polyline` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -1992,11 +1992,11 @@ InspectionDataTime = Dict[str, Any]
 Kyes of Dict
 
 * start: float
-    
+    開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
 * end: float
-    
+    終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `Time` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -2709,6 +2709,17 @@ Kyes of Dict
 """
 
 PostAnnotationArchiveUpdateResponse = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* job: JobInfo
+    
+
+"""
+
+PostProjectTasksUpdateResponse = Dict[str, Any]
 """
 
 
