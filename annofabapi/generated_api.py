@@ -752,7 +752,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        検査コメントを一括更新します。 タスクの現在の担当者でない場合、409エラーになります。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新（作成含む）」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。  既に作成済みの検査コメントのうち、リクエストボディの配列に含まれないものは更新されません。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。 
+        検査コメントを一括更新します。 タスクの現在の担当者でない場合、またはタスクの状態が「作業中」でない場合は409エラーになります。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新（作成含む）」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。  既に作成済みの検査コメントのうち、リクエストボディの配列に含まれないものは更新されません。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1732,7 +1732,8 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def post_project_tasks_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def post_project_tasks_update(self, project_id: str, query_params: Optional[Dict[str, Any]] = None,
+                                  **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトのタスク全件ファイル更新開始
 
 
@@ -1743,15 +1744,19 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
+            query_params (Dict[str, Any]): Query Parameters
+                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Message - \"2\"：PostProjectTasksUpdateResponse 
 
         Returns:
-            Tuple[Message, requests.Response]
+            Tuple[OneOfMessagePostProjectTasksUpdateResponse, requests.Response]
 
 
         """
         url_path = f'/projects/{project_id}/rawdata/tasks'
         http_method = 'POST'
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: Dict[str, Any] = {
+            'query_params': query_params,
+        }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_project(self, project_id: str, request_body: Optional[Any] = None,

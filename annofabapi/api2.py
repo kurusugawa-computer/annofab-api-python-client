@@ -2,6 +2,7 @@ import logging
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
 
 import requests
+from requests.cookies import RequestsCookieJar
 
 import annofabapi.utils
 from annofabapi.api import AnnofabApi
@@ -26,7 +27,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
         self.url_prefix = f"{api.endpoint_url}/api/v2"
 
     #: Signed Cookie情報
-    cookies: Optional[Dict[str, Any]] = None
+    cookies: Optional[RequestsCookieJar] = None
 
     #########################################
     # Private Method
@@ -111,5 +112,5 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
         content, response = self._request_wrapper(http_method, url_path, **keyword_params)
         # Signed Cookieをインスタンスに保持する
-        self.cookies = content
+        self.cookies = response.cookies
         return content, response
