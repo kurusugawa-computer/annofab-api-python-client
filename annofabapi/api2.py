@@ -111,5 +111,5 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
         content, response = self._request_wrapper(http_method, url_path, **keyword_params)
         # Signed Cookieをインスタンスに保持する
-        self.cookies = content
+        self.cookies = response.cookies
         return content, response
