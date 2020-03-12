@@ -6,6 +6,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: 
 import backoff
 import requests
 from requests.auth import AuthBase
+from requests.cookies import RequestsCookieJar
 
 import annofabapi.utils
 from annofabapi.generated_api import AbstractAnnofabApi
@@ -87,7 +88,7 @@ class AnnofabApi(AbstractAnnofabApi):
     token_dict: Optional[Dict[str, Any]] = None
 
     #: Signed Cookie情報
-    cookies: Optional[Dict[str, Any]] = None
+    cookies: Optional[RequestsCookieJar] = None
 
     class __MyToken(AuthBase):
         """
@@ -256,7 +257,8 @@ class AnnofabApi(AbstractAnnofabApi):
         # CloudFrontから403 Errorが発生したときは、別プロジェクトのcookieを渡している可能性があるので、
         # Signed Cookieを発行して、再度リクエストを投げる
         if response.status_code == requests.codes.forbidden and response.headers.get("server") == "CloudFront":
-            self.cookies, _ = self._get_signed_cookie(project_id)
+            _, r = self._get_signed_cookie(project_id)
+            self.cookies = r.cookies
             response = request(self.cookies)
 
         annofabapi.utils.log_error_response(logger, response)
