@@ -980,7 +980,8 @@ class Wrapper:
     #########################################
     # Public Method : Task
     #########################################
-    def initiate_tasks_generation_by_csv(self, project_id: str, csvfile_path: str, query_params: Optional[str, Any] = None) -> Dict[str, Any]:
+    def initiate_tasks_generation_by_csv(self, project_id: str, csvfile_path: str,
+                                         query_params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         タスクID,入力データ名,入力データID」を1行毎に指定したCSVを使って、タスクを生成する
 
