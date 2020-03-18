@@ -15,7 +15,7 @@ import dateutil.tz
 import requests
 from requests.structures import CaseInsensitiveDict
 
-from annofabapi.models import TaskHistory, TaskPhase
+from annofabapi.models import Task, TaskHistory, TaskPhase
 
 
 def raise_for_status(response: requests.Response):
@@ -222,21 +222,17 @@ def get_task_history_index_skipped_inspection(task_history_list: List[TaskHistor
     return index_list
 
 
-def first_true(iterable, default=None, pred=None):
+def can_put_annotation(task: Task, my_account_id: str) -> bool:
     """
-    Returns the first true value in the iterable.
+    対象タスクが、`put_annotation` APIで、アノテーションを更新できる状態かどうか。
+    過去に担当者が割り当たっている場合、または現在の担当者自分自身の場合は、アノテーションを更新できる。
 
-    If no true value is found, returns *default*
+    Args:
+        task: 対象タスク
+        my_account_id: 自分（ログインしているユーザ）のアカウントID
 
-    If *pred* is not None, returns the first item for which
-    ``pred(item) == True`` .
-
-        >>> first_true(range(10))
-        1
-        >>> first_true(range(10), pred=lambda x: x > 5)
-        6
-        >>> first_true(range(10), default='missing', pred=lambda x: x > 9)
-        'missing'
-
+    Returns:
+        Trueならば、タスクの状態を変更せずに`put_annotation` APIを実行できる。
     """
-    return next(filter(pred, iterable), default)
+    # ログインユーザはプロジェクトオーナであること前提
+    return len(task["histories_by_phase"]) == 0 or task["account_id"] == my_account_id

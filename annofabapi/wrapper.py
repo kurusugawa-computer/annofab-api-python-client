@@ -16,7 +16,7 @@ from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (AnnotationDataHoldingType, AnnotationSpecsV1, InputData, Inspection, InspectionStatus,
                                Instruction, JobInfo, JobStatus, JobType, MyOrganization, Organization,
                                OrganizationMember, Project, ProjectMember, SupplementaryData, Task)
-from annofabapi.utils import allow_404_error, first_true
+from annofabapi.utils import allow_404_error
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +39,10 @@ class AnnotationSpecsRelation:
     label_id: Dict[str, str]
     additional_data_definition_id: Dict[str, str]
     choice_id: Dict[ChoiceKey, ChoiceKey]
+
+
+def __first_true(iterable, default=None, pred=None):
+    return next(filter(pred, iterable), default)
 
 
 class Wrapper:
@@ -389,7 +393,7 @@ class Wrapper:
         dict_label_id: Dict[str, str] = {}
         for src_label in src_annotation_specs["labels"]:
             src_label_name_en = self.__get_label_name_en(src_label)
-            dest_label = first_true(dest_labels, pred=lambda e, f=src_label_name_en: self.__get_label_name_en(e) == f)
+            dest_label = __first_true(dest_labels, pred=lambda e, f=src_label_name_en: self.__get_label_name_en(e) == f)
             if dest_label is not None:
                 dict_label_id[src_label["label_id"]] = dest_label["label_id"]
 
@@ -397,7 +401,7 @@ class Wrapper:
         dict_choice_id: Dict[ChoiceKey, ChoiceKey] = {}
         for src_additional in src_annotation_specs["additionals"]:
             src_additional_name_en = self.__get_additional_data_definition_name_en(src_additional)
-            dest_additional = first_true(
+            dest_additional = __first_true(
                 dest_additionals,
                 pred=lambda e, f=src_additional_name_en: self.__get_additional_data_definition_name_en(e) == f)
             if dest_additional is None:
@@ -409,8 +413,8 @@ class Wrapper:
             dest_choices = dest_additional["choices"]
             for src_choice in src_additional["choices"]:
                 src_choice_name_en = self.__get_choice_name_en(src_choice)
-                dest_choice = first_true(dest_choices,
-                                         pred=lambda e, f=src_choice_name_en: self.__get_choice_name_en(e) == f)
+                dest_choice = __first_true(dest_choices,
+                                           pred=lambda e, f=src_choice_name_en: self.__get_choice_name_en(e) == f)
                 if dest_choice is not None:
                     dict_choice_id[ChoiceKey(src_additional["additional_data_definition_id"],
                                              src_choice["choice_id"])] = ChoiceKey(
