@@ -2,11 +2,11 @@
 Annofab APIのutils
 
 """
-
 import copy
 import datetime
 import json
 import logging
+import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -23,6 +23,8 @@ def raise_for_status(response: requests.Response):
     HTTP Status CodeがErrorの場合、``requests.exceptions.HTTPError`` を発生させる。
     そのとき ``response.text`` もHTTPErrorに加えて、HTTPError発生時にエラーの原因が分かるようにする。
 
+    .. deprecated:: 2020-05-01 以降廃止予定です。
+
     Args:
         response: Response
 
@@ -30,6 +32,7 @@ def raise_for_status(response: requests.Response):
         requests.exceptions.HTTPError:
 
     """
+    warnings.warn("deprecated", DeprecationWarning)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -42,11 +45,14 @@ def log_error_response(arg_logger: logging.Logger, response: requests.Response) 
     """
     HTTP Statusが400以上ならば、loggerにresponse/request情報を出力する
 
+    .. deprecated:: 2020-05-01 以降廃止予定です。
+
     Args:
         arg_logger: logger
         response: Response
 
     """
+    warnings.warn("deprecated", DeprecationWarning)
     RequestBodyHeader = Union[Dict[str, Any], CaseInsensitiveDict]
 
     def mask_key(d: RequestBodyHeader, key: str) -> RequestBodyHeader:
@@ -83,11 +89,14 @@ def download(url: str, dest_path: str):
     """
     HTTP GETで取得した内容をファイルに保存する（ダウンロードする）
 
+    .. deprecated:: 2020-05-01 以降廃止予定です。
+
     Args:
         url: ダウンロード対象のURL
         dest_path: 保存先ファイルのパス
 
     """
+    warnings.warn("deprecated", DeprecationWarning)
     response = requests.get(url)
     raise_for_status(response)
 
