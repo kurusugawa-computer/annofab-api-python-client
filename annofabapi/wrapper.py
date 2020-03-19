@@ -10,13 +10,12 @@ import warnings
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional
 
-import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (AnnotationDataHoldingType, AnnotationSpecsV1, InputData, Inspection, InspectionStatus,
                                Instruction, JobInfo, JobStatus, JobType, MyOrganization, Organization,
                                OrganizationMember, Project, ProjectMember, SupplementaryData, Task)
-from annofabapi.utils import allow_404_error
+from annofabapi.utils import _download, _log_error_response, _raise_for_status, allow_404_error, str_now
 
 logger = logging.getLogger(__name__)
 
@@ -153,7 +152,7 @@ class Wrapper:
 
         _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
         url = response.headers['Location']
-        annofabapi.utils.download(url, dest_path)
+        _download(url, dest_path)
         return url
 
     def download_full_annotation_archive(self, project_id: str, dest_path: str) -> str:
@@ -173,7 +172,7 @@ class Wrapper:
         warnings.warn("deprecated", DeprecationWarning)
         _, response = self.api.get_archive_full_with_pro_id(project_id)
         url = response.headers['Location']
-        annofabapi.utils.download(url, dest_path)
+        _download(url, dest_path)
         return url
 
     def get_all_annotation_list(self, project_id: str,
@@ -344,7 +343,7 @@ class Wrapper:
         src_annotation_specs = self.api.get_annotation_specs(src_project_id)[0]
 
         if comment is None:
-            comment = f"Copied the annotation specification of project {src_project_id} on {annofabapi.utils.str_now()}"
+            comment = f"Copied the annotation specification of project {src_project_id} on {str_now()}"
 
         request_body = {
             "labels": src_annotation_specs["labels"],
@@ -500,8 +499,8 @@ class Wrapper:
         # アップロード
         res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={'content-type': content_type})
 
-        annofabapi.utils.log_error_response(logger, res_put)
-        annofabapi.utils.raise_for_status(res_put)
+        _log_error_response(logger, res_put)
+        _raise_for_status(res_put)
         return content["path"]
 
     def put_input_data_from_file(self, project_id: str, input_data_id: str, file_path: str,
@@ -552,10 +551,10 @@ class Wrapper:
         url = response.headers['Location']
 
         response = self.api.session.get(url)
-        annofabapi.utils.log_error_response(logger, response)
+        _log_error_response(logger, response)
 
         response.encoding = 'utf-8'
-        annofabapi.utils.raise_for_status(response)
+        _raise_for_status(response)
         content = self.api._response_to_content(response)
         return content
 
@@ -643,7 +642,7 @@ class Wrapper:
             if inspection["updated_datetime"] is None:
                 inspection["updated_datetime"] = inspection["created_datetime"]
             else:
-                inspection["updated_datetime"] = annofabapi.utils.str_now()
+                inspection["updated_datetime"] = str_now()
 
         req_inspection = [{"data": e, "_type": "Put"} for e in target_inspections]
         content = self.api.batch_update_inspections(project_id, task_id, input_data_id, req_inspection)[0]
@@ -758,7 +757,7 @@ class Wrapper:
         """
         content, _ = self.api.get_project_inputs_url(project_id)
         url = content["url"]
-        annofabapi.utils.download(url, dest_path)
+        _download(url, dest_path)
         return url
 
     def download_project_tasks_url(self, project_id: str, dest_path: str) -> str:
@@ -777,7 +776,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_tasks_url(project_id)
         url = content["url"]
-        annofabapi.utils.download(url, dest_path)
+        _download(url, dest_path)
         return url
 
     def download_project_inspections_url(self, project_id: str, dest_path: str) -> str:
@@ -796,7 +795,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_inspections_url(project_id)
         url = content["url"]
-        annofabapi.utils.download(url, dest_path)
+        _download(url, dest_path)
         return url
 
     def download_project_task_history_events_url(self, project_id: str, dest_path: str) -> str:
@@ -815,7 +814,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_task_history_events_url(project_id)
         url = content["url"]
-        annofabapi.utils.download(url, dest_path)
+        _download(url, dest_path)
         return url
 
     #########################################
@@ -1101,8 +1100,8 @@ class Wrapper:
 
         # アップロード
         res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={'content-type': content_type})
-        annofabapi.utils.log_error_response(logger, res_put)
-        annofabapi.utils.raise_for_status(res_put)
+        _log_error_response(logger, res_put)
+        _raise_for_status(res_put)
         return content["path"]
 
     #########################################

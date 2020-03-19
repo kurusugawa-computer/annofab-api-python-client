@@ -8,8 +8,8 @@ import requests
 from requests.auth import AuthBase
 from requests.cookies import RequestsCookieJar
 
-import annofabapi.utils
 from annofabapi.generated_api import AbstractAnnofabApi
+from annofabapi.utils import _log_error_response, _raise_for_status
 
 logger = logging.getLogger(__name__)
 
@@ -207,10 +207,10 @@ class AnnofabApi(AbstractAnnofabApi):
             self.login()
             return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
 
-        annofabapi.utils.log_error_response(logger, response)
+        _log_error_response(logger, response)
 
         response.encoding = 'utf-8'
-        annofabapi.utils.raise_for_status(response)
+        _raise_for_status(response)
 
         content = self._response_to_content(response)
         return content, response
@@ -261,8 +261,8 @@ class AnnofabApi(AbstractAnnofabApi):
             self.cookies = r.cookies
             response = request(self.cookies)
 
-        annofabapi.utils.log_error_response(logger, response)
-        annofabapi.utils.raise_for_status(response)
+        _log_error_response(logger, response)
+        _raise_for_status(response)
         return response
 
     #########################################
@@ -284,8 +284,8 @@ class AnnofabApi(AbstractAnnofabApi):
         url = f"{self.url_prefix}/login"
         response = self.session.post(url, json=login_info)
 
-        annofabapi.utils.log_error_response(logger, response)
-        annofabapi.utils.raise_for_status(response)
+        _log_error_response(logger, response)
+        _raise_for_status(response)
 
         json_obj = response.json()
         self.token_dict = json_obj["token"]
