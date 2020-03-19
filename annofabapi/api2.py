@@ -7,6 +7,7 @@ from requests.cookies import RequestsCookieJar
 import annofabapi.utils
 from annofabapi.api import AnnofabApi
 from annofabapi.generated_api2 import AbstractAnnofabApi2
+from annofabapi.utils import _raise_for_status
 
 logger = logging.getLogger(__name__)
 
@@ -76,10 +77,10 @@ class AnnofabApi2(AbstractAnnofabApi2):
                 self._get_signed_access_v2(url_path)
                 return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
 
-        annofabapi.utils.log_error_response(logger, response)
+        _log_error_response(logger, response)
 
         response.encoding = 'utf-8'
-        annofabapi.utils.raise_for_status(response)
+        _raise_for_status(response)
 
         content = self.api._response_to_content(response)
         return content, response
