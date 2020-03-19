@@ -1,9 +1,11 @@
 #!/bin/bash -uex
 
+DOCKER_IMAGE=openapitools/openapi-generator-cli:v4.2.3
+
 PROGNAME=$(basename $0)
 
 usage_exit() {
-        echo "Usage: ${PROGNAME} [--download] [--docker-pull]" 1>&2
+        echo "Usage: ${PROGNAME} [--download]" 1>&2
         exit 1
 }
 
@@ -16,10 +18,6 @@ if [ $# -gt 0 ]; then
     case ${OPT} in
         "--download")
             FLAG_DOWNLOAD=true
-            shift 1
-        ;;
-        "--docker-pull")
-            FLAG_DOCKER_PULL=true
             shift 1
         ;;
         "-h" | "--help")
@@ -66,6 +64,7 @@ if "${FLAG_DOWNLOAD}"; then
   rm swagger/swagger-tmp.yaml swagger/swagger-tmp.v2.yaml
 fi
 
+
 JAVA_OPTS="-Dlog.level=info"
 
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
@@ -73,7 +72,7 @@ OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --type-mappings array=List,DateTime=str,date=str,object=__DictStrKeyAnyValue__"
 
 # v1 apiを生成
-docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} openapitools/openapi-generator-cli generate \
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
     --input-spec swagger/swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template \
@@ -87,8 +86,9 @@ cat partial-header/models_partial_header_v1.py out/openapi_client/models/*.py > 
 
 rm -Rf out/openapi_client
 
+
 # v2 apiを生成
-docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} openapitools/openapi-generator-cli generate \
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
     --input-spec swagger/swagger.v2.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template \
@@ -101,7 +101,7 @@ rm -Rf out/openapi_client
 
 # v1 apiのmodelからDataClass用のpythonファイルを生成する。
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} \
-    openapitools/openapi-generator-cli generate \
+    ${DOCKER_IMAGE} generate \
     --input-spec swagger/swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template_dataclass \
