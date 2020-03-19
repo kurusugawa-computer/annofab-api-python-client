@@ -18,7 +18,28 @@ from requests.structures import CaseInsensitiveDict
 from annofabapi.models import Task, TaskHistory, TaskPhase
 
 
-def raise_for_status(response: requests.Response):
+def _raise_for_status(response: requests.Response) -> None:
+    """
+    HTTP Status CodeがErrorの場合、``requests.exceptions.HTTPError`` を発生させる。
+    そのとき ``response.text`` もHTTPErrorに加えて、HTTPError発生時にエラーの原因が分かるようにする。
+
+
+    Args:
+        response: Response
+
+    Raises:
+        requests.exceptions.HTTPError:
+
+    """
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        http_error_msg = f"{e.args[0]} , {response.text}"
+        e.args = (http_error_msg, )
+        raise e
+
+
+def raise_for_status(response: requests.Response) -> None:
     """
     HTTP Status CodeがErrorの場合、``requests.exceptions.HTTPError`` を発生させる。
     そのとき ``response.text`` もHTTPErrorに加えて、HTTPError発生時にエラーの原因が分かるようにする。
@@ -33,26 +54,19 @@ def raise_for_status(response: requests.Response):
 
     """
     warnings.warn("deprecated", DeprecationWarning)
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        http_error_msg = f"{e.args[0]} , {response.text}"
-        e.args = (http_error_msg, )
-        raise e
+    _raise_for_status(response)
 
 
-def log_error_response(arg_logger: logging.Logger, response: requests.Response) -> None:
+def _log_error_response(arg_logger: logging.Logger, response: requests.Response) -> None:
     """
     HTTP Statusが400以上ならば、loggerにresponse/request情報を出力する
 
-    .. deprecated:: 2020-05-01 以降廃止予定です。
 
     Args:
         arg_logger: logger
         response: Response
 
     """
-    warnings.warn("deprecated", DeprecationWarning)
     RequestBodyHeader = Union[Dict[str, Any], CaseInsensitiveDict]
 
     def mask_key(d: RequestBodyHeader, key: str) -> RequestBodyHeader:
@@ -85,7 +99,41 @@ def log_error_response(arg_logger: logging.Logger, response: requests.Response) 
         arg_logger.debug("request.body = %s", mask_password(dict_request_body))
 
 
-def download(url: str, dest_path: str):
+def log_error_response(arg_logger: logging.Logger, response: requests.Response) -> None:
+    """
+    HTTP Statusが400以上ならば、loggerにresponse/request情報を出力する
+
+    .. deprecated:: 2020-05-01 以降廃止予定です。
+
+    Args:
+        arg_logger: logger
+        response: Response
+
+    """
+    warnings.warn("deprecated", DeprecationWarning)
+    _log_error_response(arg_logger, response)
+
+
+def _download(url: str, dest_path: str) -> None:
+    """
+    HTTP GETで取得した内容をファイルに保存する（ダウンロードする）
+
+
+    Args:
+        url: ダウンロード対象のURL
+        dest_path: 保存先ファイルのパス
+
+    """
+    response = requests.get(url)
+    _raise_for_status(response)
+
+    p = Path(dest_path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with open(dest_path, 'wb') as f:
+        f.write(response.content)
+
+
+def download(url: str, dest_path: str) -> None:
     """
     HTTP GETで取得した内容をファイルに保存する（ダウンロードする）
 
@@ -97,13 +145,7 @@ def download(url: str, dest_path: str):
 
     """
     warnings.warn("deprecated", DeprecationWarning)
-    response = requests.get(url)
-    raise_for_status(response)
-
-    p = Path(dest_path)
-    p.parent.mkdir(parents=True, exist_ok=True)
-    with open(dest_path, 'wb') as f:
-        f.write(response.content)
+    _download(url, dest_path)
 
 
 def str_now() -> str:
