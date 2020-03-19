@@ -10,13 +10,12 @@ import warnings
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional
 
-import annofabapi.utils
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (AnnotationDataHoldingType, AnnotationSpecsV1, InputData, Inspection, InspectionStatus,
                                Instruction, JobInfo, JobStatus, JobType, MyOrganization, Organization,
                                OrganizationMember, Project, ProjectMember, SupplementaryData, Task)
-from annofabapi.utils import _download, _raise_for_status, allow_404_error
+from annofabapi.utils import _download, _log_error_response, _raise_for_status, allow_404_error, str_now
 
 logger = logging.getLogger(__name__)
 
@@ -344,7 +343,7 @@ class Wrapper:
         src_annotation_specs = self.api.get_annotation_specs(src_project_id)[0]
 
         if comment is None:
-            comment = f"Copied the annotation specification of project {src_project_id} on {annofabapi.utils.str_now()}"
+            comment = f"Copied the annotation specification of project {src_project_id} on {str_now()}"
 
         request_body = {
             "labels": src_annotation_specs["labels"],
@@ -643,7 +642,7 @@ class Wrapper:
             if inspection["updated_datetime"] is None:
                 inspection["updated_datetime"] = inspection["created_datetime"]
             else:
-                inspection["updated_datetime"] = annofabapi.utils.str_now()
+                inspection["updated_datetime"] = str_now()
 
         req_inspection = [{"data": e, "_type": "Put"} for e in target_inspections]
         content = self.api.batch_update_inspections(project_id, task_id, input_data_id, req_inspection)[0]
