@@ -838,7 +838,7 @@ Kyes of Dict
 * updated_datetime: str
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `Delete` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -851,7 +851,7 @@ Kyes of Dict
 * data: BatchAnnotation
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `Put` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -866,7 +866,7 @@ Kyes of Dict
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `Delete` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -885,7 +885,7 @@ Kyes of Dict
 * inspection_id: str
     検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `Delete` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -898,7 +898,7 @@ Kyes of Dict
 * data: Inspection
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `Put` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -913,7 +913,7 @@ Kyes of Dict
 * task_id: str
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `Delete` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -1855,7 +1855,7 @@ Kyes of Dict
 
 class InputDataOrder(Enum):
     """
-    タスクに割り当てる入力データの順序  * `name_asc` - 入力データ名 昇順（a, b, c, ...）。日付や番号などの連続するデータ名を扱う場合に推奨 * `name_asc` - 入力データ名 降順（z, y, x, ...） * `random` - ランダム 
+    タスクに割り当てる入力データの順序  * `name_asc` - 入力データ名 昇順（a, b, c, ...）。日付や番号などの連続するデータ名を扱う場合に推奨 * `name_desc` - 入力データ名 降順（z, y, x, ...） * `random` - ランダム 
     """
 
     NAME_ASC = "name_asc"
@@ -3434,7 +3434,7 @@ Kyes of Dict
 * input_data_order: InputDataOrder
     
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `ByCount` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -3449,7 +3449,7 @@ Kyes of Dict
 * input_data_name_prefix: str
     タスク生成対象の入力データ名プレフィックス
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `ByDirectory` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -3462,7 +3462,7 @@ Kyes of Dict
 * csv_data_path: str
     各タスクへの入力データへの割当を記入したCSVへのS3上のパス
 * type: str
-    [詳しくはこちら](#section/API-Convention/API-_type) 
+    `ByInputDataCsv` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
