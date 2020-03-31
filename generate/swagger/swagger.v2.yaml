@@ -85,7 +85,7 @@ info:
     ジョブID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.79.0
+  version: 0.79.2
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -3055,6 +3055,7 @@ components:
         _type:
           type: string
           description: |
+            `ByCount`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "ByCount"
     TaskGenerateRuleByDirectory:
@@ -3073,6 +3074,7 @@ components:
         _type:
           type: string
           description: |
+            `ByDirectory`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "ByDirectory"
     TaskGenerateRuleByInputDataCsv:
@@ -3088,6 +3090,7 @@ components:
         _type:
           type: string
           description: |
+            `ByInputDataCsv`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "ByInputDataCsv"
     InputDataOrder:
@@ -3100,7 +3103,7 @@ components:
         タスクに割り当てる入力データの順序
   
         * `name_asc` - 入力データ名 昇順（a, b, c, ...）。日付や番号などの連続するデータ名を扱う場合に推奨
-        * `name_asc` - 入力データ名 降順（z, y, x, ...）
+        * `name_desc` - 入力データ名 降順（z, y, x, ...）
         * `random` - ランダム
     TaskOperation:
       type: object
@@ -3522,6 +3525,7 @@ components:
         _type:
           type: string
           description: |
+            `Delete`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Delete"
     BatchTaskRequestItemDelete:
@@ -3538,6 +3542,7 @@ components:
         _type:
           type: string
           description: |
+            `Delete`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Delete"
     DataPath:
@@ -3909,6 +3914,7 @@ components:
         _type:
           type: string
           description: |
+            `Put`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Put"
     BatchAnnotationRequestItemDelete:
@@ -3934,6 +3940,7 @@ components:
         _type:
           type: string
           description: |
+            `Delete`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Delete"
     SingleAnnotationDetail:
@@ -4220,6 +4227,7 @@ components:
         _type:
           type: string
           description: |
+            `Put`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Put"
     BatchInspectionRequestItemDelete:
@@ -4242,6 +4250,7 @@ components:
         _type:
           type: string
           description: |
+            `Delete`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Delete"
     Inspection:
