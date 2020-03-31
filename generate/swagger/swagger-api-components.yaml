@@ -2410,6 +2410,7 @@
         _type:
           type: string
           description: |
+            `ByCount`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "ByCount"
     TaskGenerateRuleByDirectory:
@@ -2428,6 +2429,7 @@
         _type:
           type: string
           description: |
+            `ByDirectory`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "ByDirectory"
     TaskGenerateRuleByInputDataCsv:
@@ -2443,6 +2445,7 @@
         _type:
           type: string
           description: |
+            `ByInputDataCsv`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "ByInputDataCsv"
     InputDataOrder:
@@ -2455,7 +2458,7 @@
         タスクに割り当てる入力データの順序
   
         * `name_asc` - 入力データ名 昇順（a, b, c, ...）。日付や番号などの連続するデータ名を扱う場合に推奨
-        * `name_asc` - 入力データ名 降順（z, y, x, ...）
+        * `name_desc` - 入力データ名 降順（z, y, x, ...）
         * `random` - ランダム
     TaskOperation:
       type: object
@@ -2877,6 +2880,7 @@
         _type:
           type: string
           description: |
+            `Delete`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Delete"
     BatchTaskRequestItemDelete:
@@ -2893,6 +2897,7 @@
         _type:
           type: string
           description: |
+            `Delete`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Delete"
     DataPath:
@@ -3264,6 +3269,7 @@
         _type:
           type: string
           description: |
+            `Put`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Put"
     BatchAnnotationRequestItemDelete:
@@ -3289,6 +3295,7 @@
         _type:
           type: string
           description: |
+            `Delete`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Delete"
     SingleAnnotationDetail:
@@ -3575,6 +3582,7 @@
         _type:
           type: string
           description: |
+            `Put`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Put"
     BatchInspectionRequestItemDelete:
@@ -3597,6 +3605,7 @@
         _type:
           type: string
           description: |
+            `Delete`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Delete"
     Inspection:
