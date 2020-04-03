@@ -917,31 +917,6 @@ Kyes of Dict
 
 """
 
-CacheRecord = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* input: str
-    
-* members: str
-    
-* project: str
-    
-* instruction: str
-    
-* specs: str
-    
-* statistics: str
-    
-* organization: str
-    
-* supplementary: str
-    
-
-"""
-
 ChangePasswordRequest = Dict[str, Any]
 """
 
@@ -2086,9 +2061,9 @@ Instruction = Dict[str, Any]
 Kyes of Dict
 
 * html: str
-    
+    作業ガイドのHTML
 * last_updated_datetime: str
-    * `GetInstruction` の場合: 最後に作業ガイドを更新した日時。 * `PutInstruction` の場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。 
+    * [getInstruction](#operation/getInstruction) APIのレスポンスの場合: 最後に作業ガイドを更新した日時。 * [putInstruction](#operation/putInstruction) APIのリクエストボディの場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。 
 
 """
 
@@ -2099,11 +2074,11 @@ InstructionHistory = Dict[str, Any]
 Kyes of Dict
 
 * history_id: str
-    
+    作業ガイドの履歴ID
 * account_id: str
-    
+    作業ガイドを更新したユーザのアカウントID
 * updated_datetime: str
-    
+    作業ガイドの最終更新日時
 
 """
 
@@ -2114,13 +2089,26 @@ InstructionImage = Dict[str, Any]
 Kyes of Dict
 
 * image_id: str
-    
+    作業ガイド画像ID
 * path: str
-    
+    作業ガイド画像の実体が保存されたパスです。 
 * url: str
-    
+    作業ガイド画像を取得するための内部用URLです。
 * etag: str
     
+
+"""
+
+InstructionImagePath = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* url: str
+    ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。
+* path: str
+    作業ガイド画像のURL
 
 """
 
@@ -2795,6 +2783,31 @@ Kyes of Dict
     教師付を担当したタスクが差し戻された回数
 * worktime: str
     作業時間（ISO 8601 duration）
+
+"""
+
+ProjectCacheRecord = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* input: str
+    
+* members: str
+    
+* project: str
+    
+* instruction: str
+    
+* specs: str
+    
+* statistics: str
+    
+* organization: str
+    
+* supplementary: str
+    
 
 """
 
@@ -3547,6 +3560,8 @@ Kyes of Dict
     タスクの最終更新日時 
 * account_id: str
     変更後の担当者のアカウントID。担当者を未割り当てにする場合は未指定。
+* force: bool
+    タスクの強制操作を行う場合に立てるフラグ。現在、強制操作は強制差戻しのみがサポートされています。 
 
 """
 
