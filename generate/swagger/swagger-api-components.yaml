@@ -168,7 +168,7 @@
           schema:
             $ref: "#/components/schemas/ErrorRefreshTokenExpired"
   schemas:
-    CacheRecord:
+    ProjectCacheRecord:
       type: object
       properties:
         input:
@@ -2480,6 +2480,11 @@
           allOf:
             - $ref: "#/components/schemas/AccountId"
           description: 変更後の担当者のアカウントID。担当者を未割り当てにする場合は未指定。
+        force:
+          type: boolean
+          default: false
+          description: |
+            タスクの強制操作を行う場合に立てるフラグ。現在、強制操作は強制差戻しのみがサポートされています。
     TaskStart:
       type: object
       properties:
@@ -2912,6 +2917,22 @@
           type: string
           example: s3://<ANNOFAB-TEMPORARY-BUCKET-NAME>/<UUID>/<UUID>
           description: アップロードしたファイルをAFの [入力データ](#tag/af-input) や [補助情報](#tag/af-supplementary) に登録するとき、この`path`を指定します。
+    InstructionImagePath:
+      type: object
+      required:
+        - url
+        - path
+      properties:
+        url:
+          type: string
+          format: uri
+          example: "https://s3.<REGION>.amazonaws.com/<ANNOFAB-TEMP-BUCKET>/<UUID>/<UUID>?param1=...&param2=..."
+          description: ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。
+        path:
+          type: string
+          format: url
+          example: https://annofab.com/projects/{project_id}/instruction-images/{image_id}
+          description: 作業ガイド画像のURL
     AnnotationQuery:
       type: object
       properties:
@@ -3805,32 +3826,53 @@
       properties:
         html:
           type: string
+          description: 作業ガイドのHTML
+          example: "<p>test</p>"
         last_updated_datetime:
           type: string
           format: date-time
           description: |
-            * `GetInstruction` の場合: 最後に作業ガイドを更新した日時。
-            * `PutInstruction` の場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。
+            * [getInstruction](#operation/getInstruction) APIのレスポンスの場合: 最後に作業ガイドを更新した日時。
+            * [putInstruction](#operation/putInstruction) APIのリクエストボディの場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。
     InstructionHistory:
       type: object
+      required:
+        - history_id
+        - account_id
+        - updated_datetime
       properties:
         history_id:
           type: string
+          description: 作業ガイドの履歴ID
         account_id:
           type: string
+          description: 作業ガイドを更新したユーザのアカウントID
         updated_datetime:
           type: string
           format: date-time
+          description: 作業ガイドの最終更新日時
     InstructionImage:
       type: object
+      required:
+        - image_id
+        - path
+        - url
+        - etag
       properties:
         image_id:
           type: string
+          description: 作業ガイド画像ID
         path:
           type: string
+          example: "s3://ANNOFAB-BUCKET/PATH/TO/INSTRUCTION_IMAGE"
+          description: |
+            作業ガイド画像の実体が保存されたパスです。
         url:
           type: string
           format: uri
+          example: https://annofab.com/projects/{project_id}/instruction-images/{image_id}
+          description:
+            作業ガイド画像を取得するための内部用URLです。
         etag:
           type: string
     ValidationError:

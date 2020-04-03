@@ -163,7 +163,7 @@ class AbstractAnnofabApi2(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[CacheRecord, requests.Response]
+            Tuple[ProjectCacheRecord, requests.Response]
 
 
         """
