@@ -298,7 +298,7 @@ class Wrapper:
             src: コピー元のTaskFrame情報
             dest: コピー先のTaskFrame情報
             account_id: アノテーションを登録するユーザのアカウントID
-            annotation_specs_relation: アノテーション仕様間の紐付け情報。
+            annotation_specs_relation: アノテーション仕様間の紐付け情報。``get_annotation_specs_relation`` メソッドで紐付け情報を取得できる。
                 Noneの場合、コピー元のアノテーション仕様のID情報（ラベルID、属性ID、選択肢ID）を変換せずに、アノテーションをコピーします。
 
         Returns:
@@ -382,8 +382,12 @@ class Wrapper:
             dest_label_contains_dest_additional = True
             for src_label in src_labels:
                 if src_additional["additional_data_definition_id"] in src_label["additional_data_definitions"]:
-                    dest_label_id = src_label["label_id"]
-                    dest_label = _first_true(dest_labels, pred=lambda e: e["label_id"] == dest_label_id)
+                    dest_label_id = dict_label_id.get(src_label["label_id"])
+                    if dest_label_id is None:
+                        dest_label_contains_dest_additional = False
+                        break
+
+                    dest_label = _first_true(dest_labels, pred=lambda e, f=dest_label_id: e["label_id"] == f)
                     if dest_label is None:
                         dest_label_contains_dest_additional = False
                         break
@@ -399,9 +403,10 @@ class Wrapper:
 
     def get_annotation_specs_relation(self, src_project_id: str, dest_project_id: str) -> AnnotationSpecsRelation:
         """
-        プロジェクト間のアノテーション仕様の紐付け情報を取得する。ラベル、属性、選択肢の英語名で紐付ける。
+        プロジェクト間のアノテーション仕様の紐付け情報を取得する。
+        ラベル、属性、選択肢の英語名で紐付ける。
+        ただし、属性は、参照されるラベルが一致していることも判定する。
         紐付け先がない場合は無視する。
-        ``copy_annotation`` メソッドで利用する。
 
         Args:
             src_project_id: 紐付け元のプロジェクトID
