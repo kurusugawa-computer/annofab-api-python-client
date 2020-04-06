@@ -99,6 +99,9 @@ class TestAnnotationSpecs:
         annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
         assert type(annotation_specs_histories) == list
 
+    def test_get_annotation_specs_relation(self):
+        result = wrapper.get_annotation_specs_relation(project_id, project_id)
+        assert type(result) == annofabapi.wrapper.AnnotationSpecsRelation
 
 class TestInput:
     def test_wrapper_get_input_data_list(self):
