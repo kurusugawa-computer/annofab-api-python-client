@@ -40,7 +40,7 @@ class AnnotationSpecsRelation:
     choice_id: Dict[ChoiceKey, ChoiceKey]
 
 
-def __first_true(iterable, default=None, pred=None):
+def _first_true(iterable, default=None, pred=None):
     return next(filter(pred, iterable), default)
 
 
@@ -298,7 +298,8 @@ class Wrapper:
             src: コピー元のTaskFrame情報
             dest: コピー先のTaskFrame情報
             account_id: アノテーションを登録するユーザのアカウントID
-            annotation_specs_relation: アノテーション仕様間の紐付け情報
+            annotation_specs_relation: アノテーション仕様間の紐付け情報。
+                Noneの場合、コピー元のアノテーション仕様のID情報（ラベルID、属性ID、選択肢ID）を変換せずに、アノテーションをコピーします。
 
         Returns:
             アノテーションのコピー実施したかどうか
@@ -370,6 +371,32 @@ class Wrapper:
         messages = choice["name"]["messages"]
         return [e["message"] for e in messages if e["lang"] == "en-US"][0]
 
+    def __get_dest_additional(self, src_additional: Dict[str, Any], dest_additionals: List[Dict[str, Any]],
+                              src_labels: List[Dict[str, Any]], dest_labels: List[Dict[str, Any]],
+                              dict_label_id: Dict[str, str]) -> Optional[Dict[str, Any]]:
+        src_additional_name_en = self.__get_additional_data_definition_name_en(src_additional)
+        for dest_additional in dest_additionals:
+            if src_additional_name_en != self.__get_additional_data_definition_name_en(dest_additional):
+                continue
+
+            dest_label_contains_dest_additional = True
+            for src_label in src_labels:
+                if src_additional["additional_data_definition_id"] in src_label["additional_data_definitions"]:
+                    dest_label_id = src_label["label_id"]
+                    dest_label = _first_true(dest_labels, pred=lambda e: e["label_id"] == dest_label_id)
+                    if dest_label is None:
+                        dest_label_contains_dest_additional = False
+                        break
+                    if dest_additional["additional_data_definition_id"] not in dest_label[
+                            "additional_data_definitions"]:
+                        dest_label_contains_dest_additional = False
+                        break
+
+            if dest_label_contains_dest_additional:
+                return dest_additional
+
+        return None
+
     def get_annotation_specs_relation(self, src_project_id: str, dest_project_id: str) -> AnnotationSpecsRelation:
         """
         プロジェクト間のアノテーション仕様の紐付け情報を取得する。ラベル、属性、選択肢の英語名で紐付ける。
@@ -392,17 +419,17 @@ class Wrapper:
         dict_label_id: Dict[str, str] = {}
         for src_label in src_annotation_specs["labels"]:
             src_label_name_en = self.__get_label_name_en(src_label)
-            dest_label = __first_true(dest_labels, pred=lambda e, f=src_label_name_en: self.__get_label_name_en(e) == f)
+            dest_label = _first_true(dest_labels, pred=lambda e, f=src_label_name_en: self.__get_label_name_en(e) == f)
             if dest_label is not None:
                 dict_label_id[src_label["label_id"]] = dest_label["label_id"]
 
         dict_additional_data_definition_id: Dict[str, str] = {}
         dict_choice_id: Dict[ChoiceKey, ChoiceKey] = {}
         for src_additional in src_annotation_specs["additionals"]:
-            src_additional_name_en = self.__get_additional_data_definition_name_en(src_additional)
-            dest_additional = __first_true(
-                dest_additionals,
-                pred=lambda e, f=src_additional_name_en: self.__get_additional_data_definition_name_en(e) == f)
+            dest_additional = self.__get_dest_additional(src_additional=src_additional,
+                                                         dest_additionals=dest_additionals,
+                                                         src_labels=src_annotation_specs["labels"],
+                                                         dest_labels=dest_labels, dict_label_id=dict_label_id)
             if dest_additional is None:
                 continue
 
@@ -412,8 +439,8 @@ class Wrapper:
             dest_choices = dest_additional["choices"]
             for src_choice in src_additional["choices"]:
                 src_choice_name_en = self.__get_choice_name_en(src_choice)
-                dest_choice = __first_true(dest_choices,
-                                           pred=lambda e, f=src_choice_name_en: self.__get_choice_name_en(e) == f)
+                dest_choice = _first_true(dest_choices,
+                                          pred=lambda e, f=src_choice_name_en: self.__get_choice_name_en(e) == f)
                 if dest_choice is not None:
                     dict_choice_id[ChoiceKey(src_additional["additional_data_definition_id"],
                                              src_choice["choice_id"])] = ChoiceKey(
