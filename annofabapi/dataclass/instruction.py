@@ -22,10 +22,10 @@ class Instruction:
     
     """
     html: Optional[str]
-    """"""
+    """作業ガイドのHTML"""
 
     last_updated_datetime: Optional[str]
-    """* `GetInstruction` の場合: 最後に作業ガイドを更新した日時。 * `PutInstruction` の場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。 """
+    """* [getInstruction](#operation/getInstruction) APIのレスポンスの場合: 最後に作業ガイドを更新した日時。 * [putInstruction](#operation/putInstruction) APIのリクエストボディの場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。 """
 
 
 @dataclass_json
@@ -34,14 +34,14 @@ class InstructionHistory:
     """
     
     """
-    history_id: Optional[str]
-    """"""
+    history_id: str
+    """作業ガイドの履歴ID"""
 
-    account_id: Optional[str]
-    """"""
+    account_id: str
+    """作業ガイドを更新したユーザのアカウントID"""
 
-    updated_datetime: Optional[str]
-    """"""
+    updated_datetime: str
+    """作業ガイドの最終更新日時"""
 
 
 @dataclass_json
@@ -50,14 +50,14 @@ class InstructionImage:
     """
     
     """
-    image_id: Optional[str]
-    """"""
+    image_id: str
+    """作業ガイド画像ID"""
 
-    path: Optional[str]
-    """"""
+    path: str
+    """作業ガイド画像の実体が保存されたパスです。 """
 
-    url: Optional[str]
-    """"""
+    url: str
+    """作業ガイド画像を取得するための内部用URLです。"""
 
-    etag: Optional[str]
+    etag: str
     """"""
