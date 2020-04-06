@@ -3,7 +3,7 @@ openapi: "3.0.0"
 info:
   description: |
     [AnnoFab](https://annofab.com) のWeb APIです。
-    キャッシュが有効になって[大幅に高速化された v2 はこちら](https://annofab.com/docs/api/v2) です。
+    キャッシュが有効になって[大幅に高速化された v2 はこちら](/docs/api/v2) です。
 
     APIベースURL: https://annofab.com/api/v1<br>
     例） /projects というAPIを使う場合、 https://annofab.com/api/v1/projects をリクエストします。
@@ -85,7 +85,7 @@ info:
     ジョブID | プロジェクト内で一意
     入力データセットID | 組織内で一意
 
-  version: 0.79.2
+  version: 0.80.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -3385,6 +3385,16 @@ paths:
             * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。
           * リクエストボディのJSONサンプル
             * ```{ status: "rejected", account_id: "自身(現在のタスク担当者)のアカウントID", last_updated_datetime: "2018-08-14T19:01:51.775+09:00"}```
+          * タスクを強制差戻し(force rejected)したい場合
+            * 強制差戻しについて
+              * タスクの状態・フェーズを無視して、フェーズを教師付け(annotation)に、状態を未作業(not started)に変更します。
+              * タスクの担当者としては、直前の教師付け(annotation)フェーズの担当者を割り当てます。
+              * この差戻しは差戻しとして扱われず、抜取検査・抜取受入のスキップ判定に影響を及ぼしません。
+            * 制約
+              * プロジェクトオーナー(owner)のみ、この操作を行うことができます。
+              * 現在のタスクの状態、フェーズを問わず、この操作を行うことができます。
+            * リクエストボディのJSONサンプル
+              * ```{ status: "rejected", account_id: "自身(プロジェクトオーナー)のアカウントID", last_updated_datetime: "2018-08-14T19:01:51.775+09:00", force: true }```
         * タスクの受入完了を取り消したい場合
           * 制約
             * プロジェクトオーナー(owner)のみ、この操作を行うことができます。
@@ -4606,11 +4616,11 @@ paths:
 
 
         1. 本APIを実行して、URLを取得する。
-          * `curl -X POST -H 'Content-Type: CONTENT_TYPE_HERE' 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'`
+          * `curl -X POST -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'`
         2. 1で取得したURLに、一時保存したいファイルをPUTする。
-          * `curl -X PUT -H 'Content-Type: CONTENT_TYPE_HERE' --data-binary @/hoge.zip 'https://(発行されたURL)'`
+          * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.zip 'https://{発行されたURL}'`
         3. 1で取得した登録用データパスを [入力データ登録API](#operation/putInputData)のリクエストボディ `input_data_path` に指定する。
-          * `curl -X PUT -H 'Content-Type: text/json' -d '{"input_data_name":"(表示名)", "input_data_path":"(登録用データパス)" }' 'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}'`
+          * `curl -X PUT -H 'Content-Type: text/json' -d '{"input_data_name":"{表示名}", "input_data_path":"{登録用データパス}" }' 'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}'`
 
         ここで、1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。
         ZIPファイルの場合は `application/zip` 、画像ファイルの場合は `image/png` など、適切な Content-Type を指定します。
@@ -4834,6 +4844,16 @@ paths:
         プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。
 
         リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。
+
+
+        作業ガイド画像の登録/更新方法は以下の通りです。
+        1. `getInstructionImageUrlForPut` APIを実行して、ファイルアップロード用のURLを取得する。
+          * `curl -X GET -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/instruction-images/{image_id}/put-url'`
+        2. 手順1で取得したファイルアップロード用のURLに対して、登録/更新する作業ガイド画像ファイル(`hoge.jpg`)をPUTする。
+          * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.jpg '{ファイルアップロード用のURL}'`
+
+        手順1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。
+
       security:
       - ProjectOwner: []
       - ProjectAccepter: []
@@ -4865,7 +4885,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DataPath"
+                $ref: "#/components/schemas/InstructionImagePath"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
@@ -5043,7 +5063,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorRefreshTokenExpired"
   schemas:
-    CacheRecord:
+    ProjectCacheRecord:
       type: object
       properties:
         input:
@@ -7355,6 +7375,11 @@ components:
           allOf:
             - $ref: "#/components/schemas/AccountId"
           description: 変更後の担当者のアカウントID。担当者を未割り当てにする場合は未指定。
+        force:
+          type: boolean
+          default: false
+          description: |
+            タスクの強制操作を行う場合に立てるフラグ。現在、強制操作は強制差戻しのみがサポートされています。
     TaskStart:
       type: object
       properties:
@@ -7787,6 +7812,22 @@ components:
           type: string
           example: s3://<ANNOFAB-TEMPORARY-BUCKET-NAME>/<UUID>/<UUID>
           description: アップロードしたファイルをAFの [入力データ](#tag/af-input) や [補助情報](#tag/af-supplementary) に登録するとき、この`path`を指定します。
+    InstructionImagePath:
+      type: object
+      required:
+        - url
+        - path
+      properties:
+        url:
+          type: string
+          format: uri
+          example: "https://s3.<REGION>.amazonaws.com/<ANNOFAB-TEMP-BUCKET>/<UUID>/<UUID>?param1=...&param2=..."
+          description: ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。
+        path:
+          type: string
+          format: url
+          example: https://annofab.com/projects/{project_id}/instruction-images/{image_id}
+          description: 作業ガイド画像のURL
     AnnotationQuery:
       type: object
       properties:
@@ -8680,32 +8721,53 @@ components:
       properties:
         html:
           type: string
+          description: 作業ガイドのHTML
+          example: "<p>test</p>"
         last_updated_datetime:
           type: string
           format: date-time
           description: |
-            * `GetInstruction` の場合: 最後に作業ガイドを更新した日時。
-            * `PutInstruction` の場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。
+            * [getInstruction](#operation/getInstruction) APIのレスポンスの場合: 最後に作業ガイドを更新した日時。
+            * [putInstruction](#operation/putInstruction) APIのリクエストボディの場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。
     InstructionHistory:
       type: object
+      required:
+        - history_id
+        - account_id
+        - updated_datetime
       properties:
         history_id:
           type: string
+          description: 作業ガイドの履歴ID
         account_id:
           type: string
+          description: 作業ガイドを更新したユーザのアカウントID
         updated_datetime:
           type: string
           format: date-time
+          description: 作業ガイドの最終更新日時
     InstructionImage:
       type: object
+      required:
+        - image_id
+        - path
+        - url
+        - etag
       properties:
         image_id:
           type: string
+          description: 作業ガイド画像ID
         path:
           type: string
+          example: "s3://ANNOFAB-BUCKET/PATH/TO/INSTRUCTION_IMAGE"
+          description: |
+            作業ガイド画像の実体が保存されたパスです。
         url:
           type: string
           format: uri
+          example: https://annofab.com/projects/{project_id}/instruction-images/{image_id}
+          description:
+            作業ガイド画像を取得するための内部用URLです。
         etag:
           type: string
     ValidationError:
