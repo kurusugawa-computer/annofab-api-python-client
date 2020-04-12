@@ -273,7 +273,7 @@ def get_task_history_index_skipped_inspection(task_history_list: List[TaskHistor
     return index_list
 
 
-def get_rejected_count(task_histories: List[TaskHistoryShort], phase: TaskPhase, phase_stage: int = 1) -> int:
+def get_number_of_rejections(task_histories: List[TaskHistoryShort], phase: TaskPhase, phase_stage: int = 1) -> int:
     """
     タスク履歴から、指定されたタスクフェーズでの差し戻し回数を取得する。
 
