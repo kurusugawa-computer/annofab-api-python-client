@@ -10,7 +10,7 @@ usage_exit() {
 }
 
 FLAG_DOWNLOAD=false
-FLAG_DOCKER_PULL=false
+
 
 if [ $# -gt 0 ]; then
     for OPT in "$@"
@@ -41,9 +41,6 @@ fi
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 pushd ${SCRIPT_DIR}
 
-if "${FLAG_DOCKER_PULL}"; then
-    docker pull openapitools/openapi-generator-cli
-fi
 
 # swagger.yamlを修正したいときがあるので、
 if "${FLAG_DOWNLOAD}"; then
@@ -186,7 +183,7 @@ cat partial-header/dataclass/common.py partial-header/dataclass/my.py  \
  ${model_files[@]} > ../annofabapi/dataclass/my.py
 
 # Organization
-declare -a model_files=(${MODELS_DIR}/organization_activity.py ${MODELS_DIR}/organization_summary.py ${MODELS_DIR}/organization.py)
+declare -a model_files=(${MODELS_DIR}/organization_activity.py ${MODELS_DIR}/organization.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/organization.py  \
  ${model_files[@]} > ../annofabapi/dataclass/organization.py
 

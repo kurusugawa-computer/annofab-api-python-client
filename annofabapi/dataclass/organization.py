@@ -24,7 +24,7 @@ class OrganizationActivity:
     
     """
     organization_id: str
-    """"""
+    """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     created_datetime: str
     """"""
@@ -35,22 +35,12 @@ class OrganizationActivity:
 
 @dataclass_json
 @dataclass
-class OrganizationSummary:
-    """
-    
-    """
-    last_tasks_updated_datetime: Optional[str]
-    """"""
-
-
-@dataclass_json
-@dataclass
 class Organization:
     """
     
     """
     organization_id: str
-    """"""
+    """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     organization_name: str
     """"""
@@ -61,7 +51,7 @@ class Organization:
     price_plan: PricePlan
     """"""
 
-    summary: OrganizationSummary
+    summary: Dict[str, Any]
     """"""
 
     created_datetime: str
