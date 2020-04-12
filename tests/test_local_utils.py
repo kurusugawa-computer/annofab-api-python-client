@@ -4,7 +4,9 @@
 #     tz_jst = datetime.timezone(datetime.timedelta(hours=9))
 #     assert to_iso8601_extension(d, tz_jst) == "2019-10-08T16:20:08.241+09:00"
 
-from annofabapi.utils import get_task_history_index_skipped_acceptance, get_task_history_index_skipped_inspection
+from annofabapi.models import TaskPhase
+from annofabapi.utils import (get_rejected_count, get_task_history_index_skipped_acceptance,
+                              get_task_history_index_skipped_inspection)
 
 
 class TestTaskHistoryUtils:
@@ -236,3 +238,64 @@ class TestTaskHistoryUtils:
         actual = get_task_history_index_skipped_inspection(task_history_list)
         expected = []
         assert all([a == b for a, b in zip(actual, expected)])
+
+    def test_get_rejected_count_教師付1回目(self):
+        task_history_short_list = [{
+            "account_id": self.ACCOUNT_ID,
+            "phase": "annotation",
+            "phase_stage": 1,
+            "worked": True
+        }]
+
+        actual = get_rejected_count(task_history_short_list, TaskPhase.ACCEPTANCE)
+        assert actual == 0
+
+    def test_gget_rejected_count_受入で1回差戻(self):
+        task_history_short_list = [
+            {
+                "account_id": self.ACCOUNT_ID,
+                'phase': 'annotation',
+                'phase_stage': 1,
+                'worked': True
+            },
+            {
+                "account_id": self.ACCOUNT_ID,
+                'phase': 'acceptance',
+                'phase_stage': 1,
+                'worked': True
+            },
+            {
+                "account_id": self.ACCOUNT_ID,
+                'phase': 'annotation',
+                'phase_stage': 1,
+                'worked': True
+            },
+        ]
+
+        actual = get_rejected_count(task_history_short_list, TaskPhase.ACCEPTANCE)
+        assert actual == 1
+
+    def test_get_rejected_count_検査で1回差戻(self):
+        task_history_short_list = [
+            {
+                "account_id": self.ACCOUNT_ID,
+                'phase': 'annotation',
+                'phase_stage': 1,
+                'worked': True
+            },
+            {
+                "account_id": self.ACCOUNT_ID,
+                'phase': 'inspection',
+                'phase_stage': 1,
+                'worked': True
+            },
+            {
+                "account_id": self.ACCOUNT_ID,
+                'phase': 'annotation',
+                'phase_stage': 1,
+                'worked': True
+            },
+        ]
+
+        actual = get_rejected_count(task_history_short_list, TaskPhase.INSPECTION)
+        assert actual == 1

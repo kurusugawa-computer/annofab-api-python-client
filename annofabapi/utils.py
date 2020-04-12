@@ -15,7 +15,7 @@ import dateutil.tz
 import requests
 from requests.structures import CaseInsensitiveDict
 
-from annofabapi.models import Task, TaskHistory, TaskPhase
+from annofabapi.models import Task, TaskHistory, TaskHistoryShort, TaskPhase
 
 
 def _raise_for_status(response: requests.Response) -> None:
@@ -271,6 +271,32 @@ def get_task_history_index_skipped_inspection(task_history_list: List[TaskHistor
             index_list.append(index)
 
     return index_list
+
+
+def get_rejected_count(task_histories: List[TaskHistoryShort], phase: TaskPhase, phase_stage: int = 1) -> int:
+    """
+    タスク履歴から、指定されたタスクフェーズでの差し戻し回数を取得する。
+
+    Args:
+        task_histories: タスク履歴
+        phase: どのフェーズで差し戻されたか(TaskPhase.INSPECTIONかTaskPhase.ACCEPTANCE)
+        phase_stage: どのフェーズステージで差し戻されたか。デフォルトは1。
+
+    Returns:
+        差し戻し回数
+    """
+    if phase not in [TaskPhase.INSPECTION, TaskPhase.ACCEPTANCE]:
+        raise ValueError("引数'phase'には、'TaskPhase.INSPECTION'か'TaskPhase.ACCEPTANCE'を指定してください。")
+
+    rejections_by_phase = 0
+    for i, history in enumerate(task_histories):
+        if not (history["phase"] == phase.value and history["phase_stage"] == phase_stage and history["worked"]):
+            continue
+
+        if i + 1 < len(task_histories) and task_histories[i + 1]["phase"] == TaskPhase.ANNOTATION.value:
+            rejections_by_phase += 1
+
+    return rejections_by_phase
 
 
 def can_put_annotation(task: Task, my_account_id: str) -> bool:
