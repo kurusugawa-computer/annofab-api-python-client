@@ -5,7 +5,7 @@
 #     assert to_iso8601_extension(d, tz_jst) == "2019-10-08T16:20:08.241+09:00"
 
 from annofabapi.models import TaskPhase
-from annofabapi.utils import (get_rejected_count, get_task_history_index_skipped_acceptance,
+from annofabapi.utils import (number_of_rejections, get_task_history_index_skipped_acceptance,
                               get_task_history_index_skipped_inspection)
 
 
@@ -239,7 +239,7 @@ class TestTaskHistoryUtils:
         expected = []
         assert all([a == b for a, b in zip(actual, expected)])
 
-    def test_get_rejected_count_教師付1回目(self):
+    def test_number_of_rejections_教師付1回目(self):
         task_history_short_list = [{
             "account_id": self.ACCOUNT_ID,
             "phase": "annotation",
@@ -247,10 +247,10 @@ class TestTaskHistoryUtils:
             "worked": True
         }]
 
-        actual = get_rejected_count(task_history_short_list, TaskPhase.ACCEPTANCE)
+        actual = number_of_rejections(task_history_short_list, TaskPhase.ACCEPTANCE)
         assert actual == 0
 
-    def test_gget_rejected_count_受入で1回差戻(self):
+    def test_number_of_rejections_受入で1回差戻(self):
         task_history_short_list = [
             {
                 "account_id": self.ACCOUNT_ID,
@@ -272,10 +272,10 @@ class TestTaskHistoryUtils:
             },
         ]
 
-        actual = get_rejected_count(task_history_short_list, TaskPhase.ACCEPTANCE)
+        actual = number_of_rejections(task_history_short_list, TaskPhase.ACCEPTANCE)
         assert actual == 1
 
-    def test_get_rejected_count_検査で1回差戻(self):
+    def test_number_of_rejections_検査で1回差戻(self):
         task_history_short_list = [
             {
                 "account_id": self.ACCOUNT_ID,
@@ -297,5 +297,5 @@ class TestTaskHistoryUtils:
             },
         ]
 
-        actual = get_rejected_count(task_history_short_list, TaskPhase.INSPECTION)
+        actual = number_of_rejections(task_history_short_list, TaskPhase.INSPECTION)
         assert actual == 1
