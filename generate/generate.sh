@@ -10,7 +10,7 @@ usage_exit() {
 }
 
 FLAG_DOWNLOAD=false
-FLAG_DOCKER_PULL=false
+
 
 if [ $# -gt 0 ]; then
     for OPT in "$@"
@@ -41,9 +41,6 @@ fi
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 pushd ${SCRIPT_DIR}
 
-if "${FLAG_DOCKER_PULL}"; then
-    docker pull openapitools/openapi-generator-cli
-fi
 
 # swagger.yamlを修正したいときがあるので、
 if "${FLAG_DOWNLOAD}"; then
