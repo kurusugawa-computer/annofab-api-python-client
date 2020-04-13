@@ -25,7 +25,7 @@ class MyOrganization:
     
     """
     organization_id: Optional[str]
-    """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+    """"""
 
     name: Optional[str]
     """"""
@@ -36,7 +36,7 @@ class MyOrganization:
     price_plan: Optional[PricePlan]
     """"""
 
-    summary: Optional[Dict[str, Any]]
+    summary: Optional[OrganizationSummary]
     """"""
 
     created_datetime: Optional[str]

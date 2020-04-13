@@ -84,9 +84,8 @@ info:
     選択肢ID | 属性内で一意
     ジョブID | プロジェクト内で一意
     入力データセットID | 組織内で一意
-    プラグインID | 組織内で一意
 
-  version: 0.81.0
+  version: 0.80.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -145,12 +144,6 @@ tags:
 - name: af-organization-member
   x-displayName: Organization Member
   description: 組織メンバーに対する操作
-- name: af-organization-plugin
-  x-displayName: Organization Plugin
-  description: |
-    組織で使用するプラグインに対する操作
-
-    **このAPIは AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
 - name: af-project
   x-displayName: Project
   description: プロジェクトに対する操作
@@ -292,7 +285,6 @@ x-tagGroups:
       - af-my
       - af-organization
       - af-organization-member
-      - af-organization-plugin
       - af-project
       - af-project-member
       - af-statistics
@@ -1305,172 +1297,6 @@ paths:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
           $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /organizations/{organization_name}/plugins:
-    get:
-      operationId: getOrganizationPlugins
-      summary: プラグイン一括取得
-      description: |
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
-
-        指定した組織のプラグインを一括で取得します。
-      tags:
-        - af-organization-plugin
-      security:
-        - AllOrganizationMember: []
-      parameters:
-        - name: organization_name
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/OrganizationName"
-          description: 組織名
-      responses:
-        200:
-          description: 正常
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  list:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/OrganizationPlugin"
-                  page_no:
-                    type: number
-                    description: 現在のページ番号です。
-                  total_page_no:
-                    type: number
-                    description: 指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトが0件であっても、総ページ数は1となります。
-                  total_count:
-                    type: number
-                    description: 検索結果の総件数。
-        400:
-          $ref: "#/components/responses/ErrorInvalidRequest"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /organizations/{organization_name}/plugins/{plugin_id}:
-    get:
-      operationId: getOrganizationPlugin
-      summary: プラグイン取得
-      description: |
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
-
-        指定した組織のプラグインを取得します。
-      tags:
-        - af-organization-plugin
-      security:
-        - AllOrganizationMember: []
-      parameters:
-        - name: organization_name
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/OrganizationName"
-          description: 組織名
-        - name: plugin_id
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/PluginId"
-          description: プラグインID
-      responses:
-        200:
-          description: 正常
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OrganizationPlugin"
-        400:
-          $ref: "#/components/responses/ErrorInvalidRequest"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-    put:
-      operationId: putOrganizationPlugin
-      summary: プラグイン更新
-      description: |
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
-
-        指定した組織のプラグインを更新します。
-      tags:
-        - af-organization-plugin
-      security:
-        - OrganizationAdministrator: []
-        - OrganizationOwner: []
-      parameters:
-        - name: organization_name
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/OrganizationName"
-          description: 組織名
-        - name: plugin_id
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/PluginId"
-          description: プラグインID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PutOrganizationPluginRequest"
-      responses:
-        200:
-          description: 正常
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OrganizationPlugin"
-        400:
-          $ref: "#/components/responses/ErrorInvalidRequest"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-    delete:
-      operationId: deleteOrganizationPlugin
-      summary: プラグイン削除
-      description: |
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
-
-        指定した組織のプラグインを削除します。
-      tags:
-        - af-organization-plugin
-      security:
-        - OrganizationAdministrator: []
-        - OrganizationOwner: []
-      parameters:
-        - name: organization_name
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/OrganizationName"
-          description: 組織名
-        - name: plugin_id
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/PluginId"
-          description: プラグインID
-      responses:
-        200:
-          description: 正常
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OrganizationPlugin"
-        400:
-          $ref: "#/components/responses/ErrorInvalidRequest"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
         503:
           $ref: "#/components/responses/ErrorUnderMaintenance"
   /my/projects:
@@ -4546,18 +4372,6 @@ paths:
         required: true
         schema:
           $ref: "#/components/schemas/InputDataId"
-      - name: v
-        in: query
-        description: |
-          zipファイルを受領時のAPIの戻り型のバージョンを指定します。
-          値と戻り型の対応は以下です。
-          - "1"：登録処理を開始した旨の固定メッセージ
-          - "2"：JobInfo
-        required: false
-        schema:
-          type: string
-          default: "1"
-          example: "2"
       requestBody:
         required: true
         content:
@@ -4572,13 +4386,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/InputData"
         202:
-          description: zipファイルを受領、バッチにて登録開始。
-          content:
-            application/json:
-              schema:
-                oneOf:
-                - $ref: "#/components/schemas/Message"
-                - $ref: "#/components/schemas/JobInfo"
+          description: zipファイルを受領、バッチにて登録開始。レスポンスボディには登録処理を開始した旨の固定メッセージのみが含まれる。
         400:
           $ref: "#/components/responses/ErrorInvalidRequest"
         401:
@@ -5817,20 +5625,12 @@ components:
         updated_datetime:
           type: string
           format: date-time
-    OrganizationCacheRecord:
-      type: object
-      properties:
-        input:
-          type: string
-        members:
-          type: string
-        statistics:
-          type: string
-        organization:
-          type: string
     OrganizationSummary:
       type: object
-      properties: {}
+      properties:
+        last_tasks_updated_datetime:
+          type: string
+          format: date-time
     PricePlan:
       type: string
       enum:
@@ -5882,75 +5682,6 @@ components:
         * `active` - 組織メンバーとして有効で、組織を閲覧したり、権限があれば編集できます。
         * `waiting_response` - 組織に招待され、まだ加入/脱退を返答していません。組織の一部を閲覧のみできます。
         * `inactive` - 脱退したメンバーを表します。組織を閲覧できません。
-    OrganizationPlugin:
-      type: object
-      required:
-        - organization_id
-        - plugin_id
-        - created_datetime
-        - updated_datetime
-      properties:
-        organization_id:
-          $ref: "#/components/schemas/OrganizationId"
-        plugin_id:
-          $ref: "#/components/schemas/PluginId"
-        plugin_name:
-          $ref: "#/components/schemas/PluginName"
-        description:
-          $ref: "#/components/schemas/PluginDescription"
-        annotation_editor_url:
-          $ref: "#/components/schemas/AnnotationEditorUrl"
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-    PutOrganizationPluginRequest:
-      type: object
-      properties:
-        plugin_name:
-          $ref: "#/components/schemas/PluginName"
-        description:
-          $ref: "#/components/schemas/PluginDescription"
-        annotation_editor_url:
-          $ref: "#/components/schemas/AnnotationEditorUrl"
-        last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
-    PluginId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    PluginName:
-      type: string
-      example: "foo-bar"
-      description: |
-        プラグインの名前です。
-        プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。
-    PluginDescription:
-      type: string
-      example: "desc"
-      description: |
-        プラグインの説明です。
-        プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。
-    AnnotationEditorUrl:
-      type: string
-      example: "https://example.com/my/editors?p={projectId}&t={taskId}"
-      description: |
-        カスタムアノテーションエディタでタスクを開くための URL です。
-        プラグインを使用するプロジェクトのタスク一覧などで使用されます。
-  
-        この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。
-  
-        * `{projectId}`
-        * `{taskId}`
-  
-        以下のパラメーターは任意で指定します。
-  
-        * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。
-        * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。
-  
     MyOrganization:
       type: object
       properties:
@@ -6026,8 +5757,6 @@ components:
     OrganizationId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     OrganizationName:
       type: string
       example: "sample-organization"

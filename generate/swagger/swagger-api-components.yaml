@@ -730,20 +730,12 @@
         updated_datetime:
           type: string
           format: date-time
-    OrganizationCacheRecord:
-      type: object
-      properties:
-        input:
-          type: string
-        members:
-          type: string
-        statistics:
-          type: string
-        organization:
-          type: string
     OrganizationSummary:
       type: object
-      properties: {}
+      properties:
+        last_tasks_updated_datetime:
+          type: string
+          format: date-time
     PricePlan:
       type: string
       enum:
@@ -795,75 +787,6 @@
         * `active` - 組織メンバーとして有効で、組織を閲覧したり、権限があれば編集できます。
         * `waiting_response` - 組織に招待され、まだ加入/脱退を返答していません。組織の一部を閲覧のみできます。
         * `inactive` - 脱退したメンバーを表します。組織を閲覧できません。
-    OrganizationPlugin:
-      type: object
-      required:
-        - organization_id
-        - plugin_id
-        - created_datetime
-        - updated_datetime
-      properties:
-        organization_id:
-          $ref: "#/components/schemas/OrganizationId"
-        plugin_id:
-          $ref: "#/components/schemas/PluginId"
-        plugin_name:
-          $ref: "#/components/schemas/PluginName"
-        description:
-          $ref: "#/components/schemas/PluginDescription"
-        annotation_editor_url:
-          $ref: "#/components/schemas/AnnotationEditorUrl"
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-    PutOrganizationPluginRequest:
-      type: object
-      properties:
-        plugin_name:
-          $ref: "#/components/schemas/PluginName"
-        description:
-          $ref: "#/components/schemas/PluginDescription"
-        annotation_editor_url:
-          $ref: "#/components/schemas/AnnotationEditorUrl"
-        last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
-    PluginId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    PluginName:
-      type: string
-      example: "foo-bar"
-      description: |
-        プラグインの名前です。
-        プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。
-    PluginDescription:
-      type: string
-      example: "desc"
-      description: |
-        プラグインの説明です。
-        プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。
-    AnnotationEditorUrl:
-      type: string
-      example: "https://example.com/my/editors?p={projectId}&t={taskId}"
-      description: |
-        カスタムアノテーションエディタでタスクを開くための URL です。
-        プラグインを使用するプロジェクトのタスク一覧などで使用されます。
-  
-        この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。
-  
-        * `{projectId}`
-        * `{taskId}`
-  
-        以下のパラメーターは任意で指定します。
-  
-        * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。
-        * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。
-  
     MyOrganization:
       type: object
       properties:
@@ -939,8 +862,6 @@
     OrganizationId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     OrganizationName:
       type: string
       example: "sample-organization"
