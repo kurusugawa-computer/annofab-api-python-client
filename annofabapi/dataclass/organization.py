@@ -24,7 +24,7 @@ class OrganizationActivity:
     
     """
     organization_id: str
-    """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+    """"""
 
     created_datetime: str
     """"""
@@ -40,7 +40,7 @@ class Organization:
     
     """
     organization_id: str
-    """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+    """"""
 
     organization_name: str
     """"""
@@ -51,7 +51,7 @@ class Organization:
     price_plan: PricePlan
     """"""
 
-    summary: Dict[str, Any]
+    summary: OrganizationSummary
     """"""
 
     created_datetime: str
