@@ -195,8 +195,11 @@ class AnnofabApi(AbstractAnnofabApi):
             application/jsonならDict型, text/*ならばstr型, それ以外ならばbite型。
 
         """
+        if url_path.startswith("/labor-control/"):
+            url = f"{self.endpoint_url}/api/{url_path}"
+        else:
+            url = f'{self.url_prefix}{url_path}'
 
-        url = f'{self.url_prefix}{url_path}'
         kwargs = self._create_kwargs(query_params, header_params, request_body)
 
         # HTTP Requestを投げる
