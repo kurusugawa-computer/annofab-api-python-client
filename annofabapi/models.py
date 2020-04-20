@@ -1647,6 +1647,17 @@ InlineResponse20010 = Dict[str, Any]
 
 Kyes of Dict
 
+* url: str
+    認証済み一時URL
+
+"""
+
+InlineResponse20011 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
 * list: List[InputData]
     現在のページ番号に含まれる0件以上の入力データです。
 * page_no: float
@@ -1689,6 +1700,23 @@ InlineResponse2003 = Dict[str, Any]
 
 Kyes of Dict
 
+* list: List[OrganizationPlugin]
+    
+* page_no: float
+    現在のページ番号です。
+* total_page_no: float
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトが0件であっても、総ページ数は1となります。
+* total_count: float
+    検索結果の総件数。
+
+"""
+
+InlineResponse2004 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
 * list: List[Project]
     
 * has_next: bool
@@ -1696,7 +1724,7 @@ Kyes of Dict
 
 """
 
-InlineResponse2004 = Dict[str, Any]
+InlineResponse2005 = Dict[str, Any]
 """
 
 
@@ -1707,7 +1735,7 @@ Kyes of Dict
 
 """
 
-InlineResponse2005 = Dict[str, Any]
+InlineResponse2006 = Dict[str, Any]
 """
 
 
@@ -1728,7 +1756,7 @@ Kyes of Dict
 
 """
 
-InlineResponse2006 = Dict[str, Any]
+InlineResponse2007 = Dict[str, Any]
 """
 
 
@@ -1741,7 +1769,7 @@ Kyes of Dict
 
 """
 
-InlineResponse2007 = Dict[str, Any]
+InlineResponse2008 = Dict[str, Any]
 """
 
 
@@ -1762,7 +1790,7 @@ Kyes of Dict
 
 """
 
-InlineResponse2008 = Dict[str, Any]
+InlineResponse2009 = Dict[str, Any]
 """
 
 
@@ -1780,17 +1808,6 @@ Kyes of Dict
     検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
     Aggregationによる集約結果。
-
-"""
-
-InlineResponse2009 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* url: str
-    認証済み一時URL
 
 """
 
@@ -2500,14 +2517,14 @@ MyOrganization = Dict[str, Any]
 Kyes of Dict
 
 * organization_id: str
-    
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * name: str
     
 * email: str
     
 * price_plan: PricePlan
     
-* summary: OrganizationSummary
+* summary: __DictStrKeyAnyValue__
     
 * created_datetime: str
     
@@ -2527,14 +2544,14 @@ Organization = Dict[str, Any]
 Kyes of Dict
 
 * organization_id: str
-    
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * organization_name: str
     
 * email: str
     
 * price_plan: PricePlan
     
-* summary: OrganizationSummary
+* summary: __DictStrKeyAnyValue__
     
 * created_datetime: str
     
@@ -2550,10 +2567,27 @@ OrganizationActivity = Dict[str, Any]
 Kyes of Dict
 
 * organization_id: str
-    
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * created_datetime: str
     
 * storage_usage_bytes: float
+    
+
+"""
+
+OrganizationCacheRecord = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* input: str
+    
+* members: str
+    
+* statistics: str
+    
+* organization: str
     
 
 """
@@ -2565,7 +2599,7 @@ OrganizationMember = Dict[str, Any]
 Kyes of Dict
 
 * organization_id: str
-    
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * account_id: str
     
 * user_id: str
@@ -2605,6 +2639,29 @@ class OrganizationMemberStatus(Enum):
     INACTIVE = "inactive"
 
 
+OrganizationPlugin = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* plugin_id: str
+    プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* plugin_name: str
+    プラグインの名前です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 
+* description: str
+    プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 
+* annotation_editor_url: str
+    カスタムアノテーションエディタでタスクを開くための URL です。 プラグインを使用するプロジェクトのタスク一覧などで使用されます。  この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` * `{taskId}`  以下のパラメーターは任意で指定します。  * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。 * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。 
+* created_datetime: str
+    
+* updated_datetime: str
+    
+
+"""
+
 OrganizationRegistrationRequest = Dict[str, Any]
 """
 
@@ -2616,17 +2673,6 @@ Kyes of Dict
 * organization_email: str
     
 * price_plan: PricePlan
-    
-
-"""
-
-OrganizationSummary = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* last_tasks_updated_datetime: str
     
 
 """
@@ -2736,7 +2782,7 @@ Kyes of Dict
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * organization_id: str
-    
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * title: str
     プロジェクトのタイトル
 * overview: str
@@ -3096,6 +3142,23 @@ Kyes of Dict
     組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * last_updated_datetime: str
     
+
+"""
+
+PutOrganizationPluginRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* plugin_name: str
+    プラグインの名前です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 
+* description: str
+    プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 
+* annotation_editor_url: str
+    カスタムアノテーションエディタでタスクを開くための URL です。 プラグインを使用するプロジェクトのタスク一覧などで使用されます。  この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` * `{taskId}`  以下のパラメーターは任意で指定します。  * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。 * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。 
+* last_updated_datetime: str
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 

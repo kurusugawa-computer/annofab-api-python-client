@@ -33,7 +33,6 @@ class TestAnnotation:
         json_path = test_dir / "annotation.json"
         with json_path.open(encoding="utf-8") as f:
             dict_obj = json.load(f)
-            print(dict_obj)
         dataclass_obj = Annotation.from_dict(dict_obj)
         assert type(dataclass_obj) == Annotation
 
