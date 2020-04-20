@@ -195,7 +195,7 @@ class AnnofabApi(AbstractAnnofabApi):
             application/jsonならDict型, text/*ならばstr型, それ以外ならばbite型。
 
         """
-        if url_path.startswith("/labor-control/") or url_path.startswith("/internal/"):
+        if url_path.startswith("/labor-control") or url_path.startswith("/internal/"):
             url = f"{self.endpoint_url}/api{url_path}"
         else:
             url = f'{self.url_prefix}{url_path}'
