@@ -195,8 +195,11 @@ class AnnofabApi(AbstractAnnofabApi):
             application/jsonならDict型, text/*ならばstr型, それ以外ならばbite型。
 
         """
+        if url_path.startswith("/labor-control") or url_path.startswith("/internal/"):
+            url = f"{self.endpoint_url}/api{url_path}"
+        else:
+            url = f'{self.url_prefix}{url_path}'
 
-        url = f'{self.url_prefix}{url_path}'
         kwargs = self._create_kwargs(query_params, header_params, request_body)
 
         # HTTP Requestを投げる
@@ -227,7 +230,7 @@ class AnnofabApi(AbstractAnnofabApi):
             Tuple[Content, Response)
 
         """
-        url_path = f'/private/projects/{project_id}/sign-headers'
+        url_path = f'/internal/projects/{project_id}/sign-headers'
         http_method = 'GET'
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)

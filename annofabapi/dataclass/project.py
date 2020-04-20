@@ -74,7 +74,7 @@ class Project:
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     organization_id: str
-    """"""
+    """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     title: str
     """プロジェクトのタイトル"""
