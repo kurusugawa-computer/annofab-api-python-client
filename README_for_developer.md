@@ -1,47 +1,81 @@
 # Usage for Developer
+開発者用のドキュメントです。
+ソースコードの生成、テスト実行、リリース手順などを記載します。
 
 ## Requirements
-* Linux
-* Docker
+* Bash
+* Docker (OpenAPI Generatorを実行するのに必要)
 * python 3.6+
     * [pipenv](https://pipenv.pypa.io/en/latest/)
-    * [black](https://black.readthedocs.io/en/stable/)
 
 ## Install
+以下のコマンドを実行してください。開発に必要なpipenvがインストールされます。
 
 ```bash
 $ make init
 ```
 
+## Source
 
-## `annofabapi/api.py`の生成方法
-`annofabapi/api.py`は[AnnoFab Web APIのOpenAPI specification](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
-詳細は[generate/README.md](generate/README.md)を参照してください。
+### ソースコードの生成
+annofabapiのいくつかのファイルは、[AnnoFab Web APIのOpenAPI Spec](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
+以下のコマンドを実行すると、ソースコードが生成されます。詳細は[generate/README.md](generate/README.md)を参照してください。
 
+```
+# `generate/swagger/*.yaml`ファイルから、ソースコードを生成する
+$ generate/generate.sh
 
-## フォーマッターを実行
+# AnnoFab WebAPIのOpenAPI Spec を`generate/swagger/`にダウンロードしてから、ソースコードを生成する
+$ generate/generate.sh --download
+
+```
+
+### フォーマットを実行
+以下のコマンドを実行してください。
 
 ```
 $ make format
 ```
 
-## lintを実行
+### lintを実行
+以下のコマンドを実行してください。
 
 ```
 $ make lint
 ```
 
-## テスト実行方法
+## Test
+
+### テストの実行
 1. AnnoFabの認証情報を`.netrc`に記載する。
-2. `pytest.ini`にテスト対象の`project_id`を指定. テスト実行により、プロジェクトが変更されることに注意！！
+2. `pytest.ini`にテスト対象の`project_id`を指定する。**【注意】テストを実行すると、AnnoFabプロジェクトの内容が変更される**
 3. `$ make test`コマンドを実行する。
 
-※ `pipenv run tox`も利用できます。
+#### 直接pytestを実行する場合
+
+```
+$ pipenv run pytest tests
+```
+
+annofabapiでは、pytestのカスタムオプションを定義しています。
+
+```
+# ジョブを投げるテスト（時間がかかるテスト）を実行する。
+$ pipenv run pytest --run_submitting_job tests 
+
+# annofabapiモジュールのログを表示する。
+$ pipenv run pytest --print_log_annofabapi tests 
+```
+
+#### カバレッジの確認
+`htmlcov/`ディレクトリにカバレッジの結果が出力されます。
+
+
 
 ### テストの考え方
 #### 確認すること
 * get系のメソッドはワンパスが通ること
-* 「タスクの作成」など、よく使うメソッドで、簡単に実行や確認ができるメソッドのワンパスが通ること
+* `put_instruction`など、簡単に実行できるのでput,post,delete系のメソッドは、簡単に実行できるのであればワンパスが通ること
 
 #### 確認しないこと
 * 「組織の削除」、「プロジェクトの削除」など間違って操作してしまったときの影響が多いメソッド
@@ -49,15 +83,18 @@ $ make lint
 
 
 
-## リリースする
+## Release
 
-### `setup.py`のバージョンを上げる
-* バージョンはSemantic Versioning 2.0に従う
-* AnnoFabのリリースによってクライアントライブラリをリリースするときは、マイナーバージョンを上げる。
-* クライアントライブラリのバグ/ドキュメント修正などをリリースするときは、パッチバージョンを上げる。
+## リリース方法
+
+### 1. annofabapiのバージョンを上げる
+`annofabapi/__version__.py`に記載されているバージョンを上げてください。バージョンはSemantic Versioning 2.0に従います。
+
+* AnnoFabののバージョンアップにより、annofabapiをリリースするときは、マイナーバージョンを上げる。
+* annofabapiのバグ/ドキュメント修正などにより、annofabapiをリリースするときは、パッチバージョンを上げる。
 
 
-### PyPIに登録する
+### 2. PyPIに登録する
 1. TestPyPIに登録して、内容を確認する。
 
 ```
@@ -88,16 +125,23 @@ $ python -c "import annofabapi; print(annofabapi.__version__)"
 
 
 
-### GitHubのリリースページ
-GitHubのRelease機能を使って、リリース情報を記載する。
+### 3. GitHubのリリースページに追加
+GitHubのRelease機能を使って、リリース情報を記載します。
 
 
-### ドキュメントを作成する
-1. `$ make docs`を実行して、ドキュメントを生成する。
-2. ドキュメントが期待通り生成されていること、警告やエラーが発生していないことを確認する。
-3. Read the Docsにログインして、ビルドする。https://readthedocs.org/projects/annofab-api-python-client/builds/
+## Document
+### ドキュメントの作成
+masterブランチが更新されると、自動的に[ReadTheDocsのサイト](https://annofab-api-python-client.readthedocs.io/)が更新されます。
+ReadTheDocsのビルド結果は https://readthedocs.org/projects/annofab-api-python-client/builds/ で確認できます。
+
+ローカルでドキュメントを確認したい場合は、`$ make docs` コマンドを実行してください。`docs/_build/html/`にHTMLファイルが生成されます。
+
+
+### ドキュメントの修正
+`docs/*.rst`ファイルを修正してください。rstファイルは[Sphinx](https://www.sphinx-doc.org/en/master/)でビルドしています。
+
 
 
 ## 開発フロー
-* 開発途中のcommitをmasterブランチにpushします。
-* リリース時のソースはGitHubのRelease機能からダウンロードしてください。
+* masterブランチを元にしてブランチを作成して、プルリクを作成してください。masterブランチへの直接pushすることはGitHub上で禁止しています。
+* リリース時のソースはGitHubのRelease機能、またはPyPIからダウンロードしてください。
