@@ -38,7 +38,7 @@ $ generate/generate.sh --download
 ```
 ├── generate
 │   ├── generate.sh
-│   ├── partial-header              ... 生成されるファイルのヘッダ部分。OpenAPI Generatorで生成したファイルとヘッダファイルをcatで連結して、ソースファイルを生成する。
+│   ├── partial-header          ... 生成されるファイルのヘッダ部分。OpenAPI Generatorで生成したファイルとヘッダファイルをcatで連結して、ソースファイルを生成する。
 │   │   ├── dataclass
 │   │   │   ├── *.py
 │   │   ├── generated_api_partial_header_v1.py
@@ -97,7 +97,7 @@ OpenAPI Specファイルの間違いを許容する部分/許容しない部分�
 * WebAPIにQuery Parametersがあれば、引数に`query_params`を追加する。
 * WebAPIにHeader Parametersがあれば、引数に`header_params`を追加する。
 * WebAPIにRequest Bodyがあれば、引数に`request_body`を追加する。
-* WebAPIからRequest Bodyなどが不要になってもメソッドが動くようにするため、メソッド引数には`**kwarg`を用意する。
+* WebAPIからRequest Bodyなどが不要になってもメソッドが動くようにするため、メソッド引数には`**kwargs`を用意する。
 
 
 ### 戻り値
