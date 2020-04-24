@@ -1,10 +1,82 @@
 # 概要
-[OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator)を使って、`annofabapi/generated_api.py`を生成します。
+[OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator)を使って、ソースコードを生成する方法について記載します。
+
+# ソースコードの自動生成
+
+## Requirements
+* Bash
+* Docker
+
+## ソースコードの生成方法
+以下のコマンドを実行すると、ソースコードが生成されます。
+
+```
+# `generate/swagger/*.yaml`ファイルから、ソースコードを生成する
+$ generate/generate.sh
+
+# AnnoFab WebAPIのOpenAPI Spec を`generate/swagger/`にダウンロードしてから、ソースコードを生成する
+$ generate/generate.sh --download
+
+```
+
+
+自動生成されるファイルの一覧です。
+
+```
+├── annofabapi
+│   ├── dataclass
+│   │   ├── *.py                       ... OpenAPI Specのスキーマに対応したDataClass
+│   ├── generated_api.py                ... WebAPI v1に対応したメソッド
+│   ├── generated_api2.py               ... WebAPI v2に対応したメソッド
+│   ├── models.py                       ... OpenAPI Specのスキーマに対応したクラス（`Enum` or `Dict[str,Any]`）
+```
+
+
+## 各種ファイルの説明
+
+
+```
+├── generate
+│   ├── generate.sh
+│   ├── partial-header          ... 生成されるファイルのヘッダ部分。OpenAPI Generatorで生成したファイルとヘッダファイルをcatで連結して、ソースファイルを生成する。
+│   │   ├── dataclass
+│   │   │   ├── *.py
+│   │   ├── generated_api_partial_header_v1.py
+│   │   ├── generated_api_partial_header_v2.py
+│   │   └── models_partial_header_v1.py
+│   ├── template                ... `generated_api.py`, `generated_api2.py`, `models.py` を生成する際のテンプレートファイル
+│   │   ├── api.mustache
+│   │   └── model.mustache
+│   └── template_dataclass      ... `dataclass/*.py`を生成する際のテンプレートファイル
+│       └── model.mustache
+```
+
+### テンプレートファイルについて
+テンプレートファイル（mustache）の書き方は[OpenAPI Generatorのドキュメント](https://openapi-generator.tech/docs/templating)を参照してください。
+なお、annofabapiのテンプレートファイルは、以下のファイルを参考にしています。
+* `api.mustache`：https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/python/api.mustache
+* `model.mustache`：https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/python/model.mustache
+
+
+### `openapi-gnerator-cli`でエラーが発生した場合
+以下の手順に従ってください。
+
+1. OpenAPI Specファイルをチェックする。
+
+```
+$ cd generate
+$ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli validate  -i /local/swagger/swagger.yaml 
+```
+
+2. ローカルのOpenAPI Specファイル `generate/*.yaml` を修正する
+3. `$ generate/generate.sh` コマンドを実行する。
+
 
 
 # 設計方針
-AnnoFab WebAPIのswagger.yamlが多少間違っていても、クライアントライブラリが動くようなメソッド設計になっています。
-swagger.yamlの間違いを許容する部分と許容しない部分は以下の通りです。
+AnnoFab WebAPIのOpenAPI Specファイルが多少間違っていても、annofabapiは動くような設計になっています。
+
+OpenAPI Specファイルの間違いを許容する部分/許容しない部分は以下の通りです。
 
 * 許容する部分
     * query_paramsの中身
@@ -22,70 +94,29 @@ swagger.yamlの間違いを許容する部分と許容しない部分は以下�
 
 ### 引数
 * Path Prametersの中身を引数にする。
-* APIにQuery Parametersがあれば、引数に`query_params`を追加する。
-* APIにHeader Parametersがあれば、引数に`header_params`を追加する。
-* APIにRequest Bodyがあれば、引数に`request_body`を追加する。
+* WebAPIにQuery Parametersがあれば、引数に`query_params`を追加する。
+* WebAPIにHeader Parametersがあれば、引数に`header_params`を追加する。
+* WebAPIにRequest Bodyがあれば、引数に`request_body`を追加する。
+* WebAPIからRequest Bodyなどが不要になってもメソッドが動くようにするため、メソッド引数には`**kwargs`を用意する。
+
 
 ### 戻り値
 * `Tuple[Content, Reponse]`
     * `Content`：Responseの中身。
-    * `Reponse`：Response自信。ReponseのLocationヘッダを参照するときもあるので、Responseも返すようにした。
+    * `Reponse`：Response Object。ReponseのLocationヘッダを参照するときもあるので、Responseも返すようにした。
+
+## クラス設計
+
+### クラス名
+OpenAPI Specのスキーマ名をクラス名にした。
 
 
-# 生成方法
+### クラスの中身
+#### models.py
+OpenAPI Specのスキーマが`Enum`の場合は、列挙体クラスにした。
+それ以外のクラスは、型ヒントとして利用できるよう、`Foo=Dict[str,Any]`のようにDict型のエイリアスとした。
 
-## Requirements
-* Bash
-* Docker
+#### dataclass/*.py
+dictよりdataclassの方が扱いやすい場合があるので、よく使うクラスはDataClassとして定義した。
 
-## ファイルの説明
 
-```
-generate/
-│  generated_api_partial_header_v1.py
-│  generated_api_partial_header_v2.py
-│  enum_partial_header_v1.py
-│  generate.sh
-│
-├─out/
-│  
-└─template
-        api.mustache
-        model.mustache
-
-```
-
-* `generate.sh`：`annofabapi/generated_api.py`を生成するBash Script
-* `out/`：OpenAPI Generatorの出力先。
-* `api.mustache`：APIに対応したメソッド用のテンプレートファイル。https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/python/api.mustache からダウンロードしたファイルをカスタマイズした。
-* `model.mustache`：schemeに列挙体用のテンプレートファイル。https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/resources/python/model.mustache からダウンロードしたファイルをカスタマイズした。
-* `generated_api_partial_header_v1.py`：`annofabapi/generated_api.py`のヘッダ部分（OpenAPI Generatorで生成しない部分）。
-* `generated_api_partial_header_v2.py`：`annofabapi/generated_api2.py`のヘッダ部分（OpenAPI Generatorで生成しない部分）。
-* `enums_partial_header.py`：`annofabapi/enums.py`のヘッダ部分（OpenAPI Generatorで生成しない部分）。
-
-## 実行方法
-
-```bash
-# https://annofab.com/docs/api/swagger.yaml を元に生成します。
-$ generate/generate.sh
-
-```
-
-### `openapi-gnerator-cli`でエラーが発生した場合
-
-1. swagger.yamlをチェックする。
-
-```
-$ cd generate
-$ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-generator-cli validate \
-    -i /local/swagger.yaml \
-
-```
-
-2. swagger.yamlを修正する
-
-3. ローカルにある`swagger.yaml`（ダウンロードしない）を元に、`generated_api.py`を生成する。
-
-```bash
-$ generate/generate.sh --notdownload
-```

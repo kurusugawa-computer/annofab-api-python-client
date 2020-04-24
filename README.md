@@ -5,7 +5,7 @@
 * **Reference Documentation:** https://annofab-api-python-client.readthedocs.io/en/latest/
 * **annofab-cli** https://github.com/kurusugawa-computer/annofab-cli
     * 「タスクの一括差し戻し」や、「プロジェクト間の差分表示」など、AnnoFabの画面で実施するには時間がかかる操作を、CLIツールとして提供しています。
-* **開発者用ドキュメント**: https://github.com/kurusugawa-computer/annofab-api-python-client/blob/master/README_for_developer.md
+* **開発者用ドキュメント**: [README_for_developer.md](README_for_developer.md)
 
 
 
