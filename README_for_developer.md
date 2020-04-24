@@ -4,7 +4,8 @@
 * Linux
 * Docker
 * python 3.6+
-* pipenv
+    * [pipenv](https://pipenv.pypa.io/en/latest/)
+    * [black](https://black.readthedocs.io/en/stable/)
 
 ## Install
 
