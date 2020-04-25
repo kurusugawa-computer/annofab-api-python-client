@@ -86,7 +86,7 @@ info:
     入力データセットID | 組織内で一意
     プラグインID | 組織内で一意
 
-  version: 0.81.0
+  version: 0.82.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -600,6 +600,111 @@ paths:
                 oneOf:
                 - $ref: "#/components/schemas/AnnotationSpecsV1"
                 - $ref: "#/components/schemas/AnnotationSpecsV2"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        404:
+          $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+  /organizations-by-name/{organization_name}:
+    get:
+      tags:
+        - af-organization-v2
+      summary: 組織情報取得
+      description: |
+      security:
+        - AllOrganizationMember: []
+      operationId: getOrganizationByNameV2
+      parameters:
+        - name: organization_name
+          in: path
+          description: 組織名
+          required: true
+          schema:
+            $ref: "#/components/schemas/OrganizationName"
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        404:
+          $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+  /organizations-by-name/{organization_name}/cache:
+    get:
+      tags:
+        - af-organization-v2
+      summary: キャッシュレコード
+      description: |
+      security:
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
+      operationId: getOrganizationCacheByNameV2
+      parameters:
+        - name: organization_name
+          in: path
+          description: 組織名
+          required: true
+          schema:
+            $ref: "#/components/schemas/OrganizationName"
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrganizationCacheRecord"
+        401:
+          $ref: "#/components/responses/ErrorUnauthorizedApi"
+        404:
+          $ref: "#/components/responses/ErrorMissingResource"
+        503:
+          $ref: "#/components/responses/ErrorUnderMaintenance"
+  /organizations/{organization_id}:
+    get:
+      tags:
+        - af-organization-v2
+      summary: 組織情報取得
+      description: |
+      security:
+        - AllOrganizationMember: []
+      operationId: getOrganizationV2
+      parameters:
+        - name: organization_id
+          in: path
+          description: 組織ID
+          required: true
+          schema:
+            $ref: "#/components/schemas/OrganizationId"
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
         401:
           $ref: "#/components/responses/ErrorUnauthorizedApi"
         404:
