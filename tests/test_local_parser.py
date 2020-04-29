@@ -10,8 +10,12 @@ import annofabapi.parser
 import annofabapi.utils
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
-from annofabapi.parser import (FullAnnotationDirParser, FullAnnotationZipParser, SimpleAnnotationDirParser,
-                               SimpleAnnotationZipParser)
+from annofabapi.parser import (
+    FullAnnotationDirParser,
+    FullAnnotationZipParser,
+    SimpleAnnotationDirParser,
+    SimpleAnnotationZipParser,
+)
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")

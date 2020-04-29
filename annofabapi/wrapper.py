@@ -12,9 +12,24 @@ from typing import Any, Callable, Dict, List, Optional
 
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
-from annofabapi.models import (AnnotationDataHoldingType, AnnotationSpecsV1, InputData, Inspection, InspectionStatus,
-                               Instruction, JobInfo, JobStatus, JobType, MyOrganization, Organization,
-                               OrganizationMember, Project, ProjectMember, SupplementaryData, Task)
+from annofabapi.models import (
+    AnnotationDataHoldingType,
+    AnnotationSpecsV1,
+    InputData,
+    Inspection,
+    InspectionStatus,
+    Instruction,
+    JobInfo,
+    JobStatus,
+    JobType,
+    MyOrganization,
+    Organization,
+    OrganizationMember,
+    Project,
+    ProjectMember,
+    SupplementaryData,
+    Task,
+)
 from annofabapi.utils import _download, _log_error_response, _raise_for_status, allow_404_error, str_now
 
 logger = logging.getLogger(__name__)

@@ -15,8 +15,15 @@ from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember
 from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
-from annofabapi.dataclass.statistics import (InspectionStatistics, LabelStatistics, Markers, ProjectAccountStatistics,
-                                             ProjectTaskStatisticsHistory, TaskPhaseStatistics, WorktimeStatistics)
+from annofabapi.dataclass.statistics import (
+    InspectionStatistics,
+    LabelStatistics,
+    Markers,
+    ProjectAccountStatistics,
+    ProjectTaskStatisticsHistory,
+    TaskPhaseStatistics,
+    WorktimeStatistics,
+)
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.webhook import Webhook

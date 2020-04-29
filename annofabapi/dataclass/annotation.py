@@ -14,8 +14,14 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
-from annofabapi.models import (AdditionalDataDefinitionType, AnnotationDataHoldingType, AnnotationType,
-                               InternationalizationMessage, TaskPhase, TaskStatus)
+from annofabapi.models import (
+    AdditionalDataDefinitionType,
+    AnnotationDataHoldingType,
+    AnnotationType,
+    InternationalizationMessage,
+    TaskPhase,
+    TaskStatus,
+)
 
 OneOfstringFullAnnotationData = Union[str, Dict[str, Any]]
 FullAnnotationData = Dict[str, Any]
