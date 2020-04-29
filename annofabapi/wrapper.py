@@ -52,6 +52,7 @@ class Wrapper:
         api: AnnofabApi Instance
 
     """
+
     def __init__(self, api: AnnofabApi):
         self.api = api
 
@@ -103,17 +104,17 @@ class Wrapper:
             get_XXX関数で取得した情報の一覧
 
         """
-        arg_query_params = kwargs_for_func_get_list.get('query_params')
+        arg_query_params = kwargs_for_func_get_list.get("query_params")
         copied_query_params = copy.deepcopy(arg_query_params) if arg_query_params is not None else {}
 
         all_objects: List[Dict[str, Any]] = []
 
         copied_query_params.update({"page": 1, "limit": limit})
-        kwargs_for_func_get_list['query_params'] = copied_query_params
+        kwargs_for_func_get_list["query_params"] = copied_query_params
         content, _ = func_get_list(**kwargs_for_func_get_list)
 
-        logger.debug("%s %d 件 取得します。", func_get_list.__name__, content.get('total_count'))
-        if content.get('over_limit'):
+        logger.debug("%s %d 件 取得します。", func_get_list.__name__, content.get("total_count"))
+        if content.get("over_limit"):
             logger.warning("検索結果が10,000件を超えてますが、Web APIの都合上10,000件までしか取得できません。")
 
         all_objects.extend(content["list"])
@@ -121,10 +122,10 @@ class Wrapper:
         while content["page_no"] < content["total_page_no"]:
             next_page_no = content["page_no"] + 1
             copied_query_params.update({"page": next_page_no})
-            kwargs_for_func_get_list['query_params'] = copied_query_params
+            kwargs_for_func_get_list["query_params"] = copied_query_params
             content, _ = func_get_list(**kwargs_for_func_get_list)
             all_objects.extend(content["list"])
-            logger.debug("%s %d / %d page", func_get_list.__name__, content['page_no'], content['total_page_no'])
+            logger.debug("%s %d / %d page", func_get_list.__name__, content["page_no"], content["total_page_no"])
 
         return all_objects
 
@@ -151,7 +152,7 @@ class Wrapper:
             query_params = {"v2": True}
 
         _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
-        url = response.headers['Location']
+        url = response.headers["Location"]
         _download(url, dest_path)
         return url
 
@@ -171,12 +172,13 @@ class Wrapper:
         """
         warnings.warn("deprecated", DeprecationWarning)
         _, response = self.api.get_archive_full_with_pro_id(project_id)
-        url = response.headers['Location']
+        url = response.headers["Location"]
         _download(url, dest_path)
         return url
 
-    def get_all_annotation_list(self, project_id: str,
-                                query_params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def get_all_annotation_list(
+        self, project_id: str, query_params: Optional[Dict[str, Any]] = None
+    ) -> List[Dict[str, Any]]:
         """
         すべてのアノテーション情報を取得する。
 
@@ -187,8 +189,9 @@ class Wrapper:
         Returns:l
             すべてのアノテーション一覧
         """
-        return self._get_all_objects(self.api.get_annotation_list, limit=200, project_id=project_id,
-                                     query_params=query_params)
+        return self._get_all_objects(
+            self.api.get_annotation_list, limit=200, project_id=project_id, query_params=query_params
+        )
 
     @staticmethod
     def __create_annotation_id(detail: Dict[str, Any]) -> str:
@@ -199,8 +202,9 @@ class Wrapper:
             return str(uuid.uuid4())
 
     @staticmethod
-    def __replace_annotation_specs_id(detail: Dict[str, Any],
-                                      annotation_specs_relation: AnnotationSpecsRelation) -> Optional[Dict[str, Any]]:
+    def __replace_annotation_specs_id(
+        detail: Dict[str, Any], annotation_specs_relation: AnnotationSpecsRelation
+    ) -> Optional[Dict[str, Any]]:
         """
         アノテーション仕様関係のIDを、新しいIDに置換する。
 
@@ -223,14 +227,16 @@ class Wrapper:
         for additional_data in additional_data_list:
             additional_data_definition_id = additional_data["additional_data_definition_id"]
             new_additional_data_definition_id = annotation_specs_relation.additional_data_definition_id.get(
-                additional_data_definition_id)
+                additional_data_definition_id
+            )
             if new_additional_data_definition_id is None:
                 continue
             additional_data["additional_data_definition_id"] = new_additional_data_definition_id
 
             if additional_data["choice"] is not None:
                 new_choice = annotation_specs_relation.choice_id.get(
-                    ChoiceKey(additional_data_definition_id, additional_data["choice"]))
+                    ChoiceKey(additional_data_definition_id, additional_data["choice"])
+                )
                 additional_data["choice"] = new_choice.choice_id if new_choice is not None else None
 
             new_additional_data_list.append(additional_data)
@@ -239,10 +245,7 @@ class Wrapper:
         return detail
 
     def __to_dest_annotation_detail(
-            self,
-            dest_project_id: str,
-            detail: Dict[str, Any],
-            account_id: str,
+        self, dest_project_id: str, detail: Dict[str, Any], account_id: str,
     ) -> Dict[str, Any]:
         """
         コピー元の１個のアノテーションを、コピー先用に変換する。
@@ -257,8 +260,9 @@ class Wrapper:
         if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
             outer_file_url = detail["url"]
             src_response = self.api.session.get(outer_file_url)
-            s3_path = self.upload_data_to_s3(dest_project_id, data=src_response.content,
-                                             content_type=src_response.headers["Content-Type"])
+            s3_path = self.upload_data_to_s3(
+                dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
+            )
             logger.debug("%s に塗りつぶし画像をアップロードしました。", s3_path)
             dest_detail["path"] = s3_path
             dest_detail["url"] = None
@@ -267,8 +271,14 @@ class Wrapper:
         return dest_detail
 
     def __create_request_body_for_copy_annotation(
-            self, project_id: str, task_id: str, input_data_id: str, src_details: List[Dict[str, Any]], account_id: str,
-            annotation_specs_relation: Optional[AnnotationSpecsRelation] = None) -> Dict[str, Any]:
+        self,
+        project_id: str,
+        task_id: str,
+        input_data_id: str,
+        src_details: List[Dict[str, Any]],
+        account_id: str,
+        annotation_specs_relation: Optional[AnnotationSpecsRelation] = None,
+    ) -> Dict[str, Any]:
         dest_details: List[Dict[str, Any]] = []
 
         for src_detail in src_details:
@@ -289,8 +299,13 @@ class Wrapper:
         }
         return request_body
 
-    def copy_annotation(self, src: TaskFrameKey, dest: TaskFrameKey, account_id: str,
-                        annotation_specs_relation: Optional[AnnotationSpecsRelation] = None) -> bool:
+    def copy_annotation(
+        self,
+        src: TaskFrameKey,
+        dest: TaskFrameKey,
+        account_id: str,
+        annotation_specs_relation: Optional[AnnotationSpecsRelation] = None,
+    ) -> bool:
         """
         アノテーションをコピーする。
 
@@ -316,8 +331,13 @@ class Wrapper:
         updated_datetime = old_dest_annotation["updated_datetime"]
 
         request_body = self.__create_request_body_for_copy_annotation(
-            dest.project_id, dest.task_id, dest.input_data_id, src_details=src_annotation_details,
-            account_id=account_id, annotation_specs_relation=annotation_specs_relation)
+            dest.project_id,
+            dest.task_id,
+            dest.input_data_id,
+            src_details=src_annotation_details,
+            account_id=account_id,
+            annotation_specs_relation=annotation_specs_relation,
+        )
         request_body["updated_datetime"] = updated_datetime
         self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
         return True
@@ -325,8 +345,9 @@ class Wrapper:
     #########################################
     # Public Method : AnnotationSpecs
     #########################################
-    def copy_annotation_specs(self, src_project_id: str, dest_project_id: str,
-                              comment: Optional[str] = None) -> AnnotationSpecsV1:
+    def copy_annotation_specs(
+        self, src_project_id: str, dest_project_id: str, comment: Optional[str] = None
+    ) -> AnnotationSpecsV1:
         """
         アノテーション仕様を、別のプロジェクトにコピーする。
 
@@ -371,9 +392,14 @@ class Wrapper:
         messages = choice["name"]["messages"]
         return [e["message"] for e in messages if e["lang"] == "en-US"][0]
 
-    def __get_dest_additional(self, src_additional: Dict[str, Any], dest_additionals: List[Dict[str, Any]],
-                              src_labels: List[Dict[str, Any]], dest_labels: List[Dict[str, Any]],
-                              dict_label_id: Dict[str, str]) -> Optional[Dict[str, Any]]:
+    def __get_dest_additional(
+        self,
+        src_additional: Dict[str, Any],
+        dest_additionals: List[Dict[str, Any]],
+        src_labels: List[Dict[str, Any]],
+        dest_labels: List[Dict[str, Any]],
+        dict_label_id: Dict[str, str],
+    ) -> Optional[Dict[str, Any]]:
         src_additional_name_en = self.__get_additional_data_definition_name_en(src_additional)
         for dest_additional in dest_additionals:
             if src_additional_name_en != self.__get_additional_data_definition_name_en(dest_additional):
@@ -391,8 +417,10 @@ class Wrapper:
                     if dest_label is None:
                         dest_label_contains_dest_additional = False
                         break
-                    if dest_additional["additional_data_definition_id"] not in dest_label[
-                            "additional_data_definitions"]:
+                    if (
+                        dest_additional["additional_data_definition_id"]
+                        not in dest_label["additional_data_definitions"]
+                    ):
                         dest_label_contains_dest_additional = False
                         break
 
@@ -431,30 +459,36 @@ class Wrapper:
         dict_additional_data_definition_id: Dict[str, str] = {}
         dict_choice_id: Dict[ChoiceKey, ChoiceKey] = {}
         for src_additional in src_annotation_specs["additionals"]:
-            dest_additional = self.__get_dest_additional(src_additional=src_additional,
-                                                         dest_additionals=dest_additionals,
-                                                         src_labels=src_annotation_specs["labels"],
-                                                         dest_labels=dest_labels, dict_label_id=dict_label_id)
+            dest_additional = self.__get_dest_additional(
+                src_additional=src_additional,
+                dest_additionals=dest_additionals,
+                src_labels=src_annotation_specs["labels"],
+                dest_labels=dest_labels,
+                dict_label_id=dict_label_id,
+            )
             if dest_additional is None:
                 continue
 
-            dict_additional_data_definition_id[
-                src_additional["additional_data_definition_id"]] = dest_additional["additional_data_definition_id"]
+            dict_additional_data_definition_id[src_additional["additional_data_definition_id"]] = dest_additional[
+                "additional_data_definition_id"
+            ]
 
             dest_choices = dest_additional["choices"]
             for src_choice in src_additional["choices"]:
                 src_choice_name_en = self.__get_choice_name_en(src_choice)
-                dest_choice = _first_true(dest_choices,
-                                          pred=lambda e, f=src_choice_name_en: self.__get_choice_name_en(e) == f)
+                dest_choice = _first_true(
+                    dest_choices, pred=lambda e, f=src_choice_name_en: self.__get_choice_name_en(e) == f
+                )
                 if dest_choice is not None:
-                    dict_choice_id[ChoiceKey(src_additional["additional_data_definition_id"],
-                                             src_choice["choice_id"])] = ChoiceKey(
-                                                 dest_additional["additional_data_definition_id"],
-                                                 dest_choice["choice_id"])
+                    dict_choice_id[
+                        ChoiceKey(src_additional["additional_data_definition_id"], src_choice["choice_id"])
+                    ] = ChoiceKey(dest_additional["additional_data_definition_id"], dest_choice["choice_id"])
 
-        return AnnotationSpecsRelation(label_id=dict_label_id,
-                                       additional_data_definition_id=dict_additional_data_definition_id,
-                                       choice_id=dict_choice_id)
+        return AnnotationSpecsRelation(
+            label_id=dict_label_id,
+            additional_data_definition_id=dict_additional_data_definition_id,
+            choice_id=dict_choice_id,
+        )
 
     #########################################
     # Public Method : Input
@@ -474,8 +508,9 @@ class Wrapper:
         input_data, _ = self.api.get_input_data(project_id, input_data_id)
         return input_data
 
-    def get_all_input_data_list(self, project_id: str, query_params: Optional[Dict[str,
-                                                                                   Any]] = None) -> List[InputData]:
+    def get_all_input_data_list(
+        self, project_id: str, query_params: Optional[Dict[str, Any]] = None
+    ) -> List[InputData]:
         """
         すべての入力データを取得する。
 
@@ -486,8 +521,9 @@ class Wrapper:
         Returns:
             入力データ一覧
         """
-        return self._get_all_objects(self.api.get_input_data_list, limit=200, project_id=project_id,
-                                     query_params=query_params)
+        return self._get_all_objects(
+            self.api.get_input_data_list, limit=200, project_id=project_id, query_params=query_params
+        )
 
     def upload_file_to_s3(self, project_id: str, file_path: str, content_type: Optional[str] = None) -> str:
         """
@@ -504,7 +540,7 @@ class Wrapper:
 
         # content_type を推測
         new_content_type = self._get_content_type(file_path, content_type)
-        with open(file_path, 'rb') as f:
+        with open(file_path, "rb") as f:
             return self.upload_data_to_s3(project_id, data=f, content_type=new_content_type)
 
     def upload_data_to_s3(self, project_id: str, data: Any, content_type: str) -> str:
@@ -520,7 +556,7 @@ class Wrapper:
             一時データ保存先であるS3パス
         """
         # 一時データ保存先を取得
-        content = self.api.create_temp_path(project_id, header_params={'content-type': content_type})[0]
+        content = self.api.create_temp_path(project_id, header_params={"content-type": content_type})[0]
 
         url_parse_result = urllib.parse.urlparse(content["url"])
         query_dict = urllib.parse.parse_qs(url_parse_result.query)
@@ -529,15 +565,20 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={'content-type': content_type})
+        res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={"content-type": content_type})
 
         _log_error_response(logger, res_put)
         _raise_for_status(res_put)
         return content["path"]
 
-    def put_input_data_from_file(self, project_id: str, input_data_id: str, file_path: str,
-                                 request_body: Optional[Dict[str, Any]] = None,
-                                 content_type: Optional[str] = None) -> InputData:
+    def put_input_data_from_file(
+        self,
+        project_id: str,
+        input_data_id: str,
+        file_path: str,
+        request_body: Optional[Dict[str, Any]] = None,
+        content_type: Optional[str] = None,
+    ) -> InputData:
         """
         ファイル（画像データ、動画データ、 zipファイル）を入力データとして登録する。
 
@@ -580,12 +621,12 @@ class Wrapper:
 
         """
         _, response = self.api.get_worktime_statistics(project_id)
-        url = response.headers['Location']
+        url = response.headers["Location"]
 
         response = self.api.session.get(url)
         _log_error_response(logger, response)
 
-        response.encoding = 'utf-8'
+        response.encoding = "utf-8"
         _raise_for_status(response)
         content = self.api._response_to_content(response)
         return content
@@ -593,9 +634,15 @@ class Wrapper:
     #########################################
     # Public Method : Supplementary
     #########################################
-    def put_supplementary_data_from_file(self, project_id, input_data_id: str, supplementary_data_id: str,
-                                         file_path: str, request_body: Dict[str, Any],
-                                         content_type: Optional[str] = None) -> SupplementaryData:
+    def put_supplementary_data_from_file(
+        self,
+        project_id,
+        input_data_id: str,
+        supplementary_data_id: str,
+        file_path: str,
+        request_body: Dict[str, Any],
+        content_type: Optional[str] = None,
+    ) -> SupplementaryData:
         """
         補助情報ファイルをアップロードする
 
@@ -623,27 +670,33 @@ class Wrapper:
 
         copied_request_body["supplementary_data_path"] = s3_path
 
-        if 'supplementary_data_name' not in copied_request_body:
-            copied_request_body['supplementary_data_name'] = file_path
+        if "supplementary_data_name" not in copied_request_body:
+            copied_request_body["supplementary_data_name"] = file_path
 
-        if 'supplementary_data_type' not in copied_request_body:
-            if new_content_type.startswith('image'):
-                supplementary_data_type = 'image'
-            elif new_content_type.startswith('text'):
-                supplementary_data_type = 'text'
+        if "supplementary_data_type" not in copied_request_body:
+            if new_content_type.startswith("image"):
+                supplementary_data_type = "image"
+            elif new_content_type.startswith("text"):
+                supplementary_data_type = "text"
             else:
                 raise AnnofabApiException(f"File type not supported. Content-Type={new_content_type}")
-            copied_request_body['supplementary_data_type'] = supplementary_data_type
+            copied_request_body["supplementary_data_type"] = supplementary_data_type
 
-        return self.api.put_supplementary_data(project_id, input_data_id, supplementary_data_id,
-                                               request_body=copied_request_body)[0]
+        return self.api.put_supplementary_data(
+            project_id, input_data_id, supplementary_data_id, request_body=copied_request_body
+        )[0]
 
     #########################################
     # Public Method : Inspection
     #########################################
-    def update_status_of_inspections(self, project_id: str, task_id: str, input_data_id: str,
-                                     filter_inspection: Callable[[Inspection], bool],
-                                     inspection_status: InspectionStatus) -> List[Inspection]:
+    def update_status_of_inspections(
+        self,
+        project_id: str,
+        task_id: str,
+        input_data_id: str,
+        filter_inspection: Callable[[Inspection], bool],
+        inspection_status: InspectionStatus,
+    ) -> List[Inspection]:
         """
         検査コメント（返信コメント以外）のstatusを変更する。
 
@@ -657,6 +710,7 @@ class Wrapper:
         Returns:
             `batch_update_inspections` メソッドのcontent
         """
+
         def not_reply_comment(arg_inspection: Inspection) -> bool:
             """返信コメントでないならTrueをかえす"""
             return arg_inspection["parent_inspection_id"] is None
@@ -709,8 +763,9 @@ class Wrapper:
         content, _ = self.api.get_organization(organization_name)
         return content
 
-    def get_all_projects_of_organization(self, organization_name: str,
-                                         query_params: Optional[Dict[str, Any]] = None) -> List[Project]:
+    def get_all_projects_of_organization(
+        self, organization_name: str, query_params: Optional[Dict[str, Any]] = None
+    ) -> List[Project]:
         """
         組織配下のすべてのプロジェクト一覧を取得する
 
@@ -721,8 +776,12 @@ class Wrapper:
         Returns:
             すべてのプロジェクト一覧
         """
-        return self._get_all_objects(self.api.get_projects_of_organization, limit=200,
-                                     organization_name=organization_name, query_params=query_params)
+        return self._get_all_objects(
+            self.api.get_projects_of_organization,
+            limit=200,
+            organization_name=organization_name,
+            query_params=query_params,
+        )
 
     #########################################
     # Public Method : OrganizationMember
@@ -867,8 +926,9 @@ class Wrapper:
         content, _ = self.api.get_project_member(project_id, user_id)
         return content
 
-    def get_all_project_members(self, project_id: str, query_params: Optional[Dict[str,
-                                                                                   Any]] = None) -> List[ProjectMember]:
+    def get_all_project_members(
+        self, project_id: str, query_params: Optional[Dict[str, Any]] = None
+    ) -> List[ProjectMember]:
         """
         すべてのプロジェクトメンバを取得する.
 
@@ -915,19 +975,25 @@ class Wrapper:
                 "sampling_acceptance_rate": member.get("sampling_acceptance_rate"),
                 "last_updated_datetime": last_updated_datetime,
             }
-            updated_project_member = self.api.put_project_member(project_id, member["user_id"],
-                                                                 request_body=request_body)[0]
+            updated_project_member = self.api.put_project_member(
+                project_id, member["user_id"], request_body=request_body
+            )[0]
             updated_project_members.append(updated_project_member)
 
-            command_name = '追加' if last_updated_datetime is None else '更新'
-            logger.debug("プロジェクトメンバの'%s' 完了."
-                         " project_id=%s, user_id=%s, "
-                         "last_updated_datetime=%s", command_name, project_id, member['user_id'], last_updated_datetime)
+            command_name = "追加" if last_updated_datetime is None else "更新"
+            logger.debug(
+                "プロジェクトメンバの'%s' 完了." " project_id=%s, user_id=%s, " "last_updated_datetime=%s",
+                command_name,
+                project_id,
+                member["user_id"],
+                last_updated_datetime,
+            )
 
         return updated_project_members
 
-    def assign_role_to_project_members(self, project_id: str, user_id_list: List[str],
-                                       member_role: str) -> List[ProjectMember]:
+    def assign_role_to_project_members(
+        self, project_id: str, user_id_list: List[str], member_role: str
+    ) -> List[ProjectMember]:
         """
         複数のプロジェクトメンバに1つのロールを割り当てる。
 
@@ -946,7 +1012,7 @@ class Wrapper:
 
         project_members = []
         for user_id in user_id_list:
-            member = {'user_id': user_id, 'member_status': 'active', 'member_role': member_role}
+            member = {"user_id": user_id, "member_status": "active", "member_role": member_role}
             project_members.append(member)
 
         return self.put_project_members(project_id, project_members)
@@ -969,16 +1035,17 @@ class Wrapper:
         project_members = []
         for user_id in user_id_list:
             member = {
-                'user_id': user_id,
-                'member_status': 'inactive',
-                'member_role': 'worker'  # 何か指定しないとエラーになったため、指定する
+                "user_id": user_id,
+                "member_status": "inactive",
+                "member_role": "worker",  # 何か指定しないとエラーになったため、指定する
             }
             project_members.append(member)
 
         return self.put_project_members(project_id, project_members)
 
-    def copy_project_members(self, src_project_id: str, dest_project_id: str,
-                             delete_dest: bool = False) -> List[ProjectMember]:
+    def copy_project_members(
+        self, src_project_id: str, dest_project_id: str, delete_dest: bool = False
+    ) -> List[ProjectMember]:
         """
         プロジェクトメンバを、別のプロジェクトにコピーする。
 
@@ -1003,7 +1070,7 @@ class Wrapper:
             deleted_dest_members = [e for e in dest_project_members if e["account_id"] not in src_account_ids]
 
             def to_inactive(arg_member):
-                arg_member['member_status'] = 'inactive'
+                arg_member["member_status"] = "inactive"
                 return arg_member
 
             deleted_dest_members = list(map(to_inactive, deleted_dest_members))
@@ -1015,8 +1082,9 @@ class Wrapper:
     #########################################
     # Public Method : Task
     #########################################
-    def initiate_tasks_generation_by_csv(self, project_id: str, csvfile_path: str,
-                                         query_params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def initiate_tasks_generation_by_csv(
+        self, project_id: str, csvfile_path: str, query_params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         タスクID,入力データ名,入力データID」を1行毎に指定したCSVを使って、タスクを生成する
 
@@ -1030,14 +1098,11 @@ class Wrapper:
         """
         s3_path = self.upload_file_to_s3(project_id, csvfile_path, "text/csv")
 
-        project_last_updated_datetime = self.api.get_project(project_id)[0]['updated_datetime']
+        project_last_updated_datetime = self.api.get_project(project_id)[0]["updated_datetime"]
 
         request_body = {
-            'task_generate_rule': {
-                '_type': 'ByInputDataCsv',
-                'csv_data_path': s3_path,
-            },
-            'project_last_updated_datetime': project_last_updated_datetime
+            "task_generate_rule": {"_type": "ByInputDataCsv", "csv_data_path": s3_path,},
+            "project_last_updated_datetime": project_last_updated_datetime,
         }
         return self.api.initiate_tasks_generation(project_id, request_body=request_body, query_params=query_params)[0]
 
@@ -1086,11 +1151,12 @@ class Wrapper:
         if len(histories) == 0:
             return None
 
-        latest_history_id = histories[0]['history_id']
-        return self.api.get_instruction(project_id, {'history_id': latest_history_id})[0]
+        latest_history_id = histories[0]["history_id"]
+        return self.api.get_instruction(project_id, {"history_id": latest_history_id})[0]
 
-    def upload_instruction_image(self, project_id: str, image_id: str, file_path: str,
-                                 content_type: Optional[str] = None) -> str:
+    def upload_instruction_image(
+        self, project_id: str, image_id: str, file_path: str, content_type: Optional[str] = None
+    ) -> str:
         """
         作業ガイドの画像をアップロードする。
 
@@ -1104,7 +1170,7 @@ class Wrapper:
             一時データ保存先であるS3パス
         """
         new_content_type = self._get_content_type(file_path, content_type)
-        with open(file_path, 'rb') as f:
+        with open(file_path, "rb") as f:
             return self.upload_data_as_instruction_image(project_id, image_id, data=f, content_type=new_content_type)
 
     def upload_data_as_instruction_image(self, project_id: str, image_id: str, data: Any, content_type: str) -> str:
@@ -1121,8 +1187,9 @@ class Wrapper:
             一時データ保存先であるS3パス
         """
         # 作業ガイド登録用/更新用のURLを取得
-        content = self.api.get_instruction_image_url_for_put(project_id, image_id,
-                                                             header_params={'content-type': content_type})[0]
+        content = self.api.get_instruction_image_url_for_put(
+            project_id, image_id, header_params={"content-type": content_type}
+        )[0]
 
         url_parse_result = urllib.parse.urlparse(content["url"])
         query_dict = urllib.parse.parse_qs(url_parse_result.query)
@@ -1131,7 +1198,7 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={'content-type': content_type})
+        res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={"content-type": content_type})
         _log_error_response(logger, res_put)
         _raise_for_status(res_put)
         return content["path"]
@@ -1151,12 +1218,12 @@ class Wrapper:
             削除したジョブの一覧
         """
 
-        jobs = self.get_all_project_job(project_id, {'type': job_type.value})
+        jobs = self.get_all_project_job(project_id, {"type": job_type.value})
         deleted_jobs = []
         for job in jobs:
-            if job['job_status'] == 'succeeded':
-                logger.debug("job_id=%s のジョブを削除します。", job['job_id'])
-                self.api.delete_project_job(project_id, job['job_id'])
+            if job["job_status"] == "succeeded":
+                logger.debug("job_id=%s のジョブを削除します。", job["job_id"])
+                self.api.delete_project_job(project_id, job["job_id"])
                 deleted_jobs.append(job)
 
         return deleted_jobs
@@ -1206,8 +1273,9 @@ class Wrapper:
         job = job_list[0]
         return job["job_status"] == JobStatus.PROGRESS.value
 
-    def wait_for_completion(self, project_id: str, job_type: JobType, job_access_interval: int = 60,
-                            max_job_access: int = 10) -> bool:
+    def wait_for_completion(
+        self, project_id: str, job_type: JobType, job_access_interval: int = 60, max_job_access: int = 10
+    ) -> bool:
         """
         ジョブが完了するまで待つ。
 
@@ -1222,6 +1290,7 @@ class Wrapper:
             Falseならば、ジョブが失敗 or ``max_job_access`` 回アクセスしても、ジョブが完了しなかった。
 
         """
+
         def get_latest_job() -> Optional[JobInfo]:
             job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
             if len(job_list) > 0:
@@ -1243,18 +1312,18 @@ class Wrapper:
             job_access_count += 1
 
             if job["job_status"] == "succeeded":
-                logger.debug("job_id = %s のジョブが成功しました。", job['job_id'])
+                logger.debug("job_id = %s のジョブが成功しました。", job["job_id"])
                 return True
 
             elif job["job_status"] == "failed":
-                logger.info("job_id = %s のジョブが失敗しました。", job['job_id'])
+                logger.info("job_id = %s のジョブが失敗しました。", job["job_id"])
                 return False
 
             else:
                 # 進行中
                 if job_access_count < max_job_access:
-                    logger.debug("job_id = %s のジョブが進行中です。%d 秒間待ちます。", job['job_id'], job_access_interval)
+                    logger.debug("job_id = %s のジョブが進行中です。%d 秒間待ちます。", job["job_id"], job_access_interval)
                     time.sleep(job_access_interval)
                 else:
-                    logger.debug("job_id = %s のジョブに %d 回アクセスしましたが、完了しませんでした。", job['job_id'], job_access_count)
+                    logger.debug("job_id = %s のジョブに %d 回アクセスしましたが、完了しませんでした。", job["job_id"], job_access_count)
                     return False

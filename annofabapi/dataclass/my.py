@@ -23,6 +23,7 @@ class MyOrganization:
     """
     
     """
+
     organization_id: Optional[str]
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
@@ -57,6 +58,7 @@ class MyAccount:
     """
     
     """
+
     account_id: str
     """"""
 

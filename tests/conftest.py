@@ -23,6 +23,6 @@ def pytest_collection_modifyitems(config, items):
 
 def pytest_cmdline_main(config):
     if config.getoption("--print_log_annofabapi"):
-        logging_formatter = '%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s'
+        logging_formatter = "%(levelname)s : %(asctime)s : %(name)s : %(funcName)s : %(message)s"
         logging.basicConfig(format=logging_formatter)
         logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)

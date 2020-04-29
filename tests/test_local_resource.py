@@ -23,13 +23,13 @@ class TestBuild:
 
     def test_build_from_env_raise_AnnofabApiException(self):
         with pytest.raises(annofabapi.exceptions.AnnofabApiException):
-            os.environ.pop('ANNOFAB_USER_ID', None)
-            os.environ.pop('ANNOFAB_PASSWORD', None)
+            os.environ.pop("ANNOFAB_USER_ID", None)
+            os.environ.pop("ANNOFAB_PASSWORD", None)
             annofabapi.build_from_env()
 
     def test_build_from_env(self):
-        os.environ['ANNOFAB_USER_ID'] = 'FOO'
-        os.environ['ANNOFAB_PASSWORD'] = 'BAR'
+        os.environ["ANNOFAB_USER_ID"] = "FOO"
+        os.environ["ANNOFAB_PASSWORD"] = "BAR"
         assert isinstance(annofabapi.build_from_env(), annofabapi.Resource)
 
     def test_build_with_endpoint(self):

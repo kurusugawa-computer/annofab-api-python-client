@@ -35,7 +35,7 @@ def _raise_for_status(response: requests.Response) -> None:
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
         http_error_msg = f"{e.args[0]} , {response.text}"
-        e.args = (http_error_msg, )
+        e.args = (http_error_msg,)
         raise e
 
 
@@ -129,7 +129,7 @@ def _download(url: str, dest_path: str) -> None:
 
     p = Path(dest_path)
     p.parent.mkdir(parents=True, exist_ok=True)
-    with open(dest_path, 'wb') as f:
+    with open(dest_path, "wb") as f:
         f.write(response.content)
 
 
@@ -174,7 +174,7 @@ def to_iso8601_extension(d: datetime.datetime, tz: Optional[datetime.tzinfo] = N
     if tz is None:
         tz = dateutil.tz.tzlocal()
     d = d.astimezone(tz)
-    return d.isoformat(timespec='milliseconds')
+    return d.isoformat(timespec="milliseconds")
 
 
 def allow_404_error(function):
@@ -183,6 +183,7 @@ def allow_404_error(function):
     リソースの存在確認などに利用する。
     try-exceptを行う。また404 Errorが発生したときのエラーログを無効化する
     """
+
     def wrapped(*args, **kwargs):
         annofabapi_logger_level = logging.getLogger("annofabapi").level
         backoff_logger_level = logging.getLogger("backoff").level
@@ -219,9 +220,13 @@ def get_task_history_index_skipped_acceptance(task_history_list: List[TaskHistor
     """
     index_list = []
     for index, history in enumerate(task_history_list):
-        if not (TaskPhase(history["phase"]) == TaskPhase.ACCEPTANCE and history["account_id"] is None
-                and history["accumulated_labor_time_milliseconds"] == "PT0S" and history["started_datetime"] is not None
-                and history["ended_datetime"] is not None):
+        if not (
+            TaskPhase(history["phase"]) == TaskPhase.ACCEPTANCE
+            and history["account_id"] is None
+            and history["accumulated_labor_time_milliseconds"] == "PT0S"
+            and history["started_datetime"] is not None
+            and history["ended_datetime"] is not None
+        ):
             continue
 
         if index + 1 < len(task_history_list):
@@ -252,9 +257,13 @@ def get_task_history_index_skipped_inspection(task_history_list: List[TaskHistor
     """
     index_list = []
     for index, history in enumerate(task_history_list):
-        if not (TaskPhase(history["phase"]) == TaskPhase.INSPECTION and history["account_id"] is None
-                and history["accumulated_labor_time_milliseconds"] == "PT0S" and history["started_datetime"] is not None
-                and history["ended_datetime"] is not None):
+        if not (
+            TaskPhase(history["phase"]) == TaskPhase.INSPECTION
+            and history["account_id"] is None
+            and history["accumulated_labor_time_milliseconds"] == "PT0S"
+            and history["started_datetime"] is not None
+            and history["ended_datetime"] is not None
+        ):
             continue
 
         if index + 1 < len(task_history_list):
