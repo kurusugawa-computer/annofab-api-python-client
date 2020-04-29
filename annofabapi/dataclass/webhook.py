@@ -23,6 +23,7 @@ class WebhookHeader:
     """
     
     """
+
     name: Optional[str]
     """"""
 
@@ -36,6 +37,7 @@ class Webhook:
     """
     
     """
+
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 

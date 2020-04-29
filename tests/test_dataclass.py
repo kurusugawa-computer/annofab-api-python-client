@@ -25,18 +25,18 @@ from tests.utils_for_test import WrapperForTest
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
-inifile.read('./pytest.ini', 'UTF-8')
-project_id = inifile.get('annofab', 'project_id')
-task_id = inifile.get('annofab', 'task_id')
-input_data_id = inifile.get('annofab', 'input_data_id')
+inifile.read("./pytest.ini", "UTF-8")
+project_id = inifile.get("annofab", "project_id")
+task_id = inifile.get("annofab", "task_id")
+input_data_id = inifile.get("annofab", "input_data_id")
 
-test_dir = Path('./tests/data')
+test_dir = Path("./tests/data")
 
 service = annofabapi.build_from_netrc()
 test_wrapper = WrapperForTest(service.api)
 
-my_account_id = service.api.get_my_account()[0]['account_id']
-organization_name = service.api.get_organization_of_project(project_id)[0]['organization_name']
+my_account_id = service.api.get_my_account()[0]["account_id"]
+organization_name = service.api.get_organization_of_project(project_id)[0]["organization_name"]
 
 annofab_user_id = service.api.login_user_id
 
@@ -48,10 +48,9 @@ class TestAnnotation:
         assert type(dataclass_obj) == Annotation
 
     def test_simple_annotation(self):
-        annotation_list = service.wrapper.get_all_annotation_list(project_id,
-                                                                  query_params={'query': {
-                                                                      'task_id': task_id
-                                                                  }})
+        annotation_list = service.wrapper.get_all_annotation_list(
+            project_id, query_params={"query": {"task_id": task_id}}
+        )
         single_annotation = SingleAnnotation.from_dict(annotation_list[0])
         assert type(single_annotation) == SingleAnnotation
 
@@ -70,7 +69,7 @@ class TestAnnotationSpecsV1:
 
 class TestInput:
     def test_input_data(self):
-        input_data_list = service.wrapper.get_all_input_data_list(project_id, query_params={'task_id': task_id})
+        input_data_list = service.wrapper.get_all_input_data_list(project_id, query_params={"task_id": task_id})
         input_data = InputData.from_dict(input_data_list[0])
         assert type(input_data) == InputData
 

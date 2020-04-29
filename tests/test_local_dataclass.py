@@ -23,9 +23,9 @@ from annofabapi.dataclass.webhook import Webhook
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
-inifile.read('./pytest.ini', 'UTF-8')
+inifile.read("./pytest.ini", "UTF-8")
 
-test_dir = Path('./tests/data/dataclass')
+test_dir = Path("./tests/data/dataclass")
 
 
 class TestAnnotation:

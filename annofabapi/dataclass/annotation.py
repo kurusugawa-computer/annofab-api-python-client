@@ -28,6 +28,7 @@ class Point:
     """
     座標
     """
+
     x: int
     """"""
 
@@ -41,6 +42,7 @@ class FullAnnotationDataClassification:
     """
     
     """
+
     type: str
     """Classification"""
 
@@ -51,6 +53,7 @@ class FullAnnotationDataSegmentation:
     """
     塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
     """
+
     data_uri: str
     """"""
 
@@ -64,6 +67,7 @@ class FullAnnotationDataSegmentationV2:
     """
     
     """
+
     data_uri: str
     """"""
 
@@ -77,6 +81,7 @@ class FullAnnotationDataBoundingBox:
     """
     annotation_type が bounding_boxの場合に、[左上頂点座標, 右下頂点座標]を {\"x\":int, \"y\":int} の形式で記述したもの。
     """
+
     left_top: Point
     """"""
 
@@ -93,6 +98,7 @@ class FullAnnotationDataPoints:
     """
     頂点座標 {\"x\":int, \"y\":int} の配列。  * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。 
     """
+
     points: List[Point]
     """"""
 
@@ -106,6 +112,7 @@ class FullAnnotationDataSinglePoint:
     """
     annotation_type が pointの場合。
     """
+
     point: Point
     """"""
 
@@ -119,6 +126,7 @@ class FullAnnotationDataRange:
     """
     annotation_type が rangeの場合に、[開始時間, 終了時間]を {\"begin\":number, \"end\":number} の形式で記述したもの。開始時間・終了時間の単位は秒で、精度はミリ秒まで。
     """
+
     begin: float
     """開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。"""
 
@@ -135,6 +143,7 @@ class AdditionalData:
     """
     
     """
+
     additional_data_definition_id: str
     """属性ID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。"""
 
@@ -157,6 +166,7 @@ class FullAnnotationAdditionalData:
     """
     
     """
+
     additional_data_definition_id: Optional[str]
     """"""
 
@@ -176,6 +186,7 @@ class FullAnnotationDetail:
     """
     
     """
+
     annotation_id: Optional[str]
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
@@ -207,6 +218,7 @@ class FullAnnotation:
     """
     
     """
+
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
@@ -244,6 +256,7 @@ class SimpleAnnotationDetail:
     """
     
     """
+
     label: str
     """アノテーション仕様のラベル名です。 """
 
@@ -263,6 +276,7 @@ class SimpleAnnotation:
     """
     
     """
+
     annotation_format_version: str
     """アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 """
 
@@ -300,6 +314,7 @@ class SingleAnnotationDetail:
     """
     
     """
+
     annotation_id: str
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
@@ -337,6 +352,7 @@ class SingleAnnotation:
     """
     
     """
+
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
@@ -359,6 +375,7 @@ class AnnotationDetail:
     """
     
     """
+
     annotation_id: str
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
@@ -402,6 +419,7 @@ class Annotation:
     """
     
     """
+
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 

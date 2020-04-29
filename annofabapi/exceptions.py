@@ -22,6 +22,7 @@ class AnnotationOuterFileNotFoundError(AnnofabApiException):
         zipfile_path: 指定した場合、「zipファイル内に外部ファイルが存在しなかった」という旨のメッセージを設定する。
 
     """
+
     def __init__(self, outer_file_path: str, zipfile_path: Optional[str] = None):
         if zipfile_path is None:
             message = f"No such file or directory: '{outer_file_path}'"
