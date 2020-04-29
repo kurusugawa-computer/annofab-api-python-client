@@ -23,6 +23,3 @@ twine = "*"
 sphinx = "==1.8.5"
 autoflake = "*"
 docutils = "*"
-
-[pipenv]
-allow_prereleases = true
