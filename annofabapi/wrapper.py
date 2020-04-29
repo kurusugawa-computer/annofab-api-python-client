@@ -1101,7 +1101,7 @@ class Wrapper:
         project_last_updated_datetime = self.api.get_project(project_id)[0]["updated_datetime"]
 
         request_body = {
-            "task_generate_rule": {"_type": "ByInputDataCsv", "csv_data_path": s3_path,},
+            "task_generate_rule": {"_type": "ByInputDataCsv", "csv_data_path": s3_path},
             "project_last_updated_datetime": project_last_updated_datetime,
         }
         return self.api.initiate_tasks_generation(project_id, request_body=request_body, query_params=query_params)[0]
