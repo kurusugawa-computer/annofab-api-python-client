@@ -21,6 +21,7 @@ class Instruction:
     """
     
     """
+
     html: Optional[str]
     """作業ガイドのHTML"""
 
@@ -34,6 +35,7 @@ class InstructionHistory:
     """
     
     """
+
     history_id: str
     """作業ガイドの履歴ID"""
 
@@ -50,6 +52,7 @@ class InstructionImage:
     """
     
     """
+
     image_id: str
     """作業ガイド画像ID"""
 
