@@ -23,6 +23,7 @@ class OrganizationActivity:
     """
     
     """
+
     organization_id: str
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
@@ -39,6 +40,7 @@ class Organization:
     """
     
     """
+
     organization_id: str
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 

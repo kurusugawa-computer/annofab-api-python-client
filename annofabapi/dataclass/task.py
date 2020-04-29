@@ -23,6 +23,7 @@ class TaskHistory:
     """
     タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
     """
+
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
@@ -57,6 +58,7 @@ class TaskHistoryShort:
     """
     タスクのあるフェーズを誰が担当したかを表します。
     """
+
     phase: TaskPhase
     """"""
 
@@ -76,6 +78,7 @@ class Task:
     """
     
     """
+
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 

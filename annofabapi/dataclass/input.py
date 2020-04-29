@@ -21,6 +21,7 @@ class Resolution:
     """
     
     """
+
     width: float
     """"""
 
@@ -34,6 +35,7 @@ class InputData:
     """
     入力データの情報を表すデータ構造です。
     """
+
     input_data_id: str
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 

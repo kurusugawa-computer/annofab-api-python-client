@@ -30,6 +30,7 @@ class SimpleAnnotationParser(abc.ABC):
         json_file_path: パースするJSONファイルのパス。
 
     """
+
     def __init__(self, json_file_path: str):
         p = Path(json_file_path)
         self.__json_file_path = json_file_path
@@ -117,6 +118,7 @@ class FullAnnotationParser(abc.ABC):
 
 
     """
+
     def __init__(self, json_file_path: str):
         p = Path(json_file_path)
         self.__json_file_path = json_file_path
@@ -182,6 +184,7 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
 
 
     """
+
     def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str):
         self.__zip_file = zip_file
         super().__init__(json_file_path)
@@ -216,6 +219,7 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
             annotation = p.parse()
 
     """
+
     def __init__(self, json_file_path: Path):
         super().__init__(str(json_file_path))
 
@@ -229,7 +233,7 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
-            return open(outer_file_path, mode='rb')
+            return open(outer_file_path, mode="rb")
         except FileNotFoundError:
             raise AnnotationOuterFileNotFoundError(str(outer_file_path))
 
@@ -251,6 +255,7 @@ class FullAnnotationZipParser(FullAnnotationParser):
 
 
     """
+
     def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str):
         self.__zip_file = zip_file
         super().__init__(json_file_path)
@@ -285,6 +290,7 @@ class FullAnnotationDirParser(FullAnnotationParser):
             annotation = p.parse()
 
     """
+
     def __init__(self, json_file_path: Path):
         super().__init__(str(json_file_path))
 
@@ -296,7 +302,7 @@ class FullAnnotationDirParser(FullAnnotationParser):
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
-            return open(outer_file_path, mode='rb')
+            return open(outer_file_path, mode="rb")
         except FileNotFoundError:
             raise AnnotationOuterFileNotFoundError(str(outer_file_path))
 
@@ -309,6 +315,7 @@ class SimpleAnnotationParserByTask(abc.ABC):
     Args:
         task_id: タスクID
     """
+
     def __init__(self, task_id: str):
         self.__task_id = task_id
 
@@ -391,6 +398,7 @@ def lazy_parse_simple_annotation_zip_by_task(zip_file_path: Path) -> Iterator[Si
     Yields:
         対象タスク内の、annotationの遅延Parseが可能なインスタンス列
     """
+
     def get_task_id_from_path(path: str) -> str:
         """
         1階層目のディレクトリをtask_idとみなして、task_idを取得する。

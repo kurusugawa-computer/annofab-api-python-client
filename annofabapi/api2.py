@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union  # pylint: disable=unused-import
+from typing import Any, Dict, Optional, Tuple
 
 import requests
 from requests.cookies import RequestsCookieJar
@@ -23,6 +23,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
         api: API v1のインスタンス（一部のAPIは、v1のログインメソッドを利用するため）
 
     """
+
     def __init__(self, api: AnnofabApi):
         self.api = api
         self.url_prefix = f"{api.endpoint_url}/api/v2"
@@ -35,9 +36,14 @@ class AnnofabApi2(AbstractAnnofabApi2):
     #########################################
 
     @annofabapi.api.my_backoff
-    def _request_wrapper(self, http_method: str, url_path: str, query_params: Optional[Dict[str, Any]] = None,
-                         header_params: Optional[Dict[str, Any]] = None,
-                         request_body: Optional[Any] = None) -> Tuple[Any, requests.Response]:
+    def _request_wrapper(
+        self,
+        http_method: str,
+        url_path: str,
+        query_params: Optional[Dict[str, Any]] = None,
+        header_params: Optional[Dict[str, Any]] = None,
+        request_body: Optional[Any] = None,
+    ) -> Tuple[Any, requests.Response]:
         """
         HTTP　Requestを投げて、Reponseを返す。
         Args:
@@ -53,7 +59,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
         """
 
-        url = f'{self.url_prefix}{url_path}'
+        url = f"{self.url_prefix}{url_path}"
         kwargs = self.api._create_kwargs(query_params, header_params)
 
         if url_path == "/sign-url":
@@ -79,7 +85,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
         _log_error_response(logger, response)
 
-        response.encoding = 'utf-8'
+        response.encoding = "utf-8"
         _raise_for_status(response)
 
         content = self.api._response_to_content(response)
@@ -105,10 +111,10 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
         """
 
-        url_path = f'/sign-url'
-        http_method = 'GET'
+        url_path = f"/sign-url"
+        http_method = "GET"
         keyword_params: Dict[str, Any] = {
-            'query_params': query_params,
+            "query_params": query_params,
         }
 
         content, response = self._request_wrapper(http_method, url_path, **keyword_params)

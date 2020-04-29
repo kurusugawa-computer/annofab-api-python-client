@@ -10,15 +10,19 @@ import annofabapi.parser
 import annofabapi.utils
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
-from annofabapi.parser import (FullAnnotationDirParser, FullAnnotationZipParser, SimpleAnnotationDirParser,
-                               SimpleAnnotationZipParser)
+from annofabapi.parser import (
+    FullAnnotationDirParser,
+    FullAnnotationZipParser,
+    SimpleAnnotationDirParser,
+    SimpleAnnotationZipParser,
+)
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
-inifile.read('./pytest.ini', 'UTF-8')
+inifile.read("./pytest.ini", "UTF-8")
 
-test_dir = Path('./tests/data')
+test_dir = Path("./tests/data")
 
 
 class TestSimpleAnnotation:
@@ -54,7 +58,8 @@ class TestSimpleAnnotation:
         assert index == 2
 
         parser = SimpleAnnotationDirParser(
-            Path(f"{test_dir}/simple-annotation/sample_1/.__tests__data__lenna.png.json"))
+            Path(f"{test_dir}/simple-annotation/sample_1/.__tests__data__lenna.png.json")
+        )
         assert parser.task_id == "sample_1"
         assert parser.expected_input_data_name == "./tests/data/lenna.png"
         with pytest.raises(AnnotationOuterFileNotFoundError):
@@ -165,7 +170,8 @@ class TestFullAnnotation:
         assert index == 4
 
         parser = FullAnnotationDirParser(
-            Path(f"{test_dir}/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json"))
+            Path(f"{test_dir}/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
+        )
         assert parser.task_id == "sample_1"
         assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
         with pytest.raises(AnnotationOuterFileNotFoundError):
