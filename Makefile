@@ -11,8 +11,8 @@ init:
 format:
 	pipenv run autoflake  --in-place --remove-all-unused-imports  --ignore-init-module-imports --recursive annofabapi tests
     # balckは正式版がリリースされるまでは、pipenv上で実行しない。事前にpipでblackをインストールすること。
-	black annofabapi tests
 	pipenv run isort --verbose --recursive annofabapi tests
+	black annofabapi tests
 
 lint:
 	pipenv run mypy annofabapi --config-file setup.cfg
