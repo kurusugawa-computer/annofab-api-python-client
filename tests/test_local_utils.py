@@ -5,8 +5,11 @@
 #     assert to_iso8601_extension(d, tz_jst) == "2019-10-08T16:20:08.241+09:00"
 
 from annofabapi.models import TaskPhase
-from annofabapi.utils import (get_number_of_rejections, get_task_history_index_skipped_acceptance,
-                              get_task_history_index_skipped_inspection)
+from annofabapi.utils import (
+    get_number_of_rejections,
+    get_task_history_index_skipped_acceptance,
+    get_task_history_index_skipped_inspection,
+)
 
 
 class TestTaskHistoryUtils:

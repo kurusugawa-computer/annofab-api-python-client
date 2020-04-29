@@ -17,7 +17,7 @@ from enum import Enum
 
 ### 手動の部分
 
-AccountId = NewType('AccountId', str)
+AccountId = NewType("AccountId", str)
 """
 
 Example:
@@ -25,7 +25,7 @@ Example:
     
 """
 
-UserId = NewType('UserId', str)
+UserId = NewType("UserId", str)
 """
 
 Example:
@@ -33,7 +33,7 @@ Example:
 
 """
 
-OrganizationId = NewType('OrganizationId', str)
+OrganizationId = NewType("OrganizationId", str)
 """
 
 Example:
@@ -41,7 +41,7 @@ Example:
 
 """
 
-ProjectId = NewType('ProjectId', str)
+ProjectId = NewType("ProjectId", str)
 """
 
 Example:
@@ -49,7 +49,7 @@ Example:
 
 """
 
-LabelId = NewType('LabelId', str)
+LabelId = NewType("LabelId", str)
 """
 
 Example:
@@ -57,7 +57,7 @@ Example:
 
 """
 
-AdditionalDataDefinitionId = NewType('AdditionalDataDefinitionId', str)
+AdditionalDataDefinitionId = NewType("AdditionalDataDefinitionId", str)
 """
 
 Example:
@@ -65,7 +65,7 @@ Example:
 
 """
 
-ChoiceId = NewType('ChoiceId', str)
+ChoiceId = NewType("ChoiceId", str)
 """
 
 Example:
@@ -73,7 +73,7 @@ Example:
 
 """
 
-PhraseId = NewType('PhraseId', str)
+PhraseId = NewType("PhraseId", str)
 """
 
 Example:
@@ -81,7 +81,7 @@ Example:
 
 """
 
-TaskId = NewType('TaskId', str)
+TaskId = NewType("TaskId", str)
 """
 
 Example:
@@ -89,7 +89,7 @@ Example:
 
 """
 
-InputDataId = NewType('InputDataId', str)
+InputDataId = NewType("InputDataId", str)
 """
 
 Example:
@@ -97,7 +97,7 @@ Example:
 
 """
 
-SupplementaryDataId = NewType('SupplementaryDataId', str)
+SupplementaryDataId = NewType("SupplementaryDataId", str)
 """
 
 Example:
@@ -105,7 +105,7 @@ Example:
 
 """
 
-TaskHistoryId = NewType('TaskHistoryId', str)
+TaskHistoryId = NewType("TaskHistoryId", str)
 """
 
 Example:
@@ -113,7 +113,7 @@ Example:
 
 """
 
-AnnotationId = NewType('AnnotationId', str)
+AnnotationId = NewType("AnnotationId", str)
 """
 
 Example:
@@ -121,7 +121,7 @@ Example:
 
 """
 
-InspectionId = NewType('InspectionId', str)
+InspectionId = NewType("InspectionId", str)
 """
 
 Example:
@@ -129,7 +129,7 @@ Example:
 
 """
 
-MakerId = NewType('MakerId', str)
+MakerId = NewType("MakerId", str)
 """
 
 Example:
@@ -137,7 +137,7 @@ Example:
 
 """
 
-JobId = NewType('JobId', str)
+JobId = NewType("JobId", str)
 """
 
 Example:
@@ -145,7 +145,7 @@ Example:
 
 """
 
-WebhookId = NewType('WebhookId', str)
+WebhookId = NewType("WebhookId", str)
 """
 
 Example:
@@ -153,7 +153,7 @@ Example:
 
 """
 
-Duration = NewType('Duration', str)
+Duration = NewType("Duration", str)
 """
 
 Example:
