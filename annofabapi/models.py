@@ -3591,6 +3591,8 @@ Kyes of Dict
     
 * account_id: str
     
+* request: TaskOperation
+    
 
 """
 
