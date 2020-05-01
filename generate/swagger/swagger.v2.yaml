@@ -86,7 +86,7 @@ info:
     入力データセットID | 組織内で一意
     プラグインID | 組織内で一意
 
-  version: 0.82.0
+  version: 0.83.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -3474,6 +3474,8 @@ components:
           $ref: "#/components/schemas/TaskStatus"
         account_id:
           $ref: "#/components/schemas/AccountId"
+        request:
+          $ref: "#/components/schemas/TaskOperation"
     TaskValidation:
       description: タスクの全入力データに対するバリデーション結果です。
       type: object
