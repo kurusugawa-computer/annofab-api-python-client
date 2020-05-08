@@ -12,8 +12,8 @@ def create_csv_for_task(file_path, task_id: str, input_data_id: str):
     lines = [first_line]
 
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    with open(file_path, 'w') as f:
-        writer = csv.writer(f, delimiter=',', lineterminator='\n')
+    with open(file_path, "w") as f:
+        writer = csv.writer(f, delimiter=",", lineterminator="\n")
         writer.writerows(lines)
 
 
@@ -21,6 +21,7 @@ class WrapperForTest:
     """
     テスト用のUtils
     """
+
     def __init__(self, api: AnnofabApi):
         self.api = api
 
@@ -37,14 +38,14 @@ class WrapperForTest:
 
     def get_first_input_data(self, project_id):
         r = self.api.get_input_data_list(project_id)[0]
-        input_data_list = r['list']
+        input_data_list = r["list"]
         return input_data_list[0]
 
     def get_first_annotation(self, project_id):
-        first_input_data = self.api.get_annotation_list(project_id)[0]['list'][0]
-        first_annotation = first_input_data['detail']
+        first_input_data = self.api.get_annotation_list(project_id)[0]["list"][0]
+        first_annotation = first_input_data["detail"]
         return {
-            'task_id': first_input_data['task_id'],
-            'input_data_id': first_input_data['input_data_id'],
-            'annotation_id': first_annotation['annotation_id']
+            "task_id": first_input_data["task_id"],
+            "input_data_id": first_input_data["input_data_id"],
+            "annotation_id": first_annotation["annotation_id"],
         }

@@ -1,4 +1,4 @@
-from annofabapi.models import (InspectionStatus, TaskPhase)
+from annofabapi.models import InspectionStatus, TaskPhase
 
 
 OneOfInspectionDataPointInspectionDataPolylineInspectionDataTime = Dict[str, Any]
