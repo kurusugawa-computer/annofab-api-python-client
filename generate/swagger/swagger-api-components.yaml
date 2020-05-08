@@ -2801,6 +2801,12 @@
           type: boolean
           description: |
             データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。
+          additionalProperties:
+            type: string
     InputDataRequest:
       type: object
       required:
@@ -2833,6 +2839,12 @@
           description: |
             データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br>
             このオプションを有効にする場合は、`input_data_path`として、AnnoFabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。
+          additionalProperties:
+            type: string
     SupplementaryData:
       type: object
       required:
