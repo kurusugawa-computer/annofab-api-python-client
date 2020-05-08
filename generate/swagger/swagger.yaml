@@ -86,7 +86,7 @@ info:
     入力データセットID | 組織内で一意
     プラグインID | 組織内で一意
 
-  version: 0.83.0
+  version: 0.84.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -7888,6 +7888,12 @@ components:
           type: boolean
           description: |
             データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。
+          additionalProperties:
+            type: string
     InputDataRequest:
       type: object
       required:
@@ -7920,6 +7926,12 @@ components:
           description: |
             データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br>
             このオプションを有効にする場合は、`input_data_path`として、AnnoFabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。
+          additionalProperties:
+            type: string
     SupplementaryData:
       type: object
       required:
