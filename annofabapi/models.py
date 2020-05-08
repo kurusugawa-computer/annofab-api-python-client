@@ -1841,6 +1841,8 @@ Kyes of Dict
     
 * sign_required: bool
     データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。 
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。 
 
 """
 
@@ -1869,6 +1871,8 @@ Kyes of Dict
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * sign_required: bool
     データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br> このオプションを有効にする場合は、`input_data_path`として、AnnoFabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。 
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。 
 
 """
 
@@ -3590,6 +3594,8 @@ Kyes of Dict
 * status: TaskStatus
     
 * account_id: str
+    
+* request: TaskOperation
     
 
 """
