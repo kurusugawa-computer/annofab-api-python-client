@@ -23,6 +23,7 @@ class ProjectTaskStatistics:
     """
     
     """
+
     phase: TaskPhase
     """"""
 
@@ -42,6 +43,7 @@ class ProjectTaskStatisticsHistory:
     """
     
     """
+
     date: Optional[str]
     """"""
 
@@ -55,6 +57,7 @@ class ProjectAccountStatisticsHistory:
     """
     
     """
+
     date: str
     """"""
 
@@ -74,6 +77,7 @@ class ProjectAccountStatistics:
     """
     
     """
+
     account_id: str
     """"""
 
@@ -87,6 +91,7 @@ class InspectionStatisticsPhrases:
     """
     ラベル外指摘の集計結果
     """
+
     phrases: Dict[str, int]
     """定型指摘ごとの合計数。キーは定型指摘ID、値は指摘数"""
 
@@ -100,6 +105,7 @@ class InspectionStatisticsBreakdown:
     """
     検査コメント数の集計結果
     """
+
     labels: Dict[str, InspectionStatisticsPhrases]
     """ラベルごとの指摘集計結果。キーは`label_id`"""
 
@@ -113,6 +119,7 @@ class InspectionStatistics:
     """
     
     """
+
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
@@ -129,6 +136,7 @@ class PhaseStatistics:
     """
     
     """
+
     phase: TaskPhase
     """"""
 
@@ -142,6 +150,7 @@ class TaskPhaseStatistics:
     """
     
     """
+
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
@@ -158,6 +167,7 @@ class LabelStatistics:
     """
     
     """
+
     label_id: str
     """"""
 
@@ -174,6 +184,7 @@ class HistogramItem:
     """
     
     """
+
     begin: float
     """"""
 
@@ -190,6 +201,7 @@ class WorktimeStatisticsItem:
     """
     
     """
+
     phase: TaskPhase
     """"""
 
@@ -209,6 +221,7 @@ class AccountWorktimeStatistics:
     """
     
     """
+
     account_id: str
     """"""
 
@@ -228,6 +241,7 @@ class WorktimeStatistics:
     """
     
     """
+
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
@@ -253,6 +267,7 @@ class Marker:
     """
     
     """
+
     marker_id: Optional[str]
     """マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
@@ -272,6 +287,7 @@ class Markers:
     """
     
     """
+
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
