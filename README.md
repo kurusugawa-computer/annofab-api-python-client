@@ -1,9 +1,11 @@
 # annofab-api-python-client
-[AnnoFab Web API](https://annofab.com/docs/api/)のPythonクライアントライブラリです。
+[AnnoFab Web API](https://annofab.com/docs/api/) のPythonクライアントライブラリです。
 
-[![pypi package][pypi-image]][pypi-url]
-[![Build Status][travis-image]][travis-url]
-[![Python Version][python-version]][pypi-url]
+[![Build Status](https://travis-ci.com/kurusugawa-computer/annofab-api-python-client.svg?branch=master)](https://travis-ci.com/kurusugawa-computer/annofab-api-python-client)
+[![PyPI version](https://badge.fury.io/py/annofabapi.svg)](https://badge.fury.io/py/annofabapi)
+[![Python Versions](https://img.shields.io/pypi/pyversions/annofabapi.svg)](https://pypi.org/project/annofabapi/)
+
+
 
 
 * **AnnoFab Web API Documentation:** https://annofab.com/docs/api/
