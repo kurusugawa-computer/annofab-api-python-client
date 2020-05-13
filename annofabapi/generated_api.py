@@ -1,5 +1,6 @@
 # flake8: noqa: W291
 # pylint: disable=too-many-lines,trailing-whitespace
+
 """
 AbstractAnnofabApiのヘッダ部分
 
@@ -1783,9 +1784,32 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
+    def get_project_task_histories_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+        """プロジェクトのタスク履歴全件URLの取得
+
+
+        authorizations: ProjectOwner
+
+
+        タスク履歴全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク履歴全件ファイル タスク履歴イベント全件ファイルには、プロジェクトのタスク履歴情報がJSON形式（キーがタスクID、値が[TaskHistory](#section/TaskHistory)の配列となるマップ）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+
+        Returns:
+            Tuple[InlineResponse2005, requests.Response]
+
+
+        """
+        url_path = f"/projects/{project_id}/rawdata/task_histories"
+        http_method = "GET"
+        keyword_params: Dict[str, Any] = {}
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
     def get_project_task_history_events_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトのタスク履歴イベント全件URLの取得
 
+        .. deprecated:: X
 
         authorizations: ProjectOwner
 
@@ -1800,6 +1824,7 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
+        warnings.warn("deprecated", DeprecationWarning)
         url_path = f"/projects/{project_id}/rawdata/task_history_events"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
