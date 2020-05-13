@@ -86,7 +86,7 @@ info:
     入力データセットID | 組織内で一意
     プラグインID | 組織内で一意
 
-  version: 0.84.0
+  version: 0.85.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"

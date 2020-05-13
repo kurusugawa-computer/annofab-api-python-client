@@ -242,8 +242,9 @@ cd ../
 
 # Format
 FORMATTED_FILE="annofabapi/generated_api.py annofabapi/generated_api2.py annofabapi/models.py annofabapi/dataclass/*.py"
-pipenv run isort  ${FORMATTED_FILE}
-pipenv run yapf  --in-place ${FORMATTED_FILE}
+pipenv run autoflake  --in-place --remove-all-unused-imports  --ignore-init-module-imports --recursive ${FORMATTED_FILE}
+pipenv run isort --verbose --recursive ${FORMATTED_FILE}
+black ${FORMATTED_FILE}
 
 popd
 

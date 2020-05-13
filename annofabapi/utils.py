@@ -83,8 +83,8 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
     if 400 <= response.status_code < 600:
         headers = copy.deepcopy(response.request.headers)
 
-        arg_logger.debug(f"status_code = %s, response.text = %s", response.status_code, response.text)
-        arg_logger.debug(f"request.url = %s %s", response.request.method, response.request.url)
+        arg_logger.debug("status_code = %s, response.text = %s", response.status_code, response.text)
+        arg_logger.debug("request.url = %s %s", response.request.method, response.request.url)
 
         # logにAuthorizationを出力しないようにマスクする
         mask_key(headers, "Authorization")

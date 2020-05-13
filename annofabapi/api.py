@@ -371,7 +371,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
 
         """
-        url_path = f"/labor-control"
+        url_path = "/labor-control"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
@@ -390,7 +390,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
 
         """
-        url_path = f"/labor-control"
+        url_path = "/labor-control"
         http_method = "PUT"
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,

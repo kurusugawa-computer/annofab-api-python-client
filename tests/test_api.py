@@ -261,6 +261,11 @@ class TestProject:
             project_id, f"{out_dir}/task_history_events.json"
         ).startswith("https://")
 
+    def test_wrapper_download_project_task_histories_url(self):
+        assert wrapper.download_project_task_histories_url(project_id, f"{out_dir}/task_histories.json").startswith(
+            "https://"
+        )
+
     def test_wrapper_download_project_inspections_url(self):
         assert wrapper.download_project_inspections_url(project_id, f"{out_dir}/inspections.json").startswith(
             "https://"
