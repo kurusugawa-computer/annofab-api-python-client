@@ -1,5 +1,6 @@
 # flake8: noqa: W291
 # pylint: disable=too-many-lines,trailing-whitespace
+
 """
 AbstractAnnofabApi2のヘッダ部分
 
