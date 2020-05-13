@@ -923,6 +923,25 @@ class Wrapper:
         _download(url, dest_path)
         return url
 
+    def download_project_task_histories_url(self, project_id: str, dest_path: str) -> str:
+        """
+        プロジェクトのタスク履歴全件ファイルをダウンロードする。
+        ファイルの中身はJSON。
+
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先ファイルのパス
+
+        Returns:
+            ダウンロード元のURL
+
+        """
+
+        content, _ = self.api.get_project_task_histories_url(project_id)
+        url = content["url"]
+        _download(url, dest_path)
+        return url
+
     #########################################
     # Public Method : ProjectMember
     #########################################
