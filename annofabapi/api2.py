@@ -111,7 +111,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
         """
 
-        url_path = f"/sign-url"
+        url_path = "/sign-url"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
