@@ -1,0 +1,41 @@
+disable =
+    logging-fstring-interpolation,
+# ===== May not modify =====
+    fixme, # TODO remains
+    line-too-long, # [flake8]
+    too-few-public-methods,
+    too-many-public-methods,
+    too-many-arguments,
+    too-many-locals,
+    too-many-instance-attributes,
+    arguments-differ, # Parameters differ from overridden 'define_option' method
+    useless-super-delegation, # Useless super delegation in method 'clipped'
+    global-statement, # Using the global statement
+    suppressed-message, # Suppressed 'unused-import'
+    locally-disabled, # Locally disabling unused-import
+
+# ===== False Detection in pylint =====
+    invalid-name, # Argument name "x" doesn't conform to snake_case naming style
+    no-member, # Module 'numpy' has no 'float64' member
+# no-name-in-module, # No name 'python' in module 'tensorflow'
+# not-callable, # multiprocessing.current_process is not callable
+
+# ===== Consider wheather modify =====
+    missing-docstring,
+    ungrouped-imports,  # isort と conflict
+    invalid-unary-operand-type, # bad operand type for unary -: NoneType
+    len-as-condition, # Do not use `len(SEQUENCE)` to determine if a sequence is empty
+    no-else-return, # Unnecessary "else" after "return"
+    too-many-branches, # Used when a function or method has too many branches, making it hard to follow
+    cyclic-import,
+    similarities, # Similar lines in 2 files
+
+# ===== Must modify  =====
+    empty-docstring,
+
+# ===== Custom =====
+    protected-access,
+    f-string-without-interpolation, # f-stringに変数を使わない場合もあるため
+    C0330,
+
+ignored-argument-names=arg|args|kwargs

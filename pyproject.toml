@@ -1,2 +1,61 @@
-[tool.black]
-line-length = 120
+[tool.poetry]
+name = "annofabapi"
+version = "0.33.1"
+description = "Python Clinet Library of AnnoFab WebAPI (https://annofab.com/docs/api/)"
+authors = ["yuji38kwmt <yuji38kwmt@gmail.com>"]
+maintainers = ["yuji38kwmt <yuji38kwmt@gmail.com>"]
+license = "MIT"
+keywords=["annofab", "api"]
+readme="README.md"
+repository="https://github.com/kurusugawa-computer/annofab-api-python-client"
+classifiers = [
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Topic :: Utilities",
+        "Operating System :: OS Independent",
+]
+
+
+[tool.poetry.dependencies]
+python = "^3.6"
+requests = "*"
+python-dateutil = "*"
+backoff="*"
+dataclasses-json="*"
+dataclasses = { version = "*", python = "<3.7" }
+
+[tool.poetry.dev-dependencies]
+# test library
+pytest = "*"
+pytest-xdist = "*"
+pytest-cov = "*"
+
+# format library
+isort = "*"
+autoflake = "*"
+black = {version = "^19.10b0", allow-prereleases = true}
+
+# lint library
+flake8 = "*"
+mypy = "*"
+pylint = "*"
+
+# document library
+sphinx = "==1.8.5"
+docutils = "*"
+
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
+[tool.isort]
+line_length = 120
+skip = annofabapi/__init__.py
+

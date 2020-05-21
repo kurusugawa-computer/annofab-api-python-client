@@ -17,7 +17,7 @@ with open(os.path.join(here, "annofabapi", "__version__.py"), "r", encoding="utf
 setup(
     name="annofabapi",
     version=about["__version__"],
-    description="Python Clinet Library of AnnoFab API (https://annofab.com/docs/api/)",
+    description="Python Clinet Library of AnnoFab WebAPI (https://annofab.com/docs/api/)",
     long_description=readme,
     long_description_content_type="text/markdown",
     author="yuji38kwmt",
