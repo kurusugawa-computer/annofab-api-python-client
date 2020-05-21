@@ -57,5 +57,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.isort]
 line_length = 120
-skip = annofabapi/__init__.py
+skip="annofabapi/__init__.py"
 
+[tool.black]
+line-length = 120
