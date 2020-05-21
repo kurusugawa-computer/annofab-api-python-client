@@ -1,17 +1,3 @@
-[flake8]
-max-line-length = 120
-# formatter 'black'と競合するため、チェックを無視する
-# https://black.readthedocs.io/en/stable/the_black_code_style.html#line-length
-extend-ignore = E203, W503
-
-
-[mypy]
-ignore_missing_imports = True
-
-[isort]
-line_length = 120
-skip=annofabapi/__init__.py
-
 [pylint]
 disable =
     logging-fstring-interpolation,
