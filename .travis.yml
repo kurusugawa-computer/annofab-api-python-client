@@ -9,8 +9,8 @@ install:
   - echo -e "machine annofab.com\nlogin FOO\npassword BAR\n" > ~/.netrc && chmod 600 ~/.netrc
 script:
    - flake8 annofabapi
-   - mypy annofabapi --config-file setup.cfg
-   - pylint annofabapi --rcfile setup.cfg
+   - mypy annofabapi
+   - pylint annofabapi
    - pytest tests/test_local*.py
 branches:
   only:

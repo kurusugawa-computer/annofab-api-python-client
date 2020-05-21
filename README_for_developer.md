@@ -6,10 +6,10 @@
 * Bash
 * Docker (OpenAPI Generatorを実行するのに必要)
 * python 3.6+
-    * [pipenv](https://pipenv.pypa.io/en/latest/)
+    * poetry
 
 ## Install
-以下のコマンドを実行してください。開発に必要なpipenvがインストールされます。
+以下のコマンドを実行してください。開発に必要な環境が構築されます。
 
 ```bash
 $ make init
@@ -54,17 +54,17 @@ $ make lint
 #### 直接pytestを実行する場合
 
 ```
-$ pipenv run pytest tests
+$ poetry run pytest tests
 ```
 
 annofabapiでは、pytestのカスタムオプションを定義しています。
 
 ```
 # ジョブを投げるテスト（時間がかかるテスト）を実行する。
-$ pipenv run pytest --run_submitting_job tests 
+$ poetry run pytest --run_submitting_job tests 
 
 # annofabapiモジュールのログを表示する。
-$ pipenv run pytest --print_log_annofabapi tests 
+$ poetry run pytest --print_log_annofabapi tests 
 ```
 
 #### カバレッジの確認
