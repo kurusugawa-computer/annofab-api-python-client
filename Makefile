@@ -21,6 +21,6 @@ publish:
 	poetry publish --build
 
 docs:
-	cd docs && pipenv run make html
+	cd docs && poetry run make html
 	@echo "\033[95m\n\nBuild successful! View the docs homepage at docs/_build/html/index.html.\n\033[0m"
 
