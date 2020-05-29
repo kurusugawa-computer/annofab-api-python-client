@@ -55,6 +55,14 @@ class AnnotationSpecsRelation:
     choice_id: Dict[ChoiceKey, ChoiceKey]
 
 
+@dataclass(frozen=True)
+class AnnotationQuery:
+    """
+    削除対象のアノテーションを指定するクエリ
+    """
+    label_id: str
+
+
 def _first_true(iterable, default=None, pred=None):
     return next(filter(pred, iterable), default)
 
@@ -356,6 +364,53 @@ class Wrapper:
         request_body["updated_datetime"] = updated_datetime
         self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
         return True
+
+    @staticmethod
+    def __match_query_for_annotation(annotation_detail: Dict[str, Any], query:AnnotationQuery) -> bool:
+        return annotation_detail["label_id"] == query.label_id
+
+    @staticmethod
+    def __to_put_annotation_detail(annotation_detail: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        `get_annotation_editor`メソッドで取得したアノテーションを、`put_annotation`メソッドに渡すアノテーションに変換する
+        """
+        annotation_detail["url"] = None
+        return annotation_detail
+
+    def delete_annotation(self, project_id: str, task_id: str, input_data_id: str, query:Optional[AnnotationQuery]=None) -> Optional[Dict[str, Any]]:
+        """
+        特定のアノテーションを削除する
+
+        Args:
+            project_id:
+            task_id:
+            input_data_id:
+            query: 削除対象のアノテーションを指定するクエリ
+
+        Returns:
+            `put_annotation`メソッドのレスポン
+        """
+        old_annotation, _ = self.api.get_editor_annotation(project_id, task_id, input_data_id)
+        old_details = old_annotation["details"]
+        if len(old_details) == 0:
+            return None
+
+        if query is None:
+            new_details = []
+        else:
+            new_details = [self.__to_put_annotation_detail(d) for d in old_details if not self.__match_query_for_annotation(d, query)]
+
+        updated_datetime = old_annotation["updated_datetime"]
+        request_body = {
+            "project_id": project_id,
+            "task_id": task_id,
+            "input_data_id": input_data_id,
+            "details": new_details,
+            "updated_datetime": updated_datetime,
+        }
+        return self.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)[0]
+
+
 
     #########################################
     # Public Method : AnnotationSpecs
