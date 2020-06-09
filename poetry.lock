@@ -171,7 +171,7 @@ description = "Easily serialize dataclasses to and from JSON"
 name = "dataclasses-json"
 optional = false
 python-versions = ">=3.6"
-version = "0.4.5"
+version = "0.5.1"
 
 [package.dependencies]
 marshmallow = ">=3.3.0,<4.0.0"
@@ -810,8 +810,8 @@ dataclasses = [
     {file = "dataclasses-0.6.tar.gz", hash = "sha256:6988bd2b895eef432d562370bb707d540f32f7360ab13da45340101bc2307d84"},
 ]
 dataclasses-json = [
-    {file = "dataclasses-json-0.4.5.tar.gz", hash = "sha256:8026790fc917437d2949cd0d78af650d7c1b2f5055f13336a3a4aa32bd61a293"},
-    {file = "dataclasses_json-0.4.5-py3-none-any.whl", hash = "sha256:1c500aece88738a559763572f728a16ed85fddc45cb83868b5637556347e50bd"},
+    {file = "dataclasses-json-0.5.1.tar.gz", hash = "sha256:6e38b11b178e404124bffd6d213736bc505338e8a4c718596efec8d32eb96f5a"},
+    {file = "dataclasses_json-0.5.1-py3-none-any.whl", hash = "sha256:2f5fca4f097f9f9727e2100c824ed48153171186a679487f8875eca8d8c05107"},
 ]
 docutils = [
     {file = "docutils-0.16-py2.py3-none-any.whl", hash = "sha256:0c5b78adfbf7762415433f5515cd5c9e762339e23369dbe8000d84a4bf4ab3af"},
