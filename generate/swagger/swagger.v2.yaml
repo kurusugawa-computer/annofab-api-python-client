@@ -1,39 +1,60 @@
-openapi: "3.0.0"
+openapi: 3.0.0
 info:
-  description: |
+  description: >
     [AnnoFab](https://annofab.com) のWeb API v2です。
+
     v2 はいくつかの主要なAPIでキャッシュが有効になり、日本を含む多くの国からのアクセスが大幅に高速化されます。
+
     [API v1はこちら](/docs/api/)です。
 
+
     APIベースURL: https://annofab.com/api/v2<br>
+
     例） /projects というAPIを使う場合、 https://annofab.com/api/v2/projects をリクエストします。
 
 
+
     ■APIの変更ポリシー<br>
+
     **現在、APIは開発途上版です。予告なく互換性のない変更がある可能性をご了承ください。**
+
     ご要望の実現、あるいは、セキュリティやパフォーマンスの改善などを実現するにあたり、互換性のない変更が必要になる場合があります。
+
     その場合、開発途上版では開発リソースを改善に集中するため、古いバージョンを共存させずに互換性のない変更を行う場合があります。
 
+
     ■機能の要望や不具合報告 <br>
+
     「こんな機能が欲しい」というご要望や、「APIが予期せぬ動作をする」といった不具合報告などは、[こちらのお問い合わせフォーム](https://docs.google.com/forms/d/e/1FAIpQLSePryikS_wo_H11pxL2ewUe2d0ud0jxZlBQwH2rVVfcifKyQw/viewform)からご連絡ください。
+
 
     # API Client
 
+
     APIクライアントも提供しています。
 
+
     * https://github.com/kurusugawa-computer/annofab-cli
+
     * https://github.com/kurusugawa-computer/annofab-api-python-client
+
 
     # API Convention
 
+
     ## 用語
 
+
     * **属性○○○を必須**とは、「JSONに属性キー○○○を含め、かつ、その値が`null`以外」であること
+
     * **属性○○○を未指定**とは、「JSONに属性キー○○○を含めない」または「属性○○○のキーはあるが値は`null`」のどちらかであること
+
 
     ## 更新系APIのリクエストボディに必須の属性
 
+
     * 更新系APIとは、HTTPメソッドが **PUT** または **POST** のAPIです。
+
     * 更新系APIでは、更新対象の「リソースの最終更新日」を必須とする場合があります。
       * これは、複数ユーザーからのAPIリクエストのデータ競合を避けるための、一般的なAPI設計慣習によるものです。
       * ここで「リソースの最終更新日」とは、`last_updated_datetime` または `updated_datetime` という名前の属性です。
@@ -45,16 +66,22 @@ info:
         * 更新しようとしたリソースが存在しないとき、またはすでに更新されているときは、更新リクエストは失敗します。
     * 「リソースの最終更新日」以外の属性については、新規作成/更新それぞれで必須が異なる場合、API個別に特筆されています。
 
+
     ## APIのリクエストボディに指定する _type 属性について
 
+
     * 一部のAPIではリクエストボディに `_type` 属性を任意で指定することができます。
+
     * `_type` 属性を指定する場合は、`_type` 属性で指定された型にデコードします。
       例えば、`_type` 属性に `ByDirectory` を指定すると `TaskGenerateRuleByDirectory` にデコードされ、`Poliline` を指定すると `InspectionDataPolyline` にデコードされます。
       リクエストボディが誤っている場合はエラーになります。
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
+
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし利便性のため指定は必須ではありません。
 
+
     ## APIに指定するID/名前の制約
+
 
     * APIで使用する各データのIDに使用できる文字種は次の通りです。
       * 半角英数字
@@ -65,55 +92,77 @@ info:
       * 例） `b048c6b3-b36f-4c8d-97ea-96828a50a44c`
     * 各データのIDは、以下のように特定のデータに対して一意な値である必要があります。
 
-    ID/名前 | 一意制約
-    ---|---
-    組織名 | AnnoFab内で一意
-    組織ID | AnnoFab内で一意
-    ユーザID | AnnoFab内で一意
-    アカウントID  | AnnoFab内で一意
-    プロジェクトID | AnnoFab内で一意
-    タスクID（プレフィックス含む） | プロジェクト内で一意
-    入力データID | プロジェクト内で一意
-    アノテーションID | フレーム内（タスクID、入力データIDの組み合わせ）で一意
-    検査ID | プロジェクト内で一意
-    補助情報ID | プロジェクト内で一意
-    WebhookID | プロジェクト内で一意
-    作業ガイド画像ID | プロジェクト内で一意
-    ラベルID | プロジェクト内で一意
-    属性ID | プロジェクト内で一意
-    選択肢ID | 属性内で一意
-    ジョブID | プロジェクト内で一意
-    入力データセットID | 組織内で一意
-    プラグインID | 組織内で一意
 
-  version: 0.86.0
+    ID/名前 | 一意制約
+
+    ---|---
+
+    組織名 | AnnoFab内で一意
+
+    組織ID | AnnoFab内で一意
+
+    ユーザID | AnnoFab内で一意
+
+    アカウントID  | AnnoFab内で一意
+
+    プロジェクトID | AnnoFab内で一意
+
+    タスクID（プレフィックス含む） | プロジェクト内で一意
+
+    入力データID | プロジェクト内で一意
+
+    アノテーションID | フレーム内（タスクID、入力データIDの組み合わせ）で一意
+
+    検査ID | プロジェクト内で一意
+
+    補助情報ID | プロジェクト内で一意
+
+    WebhookID | プロジェクト内で一意
+
+    作業ガイド画像ID | プロジェクト内で一意
+
+    ラベルID | プロジェクト内で一意
+
+    属性ID | プロジェクト内で一意
+
+    選択肢ID | 属性内で一意
+
+    ジョブID | プロジェクト内で一意
+
+    入力データセットID | 組織内で一意
+
+    プラグインID | 組織内で一意
+  version: 0.88.0
   title: AnnoFab Web API
   x-logo:
-    url: "https://annofab.com/images/logo_landscape.png"
-    href: "https://annofab.com/"
+    url: https://annofab.com/images/logo_landscape.png
+    href: https://annofab.com/
   contact:
-    url: "https://annofab.com/docs/forms/trouble-shooting.html"
+    url: https://annofab.com/docs/forms/trouble-shooting.html
 servers:
-- url: https://annofab.com/api/v2
+  - url: https://annofab.com/api/v2
 tags:
-- name: af-annotation-specs-v2
-  x-displayName: Annotation Specs
-  description: アノテーション仕様に対する操作
-- name: af-cache-v2
-  x-displayName: Cache
-  description: キャッシュに関係
-- name: af-organization-v2
-  x-displayName: Organization
-  description: 組織に対する操作
-- name: af-project-member-v2
-  x-displayName: Project Member
-  description: プロジェクトメンバーに対する操作
-- name: af-project-v2
-  x-displayName: Project
-  description: プロジェクトに対する操作
-- name: af-statistics-v2
-  x-displayName: Statistics
-  description: 統計
+  - name: af-annotation-specs-v2
+    x-displayName: Annotation Specs
+    description: アノテーション仕様に対する操作
+  - name: af-cache-v2
+    x-displayName: Cache
+    description: キャッシュに関係
+  - name: af-organization-v2
+    x-displayName: Organization
+    description: 組織に対する操作
+  - name: af-project-member-v2
+    x-displayName: Project Member
+    description: プロジェクトメンバーに対する操作
+  - name: af-project-v2
+    x-displayName: Project
+    description: プロジェクトに対する操作
+  - name: af-statistics-v2
+    x-displayName: Statistics
+    description: 統計
+  - name: af-users-v2
+    x-displayName: Users
+    description: 個人データ
 x-tagGroups:
   - name: API
     tags:
@@ -123,74 +172,108 @@ x-tagGroups:
       - af-project-member-v2
       - af-project-v2
       - af-statistics-v2
+      - af-users-v2
+components:
+  securitySchemes:
+    SignedCookieKeyPairId:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/SignedCookieKeyPairId
+    SignedCookiePolicy:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/SignedCookiePolicy
+    SignedCookieSignature:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/SignedCookieSignature
+    EveryoneRequestBody:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/EveryoneRequestBody
+    EveryoneQueryParameter:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/EveryoneQueryParameter
+    Everyone:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/Everyone
+    AnnoFabAdminOnly:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/AnnoFabAdminOnly
+    AllProjectMember:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/AllProjectMember
+    ProjectAccepter:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/ProjectAccepter
+    ProjectDataUser:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/ProjectDataUser
+    ProjectAccepterOrDataUser:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/ProjectAccepterOrDataUser
+    ProjectOwner:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/ProjectOwner
+    AllOrganizationMember:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/AllOrganizationMember
+    OrganizationAdministrator:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/OrganizationAdministrator
+    OrganizationOwner:
+      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/OrganizationOwner
 paths:
   /sign-url:
     get:
       tags:
-      - af-cache-v2
+        - af-cache-v2
       summary: V2系APIへのアクセスに必要なSigned Cookieを発行します
-      description: |
       security:
-      - Everyone: []
+        - Everyone: []
       operationId: getSignedAccessV2
       parameters:
-      - name: url
-        in: query
-        description: |
-          アクセスしたいページのアドレス（クエリパラメータ含み）
-        schema:
-          type: string
-          example: "/api/v2/projects/{project_id}/statistics/inspections"
+        - name: url
+          in: query
+          description: |
+            アクセスしたいページのアドレス（クエリパラメータ含み）
+          schema:
+            type: string
+            example: /api/v2/projects/{project_id}/statistics/inspections
       responses:
-        200:
+        "200":
           description: 正常
           headers:
             Set-Cookie:
               schema:
                 type: string
-                description: 署名付きCookieが発行されます。発行されるCookieの詳細は [こちら](#section/Authentication) を参照ください。
-                example: CloudFront-Key-Pair-Id=XXXXYYYZZZZ; Path=/api/v2/projects/xxxx-xxxx-xxx; max-age=84600; HttpOnly; SameSite=Strict; Secure
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/cache:
+                description: 署名付きCookieが発行されます。発行されるCookieの詳細は [こちら](#section/Authentication)
+                  を参照ください。
+                example: CloudFront-Key-Pair-Id=XXXXYYYZZZZ;
+                  Path=/api/v2/projects/xxxx-xxxx-xxx; max-age=84600; HttpOnly;
+                  SameSite=Strict; Secure
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/projects/{project_id}/cache":
     get:
       tags:
-      - af-project-v2
+        - af-project-v2
       summary: キャッシュレコード
-      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getProjectCacheV2
       parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProjectCacheRecord"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/members:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectCacheRecord
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/projects/{project_id}/members":
     get:
       tags:
-      - af-project-member-v2
+        - af-project-member-v2
       summary: プロジェクトメンバー一括取得
       security:
         - SignedCookieKeyPairId: []
@@ -198,316 +281,295 @@ paths:
           SignedCookieSignature: []
       operationId: getProjectMembersV2
       parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
-      - name: include_inactive_member
-        in: query
-        description: 脱退したプロジェクトメンバーも取得する時に、キーのみ指定します（値は無視されます）。
-        required: false
-        allowEmptyValue: true
-        schema:
-          type: string
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
+        - name: include_inactive_member
+          in: query
+          description: 脱退したプロジェクトメンバーも取得する時に、キーのみ指定します（値は無視されます）。
+          required: false
+          allowEmptyValue: true
+          schema:
+            type: string
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  list:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/ProjectMember"
-                  page_no:
-                    type: number
-                    description: 現在のページ番号です。
-                  total_page_no:
-                    type: number
-                    description: 指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトメンバーが0件であっても、総ページ数は1となります。
-                  total_count:
-                    type: number
-                    description: 検索結果の総件数。
-                  over_limit:
-                    type: boolean
-                    description: 検索結果が1万件を超えた場合にtrueとなる。
-                  aggregations:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/AggregationResult"
-                    description: Aggregationによる集約結果。
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/members/{user_id}:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectMemberList
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/projects/{project_id}/members/{user_id}":
     get:
       tags:
-      - af-project-member-v2
+        - af-project-member-v2
       summary: プロジェクトメンバー取得
-      description: |
+      description: ""
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getProjectMemberV2
       parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
-      - name: user_id
-        in: path
-        description: アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。
-        required: true
-        schema:
-          $ref: "#/components/schemas/UserId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
+        - name: user_id
+          in: path
+          description: アカウントのユーザID.
+            RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/UserId
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ProjectMember"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/tasks:
+                  $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectMember
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/projects/{project_id}/statistics/tasks":
     get:
       tags:
-      - af-statistics-v2
+        - af-statistics-v2
       summary: タスク集計取得
-      description: |
+      description: ""
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getTaskStatisticsV2
       parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ProjectTaskStatisticsHistory"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/accounts:
+                  $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectTaskStatisticsHistory
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/projects/{project_id}/statistics/accounts":
     get:
       tags:
-      - af-statistics-v2
+        - af-statistics-v2
       summary: ユーザー別タスク集計取得
-      description: |
+      description: ""
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getAccountStatisticsV2
       parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ProjectAccountStatistics"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/inspections:
+                  $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectAccountStatistics
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/projects/{project_id}/statistics/inspections":
     get:
       tags:
-      - af-statistics-v2
+        - af-statistics-v2
       summary: 検査コメント集計取得
-      description: |
+      description: ""
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getInspectionStatisticsV2
       parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/InspectionStatistics"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/task-phases:
+                  $ref: swagger-api-components.redoc.yaml#/components/schemas/InspectionStatistics
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/projects/{project_id}/statistics/task-phases":
     get:
       tags:
-      - af-statistics-v2
+        - af-statistics-v2
       summary: フェーズ別タスク集計取得
-      description: |
+      description: ""
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getTaskPhaseStatisticsV2
       parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/TaskPhaseStatistics"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/labels:
+                  $ref: swagger-api-components.redoc.yaml#/components/schemas/TaskPhaseStatistics
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/projects/{project_id}/statistics/labels":
     get:
       tags:
-      - af-statistics-v2
+        - af-statistics-v2
       summary: ラベル別アノテーション数集計取得
-      description: |
+      description: ""
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getLabelStatisticsV2
       parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/LabelStatistics"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/worktimes:
+                  $ref: swagger-api-components.redoc.yaml#/components/schemas/LabelStatistics
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/projects/{project_id}/statistics/worktimes":
     get:
       tags:
-      - af-statistics-v2
+        - af-statistics-v2
       summary: タスク作業時間集計取得
       description: |
         ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。
@@ -518,41 +580,41 @@ paths:
           SignedCookieSignature: []
       operationId: getWorktimeStatisticsV2
       parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/WorktimeStatistics"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/annotation-specs:
+                  $ref: swagger-api-components.redoc.yaml#/components/schemas/WorktimeStatistics
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/projects/{project_id}/annotation-specs":
     get:
       tags:
         - af-annotation-specs-v2
       summary: アノテーション仕様取得
-      description: |
+      description: ""
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -564,7 +626,7 @@ paths:
           description: プロジェクトID
           required: true
           schema:
-            $ref: "#/components/schemas/ProjectId"
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
         - name: cache
           in: query
           description: |
@@ -575,8 +637,10 @@ paths:
             example: "123456789"
         - name: history_id
           in: query
-          description: |
-            過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。
+          description: >
+            過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した
+            `history_id` の値を指定します。
+
             未指定時は最新のアノテーション仕様を取得します。
           required: false
           schema:
@@ -592,28 +656,28 @@ paths:
             default: "1"
             example: "2"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
-                oneOf:
-                - $ref: "#/components/schemas/AnnotationSpecsV1"
-                - $ref: "#/components/schemas/AnnotationSpecsV2"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /organizations-by-name/{organization_name}:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/AnnotationSpecs
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/organizations-by-name/{organization_name}":
     get:
       tags:
         - af-organization-v2
       summary: 組織情報取得
-      description: |
+      description: ""
       security:
-        - AllOrganizationMember: []
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
       operationId: getOrganizationByNameV2
       parameters:
         - name: organization_name
@@ -621,7 +685,7 @@ paths:
           description: 組織名
           required: true
           schema:
-            $ref: "#/components/schemas/OrganizationName"
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationName
         - name: cache
           in: query
           description: |
@@ -631,24 +695,24 @@ paths:
             type: string
             example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Organization"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /organizations-by-name/{organization_name}/cache:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/Organization
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/organizations-by-name/{organization_name}/cache":
     get:
       tags:
         - af-organization-v2
       summary: キャッシュレコード
-      description: |
+      description: ""
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -660,28 +724,30 @@ paths:
           description: 組織名
           required: true
           schema:
-            $ref: "#/components/schemas/OrganizationName"
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationName
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/OrganizationCacheRecord"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /organizations/{organization_id}:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationCacheRecord
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/organizations/{organization_id}":
     get:
       tags:
         - af-organization-v2
       summary: 組織情報取得
-      description: |
+      description: ""
       security:
-        - AllOrganizationMember: []
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
       operationId: getOrganizationV2
       parameters:
         - name: organization_id
@@ -689,7 +755,7 @@ paths:
           description: 組織ID
           required: true
           schema:
-            $ref: "#/components/schemas/OrganizationId"
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationId
         - name: cache
           in: query
           description: |
@@ -699,24 +765,24 @@ paths:
             type: string
             example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Organization"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /organizations/{organization_id}/cache:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/Organization
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/organizations/{organization_id}/cache":
     get:
       tags:
         - af-organization-v2
       summary: キャッシュレコード
-      description: |
+      description: ""
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -728,4189 +794,296 @@ paths:
           description: 組織ID
           required: true
           schema:
-            $ref: "#/components/schemas/OrganizationId"
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationId
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/OrganizationCacheRecord"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-  /organizations/{organization_id}/projects/{project_id}/task-counts:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationCacheRecord
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/organizations/{organization_id}/projects/{project_id}/task-counts":
     get:
       tags:
-      - af-organization-v2
+        - af-organization-v2
       summary: プロジェクトのタスク件数取得
-      description: |
+      description: ""
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getProjectTaskCountV2
       parameters:
-      - name: organization_id
-        in: path
-        description: 組織ID
-        required: true
-        schema:
-          $ref: "#/components/schemas/OrganizationId"
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "#/components/schemas/ProjectId"
+        - name: organization_id
+          in: path
+          description: 組織ID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationId
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProjectTaskCounts"
-        401:
-          $ref: "#/components/responses/ErrorUnauthorizedApi"
-        404:
-          $ref: "#/components/responses/ErrorMissingResource"
-        503:
-          $ref: "#/components/responses/ErrorUnderMaintenance"
-components:
-  securitySchemes:
-    SignedCookieKeyPairId:
-      description: |
-        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
-      type: "apiKey"
-      in: "cookie"
-      name: "CloudFront-Key-Pair-Id"
-    SignedCookiePolicy:
-      description: |
-        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
-      type: "apiKey"
-      in: "cookie"
-      name: "CloudFront-Policy"
-    SignedCookieSignature:
-      description: |
-        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
-      type: "apiKey"
-      in: "cookie"
-      name: "CloudFront-Signature"
-    EveryoneRequestBody:
-      description: |
-        AnnoFabのユーザーなら誰でも利用できます。
-  
-        認証/認可には、リクエストボディに含まれるパスワード、トークン、または何らかの検証コードを用います。
-        詳しくは個別のAPIの説明を確認してください。
-      type: "http"
-      scheme: "requestBody"
-    EveryoneQueryParameter:
-      description: |
-        AnnoFabのユーザーなら誰でも利用できます。
-  
-        認証/認可には、クエリパラメータに含まれるトークンまたは何らかの検証コードを用います。
-        詳しくは個別のAPIの説明を確認してください。
-      type: "http"
-      scheme: "requestBody"
-    Everyone:
-      description: |
-        AnnoFabのユーザーなら誰でも利用できます。
-  
-        認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
-      type: "apiKey"
-      name: "Authorization"
-      in: "header"
-    AnnoFabAdminOnly:
-      description: |
-        AnnoFabのシステム管理者のみ利用できます。
-  
-        認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
-      type: "apiKey"
-      name: "Authorization"
-      in: "header"
-    AllProjectMember:
-      description: |
-        プロジェクトに所属するユーザーなら誰でも利用できます。
-  
-        認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
-      type: "apiKey"
-      name: "Authorization"
-      in: "header"
-    ProjectAccepter:
-      description: |
-        プロジェクトのオーナーまたはプロジェクトのチェッカーのみ利用できます。
-  
-        認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
-      type: "apiKey"
-      name: "Authorization"
-      in: "header"
-    ProjectDataUser:
-      description: |
-        プロジェクトのオーナーまたはプロジェクトのアノテーションユーザーのみ利用できます。
-  
-        認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
-      type: "apiKey"
-      name: "Authorization"
-      in: "header"
-    ProjectAccepterOrDataUser:
-      description: |
-        プロジェクトのオーナー/チェッカー/アノテーションユーザーのいずれかのみ利用できます。
-  
-        認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
-      type: "apiKey"
-      name: "Authorization"
-      in: "header"
-    ProjectOwner:
-      description: |
-        プロジェクトのオーナーのみ利用できます。
-  
-        認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
-      type: "apiKey"
-      name: "Authorization"
-      in: "header"
-    AllOrganizationMember:
-      description: |
-        組織に所属するユーザーなら誰でも利用できます。
-  
-        認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
-      type: "apiKey"
-      name: "Authorization"
-      in: "header"
-    OrganizationAdministrator:
-      description: |
-        組織のオーナーまたは組織の管理者のみ利用できます。
-  
-        認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
-      type: "apiKey"
-      name: "Authorization"
-      in: "header"
-    OrganizationOwner:
-      description: |
-        組織のオーナーのみ利用できます。
-  
-        認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
-      type: "apiKey"
-      name: "Authorization"
-      in: "header"
-  responses:
-    SuccessMessage:
-      description: 成功時のメッセージ
-      content:
-        application/json:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectTaskCounts
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/users/{account_id}/cache":
+    get:
+      tags:
+        - af-users-v2
+      summary: キャッシュレコード
+      description: ""
+      security:
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
+      operationId: getUserCacheV2
+      parameters:
+        - name: account_id
+          in: path
+          description: アカウントID
+          required: true
           schema:
-            $ref: "#/components/schemas/Message"
-    ErrorForbiddenResource:
-      description: 権限エラー
-      content:
-        application/json:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/AccountId
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/UserCacheRecord
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/users/{account_id}/project-members":
+    get:
+      tags:
+        - af-users-v2
+      summary: 個人のプロジェクトメンバー情報一括取得
+      description: ""
+      security:
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
+      operationId: getUserProjectMembersV2
+      parameters:
+        - name: account_id
+          in: path
+          description: アカウントID
+          required: true
           schema:
-            $ref: "#/components/schemas/ErrorForbiddenResource"
-    ErrorMissingResource:
-      description: 存在しないリソースを指定された
-      content:
-        application/json:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/AccountId
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
           schema:
-            $ref: "#/components/schemas/ErrorMissingResource"
-    ErrorUnauthorizedApi:
-      description: 認証エラー
-      content:
-        application/json:
+            type: string
+            example: "123456789"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectMember
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/users/{account_id}/organizations":
+    get:
+      tags:
+        - af-users-v2
+      summary: 個人の所属組織一括取得
+      description: ""
+      security:
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
+      operationId: getUserOrganizationsV2
+      parameters:
+        - name: account_id
+          in: path
+          description: アカウントID
+          required: true
           schema:
-            $ref: "#/components/schemas/ErrorUnauthorizedApi"
-    ErrorInvalidRequest:
-      description: リクエスト形式が正しくない。必要な属性が足りなかったり、属性が特定の値
-      content:
-        application/json:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/AccountId
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
           schema:
-            # TODO このエラー定義には複数のschemaのエラーが該当しうる。それを記述する(KRSANNOFAC-1502)
-            $ref: "#/components/schemas/Errors"
-    ErrorUnderMaintenance:
-      description: システムメンテナンス中
-      content:
-        application/json:
+            type: string
+            example: "123456789"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/MyOrganizationList
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/users/{account_id}/projects":
+    get:
+      tags:
+        - af-users-v2
+      summary: 自分のプロジェクトメンバー情報一括取得
+      description: ""
+      security:
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
+      operationId: getUserProjectsV2
+      parameters:
+        - name: account_id
+          in: path
+          description: アカウントID
+          required: true
           schema:
-            $ref: "#/components/schemas/ErrorUnderMaintenance"
-    ErrorRefreshTokenExpired:
-      description: リフレッシュトークン有効期限切れのため、明示的にログインする必要があります
-      content:
-        application/json:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/AccountId
+        - name: page
+          in: query
+          description: |
+            表示するページ番号
+          required: false
           schema:
-            $ref: "#/components/schemas/ErrorRefreshTokenExpired"
-  schemas:
-    ProjectCacheRecord:
-      type: object
-      properties:
-        input:
-          type: string
-        members:
-          type: string
-        project:
-          type: string
-        instruction:
-          type: string
-        specs:
-          type: string
-        statistics:
-          type: string
-        organization:
-          type: string
-        supplementary:
-          type: string
-    Errors:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: "#/components/schemas/Error"
-        context:
-          type: object
-          description: 内部補足情報
-    Error:
-      type: object
-      properties:
-        error_code:
-          type: string
-        message:
-          type: string
-          description: エラーの概要
-        ext:
-          type: object
-          description: 補足情報
-    ErrorInvalidBody:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: INVALID_BODY
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorInvalidQueryParam:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: INVALID_QUERYPARAM
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorMissingNecessaryQueryParam:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: MISSING_NECESSARY_QUERYPARAM
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorInvalidPath:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: INVALID_PATH
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorUnauthorizedApi:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: UNAUTHORIZED_API
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorLoginFailed:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: LOGIN_FAILED
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorPasswordResetRequired:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: PASSWORD_RESET_REQUIRED
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorExpiredToken:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: EXPIRED_TOKEN
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorRefreshTokenExpired:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: EXPIRED_REFRESH_TOKEN
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorForbiddenResource:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: FORBIDDEN_RESOURCE
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorMissingResource:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: MISSING_RESOURCE
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorTimeout:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: TIMEOUT
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorAlreadyUpdated:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: ALREADY_UPDATED
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorStateMismatch:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: STATE_MISMATCH
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorInternalServerError:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: INTERNAL_SERVER_ERROR
-        context:
-          type: object
-          description: 内部補足情報
-    ErrorUnderMaintenance:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/Error'
-              - properties:
-                  error_code:
-                    type: string
-                    example: UNDER_MAINTENANCE
-        context:
-          type: object
-          description: 内部補足情報
-    Message:
-      type: object
-      properties:
-        message:
-          type: string
-          description: 多言語対応
-    InternationalizationMessage:
-      type: object
-      properties:
-        messages:
-          type: array
-          items:
-            type: object
-            properties:
-              lang:
-                type: string
-              message:
-                type: string
-        default_lang:
-          type: string
-    SignUpRequest:
-      type: object
-      required:
-        - email
-      properties:
-        email:
-          type: string
-          format: email
-    ConfirmSignUpRequest:
-      type: object
-      required:
-        - account_id
-        - user_id
-        - password
-        - username
-        - lang
-        - keylayout
-        - confirmation_code
-      properties:
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-        user_id:
-          $ref: "#/components/schemas/UserId"
-        password:
-          type: string
-        username:
-          type: string
-        lang:
-          type: string
-        keylayout:
-          type: string
-        confirmation_code:
-          type: string
-    LoginRequest:
-      type: object
-      required:
-        - user_id
-        - password
-      properties:
-        user_id:
-          $ref: "#/components/schemas/UserId"
-        password:
-          type: string
-    LoginResponse:
-      type: object
-      properties:
-        token:
-          $ref: "#/components/schemas/Token"
-    Token:
-      type: object
-      properties:
-        id_token:
-          type: string
-          description: 形式は[JWT](https://jwt.io/)。
-        access_token:
-          type: string
-          description: 形式は[JWT](https://jwt.io/)。
-        refresh_token:
-          type: string
-          description: 形式は[JWT](https://jwt.io/)。
-    RefreshTokenRequest:
-      type: object
-      required:
-        - refresh_token
-      properties:
-        refresh_token:
-          type: string
-    ChangePasswordRequest:
-      type: object
-      required:
-        - user_id
-        - old_password
-        - new_password
-      properties:
-        user_id:
-          $ref: "#/components/schemas/UserId"
-        old_password:
-          type: string
-        new_password:
-          type: string
-    PasswordResetRequest:
-      type: object
-      required:
-        - email
-      properties:
-        email:
-          type: string
-          format: email
-    ConfirmResetPasswordRequest:
-      type: object
-      required:
-        - user_id
-        - confirmation_code
-        - new_password
-      properties:
-        user_id:
-          $ref: "#/components/schemas/UserId"
-        confirmation_code:
-          type: string
-        new_password:
-          type: string
-    ResetEmailRequest:
-      type: object
-      required:
-        - email
-      properties:
-        email:
-          type: string
-          format: email
-    ConfirmResetEmailRequest:
-      type: object
-      required:
-        - token
-      properties:
-        token:
-          type: string
-    VerifyEmailRequest:
-      type: object
-      required:
-        - token
-      properties:
-        token:
-          $ref: "#/components/schemas/Token"
-    ConfirmVerifyEmailRequest:
-      type: object
-      required:
-        - token
-        - confirmation_code
-      properties:
-        token:
-          $ref: "#/components/schemas/Token"
-        confirmation_code:
-          type: string
-    ConfirmAccountDeleteRequest:
-      type: object
-      required:
-        - token
-      properties:
-        token:
-          type: string
-    Account:
-      type: object
-      required:
-        - account_id
-        - user_id
-        - username
-        - email
-        - lang
-        - keylayout
-        - authority
-      properties:
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-        user_id:
-          $ref: "#/components/schemas/UserId"
-        username:
-          type: string
-        email:
-          type: string
-          format: email
-        lang:
-          type: string
-        biography:
-          $ref: "#/components/schemas/UserBiography"
-        keylayout:
-          type: string
-        authority:
-          $ref: "#/components/schemas/AccountAuthority"
-        updated_datetime:
-          type: string
-          format: date-time
-    AccountAuthority:
-      type: string
-      enum:
-        - user
-        - admin
-    MyAccount:
-      allOf:
-        - $ref: "#/components/schemas/Account"
-        - type: object
-          required:
-            - errors
-          properties:
-            reset_requested_email:
-              type: string
-              format: email
-            errors:
-              type: array
-              items:
-                type: string
-    PutMyAccountRequest:
-      type: object
-      required:
-        - user_id
-        - username
-        - lang
-        - keylayout
-      properties:
-        user_id:
-          $ref: "#/components/schemas/UserId"
-        username:
-          type: string
-        lang:
-          type: string
-        keylayout:
-          type: string
-        biography:
-          $ref: "#/components/schemas/UserBiography"
-        last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
-    LastUpdatedDatetime:
-      type: string
-      format: date-time
-      description: |
-        新規作成時は未指定、更新時は必須（更新前の日時）
-    AcceptOrganizationInvitationRequest:
-      type: object
-      properties:
-        token:
-          type: string
-    OrganizationActivity:
-      type: object
-      required:
-        - organization_id
-        - created_datetime
-        - storage_usage_bytes
-      properties:
-        organization_id:
-          $ref: "#/components/schemas/OrganizationId"
-        created_datetime:
-          type: string
-          format: date-time
-        storage_usage_bytes:
-          type: number
-    Organization:
-      type: object
-      required:
-        - organization_id
-        - organization_name
-        - email
-        - price_plan
-        - summary
-        - created_datetime
-        - updated_datetime
-      properties:
-        organization_id:
-          $ref: "#/components/schemas/OrganizationId"
-        organization_name:
-          type: string
-        email:
-          type: string
-          format: email
-        price_plan:
-          $ref: "#/components/schemas/PricePlan"
-        summary:
-          $ref: "#/components/schemas/OrganizationSummary"
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-    OrganizationCacheRecord:
-      type: object
-      properties:
-        input:
-          type: string
-        members:
-          type: string
-        statistics:
-          type: string
-        organization:
-          type: string
-    OrganizationSummary:
-      type: object
-      properties: {}
-    PricePlan:
-      type: string
-      enum:
-        - free
-        - business
-    OrganizationMember:
-      type: object
-      required:
-        - organization_id
-        - account_id
-        - user_id
-        - username
-        - role
-        - status
-      properties:
-        organization_id:
-          $ref: "#/components/schemas/OrganizationId"
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-        user_id:
-          $ref: "#/components/schemas/UserId"
-        username:
-          type: string
-        role:
-          $ref: "#/components/schemas/OrganizationMemberRole"
-        status:
-          $ref: "#/components/schemas/OrganizationMemberStatus"
-        biography:
-          $ref: "#/components/schemas/UserBiography"
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-    OrganizationMemberRole:
-      type: string
-      enum:
-        - owner
-        - administrator
-        - contributor
-    OrganizationMemberStatus:
-      type: string
-      enum:
-        - active
-        - waiting_response
-        - inactive
-      description: |
-        * `active` - 組織メンバーとして有効で、組織を閲覧したり、権限があれば編集できます。
-        * `waiting_response` - 組織に招待され、まだ加入/脱退を返答していません。組織の一部を閲覧のみできます。
-        * `inactive` - 脱退したメンバーを表します。組織を閲覧できません。
-    OrganizationPlugin:
-      type: object
-      required:
-        - organization_id
-        - plugin_id
-        - created_datetime
-        - updated_datetime
-      properties:
-        organization_id:
-          $ref: "#/components/schemas/OrganizationId"
-        plugin_id:
-          $ref: "#/components/schemas/PluginId"
-        plugin_name:
-          $ref: "#/components/schemas/PluginName"
-        description:
-          $ref: "#/components/schemas/PluginDescription"
-        annotation_editor_url:
-          $ref: "#/components/schemas/AnnotationEditorUrl"
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-    PutOrganizationPluginRequest:
-      type: object
-      properties:
-        plugin_name:
-          $ref: "#/components/schemas/PluginName"
-        description:
-          $ref: "#/components/schemas/PluginDescription"
-        annotation_editor_url:
-          $ref: "#/components/schemas/AnnotationEditorUrl"
-        last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
-    PluginId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    PluginName:
-      type: string
-      example: "foo-bar"
-      description: |
-        プラグインの名前です。
-        プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。
-    PluginDescription:
-      type: string
-      example: "desc"
-      description: |
-        プラグインの説明です。
-        プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。
-    AnnotationEditorUrl:
-      type: string
-      example: "https://example.com/my/editors?p={projectId}&t={taskId}"
-      description: |
-        カスタムアノテーションエディタでタスクを開くための URL です。
-        プラグインを使用するプロジェクトのタスク一覧などで使用されます。
-  
-        この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。
-  
-        * `{projectId}`
-        * `{taskId}`
-  
-        以下のパラメーターは任意で指定します。
-  
-        * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。
-        * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。
-  
-    MyOrganization:
-      type: object
-      properties:
-        organization_id:
-          $ref: "#/components/schemas/OrganizationId"
-        name:
-          type: string
-        email:
-          type: string
-          format: email
-        price_plan:
-          $ref: "#/components/schemas/PricePlan"
-        summary:
-          $ref: "#/components/schemas/OrganizationSummary"
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-        my_role:
-          $ref: "#/components/schemas/OrganizationMemberRole"
-        my_status:
-          $ref: "#/components/schemas/OrganizationMemberStatus"
-    OrganizationRegistrationRequest:
-      type: object
-      required:
-        - organization_name
-        - organization_email
-        - price_plan
-      properties:
-        organization_name:
-          $ref: "#/components/schemas/OrganizationName"
-        organization_email:
-          type: string
-          format: email
-        price_plan:
-          $ref: "#/components/schemas/PricePlan"
-    PutOrganizationNameRequest:
-      type: object
-      required:
-        - organization_id
-        - organization_name
-        - last_updated_datetime
-      properties:
-        organization_id:
-          type: string
-        organization_name:
-          $ref: "#/components/schemas/OrganizationName"
-        last_updated_datetime:
-          type: string
-          format: date-time
-    PutOrganizationMemberRoleRequest:
-      type: object
-      required:
-        - role
-      properties:
-        role:
-          $ref: "#/components/schemas/OrganizationMemberRole"
-        last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
-    InviteOrganizationMemberRequest:
-      type: object
-      properties:
-        role:
-          $ref: "#/components/schemas/OrganizationMemberRole"
-    AccountId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-    UserId:
-      type: string
-      example: "john_doe"
-    OrganizationId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    OrganizationName:
-      type: string
-      example: "sample-organization"
-      description: |
-        組織名。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    ProjectId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    LabelId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-    AdditionalDataDefinitionId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-    ChoiceId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-    PhraseId:
-      type: string
-      example: "my_phrase_id"
-    TaskId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    InputDataId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    InputDataSetId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    SupplementaryDataId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-    TaskHistoryId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-    AnnotationId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br>
-        annotation_type が classification の場合は label_id と同じ値が格納されます。
-    InspectionId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    MarkerId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    JobId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-    WebhookId:
-      type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
-      description: |
-        WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    Duration:
-      type: string
-      example: "PT34H17M36.789S"
-    UserBiography:
-      type: string
-      description: |
-        人物紹介、略歴。
-  
-        この属性は、AnnoFab外の所属先や肩書などを表すために用います。
-        AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。
-      minLength: 0
-      maxLength: 100
-      example: "Annotation Manager, ABC Company"
-    AnnotationFormatVersion:
-      type: string
-      example: "1.0.0"
-      description: |
-        アノテーションフォーマットのバージョンです。
-        アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。
-        したがって、アノテーション仕様を更新しても、このバージョンは変化しません。
-  
-        バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。
-  
-        JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。
-        すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。
-        バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。
-    Project:
-      type: object
-      required:
-        - project_id
-        - organization_id
-        - title
-        - project_status
-        - input_data_type
-        - created_datetime
-        - updated_datetime
-        - configuration
-        - summary
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        organization_id:
-          $ref: "#/components/schemas/OrganizationId"
-        title:
-          type: string
-          description: プロジェクトのタイトル
-        overview:
-          type: string
-          description: プロジェクトの概要
-        project_status:
-          $ref: "#/components/schemas/ProjectStatus"
-        input_data_type:
-          $ref: "#/components/schemas/InputDataType"
-        configuration:
-          $ref: "#/components/schemas/ProjectConfiguration"
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-        summary:
-          $ref: "#/components/schemas/ProjectSummary"
-    ProjectStatus:
-      type: string
-      enum:
-        - active
-        - suspended
-      description: |
-        プロジェクトの状態
-        * `active` - プロジェクトが進行中
-        * `suspended` - プロジェクトが停止中
-    AssigneeRuleOfResubmittedTask:
-      type: string
-      enum:
-        - no_assignee
-        - fixed
-      description: |
-        再提出されたタスクの検査/受入担当者の割当方法
-        * `no_assignee` - 以前の担当者で固定せず、未割当てにします。
-        * `fixed` - 以前の担当者が再度担当します。以前の担当者がいない(1回目の検査/受入)場合は未割当てになります。
-    InputDataType:
-      type: string
-      description: |
-        アノテーションする入力データの種類。プロジェクトの作成時のみ指定可能（未指定の場合は `image`）です。更新時は無視されます。
-        * `image` - 画像
-        * `movie` - 動画
-      enum:
-        - image
-        - movie
-    ProjectConfiguration:
-      type: object
-      properties:
-        number_of_inspections:
-          description: |
-            検査回数。
-            * 0回：教師付け -> 受入
-            * 1回：教師付け -> 検査 -> 受入
-            * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入
-          type: integer
-          default: 0
-          minimum: 0
-        assignee_rule_of_resubmitted_task:
-          description: 再提出されたタスクの検査/受入担当者ルール。
-          $ref: "#/components/schemas/AssigneeRuleOfResubmittedTask"
-          default: no_assignee
-        task_assignment_type:
-          $ref: "#/components/schemas/TaskAssignmentType"
-        max_tasks_per_member:
-          description: 保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
-          type: integer
-          default: 10
-          minimum: 1
-          maximum: 100
-        max_tasks_per_member_including_hold:
-          description: 保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は20件として扱う。
-          type: integer
-          default: 20
-          minimum: 1
-          maximum: 100
-        input_data_set_id_list:
-          description: このフィールドは内部用でまだ何も意味を成しません。今は空配列を指定してください。
-          type: array
-          items:
-            $ref: "#/components/schemas/InputDataSetId"
-          example: "[]"
-        input_data_max_long_side_length:
-          description: |
-            入力データ画像の長辺の最大値（未指定時は4096px）。
-  
-            画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。
-            アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。
-  
-            大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。
-          type: integer
-          default: 4096
-          minimum: 0
-        sampling_inspection_rate:
-          description: 抜取検査率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
-          type: integer
-        sampling_acceptance_rate:
-          description: 抜取受入率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
-          type: integer
-        private_storage_aws_iam_role_arn:
-          type: string
-          description: |
-            AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。
-            [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
-          example: "arn:aws:iam::123456789012:role/AnnoFabPrivateStorageAccessor"
-    ProjectSummary:
-      type: object
-      properties:
-        last_tasks_updated_datetime:
-          type: string
-          format: date-time
-          description: タスクの最終更新日時
-    TaskAssignmentType:
-      type: string
-      default: random
-      enum:
-        - random
-        - selection
-        - random_and_selection
-      description: |
-        プロジェクトで使用するタスクの割当方式。
-  
-        * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。
-        * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。
-        * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。
-    JobInfo:
-      type: object
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        job_type:
-          $ref: "#/components/schemas/JobType"
-        job_id:
-          $ref: "#/components/schemas/JobId"
-        job_status:
-          $ref: "#/components/schemas/JobStatus"
-        job_execution:
-          type: object
-          description: ジョブの内部情報
-        job_detail:
-          type: object
-          description: ジョブ結果の内部情報
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-    JobType:
-      type: string
-      enum:
-        - copy-project
-        - gen-inputs
-        - gen-tasks
-        - gen-annotation
-        - gen-tasks-list
-        - gen-inputs-list
-        - delete-project
-        - invoke-hook
-      description: |
-        * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。
-        * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。
-        * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。
-        * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。
-        * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。
-        * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。
-        * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。
-        * `invoke-hook` - Webhookの起動。
-    JobStatus:
-        type: string
-        enum:
-          - progress
-          - succeeded
-          - failed
-    PostAnnotationArchiveUpdateResponse:
-      type: object
-      properties:
-        job:
-          $ref: "#/components/schemas/JobInfo"
-    PostProjectTasksUpdateResponse:
-      type: object
-      properties:
-        job:
-          $ref: "#/components/schemas/JobInfo"
-    ProjectCopyResponse:
-      type: object
-      properties:
-        job:
-          $ref: "#/components/schemas/JobInfo"
-        dest_project:
-          $ref: "#/components/schemas/Project"
-    DeleteProjectResponse:
-      type: object
-      properties:
-        job:
-          $ref: "#/components/schemas/JobInfo"
-        project:
-          $ref: "#/components/schemas/Project"
-    TaskGenerateResponse:
-      type: object
-      properties:
-        job:
-          $ref: "#/components/schemas/JobInfo"
-        project:
-          $ref: "#/components/schemas/Project"
-    ProjectInputsUpdateResponse:
-      type: object
-      properties:
-        job:
-          $ref: "#/components/schemas/JobInfo"
-    Webhook:
-      type: object
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        event_type:
-          $ref: "#/components/schemas/WebhookEventType"
-        webhook_id:
-          $ref: "#/components/schemas/WebhookId"
-        webhook_status:
-          $ref: "#/components/schemas/WebhookStatus"
-        method:
-          $ref: "#/components/schemas/WebhookHttpMethod"
-        headers:
-          type: array
-          items:
-            $ref: "#/components/schemas/WebhookHeader"
-        body:
-          type: string
-          example: '{\"message\": \"{{PROJECT_ID}} is updated at {{COMPLETE_DATETIME}}\"}'
-        url:
-          type: string
-          format: uri
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-    WebhookHeader:
-      type: object
-      properties:
-        name:
-          type: string
-        value:
-          type: string
-    WebhookStatus:
-      type: string
-      enum:
-        - active
-        - inactive
-    WebhookHttpMethod:
-      type: string
-      enum:
-        - POST
-        - PUT
-        - DELETE
-        - PATCH
-        - GET
-        - HEAD
-    WebhookEventType:
-      type: string
-      enum:
-        - task-completed
-        - annotation-archive-updated
-        - input-data-zip-registered
-        - project-copy-completed
-      description: |
-        * `task-completed` - タスク受入完了
-        * `annotation-archive-updated` - アノテーションZIP作成完了
-        * `input-data-zip-registered` - 入力データZIP登録完了
-        * `project-copy-completed` - プロジェクトコピー完了
-    PutProjectRequest:
-      type: object
-      required:
-        - title
-        - status
-        - organization_name
-        - configuration
-      properties:
-        title:
-          type: string
-          description: プロジェクトのタイトル
-        overview:
-          type: string
-          description: プロジェクトの概要
-        status:
-          $ref: "#/components/schemas/ProjectStatus"
-        input_data_type:
-          $ref: "#/components/schemas/InputDataType"
-        organization_name:
-          type: string
-          description: |
-            プロジェクトの所属組織を変更する場合は、ここに変更先の組織名を指定します。
-  
-            * 所属組織を変更する前にプロジェクトを停止する必要があります。
-            * APIを呼び出すアカウントは、変更先組織の管理者またはオーナーである必要があります。
-            * 変更後の組織に所属していないプロジェクトメンバーも残りますが、作業はできません。あらためて組織に招待してください。
-        configuration:
-          $ref: "#/components/schemas/ProjectConfiguration"
-        last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
-        force_suspend:
-          type: boolean
-          description: 作業中タスクがあるプロジェクトを停止する時trueにして下さい
-          default: false
-    ProjectCopyRequest:
-      type: object
-      required:
-        - dest_project_id
-        - dest_title
-      properties:
-        dest_project_id:
-          $ref: "#/components/schemas/ProjectId"
-        dest_title:
-          type: string
-          description: コピー先プロジェクトのタイトル
-        dest_overview:
-          type: string
-          description: コピー先プロジェクトの概要
-        copy_inputs:
-          type: boolean
-          description: |
-            「入力データ」をコピーするかどうかを指定します。
-          default: false
-        copy_tasks:
-          type: boolean
-          description: |
-            「タスク」をコピーするかどうかを指定します。
-  
-            この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。
-  
-            * copy_inputs の値を true とする
-          default: false
-        copy_annotations:
-          type: boolean
-          description: |
-            「アノテーション」をコピーするかどうかを指定します。
-  
-            この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。
-  
-            * copy_inputs の値を true とする
-            * copy_tasks の値を true とする
-          default: false
-        copy_webhooks:
-          type: boolean
-          description: |
-            「Webhook」をコピーするかどうかを指定します。
-          default: false
-        copy_supplementaly_data:
-          type: boolean
-          description: |
-            「補助情報」をコピーするかどうかを指定します。
-  
-            この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。
-  
-            * copy_inputs の値を true とする
-          default: false
-        copy_instructions:
-          type: boolean
-          description: |
-            「作業ガイド」をコピーするかどうかを指定します。
-          default: false
-    ProjectMember:
-      type: object
-      required:
-        - project_id
-        - account_id
-        - user_id
-        - username
-        - member_status
-        - member_role
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-        user_id:
-          $ref: "#/components/schemas/UserId"
-        username:
-          type: string
-        member_status:
-          $ref: "#/components/schemas/ProjectMemberStatus"
-        member_role:
-          $ref: "#/components/schemas/ProjectMemberRole"
-        biography:
-          $ref: "#/components/schemas/UserBiography"
-        updated_datetime:
-          type: string
-          format: date-time
-        created_datetime:
-          type: string
-          format: date-time
-        sampling_inspection_rate:
-          description: メンバー固有の抜取検査率（0-100のパーセント値）。
-          type: integer
-        sampling_acceptance_rate:
-          description: メンバー固有の抜取受入率（0-100のパーセント値）。
-          type: integer
-    ProjectMemberStatus:
-      type: string
-      enum:
-        - active
-        - inactive
-      description: |
-        * `active` - プロジェクトメンバーとして有効で、プロジェクトを閲覧したり、権限があれば編集できます。
-        * `inactive` - 脱退したプロジェクトメンバーを表します。プロジェクトを閲覧できません。
-    ProjectMemberRole:
-      type: string
-      enum:
-        - owner
-        - worker
-        - accepter
-        - training_data_user
-    ProjectMemberRequest:
-      type: object
-      properties:
-        member_status:
-          $ref: "#/components/schemas/ProjectMemberStatus"
-        member_role:
-          $ref: "#/components/schemas/ProjectMemberRole"
-        sampling_inspection_rate:
-          description: メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。
-          type: integer
-        sampling_acceptance_rate:
-          description: メンバー固有の抜取受入率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取受入率を指定の値で上書きする。
-          type: integer
-        last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
-    ProjectTaskStatisticsHistory:
-      type: object
-      properties:
-        date:
-          type: string
-          format: date
-        tasks:
-          type: array
-          items:
-            $ref: "#/components/schemas/ProjectTaskStatistics"
-    ProjectTaskStatistics:
-      type: object
-      required:
-        - phase
-        - status
-        - count
-        - work_timespan
-      properties:
-        phase:
-          $ref: "#/components/schemas/TaskPhase"
-        status:
-          $ref: "#/components/schemas/TaskStatus"
-        count:
-          type: integer
-          minimum: 0
-          description: タスク数
-        work_timespan:
-          type: integer
-          description: 累計実作業時間(ミリ秒)
-    ProjectAccountStatistics:
-      type: object
-      required:
-        - account_id
-        - histories
-      properties:
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-        histories:
-          type: array
-          items:
-            $ref: "#/components/schemas/ProjectAccountStatisticsHistory"
-    ProjectAccountStatisticsHistory:
-      type: object
-      required:
-        - date
-        - tasks_completed
-        - tasks_rejected
-        - worktime
-      properties:
-        date:
-          type: string
-          format: date
-        tasks_completed:
-          type: integer
-          description: 教師付を担当したタスクが完了状態になった回数
-        tasks_rejected:
-          type: integer
-          description: 教師付を担当したタスクが差し戻された回数
-        worktime:
-          type: string
-          example: "PT34H17M36.789S"
-          description: 作業時間（ISO 8601 duration）
-    InspectionStatistics:
-      type: object
-      required:
-        - project_id
-        - date
-        - breakdown
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        date:
-          description: 集計日
-          type: string
-          format: date
-        breakdown:
-          $ref: "#/components/schemas/InspectionStatisticsBreakdown"
-    InspectionStatisticsBreakdown:
-      type: object
-      description: 検査コメント数の集計結果
-      required:
-        - labels
-        - no_label
-      properties:
-        labels:
-          description: ラベルごとの指摘集計結果。キーは`label_id`
-          type: object
-          additionalProperties: {
-            $ref: "#/components/schemas/InspectionStatisticsPhrases"
-          }
-        no_label:
-          $ref: "#/components/schemas/InspectionStatisticsPhrases"
-    InspectionStatisticsPhrases:
-      type: object
-      description: ラベル外指摘の集計結果
-      required:
-        - phrases
-        - no_phrase
-      properties:
-        phrases:
-          description: 定型指摘ごとの合計数。キーは定型指摘ID、値は指摘数
-          type: object
-          additionalProperties: {
             type: integer
-          }
-        no_phrase:
-          description: 非定型指摘の合計数
-          type: integer
-    TaskPhaseStatistics:
-      type: object
-      required:
-        - project_id
-        - date
-        - phases
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        date:
-          type: string
-          format: date
-        phases:
-          description: タスクのフェーズごとの集計結果
-          type: array
-          items:
-            $ref: "#/components/schemas/PhaseStatistics"
-    PhaseStatistics:
-      type: object
-      required:
-        - phase
-        - worktime
-      properties:
-        phase:
-          $ref: "#/components/schemas/TaskPhase"
-        worktime:
-          description: 累積作業時間（ISO 8601 duration）
-          type: string
-          example: "PT34H17M36.789S"
-    LabelStatistics:
-      type: object
-      required:
-        - label_id
-        - completed
-        - wip
-      properties:
-        label_id:
-          $ref: "#/components/schemas/LabelId"
-        completed:
-          type: integer
-          minimum: 0
-          description: ラベルごとの受入が完了したアノテーション数
-        wip:
-          type: integer
-          minimum: 0
-          description: ラベルごとの受入が完了していないアノテーション数
-    WorktimeStatistics:
-      type: object
-      required:
-        - project_id
-        - date
-        - by_tasks
-        - by_inputs
-        - by_minutes
-        - accounts
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        date:
-          type: string
-          format: date
-        by_tasks:
-          type: array
-          description: タスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
-          items:
-            $ref: "#/components/schemas/WorktimeStatisticsItem"
-        by_inputs:
-          type: array
-          description: 画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
-          items:
-            $ref: "#/components/schemas/WorktimeStatisticsItem"
-        by_minutes:
-          type: array
-          description: 動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
-          items:
-            $ref: "#/components/schemas/WorktimeStatisticsItem"
-        accounts:
-          type: array
-          description: ユーザごとの作業時間情報
-          items:
-            $ref: "#/components/schemas/AccountWorktimeStatistics"
-    WorktimeStatisticsItem:
-      type: object
-      required:
-        - phase
-        - histogram
-        - average
-        - standard_deviation
-      properties:
-        phase:
-          $ref: "#/components/schemas/TaskPhase"
-        histogram:
-          type: array
-          items:
-            $ref: "#/components/schemas/HistogramItem"
-        average:
-          description: 作業時間の平均（ISO 8601 duration）
-          type: string
-          example: "PT34H17M36.789S"
-        standard_deviation:
-          description: 作業時間の標準偏差（ISO 8601 duration）
-          type: string
-          example: "PT34H17M36.789S"
-    HistogramItem:
-      type: object
-      required:
-        - begin
-        - end
-        - count
-      properties:
-        begin:
-          type: number
-        end:
-          type: number
-        count:
-          type: integer
-    AccountWorktimeStatistics:
-      type: object
-      required:
-        - account_id
-        - by_tasks
-        - by_inputs
-        - by_minutes
-      properties:
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-        by_tasks:
-          description: ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
-          type: array
-          items:
-            $ref: "#/components/schemas/WorktimeStatisticsItem"
-        by_inputs:
-          description: ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
-          type: array
-          items:
-            $ref: "#/components/schemas/WorktimeStatisticsItem"
-        by_minutes:
-          description: ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
-          type: array
-          items:
-            $ref: "#/components/schemas/WorktimeStatisticsItem"
-    Marker:
-      type: object
-      properties:
-        marker_id:
-          $ref: "#/components/schemas/MarkerId"
-        title:
-          type: string
-        graph_type:
-          description: マーカーの配置先グラフ
-          $ref: "#/components/schemas/GraphType"
-        marked_at:
-          description: グラフ上のマーカー位置(x軸)
-          type: string
-          format: date
-    Markers:
-      type: object
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        markers:
-          type: array
-          items:
-            $ref: "#/components/schemas/Marker"
-        updated_datetime:
-          type: string
-          format: date
-    GraphType:
-      type: string
-      enum:
-        - task_progress
-        - cumulative_labor_time_By_task_phase
-        - number_of_inspections_per_inspection_phrase
-        - number_of_task_rejections_by_member
-        - labor_time_per_member
-        - mean_labor_time_per_image
-        - mean_labor_time_per_minute_of_movie
-        - mean_labor_time_per_image_by_member
-        - mean_labor_time_per_minute_of_movie_by_member
-      description: |
-        * `task_progress` - タスク進捗状況
-        * `cumulative_labor_time_by_task_phase` - タスクフェーズ別累積作業時間
-        * `number_of_inspections_per_inspection_phrase` - 検査コメント内容別指摘回数
-        * `number_of_task_rejections_by_member` - メンバー別タスクが差戻された回数
-        * `labor_time_per_member` - メンバー別作業時間
-        * `mean_labor_time_per_image` - 画像一枚当たりの作業時間平均
-        * `mean_labor_time_per_minute_of_movie` - 動画一分当たりの作業時間平均
-        * `mean_labor_time_per_image_by_member` - メンバー別画像一枚当たりの作業時間平均
-        * `mean_labor_time_per_minute_of_movie_by_member` - メンバー別動画一分当たりの作業時間平均
-    PutMarkersRequest:
-      type: object
-      properties:
-        markers:
-          type: array
-          items:
-            $ref: "#/components/schemas/Marker"
-        last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
-    AnnotationSpecsV1:
-      type: object
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        labels:
-          type: array
-          items:
-            $ref: "#/components/schemas/LabelV1"
-        inspection_phrases:
-          type: array
-          items:
-            $ref: "#/components/schemas/InspectionPhrase"
-        updated_datetime:
-          type: string
-          format: date-time
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
           description: |
-            アノテーション仕様の最終更新時刻
-    AnnotationSpecsV2:
-      type: object
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        labels:
-          type: array
-          items:
-            $ref: "#/components/schemas/LabelV2"
-        additionals:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalDataDefinitionV2"
-        restrictions:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalDataRestriction"
-        inspection_phrases:
-          type: array
-          items:
-            $ref: "#/components/schemas/InspectionPhrase"
-        format_version:
-          type: string
-          default: "2.1.0"
-        updated_datetime:
-          type: string
-          format: date-time
+            1ページあたりの取得するデータ件数
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 200
+        - name: organization_id
+          in: query
           description: |
-            アノテーション仕様の最終更新時刻
-    AnnotationSpecsRequestV1:
-      type: object
-      required:
-        - labels
-        - inspection_phrases
-        - comment
-        - auto_marking
-      properties:
-        labels:
-          type: array
-          items:
-            $ref: "#/components/schemas/LabelV1"
-        inspection_phrases:
-          type: array
-          items:
-            $ref: "#/components/schemas/InspectionPhrase"
-        comment:
-          type: string
-        auto_marking:
-          type: boolean
-          default: false
+            指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。
+          required: false
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationId
+        - name: title
+          in: query
           description: |
-            trueが指定された場合、各統計グラフにマーカーを自動追加します。
-            マーカーのタイトルには `comment` に指定された文字列が設定されます。
-            `comment` が指定されていなかった場合は "アノテーション仕様の変更" という文字列が設定されます。
-        last_updated_datetime:
-          allOf:
-            - $ref: "#/components/schemas/LastUpdatedDatetime"
-          description: |
-            更新前アノテーション仕様の時刻( `updated_datetime` )を指定する。
-            新規作成時は未指定。
-    AnnotationSpecsRequestV2:
-      type: object
-      required:
-        - labels
-        - additionals
-        - restrictions
-        - inspection_phrases
-        - comment
-        - auto_marking
-        - format_version
-      properties:
-        labels:
-          type: array
-          items:
-            $ref: "#/components/schemas/LabelV2"
-        additionals:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalDataDefinitionV2"
-        restrictions:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalDataRestriction"
-        inspection_phrases:
-          type: array
-          items:
-            $ref: "#/components/schemas/InspectionPhrase"
-        comment:
-          type: string
-        auto_marking:
-          type: boolean
-          default: false
-          description: |
-            trueが指定された場合、各統計グラフにマーカーを自動追加します。
-            マーカーのタイトルには `comment` に指定された文字列が設定されます。
-            `comment` が指定されていなかった場合は "アノテーション仕様の変更" という文字列が設定されます。
-        format_version:
-          type: string
-          default: "2.1.0"
-        last_updated_datetime:
-          allOf:
-            - $ref: "#/components/schemas/LastUpdatedDatetime"
-          description: |
-            更新前アノテーション仕様の時刻( `updated_datetime` )を指定する。
-            新規作成時は未指定。
-    AnnotationSpecsHistory:
-      type: object
-      properties:
-        history_id:
-          type: string
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        updated_datetime:
-          type: string
-          format: date-time
-        url:
-          type: string
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-        comment:
-          type: string
-    InspectionPhrase:
-      type: object
-      properties:
-        id:
-          type: string
-        text:
-          $ref: "#/components/schemas/InternationalizationMessage"
-    AnnotationType:
-      type: string
-      enum:
-        - bounding_box
-        - segmentation
-        - segmentation_v2
-        - polygon
-        - polyline
-        - point
-        - classification
-        - range
-      description: |
-        * `bounding_box` - 矩形を表します。
-        * `segmentation` - ピクセルレベルでの塗りつぶし（ラスター）を表します。
-        * `segmentation_v2` - 塗りつぶしv2を表します。v2はSemantic Segmentationに特化しています。
-        * `polygon` - ポリゴン（閉じた頂点集合）を表します。
-        * `polyline` - ポリライン（開いた頂点集合）を表します。
-        * `point` - 点を表します。
-        * `classification` - 入力データ全体に対するアノテーションを表します。
-        * `range` - 動画の区間を表します。
-    AdditionalDataDefinitionType:
-      type: string
-      enum:
-        - flag
-        - integer
-        - text
-        - comment
-        - choice
-        - select
-        - tracking
-        - link
-      description: |
-        * `flag` - 真偽値
-        * `integer` - 整数値
-        * `text` - 自由記述（1行）
-        * `comment` - 自由記述（複数行）
-        * `choice` - 選択肢（ラジオボタン式）
-        * `select` - 選択肢（ドロップダウン式）
-        * `tracking` - 自由記述 (トラッキングID自動挿入)
-        * `link` - アノテーションリンク
-    PositionForMinimumBoundingBoxInsertion:
-      type: object
-      description: |
-        `annotation_type` が `bounding_box` かつ `min_warn_rule` が `and` または `or` の場合のみ、挿入する最小矩形アノテーションの原点を指定できます。
-        画像左上の座標が「x=0, y=0」です。
-        未指定、もしくは「画像外に飛び出たアノテーション」を許可していないにも関わらず飛び出してしまう場合は、表示範囲の中央に挿入されます。
-        「スキャンした帳票の記入欄」や「定点カメラで撮影した製品ラベル」など、アノテーションしたい位置やサイズが多くの画像で共通している場合に便利です。
-  
-        `annotation_type` が `bounding_box` 以外の場合は必ず未指定となります。
-      required:
-        - x
-        - y
-      properties:
-        x:
-          type: integer
-        y:
-          type: integer
-    LabelV1:
-      type: object
-      properties:
-        label_id:
-          $ref: "#/components/schemas/LabelId"
-        label_name:
-          $ref: "#/components/schemas/InternationalizationMessage"
-        keybind:
-          type: array
-          items:
-            $ref: "#/components/schemas/Keybind"
-        annotation_type:
-          $ref: "#/components/schemas/AnnotationType"
-        bounding_box_metadata:
-          type: object
-          properties:
-            min_width:
-              type: integer
-            min_height:
-              type: integer
-            min_warn_rule:
-              type: string
-              default: or
-            min_area:
-              type: integer
-              minimum: 1
-              maximum: 1000000
-            max_vertices:
-              type: integer
-            min_vertices:
-              type: integer
-            position_for_minimum_bounding_box_insertion:
-              $ref: "#/components/schemas/PositionForMinimumBoundingBoxInsertion"
-            tolerance:
-              type: integer
-        segmentation_metadata:
-          type: object
-          properties:
-            min_width:
-              type: integer
-            min_height:
-              type: integer
-            min_warn_rule:
-              type: string
-              default: or
-            tolerance:
-              type: integer
-        additional_data_definitions:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalDataDefinitionV1"
-        color:
-          $ref: "#/components/schemas/Color"
-        annotation_editor_feature:
-          $ref: "#/components/schemas/AnnotationEditorFeature"
-        allow_out_of_image_bounds:
-          type: boolean
-          default: false
-    LabelV2:
-      type: object
-      properties:
-        label_id:
-          $ref: "#/components/schemas/LabelId"
-        label_name:
-          $ref: "#/components/schemas/InternationalizationMessage"
-        keybind:
-          type: array
-          items:
-            $ref: "#/components/schemas/Keybind"
-        annotation_type:
-          $ref: "#/components/schemas/AnnotationType"
-        bounding_box_metadata:
-          type: object
-          properties:
-            min_width:
-              type: integer
-            min_height:
-              type: integer
-            min_warn_rule:
-              type: string
-              default: or
-            min_area:
-              type: integer
-              minimum: 1
-              maximum: 1000000
-            max_vertices:
-              type: integer
-            min_vertices:
-              type: integer
-            position_for_minimum_bounding_box_insertion:
-              $ref: "#/components/schemas/PositionForMinimumBoundingBoxInsertion"
-            tolerance:
-              type: integer
-        segmentation_metadata:
-          type: object
-          properties:
-            min_width:
-              type: integer
-            min_height:
-              type: integer
-            min_warn_rule:
-              type: string
-              default: or
-            tolerance:
-              type: integer
-        additional_data_definitions:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalDataDefinitionId"
-        color:
-          $ref: "#/components/schemas/Color"
-        annotation_editor_feature:
-          $ref: "#/components/schemas/AnnotationEditorFeature"
-        allow_out_of_image_bounds:
-          type: boolean
-          default: false
-    Color:
-      type: object
-      properties:
-        red:
-          type: integer
-          minimum: 0
-          maximum: 255
-        green:
-          type: integer
-          minimum: 0
-          maximum: 255
-        blue:
-          type: integer
-          minimum: 0
-          maximum: 255
-    AnnotationEditorFeature:
-      type: object
-      properties:
-        append:
-          type: boolean
-        erase:
-          type: boolean
-        freehand:
-          type: boolean
-        rectangle_fill:
-          type: boolean
-        polygon_fill:
-          type: boolean
-        fill_near:
-          type: boolean
-    AdditionalDataDefinitionV1:
-      type: object
-      properties:
-        additional_data_definition_id:
-          $ref: "#/components/schemas/AdditionalDataDefinitionId"
-        read_only:
-          type: boolean
-          default: false
-        name:
-          $ref: "#/components/schemas/InternationalizationMessage"
-        default:
-          oneOf:
-            - type: boolean
-            - type: integer
-            - type: string
-          description: |
-            属性の初期値です。
-  
-            初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。
-  
-            * type が flag の場合: 真偽値(`true` or `false`)
-            * type が integer の場合: 整数値
-            * type が text の場合: 文字列
-            * type が comment の場合: 文字列
-            * type が choice の場合: 選択肢(`choices`)の `choice_id`
-            * type が select の場合: 選択肢(`choices`)の `choice_id`
-  
-            属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。
-  
-            なお、トラッキングとリンクには初期値を設定できません。
-        keybind:
-          type: array
-          items:
-            $ref: "#/components/schemas/Keybind"
-        type:
-          $ref: "#/components/schemas/AdditionalDataDefinitionType"
-        choices:
-          type: array
-          items:
-            type: object
-            properties:
-              choice_id:
-                $ref: "#/components/schemas/ChoiceId"
-              name:
-                $ref: "#/components/schemas/InternationalizationMessage"
-              keybind:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Keybind"
-        regex:
-          type: string
-        label_ids:
-          type: array
-          description: リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）
-          items:
+            プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。
+          required: false
+          schema:
             type: string
-        required:
-          type: boolean
-          description: リンク属性において、入力を必須とするかどうか
-    AdditionalDataDefinitionV2:
-      type: object
-      properties:
-        additional_data_definition_id:
-          $ref: "#/components/schemas/AdditionalDataDefinitionId"
-        read_only:
-          type: boolean
-          default: false
-        name:
-          $ref: "#/components/schemas/InternationalizationMessage"
-        default:
-          oneOf:
-            - type: boolean
-            - type: integer
-            - type: string
+        - name: status
+          in: query
           description: |
-            属性の初期値です。
-  
-            初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。
-  
-            * type が flag の場合: 真偽値(`true` or `false`)
-            * type が integer の場合: 整数値
-            * type が text の場合: 文字列
-            * type が comment の場合: 文字列
-            * type が choice の場合: 選択肢(`choices`)の `choice_id`
-            * type が select の場合: 選択肢(`choices`)の `choice_id`
-  
-            属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。
-  
-            なお、トラッキングとリンクには初期値を設定できません。
-        keybind:
-          type: array
-          items:
-            $ref: "#/components/schemas/Keybind"
-        type:
-          $ref: "#/components/schemas/AdditionalDataDefinitionType"
-        choices:
-          type: array
-          items:
-            type: object
-            properties:
-              choice_id:
-                $ref: "#/components/schemas/ChoiceId"
-              name:
-                $ref: "#/components/schemas/InternationalizationMessage"
-              keybind:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Keybind"
-    AdditionalDataRestriction:
-      type: object
-      properties:
-        additional_data_definition_id:
-          $ref: "#/components/schemas/AdditionalDataDefinitionId"
-        condition:
-          $ref: "#/components/schemas/AdditionalDataRestrictionCondition"
-    AdditionalDataRestrictionCondition:
-      oneOf:
-        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionCanInput"
-        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionEquals"
-        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionNotEquals"
-        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionMatches"
-        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionNotMatches"
-        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionHasLabel"
-        - $ref: "#/components/schemas/AdditionalDataRestrictionConditionImply"
-    AdditionalDataRestrictionConditionCanInput:
-      type: object
-      description: |
-        enable=false とすることで、入力を許可しないようにできます。
-        Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。
-      properties:
-        _type:
-          type: string
-          example: "CanInput"
-        enable:
-          type: boolean
-    AdditionalDataRestrictionConditionEquals:
-      type: object
-      description: 指定された値と等しいことを要求します。
-      properties:
-        _type:
-          type: string
-          example: "Equals"
-        value:
-          type: string
-    AdditionalDataRestrictionConditionNotEquals:
-      type: object
-      description: |
-        指定された値と異なることを要求します。
-        value に "" を指定することで、入力を必須とすることができます。
-      properties:
-        _type:
-          type: string
-          example: "NotEquals"
-        value:
-          type: string
-    AdditionalDataRestrictionConditionMatches:
-      type: object
-      description: 指定された正規表現に合致することを要求します。
-      properties:
-        _type:
-          type: string
-          example: "Matches"
-        value:
-          type: string
-    AdditionalDataRestrictionConditionNotMatches:
-      type: object
-      description: 指定された正規表現に合致しないことを要求します。
-      properties:
-        _type:
-          type: string
-          example: "NotMatches"
-        value:
-          type: string
-    AdditionalDataRestrictionConditionHasLabel:
-      type: object
-      description: リンク属性において、リンク先として指定可能なラベルIDを制限します。
-      properties:
-        _type:
-          type: string
-          example: "HasLabel"
-        values:
-          type: string
-    AdditionalDataRestrictionConditionImply:
-      type: object
-      description: |
-        premise で指定された条件を満たすとき、condition で指定された条件を満たすことを要求します。
-      properties:
-        premise:
-          $ref: "#/components/schemas/AdditionalDataRestriction"
-        condition:
-          $ref: "#/components/schemas/AdditionalDataRestrictionCondition"
-    Keybind:
-      type: object
-      properties:
-        code:
-          type: string
-        shift:
-          type: boolean
-        ctrl:
-          type: boolean
-        alt:
-          type: boolean
-    Task:
-      type: object
-      required:
-        - project_id
-        - task_id
-        - phase
-        - phase_stage
-        - status
-        - input_data_id_list
-        - work_time_span
-        - updated_datetime
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        phase:
-          $ref: "#/components/schemas/TaskPhase"
-        phase_stage:
-          $ref: "#/components/schemas/TaskPhaseStage"
-        status:
-          $ref: "#/components/schemas/TaskStatus"
-        input_data_id_list:
-          type: array
-          description: タスクに含まれる入力データのID
-          items:
-            $ref: "#/components/schemas/InputDataId"
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-        histories_by_phase:
-          type: array
-          description: 簡易的なタスク履歴（あるフェーズを誰が担当したか）
-          items:
-            $ref: "#/components/schemas/TaskHistoryShort"
-        work_time_span:
-          type: integer
-          description: 累計実作業時間(ミリ秒)
-        number_of_rejections:
-          type: integer
-          deprecated: true
+            指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。
+          required: false
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectStatus
+        - name: input_data_type
+          in: query
           description: |
-            このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計
-  
-            このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。
-            `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。
-  
-            例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。
-        started_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-        sampling:
-          type: string
-          enum:
-            - inspection_skipped
-            - inspection_stages_skipped
-            - acceptance_skipped
-            - inspection_and_acceptance_skipped
+            指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト
+          required: false
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/InputDataType
+        - name: sort_by
+          in: query
           description: |
-            * `inspection_skipped` - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。
-            * `inspection_stages_skipped` - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。
-            * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。
-            * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す
-  
-            未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する)
-    TaskPhase:
-      type: string
-      enum:
-        - annotation
-        - inspection
-        - acceptance
-      description: |
-        * `annotation` - 教師付け。
-        * `inspection` - 中間検査。ワークフローが3フェーズのときのみ。
-        * `acceptance` - 受入。
-    TaskPhaseStage:
-      type: integer
-      minimum: 1
-    TaskStatus:
-      type: string
-      enum:
-        - not_started
-        - working
-        - on_hold
-        - break
-        - complete
-        - rejected
-        - cancelled
-      description: |
-        * `not_started` - 未着手。
-        * `working` - 作業中。誰かが実際にエディタ上で作業している状態。
-        * `on_hold` - 保留。作業ルールの確認などで作業できない状態。
-        * `break` - 休憩中。
-        * `complete` - 完了。次のフェーズへ進む
-        * `rejected` - 差戻し。修正のため、`annotation`フェーズへ戻る。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
-        * `cancelled` - 提出取消し。修正のため、前フェーズへ戻る。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
-    TaskRequest:
-      type: object
-      required:
-        - input_data_id_list
-      properties:
-        input_data_id_list:
-          type: array
-          items:
-            $ref: "#/components/schemas/InputDataId"
-    TaskGenerateRequest:
-      type: object
-      required:
-        - task_generate_rule
-        - project_last_updated_datetime
-      properties:
-        task_generate_rule:
-          description: |
-            * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
-            * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。
-            * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。
-          oneOf:
-            - $ref: "#/components/schemas/TaskGenerateRuleByCount"
-            - $ref: "#/components/schemas/TaskGenerateRuleByDirectory"
-            - $ref: "#/components/schemas/TaskGenerateRuleByInputDataCsv"
-        project_last_updated_datetime:
-          type: string
-          format: date-time
-          description: プロジェクトの最終更新日時（[getProject](#operation/getProject) APIのレスポンス `updated_datetime`）。タスク生成の排他制御に使用。
-    TaskGenerateRuleByCount:
-      description: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
-      type: object
-      required:
-        - task_id_prefix
-        - allow_duplicate_input_data
-        - input_data_count
-        - input_data_order
-      properties:
-        task_id_prefix:
-          type: string
-          description: |
-            生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID)
-        allow_duplicate_input_data:
-          type: boolean
-          description: falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
-        input_data_count:
-          type: integer
-          description: 1つのタスクに割り当てる入力データの個数
-          example: 10
-        input_data_order:
-          $ref: "#/components/schemas/InputDataOrder"
-        _type:
-          type: string
-          description: |
-            `ByCount`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "ByCount"
-    TaskGenerateRuleByDirectory:
-      description: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。<br>
-      type: object
-      required:
-        - task_id_prefix
-      properties:
-        task_id_prefix:
-          type: string
-          description: |
-            生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID)
-        input_data_name_prefix:
-          type: string
-          description: タスク生成対象の入力データ名プレフィックス
-        _type:
-          type: string
-          description: |
-            `ByDirectory`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "ByDirectory"
-    TaskGenerateRuleByInputDataCsv:
-      description: 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。
-      type: object
-      required:
-        - csv_data_path
-      properties:
-        csv_data_path:
-          type: string
-          description: 各タスクへの入力データへの割当を記入したCSVへのS3上のパス
-          example: "s3://ANNOFAB-BUCKET/PATH/TO/CSV"
-        _type:
-          type: string
-          description: |
-            `ByInputDataCsv`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "ByInputDataCsv"
-    InputDataOrder:
-      type: string
-      enum:
-        - name_asc
-        - name_desc
-        - random
-      description: |
-        タスクに割り当てる入力データの順序
-  
-        * `name_asc` - 入力データ名 昇順（a, b, c, ...）。日付や番号などの連続するデータ名を扱う場合に推奨
-        * `name_desc` - 入力データ名 降順（z, y, x, ...）
-        * `random` - ランダム
-    TaskOperation:
-      type: object
-      required:
-        - status
-        - last_updated_datetime
-      properties:
-        status:
-          description: |
-            次に遷移させるタスクの状態。[詳細はこちら](#section/TaskStatus)。
-          allOf:
-            - $ref: "#/components/schemas/TaskStatus"
-        last_updated_datetime:
-          allOf:
-            - $ref: "#/components/schemas/LastUpdatedDatetime"
-          description: |
-            タスクの最終更新日時
-        account_id:
-          allOf:
-            - $ref: "#/components/schemas/AccountId"
-          description: 変更後の担当者のアカウントID。担当者を未割り当てにする場合は未指定。
-        force:
-          type: boolean
-          default: false
-          description: |
-            タスクの強制操作を行う場合に立てるフラグ。現在、強制操作は強制差戻しのみがサポートされています。
-    TaskStart:
-      type: object
-      properties:
-        phase:
-          allOf:
-            - $ref: "#/components/schemas/TaskPhase"
-            - description: 開始するタスクのフェーズ
-    TaskAssignRequest:
-      type: object
-      required:
-        - request_type
-      properties:
-        request_type:
-          description: |
-            * `TaskAssignRequestTypeRandom`: タスクフェーズのみを指定してランダムにタスクを自身に割当します。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。
-            * `TaskAssignRequestTypeSelection`: 担当者とタスクを明示的に指定してタスクを割当します。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。
-          oneOf:
-            - $ref: "#/components/schemas/TaskAssignRequestTypeRandom"
-            - $ref: "#/components/schemas/TaskAssignRequestTypeSelection"
-    TaskAssignRequestTypeRandom:
-      type: object
-      required:
-        - phase
-      properties:
-        phase:
-          description: 割当するタスクフェーズ。[詳細はこちら](#section/TaskPhase)
-          allOf:
-            - $ref: "#/components/schemas/TaskPhase"
-        _type:
-          type: string
-          description: Random
-          example: "Random"
-    TaskAssignRequestTypeSelection:
-      type: object
-      required:
-        - user_id
-        - task_ids
-      properties:
-        user_id:
-          description: タスクを誰に割当するか
-          allOf:
-            - $ref: "#/components/schemas/UserId"
-        task_ids:
-          description: 割当するタスクのID
-          type: array
-          items:
-            $ref: "#/components/schemas/TaskId"
-        _type:
-          type: string
-          description: Selection
-          example: "Selection"
-    TaskHistoryShort:
-      description: タスクのあるフェーズを誰が担当したかを表します。
-      type: object
-      required:
-        - phase
-        - phase_stage
-        - account_id
-      properties:
-        phase:
-          $ref: "#/components/schemas/TaskPhase"
-        phase_stage:
-          type: integer
-          default: 1
-          minimum: 1
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-        worked:
-          type: boolean
-          description: そのフェーズでタスクの作業を行ったかどうか（行った場合はtrue）
-          default: false
-    TaskHistory:
-      description: タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
-      type: object
-      required:
-        - project_id
-        - task_id
-        - task_history_id
-        - accumulated_labor_time_milliseconds
-        - phase
-        - phase_stage
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        task_history_id:
-          $ref: "#/components/schemas/TaskHistoryId"
-        started_datetime:
-          type: string
-          format: date-time
-        ended_datetime:
-          type: string
-          format: date-time
-        accumulated_labor_time_milliseconds:
-          type: string
-          description: 累計実作業時間（ISO 8601 duration）
-          example: "PT34H17M36.789S"
-        phase:
-          $ref: "#/components/schemas/TaskPhase"
-        phase_stage:
-          type: integer
-          minimum: 1
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-    TaskHistoryEvent:
-      description: タスク履歴イベントは、タスクの状態が変化した１時点を表します。作業時間は、複数のこれらイベントを集約して計算するものなので、このオブジェクトには含まれません。
-      type: object
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        task_history_id:
-          $ref: "#/components/schemas/TaskHistoryId"
-        created_datetime:
-          type: string
-          format: date-time
-        phase:
-          $ref: "#/components/schemas/TaskPhase"
-        phase_stage:
-          type: integer
-          default: 1
-          minimum: 1
-        status:
-          $ref: "#/components/schemas/TaskStatus"
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-        request:
-          $ref: "#/components/schemas/TaskOperation"
-    TaskValidation:
-      description: タスクの全入力データに対するバリデーション結果です。
-      type: object
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        inputs:
-          type: array
-          items:
-            $ref: "#/components/schemas/InputDataSummary"
-    InputDataSummary:
-      description: ある入力データのバリデーション結果です。入力データIDをキーに引けるようにMap[入力データID, バリデーション結果]となっています
-      type: object
-      properties:
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        inspection_summary:
-          $ref: "#/components/schemas/InspectionSummary"
-        annotation_summaries:
-          type: array
-          items:
-            $ref: "#/components/schemas/ValidationError"
-    InspectionSummary:
-      type: string
-      enum:
-        - no_inspection
-        - no_comment_inspection
-        - new_reply_to_unprocessed
-        - new_unprocessed_inspection
-        - unprocessed
-        - complete
-      description: |
-        - `no_inspection` - 入力データに検査コメントが付けられていない。
-        - `no_comment_inspection` - 入力データに空の検査コメントが付けられている。
-        - `new_reply_to_unprocessed` - 現在進行中の検査・受入フェーズで未処理の検査コメントに対して新たに返信が付けられている。
-        - `new_unprocessed_inspection` - 現在進行中の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。
-        - `unprocessed` - 過去の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。
-        - `complete` - 入力データにつけられた検査コメントで未処理のものがない。
-    InputData:
-      description: 入力データの情報を表すデータ構造です。
-      type: object
-      required:
-        - input_data_id
-        - project_id
-        - input_data_name
-        - input_data_path
-        - updated_datetime
-      properties:
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        input_data_name:
-          type: string
-          description: 表示用の名前です。
-        input_data_path:
-          type: string
-          example: "s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA"
-          description: |
-            入力データの実体が保存されたパスです。
-            s3スキーマまたはhttpsスキーマのみサポートしています。
-        url:
-          type: string
-          description: |
-            入力データを取得するためのhttpsスキーマのURLです。
-  
-            このURLはセキュリティのために認証認可が必要となっており、URLだけでは入力データを参照できません。
-            このURLは内部用であり、常に変更になる可能性があります。そのため、アクセスは保証外となります。
-            また、このURLのレスポンスは最低1時間キャッシュされます。
-            キャッシュを無効にしたい場合は、クエリパラメータにアクセス毎にランダムなUUIDなどを付与してください。
-  
-            設定の不備等でデータが取得できない場合、この属性は設定されません。
-        etag:
-          type: string
-        original_input_data_path:
-          type: string
-          example: "s3://YOUR-BUCKET/PATH/TO/INPUT_DATA"
-          description: |
-            AF外部のストレージから登録された場合、その外部ストレージ中のパス。
-            それ以外の場合は値なし
-        original_resolution:
-          allOf:
-            - $ref: "#/components/schemas/Resolution"
-            - description: |
-                入力データの元画像サイズ。
-                入力データ登録時に画像がリサイズされた場合のみ設定される。
-        resized_resolution:
-          allOf:
-            - $ref: "#/components/schemas/Resolution"
-            - description: |
-                入力データのリサイズ後サイズ。
-                入力データ登録時に画像がリサイズされた場合のみ設定される。
-        input_duration:
-          type: number
-          description: |
-            入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。
-  
-            動画の長さが取得できなかった場合、あるいは入力データが画像の場合は値なし。
-        updated_datetime:
-          type: string
-          format: date-time
-        sign_required:
-          type: boolean
-          description: |
-            データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。
-        metadata:
-          type: object
-          description: |
-            ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。
-          additionalProperties:
+            `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。
+            未指定時はプロジェクト名でソートする。
+          required: false
+          schema:
             type: string
-    InputDataRequest:
-      type: object
-      required:
-        - input_data_name
-        - input_data_path
-      properties:
-        input_data_name:
-          type: string
-          description: 表示用の名前
-        input_data_path:
-          type: string
-          example: "s3://YOUR-BUCKET/PATH/TO/OBJECT"
+            example: date
+        - name: cache
+          in: query
           description: |
-            AnnoFabに登録する入力データの実体が保存されたパスです。
-  
-            対応スキーマ：
-            * s3
-            * https
-  
-            場面別の使い分け：
-            * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA`
-            * [プライベートストレージ](/docs/faq/#prst9c)の場合
-                * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`
-                * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`
-                    * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。
-        last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
-        sign_required:
-          type: boolean
-          description: |
-            データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br>
-            このオプションを有効にする場合は、`input_data_path`として、AnnoFabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。
-        metadata:
-          type: object
-          description: |
-            ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。
-          additionalProperties:
+            CACHE TIMESTAMP
+          required: false
+          schema:
             type: string
-    SupplementaryData:
-      type: object
-      required:
-        - project_id
-        - input_data_id
-        - supplementary_data_id
-        - supplementary_data_name
-        - supplementary_data_path
-        - supplementary_data_type
-        - supplementary_data_number
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        supplementary_data_id:
-          $ref: "#/components/schemas/SupplementaryDataId"
-        supplementary_data_name:
-          type: string
-          description: 表示用の名前
-        supplementary_data_path:
-          type: string
-          example: "s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA"
+            example: "123456789"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectContainer
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+  "/users/{account_id}":
+    get:
+      tags:
+        - af-users-v2
+      summary: 個人情報取得
+      description: ""
+      security:
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
+      operationId: getAccountV2
+      parameters:
+        - name: account_id
+          in: path
+          description: アカウントID
+          required: true
+          schema:
+            $ref: swagger-api-components.redoc.yaml#/components/schemas/AccountId
+        - name: cache
+          in: query
           description: |
-            補助情報の実体が保存されたパスです。
-            s3スキーマまたはhttpsスキーマのみサポートしています。
-        url:
-          type: string
-          format: uri
-          deprecated: true
-          description: このフィールドはAF内部での利用のみを想定しており、依存しないでください。
-        etag:
-          type: string
-        supplementary_data_type:
-          $ref: "#/components/schemas/SupplementaryDataType"
-        supplementary_data_number:
-          type: integer
-          description: 表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
-        updated_datetime:
-          type: string
-          format: date-time
-    SupplementaryDataType:
-      type: string
-      enum:
-        - image
-        - text
-    SupplementaryDataRequest:
-      type: object
-      required:
-        - supplementary_data_name
-        - supplementary_data_path
-        - supplementary_data_type
-        - supplementary_data_number
-      properties:
-        supplementary_data_name:
-          type: string
-          description: 表示用の名前
-        supplementary_data_path:
-          type: string
-          example: "s3://YOUR-BUCKET/PATH/TO/OBJECT"
-          description: |
-            AnnoFabに登録する補助情報の実体が保存されたパスです。
-  
-            対応スキーマ：s3, https
-  
-            * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードしたファイルパスの場合
-                * `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA`
-                * 補助情報作成/更新API成功時、アップロードしたファイルが一時データ保存先からコピーされます。
-                    * APIのレスポンスからアップロードしたファイルのコピー先パス（s3スキーマ）を取得できます。
-            * すでにAFに登録されている補助情報のパスの場合
-                * `s3://ANNOFAB-SUPPLEMENTARY-BUCKET/PATH/TO/INPUT_DATA`
-                * ファイルはコピーされません。
-            * [プライベートストレージ](/docs/faq/#prst9c)のパスの場合
-                * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`
-                * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`
-                    * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。
-                * AFにファイルはコピーされません。
-        supplementary_data_type:
-          $ref: "#/components/schemas/SupplementaryDataType"
-  
-        supplementary_data_number:
-          type: integer
-          description: 表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
-        last_updated_datetime:
-          type: string
-          format: date-time
-    WebhookTestRequest:
-      type: object
-      properties:
-        placeholders:
-          description: プレースホルダ名と置換する値
-          type: object
-          example:
-            SOME_PLACEHOLDER: value
-            SOME_NAME: value2
-    WebhookTestResponse:
-      type: object
-      properties:
-        result:
-          description: |
-            * success: 通知先から正常なレスポンス（2xx系）を受け取った
-            * failure: 通知先からエラーレスポンス（2xx系以外）を受け取った
-            * error: リクエスト送信に失敗した、もしくはレスポンスを受信できなかった
-          type: string
-          enum: [success, failure, error]
-          example: success
-        request_body:
-          description: 実際に送信されたリクエストボディ
-          type: string
-        response_status:
-          description: 通知先から返されたHTTPステータスコード
-          type: integer
-          example: 200
-        response_body:
-          description: 通知先から返されたレスポンスボディ
-          type: string
-        message:
-          description: result="error" 時のエラー内容等
-          type: string
-    BatchInputDataRequestItemDelete:
-      type: object
-      description: 入力データ削除
-      required:
-        - project_id
-        - input_data_id
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        _type:
-          type: string
-          description: |
-            `Delete`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "Delete"
-    BatchTaskRequestItemDelete:
-      type: object
-      description: タスク削除
-      required:
-        - project_id
-        - task_id
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        _type:
-          type: string
-          description: |
-            `Delete`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "Delete"
-    DataPath:
-      type: object
-      properties:
-        url:
-          type: string
-          format: uri
-          example: "https://s3.<REGION>.amazonaws.com/<ANNOFAB-TEMP-BUCKET>/<UUID>/<UUID>?param1=...&param2=..."
-          description: ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。
-        path:
-          type: string
-          example: s3://<ANNOFAB-TEMPORARY-BUCKET-NAME>/<UUID>/<UUID>
-          description: アップロードしたファイルをAFの [入力データ](#tag/af-input) や [補助情報](#tag/af-supplementary) に登録するとき、この`path`を指定します。
-    InstructionImagePath:
-      type: object
-      required:
-        - url
-        - path
-      properties:
-        url:
-          type: string
-          format: uri
-          example: "https://s3.<REGION>.amazonaws.com/<ANNOFAB-TEMP-BUCKET>/<UUID>/<UUID>?param1=...&param2=..."
-          description: ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。
-        path:
-          type: string
-          format: url
-          example: https://annofab.com/projects/{project_id}/instruction-images/{image_id}
-          description: 作業ガイド画像のURL
-    AnnotationQuery:
-      type: object
-      properties:
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        exact_match_task_id:
-          description: |
-            タスクIDの検索方法を指定します。
-            trueの場合は完全一致検索、falseの場合は中間一致検索です。
-          type: boolean
-          default: true
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        exact_match_input_data_id:
-          description: |
-            入力データIDの検索方法を指定します。
-            trueの場合は完全一致検索、falseの場合は中間一致検索です。
-          type: boolean
-          default: true
-        label_id:
-          $ref: "#/components/schemas/LabelId"
-        attributes:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalData"
-    Annotation:
-      type: object
-      required:
-        - project_id
-        - task_id
-        - input_data_id
-        - details
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        details:
-          type: array
-          description: 矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
-          items:
-            $ref: "#/components/schemas/AnnotationDetail"
-        updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
-    AnnotationDataHoldingType:
-      type: string
-      enum:
-        - inner
-        - outer
-      description:  |
-        * `inner` - アノテーションのデータ部をJSON内部に保持します。
-        * `outer` - アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
-    AnnotationDetail:
-      type: object
-      required:
-        - annotation_id
-        - account_id
-        - label_id
-        - is_protected
-        - data_holding_type
-        - additional_data_list
-      properties:
-        annotation_id:
-          $ref: "#/components/schemas/AnnotationId"
-        account_id:
-          description: アノテーションを作成したユーザのアカウントID。
-          allOf:
-          - $ref: "#/components/schemas/AccountId"
-        label_id:
-          description: ラベルID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。
-          allOf:
-          - $ref: "#/components/schemas/LabelId"
-        is_protected:
-          description: |
-            `true`の場合、アノテーションをアノテーションエディタ上での削除から保護できます。
-            外部から取り込んだアノテーションに属性を追加するときなどに指定すると、データの削除を防げます。
-          type: boolean
-          default: false
-        data_holding_type:
-          $ref: "#/components/schemas/AnnotationDataHoldingType"
-        data:
-          oneOf:
-            - type: string
-            - $ref: "#/components/schemas/FullAnnotationData"
-          description: |
-            アノテーションの座標値や区間などのデータ。レスポンスの場合は`string`形式、[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は`string`または`object`形式です。
-            `annotation_type`に応じて`string`,`object`の形式が変わります。
-  
-            <table>
-            <tr><th>annotation_type</th><th>data_holding_type</th><th>string形式</th><th>object形式</th></tr>
-            <tr><td>bounding_box </td><td>inner</td><td><code>左上x,左上y,右下x,右下y</code></td><td><code>FullAnnotationDataBoundingBox</code></td></tr>
-            <tr><td>point</td><td>inner</td><td><code>x1,y1</code></td><td><code>FullAnnotationDataSinglePoint</code></td></tr>
-            <tr><td>polygon / polyline  </td><td>inner</td><td><code>x1,y1,x2,y2, ... </code></td><td><code>FullAnnotationDataPoints</code></td></tr>
-            <tr><td>range </td><td>inner</td><td><code>開始時間(ミリ秒),終了時間(ミリ秒) </code></td><td><code>FullAnnotationDataRange</code></td></tr>
-            <tr><td>classification  </td><td>inner</td><td><code>null </code></td><td><code>FullAnnotationDataClassification</code> / <code>null </code></td></tr>
-            <tr><td>segmentation</td><td>outer</td><td><code>null </code></td><td><code>FullAnnotationDataSegmentation</code> / <code>null </code></td></tr>
-            <tr><td>segmentation_v2   </td><td>outer</td><td><code>null </code></td><td><code>FullAnnotationDataSegmentationV2</code> / <code>null </code></td></tr>
-            </table>
-        path:
-          type: string
-          description: |
-            外部ファイルに保存されたアノテーションのパス。`data_holding_type`が`inner`の場合は未指定です。
-            レスポンスの場合は`annotation_id`と同じ値が格納されます。
-  
-            [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は、[createTempPath](#operation/createTempPath) APIで取得できる一時データ保存先S3パスを格納してください。
-            更新しない場合は、[getEditorAnnotation](#operation/getEditorAnnotation) APIで取得した`path`をそのまま渡せます。
-  
-            外部ファイルのフォーマットは下表の通りです。
-  
-            <table>
-            <tr><th>annotation_type</th><th>形式</th></tr>
-            <tr><td>segmentation / segmentation_v2   </td><td>PNG画像。塗りつぶした部分は<code>rgba(255, 255, 255, 1) </code>、塗りつぶしていない部分は<code>rgba(0, 0, 0, 0) </code>。</td></tr>
-            </table>
-        etag:
-          type: string
-          description: 外部ファイルに保存されたアノテーションのETag。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
-        url:
-          type: string
-          format: uri
-          description: 外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
-        additional_data_list:
-          type: array
-          description: |
-            各要素は、 [アノテーション仕様](#operation/getAnnotationSpecs)で定義された属性（`additional_data_definitions`内）のいずれかの要素と対応づけます。
-            各要素は、どの属性なのかを表す`additional_data_definition_id`と値が必要です。値は、属性の種類に対応するキーに格納します（下表）。
-  
-            <table>
-            <tr><th>アノテーション属性の種類<br>（<code>additional_data_definition</code>の<code>type</code>）</th><th>属性の値を格納するキー</th><th>データ型</th></tr>
-            <tr><td><code>text</code>, <code>comment</code> または <code>tracking</code></td><td><code>comment</code></td><td>string</td></tr>
-            <tr><td><code>flag<c/ode></td><td><code>flag</code></td><td>boolean</td></tr>
-            <tr><td><code>integer</code></td><td><code>integer</code></td><td>integer</td></tr>
-            <tr><td><code>choice</code> または <code>select</code></td><td><code>choice</code></td><td>string（選択肢ID）</td></tr>
-            <tr><td><code>link</code></td><td><code>comment</code></td><td>string（アノテーションID）</td></tr>
-            </table>
-          items:
-            $ref: "#/components/schemas/AdditionalData"
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-    AdditionalData:
-      type: object
-      required:
-        - additional_data_definition_id
-      properties:
-        additional_data_definition_id:
-          description: 属性ID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。
-          allOf:
-          - $ref: "#/components/schemas/AdditionalDataDefinitionId"
-        flag:
-          type: boolean
-          description: |
-            `additional_data_definition`の`type`が`flag`のときの属性値。
-        integer:
-          type: integer
-          description: |
-            `additional_data_definition`の`type`が`integer`のときの属性値。
-        comment:
-          type: string
-          description: |
-            `additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。
-        choice:
-          description: |
-            `additional_data_definition`の`type`が`choice` または `select `のときの属性値（選択肢ID）。
-          allOf:
-            - $ref: "#/components/schemas/ChoiceId"
-    AdditionalDataValue:
-      oneOf:
-        - type: object
-        - $ref: "#/components/schemas/AdditionalDataValueFlag"
-        - $ref: "#/components/schemas/AdditionalDataValueInteger"
-        - $ref: "#/components/schemas/AdditionalDataValueComment"
-        - $ref: "#/components/schemas/AdditionalDataValueChoice"
-        - $ref: "#/components/schemas/AdditionalDataValueTracking"
-        - $ref: "#/components/schemas/AdditionalDataValueLink"
-    AdditionalDataValueFlag:
-      type: object
-      required:
-        - _type
-        - value
-      properties:
-        _type:
-          type: string
-          description: Flag
-          example: "Flag"
-        value:
-          type: boolean
-          description: フラグのON(true)またはOFF(false)
-    AdditionalDataValueInteger:
-      type: object
-      required:
-        - _type
-      properties:
-        _type:
-          type: string
-          description: Integer
-          example: "Integer"
-        value:
-          type: integer
-          description: 整数値
-    AdditionalDataValueComment:
-      type: object
-      required:
-        - _type
-      properties:
-        _type:
-          type: string
-          description: Comment
-          example: "Comment"
-        value:
-          type: string
-          description: 自由記述
-    AdditionalDataValueChoice:
-      type: object
-      required:
-        - _type
-      properties:
-        _type:
-          type: string
-          description: Choice
-          example: "Choice"
-        value:
-          $ref: "#/components/schemas/AdditionalDataChoiceValue"
-    AdditionalDataChoiceValue:
-      type: object
-      required:
-        - id
-        - name
-      properties:
-        id:
-          allOf:
-            - $ref: "#/components/schemas/ChoiceId"
-            - description: 選択された選択肢のID
-        name:
-          allOf:
-            - $ref: "#/components/schemas/InternationalizationMessage"
-            - description: 選択された選択肢の表示名
-    AdditionalDataValueTracking:
-      type: object
-      required:
-        - _type
-      properties:
-        _type:
-          type: string
-          description: Tracking
-          example: "Tracking"
-        value:
-          type: string
-          description: トラッキングID
-    AdditionalDataValueLink:
-      type: object
-      required:
-        - _type
-      properties:
-        _type:
-          type: string
-          description: Link
-          example: "Link"
-        value:
-          type: string
-          description: リンク先アノテーションID
-    SingleAnnotation:
-      type: object
-      required:
-        - project_id
-        - task_id
-        - input_data_id
-        - detail
-        - updated_datetime
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        detail:
-          $ref: "#/components/schemas/SingleAnnotationDetail"
-        updated_datetime:
-          type: string
-          format: date-time
-    SimpleAnnotation:
-      type: object
-      required:
-        - annotation_format_version
-        - project_id
-        - task_id
-        - task_phase
-        - task_phase_stage
-        - task_status
-        - input_data_id
-        - input_data_name
-        - details
-      properties:
-        annotation_format_version:
-          $ref: "#/components/schemas/AnnotationFormatVersion"
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        task_phase:
-          $ref: "#/components/schemas/TaskPhase"
-        task_phase_stage:
-          type: integer
-          default: 1
-          minimum: 1
-        task_status:
-          $ref: "#/components/schemas/TaskStatus"
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        input_data_name:
-          type: string
-          description: 入力データ名
-        details:
-          type: array
-          description: 矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
-          items:
-            $ref: "#/components/schemas/SimpleAnnotationDetail"
-        updated_datetime:
-          type: string
-          format: date-time
-          description: 更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。
-    BatchAnnotation:
-      type: object
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        annotation_id:
-          $ref: "#/components/schemas/AnnotationId"
-        label_id:
-          $ref: "#/components/schemas/LabelId"
-        additional_data_list:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalData"
-        updated_datetime:
-          type: string
-          format: date-time
-    BatchAnnotationRequestItemPut:
-      type: object
-      description: アノテーション更新
-      required:
-        - data
-      properties:
-        data:
-          $ref: "#/components/schemas/BatchAnnotation"
-        _type:
-          type: string
-          description: |
-            `Put`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "Put"
-    BatchAnnotationRequestItemDelete:
-      type: object
-      description: アノテーション削除
-      required:
-        - project_id
-        - task_id
-        - input_data_id
-        - annotation_id
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        annotation_id:
-          $ref: "#/components/schemas/AnnotationId"
-        updated_datetime:
-          type: string
-          format: date-time
-        _type:
-          type: string
-          description: |
-            `Delete`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "Delete"
-    SingleAnnotationDetail:
-      type: object
-      required:
-        - annotation_id
-        - account_id
-        - label_id
-        - data_holding_type
-        - additional_data_list
-        - created_datetime
-        - updated_datetime
-      properties:
-        annotation_id:
-          $ref: "#/components/schemas/AnnotationId"
-        account_id:
-          $ref: "#/components/schemas/AccountId"
-        label_id:
-          $ref: "#/components/schemas/LabelId"
-        data_holding_type:
-          $ref: "#/components/schemas/AnnotationDataHoldingType"
-        data:
-          $ref: "#/components/schemas/FullAnnotationData"
-        etag:
-          type: string
-          description: data_holding_typeがouterの場合のみ存在し、データのETagが格納される
-        url:
-          type: string
-          format: uri
-          description: data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
-        additional_data_list:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalData"
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-    SimpleAnnotationDetail:
-      type: object
-      required:
-        - label
-        - annotation_id
-        - data
-        - attributes
-      properties:
-        label:
-          type: string
-          example: "pedestrian"
-          description: |
-            アノテーション仕様のラベル名です。
-        annotation_id:
-          type: string
-          example: "acb5359e-be2e-402b-b59a-b5fdbb378ad9"
-          description: |
-            個々のアノテーションにつけられたIDです。
-        data:
-          $ref: "#/components/schemas/FullAnnotationData"
-        attributes:
-          type: object
-          description: |
-            キーに属性の名前、値に各属性の値が入った辞書構造です。
-          example:
-            maker: "AAA Motors"
-            size: 12345
-            is_foo_bar_buz: true
-    FullAnnotation:
-      type: object
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        task_phase:
-          $ref: "#/components/schemas/TaskPhase"
-        task_phase_stage:
-          type: integer
-          default: 1
-          minimum: 1
-        task_status:
-          $ref: "#/components/schemas/TaskStatus"
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        input_data_name:
-          type: string
-        details:
-          type: array
-          items:
-            $ref: "#/components/schemas/FullAnnotationDetail"
-        updated_datetime:
-          type: string
-          format: date-time
-        annotation_format_version:
-          $ref: "#/components/schemas/AnnotationFormatVersion"
-    FullAnnotationDetail:
-      type: object
-      properties:
-        annotation_id:
-          $ref: "#/components/schemas/AnnotationId"
-        user_id:
-          $ref: "#/components/schemas/UserId"
-        label_id:
-          $ref: "#/components/schemas/LabelId"
-        label_name:
-          $ref: "#/components/schemas/InternationalizationMessage"
-        annotation_type:
-          $ref: "#/components/schemas/AnnotationType"
-        data_holding_type:
-          $ref: "#/components/schemas/AnnotationDataHoldingType"
-        data:
-          $ref: "#/components/schemas/FullAnnotationData"
-        additional_data_list:
-          type: array
-          items:
-            $ref: "#/components/schemas/FullAnnotationAdditionalData"
-    FullAnnotationData:
-      oneOf:
-        - type: object
-        - $ref: "#/components/schemas/FullAnnotationDataClassification"
-        - $ref: "#/components/schemas/FullAnnotationDataSegmentation"
-        - $ref: "#/components/schemas/FullAnnotationDataSegmentationV2"
-        - $ref: "#/components/schemas/FullAnnotationDataBoundingBox"
-        - $ref: "#/components/schemas/FullAnnotationDataPoints"
-        - $ref: "#/components/schemas/FullAnnotationDataSinglePoint"
-        - $ref: "#/components/schemas/FullAnnotationDataRange"
-        - $ref: "#/components/schemas/FullAnnotationDataUnknown"
-      description: |
-        アノテーションのデータが格納されます。
-          * `FullAnnotationDataClassification`: 入力データ全体に対するアノテーションデータです。
-          * `FullAnnotationDataSegmentation`: ピクセルレベルでの塗りつぶし（ラスター）のアノテーションデータです。
-          * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2ののアノテーションデータです。塗りつぶしv2はSemantic Segmentationに特化しています。
-          * `FullAnnotationDataBoundingBox`: 矩形のアノテーションデータです。
-          * `FullAnnotationDataPoints`: ポリゴン（閉じた頂点集合）のアノテーションデータです。
-          * `FullAnnotationDataSegmentation`: 点のアノテーションデータです。
-          * `FullAnnotationDataRange`: 動画区間のアノテーションデータです。
-    FullAnnotationDataClassification:
-      type: object
-      required:
-        - _type
-      properties:
-        _type:
-          type: string
-          description: Classification
-          example: "Classification"
-    FullAnnotationDataSegmentation:
-      description: 塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
-      type: object
-      required:
-        - data_uri
-        - _type
-      properties:
-        data_uri:
-          type: string
-        _type:
-          type: string
-          description: Segmentation
-          example: "Segmentation"
-    FullAnnotationDataSegmentationV2:
-      type: object
-      required:
-        - data_uri
-        - _type
-      properties:
-        data_uri:
-          type: string
-        _type:
-          type: string
-          description: SegmentationV2
-          example: "SegmentationV2"
-    FullAnnotationDataBoundingBox:
-      description: annotation_type が bounding_boxの場合に、[左上頂点座標, 右下頂点座標]を {"x":int, "y":int} の形式で記述したもの。
-      type: object
-      required:
-        - left_top
-        - right_bottom
-        - _type
-      properties:
-        left_top:
-          $ref: "#/components/schemas/Point"
-        right_bottom:
-          $ref: "#/components/schemas/Point"
-        _type:
-          type: string
-          description: BoundingBox
-          example: "BoundingBox"
-    FullAnnotationDataPoints:
-      description: |
-        頂点座標 {"x":int, "y":int} の配列。
-  
-        * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。
-      type: object
-      required:
-        - points
-        - _type
-      properties:
-        points:
-          type: array
-          items:
-            $ref: "#/components/schemas/Point"
-        _type:
-          type: string
-          description: Points
-          example: "Points"
-    FullAnnotationDataSinglePoint:
-      description: annotation_type が pointの場合。
-      type: object
-      required:
-        - point
-        - _type
-      properties:
-        point:
-          $ref: "#/components/schemas/Point"
-        _type:
-          type: string
-          description: SinglePoint。
-          example: "SinglePoint"
-    FullAnnotationDataRange:
-      description: annotation_type が rangeの場合に、[開始時間, 終了時間]を {"begin":number, "end":number} の形式で記述したもの。開始時間・終了時間の単位は秒で、精度はミリ秒まで。
-      type: object
-      required:
-        - begin
-        - end
-        - _type
-      properties:
-        begin:
-          type: number
-          description: 開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
-        end:
-          type: number
-          description: 終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。
-        _type:
-          type: string
-          description: Range
-          example: "Range"
-    FullAnnotationDataUnknown:
-      description: annotation_typeにデータ構造が一致していない場合に、元のdata文字列をそのまま記述したもの。
-      type: object
-      required:
-        - data
-        - _type
-      properties:
-        data:
-          type: string
-        _type:
-          type: string
-          description: Unknown
-          example: "Unknown"
-    Point:
-      description: 座標
-      type: object
-      required:
-        - x
-        - y
-      properties:
-        x:
-          type: integer
-        y:
-          type: integer
-    FullAnnotationAdditionalData:
-      type: object
-      properties:
-        additional_data_definition_id:
-          allOf:
-            - $ref: "#/components/schemas/AdditionalDataDefinitionId"
-            - description: 属性ID
-        additional_data_definition_name:
-          allOf:
-            - $ref: "#/components/schemas/InternationalizationMessage"
-            - description: 属性表示名
-        type:
-          $ref: "#/components/schemas/AdditionalDataDefinitionType"
-        value:
-          $ref: "#/components/schemas/AdditionalDataValue"
-    BatchInspectionRequestItemPut:
-      type: object
-      description: 検査コメント更新
-      required:
-        - data
-      properties:
-        data:
-          $ref: "#/components/schemas/Inspection"
-        _type:
-          type: string
-          description: |
-            `Put`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "Put"
-    BatchInspectionRequestItemDelete:
-      type: object
-      description: 検査コメント削除
-      required:
-        - project_id
-        - task_id
-        - input_data_id
-        - inspection_id
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        inspection_id:
-          $ref: "#/components/schemas/InspectionId"
-        _type:
-          type: string
-          description: |
-            `Delete`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "Delete"
-    Inspection:
-      type: object
-      description: 検査コメント
-      required:
-        - project_id
-        - task_id
-        - input_data_id
-        - inspection_id
-        - phase
-        - phase_stage
-        - commenter_account_id
-        - data
-        - status
-        - comment
-        - created_datetime
-      properties:
-        project_id:
-          $ref: "#/components/schemas/ProjectId"
-        task_id:
-          $ref: "#/components/schemas/TaskId"
-        input_data_id:
-          $ref: "#/components/schemas/InputDataId"
-        inspection_id:
-          $ref: "#/components/schemas/InspectionId"
-        phase:
-          description: 検査コメントを付与したときのタスクフェーズ。[詳細はこちら](#section/TaskPhase)
-          allOf:
-            - $ref: "#/components/schemas/TaskPhase"
-        phase_stage:
-          type: integer
-          description: 検査コメントを付与したときのフェーズのステージ
-          default: 1
-          minimum: 1
-        commenter_account_id:
-          allOf:
-            - $ref: "#/components/schemas/AccountId"
-          description: 検査コメントを付与したユーザのアカウントID
-        annotation_id:
-          description: |
-            検査コメントに紐づくアノテーションのID。アノテーションに紐付けられていない場合（アノテーションの付け忘れに対する指定など）は未指定。
-            [詳細はこちら](#section/AnnotationId)。
-          allOf:
-            - $ref: "#/components/schemas/AnnotationId"
-        data:
-          description: |
-            検査コメントの座標値や区間。
-  
-            * `InspectionDataPoint`：点で検査コメントを付与したときの座標値
-            * `InspectionDataPolyline`：ポリラインで検査コメントを付与したときの座標値
-            * `InspectionDataTime`：検査コメントを付与した区間（動画プロジェクトの場合）
-          oneOf:
-            - $ref: "#/components/schemas/InspectionDataPoint"
-            - $ref: "#/components/schemas/InspectionDataPolyline"
-            - $ref: "#/components/schemas/InspectionDataTime"
-        parent_inspection_id:
-          description: |
-            返信先の検査コメントの検査ID。返信先の検査コメントは「スレッド内の直前のコメント」ではなく「スレッドの先頭のコメント」を指します。
-          allOf:
-            - $ref: "#/components/schemas/InspectionId"
-        phrases:
-          type: array
-          description: 参照している定型指摘のID。
-          items:
-            $ref: "#/components/schemas/PhraseId"
-        comment:
-          description: |
-            検査コメントの中身
-          type: string
-          example: 枠がズレています
-        status:
-          $ref: "#/components/schemas/InspectionStatus"
-        created_datetime:
-          type: string
-          format: date-time
-        updated_datetime:
-          type: string
-          format: date-time
-    InspectionDataPoint:
-      type: object
-      description: |
-        問題のある部分を示す座標
-      required:
-        - x
-        - y
-      properties:
-        x:
-          type: integer
-        y:
-          type: integer
-        _type:
-          type: string
-          description: |
-            `Point`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "Point"
-    InspectionDataPolyline:
-      type: object
-      description: |
-        問題のある部分を示すポリライン
-      required:
-        - coordinates
-      properties:
-        coordinates:
-          type: array
-          description: |
-            ポリラインを構成する頂点の配列
-          items:
-            type: object
-            properties:
-              x:
-                type: integer
-              y:
-                type: integer
-        _type:
-          type: string
-          description: |
-            `Polyline`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "Polyline"
-    InspectionDataTime:
-      type: object
-      description: |
-        問題のある時間帯を表す区間
-      required:
-        - start
-        - end
-      properties:
-        start:
-          type: number
-          description: 開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
-        end:
-          type: number
-          description: 終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。
-        _type:
-          type: string
-          description: |
-            `Time`
-            [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "Time"
-    Resolution:
-      type: object
-      required:
-        - width
-        - height
-      properties:
-        width:
-          type: number
-        height:
-          type: number
-    InspectionStatus:
-      type: string
-      enum:
-        - annotator_action_required
-        - no_correction_required
-        - error_corrected
-        - no_comment_inspection
-      description: |
-        * `annotator_action_required` - 未処置。`annotation`フェーズ担当者が何らかの回答をする必要あり
-        * `no_correction_required` - 処置不要。`annotation`フェーズ担当者が、検査コメントによる修正は不要、と回答した
-        * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した
-        * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力
-    AggregationResult:
-      oneOf:
-        - type: object
-        - $ref: "#/components/schemas/CountResult"
-    CountResult:
-      type: object
-      properties:
-        _type:
-          type: string
-          example: "CountResult"
-          description: |
-            他と区別するために `CountResult` を指定します
-        name:
-          type: string
-        field:
-          type: string
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/Count"
-    Count:
-      type: object
-      properties:
-        key:
-          type: string
-        count:
-          type: integer
-        aggregations:
-          type: array
-          items:
-            $ref: "#/components/schemas/AggregationResult"
-    Instruction:
-      type: object
-      properties:
-        html:
-          type: string
-          description: 作業ガイドのHTML
-          example: "<p>test</p>"
-        last_updated_datetime:
-          type: string
-          format: date-time
-          description: |
-            * [getInstruction](#operation/getInstruction) APIのレスポンスの場合: 最後に作業ガイドを更新した日時。
-            * [putInstruction](#operation/putInstruction) APIのリクエストボディの場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。
-    InstructionHistory:
-      type: object
-      required:
-        - history_id
-        - account_id
-        - updated_datetime
-      properties:
-        history_id:
-          type: string
-          description: 作業ガイドの履歴ID
-        account_id:
-          type: string
-          description: 作業ガイドを更新したユーザのアカウントID
-        updated_datetime:
-          type: string
-          format: date-time
-          description: 作業ガイドの最終更新日時
-    InstructionImage:
-      type: object
-      required:
-        - image_id
-        - path
-        - url
-        - etag
-      properties:
-        image_id:
-          type: string
-          description: 作業ガイド画像ID
-        path:
-          type: string
-          example: "s3://ANNOFAB-BUCKET/PATH/TO/INSTRUCTION_IMAGE"
-          description: |
-            作業ガイド画像の実体が保存されたパスです。
-        url:
-          type: string
-          format: uri
-          example: https://annofab.com/projects/{project_id}/instruction-images/{image_id}
-          description:
-            作業ガイド画像を取得するための内部用URLです。
-        etag:
-          type: string
-    ValidationError:
-      oneOf:
-        - type: object
-        - $ref: "#/components/schemas/InvalidAnnotationData"
-        - $ref: "#/components/schemas/DuplicatedSegmentationV2"
-        - $ref: "#/components/schemas/InvalidCommentFormat"
-        - $ref: "#/components/schemas/UnknownLinkTarget"
-        - $ref: "#/components/schemas/InvalidLinkTarget"
-        - $ref: "#/components/schemas/EmptyAttribute"
-        - $ref: "#/components/schemas/Duplicated"
-        - $ref: "#/components/schemas/UnknownAdditionalData"
-        - $ref: "#/components/schemas/OutOfImageBounds"
-        - $ref: "#/components/schemas/UnknownLabel"
-    InvalidAnnotationData:
-      type: object
-      description: アノテーションデータ不正エラー
-      properties:
-        labelId:
-          type: string
-        annotationId:
-          type: string
-        message:
-          type: string
-        _type:
-          type: string
-          description: InvalidAnnotationData
-          example: "InvalidAnnotationData"
-    DuplicatedSegmentationV2:
-      type: object
-      description: 塗りつぶしv2のラベルに対する1ラベルにつき1アノテーションまでの制約違反エラー
-      properties:
-        labelId:
-          type: string
-        annotationIds:
-          type: array
-          items:
+            CACHE TIMESTAMP
+          required: false
+          schema:
             type: string
-        _type:
-          type: string
-          description: DuplicatedSegmentationV2
-          example: "DuplicatedSegmentationV2"
-    InvalidCommentFormat:
-      type: object
-      description: コメントが正規表現に合致しないエラー
-      properties:
-        labelId:
-          type: string
-        annotationId:
-          type: string
-        additionalDataDefinitionId:
-          type: string
-        _type:
-          type: string
-          description: InvalidCommentFormat
-          example: "InvalidCommentFormat"
-    UnknownLinkTarget:
-      type: object
-      description: 指定されたIDに該当するアノテーションが存在しないエラー
-      properties:
-        labelId:
-          type: string
-        annotationId:
-          type: string
-        additionalDataDefinitionId:
-          type: string
-        _type:
-          type: string
-          description: UnknownLinkTarget
-          example: "UnknownLinkTarget"
-    InvalidLinkTarget:
-      type: object
-      description: リンク先アノテーションが許可されているラベルでないエラー
-      properties:
-        labelId:
-          type: string
-        annotationId:
-          type: string
-        additionalDataDefinitionId:
-          type: string
-        _type:
-          type: string
-          description: InvalidLinkTarget
-          example: "InvalidLinkTarget"
-    EmptyAttribute:
-      type: object
-      description: 属性が未入力であるエラー
-      properties:
-        labelId:
-          type: string
-        annotationId:
-          type: string
-        additionalDataDefinitionId:
-          type: string
-        _type:
-          type: string
-          description: EmptyAttribute
-          example: "EmptyAttribute"
-    Duplicated:
-      type: object
-      description: 値の重複が許可されていない属性の重複エラー
-      properties:
-        labelId:
-          type: string
-        annotationId:
-          type: string
-        additionalData:
-          $ref: "#/components/schemas/AdditionalData"
-        _type:
-          type: string
-          description: Duplicated
-          example: "Duplicated"
-    UnknownAdditionalData:
-      type: object
-      description: 何らかの原因で、アノテーション仕様にない属性がついているエラー
-      properties:
-        labelId:
-          type: string
-        annotationId:
-          type: string
-        additionalDataDefinitionId:
-          type: string
-        _type:
-          type: string
-          description: UnknownAdditionalData
-          example: "UnknownAdditionalData"
-    OutOfImageBounds:
-      type: object
-      description: 画像範囲外にアノテーションがはみ出しているエラー
-      properties:
-        labelId:
-          type: string
-        annotationId:
-          type: string
-        _type:
-          type: string
-          description: OutOfImageBounds
-          example: "OutOfImageBounds"
-    UnknownLabel:
-      type: object
-      description: 何らかの原因で、アノテーション仕様にないラベルがついているエラー
-      properties:
-        labelId:
-          type: string
-        annotationId:
-          type: string
-        _type:
-          type: string
-          description: UnknownLabel
-          example: "UnknownLabel"
-    ProjectTaskCounts:
-      type: object
-      properties:
-        task_counts:
-          type: array
-          items:
-            type: object
-            properties:
-              phase:
-                $ref: "#/components/schemas/TaskPhase"
-              status:
-                $ref: "#/components/schemas/TaskStatus"
-              count:
-                description: 該当するタスクの数
-                type: number
+            example: "123456789"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: swagger-api-components.redoc.yaml#/components/schemas/MyAccount
+        "401":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+        "404":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+        "503":
+          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
