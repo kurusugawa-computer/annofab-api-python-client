@@ -1,6 +1,6 @@
 #!/bin/bash -uex
 
-DOCKER_IMAGE=openapitools/openapi-generator-cli:v4.2.3
+DOCKER_IMAGE=openapitools/openapi-generator-cli:v4.3.1
 
 PROGNAME=$(basename $0)
 
@@ -47,18 +47,17 @@ if "${FLAG_DOWNLOAD}"; then
     curl https://annofab.com/docs/api/swagger.yaml --output swagger/swagger.yaml
     curl https://annofab.com/docs/api/swagger.v2.yaml --output swagger/swagger.v2.yaml
     curl https://annofab.com/docs/api/swagger-api-components.yaml  --output swagger/swagger-api-components.yaml
-#    curl https://annofab.com/docs/api/swagger.internal.yaml  --output swagger.internal.yaml
 
-  # インデントを１つ深くする
-  sed -e "s/#\/schemas/#\/components\/schemas/g" -e "s/^/  /g" swagger/swagger-api-components.yaml --in-place
-
-  sed '/swagger-api-components.yaml/d' swagger/swagger.yaml > swagger/swagger-tmp.yaml
-  cat swagger/swagger-tmp.yaml  swagger/swagger-api-components.yaml > swagger/swagger.yaml
-
-  sed '/swagger-api-components.yaml/d' swagger/swagger.v2.yaml > swagger/swagger-tmp.v2.yaml
-  cat swagger/swagger-tmp.v2.yaml swagger/swagger-api-components.yaml > swagger/swagger.v2.yaml
-
-  rm swagger/swagger-tmp.yaml swagger/swagger-tmp.v2.yaml
+#  # インデントを１つ深くする
+#  sed -e "s/#\/schemas/#\/components\/schemas/g" -e "s/^/  /g" swagger/swagger-api-components.yaml --in-place
+#
+#  sed '/swagger-api-components.yaml/d' swagger/swagger.yaml > swagger/swagger-tmp.yaml
+#  cat swagger/swagger-tmp.yaml  swagger/swagger-api-components.yaml > swagger/swagger.yaml
+#
+#  sed '/swagger-api-components.yaml/d' swagger/swagger.v2.yaml > swagger/swagger-tmp.v2.yaml
+#  cat swagger/swagger-tmp.v2.yaml swagger/swagger-api-components.yaml > swagger/swagger.v2.yaml
+#
+#  rm swagger/swagger-tmp.yaml swagger/swagger-tmp.v2.yaml
 fi
 
 
