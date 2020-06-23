@@ -75,3 +75,6 @@ class InputData:
 
     metadata: Optional[Dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。 """
+
+    system_metadata: Optional[SystemMetadata]
+    """"""

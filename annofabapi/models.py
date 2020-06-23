@@ -232,7 +232,7 @@ AdditionalData = Dict[str, Any]
 Kyes of Dict
 
 * additional_data_definition_id: str
-    属性ID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。
+    
 * flag: bool
     `additional_data_definition`の`type`が`flag`のときの属性値。 
 * integer: int
@@ -240,20 +240,16 @@ Kyes of Dict
 * comment: str
     `additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 
 * choice: str
-    `additional_data_definition`の`type`が`choice` または `select `のときの属性値（選択肢ID）。 
+    
 
 """
 
-AdditionalDataChoiceValue = Dict[str, Any]
+AdditionalDataDefaultType = Dict[str, Any]
 """
-
+属性の初期値です。  初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。  * type が flag の場合: 真偽値(`true` or `false`) * type が integer の場合: 整数値 * type が text の場合: 文字列 * type が comment の場合: 文字列 * type が choice の場合: 選択肢(`choices`)の `choice_id` * type が select の場合: 選択肢(`choices`)の `choice_id`  属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。  なお、トラッキングとリンクには初期値を設定できません。 
 
 Kyes of Dict
 
-* id: str
-    
-* name: InternationalizationMessage
-    
 
 """
 
@@ -285,8 +281,8 @@ Kyes of Dict
     
 * name: InternationalizationMessage
     
-* default: OneOfbooleanintegerstring
-    属性の初期値です。  初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。  * type が flag の場合: 真偽値(`true` or `false`) * type が integer の場合: 整数値 * type が text の場合: 文字列 * type が comment の場合: 文字列 * type が choice の場合: 選択肢(`choices`)の `choice_id` * type が select の場合: 選択肢(`choices`)の `choice_id`  属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。  なお、トラッキングとリンクには初期値を設定できません。 
+* default: AdditionalDataDefaultType
+    
 * keybind: List[Keybind]
     
 * type: AdditionalDataDefinitionType
@@ -329,8 +325,8 @@ Kyes of Dict
     
 * name: InternationalizationMessage
     
-* default: OneOfbooleanintegerstring
-    属性の初期値です。  初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。  * type が flag の場合: 真偽値(`true` or `false`) * type が integer の場合: 整数値 * type が text の場合: 文字列 * type が comment の場合: 文字列 * type が choice の場合: 選択肢(`choices`)の `choice_id` * type が select の場合: 選択肢(`choices`)の `choice_id`  属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。  なお、トラッキングとリンクには初期値を設定できません。 
+* default: AdditionalDataDefaultType
+    
 * keybind: List[Keybind]
     
 * type: AdditionalDataDefinitionType
@@ -419,6 +415,8 @@ premise で指定された条件を満たすとき、condition で指定され�
 
 Kyes of Dict
 
+* type: str
+    
 * premise: AdditionalDataRestriction
     
 * condition: AdditionalDataRestrictionCondition
@@ -465,97 +463,6 @@ Kyes of Dict
 
 """
 
-AdditionalDataValue = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* type: str
-    Link
-* value: str
-    リンク先アノテーションID
-
-"""
-
-AdditionalDataValueChoice = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* type: str
-    Choice
-* value: AdditionalDataChoiceValue
-    
-
-"""
-
-AdditionalDataValueComment = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* type: str
-    Comment
-* value: str
-    自由記述
-
-"""
-
-AdditionalDataValueFlag = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* type: str
-    Flag
-* value: bool
-    フラグのON(true)またはOFF(false)
-
-"""
-
-AdditionalDataValueInteger = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* type: str
-    Integer
-* value: int
-    整数値
-
-"""
-
-AdditionalDataValueLink = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* type: str
-    Link
-* value: str
-    リンク先アノテーションID
-
-"""
-
-AdditionalDataValueTracking = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* type: str
-    Tracking
-* value: str
-    トラッキングID
-
-"""
-
 AggregationResult = Dict[str, Any]
 """
 
@@ -584,6 +491,15 @@ Kyes of Dict
 
 """
 
+AnnotationData = Dict[str, Any]
+"""
+アノテーションの座標値や区間などのデータ。 `annotation_type` に応じて `string` や `object` の構造が変わります。  API レスポンスに使われる場合は常に `string` 形式です。 [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は `string` に加え、`object` 形式も使用できます。 
+
+Kyes of Dict
+
+
+"""
+
 
 class AnnotationDataHoldingType(Enum):
     """
@@ -603,15 +519,15 @@ Kyes of Dict
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * account_id: str
-    アノテーションを作成したユーザのアカウントID。
+    
 * label_id: str
-    ラベルID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。
+    
 * is_protected: bool
     `true`の場合、アノテーションをアノテーションエディタ上での削除から保護できます。 外部から取り込んだアノテーションに属性を追加するときなどに指定すると、データの削除を防げます。 
 * data_holding_type: AnnotationDataHoldingType
     
-* data: OneOfstringFullAnnotationData
-    アノテーションの座標値や区間などのデータ。レスポンスの場合は`string`形式、[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は`string`または`object`形式です。 `annotation_type`に応じて`string`,`object`の形式が変わります。  <table> <tr><th>annotation_type</th><th>data_holding_type</th><th>string形式</th><th>object形式</th></tr> <tr><td>bounding_box </td><td>inner</td><td><code>左上x,左上y,右下x,右下y</code></td><td><code>FullAnnotationDataBoundingBox</code></td></tr> <tr><td>point</td><td>inner</td><td><code>x1,y1</code></td><td><code>FullAnnotationDataSinglePoint</code></td></tr> <tr><td>polygon / polyline  </td><td>inner</td><td><code>x1,y1,x2,y2, ... </code></td><td><code>FullAnnotationDataPoints</code></td></tr> <tr><td>range </td><td>inner</td><td><code>開始時間(ミリ秒),終了時間(ミリ秒) </code></td><td><code>FullAnnotationDataRange</code></td></tr> <tr><td>classification  </td><td>inner</td><td><code>null </code></td><td><code>FullAnnotationDataClassification</code> / <code>null </code></td></tr> <tr><td>segmentation</td><td>outer</td><td><code>null </code></td><td><code>FullAnnotationDataSegmentation</code> / <code>null </code></td></tr> <tr><td>segmentation_v2   </td><td>outer</td><td><code>null </code></td><td><code>FullAnnotationDataSegmentationV2</code> / <code>null </code></td></tr> </table> 
+* data: AnnotationData
+    
 * path: str
     外部ファイルに保存されたアノテーションのパス。`data_holding_type`が`inner`の場合は未指定です。 レスポンスの場合は`annotation_id`と同じ値が格納されます。  [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は、[createTempPath](#operation/createTempPath) APIで取得できる一時データ保存先S3パスを格納してください。 更新しない場合は、[getEditorAnnotation](#operation/getEditorAnnotation) APIで取得した`path`をそのまま渡せます。  外部ファイルのフォーマットは下表の通りです。  <table> <tr><th>annotation_type</th><th>形式</th></tr> <tr><td>segmentation / segmentation_v2   </td><td>PNG画像。塗りつぶした部分は<code>rgba(255, 255, 255, 1) </code>、塗りつぶしていない部分は<code>rgba(0, 0, 0, 0) </code>。</td></tr> </table> 
 * etag: str
@@ -648,6 +564,27 @@ Kyes of Dict
 
 """
 
+AnnotationList = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[SingleAnnotation]
+    現在のページ番号に含まれる0件以上のアノテーションです。
+* page_no: float
+    現在のページ番号です。
+* total_page_no: float
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるアノテーションが0件であっても、総ページ数は1となります。
+* total_count: float
+    検索結果の総件数。
+* over_limit: bool
+    検索結果が1万件を超えた場合にtrueとなる。
+* aggregations: List[AggregationResult]
+    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
+
+"""
+
 AnnotationQuery = Dict[str, Any]
 """
 
@@ -665,6 +602,33 @@ Kyes of Dict
 * label_id: str
     
 * attributes: List[AdditionalData]
+    
+* updated_from: str
+    開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日。updated_toより後ろに指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、本日であるとして扱われる。 
+* updated_to: str
+    開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、終了日。未指定の場合、本日であるとして扱われる。 
+
+"""
+
+AnnotationSpecs = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* labels: List[LabelV2]
+    
+* inspection_phrases: List[InspectionPhrase]
+    
+* updated_datetime: str
+    アノテーション仕様の最終更新時刻 
+* additionals: List[AdditionalDataDefinitionV2]
+    
+* restrictions: List[AdditionalDataRestriction]
+    
+* format_version: str
     
 
 """
@@ -690,6 +654,31 @@ Kyes of Dict
 
 """
 
+AnnotationSpecsRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* labels: List[LabelV2]
+    
+* inspection_phrases: List[InspectionPhrase]
+    
+* comment: str
+    
+* auto_marking: bool
+    trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
+* last_updated_datetime: str
+    新規作成時は未指定、更新時は必須（更新前の日時） 
+* additionals: List[AdditionalDataDefinitionV2]
+    
+* restrictions: List[AdditionalDataRestriction]
+    
+* format_version: str
+    
+
+"""
+
 AnnotationSpecsRequestV1 = Dict[str, Any]
 """
 
@@ -705,7 +694,7 @@ Kyes of Dict
 * auto_marking: bool
     trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
 * last_updated_datetime: str
-    更新前アノテーション仕様の時刻( `updated_datetime` )を指定する。 新規作成時は未指定。 
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
@@ -730,7 +719,7 @@ Kyes of Dict
 * format_version: str
     
 * last_updated_datetime: str
-    更新前アノテーション仕様の時刻( `updated_datetime` )を指定する。 新規作成時は未指定。 
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
@@ -777,7 +766,7 @@ Kyes of Dict
 
 class AnnotationType(Enum):
     """
-    * `bounding_box` - 矩形を表します。 * `segmentation` - ピクセルレベルでの塗りつぶし（ラスター）を表します。 * `segmentation_v2` - 塗りつぶしv2を表します。v2はSemantic Segmentationに特化しています。 * `polygon` - ポリゴン（閉じた頂点集合）を表します。 * `polyline` - ポリライン（開いた頂点集合）を表します。 * `point` - 点を表します。 * `classification` - 入力データ全体に対するアノテーションを表します。 * `range` - 動画の区間を表します。 
+    * `bounding_box` - 矩形を表します。 * `segmentation` - ピクセルレベルでの塗りつぶし（ラスター）を表します。 * `segmentation_v2` - 塗りつぶしv2を表します。v2はSemantic Segmentationに特化しています。 * `polygon` - ポリゴン（閉じた頂点集合）を表します。 * `polyline` - ポリライン（開いた頂点集合）を表します。 * `point` - 点を表します。 * `classification` - 入力データ全体に対するアノテーションを表します。 * `range` - 動画の区間を表します。 * `custom` - カスタム 
     """
 
     BOUNDING_BOX = "bounding_box"
@@ -788,6 +777,7 @@ class AnnotationType(Enum):
     POINT = "point"
     CLASSIFICATION = "classification"
     RANGE = "range"
+    CUSTOM = "custom"
 
 
 class AssigneeRuleOfResubmittedTask(Enum):
@@ -817,6 +807,29 @@ Kyes of Dict
     
 * additional_data_list: List[AdditionalData]
     
+* updated_datetime: str
+    
+
+"""
+
+BatchAnnotationRequestItem = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* data: BatchAnnotation
+    
+* type: str
+    `Delete` [詳しくはこちら](#section/API-Convention/API-_type) 
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * updated_datetime: str
     
 
@@ -856,6 +869,15 @@ Kyes of Dict
 
 """
 
+BatchInputDataRequestItem = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+
+"""
+
 BatchInputDataRequestItemDelete = Dict[str, Any]
 """
 入力データ削除
@@ -868,6 +890,27 @@ Kyes of Dict
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * type: str
     `Delete` [詳しくはこちら](#section/API-Convention/API-_type) 
+
+"""
+
+BatchInspectionRequestItem = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* data: Inspection
+    
+* type: str
+    `Delete` [詳しくはこちら](#section/API-Convention/API-_type) 
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* inspection_id: str
+    検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 
 """
 
@@ -900,6 +943,15 @@ Kyes of Dict
     
 * type: str
     `Put` [詳しくはこちら](#section/API-Convention/API-_type) 
+
+"""
+
+BatchTaskRequestItem = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
 
 """
 
@@ -1028,11 +1080,11 @@ Count = Dict[str, Any]
 Kyes of Dict
 
 * key: str
-    
+    集約対象の `field` の値です。 
 * count: int
-    
+    集約対象 `field` の値が `key` の値と等しかったリソースの件数です。 
 * aggregations: List[AggregationResult]
-    
+    この集約のサブ集約です。サブ集約がないときは空の配列になります。 
 
 """
 
@@ -1043,13 +1095,13 @@ CountResult = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    他と区別するために `CountResult` を指定します 
+    `CountResult` [詳しくはこちら](#section/API-Convention/API-_type) 
 * name: str
-    
+    複数の集約を区別するための名前です。  `(フィールド名)_(集約内容)` のように命名されます。例えば `account_id` フィールドを `count` する場合、`account_id_count` となります。 
 * field: str
-    
+    集約に使われたリソースのフィールド名です。  リソースの属性のさらに属性を参照するときは、`foo.bar.buz` のようにドット区切りになります。 
 * items: List[Count]
-    
+    集約結果の値です。 
 
 """
 
@@ -1072,6 +1124,39 @@ DeleteProjectResponse = Dict[str, Any]
 
 Kyes of Dict
 
+* job: JobInfo
+    
+* project: Project
+    
+
+"""
+
+DeleteProjectResponseWrapper = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* title: str
+    プロジェクトのタイトル
+* overview: str
+    プロジェクトの概要
+* project_status: ProjectStatus
+    
+* input_data_type: InputDataType
+    
+* configuration: ProjectConfiguration
+    
+* created_datetime: str
+    
+* updated_datetime: str
+    
+* summary: ProjectSummary
+    
 * job: JobInfo
     
 * project: Project
@@ -1128,7 +1213,7 @@ Kyes of Dict
 
 """
 
-Error = Dict[str, Any]
+ErrorItem = Dict[str, Any]
 """
 
 
@@ -1143,270 +1228,16 @@ Kyes of Dict
 
 """
 
-ErrorAlreadyUpdated = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorExpiredToken = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorForbiddenResource = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorInternalServerError = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorInvalidBody = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorInvalidPath = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorInvalidQueryParam = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorLoginFailed = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorMissingNecessaryQueryParam = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorMissingResource = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorPasswordResetRequired = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorRefreshTokenExpired = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorStateMismatch = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorTimeout = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorUnauthorizedApi = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
-ErrorUnderMaintenance = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* errors: List[Error]
-    
-* context: __DictStrKeyAnyValue__
-    内部補足情報
-
-"""
-
 Errors = Dict[str, Any]
 """
 
 
 Kyes of Dict
 
-* errors: List[Error]
+* errors: List[ErrorItem]
     
 * context: __DictStrKeyAnyValue__
     内部補足情報
-
-"""
-
-FullAnnotation = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* task_id: str
-    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* task_phase: TaskPhase
-    
-* task_phase_stage: int
-    
-* task_status: TaskStatus
-    
-* input_data_id: str
-    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* input_data_name: str
-    
-* details: List[FullAnnotationDetail]
-    
-* updated_datetime: str
-    
-* annotation_format_version: str
-    アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 
-
-"""
-
-FullAnnotationAdditionalData = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* additional_data_definition_id: str
-    
-* additional_data_definition_name: InternationalizationMessage
-    
-* type: AdditionalDataDefinitionType
-    
-* value: AdditionalDataValue
-    
 
 """
 
@@ -1543,31 +1374,6 @@ Kyes of Dict
 
 """
 
-FullAnnotationDetail = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* annotation_id: str
-    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
-* user_id: str
-    
-* label_id: str
-    
-* label_name: InternationalizationMessage
-    
-* annotation_type: AnnotationType
-    
-* data_holding_type: AnnotationDataHoldingType
-    
-* data: FullAnnotationData
-    
-* additional_data_list: List[FullAnnotationAdditionalData]
-    
-
-"""
-
 
 class GraphType(Enum):
     """
@@ -1597,218 +1403,6 @@ Kyes of Dict
     
 * count: int
     
-
-"""
-
-InlineResponse200 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[MyOrganization]
-    現在のページ番号に含まれる0件以上の所属組織です。
-* page_no: float
-    現在のページ番号です。
-* total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる所属組織が0件であっても、総ページ数は1となります。
-* total_count: float
-    検索結果の総件数。
-* over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
-    Aggregationによる集約結果。
-
-"""
-
-InlineResponse2001 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[Project]
-    現在のページ番号に含まれる0件以上のプロジェクトです。
-* page_no: float
-    現在のページ番号です。
-* total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトが0件であっても、総ページ数は1となります。
-* total_count: float
-    検索結果の総件数。
-* over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
-    Aggregationによる集約結果。
-
-"""
-
-InlineResponse20010 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* url: str
-    認証済み一時URL
-
-"""
-
-InlineResponse20011 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[InputData]
-    現在のページ番号に含まれる0件以上の入力データです。
-* page_no: float
-    現在のページ番号です。
-* total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる入力データが0件であっても、総ページ数は1となります。
-* total_count: float
-    検索結果の総件数。
-* over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
-    Aggregationによる集約結果。
-
-"""
-
-InlineResponse2002 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[OrganizationMember]
-    
-* page_no: float
-    現在のページ番号です。
-* total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる組織メンバーが0件であっても、総ページ数は1となります。
-* total_count: float
-    検索結果の総件数。
-* over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
-    Aggregationによる集約結果。
-
-"""
-
-InlineResponse2003 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[OrganizationPlugin]
-    
-* page_no: float
-    現在のページ番号です。
-* total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトが0件であっても、総ページ数は1となります。
-* total_count: float
-    検索結果の総件数。
-
-"""
-
-InlineResponse2004 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[Project]
-    
-* has_next: bool
-    
-
-"""
-
-InlineResponse2005 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* url: str
-    認証済み一時URL
-
-"""
-
-InlineResponse2006 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[ProjectMember]
-    
-* page_no: float
-    現在のページ番号です。
-* total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトメンバーが0件であっても、総ページ数は1となります。
-* total_count: float
-    検索結果の総件数。
-* over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
-    Aggregationによる集約結果。
-
-"""
-
-InlineResponse2007 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[JobInfo]
-    
-* has_next: bool
-    
-
-"""
-
-InlineResponse2008 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[Task]
-    現在のページ番号に含まれる0件以上のタスクです。
-* page_no: float
-    現在のページ番号です。
-* total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるタスク0件であっても、総ページ数は1となります。
-* total_count: float
-    検索結果の総件数。
-* over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
-    Aggregationによる集約結果。
-
-"""
-
-InlineResponse2009 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[SingleAnnotation]
-    現在のページ番号に含まれる0件以上のアノテーションです。
-* page_no: float
-    現在のページ番号です。
-* total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるアノテーションが0件であっても、総ページ数は1となります。
-* total_count: float
-    検索結果の総件数。
-* over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
-    Aggregationによる集約結果。
 
 """
 
@@ -1844,6 +1438,29 @@ Kyes of Dict
     データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。 
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。 
+* system_metadata: SystemMetadata
+    
+
+"""
+
+InputDataList = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[InputData]
+    現在のページ番号に含まれる0件以上の入力データです。
+* page_no: float
+    現在のページ番号です。
+* total_page_no: float
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる入力データが0件であっても、総ページ数は1となります。
+* total_count: float
+    検索結果の総件数。
+* over_limit: bool
+    検索結果が1万件を超えた場合にtrueとなる。
+* aggregations: List[AggregationResult]
+    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
 
 """
 
@@ -1895,11 +1512,12 @@ Kyes of Dict
 
 class InputDataType(Enum):
     """
-    アノテーションする入力データの種類。プロジェクトの作成時のみ指定可能（未指定の場合は `image`）です。更新時は無視されます。 * `image` - 画像 * `movie` - 動画 
+    アノテーションする入力データの種類。プロジェクトの作成時のみ指定可能（未指定の場合は `image`）です。更新時は無視されます。 * `image` - 画像 * `movie` - 動画 * `custom` - カスタム 
     """
 
     IMAGE = "image"
     MOVIE = "movie"
+    CUSTOM = "custom"
 
 
 Inspection = Dict[str, Any]
@@ -1917,17 +1535,17 @@ Kyes of Dict
 * inspection_id: str
     検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * phase: TaskPhase
-    検査コメントを付与したときのタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+    
 * phase_stage: int
     検査コメントを付与したときのフェーズのステージ
 * commenter_account_id: str
-    検査コメントを付与したユーザのアカウントID
+    
 * annotation_id: str
-    検査コメントに紐づくアノテーションのID。アノテーションに紐付けられていない場合（アノテーションの付け忘れに対する指定など）は未指定。 [詳細はこちら](#section/AnnotationId)。 
-* data: OneOfInspectionDataPointInspectionDataPolylineInspectionDataTime
-    検査コメントの座標値や区間。  * `InspectionDataPoint`：点で検査コメントを付与したときの座標値 * `InspectionDataPolyline`：ポリラインで検査コメントを付与したときの座標値 * `InspectionDataTime`：検査コメントを付与した区間（動画プロジェクトの場合） 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+* data: InspectionData
+    
 * parent_inspection_id: str
-    返信先の検査コメントの検査ID。返信先の検査コメントは「スレッド内の直前のコメント」ではなく「スレッドの先頭のコメント」を指します。 
+    検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * phrases: List[str]
     参照している定型指摘のID。
 * comment: str
@@ -1938,6 +1556,42 @@ Kyes of Dict
     
 * updated_datetime: str
     
+
+"""
+
+InspectionData = Dict[str, Any]
+"""
+検査コメントの座標値や区間。  * `InspectionDataPoint`：点で検査コメントを付与したときの座標値 * `InspectionDataPolyline`：ポリラインで検査コメントを付与したときの座標値 * `InspectionDataTime`：検査コメントを付与した区間（動画プロジェクトの場合） * `InspectionDataCustom`：カスタム 
+
+Kyes of Dict
+
+* x: int
+    
+* y: int
+    
+* type: str
+    `Custom` [詳しくはこちら](#section/API-Convention/API-_type) 
+* coordinates: List[InspectionDataPolylineCoordinates]
+    ポリラインを構成する頂点の配列 
+* start: float
+    開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
+* end: float
+    終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。
+* data: str
+    
+
+"""
+
+InspectionDataCustom = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* data: str
+    
+* type: str
+    `Custom` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -2247,6 +1901,19 @@ Kyes of Dict
 
 """
 
+JobInfoContainer = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[JobInfo]
+    
+* has_next: bool
+    
+
+"""
+
 
 class JobStatus(Enum):
     """
@@ -2259,7 +1926,7 @@ class JobStatus(Enum):
 
 class JobType(Enum):
     """
-    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 
+    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。 
     """
 
     COPY_PROJECT = "copy-project"
@@ -2270,6 +1937,7 @@ class JobType(Enum):
     GEN_INPUTS_LIST = "gen-inputs-list"
     DELETE_PROJECT = "delete-project"
     INVOKE_HOOK = "invoke-hook"
+    MOVE_PROJECT = "move-project"
 
 
 Keybind = Dict[str, Any]
@@ -2471,6 +2139,33 @@ Kyes of Dict
 
 """
 
+MessageOrJobInfo = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* message: str
+    多言語対応
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* job_type: JobType
+    
+* job_id: str
+    
+* job_status: JobStatus
+    
+* job_execution: __DictStrKeyAnyValue__
+    ジョブの内部情報
+* job_detail: __DictStrKeyAnyValue__
+    ジョブ結果の内部情報
+* created_datetime: str
+    
+* updated_datetime: str
+    
+
+"""
+
 MyAccount = Dict[str, Any]
 """
 
@@ -2542,6 +2237,27 @@ Kyes of Dict
 
 """
 
+MyOrganizationList = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[MyOrganization]
+    現在のページ番号に含まれる0件以上の所属組織です。
+* page_no: float
+    現在のページ番号です。
+* total_page_no: float
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる所属組織が0件であっても、総ページ数は1となります。
+* total_count: float
+    検索結果の総件数。
+* over_limit: bool
+    検索結果が1万件を超えた場合にtrueとなる。
+* aggregations: List[AggregationResult]
+    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
+
+"""
+
 Organization = Dict[str, Any]
 """
 
@@ -2580,23 +2296,6 @@ Kyes of Dict
 
 """
 
-OrganizationCacheRecord = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* input: str
-    
-* members: str
-    
-* statistics: str
-    
-* organization: str
-    
-
-"""
-
 OrganizationMember = Dict[str, Any]
 """
 
@@ -2621,6 +2320,27 @@ Kyes of Dict
     
 * updated_datetime: str
     
+
+"""
+
+OrganizationMemberList = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[OrganizationMember]
+    
+* page_no: float
+    現在のページ番号です。
+* total_page_no: float
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる組織メンバーが0件であっても、総ページ数は1となります。
+* total_count: float
+    検索結果の総件数。
+* over_limit: bool
+    検索結果が1万件を超えた場合にtrueとなる。
+* aggregations: List[AggregationResult]
+    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
 
 """
 
@@ -2660,10 +2380,29 @@ Kyes of Dict
     プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 
 * annotation_editor_url: str
     カスタムアノテーションエディタでタスクを開くための URL です。 プラグインを使用するプロジェクトのタスク一覧などで使用されます。  この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` * `{taskId}`  以下のパラメーターは任意で指定します。  * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。 * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。 
+* compatible_input_data_types: List[InputDataType]
+    プラグインが対応している入力データです。 
 * created_datetime: str
     
 * updated_datetime: str
     
+
+"""
+
+OrganizationPluginList = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[OrganizationPlugin]
+    
+* page_no: float
+    現在のページ番号です。
+* total_page_no: float
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトが0件であっても、総ページ数は1となります。
+* total_count: float
+    検索結果の総件数。
 
 """
 
@@ -2758,12 +2497,38 @@ Kyes of Dict
 
 """
 
+PostAnnotationArchiveUpdateResponseWrapper = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* message: str
+    多言語対応
+* job: JobInfo
+    
+
+"""
+
 PostProjectTasksUpdateResponse = Dict[str, Any]
 """
 
 
 Kyes of Dict
 
+* job: JobInfo
+    
+
+"""
+
+PostProjectTasksUpdateResponseWrapper = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* message: str
+    多言語対応
 * job: JobInfo
     
 
@@ -2837,31 +2602,6 @@ Kyes of Dict
 
 """
 
-ProjectCacheRecord = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* input: str
-    
-* members: str
-    
-* project: str
-    
-* instruction: str
-    
-* specs: str
-    
-* statistics: str
-    
-* organization: str
-    
-* supplementary: str
-    
-
-"""
-
 ProjectConfiguration = Dict[str, Any]
 """
 
@@ -2888,6 +2628,19 @@ Kyes of Dict
     抜取受入率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
 * private_storage_aws_iam_role_arn: str
     AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
+
+"""
+
+ProjectContainer = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[Project]
+    
+* has_next: bool
+    
 
 """
 
@@ -2931,6 +2684,39 @@ Kyes of Dict
 
 """
 
+ProjectCopyResponseWrapper = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* title: str
+    プロジェクトのタイトル
+* overview: str
+    プロジェクトの概要
+* project_status: ProjectStatus
+    
+* input_data_type: InputDataType
+    
+* configuration: ProjectConfiguration
+    
+* created_datetime: str
+    
+* updated_datetime: str
+    
+* summary: ProjectSummary
+    
+* job: JobInfo
+    
+* dest_project: Project
+    
+
+"""
+
 ProjectInputsUpdateResponse = Dict[str, Any]
 """
 
@@ -2939,6 +2725,27 @@ Kyes of Dict
 
 * job: JobInfo
     
+
+"""
+
+ProjectList = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[Project]
+    現在のページ番号に含まれる0件以上のプロジェクトです。
+* page_no: float
+    現在のページ番号です。
+* total_page_no: float
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトが0件であっても、総ページ数は1となります。
+* total_count: float
+    検索結果の総件数。
+* over_limit: bool
+    検索結果が1万件を超えた場合にtrueとなる。
+* aggregations: List[AggregationResult]
+    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
 
 """
 
@@ -2970,6 +2777,27 @@ Kyes of Dict
     メンバー固有の抜取検査率（0-100のパーセント値）。
 * sampling_acceptance_rate: int
     メンバー固有の抜取受入率（0-100のパーセント値）。
+
+"""
+
+ProjectMemberList = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[ProjectMember]
+    
+* page_no: float
+    現在のページ番号です。
+* total_page_no: float
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトメンバーが0件であっても、総ページ数は1となります。
+* total_count: float
+    検索結果の総件数。
+* over_limit: bool
+    検索結果が1万件を超えた場合にtrueとなる。
+* aggregations: List[AggregationResult]
+    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
 
 """
 
@@ -3029,32 +2857,6 @@ Kyes of Dict
 
 * last_tasks_updated_datetime: str
     タスクの最終更新日時
-
-"""
-
-ProjectTaskCounts = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* task_counts: List[ProjectTaskCountsTaskCounts]
-    
-
-"""
-
-ProjectTaskCountsTaskCounts = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* phase: TaskPhase
-    
-* status: TaskStatus
-    
-* count: float
-    該当するタスクの数
 
 """
 
@@ -3162,6 +2964,8 @@ Kyes of Dict
     プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 
 * annotation_editor_url: str
     カスタムアノテーションエディタでタスクを開くための URL です。 プラグインを使用するプロジェクトのタスク一覧などで使用されます。  この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` * `{taskId}`  以下のパラメーターは任意で指定します。  * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。 * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。 
+* compatible_input_data_types: List[InputDataType]
+    プラグインが対応している入力データです。 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
@@ -3189,6 +2993,52 @@ Kyes of Dict
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * force_suspend: bool
     作業中タスクがあるプロジェクトを停止する時trueにして下さい
+
+"""
+
+PutProjectResponse = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* job: JobInfo
+    
+* project: Project
+    
+
+"""
+
+PutProjectResponseWrapper = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* title: str
+    プロジェクトのタイトル
+* overview: str
+    プロジェクトの概要
+* project_status: ProjectStatus
+    
+* input_data_type: InputDataType
+    
+* configuration: ProjectConfiguration
+    
+* created_datetime: str
+    
+* updated_datetime: str
+    
+* summary: ProjectSummary
+    
+* job: JobInfo
+    
+* project: Project
+    
 
 """
 
@@ -3387,7 +3237,64 @@ class SupplementaryDataType(Enum):
 
     IMAGE = "image"
     TEXT = "text"
+    CUSTOM = "custom"
 
+
+SystemMetadata = Dict[str, Any]
+"""
+* `SystemMetadataImage`: 画像プロジェクトの場合。画像データ固有のメタデータが保存されます。 * `SystemMetadataMovie`: 動画プロジェクトの場合。動画データ固有のメタデータが保存されます。 * `SystemMetadataCustom`: カスタムプロジェクトの場合。カスタムデータ固有のメタデータが保存されます。  `metadata` プロパティとは違い、ユーザー側では値を編集できない読取専用のプロパティです。 
+
+Kyes of Dict
+
+* original_resolution: Resolution
+    
+* resized_resolution: Resolution
+    
+* type: str
+    `Custom`
+* input_duration: float
+    入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。 動画の長さが取得できなかった場合は値なし。 
+
+"""
+
+SystemMetadataCustom = Dict[str, Any]
+"""
+カスタムデータ用システムメタデータ。 現行はプロパティがない形式的なオブジェクトです。 
+
+Kyes of Dict
+
+* type: str
+    `Custom`
+
+"""
+
+SystemMetadataImage = Dict[str, Any]
+"""
+画像データ用システムメタデータ。 
+
+Kyes of Dict
+
+* original_resolution: Resolution
+    
+* resized_resolution: Resolution
+    
+* type: str
+    `Image`
+
+"""
+
+SystemMetadataMovie = Dict[str, Any]
+"""
+動画データ用システムメタデータ。 
+
+Kyes of Dict
+
+* input_duration: float
+    入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。 動画の長さが取得できなかった場合は値なし。 
+* type: str
+    `Movie`
+
+"""
 
 Task = Dict[str, Any]
 """
@@ -3430,8 +3337,25 @@ TaskAssignRequest = Dict[str, Any]
 
 Kyes of Dict
 
-* request_type: OneOfTaskAssignRequestTypeRandomTaskAssignRequestTypeSelection
-    * `TaskAssignRequestTypeRandom`: タスクフェーズのみを指定してランダムにタスクを自身に割当します。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: 担当者とタスクを明示的に指定してタスクを割当します。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 
+* request_type: TaskAssignRequestType
+    
+
+"""
+
+TaskAssignRequestType = Dict[str, Any]
+"""
+* `TaskAssignRequestTypeRandom`: タスクフェーズのみを指定してランダムにタスクを自身に割当します。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: 担当者とタスクを明示的に指定してタスクを割当します。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 
+
+Kyes of Dict
+
+* phase: TaskPhase
+    
+* type: str
+    Selection
+* user_id: str
+    
+* task_ids: List[str]
+    割当するタスクのID
 
 """
 
@@ -3442,7 +3366,7 @@ TaskAssignRequestTypeRandom = Dict[str, Any]
 Kyes of Dict
 
 * phase: TaskPhase
-    割当するタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+    
 * type: str
     Random
 
@@ -3455,7 +3379,7 @@ TaskAssignRequestTypeSelection = Dict[str, Any]
 Kyes of Dict
 
 * user_id: str
-    タスクを誰に割当するか
+    
 * task_ids: List[str]
     割当するタスクのID
 * type: str
@@ -3480,8 +3404,8 @@ TaskGenerateRequest = Dict[str, Any]
 
 Kyes of Dict
 
-* task_generate_rule: OneOfTaskGenerateRuleByCountTaskGenerateRuleByDirectoryTaskGenerateRuleByInputDataCsv
-    * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。 * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。 
+* task_generate_rule: TaskGenerateRule
+    
 * project_last_updated_datetime: str
     プロジェクトの最終更新日時（[getProject](#operation/getProject) APIのレスポンス `updated_datetime`）。タスク生成の排他制御に使用。
 
@@ -3497,6 +3421,62 @@ Kyes of Dict
     
 * project: Project
     
+
+"""
+
+TaskGenerateResponseWrapper = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* title: str
+    プロジェクトのタイトル
+* overview: str
+    プロジェクトの概要
+* project_status: ProjectStatus
+    
+* input_data_type: InputDataType
+    
+* configuration: ProjectConfiguration
+    
+* created_datetime: str
+    
+* updated_datetime: str
+    
+* summary: ProjectSummary
+    
+* job: JobInfo
+    
+* project: Project
+    
+
+"""
+
+TaskGenerateRule = Dict[str, Any]
+"""
+* `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。 * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。 
+
+Kyes of Dict
+
+* task_id_prefix: str
+    生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* allow_duplicate_input_data: bool
+    falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
+* input_data_count: int
+    1つのタスクに割り当てる入力データの個数
+* input_data_order: InputDataOrder
+    
+* type: str
+    `ByInputDataCsv` [詳しくはこちら](#section/API-Convention/API-_type) 
+* input_data_name_prefix: str
+    タスク生成対象の入力データ名プレフィックス
+* csv_data_path: str
+    各タスクへの入力データへの割当を記入したCSVへのS3上のパス
 
 """
 
@@ -3574,33 +3554,6 @@ Kyes of Dict
 
 """
 
-TaskHistoryEvent = Dict[str, Any]
-"""
-タスク履歴イベントは、タスクの状態が変化した１時点を表します。作業時間は、複数のこれらイベントを集約して計算するものなので、このオブジェクトには含まれません。
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* task_id: str
-    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* task_history_id: str
-    
-* created_datetime: str
-    
-* phase: TaskPhase
-    
-* phase_stage: int
-    
-* status: TaskStatus
-    
-* account_id: str
-    
-* request: TaskOperation
-    
-
-"""
-
 TaskHistoryShort = Dict[str, Any]
 """
 タスクのあるフェーズを誰が担当したかを表します。
@@ -3618,6 +3571,27 @@ Kyes of Dict
 
 """
 
+TaskList = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[Task]
+    現在のページ番号に含まれる0件以上のタスクです。
+* page_no: float
+    現在のページ番号です。
+* total_page_no: float
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるタスク0件であっても、総ページ数は1となります。
+* total_count: float
+    検索結果の総件数。
+* over_limit: bool
+    検索結果が1万件を超えた場合にtrueとなる。
+* aggregations: List[AggregationResult]
+    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
+
+"""
+
 TaskOperation = Dict[str, Any]
 """
 
@@ -3625,11 +3599,11 @@ TaskOperation = Dict[str, Any]
 Kyes of Dict
 
 * status: TaskStatus
-    次に遷移させるタスクの状態。[詳細はこちら](#section/TaskStatus)。 
+    
 * last_updated_datetime: str
-    タスクの最終更新日時 
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 * account_id: str
-    変更後の担当者のアカウントID。担当者を未割り当てにする場合は未指定。
+    
 * force: bool
     タスクの強制操作を行う場合に立てるフラグ。現在、強制操作は強制差戻しのみがサポートされています。 
 
@@ -3710,6 +3684,17 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * inputs: List[InputDataSummary]
     
+
+"""
+
+TemporaryUrl = Dict[str, Any]
+"""
+認証済み一時URL
+
+Kyes of Dict
+
+* url: str
+    認証済み一時URL
 
 """
 

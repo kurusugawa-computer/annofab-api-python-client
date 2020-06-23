@@ -60,6 +60,7 @@ class AnnotationQuery:
     """
     削除対象のアノテーションを指定するクエリ
     """
+
     label_id: str
 
 
@@ -366,7 +367,7 @@ class Wrapper:
         return True
 
     @staticmethod
-    def __match_query_for_annotation(annotation_detail: Dict[str, Any], query:AnnotationQuery) -> bool:
+    def __match_query_for_annotation(annotation_detail: Dict[str, Any], query: AnnotationQuery) -> bool:
         return annotation_detail["label_id"] == query.label_id
 
     @staticmethod
@@ -377,7 +378,9 @@ class Wrapper:
         annotation_detail["url"] = None
         return annotation_detail
 
-    def delete_annotation(self, project_id: str, task_id: str, input_data_id: str, query:Optional[AnnotationQuery]=None) -> Optional[Dict[str, Any]]:
+    def delete_annotation(
+        self, project_id: str, task_id: str, input_data_id: str, query: Optional[AnnotationQuery] = None
+    ) -> Optional[Dict[str, Any]]:
         """
         特定のアノテーションを削除する
 
@@ -398,7 +401,11 @@ class Wrapper:
         if query is None:
             new_details = []
         else:
-            new_details = [self.__to_put_annotation_detail(d) for d in old_details if not self.__match_query_for_annotation(d, query)]
+            new_details = [
+                self.__to_put_annotation_detail(d)
+                for d in old_details
+                if not self.__match_query_for_annotation(d, query)
+            ]
 
         updated_datetime = old_annotation["updated_datetime"]
         request_body = {
@@ -409,8 +416,6 @@ class Wrapper:
             "updated_datetime": updated_datetime,
         }
         return self.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)[0]
-
-
 
     #########################################
     # Public Method : AnnotationSpecs
