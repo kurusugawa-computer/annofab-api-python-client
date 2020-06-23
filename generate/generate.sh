@@ -72,8 +72,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
     --input-spec swagger/swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template \
-    -Dapis -DapiTests=false -DapiDocs=false \
-    -Dmodels -DmodelTests=false -DmodelDocs=false \
+    --global-property=apis,apiTests=false,apiDocs=false,models,modelTests=false,modelDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
 cat partial-header/generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
@@ -88,7 +87,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${
     --input-spec swagger/swagger.v2.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template \
-    -Dapis -DapiTests=false -DapiDocs=false \
+    --global-property=apis,apiTests=false,apiDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v2
 
 cat partial-header/generated_api_partial_header_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
@@ -101,7 +100,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
     --input-spec swagger/swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template_dataclass \
-    -Dmodels -DmodelTests=false -DmodelDocs=false \
+    --global-property=models,modelTests=false,modelDocs=false  \
 
 MODELS_DIR=out/openapi_client/models
 
