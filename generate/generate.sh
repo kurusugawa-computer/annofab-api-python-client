@@ -119,9 +119,6 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/full_annotation_data_single_point.py \
  ${MODELS_DIR}/full_annotation_data_range.py \
  ${MODELS_DIR}/additional_data.py \
- ${MODELS_DIR}/full_annotation_additional_data.py \
- ${MODELS_DIR}/full_annotation_detail.py \
- ${MODELS_DIR}/full_annotation.py \
  ${MODELS_DIR}/simple_annotation_detail.py \
  ${MODELS_DIR}/simple_annotation.py \
  ${MODELS_DIR}/single_annotation_detail.py \
