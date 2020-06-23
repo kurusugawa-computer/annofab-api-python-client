@@ -1,60 +1,39 @@
-openapi: 3.0.0
+openapi: "3.0.0"
 info:
-  description: >
+  description: |
     [AnnoFab](https://annofab.com) のWeb API v2です。
-
     v2 はいくつかの主要なAPIでキャッシュが有効になり、日本を含む多くの国からのアクセスが大幅に高速化されます。
-
     [API v1はこちら](/docs/api/)です。
 
-
     APIベースURL: https://annofab.com/api/v2<br>
-
     例） /projects というAPIを使う場合、 https://annofab.com/api/v2/projects をリクエストします。
 
 
-
     ■APIの変更ポリシー<br>
-
     **現在、APIは開発途上版です。予告なく互換性のない変更がある可能性をご了承ください。**
-
     ご要望の実現、あるいは、セキュリティやパフォーマンスの改善などを実現するにあたり、互換性のない変更が必要になる場合があります。
-
     その場合、開発途上版では開発リソースを改善に集中するため、古いバージョンを共存させずに互換性のない変更を行う場合があります。
 
-
     ■機能の要望や不具合報告 <br>
-
     「こんな機能が欲しい」というご要望や、「APIが予期せぬ動作をする」といった不具合報告などは、[こちらのお問い合わせフォーム](https://docs.google.com/forms/d/e/1FAIpQLSePryikS_wo_H11pxL2ewUe2d0ud0jxZlBQwH2rVVfcifKyQw/viewform)からご連絡ください。
-
 
     # API Client
 
-
     APIクライアントも提供しています。
 
-
     * https://github.com/kurusugawa-computer/annofab-cli
-
     * https://github.com/kurusugawa-computer/annofab-api-python-client
-
 
     # API Convention
 
-
     ## 用語
 
-
     * **属性○○○を必須**とは、「JSONに属性キー○○○を含め、かつ、その値が`null`以外」であること
-
     * **属性○○○を未指定**とは、「JSONに属性キー○○○を含めない」または「属性○○○のキーはあるが値は`null`」のどちらかであること
-
 
     ## 更新系APIのリクエストボディに必須の属性
 
-
     * 更新系APIとは、HTTPメソッドが **PUT** または **POST** のAPIです。
-
     * 更新系APIでは、更新対象の「リソースの最終更新日」を必須とする場合があります。
       * これは、複数ユーザーからのAPIリクエストのデータ競合を避けるための、一般的なAPI設計慣習によるものです。
       * ここで「リソースの最終更新日」とは、`last_updated_datetime` または `updated_datetime` という名前の属性です。
@@ -66,22 +45,16 @@ info:
         * 更新しようとしたリソースが存在しないとき、またはすでに更新されているときは、更新リクエストは失敗します。
     * 「リソースの最終更新日」以外の属性については、新規作成/更新それぞれで必須が異なる場合、API個別に特筆されています。
 
-
     ## APIのリクエストボディに指定する _type 属性について
 
-
     * 一部のAPIではリクエストボディに `_type` 属性を任意で指定することができます。
-
     * `_type` 属性を指定する場合は、`_type` 属性で指定された型にデコードします。
       例えば、`_type` 属性に `ByDirectory` を指定すると `TaskGenerateRuleByDirectory` にデコードされ、`Poliline` を指定すると `InspectionDataPolyline` にデコードされます。
       リクエストボディが誤っている場合はエラーになります。
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
-
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし利便性のため指定は必須ではありません。
 
-
     ## APIに指定するID/名前の制約
-
 
     * APIで使用する各データのIDに使用できる文字種は次の通りです。
       * 半角英数字
@@ -92,82 +65,96 @@ info:
       * 例） `b048c6b3-b36f-4c8d-97ea-96828a50a44c`
     * 各データのIDは、以下のように特定のデータに対して一意な値である必要があります。
 
-
     ID/名前 | 一意制約
-
     ---|---
-
     組織名 | AnnoFab内で一意
-
     組織ID | AnnoFab内で一意
-
     ユーザID | AnnoFab内で一意
-
     アカウントID  | AnnoFab内で一意
-
     プロジェクトID | AnnoFab内で一意
-
     タスクID（プレフィックス含む） | プロジェクト内で一意
-
     入力データID | プロジェクト内で一意
-
     アノテーションID | フレーム内（タスクID、入力データIDの組み合わせ）で一意
-
     検査ID | プロジェクト内で一意
-
     補助情報ID | プロジェクト内で一意
-
     WebhookID | プロジェクト内で一意
-
     作業ガイド画像ID | プロジェクト内で一意
-
     ラベルID | プロジェクト内で一意
-
     属性ID | プロジェクト内で一意
-
     選択肢ID | 属性内で一意
-
     ジョブID | プロジェクト内で一意
-
     入力データセットID | 組織内で一意
-
     プラグインID | 組織内で一意
-  version: 0.88.0
+
+
+    ## 検索結果の集約を表す AggregationResult
+
+    いくつかの検索系 API の検索結果レスポンスは、`AggregationResult` というデータ構造のフィールドを持っています。
+    `AggergationResult` は、検索対象リソースをある観点で集約した結果を表します。
+    このような集約は、「検索結果を属性 XXX の件数別に分類」などするために使われます。
+
+    例えば、タスクを検索する API には、以下のような「タスクの現在担当者での集約 `account_id_count`」などの `AggregationResult` がいくつか含まれています。
+
+    ```json
+    {
+      "list": [ ... ],
+      "aggregations": [
+        {
+          "_type": "CountResult",
+          "name": "account_id_count",
+          "field": "account_id",
+          "items": [
+            {"key":"c5eee002", "count":9, "aggregations":[], "_type":"..."},
+            {"key":"9f110e48", "count":5, "aggregations":[], "_type":"..."},
+            {"key":"b25dfeb3", "count":1, "aggregations":[], "_type":"..."}
+          ]
+        }
+      ]
+    }
+    ```
+
+    上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
+
+  version: 0.89.3
   title: AnnoFab Web API
   x-logo:
-    url: https://annofab.com/images/logo_landscape.png
-    href: https://annofab.com/
+    url: "https://annofab.com/images/logo_landscape.png"
+    href: "https://annofab.com/"
   contact:
-    url: https://annofab.com/docs/forms/trouble-shooting.html
+    url: "https://annofab.com/docs/forms/trouble-shooting.html"
 servers:
-  - url: https://annofab.com/api/v2
+- url: https://annofab.com/api/v2
 tags:
-  - name: af-annotation-specs-v2
-    x-displayName: Annotation Specs
-    description: アノテーション仕様に対する操作
-  - name: af-cache-v2
-    x-displayName: Cache
-    description: キャッシュに関係
-  - name: af-organization-v2
-    x-displayName: Organization
-    description: 組織に対する操作
-  - name: af-project-member-v2
-    x-displayName: Project Member
-    description: プロジェクトメンバーに対する操作
-  - name: af-project-v2
-    x-displayName: Project
-    description: プロジェクトに対する操作
-  - name: af-statistics-v2
-    x-displayName: Statistics
-    description: 統計
-  - name: af-users-v2
-    x-displayName: Users
-    description: 個人データ
+- name: af-annotation-specs-v2
+  x-displayName: Annotation Specs
+  description: アノテーション仕様に対する操作
+- name: af-cache-v2
+  x-displayName: Cache
+  description: キャッシュに関係
+- name: af-organization-member-v2
+  x-displayName: Organization Member
+  description: 組織メンバーに対する操作
+- name: af-organization-v2
+  x-displayName: Organization
+  description: 組織に対する操作
+- name: af-project-member-v2
+  x-displayName: Project Member
+  description: プロジェクトメンバーに対する操作
+- name: af-project-v2
+  x-displayName: Project
+  description: プロジェクトに対する操作
+- name: af-statistics-v2
+  x-displayName: Statistics
+  description: 統計
+- name: af-users-v2
+  x-displayName: Users
+  description: 個人データ
 x-tagGroups:
   - name: API
     tags:
       - af-annotation-specs-v2
       - af-cache-v2
+      - af-organization-member-v2
       - af-organization-v2
       - af-project-member-v2
       - af-project-v2
@@ -176,52 +163,52 @@ x-tagGroups:
 components:
   securitySchemes:
     SignedCookieKeyPairId:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/SignedCookieKeyPairId
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/SignedCookieKeyPairId"
     SignedCookiePolicy:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/SignedCookiePolicy
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/SignedCookiePolicy"
     SignedCookieSignature:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/SignedCookieSignature
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/SignedCookieSignature"
     EveryoneRequestBody:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/EveryoneRequestBody
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/EveryoneRequestBody"
     EveryoneQueryParameter:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/EveryoneQueryParameter
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/EveryoneQueryParameter"
     Everyone:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/Everyone
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/Everyone"
     AnnoFabAdminOnly:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/AnnoFabAdminOnly
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/AnnoFabAdminOnly"
     AllProjectMember:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/AllProjectMember
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/AllProjectMember"
     ProjectAccepter:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/ProjectAccepter
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/ProjectAccepter"
     ProjectDataUser:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/ProjectDataUser
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/ProjectDataUser"
     ProjectAccepterOrDataUser:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/ProjectAccepterOrDataUser
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/ProjectAccepterOrDataUser"
     ProjectOwner:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/ProjectOwner
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/ProjectOwner"
     AllOrganizationMember:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/AllOrganizationMember
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/AllOrganizationMember"
     OrganizationAdministrator:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/OrganizationAdministrator
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/OrganizationAdministrator"
     OrganizationOwner:
-      $ref: swagger-api-components.redoc.yaml#/components/securitySchemes/OrganizationOwner
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/OrganizationOwner"
 paths:
   /sign-url:
     get:
       tags:
-        - af-cache-v2
+      - af-cache-v2
       summary: V2系APIへのアクセスに必要なSigned Cookieを発行します
       security:
-        - Everyone: []
+      - Everyone: []
       operationId: getSignedAccessV2
       parameters:
-        - name: url
-          in: query
-          description: |
-            アクセスしたいページのアドレス（クエリパラメータ含み）
-          schema:
-            type: string
-            example: /api/v2/projects/{project_id}/statistics/inspections
+      - name: url
+        in: query
+        description: |
+          アクセスしたいページのアドレス（クエリパラメータ含み）
+        schema:
+          type: string
+          example: "/api/v2/projects/{project_id}/statistics/inspections"
       responses:
         "200":
           description: 正常
@@ -229,21 +216,18 @@ paths:
             Set-Cookie:
               schema:
                 type: string
-                description: 署名付きCookieが発行されます。発行されるCookieの詳細は [こちら](#section/Authentication)
-                  を参照ください。
-                example: CloudFront-Key-Pair-Id=XXXXYYYZZZZ;
-                  Path=/api/v2/projects/xxxx-xxxx-xxx; max-age=84600; HttpOnly;
-                  SameSite=Strict; Secure
+                description: 署名付きCookieが発行されます。発行されるCookieの詳細は [こちら](#section/Authentication) を参照ください。
+                example: CloudFront-Key-Pair-Id=XXXXYYYZZZZ; Path=/api/v2/projects/xxxx-xxxx-xxx; max-age=84600; HttpOnly; SameSite=Strict; Secure
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/projects/{project_id}/cache":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/cache:
     get:
       tags:
-        - af-project-v2
+      - af-project-v2
       summary: キャッシュレコード
       security:
         - SignedCookieKeyPairId: []
@@ -251,29 +235,29 @@ paths:
           SignedCookieSignature: []
       operationId: getProjectCacheV2
       parameters:
-        - name: project_id
-          in: path
-          description: プロジェクトID
-          required: true
-          schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
         "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectCacheRecord
+                $ref: "swagger-api-components.yaml#/components/schemas/ProjectCacheRecord"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/projects/{project_id}/members":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/members:
     get:
       tags:
-        - af-project-member-v2
+      - af-project-member-v2
       summary: プロジェクトメンバー一括取得
       security:
         - SignedCookieKeyPairId: []
@@ -281,71 +265,70 @@ paths:
           SignedCookieSignature: []
       operationId: getProjectMembersV2
       parameters:
-        - name: project_id
-          in: path
-          description: プロジェクトID
-          required: true
-          schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
-        - name: include_inactive_member
-          in: query
-          description: 脱退したプロジェクトメンバーも取得する時に、キーのみ指定します（値は無視されます）。
-          required: false
-          allowEmptyValue: true
-          schema:
-            type: string
-        - name: cache
-          in: query
-          description: |
-            CACHE TIMESTAMP
-          required: false
-          schema:
-            type: string
-            example: "123456789"
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: include_inactive_member
+        in: query
+        description: 脱退したプロジェクトメンバーも取得する時に、キーのみ指定します（値は無視されます）。
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: string
+      - name: cache
+        in: query
+        description: |
+          CACHE TIMESTAMP
+        required: false
+        schema:
+          type: string
+          example: "123456789"
       responses:
         "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectMemberList
+                $ref: "swagger-api-components.yaml#/components/schemas/ProjectMemberList"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/projects/{project_id}/members/{user_id}":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/members/{user_id}:
     get:
       tags:
-        - af-project-member-v2
+      - af-project-member-v2
       summary: プロジェクトメンバー取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getProjectMemberV2
       parameters:
-        - name: project_id
-          in: path
-          description: プロジェクトID
-          required: true
-          schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
-        - name: user_id
-          in: path
-          description: アカウントのユーザID.
-            RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。
-          required: true
-          schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/UserId
-        - name: cache
-          in: query
-          description: |
-            CACHE TIMESTAMP
-          required: false
-          schema:
-            type: string
-            example: "123456789"
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: user_id
+        in: path
+        description: アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/UserId"
+      - name: cache
+        in: query
+        description: |
+          CACHE TIMESTAMP
+        required: false
+        schema:
+          type: string
+          example: "123456789"
       responses:
         "200":
           description: 正常
@@ -354,39 +337,39 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectMember
+                  $ref: "swagger-api-components.yaml#/components/schemas/ProjectMember"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/projects/{project_id}/statistics/tasks":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/tasks:
     get:
       tags:
-        - af-statistics-v2
+      - af-statistics-v2
       summary: タスク集計取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getTaskStatisticsV2
       parameters:
-        - name: project_id
-          in: path
-          description: プロジェクトID
-          required: true
-          schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
-        - name: cache
-          in: query
-          description: |
-            CACHE TIMESTAMP
-          required: false
-          schema:
-            type: string
-            example: "123456789"
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: cache
+        in: query
+        description: |
+          CACHE TIMESTAMP
+        required: false
+        schema:
+          type: string
+          example: "123456789"
       responses:
         "200":
           description: 正常
@@ -395,39 +378,39 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectTaskStatisticsHistory
+                  $ref: "swagger-api-components.yaml#/components/schemas/ProjectTaskStatisticsHistory"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/projects/{project_id}/statistics/accounts":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/accounts:
     get:
       tags:
-        - af-statistics-v2
+      - af-statistics-v2
       summary: ユーザー別タスク集計取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getAccountStatisticsV2
       parameters:
-        - name: project_id
-          in: path
-          description: プロジェクトID
-          required: true
-          schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
-        - name: cache
-          in: query
-          description: |
-            CACHE TIMESTAMP
-          required: false
-          schema:
-            type: string
-            example: "123456789"
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: cache
+        in: query
+        description: |
+          CACHE TIMESTAMP
+        required: false
+        schema:
+          type: string
+          example: "123456789"
       responses:
         "200":
           description: 正常
@@ -436,39 +419,39 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectAccountStatistics
+                  $ref: "swagger-api-components.yaml#/components/schemas/ProjectAccountStatistics"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/projects/{project_id}/statistics/inspections":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/inspections:
     get:
       tags:
-        - af-statistics-v2
+      - af-statistics-v2
       summary: 検査コメント集計取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getInspectionStatisticsV2
       parameters:
-        - name: project_id
-          in: path
-          description: プロジェクトID
-          required: true
-          schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
-        - name: cache
-          in: query
-          description: |
-            CACHE TIMESTAMP
-          required: false
-          schema:
-            type: string
-            example: "123456789"
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: cache
+        in: query
+        description: |
+          CACHE TIMESTAMP
+        required: false
+        schema:
+          type: string
+          example: "123456789"
       responses:
         "200":
           description: 正常
@@ -477,39 +460,39 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: swagger-api-components.redoc.yaml#/components/schemas/InspectionStatistics
+                  $ref: "swagger-api-components.yaml#/components/schemas/InspectionStatistics"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/projects/{project_id}/statistics/task-phases":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/task-phases:
     get:
       tags:
-        - af-statistics-v2
+      - af-statistics-v2
       summary: フェーズ別タスク集計取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getTaskPhaseStatisticsV2
       parameters:
-        - name: project_id
-          in: path
-          description: プロジェクトID
-          required: true
-          schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
-        - name: cache
-          in: query
-          description: |
-            CACHE TIMESTAMP
-          required: false
-          schema:
-            type: string
-            example: "123456789"
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: cache
+        in: query
+        description: |
+          CACHE TIMESTAMP
+        required: false
+        schema:
+          type: string
+          example: "123456789"
       responses:
         "200":
           description: 正常
@@ -518,39 +501,39 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: swagger-api-components.redoc.yaml#/components/schemas/TaskPhaseStatistics
+                  $ref: "swagger-api-components.yaml#/components/schemas/TaskPhaseStatistics"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/projects/{project_id}/statistics/labels":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/labels:
     get:
       tags:
-        - af-statistics-v2
+      - af-statistics-v2
       summary: ラベル別アノテーション数集計取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
       operationId: getLabelStatisticsV2
       parameters:
-        - name: project_id
-          in: path
-          description: プロジェクトID
-          required: true
-          schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
-        - name: cache
-          in: query
-          description: |
-            CACHE TIMESTAMP
-          required: false
-          schema:
-            type: string
-            example: "123456789"
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: cache
+        in: query
+        description: |
+          CACHE TIMESTAMP
+        required: false
+        schema:
+          type: string
+          example: "123456789"
       responses:
         "200":
           description: 正常
@@ -559,17 +542,17 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: swagger-api-components.redoc.yaml#/components/schemas/LabelStatistics
+                  $ref: "swagger-api-components.yaml#/components/schemas/LabelStatistics"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/projects/{project_id}/statistics/worktimes":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/worktimes:
     get:
       tags:
-        - af-statistics-v2
+      - af-statistics-v2
       summary: タスク作業時間集計取得
       description: |
         ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。
@@ -580,20 +563,20 @@ paths:
           SignedCookieSignature: []
       operationId: getWorktimeStatisticsV2
       parameters:
-        - name: project_id
-          in: path
-          description: プロジェクトID
-          required: true
-          schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
-        - name: cache
-          in: query
-          description: |
-            CACHE TIMESTAMP
-          required: false
-          schema:
-            type: string
-            example: "123456789"
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: cache
+        in: query
+        description: |
+          CACHE TIMESTAMP
+        required: false
+        schema:
+          type: string
+          example: "123456789"
       responses:
         "200":
           description: 正常
@@ -602,19 +585,19 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: swagger-api-components.redoc.yaml#/components/schemas/WorktimeStatistics
+                  $ref: "swagger-api-components.yaml#/components/schemas/WorktimeStatistics"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/projects/{project_id}/annotation-specs":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/annotation-specs:
     get:
       tags:
         - af-annotation-specs-v2
       summary: アノテーション仕様取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -626,7 +609,7 @@ paths:
           description: プロジェクトID
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
         - name: cache
           in: query
           description: |
@@ -637,10 +620,8 @@ paths:
             example: "123456789"
         - name: history_id
           in: query
-          description: >
-            過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した
-            `history_id` の値を指定します。
-
+          description: |
+            過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。
             未指定時は最新のアノテーション仕様を取得します。
           required: false
           schema:
@@ -661,19 +642,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/AnnotationSpecs
+                $ref: "swagger-api-components.yaml#/components/schemas/AnnotationSpecs"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/organizations-by-name/{organization_name}":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /organizations-by-name/{organization_name}:
     get:
       tags:
         - af-organization-v2
       summary: 組織情報取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -685,7 +666,7 @@ paths:
           description: 組織名
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationName
+            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
         - name: cache
           in: query
           description: |
@@ -700,19 +681,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/Organization
+                $ref: "swagger-api-components.yaml#/components/schemas/Organization"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/organizations-by-name/{organization_name}/cache":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /organizations-by-name/{organization_name}/cache:
     get:
       tags:
         - af-organization-v2
       summary: キャッシュレコード
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -724,26 +705,26 @@ paths:
           description: 組織名
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationName
+            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
       responses:
         "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationCacheRecord
+                $ref: "swagger-api-components.yaml#/components/schemas/OrganizationCacheRecord"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/organizations/{organization_id}":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /organizations/{organization_id}:
     get:
       tags:
         - af-organization-v2
       summary: 組織情報取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -755,7 +736,7 @@ paths:
           description: 組織ID
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationId
+            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationId"
         - name: cache
           in: query
           description: |
@@ -770,19 +751,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/Organization
+                $ref: "swagger-api-components.yaml#/components/schemas/Organization"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/organizations/{organization_id}/cache":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /organizations/{organization_id}/cache:
     get:
       tags:
         - af-organization-v2
       summary: キャッシュレコード
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -794,63 +775,145 @@ paths:
           description: 組織ID
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationId
+            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationId"
       responses:
         "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationCacheRecord
+                $ref: "swagger-api-components.yaml#/components/schemas/OrganizationCacheRecord"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/organizations/{organization_id}/projects/{project_id}/task-counts":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /organizations/{organization_id}/members:
     get:
       tags:
-        - af-organization-v2
-      summary: プロジェクトのタスク件数取得
-      description: ""
+        - af-organization-member-v2
+      summary: 組織メンバー一括取得
+      description: |
+        脱退したメンバーは含まれません。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
           SignedCookieSignature: []
-      operationId: getProjectTaskCountV2
+      operationId: getOrganizationMembersV2
       parameters:
         - name: organization_id
           in: path
           description: 組織ID
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationId
-        - name: project_id
+            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationId"
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/OrganizationMemberList"
+        401:
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        503:
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /organizations/{organization_id}/members/{user_id}:
+    get:
+      tags:
+        - af-organization-member-v2
+      summary: 組織メンバー取得
+      description: |
+        指定したユーザーが指定した組織にどのようなロールで参加しているかを取得します。
+      security:
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
+      operationId: getOrganizationMemberV2
+      parameters:
+        - name: organization_id
           in: path
-          description: プロジェクトID
+          description: 組織ID
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectId
+            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationId"
+        - name: user_id
+          in: path
+          description: ユーザID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/UserId"
+        - name: cache
+          in: query
+          description: |
+            CACHE TIMESTAMP
+          required: false
+          schema:
+            type: string
+            example: "123456789"
+      responses:
+        200:
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/OrganizationMember"
+        401:
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        503:
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /organizations/{organization_id}/projects/{project_id}/task-counts:
+    get:
+      tags:
+      - af-organization-v2
+      summary: プロジェクトのタスク件数取得
+      description: |
+      security:
+        - SignedCookieKeyPairId: []
+          SignedCookiePolicy: []
+          SignedCookieSignature: []
+      operationId: getProjectTaskCountV2
+      parameters:
+      - name: organization_id
+        in: path
+        description: 組織ID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/OrganizationId"
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
         "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectTaskCounts
+                $ref: "swagger-api-components.yaml#/components/schemas/ProjectTaskCounts"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/users/{account_id}/cache":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /users/{account_id}/cache:
     get:
       tags:
         - af-users-v2
       summary: キャッシュレコード
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -862,26 +925,26 @@ paths:
           description: アカウントID
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/AccountId
+            $ref: "swagger-api-components.yaml#/components/schemas/AccountId"
       responses:
         "200":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/UserCacheRecord
+                $ref: "swagger-api-components.yaml#/components/schemas/UserCacheRecord"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/users/{account_id}/project-members":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /users/{account_id}/project-members:
     get:
       tags:
         - af-users-v2
       summary: 個人のプロジェクトメンバー情報一括取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -893,7 +956,7 @@ paths:
           description: アカウントID
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/AccountId
+            $ref: "swagger-api-components.yaml#/components/schemas/AccountId"
         - name: cache
           in: query
           description: |
@@ -908,19 +971,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectMember
+                $ref: "swagger-api-components.yaml#/components/schemas/ProjectMember"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/users/{account_id}/organizations":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /users/{account_id}/organizations:
     get:
       tags:
         - af-users-v2
       summary: 個人の所属組織一括取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -932,7 +995,7 @@ paths:
           description: アカウントID
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/AccountId
+            $ref: "swagger-api-components.yaml#/components/schemas/AccountId"
         - name: cache
           in: query
           description: |
@@ -947,19 +1010,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/MyOrganizationList
+                $ref: "swagger-api-components.yaml#/components/schemas/MyOrganizationList"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/users/{account_id}/projects":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /users/{account_id}/projects:
     get:
       tags:
         - af-users-v2
       summary: 自分のプロジェクトメンバー情報一括取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -971,7 +1034,7 @@ paths:
           description: アカウントID
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/AccountId
+            $ref: "swagger-api-components.yaml#/components/schemas/AccountId"
         - name: page
           in: query
           description: |
@@ -996,7 +1059,7 @@ paths:
             指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。
           required: false
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/OrganizationId
+            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationId"
         - name: title
           in: query
           description: |
@@ -1010,14 +1073,14 @@ paths:
             指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。
           required: false
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectStatus
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectStatus"
         - name: input_data_type
           in: query
           description: |
             指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト
           required: false
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/InputDataType
+            $ref: "swagger-api-components.yaml#/components/schemas/InputDataType"
         - name: sort_by
           in: query
           description: |
@@ -1041,19 +1104,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/ProjectContainer
+                $ref: "swagger-api-components.yaml#/components/schemas/ProjectContainer"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
-  "/users/{account_id}":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /users/{account_id}:
     get:
       tags:
         - af-users-v2
       summary: 個人情報取得
-      description: ""
+      description: |
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -1065,7 +1128,7 @@ paths:
           description: アカウントID
           required: true
           schema:
-            $ref: swagger-api-components.redoc.yaml#/components/schemas/AccountId
+            $ref: "swagger-api-components.yaml#/components/schemas/AccountId"
         - name: cache
           in: query
           description: |
@@ -1080,10 +1143,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: swagger-api-components.redoc.yaml#/components/schemas/MyAccount
+                $ref: "swagger-api-components.yaml#/components/schemas/MyAccount"
         "401":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnauthorizedApi
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorMissingResource
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
-          $ref: swagger-api-components.redoc.yaml#/components/responses/ErrorUnderMaintenance
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
