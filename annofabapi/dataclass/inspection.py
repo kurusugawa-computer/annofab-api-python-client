@@ -17,7 +17,7 @@ from dataclasses_json import dataclass_json
 
 from annofabapi.models import InspectionStatus, TaskPhase
 
-OneOfInspectionDataPointInspectionDataPolylineInspectionDataTime = Dict[str, Any]
+InspectionData = Dict[str, Any]
 
 
 @dataclass_json

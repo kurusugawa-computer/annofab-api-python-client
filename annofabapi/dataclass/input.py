@@ -15,6 +15,7 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
+SystemMetadata = Dict[str, Any]
 
 @dataclass_json
 @dataclass

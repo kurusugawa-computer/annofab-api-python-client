@@ -7,6 +7,6 @@ from annofabapi.models import (
     TaskStatus,
 )
 
-OneOfstringFullAnnotationData = Union[str, Dict[str, Any]]
+AdditionalDataValue = Union[str, Dict[str, Any]]
 FullAnnotationData = Dict[str, Any]
 AdditionalDataValue = Dict[str, Any]

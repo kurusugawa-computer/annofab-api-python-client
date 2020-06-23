@@ -17,7 +17,7 @@ from dataclasses_json import dataclass_json
 
 from annofabapi.models import AdditionalDataDefinitionType, AnnotationType
 
-OneOfbooleanintegerstring = Union[bool, int, str]
+AdditionalDataDefaultType = Union[bool, int, str]
 
 AdditionalDataRestrictionCondition = Dict[str, Any]
 
