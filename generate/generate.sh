@@ -58,6 +58,9 @@ if "${FLAG_DOWNLOAD}"; then
 #  cat swagger/swagger-tmp.v2.yaml swagger/swagger-api-components.yaml > swagger/swagger.v2.yaml
 #
 #  rm swagger/swagger-tmp.yaml swagger/swagger-tmp.v2.yaml
+
+  cat swagger/swagger-partial-header.yaml swagger/swagger-api-components.yaml > swagger/swagger-models.yaml
+
 fi
 
 
@@ -72,7 +75,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
     --input-spec swagger/swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template \
-    --global-property=apis,apiTests=false,apiDocs=false,models,modelTests=false,modelDocs=false \
+    --global-property apis,apiTests=false,apiDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
 cat partial-header/generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
@@ -87,12 +90,22 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${
     --input-spec swagger/swagger.v2.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template \
-    --global-property=apis,apiTests=false,apiDocs=false \
+    --global-property apis,apiTests=false,apiDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v2
 
 cat partial-header/generated_api_partial_header_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
 
 rm -Rf out/openapi_client
+
+
+# modelsを生成
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
+    --input-spec swagger/swagger-models.yaml \
+    ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
+    --template-dir /local/template \
+    --global-property ,models,modelTests=false,modelDocs=false \
+    --ignore-file-override=/local/.openapi-generator-ignore_v1
+
 
 # v1 apiのmodelからDataClass用のpythonファイルを生成する。
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} \
@@ -100,7 +113,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
     --input-spec swagger/swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template_dataclass \
-    --global-property=models,modelTests=false,modelDocs=false  \
+    --global-property models,modelTests=false,modelDocs=false  \
 
 MODELS_DIR=out/openapi_client/models
 
@@ -119,6 +132,9 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/full_annotation_data_single_point.py \
  ${MODELS_DIR}/full_annotation_data_range.py \
  ${MODELS_DIR}/additional_data.py \
+ ${MODELS_DIR}/full_annotation_additional_data.py \
+ ${MODELS_DIR}/full_annotation_detail.py \
+ ${MODELS_DIR}/full_annotation.py \
  ${MODELS_DIR}/simple_annotation_detail.py \
  ${MODELS_DIR}/simple_annotation.py \
  ${MODELS_DIR}/single_annotation_detail.py \
