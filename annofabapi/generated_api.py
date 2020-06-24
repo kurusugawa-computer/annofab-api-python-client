@@ -278,7 +278,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                one_of_batch_annotation_request_item_put_batch_annotation_request_item_delete (List[OneOfBatchAnnotationRequestItemPutBatchAnnotationRequestItemDelete]):  (required)
+                batch_annotation_request_item (List[BatchAnnotationRequestItem]):  (required)
 
         Returns:
             Tuple[List[SingleAnnotation], requests.Response]
@@ -335,7 +335,7 @@ class AbstractAnnofabApi(abc.ABC):
                 v2 (str):  このクエリパラメータのキーだけを指定（`?v2`）、または値 `true` も指定（`?v2=true`）すると、アノテーションJSONのファイル名は `{入力データID}.json` になります。 この v2 形式は、入力データ名がファイル名の長さ上限を上回ってもよいように再設計されたものです。 以前の v1 形式（アノテーションJSONのファイル名は `{入力データ名}.json` ）はいずれ廃止され、クエリパラメータ `v2` があってもなくても v2 形式に置き換わる予定です。 
 
         Returns:
-            Tuple[InlineResponse20010, requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -363,11 +363,11 @@ class AbstractAnnofabApi(abc.ABC):
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
                 aggregate_by_task_and_input (bool):  trueを指定した場合に「タスクIDと入力IDの組」ごとに検索結果を集計するようにする。
-                query (AnnotationQuery):  絞り込み条件をJSON形式で表したもの。 
+                query (str):  絞り込み条件([AnnotationQuery](#section/AnnotationQuery))をJSON形式で表した文字列。 
                 sort (str):  ソート順の指定。 使用可能キーはtask_id, input_data_id, detail.annotation_id, detail.account_id, detail.label_id, detail.data_holding_type, detail.created_datetime, detail.updated_datetimeのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
 
         Returns:
-            Tuple[InlineResponse2009, requests.Response]
+            Tuple[AnnotationList, requests.Response]
 
 
         """
@@ -391,7 +391,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[InlineResponse20010, requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -443,7 +443,7 @@ class AbstractAnnofabApi(abc.ABC):
                 v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Message - \"2\"：PostAnnotationArchiveUpdateResponse 
 
         Returns:
-            Tuple[OneOfMessagePostAnnotationArchiveUpdateResponse, requests.Response]
+            Tuple[PostAnnotationArchiveUpdateResponseWrapper, requests.Response]
 
 
         """
@@ -506,7 +506,7 @@ class AbstractAnnofabApi(abc.ABC):
                 v (str):  取得するアノテーション仕様のフォーマットバージョンを指定します。 
 
         Returns:
-            Tuple[OneOfAnnotationSpecsV1AnnotationSpecsV2, requests.Response]
+            Tuple[AnnotationSpecs, requests.Response]
 
 
         """
@@ -551,7 +551,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                unknown_base_type (UNKNOWN_BASE_TYPE):  (required)
+                annotation_specs_request (AnnotationSpecsRequest):  (required)
 
         Returns:
             Tuple[AnnotationSpecsV2, requests.Response]
@@ -584,7 +584,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                one_of_batch_input_data_request_item_delete (List[OneOfBatchInputDataRequestItemDelete]):  (required)
+                batch_input_data_request_item (List[BatchInputDataRequestItem]):  (required)
 
         Returns:
             Tuple[List[InputData], requests.Response]
@@ -693,7 +693,7 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  1ページあたりの取得するデータ件数
 
         Returns:
-            Tuple[InlineResponse20011, requests.Response]
+            Tuple[InputDataList, requests.Response]
 
 
         """
@@ -789,7 +789,7 @@ class AbstractAnnofabApi(abc.ABC):
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
             request_body (Any): Request Body
-                one_of_batch_inspection_request_item_put_batch_inspection_request_item_delete (List[OneOfBatchInspectionRequestItemPutBatchInspectionRequestItemDelete]):  (required)
+                batch_inspection_request_item (List[BatchInspectionRequestItem]):  (required)
 
         Returns:
             Tuple[List[Inspection], requests.Response]
@@ -1038,7 +1038,7 @@ class AbstractAnnofabApi(abc.ABC):
                 exclusive_start_created_datetime (str):  取得するデータの直前の作成日時
 
         Returns:
-            Tuple[InlineResponse2007, requests.Response]
+            Tuple[JobInfoContainer, requests.Response]
 
 
         """
@@ -1137,7 +1137,7 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  1ページあたりの取得するデータ件数  現在は未実装のパラメータです。(今後対応予定) 
 
         Returns:
-            Tuple[InlineResponse200, requests.Response]
+            Tuple[MyOrganizationList, requests.Response]
 
 
         """
@@ -1188,7 +1188,7 @@ class AbstractAnnofabApi(abc.ABC):
                 sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。 
 
         Returns:
-            Tuple[InlineResponse2004, requests.Response]
+            Tuple[ProjectContainer, requests.Response]
 
 
         """
@@ -1387,7 +1387,7 @@ class AbstractAnnofabApi(abc.ABC):
                 sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。 
 
         Returns:
-            Tuple[InlineResponse2001, requests.Response]
+            Tuple[ProjectList, requests.Response]
 
 
         """
@@ -1493,7 +1493,7 @@ class AbstractAnnofabApi(abc.ABC):
             organization_name (str):  組織名 (required)
 
         Returns:
-            Tuple[InlineResponse2002, requests.Response]
+            Tuple[OrganizationMemberList, requests.Response]
 
 
         """
@@ -1627,7 +1627,7 @@ class AbstractAnnofabApi(abc.ABC):
             organization_name (str):  組織名 (required)
 
         Returns:
-            Tuple[InlineResponse2003, requests.Response]
+            Tuple[OrganizationPluginList, requests.Response]
 
 
         """
@@ -1687,7 +1687,7 @@ class AbstractAnnofabApi(abc.ABC):
                 v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：DeleteProjectResponse 
 
         Returns:
-            Tuple[OneOfProjectDeleteProjectResponse, requests.Response]
+            Tuple[DeleteProjectResponseWrapper, requests.Response]
 
 
         """
@@ -1753,7 +1753,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[InlineResponse2005, requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -1775,7 +1775,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[InlineResponse2005, requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -1797,7 +1797,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[InlineResponse2005, requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -1820,7 +1820,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[InlineResponse2005, requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -1843,7 +1843,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[InlineResponse2005, requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -1875,7 +1875,7 @@ class AbstractAnnofabApi(abc.ABC):
                 project_copy_request (ProjectCopyRequest):  (required)
 
         Returns:
-            Tuple[OneOfProjectProjectCopyResponse, requests.Response]
+            Tuple[ProjectCopyResponseWrapper, requests.Response]
 
 
         """
@@ -1926,7 +1926,7 @@ class AbstractAnnofabApi(abc.ABC):
                 v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Message - \"2\"：PostProjectTasksUpdateResponse 
 
         Returns:
-            Tuple[OneOfMessagePostProjectTasksUpdateResponse, requests.Response]
+            Tuple[PostProjectTasksUpdateResponseWrapper, requests.Response]
 
 
         """
@@ -1938,7 +1938,11 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_project(
-        self, project_id: str, request_body: Optional[Any] = None, **kwargs
+        self,
+        project_id: str,
+        query_params: Optional[Dict[str, Any]] = None,
+        request_body: Optional[Any] = None,
+        **kwargs,
     ) -> Tuple[Any, requests.Response]:
         """プロジェクト作成/更新
 
@@ -1950,6 +1954,8 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
+            query_params (Dict[str, Any]): Query Parameters
+                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：PutProjectResponse 
             request_body (Any): Request Body
                 put_project_request (PutProjectRequest): 
 
@@ -1961,6 +1967,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}"
         http_method = "PUT"
         keyword_params: Dict[str, Any] = {
+            "query_params": query_params,
             "request_body": request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -2009,7 +2016,7 @@ class AbstractAnnofabApi(abc.ABC):
                 include_inactive_member (str):  脱退したプロジェクトメンバーも取得する時に、キーのみ指定します（値は無視されます）。
 
         Returns:
-            Tuple[InlineResponse2006, requests.Response]
+            Tuple[ProjectMemberList, requests.Response]
 
 
         """
@@ -2368,7 +2375,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                one_of_batch_task_request_item_delete (List[OneOfBatchTaskRequestItemDelete]):  (required)
+                batch_task_request_item (List[BatchTaskRequestItem]):  (required)
 
         Returns:
             Tuple[List[Task], requests.Response]
@@ -2504,9 +2511,10 @@ class AbstractAnnofabApi(abc.ABC):
                 rejected_only (str):  差し戻されたタスクだけを絞り込む時に、キーのみ指定します（値は無視されます）。
                 auto_accepted_only (str):  「抜取検査の対象外となり、自動受入されたタスク」だけを絞り込む時に、キーのみ指定します（値は無視されます）。
                 sort (str):  ソート順の指定。 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、phase_stage、status、account_idのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
+                annotation (AnnotationQuery):  アノテーションの絞り込み条件をJSON形式で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
 
         Returns:
-            Tuple[InlineResponse2008, requests.Response]
+            Tuple[TaskList, requests.Response]
 
 
         """
@@ -2540,7 +2548,7 @@ class AbstractAnnofabApi(abc.ABC):
                 task_generate_request (TaskGenerateRequest):  (required)
 
         Returns:
-            Tuple[OneOfProjectTaskGenerateResponse, requests.Response]
+            Tuple[TaskGenerateResponseWrapper, requests.Response]
 
 
         """

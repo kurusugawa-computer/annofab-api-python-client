@@ -15,6 +15,8 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import dataclass_json
 
+SystemMetadata = Dict[str, Any]
+
 
 @dataclass_json
 @dataclass
@@ -75,3 +77,6 @@ class InputData:
 
     metadata: Optional[Dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。 """
+
+    system_metadata: Optional[SystemMetadata]
+    """"""

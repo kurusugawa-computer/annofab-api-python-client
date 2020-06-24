@@ -11,5 +11,10 @@
   "original_resolution": null,
   "input_duration": null,
   "sign_required": false,
-  "metadata": {}
+  "metadata": {},
+  "system_metadata": {
+    "resized_resolution": null,
+    "original_resolution": null,
+    "_type": "Image"
+  }
 }
