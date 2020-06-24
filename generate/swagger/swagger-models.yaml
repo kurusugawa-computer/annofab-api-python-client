@@ -1,3 +1,13 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: swagger-api-components.yaml に記載されたschemaを出力するためのヘッダ部分
+paths:
+  /none:
+    get:
+      responses:
+        '200':
+          description: none
 components:
   securitySchemes:
     SignedCookieKeyPairId:
