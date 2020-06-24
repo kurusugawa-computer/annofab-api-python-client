@@ -17,6 +17,7 @@ from dataclasses_json import dataclass_json
 
 SystemMetadata = Dict[str, Any]
 
+
 @dataclass_json
 @dataclass
 class Resolution:

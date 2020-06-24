@@ -244,6 +244,19 @@ Kyes of Dict
 
 """
 
+AdditionalDataChoiceValue = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* id: str
+    
+* name: InternationalizationMessage
+    
+
+"""
+
 AdditionalDataDefaultType = Dict[str, Any]
 """
 属性の初期値です。  初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。  * type が flag の場合: 真偽値(`true` or `false`) * type が integer の場合: 整数値 * type が text の場合: 文字列 * type が comment の場合: 文字列 * type が choice の場合: 選択肢(`choices`)の `choice_id` * type が select の場合: 選択肢(`choices`)の `choice_id`  属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。  なお、トラッキングとリンクには初期値を設定できません。 
@@ -460,6 +473,97 @@ Kyes of Dict
     
 * value: str
     
+
+"""
+
+AdditionalDataValue = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Link
+* value: str
+    リンク先アノテーションID
+
+"""
+
+AdditionalDataValueChoice = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Choice
+* value: AdditionalDataChoiceValue
+    
+
+"""
+
+AdditionalDataValueComment = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Comment
+* value: str
+    自由記述
+
+"""
+
+AdditionalDataValueFlag = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Flag
+* value: bool
+    フラグのON(true)またはOFF(false)
+
+"""
+
+AdditionalDataValueInteger = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Integer
+* value: int
+    整数値
+
+"""
+
+AdditionalDataValueLink = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Link
+* value: str
+    リンク先アノテーションID
+
+"""
+
+AdditionalDataValueTracking = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Tracking
+* value: str
+    トラッキングID
 
 """
 
@@ -1241,6 +1345,52 @@ Kyes of Dict
 
 """
 
+FullAnnotation = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_phase: TaskPhase
+    
+* task_phase_stage: int
+    
+* task_status: TaskStatus
+    
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_name: str
+    
+* details: List[FullAnnotationDetail]
+    
+* updated_datetime: str
+    
+* annotation_format_version: str
+    アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 
+
+"""
+
+FullAnnotationAdditionalData = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* additional_data_definition_id: str
+    
+* additional_data_definition_name: InternationalizationMessage
+    
+* type: AdditionalDataDefinitionType
+    
+* value: AdditionalDataValue
+    
+
+"""
+
 FullAnnotationData = Dict[str, Any]
 """
 アノテーションのデータが格納されます。   * `FullAnnotationDataClassification`: 入力データ全体に対するアノテーションデータです。   * `FullAnnotationDataSegmentation`: ピクセルレベルでの塗りつぶし（ラスター）のアノテーションデータです。   * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2ののアノテーションデータです。塗りつぶしv2はSemantic Segmentationに特化しています。   * `FullAnnotationDataBoundingBox`: 矩形のアノテーションデータです。   * `FullAnnotationDataPoints`: ポリゴン（閉じた頂点集合）のアノテーションデータです。   * `FullAnnotationDataSegmentation`: 点のアノテーションデータです。   * `FullAnnotationDataRange`: 動画区間のアノテーションデータです。 
@@ -1371,6 +1521,31 @@ Kyes of Dict
     
 * type: str
     Unknown
+
+"""
+
+FullAnnotationDetail = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+* user_id: str
+    
+* label_id: str
+    
+* label_name: InternationalizationMessage
+    
+* annotation_type: AnnotationType
+    
+* data_holding_type: AnnotationDataHoldingType
+    
+* data: FullAnnotationData
+    
+* additional_data_list: List[FullAnnotationAdditionalData]
+    
 
 """
 
@@ -1901,6 +2076,31 @@ Kyes of Dict
 
 """
 
+JobInfo2 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* job_type: JobType
+    
+* job_id: str
+    
+* job_status: JobStatus
+    
+* job_execution: __DictStrKeyAnyValue__
+    ジョブの内部情報
+* job_detail: __DictStrKeyAnyValue__
+    ジョブ結果の内部情報
+* created_datetime: str
+    
+* updated_datetime: str
+    
+
+"""
+
 JobInfoContainer = Dict[str, Any]
 """
 
@@ -2296,6 +2496,23 @@ Kyes of Dict
 
 """
 
+OrganizationCacheRecord = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* input: str
+    
+* members: str
+    
+* statistics: str
+    
+* organization: str
+    
+
+"""
+
 OrganizationMember = Dict[str, Any]
 """
 
@@ -2572,6 +2789,35 @@ Kyes of Dict
 
 """
 
+Project2 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* title: str
+    プロジェクトのタイトル
+* overview: str
+    プロジェクトの概要
+* project_status: ProjectStatus
+    
+* input_data_type: InputDataType
+    
+* configuration: ProjectConfiguration2
+    
+* created_datetime: str
+    
+* updated_datetime: str
+    
+* summary: ProjectSummary
+    
+
+"""
+
 ProjectAccountStatistics = Dict[str, Any]
 """
 
@@ -2602,7 +2848,61 @@ Kyes of Dict
 
 """
 
+ProjectCacheRecord = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* input: str
+    
+* members: str
+    
+* project: str
+    
+* instruction: str
+    
+* specs: str
+    
+* statistics: str
+    
+* organization: str
+    
+* supplementary: str
+    
+
+"""
+
 ProjectConfiguration = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* number_of_inspections: int
+    検査回数。 * 0回：教師付け -> 受入 * 1回：教師付け -> 検査 -> 受入 * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入 
+* assignee_rule_of_resubmitted_task: AssigneeRuleOfResubmittedTask
+    
+* task_assignment_type: TaskAssignmentType
+    
+* max_tasks_per_member: int
+    保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
+* max_tasks_per_member_including_hold: int
+    保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は20件として扱う。
+* input_data_set_id_list: List[str]
+    このフィールドは内部用でまだ何も意味を成しません。今は空配列を指定してください。
+* input_data_max_long_side_length: int
+    入力データ画像の長辺の最大値（未指定時は4096px）。  画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。 アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。  大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。 
+* sampling_inspection_rate: int
+    抜取検査率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
+* sampling_acceptance_rate: int
+    抜取受入率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
+* private_storage_aws_iam_role_arn: str
+    AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
+
+"""
+
+ProjectConfiguration2 = Dict[str, Any]
 """
 
 
@@ -2860,6 +3160,32 @@ Kyes of Dict
 
 """
 
+ProjectTaskCounts = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* task_counts: List[ProjectTaskCountsTaskCounts]
+    
+
+"""
+
+ProjectTaskCountsTaskCounts = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* phase: TaskPhase
+    
+* status: TaskStatus
+    
+* count: float
+    該当するタスクの数
+
+"""
+
 ProjectTaskStatistics = Dict[str, Any]
 """
 
@@ -3009,6 +3335,19 @@ Kyes of Dict
 
 """
 
+PutProjectResponse2 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* job: JobInfo2
+    
+* project: Project2
+    
+
+"""
+
 PutProjectResponseWrapper = Dict[str, Any]
 """
 
@@ -3027,7 +3366,7 @@ Kyes of Dict
     
 * input_data_type: InputDataType
     
-* configuration: ProjectConfiguration
+* configuration: ProjectConfiguration2
     
 * created_datetime: str
     
@@ -3035,9 +3374,9 @@ Kyes of Dict
     
 * summary: ProjectSummary
     
-* job: JobInfo
+* job: JobInfo2
     
-* project: Project
+* project: Project2
     
 
 """
@@ -3554,6 +3893,33 @@ Kyes of Dict
 
 """
 
+TaskHistoryEvent = Dict[str, Any]
+"""
+タスク履歴イベントは、タスクの状態が変化した１時点を表します。作業時間は、複数のこれらイベントを集約して計算するものなので、このオブジェクトには含まれません。
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_history_id: str
+    
+* created_datetime: str
+    
+* phase: TaskPhase
+    
+* phase_stage: int
+    
+* status: TaskStatus
+    
+* account_id: str
+    
+* request: TaskOperation
+    
+
+"""
+
 TaskHistoryShort = Dict[str, Any]
 """
 タスクのあるフェーズを誰が担当したかを表します。
@@ -3759,6 +4125,23 @@ Kyes of Dict
     
 * type: str
     UnknownLinkTarget
+
+"""
+
+UserCacheRecord = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* account: str
+    
+* members: str
+    
+* projects: str
+    
+* organizations: str
+    
 
 """
 
