@@ -115,7 +115,7 @@ info:
 
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
 
-  version: 0.89.3
+  version: 0.90.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -197,7 +197,11 @@ paths:
     get:
       tags:
       - af-cache-v2
-      summary: V2系APIへのアクセスに必要なSigned Cookieを発行します
+      summary: V2系リソース用 Signed Cookie 発行
+      description: |
+        本ドキュメントに記載している V2 系 リソースへのアクセスに必要な Signed Cookie を発行します。
+        この Cookie には有効期限があり、有効期限はリソース種類によって異なる場合があります。
+        有効期限が切れた場合は再取得します。
       security:
       - Everyone: []
       operationId: getSignedAccessV2
@@ -216,7 +220,7 @@ paths:
             Set-Cookie:
               schema:
                 type: string
-                description: 署名付きCookieが発行されます。発行されるCookieの詳細は [こちら](#section/Authentication) を参照ください。
+                description: Signed Cookieが発行されます。発行されるCookieの詳細は [こちら](#section/Authentication) を参照ください。
                 example: CloudFront-Key-Pair-Id=XXXXYYYZZZZ; Path=/api/v2/projects/xxxx-xxxx-xxx; max-age=84600; HttpOnly; SameSite=Strict; Secure
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
@@ -228,7 +232,11 @@ paths:
     get:
       tags:
       - af-project-v2
-      summary: キャッシュレコード
+      summary: プロジェクトキャッシュレコード取得
+      description: |
+        プロジェクトの各種リソースのキャッシュタイムスタンプを取得します。
+
+        これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -258,7 +266,11 @@ paths:
     get:
       tags:
       - af-project-member-v2
-      summary: プロジェクトメンバー一括取得
+      summary: プロジェクトメンバー検索
+      description: |
+        指定されたプロジェクトのメンバーを検索します。
+
+        パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -303,6 +315,7 @@ paths:
       - af-project-member-v2
       summary: プロジェクトメンバー取得
       description: |
+        指定したプロジェクトメンバーを取得します。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -350,6 +363,7 @@ paths:
       - af-statistics-v2
       summary: タスク集計取得
       description: |
+        指定したプロジェクトのタスク集計をすべて取得します。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -391,6 +405,7 @@ paths:
       - af-statistics-v2
       summary: ユーザー別タスク集計取得
       description: |
+        指定したプロジェクトのユーザー別タスク集計をすべて取得します。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -432,6 +447,7 @@ paths:
       - af-statistics-v2
       summary: 検査コメント集計取得
       description: |
+        指定したプロジェクトの検査コメント集計をすべて取得します。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -473,6 +489,7 @@ paths:
       - af-statistics-v2
       summary: フェーズ別タスク集計取得
       description: |
+        指定したプロジェクトのフェーズ別タスク集計をすべて取得します。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -514,6 +531,7 @@ paths:
       - af-statistics-v2
       summary: ラベル別アノテーション数集計取得
       description: |
+        指定したプロジェクトのラベル別アノテーション数集計をすべて取得します。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -598,6 +616,9 @@ paths:
         - af-annotation-specs-v2
       summary: アノテーション仕様取得
       description: |
+        指定したプロジェクトのアノテーション仕様を取得します。
+
+        本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -653,8 +674,11 @@ paths:
     get:
       tags:
         - af-organization-v2
-      summary: 組織情報取得
+      summary: 組織名で組織情報取得
       description: |
+        指定された組織を取得します。
+
+        本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -692,8 +716,11 @@ paths:
     get:
       tags:
         - af-organization-v2
-      summary: キャッシュレコード
+      summary: 組織名で組織キャッシュレコード取得
       description: |
+        組織の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。
+
+        これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -723,8 +750,11 @@ paths:
     get:
       tags:
         - af-organization-v2
-      summary: 組織情報取得
+      summary: 組織IDで組織情報取得
       description: |
+        指定された組織を取得します。
+
+        本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -762,8 +792,11 @@ paths:
     get:
       tags:
         - af-organization-v2
-      summary: キャッシュレコード
+      summary: 組織IDで組織キャッシュレコード取得
       description: |
+        組織の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。
+
+        これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -817,15 +850,15 @@ paths:
             type: string
             example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
                 $ref: "swagger-api-components.yaml#/components/schemas/OrganizationMemberList"
-        401:
+        "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        503:
+        "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /organizations/{organization_id}/members/{user_id}:
     get:
@@ -861,15 +894,15 @@ paths:
             type: string
             example: "123456789"
       responses:
-        200:
+        "200":
           description: 正常
           content:
             application/json:
               schema:
                 $ref: "swagger-api-components.yaml#/components/schemas/OrganizationMember"
-        401:
+        "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        503:
+        "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /organizations/{organization_id}/projects/{project_id}/task-counts:
     get:
@@ -877,6 +910,7 @@ paths:
       - af-organization-v2
       summary: プロジェクトのタスク件数取得
       description: |
+        プロジェクトのタスク件数を取得します。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -914,6 +948,9 @@ paths:
         - af-users-v2
       summary: キャッシュレコード
       description: |
+        ユーザー別の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。
+
+        これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -945,6 +982,9 @@ paths:
         - af-users-v2
       summary: 個人のプロジェクトメンバー情報一括取得
       description: |
+        指定したユーザーが所属するプロジェクトメンバー情報をすべて取得します。
+
+        本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -982,8 +1022,11 @@ paths:
     get:
       tags:
         - af-users-v2
-      summary: 個人の所属組織一括取得
+      summary: 個人の所属組織検索
       description: |
+        指定したユーザーが所属する組織を検索します。
+
+        本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -1021,8 +1064,11 @@ paths:
     get:
       tags:
         - af-users-v2
-      summary: 自分のプロジェクトメンバー情報一括取得
+      summary: 自分のプロジェクトメンバー情報検索
       description: |
+        指定したユーザーが所属するプロジェクトを検索します。
+
+        本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -1115,8 +1161,11 @@ paths:
     get:
       tags:
         - af-users-v2
-      summary: 個人情報取得
+      summary: ユーザーアカウント情報取得
       description: |
+        指定したユーザーの組織のアカウント情報を取得します。
+
+        本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []

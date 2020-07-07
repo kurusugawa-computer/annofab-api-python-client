@@ -21,6 +21,8 @@ AdditionalDataDefaultType = Union[bool, int, str]
 
 AdditionalDataRestrictionCondition = Dict[str, Any]
 
+AnnotationSpecsOption = Dict[str, Any]
+
 
 @dataclass_json
 @dataclass
@@ -412,6 +414,9 @@ class AnnotationSpecsV1:
     updated_datetime: Optional[str]
     """アノテーション仕様の最終更新時刻 """
 
+    option: Optional[AnnotationSpecsOption]
+    """"""
+
 
 @dataclass_json
 @dataclass
@@ -440,3 +445,6 @@ class AnnotationSpecsV2:
 
     updated_datetime: Optional[str]
     """アノテーション仕様の最終更新時刻 """
+
+    option: Optional[AnnotationSpecsOption]
+    """"""

@@ -45,6 +45,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
+        パスワードの変更を試みます。  パスワードの要件を満たさない場合、エラーメッセージが返ります。 
 
         Args:
             request_body (Any): Request Body
@@ -113,12 +114,13 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def confirm_signup(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
-        """サインアップstep2（確定）
+        """サインアップstep2（本登録）
 
 
         authorizations: EveryoneRequestBody
 
 
+        アカウントのサインアップの最後のステップとして、アカウントを本登録します。 
 
         Args:
             request_body (Any): Request Body
@@ -212,11 +214,12 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_signup(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
-        """サインアップstep1（開始）
+        """サインアップstep1（仮登録）
 
 
 
 
+        アカウントのサインアップの最初のステップとして、アカウントを仮登録します。  AnnoFab に未登録のメールアドレスであれば、新規アカウントが仮登録状態で作成され、本登録フローのためのメールが送信されます。 このメールには仮パスワードなどが記載されています。  指定したメールアドレスを使うユーザーが仮登録であれば、本登録フローのメールが再送信されます。 指定したメールアドレスを使うユーザーが本登録であれば、不正なリクエストとしてエラーを返します（本登録が仮登録に戻ることはありません）。 
 
         Args:
             request_body (Any): Request Body
@@ -318,9 +321,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_annotation_archive(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    def get_annotation_archive(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """SimpleアノテーションZIP取得
 
 
@@ -331,8 +332,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
-                v2 (str):  このクエリパラメータのキーだけを指定（`?v2`）、または値 `true` も指定（`?v2=true`）すると、アノテーションJSONのファイル名は `{入力データID}.json` になります。 この v2 形式は、入力データ名がファイル名の長さ上限を上回ってもよいように再設計されたものです。 以前の v1 形式（アノテーションJSONのファイル名は `{入力データ名}.json` ）はいずれ廃止され、クエリパラメータ `v2` があってもなくても v2 形式に置き換わる予定です。 
 
         Returns:
             Tuple[TemporaryUrl, requests.Response]
@@ -341,9 +340,7 @@ class AbstractAnnofabApi(abc.ABC):
         """
         url_path = f"/projects/{project_id}/archive/simple"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
-            "query_params": query_params,
-        }
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_annotation_list(
@@ -498,6 +495,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        指定したプロジェクトのアノテーション仕様を取得します。  パラメータを指定することで、過去に保存された履歴を取得することもできます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -518,12 +516,13 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_annotation_specs_histories(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """アノテーション仕様履歴取得
+        """アノテーション仕様履歴一括取得
 
 
         authorizations: AllProjectMember
 
 
+        指定されたプロジェクトのアノテーション仕様のすべての履歴を取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -547,6 +546,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
+        アノテーション仕様を更新します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -633,6 +633,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
+        入力データを削除します。  入力データの実体ファイルが AnnoFab のストレージに存在するものであれば、実体ファイルも削除されます。 お客様の管理するプライベートストレージに存在するものであれば、実体ファイルは削除されません。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -655,6 +656,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        指定された入力データを取得します。  この API の返す入力データは入力データ名などの項目を含む JSON であり、実体のファイル（画像や動画など）ではありません。 実体ファイルにアクセスする方法は非公開です（詳細を希望される場合はお問い合わせください）。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -679,6 +681,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        指定されたプロジェクトの入力データを検索します。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -745,7 +748,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        入力データ（画像プロジェクトなら画像、動画プロジェクトなら動画や時系列データ）を登録します。  画像プロジェクトの場合、複数の画像ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> アノテーション作業生産性を高めるため、画像は「長辺4096px以内」かつ「4MB以内」になるよう圧縮されます。<br> 作成されるアノテーションは、元の解像度でつけた場合相当に自動で復元されます。  動画プロジェクトの場合、複数の動画ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> また、複数のストリーミング形式の動画をアップロードすることもできます。<br> この場合はZIP形式必須で、同一のZIPファイル内にm3u8ファイルとtsファイルを両方含めてください。<br> なお、このm3u8ファイルに記述された相対パスでtsファイルが参照可能である必要があります。  ZIPファイルを登録するとバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ### ディレクトリ例 ```   hoge.zip/     hoge.ts     fuga/       foo.m3u8(hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)       foo1.ts       foo2.ts     piyo1/       piyo2/         bar.ts       bar.m3u8(hoge.ts, piyo1/piyo2/bar.tsを参照) ```  ファイルの登録には、[アップロード用一時データ保存先作成API](#operation/createTempPath) を組み合わせて使用します。 
+        入力データ（画像プロジェクトなら画像、動画プロジェクトなら動画や時系列データ）を登録します。  ファイルの登録には、[アップロード用一時データ保存先作成API](#operation/createTempPath) を組み合わせて使用します。  ## ZIPでまとめてアップロード  画像プロジェクトの場合、複数の画像ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> アノテーション作業生産性を高めるため、画像は「長辺4096px以内」かつ「4MB以内」になるよう縮小されます。<br> 作成されるアノテーションは、元の解像度でつけた場合相当に自動で復元されます。  動画プロジェクトの場合、複数の動画ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> また、複数のストリーミング形式の動画をアップロードすることもできます。<br> この場合はZIP形式必須で、同一のZIPファイル内にm3u8ファイルとtsファイルを両方含めてください。<br> なお、このm3u8ファイルに記述された相対パスでtsファイルが参照可能である必要があります。  ZIPファイルを登録するとバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ### ディレクトリ例 ```   hoge.zip/     hoge.ts     fuga/       foo.m3u8(hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)       foo1.ts       foo2.ts     piyo1/       piyo2/         bar.ts       bar.m3u8(hoge.ts, piyo1/piyo2/bar.tsを参照) ```  ## 注意事項  * `input_data_path` のスキーマが `https` の場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます * `input_data_path` のスキーマが `s3` かつ入力データがtsファイルの場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -812,6 +815,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        指定されたタスクで、指定された入力データにつけられた検査コメントをすべて取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1003,6 +1007,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
+        バックグラウンドジョブ情報を削除します。  なお、バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1027,7 +1032,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        バックグラウンドジョブの情報を取得する。 取得されるジョブの情報は作成日付の新しい順にソートされる。 バックグラウンドジョブ情報は完了(失敗含む)から14日経過後に削除される。 
+        バックグラウンドジョブの情報を取得します。 取得されるジョブ情報は、作成日付の新しい順にソートされています。  バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1086,6 +1091,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
+        API リクエストユーザーのアカウント情報を取得します。 
 
         Args:
 
@@ -1130,6 +1136,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
+        API リクエストユーザーが所属するすべての組織における、自身がどのようなメンバー設定で所属しているかをまとめて取得します。 
 
         Args:
             query_params (Dict[str, Any]): Query Parameters
@@ -1155,6 +1162,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
+        API リクエストユーザーが所属するすべてのプロジェクトにおける、自身がどのようなメンバー設定で所属しているかをまとめて取得します。 
 
         Args:
 
@@ -1200,7 +1208,7 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_my_account_delete(self, **kwargs) -> Tuple[Any, requests.Response]:
-        """アカウント削除step1
+        """アカウント削除step1（確認）
 
 
         authorizations: Everyone
@@ -1227,6 +1235,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
+        API リクエストユーザーのアカウント情報を更新します。 
 
         Args:
             request_body (Any): Request Body
@@ -1328,6 +1337,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
+        指定組織の組織IDなどの情報を取得します。 
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1349,6 +1359,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
+        組織全体でどれだけ AnnoFab ストレージを使用しているかなどの活動の要約を取得します。 
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1540,6 +1551,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationOwner
 
 
+        指定された組織メンバーのロールのみを変更します。 
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1705,6 +1717,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        指定されたプロジェクトがひもづく組織を取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1726,6 +1739,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        プロジェクトを取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1744,7 +1758,7 @@ class AbstractAnnofabApi(abc.ABC):
         """プロジェクトの入力データ情報全件URLの取得
 
 
-        authorizations: ProjectOwner
+        authorizations: ProjectDataUser
 
 
         入力データ情報全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### 入力データ情報全件ファイル 入力データ情報全件ファイルには、プロジェクトの入力データ情報がJSON形式（[InputData](#section/InputData)の配列）で記録されています。 ただし`InputData`中の`url`は常に`null`です。 このファイルは毎日AM 02:00 JSTに更新されます。 
@@ -1766,7 +1780,7 @@ class AbstractAnnofabApi(abc.ABC):
         """プロジェクトの検査コメント全件URLの取得
 
 
-        authorizations: ProjectOwner
+        authorizations: ProjectDataUser
 
 
         検査コメント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### 検査コメント全件ファイル 検査コメント全件ファイルには、プロジェクトの検査コメント情報がJSON形式（[Inspection](#section/Inspection)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 
@@ -1788,7 +1802,7 @@ class AbstractAnnofabApi(abc.ABC):
         """プロジェクトのタスク履歴全件URLの取得
 
 
-        authorizations: ProjectOwner
+        authorizations: ProjectDataUser
 
 
         タスク履歴全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク履歴全件ファイル タスク履歴イベント全件ファイルには、プロジェクトのタスク履歴情報がJSON形式（キーがタスクID、値が[TaskHistory](#section/TaskHistory)の配列となるマップ）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 
@@ -1811,7 +1825,7 @@ class AbstractAnnofabApi(abc.ABC):
 
         .. deprecated:: X
 
-        authorizations: ProjectOwner
+        authorizations: ProjectDataUser
 
 
         タスク履歴イベント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク履歴イベント全件ファイル タスク履歴イベント全件ファイルには、プロジェクトのタスク履歴イベント情報がJSON形式（[TaskHistoryEvent](#section/TaskHistoryEvent)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 
@@ -1834,7 +1848,7 @@ class AbstractAnnofabApi(abc.ABC):
         """プロジェクトのタスク全件URLの取得
 
 
-        authorizations: ProjectOwner
+        authorizations: ProjectDataUser
 
 
         タスク全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク全件ファイル タスク全件ファイルには、プロジェクトのタスク情報がJSON形式（[Task](#section/Task)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 また、[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを利用することで、手動でタスク全件ファイルを更新することも可能です。 
@@ -1891,7 +1905,7 @@ class AbstractAnnofabApi(abc.ABC):
         """プロジェクトの入力データ情報全件ファイル更新開始
 
 
-        authorizations: ProjectOwner
+        authorizations: ProjectDataUser
 
 
         プロジェクト内の入力データ情報全件ファイルの更新を開始します。 ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。 本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs-list`）。  入力データ情報全件ファイルは毎日AM 02:00 JSTに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、入力データ情報全件ファイル以外は更新されません。  入力データ情報全件ファイルについては、[getProjectInputsUrl](#operation/getProjectInputsUrl) APIを参照ください。 
@@ -1915,7 +1929,7 @@ class AbstractAnnofabApi(abc.ABC):
         """プロジェクトのタスク全件ファイル更新開始
 
 
-        authorizations: ProjectOwner
+        authorizations: ProjectDataUser
 
 
         プロジェクト内のタスク全件ファイルの更新を開始します。 ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。 本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks-list`）。  タスク全件ファイルは毎日AM 02:00 JSTに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、タスク全件ファイル以外は更新されません。  タスク全件ファイルについては、[getProjectTasksUrl](#operation/getProjectTasksUrl) APIを参照ください。 
@@ -1984,6 +1998,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        プロジェクトの特定のメンバーを取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2030,12 +2045,13 @@ class AbstractAnnofabApi(abc.ABC):
     def put_project_member(
         self, project_id: str, user_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """プロジェクトメンバー作成/更新
+        """プロジェクトメンバー追加/更新
 
 
         authorizations: ProjectOwner
 
 
+        プロジェクトにメンバーを新規に追加、または存在するメンバーの設定を変更します。  メンバーとなるユーザーは、作成するプロジェクトをひもづける組織に加入している必要があります。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2127,12 +2143,13 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_markers(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """統計グラフマーカー取得
+        """統計グラフマーカー一括取得
 
 
         authorizations: AllProjectMember
 
 
+        指定されたプロジェクトの統計グラフマーカーをすべて取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2222,6 +2239,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
+        指定されたプロジェクトの統計グラフマーカーを更新します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2254,6 +2272,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
+        指定された補助情報を、実体ファイルとともに削除します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2279,6 +2298,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        指定された入力データにつけられた補助情報をすべて取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2308,6 +2328,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
+        指定された入力データに補助情報を新規作成または更新します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2442,6 +2463,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
+        指定されたタスクの作業履歴をすべて取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2485,7 +2507,7 @@ class AbstractAnnofabApi(abc.ABC):
     def get_tasks(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """タスク一括取得
+        """タスク検索
 
 
         authorizations: AllProjectMember
@@ -2654,12 +2676,13 @@ class AbstractAnnofabApi(abc.ABC):
     #########################################
 
     def delete_webhook(self, project_id: str, webhook_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """プロジェクトのWebhookを削除
+        """プロジェクト Webhook 削除
 
 
         authorizations: ProjectOwner
 
 
+        指定された Webhook を削除 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2676,12 +2699,13 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_webhooks(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """プロジェクトのWebhookをすべて取得
+        """プロジェクト Webhook 一括取得
 
 
         authorizations: ProjectOwner
 
 
+        指定されたプロジェクトの Webhook をすべて取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2699,13 +2723,13 @@ class AbstractAnnofabApi(abc.ABC):
     def put_webhook(
         self, project_id: str, webhook_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """プロジェクトのWebhookを更新
+        """プロジェクト Webhook 作成/更新
 
 
         authorizations: ProjectOwner
 
 
-        プロジェクトのWebhookを新規登録/更新することができます。  body中には、event_typeによって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip  * project-copy-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{DEST_PROJECT_ID}} :  コピー先プロジェクトID   * {{DEST_PROJECT_TITLE}} : コピー先プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00 
+        プロジェクトのWebhookを新規作成/更新します。  Webhook で送信される body には、event_type によって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip  * project-copy-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{DEST_PROJECT_ID}} :  コピー先プロジェクトID   * {{DEST_PROJECT_TITLE}} : コピー先プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2728,12 +2752,13 @@ class AbstractAnnofabApi(abc.ABC):
     def test_webhook(
         self, project_id: str, webhook_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """プロジェクトのWebhookをテスト実行
+        """プロジェクト Webhook テスト実行
 
 
         authorizations: ProjectOwner
 
 
+        得録された登録された URL にテスト用の Webhook を実際に送信します。  送信される Webhook の body に含まれるプレースホルダーは、本 API リクエストで指定されたダミーのプレースホルダーで置き換えられます。 
 
         Args:
             project_id (str):  プロジェクトID (required)
