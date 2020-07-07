@@ -1,7 +1,6 @@
 import abc
 import json
 import os
-import warnings
 import zipfile
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional
@@ -22,8 +21,8 @@ class SimpleAnnotationParser(abc.ABC):
     以下のフォルダ構成であることを期待します。::
 
         ├── {task_id}/
-        │   ├── {input_data_name}.json
-        │   ├── {input_data_name}/
+        │   ├── {input_data_id}.json
+        │   ├── {input_data_id}/
         │   │   ├── {annotation_id}
 
     Args:
@@ -35,7 +34,6 @@ class SimpleAnnotationParser(abc.ABC):
         p = Path(json_file_path)
         self.__json_file_path = json_file_path
         self.__task_id = p.parent.name
-        self.__expected_input_data_name = _trim_extension(p.name).replace("__", "/")
         self.__input_data_id = _trim_extension(p.name)
 
     @property
@@ -57,20 +55,6 @@ class SimpleAnnotationParser(abc.ABC):
         Simple(v2)版用です。
          """
         return self.__input_data_id
-
-    @property
-    def expected_input_data_name(self) -> str:
-        """
-        JSONファイル名から決まる、おそらく正しい input_data_nameです。
-        Simple(v1)用です。いずれ廃止されるので、非推奨です。
-        https://annofab.com/docs/releases/deprecation-announcements.html#notice12
-
-         zipファイル内のファイル名は、input_data_nameになっています。
-         しかし、'/'がinput_data_nameに含まれる場合'__'に変換されて格納されています。
-         そのため、真に正しいinput_data_nameはファイルの中身をparseしないと見つかりません。
-         """
-        warnings.warn("deprecated", DeprecationWarning)
-        return self.__expected_input_data_name
 
     @abc.abstractmethod
     def open_outer_file(self, data_uri: str):
@@ -179,7 +163,7 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
         JSONファイルをパースする::
 
             with zipfile.ZipFile('annotation.zip', 'r') as zip_file:
-                p = SimpleAnnotationZipParser(zip_file, "task_id/input_data_name.json")
+                p = SimpleAnnotationZipParser(zip_file, "task_id/input_data_id.json")
                 annotation = p.parse()
 
 
@@ -215,7 +199,7 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
     Examples:
         JSONファイルをパースする::
 
-            p = SimpleAnnotationDirParser(Path("task_id/input_data_name.json"))
+            p = SimpleAnnotationDirParser(Path("task_id/input_data_id.json"))
             annotation = p.parse()
 
     """
@@ -250,7 +234,7 @@ class FullAnnotationZipParser(FullAnnotationParser):
         JSONファイルをパースする::
 
             with zipfile.ZipFile('annotation.zip', 'r') as zip_file:
-                p = FullAnnotationZipParser(zip_file, "task_id/input_data_name.json")
+                p = FullAnnotationZipParser(zip_file, "task_id/input_data_id.json")
                 annotation = p.parse()
 
 
@@ -286,7 +270,7 @@ class FullAnnotationDirParser(FullAnnotationParser):
     Examples:
         JSONファイルをパースする::
 
-            p = FullAnnotationDirParser(Path("task_id/input_data_name.json"))
+            p = FullAnnotationDirParser(Path("task_id/input_data_id.json"))
             annotation = p.parse()
 
     """

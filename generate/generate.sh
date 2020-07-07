@@ -47,7 +47,6 @@ if "${FLAG_DOWNLOAD}"; then
     curl https://annofab.com/docs/api/swagger.yaml --output swagger/swagger.yaml
     curl https://annofab.com/docs/api/swagger.v2.yaml --output swagger/swagger.v2.yaml
     curl https://annofab.com/docs/api/swagger-api-components.yaml  --output swagger/swagger-api-components.yaml
-    cat swagger/swagger-partial-header.yaml swagger/swagger-api-components.yaml > swagger/swagger-models.yaml
 fi
 
 
@@ -81,6 +80,8 @@ rm -Rf out/openapi_client
 
 
 # modelsを生成
+cat swagger/swagger-partial-header.yaml swagger/swagger-api-components.yaml > swagger/swagger-models.yaml
+
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
     --input-spec swagger/swagger-models.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
@@ -100,11 +101,11 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
     --global-property models,modelTests=false,modelDocs=false  \
 
 MODELS_DIR=out/openapi_client/models
+rm swagger/swagger-models.yaml
 
 ############################
 # DataClassを作成
 ############################
-
 
 # Annotation
 declare -a model_files=(${MODELS_DIR}/point.py \

@@ -47,6 +47,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定したプロジェクトのアノテーション仕様を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -137,12 +138,13 @@ class AbstractAnnofabApi2(abc.ABC):
     def get_organization_by_name_v2(
         self, organization_name: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """組織情報取得
+        """組織名で組織情報取得
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定された組織を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
 
         Args:
             organization_name (str):  組織名 (required)
@@ -162,12 +164,13 @@ class AbstractAnnofabApi2(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_cache_by_name_v2(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """キャッシュレコード
+        """組織名で組織キャッシュレコード取得
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        組織の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。 
 
         Args:
             organization_name (str):  組織名 (required)
@@ -183,12 +186,13 @@ class AbstractAnnofabApi2(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_cache_v2(self, organization_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """キャッシュレコード
+        """組織IDで組織キャッシュレコード取得
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        組織の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。 
 
         Args:
             organization_id (str):  組織ID (required)
@@ -206,12 +210,13 @@ class AbstractAnnofabApi2(abc.ABC):
     def get_organization_v2(
         self, organization_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """組織情報取得
+        """組織IDで組織情報取得
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定された組織を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
 
         Args:
             organization_id (str):  組織ID (required)
@@ -239,6 +244,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        プロジェクトのタスク件数を取得します。 
 
         Args:
             organization_id (str):  組織ID (required)
@@ -268,6 +274,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定したプロジェクトメンバーを取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -290,12 +297,13 @@ class AbstractAnnofabApi2(abc.ABC):
     def get_project_members_v2(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """プロジェクトメンバー一括取得
+        """プロジェクトメンバー検索
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定されたプロジェクトのメンバーを検索します。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -321,12 +329,13 @@ class AbstractAnnofabApi2(abc.ABC):
     #########################################
 
     def get_project_cache_v2(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """キャッシュレコード
+        """プロジェクトキャッシュレコード取得
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        プロジェクトの各種リソースのキャッシュタイムスタンプを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -355,6 +364,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定したプロジェクトのユーザー別タスク集計をすべて取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -382,6 +392,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定したプロジェクトの検査コメント集計をすべて取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -409,6 +420,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定したプロジェクトのラベル別アノテーション数集計をすべて取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -436,6 +448,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定したプロジェクトのフェーズ別タスク集計をすべて取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -463,6 +476,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定したプロジェクトのタスク集計をすべて取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -517,12 +531,13 @@ class AbstractAnnofabApi2(abc.ABC):
     def get_account_v2(
         self, account_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """個人情報取得
+        """ユーザーアカウント情報取得
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定したユーザーの組織のアカウント情報を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
 
         Args:
             account_id (str):  アカウントID (required)
@@ -548,6 +563,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        ユーザー別の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。 
 
         Args:
             account_id (str):  アカウントID (required)
@@ -565,12 +581,13 @@ class AbstractAnnofabApi2(abc.ABC):
     def get_user_organizations_v2(
         self, account_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """個人の所属組織一括取得
+        """個人の所属組織検索
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定したユーザーが所属する組織を検索します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
 
         Args:
             account_id (str):  アカウントID (required)
@@ -598,6 +615,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定したユーザーが所属するプロジェクトメンバー情報をすべて取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
 
         Args:
             account_id (str):  アカウントID (required)
@@ -619,12 +637,13 @@ class AbstractAnnofabApi2(abc.ABC):
     def get_user_projects_v2(
         self, account_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """自分のプロジェクトメンバー情報一括取得
+        """自分のプロジェクトメンバー情報検索
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
+        指定したユーザーが所属するプロジェクトを検索します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
 
         Args:
             account_id (str):  アカウントID (required)

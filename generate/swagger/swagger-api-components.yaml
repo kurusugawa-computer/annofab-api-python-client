@@ -1042,6 +1042,78 @@ components:
         * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。
         * `invoke-hook` - Webhookの起動。
         * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。
+
+        ## ジョブの同時実行制限
+
+        AnnoFab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。
+
+        ジョブの同時実行可否はジョブの種別によって異なります。
+
+        ### copy-project
+        次のジョブが実行されている場合、このジョブを実行することはできません。
+
+        * `gen-inputs`
+        * `gen-tasks`
+        * `delete-project`
+        * `move-project`
+
+        ### gen-inputs
+        次のジョブが実行されている場合、このジョブを実行することはできません。
+
+        * `copy-project`
+        * `gen-inputs`
+        * `gen-tasks`
+        * `gen-inputs-list`
+        * `delete-project`
+        * `move-project`
+
+        ### gen-tasks
+        次のジョブが実行されている場合、このジョブを実行することはできません。
+
+        * `copy-project`
+        * `gen-inputs`
+        * `gen-tasks`
+        * `gen-annotation`
+        * `gen-tasks-list`
+        * `delete-project`
+        * `move-project`
+
+        ### gen-annotation
+        次のジョブが実行されている場合、このジョブを実行することはできません。
+
+        * `gen-tasks`
+        * `gen-annotation`
+        * `delete-project`
+        * `move-project`
+
+        ### gen-tasks-list
+        次のジョブが実行されている場合、このジョブを実行することはできません。
+
+        * `gen-tasks`
+        * `gen-tasks-list`
+        * `delete-project`
+        * `move-project`
+
+        ### gen-inputs-list
+        次のジョブが実行されている場合、このジョブを実行することはできません。
+
+        * `gen-inputs`
+        * `gen-inputs-list`
+        * `delete-project`
+        * `move-project`
+
+        ### delete-project
+        他のジョブが実行されていない場合**のみ**実行できます。
+
+        ### invoke-hook
+        次のジョブが実行されている場合、このジョブを実行することはできません。
+
+        * `delete-project`
+        * `move-project`
+
+        ### move-project
+        他のジョブが実行されていない場合**のみ**実行できます。
+
     JobStatus:
         type: string
         enum:
@@ -1634,6 +1706,8 @@ components:
           format: date-time
           description: |
             アノテーション仕様の最終更新時刻
+        option:
+          $ref: "#/components/schemas/AnnotationSpecsOption"
     AnnotationSpecsV2:
       type: object
       properties:
@@ -1663,6 +1737,8 @@ components:
           format: date-time
           description: |
             アノテーション仕様の最終更新時刻
+        option:
+          $ref: "#/components/schemas/AnnotationSpecsOption"
     AnnotationSpecsRequestV1:
       type: object
       required:
@@ -1693,6 +1769,8 @@ components:
           description: |
             更新前アノテーション仕様の時刻( `updated_datetime` )を指定する。
             新規作成時は未指定。
+        option:
+          $ref: "#/components/schemas/AnnotationSpecsOption"
     AnnotationSpecsRequestV2:
       type: object
       required:
@@ -1737,6 +1815,25 @@ components:
           description: |
             更新前アノテーション仕様の時刻( `updated_datetime` )を指定する。
             新規作成時は未指定。
+        option:
+          $ref: "#/components/schemas/AnnotationSpecsOption"
+    AnnotationSpecsOption:
+      oneOf:
+        - $ref: "#/components/schemas/AnnotationSpecsMovieOption"
+      description: |
+        アノテーション仕様のオプション設定。
+
+        現時点では動画プロジェクトでのみ利用・指定可能。動画以外のプロジェクトでは値なし。
+
+        動画プロジェクトで値が未指定の場合、AnnotationSpecsOption内の値はすべてデフォルト値が指定されたものとして扱われる。
+    AnnotationSpecsMovieOption:
+      type: object
+      properties:
+        can_overwrap:
+          type: boolean
+          default: true
+          description: |
+            動画プロジェクトのアノテーションに重複配置を許すか否か。
     AnnotationSpecsHistory:
       type: object
       properties:

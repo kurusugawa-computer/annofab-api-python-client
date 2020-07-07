@@ -728,6 +728,8 @@ Kyes of Dict
     
 * updated_datetime: str
     アノテーション仕様の最終更新時刻 
+* option: AnnotationSpecsOption
+    
 * additionals: List[AdditionalDataDefinitionV2]
     
 * restrictions: List[AdditionalDataRestriction]
@@ -758,6 +760,26 @@ Kyes of Dict
 
 """
 
+AnnotationSpecsMovieOption = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* can_overwrap: bool
+    動画プロジェクトのアノテーションに重複配置を許すか否か。 
+
+"""
+
+AnnotationSpecsOption = Dict[str, Any]
+"""
+アノテーション仕様のオプション設定。  現時点では動画プロジェクトでのみ利用・指定可能。動画以外のプロジェクトでは値なし。  動画プロジェクトで値が未指定の場合、AnnotationSpecsOption内の値はすべてデフォルト値が指定されたものとして扱われる。 
+
+Kyes of Dict
+
+
+"""
+
 AnnotationSpecsRequest = Dict[str, Any]
 """
 
@@ -774,6 +796,8 @@ Kyes of Dict
     trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
+* option: AnnotationSpecsOption
+    
 * additionals: List[AdditionalDataDefinitionV2]
     
 * restrictions: List[AdditionalDataRestriction]
@@ -799,6 +823,8 @@ Kyes of Dict
     trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
+* option: AnnotationSpecsOption
+    
 
 """
 
@@ -824,6 +850,8 @@ Kyes of Dict
     
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
+* option: AnnotationSpecsOption
+    
 
 """
 
@@ -841,6 +869,8 @@ Kyes of Dict
     
 * updated_datetime: str
     アノテーション仕様の最終更新時刻 
+* option: AnnotationSpecsOption
+    
 
 """
 
@@ -864,6 +894,8 @@ Kyes of Dict
     
 * updated_datetime: str
     アノテーション仕様の最終更新時刻 
+* option: AnnotationSpecsOption
+    
 
 """
 
@@ -2126,7 +2158,7 @@ class JobStatus(Enum):
 
 class JobType(Enum):
     """
-    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。 
+    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。  ## ジョブの同時実行制限  AnnoFab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。  ジョブの同時実行可否はジョブの種別によって異なります。  ### copy-project 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-tasks` * `delete-project` * `move-project`  ### gen-inputs 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-inputs-list` * `delete-project` * `move-project`  ### gen-tasks 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-annotation` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-annotation 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-annotation` * `delete-project` * `move-project`  ### gen-tasks-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-inputs-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-inputs-list` * `delete-project` * `move-project`  ### delete-project 他のジョブが実行されていない場合**のみ**実行できます。  ### invoke-hook 次のジョブが実行されている場合、このジョブを実行することはできません。  * `delete-project` * `move-project`  ### move-project 他のジョブが実行されていない場合**のみ**実行できます。 
     """
 
     COPY_PROJECT = "copy-project"
