@@ -114,7 +114,7 @@ info:
 
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
 
-  version: 0.89.3
+  version: 0.90.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -246,9 +246,9 @@ tags:
     ### ZIPファイル内の構造
     * / (ZIPファイルのルートディレクトリ)
       * {タスクID}/
-        * {入力データ名}.json
+        * {入力データID}.json
           * アノテーションJSONデータ (詳細は次節を参照)
-        * {入力データ名}/ (塗りつぶしアノテーション時のみ)
+        * {入力データID}/ (塗りつぶしアノテーション時のみ)
           * {アノテーションデータID} (塗りつぶしのPNG画像)
 
     ### アノテーションJSONデータの構造
@@ -369,7 +369,10 @@ paths:
       tags:
       - af-login
       summary: ログイン
-      description: ""
+      description: |
+        AnnoFab にログインし、その他 API の認証に必要なトークンを取得します。
+
+        トークンは本人認証に使われる機密情報です。なりすましなど悪用のおそれがあるため、他人への提供は推奨されません。
       security:
       - EveryoneRequestBody: []
       operationId: login
@@ -417,7 +420,11 @@ paths:
       tags:
       - af-login
       summary: トークン リフレッシュ
-      description: ""
+      description: |
+        トークンを再発行します。
+        IDトークンやアクセストークンの有効期限が切れた場合に使います。
+
+        リフレッシュトークンの有効期限が切れた場合は本 API では再発行できません。代わりに、[login API](#operation/login) を実行します。
       security:
       - EveryoneRequestBody: []
       operationId: refreshToken
@@ -442,8 +449,15 @@ paths:
     post:
       tags:
       - af-account
-      summary: サインアップstep1（開始）
-      description: ""
+      summary: サインアップstep1（仮登録）
+      description: |
+        アカウントのサインアップの最初のステップとして、アカウントを仮登録します。
+
+        AnnoFab に未登録のメールアドレスであれば、新規アカウントが仮登録状態で作成され、本登録フローのためのメールが送信されます。
+        このメールには仮パスワードなどが記載されています。
+
+        指定したメールアドレスを使うユーザーが仮登録であれば、本登録フローのメールが再送信されます。
+        指定したメールアドレスを使うユーザーが本登録であれば、不正なリクエストとしてエラーを返します（本登録が仮登録に戻ることはありません）。
       operationId: initiateSignup
       requestBody:
         required: true
@@ -460,8 +474,9 @@ paths:
     post:
       tags:
       - af-account
-      summary: サインアップstep2（確定）
-      description: ""
+      summary: サインアップstep2（本登録）
+      description: |
+        アカウントのサインアップの最後のステップとして、アカウントを本登録します。
       operationId: confirmSignup
       security:
       - EveryoneRequestBody: []
@@ -483,7 +498,10 @@ paths:
       tags:
       - af-account
       summary: パスワード変更
-      description: ""
+      description: |
+        パスワードの変更を試みます。
+
+        パスワードの要件を満たさない場合、エラーメッセージが返ります。
       security:
       - Everyone: []
       operationId: changePassword
@@ -659,7 +677,8 @@ paths:
       tags:
       - af-my
       summary: 自分のアカウント取得
-      description: ""
+      description: |
+        API リクエストユーザーのアカウント情報を取得します。
       security:
       - Everyone: []
       operationId: getMyAccount
@@ -678,7 +697,8 @@ paths:
       tags:
       - af-my
       summary: 自分のアカウント情報更新
-      description: ""
+      description: |
+        API リクエストユーザーのアカウント情報を更新します。
       security:
       - Everyone: []
       operationId: putMyAccount
@@ -705,7 +725,7 @@ paths:
     post:
       tags:
       - af-my
-      summary: アカウント削除step1
+      summary: アカウント削除step1（確認）
       description: |
         アカウント削除プロセスを開始します。
 
@@ -758,7 +778,8 @@ paths:
       tags:
       - af-my
       summary: 自分のプロジェクトメンバー情報一括取得
-      description: ""
+      description: |
+        API リクエストユーザーが所属するすべてのプロジェクトにおける、自身がどのようなメンバー設定で所属しているかをまとめて取得します。
       security:
       - Everyone: []
       operationId: getMyProjectMembers
@@ -807,7 +828,8 @@ paths:
       tags:
       - af-my
       summary: 所属組織一括取得
-      description: ""
+      description: |
+        API リクエストユーザーが所属するすべての組織における、自身がどのようなメンバー設定で所属しているかをまとめて取得します。
       security:
       - AllOrganizationMember: []
       operationId: getMyOrganizations
@@ -886,6 +908,7 @@ paths:
       - af-organization
       summary: 組織情報取得
       description: |
+        指定組織の組織IDなどの情報を取得します。
       security:
       - AllOrganizationMember: []
       operationId: getOrganization
@@ -1149,6 +1172,7 @@ paths:
       - af-organization-member
       summary: 組織メンバーのロール更新
       description: |
+        指定された組織メンバーのロールのみを変更します。
       security:
       - OrganizationOwner: []
       operationId: updateOrganizationMemberRole
@@ -1276,6 +1300,7 @@ paths:
       - af-organization
       summary: 組織活動サマリー取得
       description: |
+        組織全体でどれだけ AnnoFab ストレージを使用しているかなどの活動の要約を取得します。
       security:
       - AllOrganizationMember: []
       operationId: getOrganizationActivity
@@ -1536,6 +1561,7 @@ paths:
       - af-project
       summary: プロジェクト取得
       description: |
+        プロジェクトを取得します。
       security:
       - AllProjectMember: []
       operationId: getProject
@@ -1689,6 +1715,7 @@ paths:
       - af-project
       summary: プロジェクトの所属組織取得
       description: |
+        指定されたプロジェクトがひもづく組織を取得します。
       security:
       - AllProjectMember: []
       operationId: getOrganizationOfProject
@@ -1797,7 +1824,7 @@ paths:
         ただし`InputData`中の`url`は常に`null`です。
         このファイルは毎日AM 02:00 JSTに更新されます。
       security:
-        - ProjectOwner: []
+        - ProjectDataUser: []
       operationId: getProjectInputsUrl
       parameters:
         - name: project_id
@@ -1840,7 +1867,7 @@ paths:
 
         入力データ情報全件ファイルについては、[getProjectInputsUrl](#operation/getProjectInputsUrl) APIを参照ください。
       security:
-        - ProjectOwner: []
+        - ProjectDataUser: []
       operationId: postProjectInputsUpdate
       parameters:
         - name: project_id
@@ -1876,7 +1903,7 @@ paths:
         このファイルは毎日AM 02:00 JSTに更新されます。
         また、[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを利用することで、手動でタスク全件ファイルを更新することも可能です。
       security:
-      - ProjectOwner: []
+      - ProjectDataUser: []
       operationId: getProjectTasksUrl
       parameters:
       - name: project_id
@@ -1919,7 +1946,7 @@ paths:
 
         タスク全件ファイルについては、[getProjectTasksUrl](#operation/getProjectTasksUrl) APIを参照ください。
       security:
-        - ProjectOwner: []
+        - ProjectDataUser: []
       operationId: postProjectTasksUpdate
       parameters:
         - name: project_id
@@ -1966,7 +1993,7 @@ paths:
         検査コメント全件ファイルには、プロジェクトの検査コメント情報がJSON形式（[Inspection](#section/Inspection)の配列）で記録されています。
         このファイルは毎日AM 02:00 JSTに更新されます。
       security:
-      - ProjectOwner: []
+      - ProjectDataUser: []
       operationId: getProjectInspectionsUrl
       parameters:
       - name: project_id
@@ -2008,7 +2035,7 @@ paths:
         タスク履歴イベント全件ファイルには、プロジェクトのタスク履歴イベント情報がJSON形式（[TaskHistoryEvent](#section/TaskHistoryEvent)の配列）で記録されています。
         このファイルは毎日AM 02:00 JSTに更新されます。
       security:
-      - ProjectOwner: []
+      - ProjectDataUser: []
       operationId: getProjectTaskHistoryEventsUrl
       parameters:
       - name: project_id
@@ -2049,7 +2076,7 @@ paths:
         タスク履歴イベント全件ファイルには、プロジェクトのタスク履歴情報がJSON形式（キーがタスクID、値が[TaskHistory](#section/TaskHistory)の配列となるマップ）で記録されています。
         このファイルは毎日AM 02:00 JSTに更新されます。
       security:
-        - ProjectOwner: []
+        - ProjectDataUser: []
       operationId: getProjectTaskHistoriesUrl
       parameters:
         - name: project_id
@@ -2148,6 +2175,7 @@ paths:
       - af-project-member
       summary: プロジェクトメンバー取得
       description: |
+        プロジェクトの特定のメンバーを取得します。
       security:
       - AllProjectMember: []
       operationId: getProjectMember
@@ -2180,8 +2208,11 @@ paths:
     put:
       tags:
       - af-project-member
-      summary: プロジェクトメンバー作成/更新
+      summary: プロジェクトメンバー追加/更新
       description: |
+        プロジェクトにメンバーを新規に追加、または存在するメンバーの設定を変更します。
+
+        メンバーとなるユーザーは、作成するプロジェクトをひもづける組織に加入している必要があります。
       security:
       - ProjectOwner: []
       operationId: putProjectMember
@@ -2431,8 +2462,9 @@ paths:
     get:
       tags:
       - af-statistics
-      summary: 統計グラフマーカー取得
+      summary: 統計グラフマーカー一括取得
       description: |
+        指定されたプロジェクトの統計グラフマーカーをすべて取得します。
       security:
       - AllProjectMember: []
       operationId: getMarkers
@@ -2459,6 +2491,7 @@ paths:
       - af-statistics
       summary: 統計グラフマーカー更新
       description: |
+        指定されたプロジェクトの統計グラフマーカーを更新します。
       security:
       - ProjectOwner: []
       operationId: putMarkers
@@ -2496,9 +2529,10 @@ paths:
       - af-job
       summary: バックグラウンドジョブ情報取得
       description: |
-        バックグラウンドジョブの情報を取得する。
-        取得されるジョブの情報は作成日付の新しい順にソートされる。
-        バックグラウンドジョブ情報は完了(失敗含む)から14日経過後に削除される。
+        バックグラウンドジョブの情報を取得します。
+        取得されるジョブ情報は、作成日付の新しい順にソートされています。
+
+        バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
       security:
       - AllProjectMember: []
       operationId: getProjectJob
@@ -2564,6 +2598,9 @@ paths:
       - af-job
       summary: バックグラウンドジョブ情報削除
       description: |
+        バックグラウンドジョブ情報を削除します。
+
+        なお、バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
       security:
       - ProjectOwner: []
       operationId: deleteProjectJob
@@ -2593,8 +2630,9 @@ paths:
     get:
       tags:
       - af-webhook
-      summary: プロジェクトのWebhookをすべて取得
+      summary: プロジェクト Webhook 一括取得
       description: |
+        指定されたプロジェクトの Webhook をすべて取得します。
       security:
       - ProjectOwner: []
       operationId: getWebhooks
@@ -2624,11 +2662,11 @@ paths:
     put:
       tags:
       - af-webhook
-      summary: プロジェクトのWebhookを更新
+      summary: プロジェクト Webhook 作成/更新
       description: |
-        プロジェクトのWebhookを新規登録/更新することができます。
+        プロジェクトのWebhookを新規作成/更新します。
 
-        body中には、event_typeによって以下のプレースホルダーを使用できます。
+        Webhook で送信される body には、event_type によって以下のプレースホルダーを使用できます。
 
         * task-completed
           * {{PROJECT_ID}} :  プロジェクトID
@@ -2699,8 +2737,9 @@ paths:
     delete:
       tags:
       - af-webhook
-      summary: プロジェクトのWebhookを削除
+      summary: プロジェクト Webhook 削除
       description: |
+        指定された Webhook を削除
       security:
       - ProjectOwner: []
       operationId: deleteWebhook
@@ -2734,8 +2773,11 @@ paths:
     post:
       tags:
         - af-webhook
-      summary: プロジェクトのWebhookをテスト実行
+      summary: プロジェクト Webhook テスト実行
       description: |
+        得録された登録された URL にテスト用の Webhook を実際に送信します。
+
+        送信される Webhook の body に含まれるプレースホルダーは、本 API リクエストで指定されたダミーのプレースホルダーで置き換えられます。
       security:
         - ProjectOwner: []
       operationId: testWebhook
@@ -2777,6 +2819,9 @@ paths:
       - af-annotation-specs
       summary: アノテーション仕様取得
       description: |
+        指定したプロジェクトのアノテーション仕様を取得します。
+
+        パラメータを指定することで、過去に保存された履歴を取得することもできます。
       security:
       - AllProjectMember: []
       operationId: getAnnotationSpecs
@@ -2823,6 +2868,7 @@ paths:
       - af-annotation-specs
       summary: アノテーション仕様更新
       description: |
+        アノテーション仕様を更新します。
       security:
       - ProjectOwner: []
       operationId: putAnnotationSpecs
@@ -2858,8 +2904,9 @@ paths:
     get:
       tags:
       - af-annotation-specs
-      summary: アノテーション仕様履歴取得
+      summary: アノテーション仕様履歴一括取得
       description: |
+        指定されたプロジェクトのアノテーション仕様のすべての履歴を取得します。
       security:
       - AllProjectMember: []
       operationId: getAnnotationSpecsHistories
@@ -2936,7 +2983,7 @@ paths:
     get:
       tags:
       - af-task
-      summary: タスク一括取得
+      summary: タスク検索
       description: |
         プロジェクトに含まれる複数のタスクをまとめて取得します。
 
@@ -3614,6 +3661,7 @@ paths:
       - af-task
       summary: タスク履歴一括取得
       description: |
+        指定されたタスクの作業履歴をすべて取得します。
       security:
       - AllProjectMember: []
       operationId: getTaskHistories
@@ -4013,16 +4061,6 @@ paths:
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: v2
-        in: query
-        description: |
-          このクエリパラメータのキーだけを指定（`?v2`）、または値 `true` も指定（`?v2=true`）すると、アノテーションJSONのファイル名は `{入力データID}.json` になります。
-          この v2 形式は、入力データ名がファイル名の長さ上限を上回ってもよいように再設計されたものです。
-          以前の v1 形式（アノテーションJSONのファイル名は `{入力データ名}.json` ）はいずれ廃止され、クエリパラメータ `v2` があってもなくても v2 形式に置き換わる予定です。
-        required: false
-        schema:
-          type: string
-          example: "true"
       responses:
         "200":
           description: 正常
@@ -4094,6 +4132,8 @@ paths:
       tags:
       - af-inspection
       summary: 検査コメント一括取得
+      description: |
+        指定されたタスクで、指定された入力データにつけられた検査コメントをすべて取得します。
       security:
       - AllProjectMember: []
       operationId: getInspections
@@ -4206,6 +4246,9 @@ paths:
       - af-input
       summary: 入力データ一括取得
       description: |
+        指定されたプロジェクトの入力データを検索します。
+
+        パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。
       security:
       - AllProjectMember: []
       operationId: getInputDataList
@@ -4346,6 +4389,10 @@ paths:
       - af-input
       summary: 入力データ取得
       description: |
+        指定された入力データを取得します。
+
+        この API の返す入力データは入力データ名などの項目を含む JSON であり、実体のファイル（画像や動画など）ではありません。
+        実体ファイルにアクセスする方法は非公開です（詳細を希望される場合はお問い合わせください）。
       security:
       - AllProjectMember: []
       operationId: getInputData
@@ -4383,8 +4430,12 @@ paths:
       description: |
         入力データ（画像プロジェクトなら画像、動画プロジェクトなら動画や時系列データ）を登録します。
 
+        ファイルの登録には、[アップロード用一時データ保存先作成API](#operation/createTempPath) を組み合わせて使用します。
+
+        ## ZIPでまとめてアップロード
+
         画像プロジェクトの場合、複数の画像ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br>
-        アノテーション作業生産性を高めるため、画像は「長辺4096px以内」かつ「4MB以内」になるよう圧縮されます。<br>
+        アノテーション作業生産性を高めるため、画像は「長辺4096px以内」かつ「4MB以内」になるよう縮小されます。<br>
         作成されるアノテーションは、元の解像度でつけた場合相当に自動で復元されます。
 
         動画プロジェクトの場合、複数の動画ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br>
@@ -4408,7 +4459,13 @@ paths:
               bar.m3u8(hoge.ts, piyo1/piyo2/bar.tsを参照)
         ```
 
-        ファイルの登録には、[アップロード用一時データ保存先作成API](#operation/createTempPath) を組み合わせて使用します。
+        ## 注意事項
+
+        * `input_data_path` のスキーマが `https` の場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください
+            * `input_data_name`  の値が優先されます
+        * `input_data_path` のスキーマが `s3` かつ入力データがtsファイルの場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください
+            * `input_data_name`  の値が優先されます
+
       security:
       - ProjectOwner: []
       operationId: putInputData
@@ -4478,6 +4535,10 @@ paths:
       - af-input
       summary: 入力データ削除
       description: |
+        入力データを削除します。
+
+        入力データの実体ファイルが AnnoFab のストレージに存在するものであれば、実体ファイルも削除されます。
+        お客様の管理するプライベートストレージに存在するものであれば、実体ファイルは削除されません。
       security:
       - ProjectOwner: []
       operationId: deleteInputData
@@ -4560,6 +4621,7 @@ paths:
       - af-supplementary
       summary: 補助情報一括取得
       description: |
+        指定された入力データにつけられた補助情報をすべて取得します。
       security:
       - AllProjectMember: []
       operationId: getSupplementaryDataList
@@ -4597,6 +4659,7 @@ paths:
       - af-supplementary
       summary: 補助情報作成/更新
       description: |
+        指定された入力データに補助情報を新規作成または更新します。
       security:
       - ProjectOwner: []
       operationId: putSupplementaryData
@@ -4643,6 +4706,7 @@ paths:
       - af-supplementary
       summary: 補助情報削除
       description: |
+        指定された補助情報を、実体ファイルとともに削除します。
       security:
       - ProjectOwner: []
       operationId: deleteSupplementaryData
