@@ -13,12 +13,13 @@ import uuid
 
 import pytest
 import requests
+from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
 from annofabapi.models import GraphType, JobType
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
-from more_itertools import first_true
+
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
@@ -180,15 +181,16 @@ class TestJob:
 
     @pytest.mark.submitting_job
     def test_delete_project_job(self):
-        content,_ = api.post_project_tasks_update(project_id,{"v":"2"})
+        content, _ = api.post_project_tasks_update(project_id, {"v": "2"})
         job = content["job"]
         job_type = job["job_type"]
         job_id = job["job_id"]
         job_list = wrapper.get_all_project_job(project_id, {"type": job_type})
         assert first_true(job_list, pred=lambda e: e["job_id"] == job_id) is not None
-        api.delete_project_job(project_id,job_type=job["job_type"],job_id=job["job_id"])
+        api.delete_project_job(project_id, job_type=job["job_type"], job_id=job["job_id"])
         job_list = wrapper.get_all_project_job(project_id, {"type": job_type})
         assert first_true(job_list, pred=lambda e: e["job_id"] == job_id) is None
+
 
 class TestLogin:
     def test_login(self):
