@@ -65,6 +65,9 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
 cat partial-header/generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
+# job_typeの型がJobTypeだとEnumのため都合が悪いので、型をstrに変換する
+sed  -e "s/job_type: JobType/job_type: str/g"  ../annofabapi/generated_api.py  --in-place
+
 rm -Rf out/openapi_client
 
 # v2 apiを生成
@@ -229,6 +232,7 @@ cat partial-header/dataclass/common.py partial-header/dataclass/webhook.py  \
 sed  -e "s/__DictStrKeyAnyValue__/Dict[str,Any]/g"  ../annofabapi/dataclass/*.py  --in-place
 # dict(str, int) -> Dict[str, int]
 sed -E -e "s/dict\((.*)\)/Dict\[\1\]/g"  ../annofabapi/dataclass/*.py  --in-place
+
 
 
 rm -Rf out/openapi_client

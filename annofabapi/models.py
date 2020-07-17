@@ -1236,6 +1236,8 @@ Kyes of Dict
     複数の集約を区別するための名前です。  `(フィールド名)_(集約内容)` のように命名されます。例えば `account_id` フィールドを `count` する場合、`account_id_count` となります。 
 * field: str
     集約に使われたリソースのフィールド名です。  リソースの属性のさらに属性を参照するときは、`foo.bar.buz` のようにドット区切りになります。 
+* doc_count: int
+    集約の件数です。 
 * items: List[Count]
     集約結果の値です。 
 
@@ -2682,6 +2684,21 @@ Kyes of Dict
     
 * type: str
     OutOfImageBounds
+
+"""
+
+OverlappedRangeAnnotation = Dict[str, Any]
+"""
+区間が重複しているアノテーションが存在している場合に発生するエラー
+
+Kyes of Dict
+
+* label_id: str
+    
+* annotation_id: str
+    
+* type: str
+    OverlappedRangeAnnotation
 
 """
 
