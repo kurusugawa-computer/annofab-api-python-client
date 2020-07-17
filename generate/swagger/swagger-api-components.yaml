@@ -3941,6 +3941,10 @@ components:
             集約に使われたリソースのフィールド名です。
 
             リソースの属性のさらに属性を参照するときは、`foo.bar.buz` のようにドット区切りになります。
+        doc_count:
+          type: integer
+          description: |
+            集約の件数です。
         items:
           type: array
           items:
@@ -4029,6 +4033,7 @@ components:
         - $ref: "#/components/schemas/Duplicated"
         - $ref: "#/components/schemas/UnknownAdditionalData"
         - $ref: "#/components/schemas/OutOfImageBounds"
+        - $ref: "#/components/schemas/OverlappedRangeAnnotation"
         - $ref: "#/components/schemas/UnknownLabel"
       discriminator:
         propertyName: "_type"
@@ -4042,6 +4047,7 @@ components:
           Duplicated: "#/components/schemas/Duplicated"
           UnknownAdditionalData: "#/components/schemas/UnknownAdditionalData"
           OutOfImageBounds: "#/components/schemas/OutOfImageBounds"
+          OverlappedRangeAnnotation: "#/components/schemas/OverlappedRangeAnnotation"
           UnknownLabel: "#/components/schemas/UnknownLabel"
     InvalidAnnotationData:
       type: object
@@ -4167,6 +4173,18 @@ components:
           type: string
           description: OutOfImageBounds
           example: "OutOfImageBounds"
+    OverlappedRangeAnnotation:
+      type: object
+      description: 区間が重複しているアノテーションが存在している場合に発生するエラー
+      properties:
+        labelId:
+          type: string
+        annotationId:
+          type: string
+        _type:
+          type: string
+          description: OverlappedRangeAnnotation
+          example: "OverlappedRangeAnnotation"
     UnknownLabel:
       type: object
       description: 何らかの原因で、アノテーション仕様にないラベルがついているエラー
