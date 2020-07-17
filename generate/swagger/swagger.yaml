@@ -102,6 +102,7 @@ info:
           "_type": "CountResult",
           "name": "account_id_count",
           "field": "account_id",
+          "docCount": 15,
           "items": [
             {"key":"c5eee002", "count":9, "aggregations":[], "_type":"..."},
             {"key":"9f110e48", "count":5, "aggregations":[], "_type":"..."},
@@ -113,8 +114,9 @@ info:
     ```
 
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
+    また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.90.0
+  version: 0.90.2
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -2592,7 +2594,7 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/jobs/gen-inputs/{job_id}:
+  /projects/{project_id}/jobs/{job_type}/{job_id}:
     delete:
       tags:
       - af-job
@@ -2611,6 +2613,12 @@ paths:
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: job_type
+        in: path
+        description: ジョブの種別。[詳細はこちら](#section/JobType)。
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/JobType"
       - name: job_id
         in: path
         description: ジョブID
