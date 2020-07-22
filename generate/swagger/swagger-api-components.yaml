@@ -1436,10 +1436,110 @@ components:
           format: date
         tasks_completed:
           type: integer
-          description: 教師付を担当したタスクが完了状態になった回数
+          description: |
+            教師付フェーズのタスクを提出した回数、または検査/受入フェーズのタスクを合格/差戻にした回数。
+
+            たとえば、あるタスクのタスク履歴が下表の状態だった場合、2020-04-01の`tasks_completed`は以下の通りになります。
+
+            * Alice: 1
+            * Bob: 1
+            * Chris: 2
+
+
+            <table>
+              <tr>
+                <th>担当者</th>
+                <th>フェーズ</th>
+                <th>作業内容</th>
+                <th>完了日時</th>
+              </tr>
+              <tr>
+                <td>Alice</td>
+                <td>教師付</td>
+                <td>提出する</td>
+                <td>2020-04-01 09:00</td>
+              </tr>
+              <tr>
+                <td>Chris</td>
+                <td>受入</td>
+                <td>差し戻す</td>
+                <td>2020-04-01 10:00</td>
+              </tr>
+              <tr>
+                <td>Bob</td>
+                <td>教師付</td>
+                <td>提出する</td>
+                <td>2020-04-01 11:00</td>
+              </tr>
+              <tr>
+                <td>Chris</td>
+                <td>受入</td>
+                <td>合格にする</td>
+                <td>2020-04-01 12:00</td>
+              </tr>
+            </table>
         tasks_rejected:
           type: integer
-          description: 教師付を担当したタスクが差し戻された回数
+          description: |
+            教師付フェーズを担当したタスクが差し戻された回数、または受入フェーズを担当したタスクが受入完了を取り消された回数。
+
+            たとえば、あるタスクのタスク履歴が下表の状態だった場合、2020-04-01の`tasks_rejected`は以下の通りになります。
+
+            * Alice: 1
+            * Bob: 1
+            * Chris: 1
+
+
+            <table>
+              <tr>
+                <th>担当者</th>
+                <th>フェーズ</th>
+                <th>作業内容</th>
+                <th>完了日時</th>
+              </tr>
+              <tr>
+                <td>Alice</td>
+                <td>教師付</td>
+                <td>提出する</td>
+                <td>2020-04-01 09:00</td>
+              </tr>
+              <tr>
+                <td>Chris</td>
+                <td>受入</td>
+                <td>差し戻す</td>
+                <td>2020-04-01 10:00</td>
+              </tr>
+              <tr>
+                <td>Bob</td>
+                <td>教師付</td>
+                <td>提出する</td>
+                <td>2020-04-01 11:00</td>
+              </tr>
+              <tr>
+                <td>Chris</td>
+                <td>受入</td>
+                <td>差し戻す</td>
+                <td>2020-04-01 12:00</td>
+              </tr>
+              <tr>
+                <td>Bob</td>
+                <td>教師付</td>
+                <td>提出する</td>
+                <td>2020-04-01 13:00</td>
+              </tr>
+              <tr>
+                <td>Chris</td>
+                <td>受入</td>
+                <td>合格にする</td>
+                <td>2020-04-01 14:00</td>
+              </tr>
+              <tr>
+                <td>Dave</td>
+                <td>受入</td>
+                <td>受入完了状態を取り消して、再度合格にする</td>
+                <td>2020-04-01 15:00</td>
+              </tr>
+            </table>
         worktime:
           type: string
           example: "PT34H17M36.789S"
@@ -2646,6 +2746,34 @@ components:
         - `new_unprocessed_inspection` - 現在進行中の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。
         - `unprocessed` - 過去の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。
         - `complete` - 入力データにつけられた検査コメントで未処理のものがない。
+    InputDataSet:
+      description: 入力データセットの情報を表すデータ構造です。
+      type: object
+      required:
+        - input_data_set_id
+        - input_data_set_name
+        - organization_id
+        - input_data_type
+      properties:
+        input_data_set_id:
+          $ref: "#/components/schemas/InputDataSetId"
+        input_data_set_name:
+          type: string
+          description: 表示用の名前です。
+        organization_id:
+          $ref: "#/components/schemas/OrganizationId"
+        input_data_type:
+          $ref: "#/components/schemas/InputDataType"
+        private_storage_arn:
+          type: string
+          description: |
+            AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。
+            [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
+          example: "arn:aws:iam::123456789012:role/AnnoFabPrivateStorageAccessor"
+        updated_datetime:
+          type: string
+          format: date-time
+          description: 入力データセットの最終更新日時
     InputData:
       description: 入力データの情報を表すデータ構造です。
       type: object
@@ -4253,6 +4381,32 @@ components:
           items:
             $ref: "#/components/schemas/InputData"
           description: 現在のページ番号に含まれる0件以上の入力データです。
+        page_no:
+          type: number
+          description: 現在のページ番号です。
+        total_page_no:
+          type: number
+          description: 指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる入力データが0件であっても、総ページ数は1となります。
+        total_count:
+          type: number
+          description: 検索結果の総件数。
+        over_limit:
+          type: boolean
+          description: 検索結果が1万件を超えた場合にtrueとなる。
+        aggregations:
+          type: array
+          items:
+            $ref: "#/components/schemas/AggregationResult"
+          description: |
+            [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
+    InputDataSetList:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: "#/components/schemas/InputDataSet"
+          description: 現在のページ番号に含まれる0件以上の入力データセットです。
         page_no:
           type: number
           description: 現在のページ番号です。
