@@ -1703,6 +1703,48 @@ Kyes of Dict
 
 """
 
+InputDataSet = Dict[str, Any]
+"""
+入力データセットの情報を表すデータ構造です。
+
+Kyes of Dict
+
+* input_data_set_id: str
+    入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_set_name: str
+    表示用の名前です。
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_type: InputDataType
+    
+* private_storage_arn: str
+    AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
+* updated_datetime: str
+    入力データセットの最終更新日時
+
+"""
+
+InputDataSetList = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[InputDataSet]
+    現在のページ番号に含まれる0件以上の入力データセットです。
+* page_no: float
+    現在のページ番号です。
+* total_page_no: float
+    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる入力データが0件であっても、総ページ数は1となります。
+* total_count: float
+    検索結果の総件数。
+* over_limit: bool
+    検索結果が1万件を超えた場合にtrueとなる。
+* aggregations: List[AggregationResult]
+    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
+
+"""
+
 InputDataSummary = Dict[str, Any]
 """
 ある入力データのバリデーション結果です。入力データIDをキーに引けるようにMap[入力データID, バリデーション結果]となっています
@@ -2889,9 +2931,9 @@ Kyes of Dict
 * date: str
     
 * tasks_completed: int
-    教師付を担当したタスクが完了状態になった回数
+    教師付フェーズのタスクを提出した回数、または検査/受入フェーズのタスクを合格/差戻にした回数。  たとえば、あるタスクのタスク履歴が下表の状態だった場合、2020-04-01の`tasks_completed`は以下の通りになります。  * Alice: 1 * Bob: 1 * Chris: 2   <table>   <tr>     <th>担当者</th>     <th>フェーズ</th>     <th>作業内容</th>     <th>完了日時</th>   </tr>   <tr>     <td>Alice</td>     <td>教師付</td>     <td>提出する</td>     <td>2020-04-01 09:00</td>   </tr>   <tr>     <td>Chris</td>     <td>受入</td>     <td>差し戻す</td>     <td>2020-04-01 10:00</td>   </tr>   <tr>     <td>Bob</td>     <td>教師付</td>     <td>提出する</td>     <td>2020-04-01 11:00</td>   </tr>   <tr>     <td>Chris</td>     <td>受入</td>     <td>合格にする</td>     <td>2020-04-01 12:00</td>   </tr> </table> 
 * tasks_rejected: int
-    教師付を担当したタスクが差し戻された回数
+    教師付フェーズを担当したタスクが差し戻された回数、または受入フェーズを担当したタスクが受入完了を取り消された回数。  たとえば、あるタスクのタスク履歴が下表の状態だった場合、2020-04-01の`tasks_rejected`は以下の通りになります。  * Alice: 1 * Bob: 1 * Chris: 1   <table>   <tr>     <th>担当者</th>     <th>フェーズ</th>     <th>作業内容</th>     <th>完了日時</th>   </tr>   <tr>     <td>Alice</td>     <td>教師付</td>     <td>提出する</td>     <td>2020-04-01 09:00</td>   </tr>   <tr>     <td>Chris</td>     <td>受入</td>     <td>差し戻す</td>     <td>2020-04-01 10:00</td>   </tr>   <tr>     <td>Bob</td>     <td>教師付</td>     <td>提出する</td>     <td>2020-04-01 11:00</td>   </tr>   <tr>     <td>Chris</td>     <td>受入</td>     <td>差し戻す</td>     <td>2020-04-01 12:00</td>   </tr>   <tr>     <td>Bob</td>     <td>教師付</td>     <td>提出する</td>     <td>2020-04-01 13:00</td>   </tr>   <tr>     <td>Chris</td>     <td>受入</td>     <td>合格にする</td>     <td>2020-04-01 14:00</td>   </tr>   <tr>     <td>Dave</td>     <td>受入</td>     <td>受入完了状態を取り消して、再度合格にする</td>     <td>2020-04-01 15:00</td>   </tr> </table> 
 * worktime: str
     作業時間（ISO 8601 duration）
 
