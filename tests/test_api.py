@@ -299,23 +299,29 @@ class TestProjectMember:
 
 
 class TestStatistics:
-    def test_statistics(self):
-        assert type(api.get_task_statistics(project_id)[0]) == list
+    def test_wrapper_statistics(self):
+        actual = wrapper.get_task_statistics(project_id)
+        assert type(actual) == list
 
-    def test_get_account_statistics(self):
-        assert type(api.get_account_statistics(project_id)[0]) == list
+    def test_wrapper_get_account_statistics(self):
+        actual = wrapper.get_account_statistics(project_id)
+        assert type(actual) == list
 
-    def test_get_inspection_statistics(self):
-        assert type(api.get_inspection_statistics(project_id)[0]) == list
+    def test_wrapper_get_inspection_statistics(self):
+        actual = wrapper.get_inspection_statistics(project_id)
+        assert type(actual) == list
 
-    def test_get_task_phase_statistics(self):
-        assert type(api.get_task_phase_statistics(project_id)[0]) == list
+    def test_wrapper_get_task_phase_statistics(self):
+        actual = wrapper.get_task_phase_statistics(project_id)
+        assert type(actual) == list
 
-    def test_get_label_statistics(self):
-        assert type(api.get_label_statistics(project_id)[0]) == list
+    def test_wrapper_get_label_statistics(self):
+        actual = wrapper.get_label_statistics(project_id)
+        assert type(actual) == list
 
     def test_wrapper_get_worktime_statistics(self):
-        assert type(wrapper.get_worktime_statistics(project_id)) == list
+        actual = wrapper.get_worktime_statistics(project_id)
+        assert type(actual) == list
 
     def test_graph_marker(self):
         print("get_markers")

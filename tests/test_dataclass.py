@@ -162,27 +162,27 @@ class TestProjectMember:
 
 class TestStatistics:
     def test_statistics_get_task_statistics(self):
-        stat_list, _ = service.api.get_task_statistics(project_id)
+        stat_list = service.wrapper.get_task_statistics(project_id)
         stat = ProjectTaskStatisticsHistory.from_dict(stat_list[0])
         assert type(stat) == ProjectTaskStatisticsHistory
 
     def test_statistics_get_account_statistics(self):
-        stat_list, _ = service.api.get_account_statistics(project_id)
+        stat_list = service.wrapper.get_account_statistics(project_id)
         stat = ProjectAccountStatistics.from_dict(stat_list[0])
         assert type(stat) == ProjectAccountStatistics
 
     def test_statistics_get_inspection_statistics(self):
-        stat_list, _ = service.api.get_inspection_statistics(project_id)
+        stat_list = service.wrapper.get_inspection_statistics(project_id)
         stat = InspectionStatistics.from_dict(stat_list[0])
         assert type(stat) == InspectionStatistics
 
     def test_statistics_get_task_phase_statistics(self):
-        stat_list, _ = service.api.get_task_phase_statistics(project_id)
+        stat_list = service.wrapper.get_task_phase_statistics(project_id)
         stat = TaskPhaseStatistics.from_dict(stat_list[0])
         assert type(stat) == TaskPhaseStatistics
 
     def test_statistics_get_label_statistics(self):
-        stat_list, _ = service.api.get_label_statistics(project_id)
+        stat_list = service.wrapper.get_label_statistics(project_id)
         stat = LabelStatistics.from_dict(stat_list[0])
         assert type(stat) == LabelStatistics
 
