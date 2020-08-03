@@ -182,7 +182,7 @@ class TestStatistics:
         assert type(stat) == TaskPhaseStatistics
 
     def test_statistics_get_label_statistics(self):
-        stat_list, _ = service.api.get_label_statistics(project_id)
+        stat_list = service.wrapper.get_label_statistics(project_id)
         stat = LabelStatistics.from_dict(stat_list[0])
         assert type(stat) == LabelStatistics
 
