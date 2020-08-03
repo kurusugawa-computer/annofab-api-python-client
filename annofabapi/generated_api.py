@@ -40,6 +40,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def change_password(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """パスワード変更
+        https://annofab.com/docs/api/#operation/changePassword
 
 
         authorizations: Everyone
@@ -65,6 +66,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def confirm_reset_email(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """メールアドレスstep2（確定）
+        https://annofab.com/docs/api/#operation/confirmResetEmail
 
 
         authorizations: EveryoneRequestBody
@@ -90,6 +92,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def confirm_reset_password(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """パスワードリセットstep2（新しいパスワードに変更）
+        https://annofab.com/docs/api/#operation/confirmResetPassword
 
 
         authorizations: EveryoneRequestBody
@@ -115,6 +118,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def confirm_signup(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """サインアップstep2（本登録）
+        https://annofab.com/docs/api/#operation/confirmSignup
 
 
         authorizations: EveryoneRequestBody
@@ -140,6 +144,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def confirm_verify_email(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """メールアドレス検証step2（確定）
+        https://annofab.com/docs/api/#operation/confirmVerifyEmail
 
 
         authorizations: Everyone
@@ -165,6 +170,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def initiate_password_reset(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """パスワードリセットstep1（開始）
+        https://annofab.com/docs/api/#operation/initiatePasswordReset
 
 
         authorizations: EveryoneRequestBody
@@ -190,6 +196,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def initiate_reset_email(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """メールアドレスリセットstep1（開始）
+        https://annofab.com/docs/api/#operation/initiateResetEmail
 
 
         authorizations: Everyone
@@ -215,6 +222,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def initiate_signup(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """サインアップstep1（仮登録）
+        https://annofab.com/docs/api/#operation/initiateSignup
 
 
 
@@ -239,6 +247,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def initiate_verify_email(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """メールアドレス検証step1（開始）
+        https://annofab.com/docs/api/#operation/initiateVerifyEmail
 
 
         authorizations: Everyone
@@ -271,6 +280,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """アノテーション一括更新
+        https://annofab.com/docs/api/#operation/batchUpdateAnnotations
 
 
         authorizations: ProjectAccepter
@@ -299,6 +309,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, task_id: str, input_data_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク-入力データのSimpleアノテーション一括取得
+        https://annofab.com/docs/api/#operation/getAnnotation
 
 
         authorizations: AllProjectMember
@@ -323,6 +334,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_annotation_archive(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """SimpleアノテーションZIP取得
+        https://annofab.com/docs/api/#operation/getAnnotationArchive
 
 
         authorizations: ProjectDataUser
@@ -347,6 +359,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """アノテーション一括取得
+        https://annofab.com/docs/api/#operation/getAnnotationList
 
 
         authorizations: AllProjectMember
@@ -377,6 +390,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_archive_full_with_pro_id(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """FullアノテーションZIP取得
+        https://annofab.com/docs/api/#operation/getArchiveFullWithProId
 
 
         authorizations: ProjectDataUser
@@ -401,6 +415,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, task_id: str, input_data_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク/入力データのアノテーション一括取得
+        https://annofab.com/docs/api/#operation/getEditorAnnotation
 
 
         authorizations: AllProjectMember
@@ -427,6 +442,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """アノテーションZIP更新開始
+        https://annofab.com/docs/api/#operation/postAnnotationArchiveUpdate
 
 
         authorizations: ProjectDataUser
@@ -455,6 +471,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, task_id: str, input_data_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク-入力データのアノテーション更新
+        https://annofab.com/docs/api/#operation/putAnnotation
 
 
         authorizations: AllProjectMember
@@ -490,6 +507,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """アノテーション仕様取得
+        https://annofab.com/docs/api/#operation/getAnnotationSpecs
 
 
         authorizations: AllProjectMember
@@ -517,6 +535,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_annotation_specs_histories(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """アノテーション仕様履歴一括取得
+        https://annofab.com/docs/api/#operation/getAnnotationSpecsHistories
 
 
         authorizations: AllProjectMember
@@ -541,6 +560,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """アノテーション仕様更新
+        https://annofab.com/docs/api/#operation/putAnnotationSpecs
 
 
         authorizations: ProjectOwner
@@ -574,6 +594,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """入力データ一括更新
+        https://annofab.com/docs/api/#operation/batchUpdateInputs
 
 
         authorizations: ProjectOwner
@@ -602,6 +623,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, header_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """一時データ保存先取得
+        https://annofab.com/docs/api/#operation/createTempPath
 
 
         authorizations: AllProjectMember
@@ -628,6 +650,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def delete_input_data(self, project_id: str, input_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """入力データ削除
+        https://annofab.com/docs/api/#operation/deleteInputData
 
 
         authorizations: ProjectOwner
@@ -651,6 +674,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_input_data(self, project_id: str, input_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """入力データ取得
+        https://annofab.com/docs/api/#operation/getInputData
 
 
         authorizations: AllProjectMember
@@ -676,6 +700,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """入力データ一括取得
+        https://annofab.com/docs/api/#operation/getInputDataList
 
 
         authorizations: AllProjectMember
@@ -711,6 +736,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, input_data_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """実体参照用認証済みURL取得
+        https://annofab.com/docs/api/#operation/getSignedUrlOfInputData
 
         .. deprecated:: X
 
@@ -743,6 +769,7 @@ class AbstractAnnofabApi(abc.ABC):
         **kwargs,
     ) -> Tuple[Any, requests.Response]:
         """入力データ更新 
+        https://annofab.com/docs/api/#operation/putInputData
 
 
         authorizations: ProjectOwner
@@ -780,6 +807,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, task_id: str, input_data_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """検査コメント一括更新
+        https://annofab.com/docs/api/#operation/batchUpdateInspections
 
 
         authorizations: AllProjectMember
@@ -810,6 +838,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, task_id: str, input_data_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """検査コメント一括取得
+        https://annofab.com/docs/api/#operation/getInspections
 
 
         authorizations: AllProjectMember
@@ -839,6 +868,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def delete_instruction_image(self, project_id: str, image_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """作業ガイドの画像削除
+        https://annofab.com/docs/api/#operation/deleteInstructionImage
 
 
         authorizations: ProjectAccepter, ProjectOwner
@@ -864,6 +894,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """作業ガイドの取得
+        https://annofab.com/docs/api/#operation/getInstruction
 
 
         authorizations: AllProjectMember
@@ -892,6 +923,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """作業ガイドの編集履歴の取得
+        https://annofab.com/docs/api/#operation/getInstructionHistory
 
 
         authorizations: AllProjectMember
@@ -920,6 +952,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, image_id: str, header_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """作業ガイドの画像登録・更新用URL取得
+        https://annofab.com/docs/api/#operation/getInstructionImageUrlForPut
 
 
         authorizations: ProjectAccepter, ProjectOwner
@@ -947,6 +980,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_instruction_images(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """作業ガイドの画像一覧の取得
+        https://annofab.com/docs/api/#operation/getInstructionImages
 
 
         authorizations: AllProjectMember
@@ -971,6 +1005,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """作業ガイドの更新
+        https://annofab.com/docs/api/#operation/putInstruction
 
 
         authorizations: ProjectAccepter, ProjectOwner
@@ -1004,6 +1039,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, job_type: str, job_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """バックグラウンドジョブ情報削除
+        https://annofab.com/docs/api/#operation/deleteProjectJob
 
 
         authorizations: ProjectOwner
@@ -1030,6 +1066,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """バックグラウンドジョブ情報取得
+        https://annofab.com/docs/api/#operation/getProjectJob
 
 
         authorizations: AllProjectMember
@@ -1064,6 +1101,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def confirm_my_account_delete(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """アカウント削除step2（確定）
+        https://annofab.com/docs/api/#operation/confirmMyAccountDelete
 
 
         authorizations: EveryoneRequestBody
@@ -1089,6 +1127,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_my_account(self, **kwargs) -> Tuple[Any, requests.Response]:
         """自分のアカウント取得
+        https://annofab.com/docs/api/#operation/getMyAccount
 
 
         authorizations: Everyone
@@ -1110,6 +1149,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_my_member_in_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """自分のプロジェクトメンバー取得
+        https://annofab.com/docs/api/#operation/getMyMemberInProject
 
 
         authorizations: AllProjectMember
@@ -1134,6 +1174,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """所属組織一括取得
+        https://annofab.com/docs/api/#operation/getMyOrganizations
 
 
         authorizations: AllOrganizationMember
@@ -1160,6 +1201,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_my_project_members(self, **kwargs) -> Tuple[Any, requests.Response]:
         """自分のプロジェクトメンバー情報一括取得
+        https://annofab.com/docs/api/#operation/getMyProjectMembers
 
 
         authorizations: Everyone
@@ -1181,6 +1223,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_my_projects(self, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """所属プロジェクト一括取得
+        https://annofab.com/docs/api/#operation/getMyProjects
 
 
         authorizations: Everyone
@@ -1212,6 +1255,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def initiate_my_account_delete(self, **kwargs) -> Tuple[Any, requests.Response]:
         """アカウント削除step1（確認）
+        https://annofab.com/docs/api/#operation/initiateMyAccountDelete
 
 
         authorizations: Everyone
@@ -1233,6 +1277,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def put_my_account(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """自分のアカウント情報更新
+        https://annofab.com/docs/api/#operation/putMyAccount
 
 
         authorizations: Everyone
@@ -1258,6 +1303,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def update_organization(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """組織名変更
+        https://annofab.com/docs/api/#operation/updateOrganization
 
 
         authorizations: OrganizationOwner
@@ -1288,6 +1334,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def create_new_organization(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """組織新規作成
+        https://annofab.com/docs/api/#operation/createNewOrganization
 
 
         authorizations: Everyone
@@ -1313,6 +1360,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def delete_organization(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
         """組織削除
+        https://annofab.com/docs/api/#operation/deleteOrganization
 
 
         authorizations: OrganizationOwner
@@ -1335,6 +1383,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_organization(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
         """組織情報取得
+        https://annofab.com/docs/api/#operation/getOrganization
 
 
         authorizations: AllOrganizationMember
@@ -1357,6 +1406,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_organization_activity(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
         """組織活動サマリー取得
+        https://annofab.com/docs/api/#operation/getOrganizationActivity
 
 
         authorizations: AllOrganizationMember
@@ -1381,6 +1431,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, organization_name: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """組織配下プロジェクト一括取得
+        https://annofab.com/docs/api/#operation/getProjectsOfOrganization
 
 
         authorizations: AllOrganizationMember
@@ -1421,6 +1472,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, organization_name: str, input_data_set_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """入力データセット情報取得
+        https://annofab.com/docs/api/#operation/getInputDataSet
 
 
         authorizations: AllOrganizationMember
@@ -1444,6 +1496,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_input_data_set_list(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
         """入力データセット一括取得
+        https://annofab.com/docs/api/#operation/getInputDataSetList
 
 
         authorizations: OrganizationAdministrator, OrganizationOwner
@@ -1468,6 +1521,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, organization_name: str, input_data_set_id: str, input_data_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """入力データセットの入力データ取得
+        https://annofab.com/docs/api/#operation/getOrganizationInputData
 
 
         authorizations: AllOrganizationMember
@@ -1499,6 +1553,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, organization_name: str, user_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """組織への招待受諾
+        https://annofab.com/docs/api/#operation/acceptOrganizationInvitation
 
 
         authorizations: EveryoneRequestBody
@@ -1528,6 +1583,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, organization_name: str, user_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """組織メンバー削除
+        https://annofab.com/docs/api/#operation/deleteOrganizationMember
 
 
         authorizations: OrganizationAdministrator
@@ -1551,6 +1607,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_organization_member(self, organization_name: str, user_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """組織メンバー取得
+        https://annofab.com/docs/api/#operation/getOrganizationMember
 
 
         authorizations: AllOrganizationMember
@@ -1574,6 +1631,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_organization_members(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
         """組織メンバー一括取得
+        https://annofab.com/docs/api/#operation/getOrganizationMembers
 
 
         authorizations: AllOrganizationMember
@@ -1598,6 +1656,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, organization_name: str, user_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """組織への招待送信
+        https://annofab.com/docs/api/#operation/inviteOrganizationMember
 
 
         authorizations: OrganizationAdministrator
@@ -1627,6 +1686,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, organization_name: str, user_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """組織メンバーのロール更新
+        https://annofab.com/docs/api/#operation/updateOrganizationMemberRole
 
 
         authorizations: OrganizationOwner
@@ -1661,6 +1721,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, organization_name: str, plugin_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プラグイン削除
+        https://annofab.com/docs/api/#operation/deleteOrganizationPlugin
 
 
         authorizations: OrganizationAdministrator, OrganizationOwner
@@ -1686,6 +1747,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, organization_name: str, plugin_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プラグイン取得
+        https://annofab.com/docs/api/#operation/getOrganizationPlugin
 
 
         authorizations: AllOrganizationMember
@@ -1709,6 +1771,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_organization_plugins(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プラグイン一括取得
+        https://annofab.com/docs/api/#operation/getOrganizationPlugins
 
 
         authorizations: AllOrganizationMember
@@ -1733,6 +1796,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, organization_name: str, plugin_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プラグイン更新
+        https://annofab.com/docs/api/#operation/putOrganizationPlugin
 
 
         authorizations: OrganizationAdministrator, OrganizationOwner
@@ -1767,6 +1831,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プロジェクト削除
+        https://annofab.com/docs/api/#operation/deleteProject
 
 
         authorizations: ProjectOwner
@@ -1793,6 +1858,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_organization_of_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトの所属組織取得
+        https://annofab.com/docs/api/#operation/getOrganizationOfProject
 
 
         authorizations: AllProjectMember
@@ -1815,6 +1881,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクト取得
+        https://annofab.com/docs/api/#operation/getProject
 
 
         authorizations: AllProjectMember
@@ -1837,6 +1904,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_project_inputs_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトの入力データ情報全件URLの取得
+        https://annofab.com/docs/api/#operation/getProjectInputsUrl
 
 
         authorizations: ProjectDataUser
@@ -1859,6 +1927,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_project_inspections_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトの検査コメント全件URLの取得
+        https://annofab.com/docs/api/#operation/getProjectInspectionsUrl
 
 
         authorizations: ProjectDataUser
@@ -1881,6 +1950,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_project_task_histories_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトのタスク履歴全件URLの取得
+        https://annofab.com/docs/api/#operation/getProjectTaskHistoriesUrl
 
 
         authorizations: ProjectDataUser
@@ -1903,6 +1973,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_project_task_history_events_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトのタスク履歴イベント全件URLの取得
+        https://annofab.com/docs/api/#operation/getProjectTaskHistoryEventsUrl
 
         .. deprecated:: X
 
@@ -1927,6 +1998,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_project_tasks_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトのタスク全件URLの取得
+        https://annofab.com/docs/api/#operation/getProjectTasksUrl
 
 
         authorizations: ProjectDataUser
@@ -1955,6 +2027,7 @@ class AbstractAnnofabApi(abc.ABC):
         **kwargs,
     ) -> Tuple[Any, requests.Response]:
         """プロジェクト複製
+        https://annofab.com/docs/api/#operation/initiateProjectCopy
 
 
         authorizations: OrganizationAdministrator, ProjectOwner
@@ -1984,6 +2057,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def post_project_inputs_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトの入力データ情報全件ファイル更新開始
+        https://annofab.com/docs/api/#operation/postProjectInputsUpdate
 
 
         authorizations: ProjectDataUser
@@ -2008,6 +2082,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プロジェクトのタスク全件ファイル更新開始
+        https://annofab.com/docs/api/#operation/postProjectTasksUpdate
 
 
         authorizations: ProjectDataUser
@@ -2040,6 +2115,7 @@ class AbstractAnnofabApi(abc.ABC):
         **kwargs,
     ) -> Tuple[Any, requests.Response]:
         """プロジェクト作成/更新
+        https://annofab.com/docs/api/#operation/putProject
 
 
         authorizations: OrganizationAdministrator, ProjectOwner
@@ -2074,6 +2150,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_project_member(self, project_id: str, user_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトメンバー取得
+        https://annofab.com/docs/api/#operation/getProjectMember
 
 
         authorizations: AllProjectMember
@@ -2099,6 +2176,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プロジェクトメンバー一括取得
+        https://annofab.com/docs/api/#operation/getProjectMembers
 
 
         authorizations: AllProjectMember
@@ -2127,6 +2205,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, user_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プロジェクトメンバー追加/更新
+        https://annofab.com/docs/api/#operation/putProjectMember
 
 
         authorizations: ProjectOwner
@@ -2159,6 +2238,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_account_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """ユーザー別タスク集計取得
+        https://annofab.com/docs/api/#operation/getAccountStatistics
 
 
         authorizations: AllProjectMember
@@ -2181,6 +2261,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_inspection_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """検査コメント集計取得
+        https://annofab.com/docs/api/#operation/getInspectionStatistics
 
 
         authorizations: AllProjectMember
@@ -2203,6 +2284,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_label_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """ラベル別アノテーション数集計取得
+        https://annofab.com/docs/api/#operation/getLabelStatistics
 
 
         authorizations: AllProjectMember
@@ -2225,6 +2307,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_markers(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """統計グラフマーカー一括取得
+        https://annofab.com/docs/api/#operation/getMarkers
 
 
         authorizations: AllProjectMember
@@ -2247,6 +2330,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_task_phase_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """フェーズ別タスク集計取得
+        https://annofab.com/docs/api/#operation/getTaskPhaseStatistics
 
 
         authorizations: AllProjectMember
@@ -2269,6 +2353,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_task_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """タスク集計取得
+        https://annofab.com/docs/api/#operation/getTaskStatistics
 
 
         authorizations: AllProjectMember
@@ -2291,6 +2376,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_worktime_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """タスク作業時間集計取得
+        https://annofab.com/docs/api/#operation/getWorktimeStatistics
 
 
         authorizations: AllProjectMember
@@ -2315,6 +2401,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """統計グラフマーカー更新
+        https://annofab.com/docs/api/#operation/putMarkers
 
 
         authorizations: ProjectOwner
@@ -2348,6 +2435,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, input_data_id: str, supplementary_data_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """補助情報削除
+        https://annofab.com/docs/api/#operation/deleteSupplementaryData
 
 
         authorizations: ProjectOwner
@@ -2374,6 +2462,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, input_data_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """補助情報一括取得
+        https://annofab.com/docs/api/#operation/getSupplementaryDataList
 
 
         authorizations: AllProjectMember
@@ -2404,6 +2493,7 @@ class AbstractAnnofabApi(abc.ABC):
         **kwargs,
     ) -> Tuple[Any, requests.Response]:
         """補助情報作成/更新
+        https://annofab.com/docs/api/#operation/putSupplementaryData
 
 
         authorizations: ProjectOwner
@@ -2439,6 +2529,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク割当
+        https://annofab.com/docs/api/#operation/assignTasks
 
 
         authorizations: AllProjectMember
@@ -2467,6 +2558,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク一括更新
+        https://annofab.com/docs/api/#operation/batchUpdateTasks
 
 
         authorizations: ProjectOwner
@@ -2493,6 +2585,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def delete_task(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """タスク削除
+        https://annofab.com/docs/api/#operation/deleteTask
 
 
         authorizations: ProjectOwner
@@ -2516,6 +2609,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_task(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """タスク取得
+        https://annofab.com/docs/api/#operation/getTask
 
 
         authorizations: AllProjectMember
@@ -2539,6 +2633,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_task_histories(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """タスク履歴一括取得
+        https://annofab.com/docs/api/#operation/getTaskHistories
 
 
         authorizations: AllProjectMember
@@ -2562,6 +2657,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_task_validation(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """タスク自動検査
+        https://annofab.com/docs/api/#operation/getTaskValidation
 
         .. deprecated:: X
 
@@ -2589,6 +2685,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク検索
+        https://annofab.com/docs/api/#operation/getTasks
 
 
         authorizations: AllProjectMember
@@ -2636,6 +2733,7 @@ class AbstractAnnofabApi(abc.ABC):
         **kwargs,
     ) -> Tuple[Any, requests.Response]:
         """タスク一括作成
+        https://annofab.com/docs/api/#operation/initiateTasksGeneration
 
 
         authorizations: ProjectOwner
@@ -2667,6 +2765,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, task_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク状態変更
+        https://annofab.com/docs/api/#operation/operateTask
 
 
         authorizations: AllProjectMember
@@ -2696,6 +2795,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, task_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク作成/更新
+        https://annofab.com/docs/api/#operation/putTask
 
 
         authorizations: ProjectOwner
@@ -2725,6 +2825,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク割当
+        https://annofab.com/docs/api/#operation/startTask
 
         .. deprecated:: X
 
@@ -2758,6 +2859,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def delete_webhook(self, project_id: str, webhook_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクト Webhook 削除
+        https://annofab.com/docs/api/#operation/deleteWebhook
 
 
         authorizations: ProjectOwner
@@ -2781,6 +2883,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def get_webhooks(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクト Webhook 一括取得
+        https://annofab.com/docs/api/#operation/getWebhooks
 
 
         authorizations: ProjectOwner
@@ -2805,6 +2908,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, webhook_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プロジェクト Webhook 作成/更新
+        https://annofab.com/docs/api/#operation/putWebhook
 
 
         authorizations: ProjectOwner
@@ -2834,6 +2938,7 @@ class AbstractAnnofabApi(abc.ABC):
         self, project_id: str, webhook_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プロジェクト Webhook テスト実行
+        https://annofab.com/docs/api/#operation/testWebhook
 
 
         authorizations: ProjectOwner
