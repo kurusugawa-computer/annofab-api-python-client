@@ -42,6 +42,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """アノテーション仕様取得
+        https://annofab.com/docs/api/#operation/getAnnotationSpecsV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -77,6 +78,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, organization_id: str, user_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """組織メンバー取得
+        https://annofab.com/docs/api/#operation/getOrganizationMemberV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -106,6 +108,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, organization_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """組織メンバー一括取得
+        https://annofab.com/docs/api/#operation/getOrganizationMembersV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -139,6 +142,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, organization_name: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """組織名で組織情報取得
+        https://annofab.com/docs/api/#operation/getOrganizationByNameV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -165,6 +169,7 @@ class AbstractAnnofabApi2(abc.ABC):
 
     def get_organization_cache_by_name_v2(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
         """組織名で組織キャッシュレコード取得
+        https://annofab.com/docs/api/#operation/getOrganizationCacheByNameV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -187,6 +192,7 @@ class AbstractAnnofabApi2(abc.ABC):
 
     def get_organization_cache_v2(self, organization_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """組織IDで組織キャッシュレコード取得
+        https://annofab.com/docs/api/#operation/getOrganizationCacheV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -211,6 +217,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, organization_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """組織IDで組織情報取得
+        https://annofab.com/docs/api/#operation/getOrganizationV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -239,6 +246,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, organization_id: str, project_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プロジェクトのタスク件数取得
+        https://annofab.com/docs/api/#operation/getProjectTaskCountV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -269,6 +277,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, project_id: str, user_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プロジェクトメンバー取得
+        https://annofab.com/docs/api/#operation/getProjectMemberV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -298,6 +307,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プロジェクトメンバー検索
+        https://annofab.com/docs/api/#operation/getProjectMembersV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -330,6 +340,7 @@ class AbstractAnnofabApi2(abc.ABC):
 
     def get_project_cache_v2(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトキャッシュレコード取得
+        https://annofab.com/docs/api/#operation/getProjectCacheV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -359,6 +370,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """ユーザー別タスク集計取得
+        https://annofab.com/docs/api/#operation/getAccountStatisticsV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -387,6 +399,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """検査コメント集計取得
+        https://annofab.com/docs/api/#operation/getInspectionStatisticsV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -415,6 +428,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """ラベル別アノテーション数集計取得
+        https://annofab.com/docs/api/#operation/getLabelStatisticsV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -443,6 +457,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """フェーズ別タスク集計取得
+        https://annofab.com/docs/api/#operation/getTaskPhaseStatisticsV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -471,6 +486,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク集計取得
+        https://annofab.com/docs/api/#operation/getTaskStatisticsV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -499,6 +515,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク作業時間集計取得
+        https://annofab.com/docs/api/#operation/getWorktimeStatisticsV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -532,6 +549,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, account_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """ユーザーアカウント情報取得
+        https://annofab.com/docs/api/#operation/getAccountV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -558,6 +576,7 @@ class AbstractAnnofabApi2(abc.ABC):
 
     def get_user_cache_v2(self, account_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """キャッシュレコード
+        https://annofab.com/docs/api/#operation/getUserCacheV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -582,6 +601,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, account_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """個人の所属組織検索
+        https://annofab.com/docs/api/#operation/getUserOrganizationsV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -610,6 +630,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, account_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """個人のプロジェクトメンバー情報一括取得
+        https://annofab.com/docs/api/#operation/getUserProjectMembersV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
@@ -638,6 +659,7 @@ class AbstractAnnofabApi2(abc.ABC):
         self, account_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """自分のプロジェクトメンバー情報検索
+        https://annofab.com/docs/api/#operation/getUserProjectsV2
 
 
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
