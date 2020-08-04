@@ -440,6 +440,13 @@ class TestWebhook:
 
         assert type(api.delete_webhook(project_id, test_webhook_id)[0]) == dict
 
+class TestLabor:
+    def test_get_labor_control_worktime(self):
+        wrapper.get_labor_control_worktime(project_id=project_id)
+
+    def test_get_labor_control_availability(self):
+        wrapper.get_labor_control_availability(account_id=my_account_id)
+
 
 class TestGetObjOrNone:
     """
