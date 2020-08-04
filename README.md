@@ -12,7 +12,7 @@
 * **Reference Documentation:** https://annofab-api-python-client.readthedocs.io/en/latest/
 * **annofab-cli** https://github.com/kurusugawa-computer/annofab-cli
     * 「タスクの一括差し戻し」や、「プロジェクト間の差分表示」など、AnnoFabの画面で実施するには時間がかかる操作を、CLIツールとして提供しています。
-* **開発者用ドキュメント**: [README_for_developer.md](README_for_developer.md)
+* **開発者用ドキュメント**: [README_for_developer.md](https://github.com/kurusugawa-computer/annofab-api-python-client/blob/master/README_for_developer.md)
 
 
 
@@ -56,7 +56,7 @@ https://pypi.org/project/annofabapi/
 
 ## インスタンス生成
 
-### user_id, passwordをコンストラクタ引数に渡す
+### user_id, passwordをコンストラクタ引数に渡す場合
 
 ```python
 # APIアクセス用のインスタンスを生成
@@ -69,7 +69,7 @@ password = "YYYYYY"
 service = build(user_id, password)
 ```
 
-### `.netrc`に記載されたuser_id, passwordから生成
+### `.netrc`に認証情報を記載する場合
 `.netrc`ファイルに、AnnofabのユーザIDとパスワードを記載します。
 
 ```plain:.netrc
@@ -92,6 +92,24 @@ service = build_from_netrc()
 
 #### For Windows
 * パスは`%USERPROFILE%\.netrc`
+
+
+### 環境変数に認証情報を設定する場合
+環境変数`ANNOFAB_USER_ID`、`ANNOFAB_PASSWORD`にユーザIDとパスワードを設定します。
+
+```python
+from annofabapi import build_from_env
+service = build_from_env()
+```
+
+
+### `.netrc`または環境変数に認証情報を設定する場合
+`.netrc`、環境変数の順に認証情報を読み込みます。
+
+```python
+from annofabapi import build_from_netrc_or_env
+service = build_from_netrc_or_env()
+```
 
 
 ## `service.api`のサンプルコード

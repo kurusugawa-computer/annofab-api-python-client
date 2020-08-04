@@ -24,7 +24,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 
-OneOfstringFullAnnotationData = Union[str, Dict[str, Any]]
+AnnotationData = Union[str, Dict[str, Any]]
 FullAnnotationData = Dict[str, Any]
 AdditionalDataValue = Dict[str, Any]
 
@@ -152,7 +152,7 @@ class AdditionalData:
     """
 
     additional_data_definition_id: str
-    """属性ID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。"""
+    """"""
 
     flag: Optional[bool]
     """`additional_data_definition`の`type`が`flag`のときの属性値。 """
@@ -164,7 +164,7 @@ class AdditionalData:
     """`additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 """
 
     choice: Optional[str]
-    """`additional_data_definition`の`type`が`choice` または `select `のときの属性値（選択肢ID）。 """
+    """"""
 
 
 @dataclass_json
@@ -387,10 +387,10 @@ class AnnotationDetail:
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
     account_id: str
-    """アノテーションを作成したユーザのアカウントID。"""
+    """"""
 
     label_id: str
-    """ラベルID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。"""
+    """"""
 
     is_protected: bool
     """`true`の場合、アノテーションをアノテーションエディタ上での削除から保護できます。 外部から取り込んだアノテーションに属性を追加するときなどに指定すると、データの削除を防げます。 """
@@ -398,8 +398,8 @@ class AnnotationDetail:
     data_holding_type: AnnotationDataHoldingType
     """"""
 
-    data: Optional[OneOfstringFullAnnotationData]
-    """アノテーションの座標値や区間などのデータ。レスポンスの場合は`string`形式、[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は`string`または`object`形式です。 `annotation_type`に応じて`string`,`object`の形式が変わります。  <table> <tr><th>annotation_type</th><th>data_holding_type</th><th>string形式</th><th>object形式</th></tr> <tr><td>bounding_box </td><td>inner</td><td><code>左上x,左上y,右下x,右下y</code></td><td><code>FullAnnotationDataBoundingBox</code></td></tr> <tr><td>point</td><td>inner</td><td><code>x1,y1</code></td><td><code>FullAnnotationDataSinglePoint</code></td></tr> <tr><td>polygon / polyline  </td><td>inner</td><td><code>x1,y1,x2,y2, ... </code></td><td><code>FullAnnotationDataPoints</code></td></tr> <tr><td>range </td><td>inner</td><td><code>開始時間(ミリ秒),終了時間(ミリ秒) </code></td><td><code>FullAnnotationDataRange</code></td></tr> <tr><td>classification  </td><td>inner</td><td><code>null </code></td><td><code>FullAnnotationDataClassification</code> / <code>null </code></td></tr> <tr><td>segmentation</td><td>outer</td><td><code>null </code></td><td><code>FullAnnotationDataSegmentation</code> / <code>null </code></td></tr> <tr><td>segmentation_v2   </td><td>outer</td><td><code>null </code></td><td><code>FullAnnotationDataSegmentationV2</code> / <code>null </code></td></tr> </table> """
+    data: Optional[AnnotationData]
+    """"""
 
     path: Optional[str]
     """外部ファイルに保存されたアノテーションのパス。`data_holding_type`が`inner`の場合は未指定です。 レスポンスの場合は`annotation_id`と同じ値が格納されます。  [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は、[createTempPath](#operation/createTempPath) APIで取得できる一時データ保存先S3パスを格納してください。 更新しない場合は、[getEditorAnnotation](#operation/getEditorAnnotation) APIで取得した`path`をそのまま渡せます。  外部ファイルのフォーマットは下表の通りです。  <table> <tr><th>annotation_type</th><th>形式</th></tr> <tr><td>segmentation / segmentation_v2   </td><td>PNG画像。塗りつぶした部分は<code>rgba(255, 255, 255, 1) </code>、塗りつぶしていない部分は<code>rgba(0, 0, 0, 0) </code>。</td></tr> </table> """

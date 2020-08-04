@@ -13,6 +13,7 @@ import uuid
 
 import pytest
 import requests
+from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
@@ -178,6 +179,18 @@ class TestJob:
     def test_job_in_progress(self):
         assert type(wrapper.job_in_progress(project_id, JobType.GEN_TASKS)) == bool
 
+    @pytest.mark.submitting_job
+    def test_delete_project_job(self):
+        content, _ = api.post_project_tasks_update(project_id, {"v": "2"})
+        job = content["job"]
+        job_type = job["job_type"]
+        job_id = job["job_id"]
+        job_list = wrapper.get_all_project_job(project_id, {"type": job_type})
+        assert first_true(job_list, pred=lambda e: e["job_id"] == job_id) is not None
+        api.delete_project_job(project_id, job_type=job["job_type"], job_id=job["job_id"])
+        job_list = wrapper.get_all_project_job(project_id, {"type": job_type})
+        assert first_true(job_list, pred=lambda e: e["job_id"] == job_id) is None
+
 
 class TestLogin:
     def test_login(self):
@@ -286,23 +299,29 @@ class TestProjectMember:
 
 
 class TestStatistics:
-    def test_statistics(self):
-        assert type(api.get_task_statistics(project_id)[0]) == list
+    def test_wrapper_statistics(self):
+        actual = wrapper.get_task_statistics(project_id)
+        assert type(actual) == list
 
-    def test_get_account_statistics(self):
-        assert type(api.get_account_statistics(project_id)[0]) == list
+    def test_wrapper_get_account_statistics(self):
+        actual = wrapper.get_account_statistics(project_id)
+        assert type(actual) == list
 
-    def test_get_inspection_statistics(self):
-        assert type(api.get_inspection_statistics(project_id)[0]) == list
+    def test_wrapper_get_inspection_statistics(self):
+        actual = wrapper.get_inspection_statistics(project_id)
+        assert type(actual) == list
 
-    def test_get_task_phase_statistics(self):
-        assert type(api.get_task_phase_statistics(project_id)[0]) == list
+    def test_wrapper_get_task_phase_statistics(self):
+        actual = wrapper.get_task_phase_statistics(project_id)
+        assert type(actual) == list
 
-    def test_get_label_statistics(self):
-        assert type(api.get_label_statistics(project_id)[0]) == list
+    def test_wrapper_get_label_statistics(self):
+        actual = wrapper.get_label_statistics(project_id)
+        assert type(actual) == list
 
     def test_wrapper_get_worktime_statistics(self):
-        assert type(wrapper.get_worktime_statistics(project_id)) == list
+        actual = wrapper.get_worktime_statistics(project_id)
+        assert type(actual) == list
 
     def test_graph_marker(self):
         print("get_markers")
@@ -367,6 +386,7 @@ class TestTask:
 
         assert type(api.delete_task(project_id, test_task_id)[0]) == dict
 
+    @pytest.mark.side_effect
     def test_assign_task(self):
         request_body = {"request_type": {"phase": "annotation", "_type": "Random"}}
         assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == list
@@ -419,6 +439,14 @@ class TestWebhook:
         assert type(api.put_webhook(project_id, test_webhook_id, request_body=request_body)[0]) == dict
 
         assert type(api.delete_webhook(project_id, test_webhook_id)[0]) == dict
+
+
+class TestLabor:
+    def test_get_labor_control_worktime(self):
+        wrapper.get_labor_control_worktime(project_id=project_id)
+
+    def test_get_labor_control_availability(self):
+        wrapper.get_labor_control_availability(account_id=my_account_id)
 
 
 class TestGetObjOrNone:

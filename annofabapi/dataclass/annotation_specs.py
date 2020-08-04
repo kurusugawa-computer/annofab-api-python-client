@@ -17,9 +17,11 @@ from dataclasses_json import dataclass_json
 
 from annofabapi.models import AdditionalDataDefinitionType, AnnotationType
 
-OneOfbooleanintegerstring = Union[bool, int, str]
+AdditionalDataDefaultType = Union[bool, int, str]
 
 AdditionalDataRestrictionCondition = Dict[str, Any]
+
+AnnotationSpecsOption = Dict[str, Any]
 
 
 @dataclass_json
@@ -226,8 +228,8 @@ class AdditionalDataDefinitionV1:
     name: Optional[InternationalizationMessage]
     """"""
 
-    default: Optional[OneOfbooleanintegerstring]
-    """属性の初期値です。  初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。  * type が flag の場合: 真偽値(`true` or `false`) * type が integer の場合: 整数値 * type が text の場合: 文字列 * type が comment の場合: 文字列 * type が choice の場合: 選択肢(`choices`)の `choice_id` * type が select の場合: 選択肢(`choices`)の `choice_id`  属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。  なお、トラッキングとリンクには初期値を設定できません。 """
+    default: Optional[AdditionalDataDefaultType]
+    """"""
 
     keybind: Optional[List[Keybind]]
     """"""
@@ -264,8 +266,8 @@ class AdditionalDataDefinitionV2:
     name: Optional[InternationalizationMessage]
     """"""
 
-    default: Optional[OneOfbooleanintegerstring]
-    """属性の初期値です。  初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。  * type が flag の場合: 真偽値(`true` or `false`) * type が integer の場合: 整数値 * type が text の場合: 文字列 * type が comment の場合: 文字列 * type が choice の場合: 選択肢(`choices`)の `choice_id` * type が select の場合: 選択肢(`choices`)の `choice_id`  属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。  なお、トラッキングとリンクには初期値を設定できません。 """
+    default: Optional[AdditionalDataDefaultType]
+    """"""
 
     keybind: Optional[List[Keybind]]
     """"""
@@ -412,6 +414,9 @@ class AnnotationSpecsV1:
     updated_datetime: Optional[str]
     """アノテーション仕様の最終更新時刻 """
 
+    option: Optional[AnnotationSpecsOption]
+    """"""
+
 
 @dataclass_json
 @dataclass
@@ -440,3 +445,6 @@ class AnnotationSpecsV2:
 
     updated_datetime: Optional[str]
     """アノテーション仕様の最終更新時刻 """
+
+    option: Optional[AnnotationSpecsOption]
+    """"""

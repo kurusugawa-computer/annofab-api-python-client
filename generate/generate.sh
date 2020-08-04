@@ -1,6 +1,6 @@
 #!/bin/bash -uex
 
-DOCKER_IMAGE=openapitools/openapi-generator-cli:v4.2.3
+DOCKER_IMAGE=openapitools/openapi-generator-cli:v4.3.1
 
 PROGNAME=$(basename $0)
 
@@ -47,18 +47,6 @@ if "${FLAG_DOWNLOAD}"; then
     curl https://annofab.com/docs/api/swagger.yaml --output swagger/swagger.yaml
     curl https://annofab.com/docs/api/swagger.v2.yaml --output swagger/swagger.v2.yaml
     curl https://annofab.com/docs/api/swagger-api-components.yaml  --output swagger/swagger-api-components.yaml
-#    curl https://annofab.com/docs/api/swagger.internal.yaml  --output swagger.internal.yaml
-
-  # インデントを１つ深くする
-  sed -e "s/#\/schemas/#\/components\/schemas/g" -e "s/^/  /g" swagger/swagger-api-components.yaml --in-place
-
-  sed '/swagger-api-components.yaml/d' swagger/swagger.yaml > swagger/swagger-tmp.yaml
-  cat swagger/swagger-tmp.yaml  swagger/swagger-api-components.yaml > swagger/swagger.yaml
-
-  sed '/swagger-api-components.yaml/d' swagger/swagger.v2.yaml > swagger/swagger-tmp.v2.yaml
-  cat swagger/swagger-tmp.v2.yaml swagger/swagger-api-components.yaml > swagger/swagger.v2.yaml
-
-  rm swagger/swagger-tmp.yaml swagger/swagger-tmp.v2.yaml
 fi
 
 
@@ -73,43 +61,54 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
     --input-spec swagger/swagger.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template \
-    -Dapis -DapiTests=false -DapiDocs=false \
-    -Dmodels -DmodelTests=false -DmodelDocs=false \
+    --global-property apis,apiTests=false,apiDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
 cat partial-header/generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
-
-cat partial-header/models_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/models.py
+# job_typeの型がJobTypeだとEnumのため都合が悪いので、型をstrに変換する
+sed  -e "s/job_type: JobType/job_type: str/g"  ../annofabapi/generated_api.py  --in-place
 
 rm -Rf out/openapi_client
-
 
 # v2 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
     --input-spec swagger/swagger.v2.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template \
-    -Dapis -DapiTests=false -DapiDocs=false \
+    --global-property apis,apiTests=false,apiDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v2
 
 cat partial-header/generated_api_partial_header_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
+rm -Rf out/openapi_client
 
+
+# modelsを生成
+cat swagger/swagger-partial-header.yaml swagger/swagger-api-components.yaml > swagger/swagger-models.yaml
+
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
+    --input-spec swagger/swagger-models.yaml \
+    ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
+    --template-dir /local/template \
+    --global-property ,models,modelTests=false,modelDocs=false \
+    --ignore-file-override=/local/.openapi-generator-ignore_v1
+
+cat partial-header/models_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/models.py
 rm -Rf out/openapi_client
 
 # v1 apiのmodelからDataClass用のpythonファイルを生成する。
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} \
     ${DOCKER_IMAGE} generate \
-    --input-spec swagger/swagger.yaml \
+    --input-spec swagger/swagger-models.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template_dataclass \
-    -Dmodels -DmodelTests=false -DmodelDocs=false \
+    --global-property models,modelTests=false,modelDocs=false  \
 
 MODELS_DIR=out/openapi_client/models
+rm swagger/swagger-models.yaml
 
 ############################
 # DataClassを作成
 ############################
-
 
 # Annotation
 declare -a model_files=(${MODELS_DIR}/point.py \
@@ -233,6 +232,7 @@ cat partial-header/dataclass/common.py partial-header/dataclass/webhook.py  \
 sed  -e "s/__DictStrKeyAnyValue__/Dict[str,Any]/g"  ../annofabapi/dataclass/*.py  --in-place
 # dict(str, int) -> Dict[str, int]
 sed -E -e "s/dict\((.*)\)/Dict\[\1\]/g"  ../annofabapi/dataclass/*.py  --in-place
+
 
 
 rm -Rf out/openapi_client
