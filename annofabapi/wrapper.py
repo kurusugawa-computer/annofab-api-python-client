@@ -10,6 +10,8 @@ import warnings
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional
 
+import requests
+
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (
@@ -623,6 +625,93 @@ class Wrapper:
     #########################################
     # Public Method : Statistics
     #########################################
+    def _request_location_header_url(self, response: requests.Response) -> Any:
+        """
+        Location headerに記載されているURLの中身を返す。
+
+        Args:
+            response:
+
+        Returns:
+            Location headerに記載されているURLの中身
+
+        """
+        url = response.headers["Location"]
+
+        response = self.api.session.get(url)
+        _log_error_response(logger, response)
+
+        response.encoding = "utf-8"
+        _raise_for_status(response)
+        content = self.api._response_to_content(response)
+        return content
+
+    def get_task_statistics(self, project_id: str) -> List[Any]:
+        """
+        getTaskStatistics APIのLocation headerの中身を返す。
+
+        Args:
+            project_id:  プロジェクトID
+
+        Returns:
+
+
+        """
+        _, response = self.api.get_task_statistics(project_id)
+        return self._request_location_header_url(response)
+
+    def get_account_statistics(self, project_id: str) -> List[Any]:
+        """
+        getAccountStatistics APIのLocation headerの中身を返す。
+
+        Args:
+            project_id:
+
+        Returns:
+
+        """
+        _, response = self.api.get_account_statistics(project_id)
+        return self._request_location_header_url(response)
+
+    def get_inspection_statistics(self, project_id: str) -> List[Any]:
+        """
+        getInspectionStatistics APIのLocation headerの中身を返す。
+
+        Args:
+            project_id:
+
+        Returns:
+
+        """
+        _, response = self.api.get_inspection_statistics(project_id)
+        return self._request_location_header_url(response)
+
+    def get_task_phase_statistics(self, project_id: str) -> List[Any]:
+        """
+        getTaskPhaseStatistics APIのLocation headerの中身を返す。
+
+        Args:
+            project_id:
+
+        Returns:
+
+        """
+        _, response = self.api.get_task_phase_statistics(project_id)
+        return self._request_location_header_url(response)
+
+    def get_label_statistics(self, project_id: str) -> List[Any]:
+        """
+        getLabelStatistics APIのLocation headerの中身を返す。
+
+        Args:
+            project_id:
+
+        Returns:
+
+        """
+        _, response = self.api.get_label_statistics(project_id)
+        return self._request_location_header_url(response)
+
     def get_worktime_statistics(self, project_id: str) -> List[Any]:
         """
         タスク作業時間集計取得.
@@ -636,15 +725,7 @@ class Wrapper:
 
         """
         _, response = self.api.get_worktime_statistics(project_id)
-        url = response.headers["Location"]
-
-        response = self.api.session.get(url)
-        _log_error_response(logger, response)
-
-        response.encoding = "utf-8"
-        _raise_for_status(response)
-        content = self.api._response_to_content(response)
-        return content
+        return self._request_location_header_url(response)
 
     #########################################
     # Public Method : Supplementary
@@ -1361,3 +1442,93 @@ class Wrapper:
                 else:
                     logger.debug("job_id = %s のジョブに %d 回アクセスしましたが、完了しませんでした。", job["job_id"], job_access_count)
                     return False
+
+    #########################################
+    # Public Method : Labor Control
+    #########################################
+    @staticmethod
+    def _get_actual_worktime_hour_from_labor(labor: Dict[str, Any]) -> Optional[float]:
+        working_time_by_user = labor["values"]["working_time_by_user"]
+        if working_time_by_user is None:
+            return None
+
+        actual_worktime = working_time_by_user.get("results")
+        if actual_worktime is None:
+            return None
+        else:
+            return actual_worktime / 3600 / 1000
+
+    @staticmethod
+    def _get_plan_worktime_hour_from_labor(labor: Dict[str, Any]) -> Optional[float]:
+        working_time_by_user = labor["values"]["working_time_by_user"]
+        if working_time_by_user is None:
+            return None
+
+        actual_worktime = working_time_by_user.get("plans")
+        if actual_worktime is None:
+            return None
+        else:
+            return actual_worktime / 3600 / 1000
+
+    def get_labor_control_worktime(
+        self,
+        organization_id: Optional[str] = None,
+        project_id: Optional[str] = None,
+        account_id: Optional[str] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        実績作業時間(actual_worktime)と予定作業時間(plan_worktime)を取得する。
+
+        Args:
+            query_params:
+
+        Returns:
+
+        """
+
+        def _to_new_data(labor: Dict[str, Any]) -> Dict[str, Any]:
+            labor["actual_worktime"] = self._get_actual_worktime_hour_from_labor(labor)
+            labor["plan_worktime"] = self._get_plan_worktime_hour_from_labor(labor)
+            labor.pop("values", None)
+            return labor
+
+        query_params = {
+            "organization_id": organization_id,
+            "project_id": project_id,
+            "account_id": account_id,
+            "from_date": from_date,
+            "to_date": to_date,
+        }
+        labor_list, _ = self.api.get_labor_control(query_params)
+        return [_to_new_data(e) for e in labor_list]
+
+    def get_labor_control_availability(
+        self, account_id: str = None, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        労務管理の予定稼働時間を取得する。
+
+        Args:
+            account_id:
+            from_date:
+            to_date:
+
+        Returns:
+            予定稼働時間情報
+        """
+
+        def _to_new_data(labor: Dict[str, Any]) -> Dict[str, Any]:
+            labor["availability"] = self._get_plan_worktime_hour_from_labor(labor)
+            labor.pop("values", None)
+            return labor
+
+        query_params = {
+            "organization_id": "___plannedWorktime___",
+            "account_id": account_id,
+            "from_date": from_date,
+            "to_date": to_date,
+        }
+        labor_list, _ = self.api.get_labor_control(query_params)
+        return [_to_new_data(e) for e in labor_list]
