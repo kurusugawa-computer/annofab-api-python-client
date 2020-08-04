@@ -1470,6 +1470,13 @@ class Wrapper:
         else:
             return actual_worktime / 3600 / 1000
 
+    @staticmethod
+    def _get_working_description_from_labor(labor: Dict[str, Any]) -> Optional[str]:
+        working_time_by_user = labor["values"]["working_time_by_user"]
+        if working_time_by_user is None:
+            return None
+        return working_time_by_user.get("description")
+
     def get_labor_control_worktime(
         self,
         organization_id: Optional[str] = None,
@@ -1491,6 +1498,7 @@ class Wrapper:
         def _to_new_data(labor: Dict[str, Any]) -> Dict[str, Any]:
             labor["actual_worktime"] = self._get_actual_worktime_hour_from_labor(labor)
             labor["plan_worktime"] = self._get_plan_worktime_hour_from_labor(labor)
+            labor["working_description"] = self._get_working_description_from_labor(labor)
             labor.pop("values", None)
             return labor
 
