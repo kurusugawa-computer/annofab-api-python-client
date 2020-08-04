@@ -99,7 +99,7 @@ def build_from_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     return Resource(login_user_id, login_password, endpoint_url=endpoint_url)
 
 
-def build_from_netrc_and_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
+def build_from_netrc_or_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     """
     `.netrc`ファイルまたは環境変数からAnnoFab認証情報を取得し、annnofabapi.Resourceインスタンスを生成します。
     netrc, 環境変数の順に認証情報を読み込みます。

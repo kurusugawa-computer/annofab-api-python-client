@@ -7,7 +7,7 @@ import pytest
 
 import annofabapi
 import annofabapi.exceptions
-from annofabapi.resource import build_from_netrc_and_env
+from annofabapi.resource import build_from_netrc_or_env
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -33,10 +33,10 @@ class TestBuild:
         os.environ["ANNOFAB_PASSWORD"] = "BAR"
         assert isinstance(annofabapi.build_from_env(), annofabapi.Resource)
 
-    def test_build_from_netrc_and_env(self):
+    def test_build_from_netrc_or_env(self):
         os.environ["ANNOFAB_USER_ID"] = "FOO"
         os.environ["ANNOFAB_PASSWORD"] = "BAR"
-        assert isinstance(build_from_netrc_and_env(), annofabapi.Resource)
+        assert isinstance(build_from_netrc_or_env(), annofabapi.Resource)
 
     def test_build_with_endpoint(self):
         resource = annofabapi.build("test_user", "password", "https://localhost:8080")
