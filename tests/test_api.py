@@ -34,10 +34,6 @@ api = service.api
 wrapper = service.wrapper
 test_wrapper = WrapperForTest(api)
 
-my_account_id = api.get_my_account()[0]["account_id"]
-organization_name = api.get_organization_of_project(project_id)[0]["organization_name"]
-
-annofab_user_id = service.api.login_user_id
 
 task_id = test_wrapper.get_first_task_id(project_id)
 input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
@@ -228,28 +224,36 @@ class TestMy:
 
 
 class TestOrganization:
+    @classmethod
+    def setup_class(cls):
+        cls.organization_name = api.get_organization_of_project(project_id)[0]["organization_name"]
+
     def test_get_organization(self):
-        assert type(api.get_organization(organization_name)[0]) == dict
+        assert type(api.get_organization(self.organization_name)[0]) == dict
 
     def test_get_organization_activity(self):
-        assert type(api.get_organization_activity(organization_name)[0]) == dict
+        assert type(api.get_organization_activity(self.organization_name)[0]) == dict
 
     def test_wrapper_get_all_projects_of_organization(self):
-        assert len(wrapper.get_all_projects_of_organization(organization_name)) > 0
+        assert len(wrapper.get_all_projects_of_organization(self.organization_name)) > 0
 
 
 class TestOrganizationMember:
+    @classmethod
+    def setup_class(cls):
+        cls.organization_name = api.get_organization_of_project(project_id)[0]["organization_name"]
+
     def test_wrapper_get_all_organization_members(self):
-        assert len(wrapper.get_all_organization_members(organization_name)) > 0
+        assert len(wrapper.get_all_organization_members(self.organization_name)) > 0
 
     def test_get_organization_member(self):
-        organization_member = api.get_organization_member(organization_name, annofab_user_id)[0]
+        organization_member = api.get_organization_member(self.organization_name, api.login_user_id)[0]
         assert type(organization_member) == dict
 
     def test_update_organization_member_role(self):
-        organization_member = api.get_organization_member(organization_name, annofab_user_id)[0]
+        organization_member = api.get_organization_member(self.organization_name, api.login_user_id)[0]
         request_body = {"role": "owner", "last_updated_datetime": organization_member["updated_datetime"]}
-        api.update_organization_member_role(organization_name, annofab_user_id, request_body=request_body)
+        api.update_organization_member_role(self.organization_name, api.login_user_id, request_body=request_body)
 
 
 class TestProject:
@@ -287,7 +291,7 @@ class TestProject:
 
 class TestProjectMember:
     def test_get_project_member(self):
-        my_member = api.get_project_member(project_id, annofab_user_id)[0]
+        my_member = api.get_project_member(project_id, api.login_user_id)[0]
         assert type(my_member) == dict
 
     def test_wrapper_get_all_project_members(self):
@@ -396,7 +400,7 @@ class TestTask:
         request_body = {
             "status": "not_started",
             "last_updated_datetime": task["updated_datetime"],
-            "account_id": my_account_id,
+            "account_id": api.account_id,
         }
         assert type(api.operate_task(project_id, task_id, request_body=request_body)[0]) == dict
 
@@ -446,13 +450,17 @@ class TestLabor:
         wrapper.get_labor_control_worktime(project_id=project_id)
 
     def test_get_labor_control_availability(self):
-        wrapper.get_labor_control_availability(account_id=my_account_id)
+        wrapper.get_labor_control_availability(account_id=api.account_id)
 
 
 class TestGetObjOrNone:
     """
     wrapper.get_xxx_or_none メソッドの確認
     """
+
+    @classmethod
+    def setup_class(cls):
+        cls.organization_name = api.get_organization_of_project(project_id)[0]["organization_name"]
 
     def test_get_input_data_or_none(self):
         assert type(wrapper.get_input_data_or_none(project_id, input_data_id)) == dict
@@ -462,16 +470,16 @@ class TestGetObjOrNone:
         assert wrapper.get_input_data_or_none("not-exists", input_data_id) is None
 
     def test_get_organization_or_none(self):
-        assert type(wrapper.get_organization_or_none(organization_name)) == dict
+        assert type(wrapper.get_organization_or_none(self.organization_name)) == dict
 
         assert wrapper.get_organization_or_none("not-exists") is None
 
     def test_get_organization_member_or_none(self):
-        assert type(wrapper.get_organization_member_or_none(organization_name, annofab_user_id)) == dict
+        assert type(wrapper.get_organization_member_or_none(self.organization_name, api.login_user_id)) == dict
 
-        assert wrapper.get_organization_member_or_none("not-exists", annofab_user_id) is None
+        assert wrapper.get_organization_member_or_none("not-exists", api.login_user_id) is None
 
-        assert wrapper.get_organization_member_or_none(organization_name, "not-exists") is None
+        assert wrapper.get_organization_member_or_none(self.organization_name, "not-exists") is None
 
     def test_get_project_or_none(self):
         assert type(wrapper.get_project_or_none(project_id)) == dict
@@ -479,11 +487,11 @@ class TestGetObjOrNone:
         assert wrapper.get_project_or_none("not-exists") is None
 
     def test_get_project_member_or_none(self):
-        assert type(wrapper.get_project_member_or_none(project_id, annofab_user_id)) == dict
+        assert type(wrapper.get_project_member_or_none(project_id, api.login_user_id)) == dict
 
         assert wrapper.get_project_member_or_none(project_id, "not-exists") is None
 
-        assert wrapper.get_project_member_or_none("not-exists", annofab_user_id) is None
+        assert wrapper.get_project_member_or_none("not-exists", api.login_user_id) is None
 
     def test_get_task_or_none(self):
         assert type(wrapper.get_task_or_none(project_id, task_id)) == dict

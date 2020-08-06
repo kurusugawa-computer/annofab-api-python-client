@@ -46,15 +46,17 @@ $ make lint
 
 ## Test
 
-### テストの実行
-1. AnnoFabの認証情報を`.netrc`に記載する。
-2. `pytest.ini`にテスト対象の`project_id`を指定する。**【注意】テストを実行すると、AnnoFabプロジェクトの内容が変更される**
+### テストの実行方法
+1. AnnoFabの認証情報を、`.netrc`ファイルまたは環境変数に設定する。
+2. `pytest.ini`に、テスト対象の`project_id`と`task_id`を指定する。
+    * `task_id`はプロジェクト`project_id`配下であること
+    * **【注意】テストを実行すると、AnnoFabプロジェクトの内容が変更される**
 3. `$ make test`コマンドを実行する。
 
-#### 直接pytestを実行する場合
+#### テストメソッドを指定してテストする方法
 
 ```
-$ poetry run pytest tests
+$ poetry run pytest tests/test_api.py::TestLogin::test_login
 ```
 
 annofabapiでは、pytestのカスタムオプションを定義しています。
