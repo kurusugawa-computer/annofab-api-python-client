@@ -129,7 +129,7 @@ class TestFullAnnotation:
         assert index == 4
 
         parser = FullAnnotationDirParser(
-            Path(f"{test_dir}/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
+            Path(f"{test_dir}/full-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
         )
         assert parser.task_id == "sample_1"
         assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"

@@ -24,7 +24,10 @@ from tests.utils_for_test import WrapperForTest, create_csv_for_task
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
-project_id = inifile.get("annofab", "project_id")
+
+project_id = inifile["annofab"]["project_id"]
+task_id = inifile["annofab"]["task_id"]
+
 
 test_dir = "./tests/data"
 out_dir = "./tests/out"
@@ -35,30 +38,26 @@ wrapper = service.wrapper
 test_wrapper = WrapperForTest(api)
 
 
-task_id = test_wrapper.get_first_task_id(project_id)
-input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
-
-
 class TestAccount:
     pass
 
 
 class TestAnnotation:
+    @classmethod
+    def setup_class(cls):
+        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
     def test_wrapper_get_all_annotation_list(self):
         assert len(wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}})) >= 0
 
     def test_get_annotation(self):
-        assert type(api.get_annotation(project_id, task_id, input_data_id)[0]) == dict
+        assert type(api.get_annotation(project_id, task_id, self.input_data_id)[0]) == dict
 
     def test_get_editor_annotation(self):
-        assert type(api.get_editor_annotation(project_id, task_id, input_data_id)[0]) == dict
+        assert type(api.get_editor_annotation(project_id, task_id, self.input_data_id)[0]) == dict
 
     def test_get_annotation_archive(self):
         content, response = api.get_annotation_archive(project_id)
-        assert response.headers["Location"].startswith("https://")
-
-        # v2版の確認
-        content, response = api.get_annotation_archive(project_id, query_params={"v2": True})
         assert response.headers["Location"].startswith("https://")
 
     def test_get_archive_full_with_pro_id(self):
@@ -102,11 +101,15 @@ class TestAnnotationSpecs:
 
 
 class TestInput:
+    @classmethod
+    def setup_class(cls):
+        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
     def test_wrapper_get_input_data_list(self):
         assert type(wrapper.get_all_input_data_list(project_id, {"input_data_name": "foo"})) == list
 
     def test_get_input_data(self):
-        test_input_data = api.get_input_data(project_id, input_data_id)[0]
+        test_input_data = api.get_input_data(project_id, self.input_data_id)[0]
         assert type(test_input_data) == dict
 
     def test_wrapper_put_input_data_from_file_and_delete_input_data(self):
@@ -127,8 +130,12 @@ class TestInput:
 
 
 class TestInspection:
+    @classmethod
+    def setup_class(cls):
+        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
     def test_get_inspections(self):
-        assert len(api.get_inspections(project_id, task_id, input_data_id)[0]) >= 0
+        assert len(api.get_inspections(project_id, task_id, self.input_data_id)[0]) >= 0
 
 
 class TestInstruction:
@@ -346,6 +353,10 @@ class TestStatistics:
 
 
 class Testsupplementary:
+    @classmethod
+    def setup_class(cls):
+        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
     def test_supplementary(self):
         supplementary_data_id = str(uuid.uuid4())
         request_body = {"supplementary_data_number": 1}
@@ -353,19 +364,23 @@ class Testsupplementary:
         print("")
         print(f"wrapper.put_supplementary_data_from_file: supplementary_data_id={supplementary_data_id}")
         content = wrapper.put_supplementary_data_from_file(
-            project_id, input_data_id, supplementary_data_id, f"{test_dir}/sample.txt", request_body=request_body
+            project_id, self.input_data_id, supplementary_data_id, f"{test_dir}/sample.txt", request_body=request_body
         )
         assert type(content) == dict
 
-        supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
+        supplementary_data_list = api.get_supplementary_data_list(project_id, self.input_data_id)[0]
         assert len([e for e in supplementary_data_list if e["supplementary_data_id"] == supplementary_data_id]) == 1
 
-        api.delete_supplementary_data(project_id, input_data_id, supplementary_data_id)
-        supplementary_data_list = api.get_supplementary_data_list(project_id, input_data_id)[0]
+        api.delete_supplementary_data(project_id, self.input_data_id, supplementary_data_id)
+        supplementary_data_list = api.get_supplementary_data_list(project_id, self.input_data_id)[0]
         assert len([e for e in supplementary_data_list if e["supplementary_data_id"] == supplementary_data_id]) == 0
 
 
 class TestTask:
+    @classmethod
+    def setup_class(cls):
+        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
     def test_wraper_get_all_tasks(self):
         assert type(wrapper.get_all_tasks(project_id, query_params={"task_id": "foo"})) == list
 
@@ -373,7 +388,7 @@ class TestTask:
     def test_initiate_tasks_generation_by_csv(self):
         csv_file_path = f"{test_dir}/tmp/create_task.csv"
         test_task_id = str(uuid.uuid4())
-        create_csv_for_task(csv_file_path, test_task_id, input_data_id)
+        create_csv_for_task(csv_file_path, test_task_id, self.input_data_id)
         content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path)
         assert type(content) == dict
 
@@ -382,7 +397,7 @@ class TestTask:
 
     def test_put_task_and_delete_task(self):
         test_task_id = str(uuid.uuid4())
-        request_body = {"input_data_id_list": [input_data_id]}
+        request_body = {"input_data_id_list": [self.input_data_id]}
         print("")
         print(f"put_task: task_id={task_id}")
         test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]
@@ -409,7 +424,7 @@ class TestTask:
 
     def test_batch_update_tasks(self):
         test_task_id = str(uuid.uuid4())
-        request_body = {"input_data_id_list": [input_data_id]}
+        request_body = {"input_data_id_list": [self.input_data_id]}
         print("")
         print(f"put_task: task_id={task_id}")
         test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]
@@ -461,13 +476,14 @@ class TestGetObjOrNone:
     @classmethod
     def setup_class(cls):
         cls.organization_name = api.get_organization_of_project(project_id)[0]["organization_name"]
+        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
     def test_get_input_data_or_none(self):
-        assert type(wrapper.get_input_data_or_none(project_id, input_data_id)) == dict
+        assert type(wrapper.get_input_data_or_none(project_id, self.input_data_id)) == dict
 
         assert wrapper.get_input_data_or_none(project_id, "not-exists") is None
 
-        assert wrapper.get_input_data_or_none("not-exists", input_data_id) is None
+        assert wrapper.get_input_data_or_none("not-exists", self.input_data_id) is None
 
     def test_get_organization_or_none(self):
         assert type(wrapper.get_organization_or_none(self.organization_name)) == dict
