@@ -32,7 +32,11 @@ task_id = inifile["annofab"]["task_id"]
 test_dir = "./tests/data"
 out_dir = "./tests/out"
 
-service = annofabapi.build_from_netrc()
+endpoint_url = inifile["annofab"].get("endpoint_url", None)
+if endpoint_url is not None:
+    service = annofabapi.build(endpoint_url=endpoint_url)
+else:
+    service = annofabapi.build()
 api = service.api
 wrapper = service.wrapper
 test_wrapper = WrapperForTest(api)
