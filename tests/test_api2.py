@@ -13,19 +13,20 @@ from tests.utils_for_test import WrapperForTest
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
-project_id = inifile.get("annofab", "project_id")
+project_id = inifile["annofab"]["project_id"]
 
 test_dir = "./tests/data"
 out_dir = "./tests/out"
 
-service = annofabapi.build_from_netrc()
+endpoint_url = inifile["annofab"].get("endpoint_url", None)
+if endpoint_url is not None:
+    service = annofabapi.build(endpoint_url=endpoint_url)
+else:
+    service = annofabapi.build()
+
 test_wrapper = WrapperForTest(service.api)
-
-my_account_id = service.api.get_my_account()[0]["account_id"]
-organization_name = service.api.get_organization_of_project(project_id)[0]["organization_name"]
-
-annofab_user_id = service.api.login_user_id
 
 
 def test_project():
-    assert type(service.api2.get_project_cache_v2(project_id))
+    content, _ = service.api2.get_project_cache_v2(project_id)
+    assert type(content) == dict
