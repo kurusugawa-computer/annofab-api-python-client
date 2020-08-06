@@ -505,3 +505,9 @@ class TestProtectedMethod:
         url = "https://annofab.com/projects/foo/annotation_specs_histories/foo.json"
         with pytest.raises(requests.HTTPError):
             api._request_get_with_cookie(project_id, url)
+
+
+class TestProperty:
+    def test_account_id(self):
+        account_id = api.account_id
+        assert type(account_id) == str and len(account_id) > 0
