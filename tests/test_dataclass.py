@@ -33,24 +33,26 @@ from tests.utils_for_test import WrapperForTest
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
-project_id = inifile.get("annofab", "project_id")
-task_id = inifile.get("annofab", "task_id")
-input_data_id = inifile.get("annofab", "input_data_id")
+project_id = inifile["annofab"]["project_id"]
+task_id = inifile["annofab"]["task_id"]
 
 test_dir = Path("./tests/data")
 
-service = annofabapi.build_from_netrc()
+endpoint_url = inifile["annofab"].get("endpoint_url", None)
+if endpoint_url is not None:
+    service = annofabapi.build(endpoint_url=endpoint_url)
+else:
+    service = annofabapi.build()
 test_wrapper = WrapperForTest(service.api)
-
-my_account_id = service.api.get_my_account()[0]["account_id"]
-organization_name = service.api.get_organization_of_project(project_id)[0]["organization_name"]
-
-annofab_user_id = service.api.login_user_id
 
 
 class TestAnnotation:
+    @classmethod
+    def setup_class(cls):
+        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
     def test_get_editor_annotation(self):
-        dict_obj, _ = service.api.get_editor_annotation(project_id, task_id, input_data_id)
+        dict_obj, _ = service.api.get_editor_annotation(project_id, task_id, self.input_data_id)
         dataclass_obj = Annotation.from_dict(dict_obj)
         assert type(dataclass_obj) == Annotation
 
@@ -62,7 +64,7 @@ class TestAnnotation:
         assert type(single_annotation) == SingleAnnotation
 
     def test_full_annotation(self):
-        dict_simple_annotation, _ = service.api.get_annotation(project_id, task_id, input_data_id)
+        dict_simple_annotation, _ = service.api.get_annotation(project_id, task_id, self.input_data_id)
         simple_annotation = SimpleAnnotation.from_dict(dict_simple_annotation)
         assert type(simple_annotation) == SimpleAnnotation
 
@@ -82,8 +84,12 @@ class TestInput:
 
 
 class TestInspection:
+    @classmethod
+    def setup_class(cls):
+        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
     def test_inspection(self):
-        inspection_list, _ = service.api.get_inspections(project_id, task_id, input_data_id)
+        inspection_list, _ = service.api.get_inspections(project_id, task_id, self.input_data_id)
         inspection = Inspection.from_dict(inspection_list[0])
         assert type(inspection) == Inspection
 
@@ -128,20 +134,30 @@ class TestMy:
 
 
 class TestOrganization:
+    @classmethod
+    def setup_class(cls):
+        cls.organization_name = service.api.get_organization_of_project(project_id)[0]["organization_name"]
+
     def test_organization(self):
-        dict_organization, _ = service.api.get_organization(organization_name)
+        dict_organization, _ = service.api.get_organization(self.organization_name)
         organization = Organization.from_dict(dict_organization)
         assert type(organization) == Organization
 
     def test_organization_activity(self):
-        dict_organization_activity, _ = service.api.get_organization_activity(organization_name)
+        dict_organization_activity, _ = service.api.get_organization_activity(self.organization_name)
         organization_activity = OrganizationActivity.from_dict(dict_organization_activity)
         assert type(organization_activity) == OrganizationActivity
 
 
 class TestOrganizationMember:
+    @classmethod
+    def setup_class(cls):
+        cls.organization_name = service.api.get_organization_of_project(project_id)[0]["organization_name"]
+
     def test_organization_member(self):
-        dict_organization_member, _ = service.api.get_organization_member(organization_name, annofab_user_id)
+        dict_organization_member, _ = service.api.get_organization_member(
+            self.organization_name, service.api.login_user_id
+        )
         organization_member = OrganizationMember.from_dict(dict_organization_member)
         assert type(organization_member) == OrganizationMember
 
@@ -155,7 +171,7 @@ class TestProject:
 
 class TestProjectMember:
     def test_project_member(self):
-        dict_project_member, _ = service.api.get_project_member(project_id, annofab_user_id)
+        dict_project_member, _ = service.api.get_project_member(project_id, service.api.login_user_id)
         project_member = ProjectMember.from_dict(dict_project_member)
         assert type(project_member) == ProjectMember
 
@@ -198,8 +214,12 @@ class TestStatistics:
 
 
 class TestSupplementary:
+    @classmethod
+    def setup_class(cls):
+        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
     def test_supplementary(self):
-        supplementary_data_list, _ = service.api.get_supplementary_data_list(project_id, input_data_id)
+        supplementary_data_list, _ = service.api.get_supplementary_data_list(project_id, self.input_data_id)
         supplementary_data = SupplementaryData.from_dict(supplementary_data_list[0])
         assert type(supplementary_data) == SupplementaryData
 

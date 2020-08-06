@@ -97,6 +97,8 @@ class AnnofabApi(AbstractAnnofabApi):
     #: Signed Cookie情報
     cookies: Optional[RequestsCookieJar] = None
 
+    __account_id: Optional[str] = None
+
     class __MyToken(AuthBase):
         """
         requestsモジュールのauthに渡す情報。
@@ -413,3 +415,19 @@ class AnnofabApi(AbstractAnnofabApi):
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    #########################################
+    # Public Method : Other
+    #########################################
+    @property
+    def account_id(self) -> str:
+        """
+        AnnoFabにログインするユーザのaccount_id
+        """
+        if self.__account_id is not None:
+            return self.__account_id
+        else:
+            content, _ = self.get_my_account()
+            account_id = content["account_id"]
+            self.__account_id = account_id
+            return account_id

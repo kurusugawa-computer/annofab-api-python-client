@@ -1,6 +1,7 @@
 import logging
 import netrc
 import os
+from typing import Optional
 from urllib.parse import urlparse
 
 from annofabapi import AnnofabApi, AnnofabApi2, Wrapper
@@ -32,9 +33,16 @@ class Resource:
         self.api2 = AnnofabApi2(self.api)
 
 
-def build(login_user_id: str, login_password: str, endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
+def build(
+    login_user_id: Optional[str] = None, login_password: Optional[str] = None, endpoint_url: str = DEFAULT_ENDPOINT_URL
+) -> Resource:
     """
     AnnofabApi, Wrapperのインスタンスを保持するインスタンスを生成する。
+
+    ``login_user_id``と``login_password`の両方がNoneの場合は、`.netrc`ファイルまたは環境変数から認証情報を取得する。
+    認証情報は、`.netrc`ファイル、環境変数の順に読み込む。
+
+    環境変数は``ANNOFAB_USER_ID`` , ``ANNOFAB_PASSWORD`` を参照する。
 
     Args:
         login_user_id: AnnoFabにログインするときのユーザID
@@ -45,7 +53,24 @@ def build(login_user_id: str, login_password: str, endpoint_url: str = DEFAULT_E
         AnnofabApi, Wrapperのインスタンスを保持するインスタンス
 
     """
-    return Resource(login_user_id, login_password, endpoint_url=endpoint_url)
+    if login_user_id is not None and login_password is not None:
+        return Resource(login_user_id, login_password, endpoint_url=endpoint_url)
+
+    elif login_user_id is None and login_password is None:
+        try:
+            return build_from_netrc(endpoint_url)
+        except AnnofabApiException:
+            pass
+
+        try:
+            return build_from_env(endpoint_url)
+        except AnnofabApiException:
+            pass
+
+        raise AnnofabApiException("`.netrc`ファイルまたは環境変数にAnnoFab認証情報はありませんでした。")
+
+    else:
+        raise ValueError()
 
 
 def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
@@ -97,29 +122,3 @@ def build_from_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
 
     logger.debug("環境変数からAnnoFab認証情報を読み込みました。")
     return Resource(login_user_id, login_password, endpoint_url=endpoint_url)
-
-
-def build_from_netrc_or_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
-    """
-    `.netrc`ファイルまたは環境変数からAnnoFab認証情報を取得し、annnofabapi.Resourceインスタンスを生成します。
-    netrc, 環境変数の順に認証情報を読み込みます。
-
-    Args:
-        endpoint_url:
-
-    Returns:
-
-    """
-    # '.netrc'ファイルから認証情報を取得する
-    try:
-        return build_from_netrc(endpoint_url)
-    except AnnofabApiException:
-        pass
-
-    # 環境変数から認証情報を取得する
-    try:
-        return build_from_env(endpoint_url)
-    except AnnofabApiException:
-        pass
-
-    raise AnnofabApiException("`.netrc`ファイルまたは環境変数にAnnoFab認証情報はありませんでした。")

@@ -27,7 +27,7 @@ test_dir = Path("./tests/data")
 
 class TestSimpleAnnotationV2:
     def test_simple_annotation_zip(self):
-        zip_path = Path(test_dir / "simple-annotation-v2.zip")
+        zip_path = Path(test_dir / "simple-annotation.zip")
         iter_parser = annofabapi.parser.lazy_parse_simple_annotation_zip(zip_path)
 
         index = 0
@@ -50,7 +50,7 @@ class TestSimpleAnnotationV2:
                 parser.open_outer_file("foo")
 
     def test_simple_annotation_dir(self):
-        dir_path = Path(test_dir / "simple-annotation-v2")
+        dir_path = Path(test_dir / "simple-annotation")
         iter_parser = annofabapi.parser.lazy_parse_simple_annotation_dir(dir_path)
 
         index = 0
@@ -68,7 +68,7 @@ class TestSimpleAnnotationV2:
             parser.open_outer_file("foo")
 
     def test_lazy_parse_simple_annotation_zip_by_task(self):
-        zip_path = Path(test_dir / "simple-annotation-v2.zip")
+        zip_path = Path(test_dir / "simple-annotation.zip")
         task_parser_list = list(annofabapi.parser.lazy_parse_simple_annotation_zip_by_task(zip_path))
 
         assert len(task_parser_list) == 2
@@ -82,7 +82,7 @@ class TestSimpleAnnotationV2:
         assert len([e for e in parser_list if e.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"]) == 1
 
     def test_lazy_parse_simple_annotation_dir_by_task(self):
-        zip_path = Path(test_dir / "simple-annotation-v2")
+        zip_path = Path(test_dir / "simple-annotation")
         task_parser_list = list(annofabapi.parser.lazy_parse_simple_annotation_dir_by_task(zip_path))
 
         assert len(task_parser_list) == 2
@@ -129,7 +129,7 @@ class TestFullAnnotation:
         assert index == 4
 
         parser = FullAnnotationDirParser(
-            Path(f"{test_dir}/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
+            Path(f"{test_dir}/full-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
         )
         assert parser.task_id == "sample_1"
         assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
