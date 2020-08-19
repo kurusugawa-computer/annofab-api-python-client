@@ -1,5 +1,5 @@
 {
-  "project_id": "1186bb00-16e6-4d20-8e24-310322911850",
+  "project_id": "12345678-abcd-1234-abcd-1234abcd5678",
   "labels": [
     {
       "label_id": "15ba7932-24b9-4cf3-95bd-9bf6deede4fa",
@@ -7,7 +7,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u30cd\u30b3"
+            "message": "ネコ"
           },
           {
             "lang": "en-US",
@@ -44,7 +44,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "\u96a0\u308c"
+                "message": "隠れ"
               },
               {
                 "lang": "en-US",
@@ -76,7 +76,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "\u76ee\u306e\u30ea\u30f3\u30af"
+                "message": "目のリンク"
               },
               {
                 "lang": "en-US",
@@ -103,7 +103,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "\u4f53\u91cd"
+                "message": "体重"
               },
               {
                 "lang": "en-US",
@@ -128,7 +128,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "\u540d\u524d"
+                "message": "名前"
               },
               {
                 "lang": "en-US",
@@ -153,7 +153,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "\u5099\u8003"
+                "message": "備考"
               },
               {
                 "lang": "en-US",
@@ -219,7 +219,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u8db3"
+            "message": "足"
           },
           {
             "lang": "en-US",
@@ -271,7 +271,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u76ee"
+            "message": "目"
           },
           {
             "lang": "en-US",
@@ -307,7 +307,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u72ac"
+            "message": "犬"
           },
           {
             "lang": "en-US",
@@ -343,7 +343,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u4eba\u9593"
+            "message": "人間"
           },
           {
             "lang": "en-US",
@@ -384,7 +384,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u9ce5"
+            "message": "鳥"
           },
           {
             "lang": "en-US",
@@ -429,7 +429,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u6c17\u5019"
+            "message": "気候"
           },
           {
             "lang": "en-US",
@@ -450,7 +450,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "\u5929\u6c17"
+                "message": "天気"
               },
               {
                 "lang": "en-US",
@@ -469,7 +469,7 @@
                 "messages": [
                   {
                     "lang": "ja-JP",
-                    "message": "\u6674"
+                    "message": "晴"
                   },
                   {
                     "lang": "en-US",
@@ -486,7 +486,7 @@
                 "messages": [
                   {
                     "lang": "ja-JP",
-                    "message": "\u96e8"
+                    "message": "雨"
                   },
                   {
                     "lang": "en-US",
@@ -510,7 +510,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "\u6c17\u6e29"
+                "message": "気温"
               },
               {
                 "lang": "en-US",
@@ -622,7 +622,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u30e9\u30d9\u30eb\u9593\u9055\u3044"
+            "message": "ラベル間違い"
           },
           {
             "lang": "en-US",
@@ -638,7 +638,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u898b\u843d\u3068\u3057"
+            "message": "見落とし"
           },
           {
             "lang": "en-US",
@@ -654,7 +654,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u898b\u9593\u9055\u3044"
+            "message": "見間違い"
           },
           {
             "lang": "en-US",
@@ -670,7 +670,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u5c5e\u6027\u9593\u9055\u3044"
+            "message": "属性間違い"
           },
           {
             "lang": "en-US",
@@ -686,7 +686,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u5927\u304d\u904e\u304e\u308b"
+            "message": "大き過ぎる"
           },
           {
             "lang": "en-US",
@@ -702,7 +702,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "\u5c0f\u3055\u904e\u304e\u308b"
+            "message": "小さ過ぎる"
           },
           {
             "lang": "en-US",
@@ -713,7 +713,9 @@
       }
     }
   ],
-  "updated_datetime": null,
-  "option": null,
+  "updated_datetime": "2020-08-14T09:47:41.331+09:00",
+  "option": {
+    "can_overwrap": true
+  },
   "metadata": {}
 }
