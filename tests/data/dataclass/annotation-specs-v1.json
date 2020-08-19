@@ -698,6 +698,9 @@
       }
     }
   ],
-  "updated_datetime": "2019-08-22T14:10:14.758+09:00",
-  "option": null
+  "updated_datetime": "2020-08-14T09:47:41.331+09:00",
+  "option": {
+    "can_overwrap": true
+  },
+  "metadata": {}
 }
