@@ -2244,13 +2244,13 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        ユーザごと、日ごとに集計した以下のデータを取得します。 * 教師付フェーズのタスクを提出した回数、または検査/受入フェーズのタスクを合格/差戻にした回数 * 教師付フェーズを担当して提出したタスクが差し戻された回数、または受入フェーズを担当して合格にしたタスクが受入完了状態を取り消された回数 * 作業時間 
+        [ユーザー別タスク集計データ](#section/ArrayOfProjectAccountStatistics) を取得するための認証済み一時URLを取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[ProjectAccountStatistics], requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -2267,13 +2267,13 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        ラベルごと、定型指摘ごとに集計した検査コメント数を取得します。 
+        [検査コメント集計データ](#section/ArrayOfInspectionStatistics) を取得するための認証済み一時URLを取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[InspectionStatistics], requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -2290,13 +2290,13 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        ラベルごとの以下集計データを取得します。 * 受入が完了したアノテーション数 * 受入が完了していないアノテーション数 
+        [ラベル別アノテーション数集計データ](#section/ArrayOfLabelStatistics) を取得するための認証済み一時URLを取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[LabelStatistics], requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -2336,13 +2336,13 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        日ごと、フェーズごとに集計した以下のデータを取得します。 * 累積作業時間 
+        [フェーズ別タスク集計データ](#section/ArrayOfTaskPhaseStatistics) を取得するための認証済み一時URLを取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[TaskPhaseStatistics], requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -2359,13 +2359,13 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        日ごと、タスクフェーズごと、タスクステータスごとに集計した以下のデータを取得します。 * タスク数 * 累計作業時間 
+        [タスク集計データ](#section/ArrayOfProjectTaskStatisticsHistory) を取得するための認証済み一時URLを取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[ProjectTaskStatisticsHistory], requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -2382,13 +2382,13 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        単位当たり（タスク1個、画像1個、動画1分）の作業時間情報が格納されたファイルに対して、認証済み一時URLを取得します。認証済み一時URLはLocationヘッダに格納されています。  ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。 アカウント毎の集計のby_tasks、by_inputsには、最終日であってもヒストグラムを返却しない。 
+        [タスク作業時間集計データ](#section/ArrayOfWorktimeStatistics) を取得するための認証済み一時URLを取得します。 
 
         Args:
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[WorktimeStatistics], requests.Response]
+            Tuple[TemporaryUrl, requests.Response]
 
 
         """
@@ -2711,7 +2711,7 @@ class AbstractAnnofabApi(abc.ABC):
                 rejected_only (str):  差し戻されたタスクだけを絞り込む時に、キーのみ指定します（値は無視されます）。
                 auto_accepted_only (str):  「抜取検査の対象外となり、自動受入されたタスク」だけを絞り込む時に、キーのみ指定します（値は無視されます）。
                 sort (str):  ソート順の指定。 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、phase_stage、status、account_idのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
-                annotation (AnnotationQuery):  アノテーションの絞り込み条件をJSON形式で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
+                annotation (str):  アノテーションの絞り込み条件をJSON形式([AnnotationQuery](#section/AnnotationQuery))で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。 
 
         Returns:
             Tuple[TaskList, requests.Response]

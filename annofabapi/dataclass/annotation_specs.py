@@ -249,6 +249,9 @@ class AdditionalDataDefinitionV1:
     required: Optional[bool]
     """リンク属性において、入力を必須とするかどうか"""
 
+    metadata: Optional[Dict[str, str]]
+    """ユーザーが自由に登録できるkey-value型のメタデータです。 """
+
 
 @dataclass_json
 @dataclass
@@ -277,6 +280,9 @@ class AdditionalDataDefinitionV2:
 
     choices: Optional[List[AdditionalDataDefinitionV1Choices]]
     """"""
+
+    metadata: Optional[Dict[str, str]]
+    """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
 @dataclass_json
@@ -342,6 +348,9 @@ class LabelV1:
     allow_out_of_image_bounds: Optional[bool]
     """"""
 
+    metadata: Optional[Dict[str, str]]
+    """ユーザーが自由に登録できるkey-value型のメタデータです。 """
+
 
 @dataclass_json
 @dataclass
@@ -380,6 +389,9 @@ class LabelV2:
     allow_out_of_image_bounds: Optional[bool]
     """"""
 
+    metadata: Optional[Dict[str, str]]
+    """ユーザーが自由に登録できるkey-value型のメタデータです。 """
+
 
 @dataclass_json
 @dataclass
@@ -417,6 +429,9 @@ class AnnotationSpecsV1:
     option: Optional[AnnotationSpecsOption]
     """"""
 
+    metadata: Optional[Dict[str, str]]
+    """ユーザーが自由に登録できるkey-value型のメタデータです。 """
+
 
 @dataclass_json
 @dataclass
@@ -448,3 +463,6 @@ class AnnotationSpecsV2:
 
     option: Optional[AnnotationSpecsOption]
     """"""
+
+    metadata: Optional[Dict[str, str]]
+    """ユーザーが自由に登録できるkey-value型のメタデータです。 """

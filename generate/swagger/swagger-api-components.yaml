@@ -125,6 +125,16 @@ components:
       name: "Authorization"
       in: "header"
   responses:
+    FileRedirectResponse:
+      description: 正常
+      headers:
+        Location:
+          schema:
+            $ref: "#/components/schemas/TemporaryUrlString"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TemporaryUrl"
     SuccessMessage:
       description: 成功時のメッセージ
       content:
@@ -169,6 +179,30 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorRefreshTokenExpired"
   schemas:
+    ArrayOfProjectTaskStatisticsHistory:
+      type: array
+      items:
+        $ref: "#/components/schemas/ProjectTaskStatisticsHistory"
+    ArrayOfProjectAccountStatistics:
+      type: array
+      items:
+        $ref: "#/components/schemas/ProjectAccountStatistics"
+    ArrayOfInspectionStatistics:
+      type: array
+      items:
+        $ref: "#/components/schemas/InspectionStatistics"
+    ArrayOfTaskPhaseStatistics:
+      type: array
+      items:
+        $ref: "#/components/schemas/TaskPhaseStatistics"
+    ArrayOfLabelStatistics:
+      type: array
+      items:
+        $ref: "#/components/schemas/LabelStatistics"
+    ArrayOfWorktimeStatistics:
+      type: array
+      items:
+        $ref: "#/components/schemas/WorktimeStatistics"
     ProjectCacheRecord:
       type: object
       properties:
@@ -1808,6 +1842,12 @@ components:
             アノテーション仕様の最終更新時刻
         option:
           $ref: "#/components/schemas/AnnotationSpecsOption"
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。
+          additionalProperties:
+            type: string
     AnnotationSpecsV2:
       type: object
       properties:
@@ -1839,6 +1879,12 @@ components:
             アノテーション仕様の最終更新時刻
         option:
           $ref: "#/components/schemas/AnnotationSpecsOption"
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。
+          additionalProperties:
+            type: string
     AnnotationSpecsRequestV1:
       type: object
       required:
@@ -1871,6 +1917,12 @@ components:
             新規作成時は未指定。
         option:
           $ref: "#/components/schemas/AnnotationSpecsOption"
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。
+          additionalProperties:
+            type: string
     AnnotationSpecsRequestV2:
       type: object
       required:
@@ -1917,6 +1969,12 @@ components:
             新規作成時は未指定。
         option:
           $ref: "#/components/schemas/AnnotationSpecsOption"
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。
+          additionalProperties:
+            type: string
     AnnotationSpecsOption:
       oneOf:
         - $ref: "#/components/schemas/AnnotationSpecsMovieOption"
@@ -2074,6 +2132,12 @@ components:
         allow_out_of_image_bounds:
           type: boolean
           default: false
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。
+          additionalProperties:
+            type: string
     LabelV2:
       type: object
       properties:
@@ -2132,6 +2196,12 @@ components:
         allow_out_of_image_bounds:
           type: boolean
           default: false
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。
+          additionalProperties:
+            type: string
     Color:
       type: object
       properties:
@@ -2203,6 +2273,12 @@ components:
         required:
           type: boolean
           description: リンク属性において、入力を必須とするかどうか
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。
+          additionalProperties:
+            type: string
     AdditionalDataDefinitionV2:
       type: object
       properties:
@@ -2234,6 +2310,12 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/Keybind"
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。
+          additionalProperties:
+            type: string
     AdditionalDataRestriction:
       type: object
       properties:
@@ -2706,6 +2788,20 @@ components:
           $ref: "#/components/schemas/AccountId"
         request:
           $ref: "#/components/schemas/TaskOperation"
+    TaskInputValidation:
+      description: タスクの提出操作に対する入力データID別のバリデーション結果です。
+      type: object
+      properties:
+        input_data_id:
+          $ref: "#/components/schemas/InputDataId"
+        annotation_errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationError"
+        inspection_errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/InspectionValidationError"
     TaskValidation:
       description: タスクの全入力データに対するバリデーション結果です。
       type: object
@@ -4325,6 +4421,67 @@ components:
           type: string
           description: UnknownLabel
           example: "UnknownLabel"
+    InspectionValidationError:
+      oneOf:
+        - $ref: "#/components/schemas/NoCommentInspection"
+        - $ref: "#/components/schemas/ReplyRequired"
+        - $ref: "#/components/schemas/ActionRequired"
+        - $ref: "#/components/schemas/InspectionOrReplyRequired"
+        - $ref: "#/components/schemas/IllegalState"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          NoCommentInspection: "#/components/schemas/NoCommentInspection"
+          ReplyRequired: "#/components/schemas/ReplyRequired"
+          ActionRequired: "#/components/schemas/ActionRequired"
+          InspectionOrReplyRequired: "#/components/schemas/InspectionOrReplyRequired"
+          IllegalState: "#/components/schemas/IllegalState"
+    NoCommentInspection:
+      type: object
+      description: 空の検査コメントがある時のエラー
+      properties:
+        inspection:
+          $ref: "#/components/schemas/Inspection"
+        _type:
+          type: string
+          description: NoCommentInspection
+          example: "NoCommentInspection"
+    ReplyRequired:
+      type: object
+      description: 返信が必要な検査コメントが残っている時のエラー
+      properties:
+        inspection:
+          $ref: "#/components/schemas/Inspection"
+        _type:
+          type: string
+          description: ReplyRequired
+          example: "ReplyRequired"
+    ActionRequired:
+      type: object
+      description: 対応が必要な検査コメントが残っている時のエラー
+      properties:
+        inspection:
+          $ref: "#/components/schemas/Inspection"
+        _type:
+          type: string
+          description: ActionRequired
+          example: "ActionRequired"
+    InspectionOrReplyRequired:
+      type: object
+      description: 新規検査コメントまたは未対応検査コメントへの返信が必要である時のエラー
+      properties:
+        _type:
+          type: string
+          description: InspectionOrReplyRequired
+          example: "InspectionOrReplyRequired"
+    IllegalState:
+      type: object
+      description: 作業が開始されていない、担当が割り当たっていない等のエラー
+      properties:
+        _type:
+          type: string
+          description: IllegalState
+          example: "IllegalState"
     ProjectTaskCounts:
       type: object
       properties:
@@ -4340,13 +4497,18 @@ components:
               count:
                 description: 該当するタスクの数
                 type: number
+    TemporaryUrlString:
+      type: string
+      description: |
+        このURLは発行から1時間経過すると無効になります。
+        URLを構成するドメイン、パス、クエリパラメータなどが変更になることがあります。
+      example: "https://.."
     TemporaryUrl:
       type: object
       description: 認証済み一時URL
       properties:
         url:
-          type: string
-          description: 認証済み一時URL
+          $ref: "#/components/schemas/TemporaryUrlString"
     AnnotationList:
       type: object
       properties:

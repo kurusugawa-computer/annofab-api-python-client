@@ -107,8 +107,8 @@ service = build_from_env()
 `.netrc`、環境変数の順に認証情報を読み込みます。
 
 ```python
-from annofabapi import build_from_netrc_or_env
-service = build_from_netrc_or_env()
+from annofabapi import build
+service = build()
 ```
 
 

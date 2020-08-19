@@ -225,6 +225,19 @@ Kyes of Dict
 
 """
 
+ActionRequired = Dict[str, Any]
+"""
+対応が必要な検査コメントが残っている時のエラー
+
+Kyes of Dict
+
+* inspection: Inspection
+    
+* type: str
+    ActionRequired
+
+"""
+
 AdditionalData = Dict[str, Any]
 """
 
@@ -308,6 +321,8 @@ Kyes of Dict
     リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）
 * required: bool
     リンク属性において、入力を必須とするかどうか
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 
 """
 
@@ -346,6 +361,8 @@ Kyes of Dict
     
 * choices: List[AdditionalDataDefinitionV1Choices]
     
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 
 """
 
@@ -730,6 +747,8 @@ Kyes of Dict
     アノテーション仕様の最終更新時刻 
 * option: AnnotationSpecsOption
     
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 * additionals: List[AdditionalDataDefinitionV2]
     
 * restrictions: List[AdditionalDataRestriction]
@@ -798,6 +817,8 @@ Kyes of Dict
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * option: AnnotationSpecsOption
     
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 * additionals: List[AdditionalDataDefinitionV2]
     
 * restrictions: List[AdditionalDataRestriction]
@@ -825,6 +846,8 @@ Kyes of Dict
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * option: AnnotationSpecsOption
     
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 
 """
 
@@ -852,6 +875,8 @@ Kyes of Dict
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * option: AnnotationSpecsOption
     
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 
 """
 
@@ -871,6 +896,8 @@ Kyes of Dict
     アノテーション仕様の最終更新時刻 
 * option: AnnotationSpecsOption
     
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 
 """
 
@@ -896,6 +923,8 @@ Kyes of Dict
     アノテーション仕様の最終更新時刻 
 * option: AnnotationSpecsOption
     
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 
 """
 
@@ -1615,6 +1644,17 @@ Kyes of Dict
 
 """
 
+IllegalState = Dict[str, Any]
+"""
+作業が開始されていない、担当が割り当たっていない等のエラー
+
+Kyes of Dict
+
+* type: str
+    IllegalState
+
+"""
+
 InputData = Dict[str, Any]
 """
 入力データの情報を表すデータ構造です。
@@ -1902,6 +1942,17 @@ Kyes of Dict
 
 """
 
+InspectionOrReplyRequired = Dict[str, Any]
+"""
+新規検査コメントまたは未対応検査コメントへの返信が必要である時のエラー
+
+Kyes of Dict
+
+* type: str
+    InspectionOrReplyRequired
+
+"""
+
 InspectionPhrase = Dict[str, Any]
 """
 
@@ -1980,6 +2031,19 @@ class InspectionSummary(Enum):
     UNPROCESSED = "unprocessed"
     COMPLETE = "complete"
 
+
+InspectionValidationError = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* inspection: Inspection
+    
+* type: str
+    IllegalState
+
+"""
 
 Instruction = Dict[str, Any]
 """
@@ -2274,6 +2338,8 @@ Kyes of Dict
     
 * allow_out_of_image_bounds: bool
     
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 
 """
 
@@ -2345,6 +2411,8 @@ Kyes of Dict
     
 * allow_out_of_image_bounds: bool
     
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 
 """
 
@@ -2531,6 +2599,19 @@ Kyes of Dict
     検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
     [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
+
+"""
+
+NoCommentInspection = Dict[str, Any]
+"""
+空の検査コメントがある時のエラー
+
+Kyes of Dict
+
+* inspection: Inspection
+    
+* type: str
+    NoCommentInspection
 
 """
 
@@ -3483,6 +3564,19 @@ Kyes of Dict
 
 """
 
+ReplyRequired = Dict[str, Any]
+"""
+返信が必要な検査コメントが残っている時のエラー
+
+Kyes of Dict
+
+* inspection: Inspection
+    
+* type: str
+    ReplyRequired
+
+"""
+
 ResetEmailRequest = Dict[str, Any]
 """
 
@@ -4028,6 +4122,21 @@ Kyes of Dict
 
 """
 
+TaskInputValidation = Dict[str, Any]
+"""
+タスクの提出操作に対する入力データID別のバリデーション結果です。
+
+Kyes of Dict
+
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* annotation_errors: List[ValidationError]
+    
+* inspection_errors: List[InspectionValidationError]
+    
+
+"""
+
 TaskList = Dict[str, Any]
 """
 
@@ -4151,7 +4260,7 @@ TemporaryUrl = Dict[str, Any]
 Kyes of Dict
 
 * url: str
-    認証済み一時URL
+    このURLは発行から1時間経過すると無効になります。 URLを構成するドメイン、パス、クエリパラメータなどが変更になることがあります。 
 
 """
 
