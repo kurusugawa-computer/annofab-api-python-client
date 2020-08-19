@@ -1,5 +1,5 @@
 {
-  "project_id": "12345678-abcd-1234-abcd-1234abcd5678",
+  "project_id": "1186bb00-16e6-4d20-8e24-310322911850",
   "labels": [
     {
       "label_id": "15ba7932-24b9-4cf3-95bd-9bf6deede4fa",
@@ -7,7 +7,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "ネコ"
+            "message": "\u30cd\u30b3"
           },
           {
             "lang": "en-US",
@@ -44,7 +44,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "隠れ"
+                "message": "\u96a0\u308c"
               },
               {
                 "lang": "en-US",
@@ -66,7 +66,8 @@
           "choices": [],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "51e8c91f-5de1-450b-a0f3-94fec582f5ce",
@@ -75,7 +76,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "目のリンク"
+                "message": "\u76ee\u306e\u30ea\u30f3\u30af"
               },
               {
                 "lang": "en-US",
@@ -92,7 +93,8 @@
           "required": null,
           "label_ids": [
             "f50aa88d-36c7-43f5-8728-247a49b4f4d8"
-          ]
+          ],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "aff2855e-2e3d-47a2-8c27-c7652e4dfb2f",
@@ -101,7 +103,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "体重"
+                "message": "\u4f53\u91cd"
               },
               {
                 "lang": "en-US",
@@ -116,7 +118,8 @@
           "choices": [],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "7e6a577a-3410-4c8a-9624-2904bb2e6666",
@@ -125,7 +128,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "名前"
+                "message": "\u540d\u524d"
               },
               {
                 "lang": "en-US",
@@ -140,7 +143,8 @@
           "choices": [],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "a63a0513-a96e-4c7c-8754-88a24fef9ca9",
@@ -149,7 +153,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "備考"
+                "message": "\u5099\u8003"
               },
               {
                 "lang": "en-US",
@@ -164,7 +168,8 @@
           "choices": [],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "649abf45-1ed7-459a-8282-a58228e9a302",
@@ -188,7 +193,8 @@
           "choices": [],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         }
       ],
       "color": {
@@ -204,7 +210,8 @@
         "polygon_fill": false,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "c754f724-5f8c-48eb-81ec-ea77e55efee7",
@@ -212,7 +219,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "足"
+            "message": "\u8db3"
           },
           {
             "lang": "en-US",
@@ -255,7 +262,8 @@
         "polygon_fill": false,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "f50aa88d-36c7-43f5-8728-247a49b4f4d8",
@@ -263,7 +271,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "目"
+            "message": "\u76ee"
           },
           {
             "lang": "en-US",
@@ -290,7 +298,8 @@
         "polygon_fill": false,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "108ce1f7-217b-43e9-a407-8d0ac6aad87e",
@@ -298,7 +307,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "犬"
+            "message": "\u72ac"
           },
           {
             "lang": "en-US",
@@ -325,7 +334,8 @@
         "polygon_fill": true,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "2ffb4c74-106b-44ac-81ce-3c3df77518e0",
@@ -333,7 +343,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "人間"
+            "message": "\u4eba\u9593"
           },
           {
             "lang": "en-US",
@@ -365,7 +375,8 @@
         "polygon_fill": true,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "ded52dcb-bcd6-4e77-9626-61e546f635d0",
@@ -373,7 +384,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "鳥"
+            "message": "\u9ce5"
           },
           {
             "lang": "en-US",
@@ -409,7 +420,8 @@
         "polygon_fill": false,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "5ac0d7d5-6738-4c4b-a69a-cd583ff458e1",
@@ -417,7 +429,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "気候"
+            "message": "\u6c17\u5019"
           },
           {
             "lang": "en-US",
@@ -438,7 +450,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "天気"
+                "message": "\u5929\u6c17"
               },
               {
                 "lang": "en-US",
@@ -457,7 +469,7 @@
                 "messages": [
                   {
                     "lang": "ja-JP",
-                    "message": "晴"
+                    "message": "\u6674"
                   },
                   {
                     "lang": "en-US",
@@ -474,7 +486,7 @@
                 "messages": [
                   {
                     "lang": "ja-JP",
-                    "message": "雨"
+                    "message": "\u96e8"
                   },
                   {
                     "lang": "en-US",
@@ -488,7 +500,8 @@
           ],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "60caffa5-6300-4819-9a99-c43ce49008c2",
@@ -497,7 +510,7 @@
             "messages": [
               {
                 "lang": "ja-JP",
-                "message": "気温"
+                "message": "\u6c17\u6e29"
               },
               {
                 "lang": "en-US",
@@ -581,7 +594,8 @@
           ],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         }
       ],
       "color": {
@@ -597,7 +611,8 @@
         "polygon_fill": false,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     }
   ],
   "inspection_phrases": [
@@ -607,7 +622,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "ラベル間違い"
+            "message": "\u30e9\u30d9\u30eb\u9593\u9055\u3044"
           },
           {
             "lang": "en-US",
@@ -623,7 +638,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "見落とし"
+            "message": "\u898b\u843d\u3068\u3057"
           },
           {
             "lang": "en-US",
@@ -639,7 +654,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "見間違い"
+            "message": "\u898b\u9593\u9055\u3044"
           },
           {
             "lang": "en-US",
@@ -655,7 +670,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "属性間違い"
+            "message": "\u5c5e\u6027\u9593\u9055\u3044"
           },
           {
             "lang": "en-US",
@@ -671,7 +686,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "大き過ぎる"
+            "message": "\u5927\u304d\u904e\u304e\u308b"
           },
           {
             "lang": "en-US",
@@ -687,7 +702,7 @@
         "messages": [
           {
             "lang": "ja-JP",
-            "message": "小さ過ぎる"
+            "message": "\u5c0f\u3055\u904e\u304e\u308b"
           },
           {
             "lang": "en-US",
@@ -698,9 +713,7 @@
       }
     }
   ],
-  "updated_datetime": "2020-08-14T09:47:41.331+09:00",
-  "option": {
-    "can_overwrap": true
-  },
+  "updated_datetime": null,
+  "option": null,
   "metadata": {}
 }
