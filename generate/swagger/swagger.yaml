@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.93.0
+  version: 0.94.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -322,6 +322,52 @@ tags:
     # AnnotationQuery
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/AnnotationQuery" />
 
+    # ArrayOfProjectTaskStatisticsHistory
+
+    日付ごと、タスクフェーズごと、タスクステータスごとに以下の項目を集計したデータです。
+    * タスク数
+    * 累計作業時間
+
+    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfProjectTaskStatisticsHistory" />
+
+    # ArrayOfProjectAccountStatistics
+
+    ユーザごと、日ごとに以下の項目を集計したデータです。
+    * 教師付フェーズのタスクを提出した回数、または検査/受入フェーズのタスクを合格/差戻にした回数
+    * 教師付フェーズを担当して提出したタスクが差し戻された回数、または受入フェーズを担当して合格にしたタスクが受入完了状態を取り消された回数
+    * 作業時間
+
+    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfProjectAccountStatistics" />
+
+    # ArrayOfInspectionStatistics
+
+    ラベルごと、定型指摘ごとに検査コメント数を集計したデータです。
+
+    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfInspectionStatistics" />
+
+    # ArrayOfTaskPhaseStatistics
+
+    日ごと、フェーズごとに以下の項目を集計したデータです。
+    * 累積作業時間
+
+    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfTaskPhaseStatistics" />
+
+    # ArrayOfLabelStatistics
+
+    アノテーションラベルごとに以下の項目を集計したデータです。
+    * 受入が完了したアノテーション数
+    * 受入が完了していないアノテーション数
+
+    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfLabelStatistics" />
+
+    # ArrayOfWorktimeStatistics
+
+    単位当たり（タスク1個、画像1個、動画1分）の作業時間情報を集計したデータです。
+
+    ヒストグラムは、最終日の `by_tasks`、`by_inputs` のみ格納されます。
+    アカウント毎の集計の `by_tasks`、`by_inputs` には、最終日であってもヒストグラムは格納されません。
+
+    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfWorktimeStatistics" />
 x-tagGroups:
   - name: API
     tags:
@@ -1956,18 +2002,8 @@ paths:
           schema:
             $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/TemporaryUrl"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -2035,18 +2071,8 @@ paths:
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/TemporaryUrl"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -2125,18 +2151,8 @@ paths:
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              required: true
-              description: 認証済み一時URL
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/TemporaryUrl"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -2167,18 +2183,8 @@ paths:
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              required: true
-              description: 認証済み一時URL
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/TemporaryUrl"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -2208,18 +2214,8 @@ paths:
           schema:
             $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              required: true
-              description: 認証済み一時URL
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/TemporaryUrl"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -2378,9 +2374,7 @@ paths:
       - af-statistics
       summary: タスク集計取得
       description: |
-        日ごと、タスクフェーズごと、タスクステータスごとに集計した以下のデータを取得します。
-        * タスク数
-        * 累計作業時間
+        [タスク集計データ](#section/ArrayOfProjectTaskStatisticsHistory) を取得するための認証済み一時URLを取得します。
       security:
       - AllProjectMember: []
       operationId: getTaskStatistics
@@ -2392,20 +2386,8 @@ paths:
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/ProjectTaskStatisticsHistory"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -2418,10 +2400,7 @@ paths:
       - af-statistics
       summary: ユーザー別タスク集計取得
       description: |
-        ユーザごと、日ごとに集計した以下のデータを取得します。
-        * 教師付フェーズのタスクを提出した回数、または検査/受入フェーズのタスクを合格/差戻にした回数
-        * 教師付フェーズを担当して提出したタスクが差し戻された回数、または受入フェーズを担当して合格にしたタスクが受入完了状態を取り消された回数
-        * 作業時間
+        [ユーザー別タスク集計データ](#section/ArrayOfProjectAccountStatistics) を取得するための認証済み一時URLを取得します。
       security:
       - AllProjectMember: []
       operationId: getAccountStatistics
@@ -2433,20 +2412,8 @@ paths:
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/ProjectAccountStatistics"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -2459,7 +2426,7 @@ paths:
       - af-statistics
       summary: 検査コメント集計取得
       description: |
-        ラベルごと、定型指摘ごとに集計した検査コメント数を取得します。
+        [検査コメント集計データ](#section/ArrayOfInspectionStatistics) を取得するための認証済み一時URLを取得します。
       security:
       - AllProjectMember: []
       operationId: getInspectionStatistics
@@ -2471,20 +2438,8 @@ paths:
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/InspectionStatistics"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -2497,8 +2452,7 @@ paths:
       - af-statistics
       summary: フェーズ別タスク集計取得
       description: |
-        日ごと、フェーズごとに集計した以下のデータを取得します。
-        * 累積作業時間
+        [フェーズ別タスク集計データ](#section/ArrayOfTaskPhaseStatistics) を取得するための認証済み一時URLを取得します。
       security:
       - AllProjectMember: []
       operationId: getTaskPhaseStatistics
@@ -2510,20 +2464,8 @@ paths:
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/TaskPhaseStatistics"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -2536,9 +2478,7 @@ paths:
       - af-statistics
       summary: ラベル別アノテーション数集計取得
       description: |
-        ラベルごとの以下集計データを取得します。
-        * 受入が完了したアノテーション数
-        * 受入が完了していないアノテーション数
+        [ラベル別アノテーション数集計データ](#section/ArrayOfLabelStatistics) を取得するための認証済み一時URLを取得します。
       security:
       - AllProjectMember: []
       operationId: getLabelStatistics
@@ -2550,20 +2490,8 @@ paths:
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/LabelStatistics"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -2576,10 +2504,7 @@ paths:
       - af-statistics
       summary: タスク作業時間集計取得
       description: |
-        単位当たり（タスク1個、画像1個、動画1分）の作業時間情報が格納されたファイルに対して、認証済み一時URLを取得します。認証済み一時URLはLocationヘッダに格納されています。
-
-        ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。
-        アカウント毎の集計のby_tasks、by_inputsには、最終日であってもヒストグラムを返却しない。
+        [タスク作業時間集計データ](#section/ArrayOfWorktimeStatistics) を取得するための認証済み一時URLを取得します。
       security:
       - AllProjectMember: []
       operationId: getWorktimeStatistics
@@ -2591,19 +2516,8 @@ paths:
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/WorktimeStatistics"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -3262,10 +3176,12 @@ paths:
           type: string
       - name: annotation
         in: query
-        description: アノテーションの絞り込み条件をJSON形式で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
+        description: |
+          アノテーションの絞り込み条件をJSON形式([AnnotationQuery](#section/AnnotationQuery))で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
         required: false
+        example: '{"label_id":"b048c6b3-b36f-4c8d-97ea-96828a50a44c"}'
         schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/AnnotationQuery"
+          type: string
       responses:
         "200":
           description: 指定された条件にあてはまるタスクを返します。条件にあてはまるタスクが多数に及ぶことがあるので、すべての結果を得るにはページングしてください。
@@ -4180,17 +4096,8 @@ paths:
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/TemporaryUrl"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -4220,17 +4127,8 @@ paths:
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/TemporaryUrl"
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
