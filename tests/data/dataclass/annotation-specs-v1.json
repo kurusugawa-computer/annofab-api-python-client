@@ -66,7 +66,8 @@
           "choices": [],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "51e8c91f-5de1-450b-a0f3-94fec582f5ce",
@@ -92,7 +93,8 @@
           "required": null,
           "label_ids": [
             "f50aa88d-36c7-43f5-8728-247a49b4f4d8"
-          ]
+          ],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "aff2855e-2e3d-47a2-8c27-c7652e4dfb2f",
@@ -116,7 +118,8 @@
           "choices": [],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "7e6a577a-3410-4c8a-9624-2904bb2e6666",
@@ -140,7 +143,8 @@
           "choices": [],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "a63a0513-a96e-4c7c-8754-88a24fef9ca9",
@@ -164,7 +168,8 @@
           "choices": [],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "649abf45-1ed7-459a-8282-a58228e9a302",
@@ -188,7 +193,8 @@
           "choices": [],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         }
       ],
       "color": {
@@ -204,7 +210,8 @@
         "polygon_fill": false,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "c754f724-5f8c-48eb-81ec-ea77e55efee7",
@@ -255,7 +262,8 @@
         "polygon_fill": false,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "f50aa88d-36c7-43f5-8728-247a49b4f4d8",
@@ -290,7 +298,8 @@
         "polygon_fill": false,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "108ce1f7-217b-43e9-a407-8d0ac6aad87e",
@@ -325,7 +334,8 @@
         "polygon_fill": true,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "2ffb4c74-106b-44ac-81ce-3c3df77518e0",
@@ -365,7 +375,8 @@
         "polygon_fill": true,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "ded52dcb-bcd6-4e77-9626-61e546f635d0",
@@ -409,7 +420,8 @@
         "polygon_fill": false,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     },
     {
       "label_id": "5ac0d7d5-6738-4c4b-a69a-cd583ff458e1",
@@ -488,7 +500,8 @@
           ],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         },
         {
           "additional_data_definition_id": "60caffa5-6300-4819-9a99-c43ce49008c2",
@@ -581,7 +594,8 @@
           ],
           "regex": null,
           "required": null,
-          "label_ids": []
+          "label_ids": [],
+          "metadata": {}
         }
       ],
       "color": {
@@ -597,7 +611,8 @@
         "polygon_fill": false,
         "fill_near": false
       },
-      "allow_out_of_image_bounds": false
+      "allow_out_of_image_bounds": false,
+      "metadata": {}
     }
   ],
   "inspection_phrases": [
@@ -698,6 +713,9 @@
       }
     }
   ],
-  "updated_datetime": "2019-08-22T14:10:14.758+09:00",
-  "option": null
+  "updated_datetime": "2020-08-14T09:47:41.331+09:00",
+  "option": {
+    "can_overwrap": true
+  },
+  "metadata": {}
 }
