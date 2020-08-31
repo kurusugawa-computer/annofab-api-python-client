@@ -543,6 +543,7 @@ class Wrapper:
             "updated_datetime": updated_datetime,
         }
         self.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)
+        return None
 
     #########################################
     # Public Method : AnnotationSpecs
