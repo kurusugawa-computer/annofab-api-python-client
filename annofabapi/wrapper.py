@@ -8,6 +8,7 @@ import urllib.parse
 import uuid
 import warnings
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 import requests
@@ -15,8 +16,13 @@ import requests
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (
+    AdditionalData,
+    AdditionalDataDefinitionType,
+    AdditionalDataDefinitionV1,
     AnnotationDataHoldingType,
+    AnnotationDetail,
     AnnotationSpecsV1,
+    FullAnnotationData,
     InputData,
     Inspection,
     InspectionStatus,
@@ -24,14 +30,17 @@ from annofabapi.models import (
     JobInfo,
     JobStatus,
     JobType,
+    LabelV1,
     MyOrganization,
     Organization,
     OrganizationMember,
     Project,
     ProjectMember,
+    SimpleAnnotationDetail,
     SupplementaryData,
     Task,
 )
+from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
 from annofabapi.utils import _download, _log_error_response, _raise_for_status, allow_404_error, str_now
 
 logger = logging.getLogger(__name__)
@@ -273,7 +282,6 @@ class Wrapper:
         """
         dest_detail = detail
         dest_detail["account_id"] = account_id
-
         if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
             outer_file_url = detail["url"]
             src_response = self.api.session.get(outer_file_url)
@@ -358,6 +366,184 @@ class Wrapper:
         request_body["updated_datetime"] = updated_datetime
         self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
         return True
+
+    def __get_label_info_from_label_name(
+        self, label_name: str, annotation_specs_labels: List[LabelV1]
+    ) -> Optional[LabelV1]:
+        for label in annotation_specs_labels:
+            if self.__get_label_name_en(label) == label_name:
+                return label
+        return None
+
+    def __get_additional_data_from_attribute_name(
+        self, attribute_name: str, label_info: LabelV1
+    ) -> Optional[AdditionalDataDefinitionV1]:
+        for additional_data in label_info["additional_data_definitions"]:
+            if self.__get_additional_data_definition_name_en(additional_data) == attribute_name:
+                return additional_data
+
+        return None
+
+    def _get_choice_id_from_name(self, name: str, choices: List[Dict[str, Any]]) -> Optional[str]:
+        choice_info = _first_true(choices, pred=lambda e: self.__get_choice_name_en(e) == name)
+        if choice_info is not None:
+            return choice_info["choice_id"]
+        else:
+            return None
+
+    @staticmethod
+    def __get_data_holding_type_from_data(data: FullAnnotationData) -> str:
+        if data["_type"] in ["Segmentation", "SegmentationV2"]:
+            return AnnotationDataHoldingType.OUTER.value
+        else:
+            return AnnotationDataHoldingType.INNER.value
+
+    @staticmethod
+    def _create_annotation_id(data: FullAnnotationData, label_id: str) -> str:
+        if data["_type"] == "Classification":
+            return label_id
+        else:
+            return str(uuid.uuid4())
+
+    def __to_additional_data_list(self, attributes: Dict[str, Any], label_info: LabelV1) -> List[AdditionalData]:
+        additional_data_list: List[AdditionalData] = []
+        for key, value in attributes.items():
+            specs_additional_data = self.__get_additional_data_from_attribute_name(key, label_info)
+            if specs_additional_data is None:
+                logger.warning(f"アノテーション仕様に attribute_name='{key}' の属性が存在しません。")
+                continue
+
+            additional_data = dict(
+                additional_data_definition_id=specs_additional_data["additional_data_definition_id"],
+                flag=None,
+                integer=None,
+                choice=None,
+                comment=None,
+            )
+            additional_data_type = specs_additional_data["type"]
+            if additional_data_type == AdditionalDataDefinitionType.FLAG.value:
+                additional_data["flag"] = value
+            elif additional_data_type == AdditionalDataDefinitionType.INTEGER.value:
+                additional_data["integer"] = value
+            elif additional_data_type in [
+                AdditionalDataDefinitionType.TEXT.value,
+                AdditionalDataDefinitionType.COMMENT.value,
+                AdditionalDataDefinitionType.TRACKING.value,
+                AdditionalDataDefinitionType.LINK.value,
+            ]:
+                additional_data["comment"] = value
+            elif additional_data_type in [
+                AdditionalDataDefinitionType.CHOICE.value,
+                AdditionalDataDefinitionType.SELECT.value,
+            ]:
+                additional_data["choice"] = self._get_choice_id_from_name(value, specs_additional_data["choices"])
+            else:
+                logger.warning(f"additional_data_type={additional_data_type}が不正です。")
+                continue
+
+            additional_data_list.append(additional_data)
+
+        return additional_data_list
+
+    def __to_annotation_detail_for_request(
+        self,
+        project_id: str,
+        parser: SimpleAnnotationParser,
+        detail: SimpleAnnotationDetail,
+        annotation_specs_labels: List[LabelV1],
+    ) -> Optional[AnnotationDetail]:
+        """
+        Request Bodyに渡すDataClassに変換する。塗りつぶし画像があれば、それをS3にアップロードする。
+
+        Args:
+            project_id:
+            parser:
+            detail:
+
+        Returns:
+
+        """
+        label_info = self.__get_label_info_from_label_name(detail["label"], annotation_specs_labels)
+        if label_info is None:
+            logger.warning(f"アノテーション仕様に '{detail['label']}' のラベルが存在しません。")
+            return None
+
+        additional_data_list: List[AdditionalData] = self.__to_additional_data_list(detail["attributes"], label_info)
+        data_holding_type = self.__get_data_holding_type_from_data(detail["data"])
+
+        dest_obj = dict(
+            label_id=label_info["label_id"],
+            annotation_id=detail["annotation_id"] if detail["annotation_id"] is not None else str(uuid.uuid4()),
+            account_id=self.api.account_id,
+            data_holding_type=data_holding_type,
+            data=detail["data"],
+            additional_data_list=additional_data_list,
+            is_protected=False,
+            etag=None,
+            url=None,
+            path=None,
+            created_datetime=None,
+            updated_datetime=None,
+        )
+
+        if data_holding_type == AnnotationDataHoldingType.OUTER.value:
+            data_uri = detail["data"]["data_uri"]
+            with parser.open_outer_file(data_uri) as f:
+                s3_path = self.upload_data_to_s3(project_id, f, content_type="image/png")
+                dest_obj["path"] = s3_path
+                logger.debug(f"{parser.task_id}/{parser.input_data_id}/{data_uri} をS3にアップロードしました。")
+
+        return dest_obj
+
+    def put_annotation_for_simple_annotation_json(
+        self,
+        project_id: str,
+        task_id: str,
+        input_data_id: str,
+        simple_annotation_json: str,
+        annotation_specs_labels: List[LabelV1],
+    ) -> None:
+        """
+        AnnoFabからダウンロードしたアノテーションzip配下のJSONと同じフォーマット（Simple Annotation)の内容から、アノテーションを登録する。
+
+        Args:
+            project_id:
+            task_id:
+            input_data_id:
+            simple_annotation_json:
+
+        """
+        parser = SimpleAnnotationDirParser(Path(simple_annotation_json))
+        annotation = parser.load_json()
+
+        details = annotation["details"]
+        if len(details) == 0:
+            logger.warning(f"simple_annotation_json='{simple_annotation_json}'にアノテーション情報は記載されていなかったので、スキップします。")
+            return None
+
+        request_details: List[Dict[str, Any]] = []
+        for detail in details:
+            request_detail = self.__to_annotation_detail_for_request(
+                project_id, parser, detail, annotation_specs_labels
+            )
+            if request_detail is not None:
+                request_details.append(request_detail)
+        if len(request_details) == 0:
+            logger.warning(f"simple_annotation_json='{simple_annotation_json}'に、登録できるアノテーションはなかったので、スキップします。")
+            return None
+
+        old_annotation, _ = self.api.get_editor_annotation(project_id, task_id, input_data_id)
+        updated_datetime = old_annotation["updated_datetime"] if old_annotation is not None else None
+
+        request_body = {
+            "project_id": project_id,
+            "task_id": task_id,
+            "input_data_id": input_data_id,
+            "details": request_details,
+            "updated_datetime": updated_datetime,
+        }
+        self.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)
+        return None
 
     #########################################
     # Public Method : AnnotationSpecs
@@ -1506,8 +1692,8 @@ class Wrapper:
             "organization_id": organization_id,
             "project_id": project_id,
             "account_id": account_id,
-            "from_date": from_date,
-            "to_date": to_date,
+            "from": from_date,
+            "to": to_date,
         }
         labor_list, _ = self.api.get_labor_control(query_params)
         return [_to_new_data(e) for e in labor_list]
