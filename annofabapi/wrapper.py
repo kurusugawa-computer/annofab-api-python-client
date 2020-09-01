@@ -473,7 +473,7 @@ class Wrapper:
 
         dest_obj = dict(
             label_id=label_info["label_id"],
-            annotation_id=detail["annotation_id"] if detail["annotation_id"] is not None else str(uuid.uuid4()),
+            annotation_id=detail["annotation_id"] if detail.get("annotation_id") is not None else str(uuid.uuid4()),
             account_id=self.api.account_id,
             data_holding_type=data_holding_type,
             data=detail["data"],
