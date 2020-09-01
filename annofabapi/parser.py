@@ -184,9 +184,11 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
             return self.__zip_file.open(outer_file_path, mode="r")
-        except KeyError:
+        except KeyError as e:
             # mypyの `error: "ZipFile" has no attribute "filename"` という警告を無視する
-            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename)  # type: ignore
+            raise AnnotationOuterFileNotFoundError(
+                str(outer_file_path), self.__zip_file.filename
+            ) from e  # type: ignore
 
 
 class SimpleAnnotationDirParser(SimpleAnnotationParser):
@@ -218,8 +220,8 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
             return open(outer_file_path, mode="rb")
-        except FileNotFoundError:
-            raise AnnotationOuterFileNotFoundError(str(outer_file_path))
+        except FileNotFoundError as e:
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path)) from e
 
 
 class FullAnnotationZipParser(FullAnnotationParser):
@@ -254,9 +256,11 @@ class FullAnnotationZipParser(FullAnnotationParser):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
             return self.__zip_file.open(outer_file_path, mode="r")
-        except KeyError:
+        except KeyError as e:
             # mypyの `error: "ZipFile" has no attribute "filename"` という警告を無視する
-            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename)  # type: ignore
+            raise AnnotationOuterFileNotFoundError(
+                str(outer_file_path), self.__zip_file.filename
+            ) from e  # type: ignore
 
 
 class FullAnnotationDirParser(FullAnnotationParser):
@@ -287,8 +291,8 @@ class FullAnnotationDirParser(FullAnnotationParser):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
             return open(outer_file_path, mode="rb")
-        except FileNotFoundError:
-            raise AnnotationOuterFileNotFoundError(str(outer_file_path))
+        except FileNotFoundError as e:
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path)) from e
 
 
 class SimpleAnnotationParserByTask(abc.ABC):
