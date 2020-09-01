@@ -502,7 +502,7 @@ class Wrapper:
         input_data_id: str,
         simple_annotation_json: str,
         annotation_specs_labels: List[LabelV1],
-    ) -> None:
+    ) -> bool:
         """
         AnnoFabからダウンロードしたアノテーションzip配下のJSONと同じフォーマット（Simple Annotation)の内容から、アノテーションを登録する。
 
@@ -512,6 +512,8 @@ class Wrapper:
             input_data_id:
             simple_annotation_json:
 
+        Returns:
+            True:アノテーション情報をした。False: 登録するアノテーション情報がなかったため、登録しなかった。
         """
         parser = SimpleAnnotationDirParser(Path(simple_annotation_json))
         annotation = parser.load_json()
@@ -519,7 +521,7 @@ class Wrapper:
         details = annotation["details"]
         if len(details) == 0:
             logger.warning(f"simple_annotation_json='{simple_annotation_json}'にアノテーション情報は記載されていなかったので、スキップします。")
-            return None
+            return False
 
         request_details: List[Dict[str, Any]] = []
         for detail in details:
@@ -530,7 +532,7 @@ class Wrapper:
                 request_details.append(request_detail)
         if len(request_details) == 0:
             logger.warning(f"simple_annotation_json='{simple_annotation_json}'に、登録できるアノテーションはなかったので、スキップします。")
-            return None
+            return False
 
         old_annotation, _ = self.api.get_editor_annotation(project_id, task_id, input_data_id)
         updated_datetime = old_annotation["updated_datetime"] if old_annotation is not None else None
@@ -543,7 +545,7 @@ class Wrapper:
             "updated_datetime": updated_datetime,
         }
         self.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)
-        return None
+        return True
 
     #########################################
     # Public Method : AnnotationSpecs
