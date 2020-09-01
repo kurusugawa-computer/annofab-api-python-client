@@ -211,10 +211,10 @@ def allow_404_error(function):
 def get_task_history_index_skipped_acceptance(task_history_list: List[TaskHistory]) -> List[int]:
     """
     受入がスキップされたタスク履歴のインデックス番号（0始まり）を返す。
-​
+
     Args:
         task_history_list: タスク履歴List
-​
+
     Returns:
         受入フェーズがスキップされた履歴のインデックス番号（0始まり）。受入がスキップされていない場合は空リストを返す。
     """
