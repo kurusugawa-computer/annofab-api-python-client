@@ -39,7 +39,7 @@ pytest-cov = "*"
 # format library
 isort = "*"
 autoflake = "*"
-black = {version = "^19.10b0", allow-prereleases = true}
+black = {version = "^20.8b1", allow-prereleases = true}
 
 # lint library
 flake8 = "*"
