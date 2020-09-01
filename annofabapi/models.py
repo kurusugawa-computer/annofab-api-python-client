@@ -1363,23 +1363,6 @@ Kyes of Dict
 
 """
 
-EmptyAttribute = Dict[str, Any]
-"""
-属性が未入力であるエラー
-
-Kyes of Dict
-
-* label_id: str
-    
-* annotation_id: str
-    
-* additional_data_definition_id: str
-    
-* type: str
-    EmptyAttribute
-
-"""
-
 ErrorItem = Dict[str, Any]
 """
 
@@ -2146,9 +2129,9 @@ Kyes of Dict
 
 """
 
-InvalidCommentFormat = Dict[str, Any]
+InvalidChoice = Dict[str, Any]
 """
-コメントが正規表現に合致しないエラー
+選択肢不正エラー
 
 Kyes of Dict
 
@@ -2159,7 +2142,7 @@ Kyes of Dict
 * additional_data_definition_id: str
     
 * type: str
-    InvalidCommentFormat
+    InvalidChoice
 
 """
 
@@ -2177,6 +2160,23 @@ Kyes of Dict
     
 * type: str
     InvalidLinkTarget
+
+"""
+
+InvalidValue = Dict[str, Any]
+"""
+値制約に合致しないエラー
+
+Kyes of Dict
+
+* label_id: str
+    
+* annotation_id: str
+    
+* additional_data_definition_id: str
+    
+* type: str
+    InvalidValue
 
 """
 
