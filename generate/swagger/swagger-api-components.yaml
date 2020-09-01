@@ -4250,10 +4250,10 @@ components:
       oneOf:
         - $ref: "#/components/schemas/InvalidAnnotationData"
         - $ref: "#/components/schemas/DuplicatedSegmentationV2"
-        - $ref: "#/components/schemas/InvalidCommentFormat"
+        - $ref: "#/components/schemas/InvalidValue"
         - $ref: "#/components/schemas/UnknownLinkTarget"
         - $ref: "#/components/schemas/InvalidLinkTarget"
-        - $ref: "#/components/schemas/EmptyAttribute"
+        - $ref: "#/components/schemas/InvalidChoice"
         - $ref: "#/components/schemas/Duplicated"
         - $ref: "#/components/schemas/UnknownAdditionalData"
         - $ref: "#/components/schemas/OutOfImageBounds"
@@ -4264,10 +4264,10 @@ components:
         mapping:
           InvalidAnnotationData: "#/components/schemas/InvalidAnnotationData"
           DuplicatedSegmentationV2: "#/components/schemas/DuplicatedSegmentationV2"
-          InvalidCommentFormat: "#/components/schemas/InvalidCommentFormat"
+          InvalidValue: "#/components/schemas/InvalidValue"
           UnknownLinkTarget: "#/components/schemas/UnknownLinkTarget"
           InvalidLinkTarget: "#/components/schemas/InvalidLinkTarget"
-          EmptyAttribute: "#/components/schemas/EmptyAttribute"
+          InvalidChoice: "#/components/schemas/InvalidChoice"
           Duplicated: "#/components/schemas/Duplicated"
           UnknownAdditionalData: "#/components/schemas/UnknownAdditionalData"
           OutOfImageBounds: "#/components/schemas/OutOfImageBounds"
@@ -4277,9 +4277,9 @@ components:
       type: object
       description: アノテーションデータ不正エラー
       properties:
-        labelId:
+        label_id:
           type: string
-        annotationId:
+        annotation_id:
           type: string
         message:
           type: string
@@ -4291,9 +4291,9 @@ components:
       type: object
       description: 塗りつぶしv2のラベルに対する1ラベルにつき1アノテーションまでの制約違反エラー
       properties:
-        labelId:
+        label_id:
           type: string
-        annotationIds:
+        annotation_ids:
           type: array
           items:
             type: string
@@ -4301,29 +4301,29 @@ components:
           type: string
           description: DuplicatedSegmentationV2
           example: "DuplicatedSegmentationV2"
-    InvalidCommentFormat:
+    InvalidValue:
       type: object
-      description: コメントが正規表現に合致しないエラー
+      description: 値制約に合致しないエラー
       properties:
-        labelId:
+        label_id:
           type: string
-        annotationId:
+        annotation_id:
           type: string
-        additionalDataDefinitionId:
+        additional_data_definition_id:
           type: string
         _type:
           type: string
-          description: InvalidCommentFormat
-          example: "InvalidCommentFormat"
+          description: InvalidValue
+          example: "InvalidValue"
     UnknownLinkTarget:
       type: object
       description: 指定されたIDに該当するアノテーションが存在しないエラー
       properties:
-        labelId:
+        label_id:
           type: string
-        annotationId:
+        annotation_id:
           type: string
-        additionalDataDefinitionId:
+        additional_data_definition_id:
           type: string
         _type:
           type: string
@@ -4333,39 +4333,39 @@ components:
       type: object
       description: リンク先アノテーションが許可されているラベルでないエラー
       properties:
-        labelId:
+        label_id:
           type: string
-        annotationId:
+        annotation_id:
           type: string
-        additionalDataDefinitionId:
+        additional_data_definition_id:
           type: string
         _type:
           type: string
           description: InvalidLinkTarget
           example: "InvalidLinkTarget"
-    EmptyAttribute:
+    InvalidChoice:
       type: object
-      description: 属性が未入力であるエラー
+      description: 選択肢不正エラー
       properties:
-        labelId:
+        label_id:
           type: string
-        annotationId:
+        annotation_id:
           type: string
-        additionalDataDefinitionId:
+        additional_data_definition_id:
           type: string
         _type:
           type: string
-          description: EmptyAttribute
-          example: "EmptyAttribute"
+          description: InvalidChoice
+          example: "InvalidChoice"
     Duplicated:
       type: object
       description: 値の重複が許可されていない属性の重複エラー
       properties:
-        labelId:
+        label_id:
           type: string
-        annotationId:
+        annotation_id:
           type: string
-        additionalData:
+        additional_data:
           $ref: "#/components/schemas/AdditionalData"
         _type:
           type: string
@@ -4375,11 +4375,11 @@ components:
       type: object
       description: 何らかの原因で、アノテーション仕様にない属性がついているエラー
       properties:
-        labelId:
+        label_id:
           type: string
-        annotationId:
+        annotation_id:
           type: string
-        additionalDataDefinitionId:
+        additional_data_definition_id:
           type: string
         _type:
           type: string
@@ -4389,9 +4389,9 @@ components:
       type: object
       description: 画像範囲外にアノテーションがはみ出しているエラー
       properties:
-        labelId:
+        label_id:
           type: string
-        annotationId:
+        annotation_id:
           type: string
         _type:
           type: string
@@ -4401,9 +4401,9 @@ components:
       type: object
       description: 区間が重複しているアノテーションが存在している場合に発生するエラー
       properties:
-        labelId:
+        label_id:
           type: string
-        annotationId:
+        annotation_id:
           type: string
         _type:
           type: string
@@ -4413,9 +4413,9 @@ components:
       type: object
       description: 何らかの原因で、アノテーション仕様にないラベルがついているエラー
       properties:
-        labelId:
+        label_id:
           type: string
-        annotationId:
+        annotation_id:
           type: string
         _type:
           type: string
