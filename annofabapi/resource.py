@@ -87,7 +87,7 @@ def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     try:
         netrc_hosts = netrc.netrc().hosts
     except FileNotFoundError as e:
-        raise AnnofabApiException(e)
+        raise AnnofabApiException(e) from e
 
     annofab_hostname = (urlparse(endpoint_url)).hostname
 
