@@ -6,7 +6,7 @@ init:
 
 format:
 	poetry run autoflake  --in-place --remove-all-unused-imports  --ignore-init-module-imports --recursive annofabapi tests
-	poetry run isort --verbose --recursive annofabapi tests
+	poetry run isort --verbose  annofabapi tests
 	poetry run black annofabapi tests
 
 lint:
