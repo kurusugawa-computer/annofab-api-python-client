@@ -21,9 +21,7 @@ from annofabapi.models import ProjectMemberRole, ProjectMemberStatus
 @dataclass_json
 @dataclass
 class ProjectMember:
-    """
-    
-    """
+    """"""
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

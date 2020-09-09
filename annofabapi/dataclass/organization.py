@@ -21,9 +21,7 @@ from annofabapi.models import PricePlan
 @dataclass_json
 @dataclass
 class OrganizationActivity:
-    """
-    
-    """
+    """"""
 
     organization_id: str
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -38,9 +36,7 @@ class OrganizationActivity:
 @dataclass_json
 @dataclass
 class Organization:
-    """
-    
-    """
+    """"""
 
     organization_id: str
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

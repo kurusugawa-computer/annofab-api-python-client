@@ -21,9 +21,7 @@ SystemMetadata = Dict[str, Any]
 @dataclass_json
 @dataclass
 class Resolution:
-    """
-    
-    """
+    """"""
 
     width: float
     """"""

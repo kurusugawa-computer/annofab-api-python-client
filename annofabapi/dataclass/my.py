@@ -21,9 +21,7 @@ from annofabapi.models import AccountAuthority, OrganizationMemberRole, Organiza
 @dataclass_json
 @dataclass
 class MyOrganization:
-    """
-    
-    """
+    """"""
 
     organization_id: Optional[str]
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -56,9 +54,7 @@ class MyOrganization:
 @dataclass_json
 @dataclass
 class MyAccount:
-    """
-    
-    """
+    """"""
 
     account_id: str
     """"""

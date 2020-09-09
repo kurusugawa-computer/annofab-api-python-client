@@ -21,9 +21,7 @@ from annofabapi.models import GraphType, TaskPhase, TaskStatus
 @dataclass_json
 @dataclass
 class ProjectTaskStatistics:
-    """
-    
-    """
+    """"""
 
     phase: TaskPhase
     """"""
@@ -41,9 +39,7 @@ class ProjectTaskStatistics:
 @dataclass_json
 @dataclass
 class ProjectTaskStatisticsHistory:
-    """
-    
-    """
+    """"""
 
     date: Optional[str]
     """"""
@@ -55,9 +51,7 @@ class ProjectTaskStatisticsHistory:
 @dataclass_json
 @dataclass
 class ProjectAccountStatisticsHistory:
-    """
-    
-    """
+    """"""
 
     date: str
     """"""
@@ -75,9 +69,7 @@ class ProjectAccountStatisticsHistory:
 @dataclass_json
 @dataclass
 class ProjectAccountStatistics:
-    """
-    
-    """
+    """"""
 
     account_id: str
     """"""
@@ -117,9 +109,7 @@ class InspectionStatisticsBreakdown:
 @dataclass_json
 @dataclass
 class InspectionStatistics:
-    """
-    
-    """
+    """"""
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -134,9 +124,7 @@ class InspectionStatistics:
 @dataclass_json
 @dataclass
 class PhaseStatistics:
-    """
-    
-    """
+    """"""
 
     phase: TaskPhase
     """"""
@@ -148,9 +136,7 @@ class PhaseStatistics:
 @dataclass_json
 @dataclass
 class TaskPhaseStatistics:
-    """
-    
-    """
+    """"""
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -165,9 +151,7 @@ class TaskPhaseStatistics:
 @dataclass_json
 @dataclass
 class LabelStatistics:
-    """
-    
-    """
+    """"""
 
     label_id: str
     """"""
@@ -182,9 +166,7 @@ class LabelStatistics:
 @dataclass_json
 @dataclass
 class HistogramItem:
-    """
-    
-    """
+    """"""
 
     begin: float
     """"""
@@ -199,9 +181,7 @@ class HistogramItem:
 @dataclass_json
 @dataclass
 class WorktimeStatisticsItem:
-    """
-    
-    """
+    """"""
 
     phase: TaskPhase
     """"""
@@ -219,9 +199,7 @@ class WorktimeStatisticsItem:
 @dataclass_json
 @dataclass
 class AccountWorktimeStatistics:
-    """
-    
-    """
+    """"""
 
     account_id: str
     """"""
@@ -239,9 +217,7 @@ class AccountWorktimeStatistics:
 @dataclass_json
 @dataclass
 class WorktimeStatistics:
-    """
-    
-    """
+    """"""
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -265,9 +241,7 @@ class WorktimeStatistics:
 @dataclass_json
 @dataclass
 class Marker:
-    """
-    
-    """
+    """"""
 
     marker_id: Optional[str]
     """マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -285,9 +259,7 @@ class Marker:
 @dataclass_json
 @dataclass
 class Markers:
-    """
-    
-    """
+    """"""
 
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

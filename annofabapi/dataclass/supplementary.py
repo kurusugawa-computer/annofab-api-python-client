@@ -21,9 +21,7 @@ from annofabapi.models import SupplementaryDataType
 @dataclass_json
 @dataclass
 class SupplementaryData:
-    """
-    
-    """
+    """"""
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

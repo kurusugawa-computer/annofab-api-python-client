@@ -76,9 +76,7 @@ class TaskHistoryShort:
 @dataclass_json
 @dataclass
 class Task:
-    """
-    
-    """
+    """"""
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

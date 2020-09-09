@@ -27,9 +27,7 @@ AnnotationSpecsOption = Dict[str, Any]
 @dataclass_json
 @dataclass
 class Keybind:
-    """
-    
-    """
+    """"""
 
     code: Optional[str]
     """"""
@@ -48,7 +46,7 @@ class Keybind:
 @dataclass
 class PositionForMinimumBoundingBoxInsertion:
     """
-    `annotation_type` が `bounding_box` かつ `min_warn_rule` が `and` または `or` の場合のみ、挿入する最小矩形アノテーションの原点を指定できます。 画像左上の座標が「x=0, y=0」です。 未指定、もしくは「画像外に飛び出たアノテーション」を許可していないにも関わらず飛び出してしまう場合は、表示範囲の中央に挿入されます。 「スキャンした帳票の記入欄」や「定点カメラで撮影した製品ラベル」など、アノテーションしたい位置やサイズが多くの画像で共通している場合に便利です。  `annotation_type` が `bounding_box` 以外の場合は必ず未指定となります。 
+    `annotation_type` が `bounding_box` かつ `min_warn_rule` が `and` または `or` の場合のみ、挿入する最小矩形アノテーションの原点を指定できます。 画像左上の座標が「x=0, y=0」です。 未指定、もしくは「画像外に飛び出たアノテーション」を許可していないにも関わらず飛び出してしまう場合は、表示範囲の中央に挿入されます。 「スキャンした帳票の記入欄」や「定点カメラで撮影した製品ラベル」など、アノテーションしたい位置やサイズが多くの画像で共通している場合に便利です。  `annotation_type` が `bounding_box` 以外の場合は必ず未指定となります。
     """
 
     x: int
@@ -61,9 +59,7 @@ class PositionForMinimumBoundingBoxInsertion:
 @dataclass_json
 @dataclass
 class LabelV1BoundingBoxMetadata:
-    """
-    
-    """
+    """"""
 
     min_width: Optional[int]
     """"""
@@ -93,9 +89,7 @@ class LabelV1BoundingBoxMetadata:
 @dataclass_json
 @dataclass
 class LabelV1SegmentationMetadata:
-    """
-    
-    """
+    """"""
 
     min_width: Optional[int]
     """"""
@@ -113,9 +107,7 @@ class LabelV1SegmentationMetadata:
 @dataclass_json
 @dataclass
 class InternationalizationMessageMessages:
-    """
-    
-    """
+    """"""
 
     lang: Optional[str]
     """"""
@@ -127,9 +119,7 @@ class InternationalizationMessageMessages:
 @dataclass_json
 @dataclass
 class InternationalizationMessage:
-    """
-    
-    """
+    """"""
 
     messages: Optional[List[InternationalizationMessageMessages]]
     """"""
@@ -141,9 +131,7 @@ class InternationalizationMessage:
 @dataclass_json
 @dataclass
 class InspectionPhrase:
-    """
-    
-    """
+    """"""
 
     id: Optional[str]
     """"""
@@ -155,9 +143,7 @@ class InspectionPhrase:
 @dataclass_json
 @dataclass
 class AnnotationSpecsHistory:
-    """
-    
-    """
+    """"""
 
     history_id: Optional[str]
     """"""
@@ -181,9 +167,7 @@ class AnnotationSpecsHistory:
 @dataclass_json
 @dataclass
 class Color:
-    """
-    
-    """
+    """"""
 
     red: Optional[int]
     """"""
@@ -198,9 +182,7 @@ class Color:
 @dataclass_json
 @dataclass
 class AdditionalDataDefinitionV1Choices:
-    """
-    
-    """
+    """"""
 
     choice_id: Optional[str]
     """"""
@@ -215,9 +197,7 @@ class AdditionalDataDefinitionV1Choices:
 @dataclass_json
 @dataclass
 class AdditionalDataDefinitionV1:
-    """
-    
-    """
+    """"""
 
     additional_data_definition_id: Optional[str]
     """"""
@@ -256,9 +236,7 @@ class AdditionalDataDefinitionV1:
 @dataclass_json
 @dataclass
 class AdditionalDataDefinitionV2:
-    """
-    
-    """
+    """"""
 
     additional_data_definition_id: Optional[str]
     """"""
@@ -288,9 +266,7 @@ class AdditionalDataDefinitionV2:
 @dataclass_json
 @dataclass
 class AnnotationEditorFeature:
-    """
-    
-    """
+    """"""
 
     append: Optional[bool]
     """"""
@@ -314,9 +290,7 @@ class AnnotationEditorFeature:
 @dataclass_json
 @dataclass
 class LabelV1:
-    """
-    
-    """
+    """"""
 
     label_id: Optional[str]
     """"""
@@ -355,9 +329,7 @@ class LabelV1:
 @dataclass_json
 @dataclass
 class LabelV2:
-    """
-    
-    """
+    """"""
 
     label_id: Optional[str]
     """"""
@@ -396,9 +368,7 @@ class LabelV2:
 @dataclass_json
 @dataclass
 class AdditionalDataRestriction:
-    """
-    
-    """
+    """"""
 
     additional_data_definition_id: Optional[str]
     """"""
@@ -410,9 +380,7 @@ class AdditionalDataRestriction:
 @dataclass_json
 @dataclass
 class AnnotationSpecsV1:
-    """
-    
-    """
+    """"""
 
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -436,9 +404,7 @@ class AnnotationSpecsV1:
 @dataclass_json
 @dataclass
 class AnnotationSpecsV2:
-    """
-    
-    """
+    """"""
 
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

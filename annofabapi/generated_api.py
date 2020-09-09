@@ -46,7 +46,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        パスワードの変更を試みます。  パスワードの要件を満たさない場合、エラーメッセージが返ります。 
+        パスワードの変更を試みます。  パスワードの要件を満たさない場合、エラーメッセージが返ります。
 
         Args:
             request_body (Any): Request Body
@@ -72,7 +72,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: EveryoneRequestBody
 
 
-        [受け取った確認コード](#operation/initiateResetEmail)を使い、メールアドレスを変更します。 
+        [受け取った確認コード](#operation/initiateResetEmail)を使い、メールアドレスを変更します。
 
         Args:
             request_body (Any): Request Body
@@ -98,7 +98,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: EveryoneRequestBody
 
 
-        新しいパスワードに変更します。 本人確認のため、[パスワードリセットを要求](#operation/initiateResetPassword)で受信したメールに記載された検証コードを使用します。  パスワードリセットプロセスの最終ステップです。 
+        新しいパスワードに変更します。 本人確認のため、[パスワードリセットを要求](#operation/initiateResetPassword)で受信したメールに記載された検証コードを使用します。  パスワードリセットプロセスの最終ステップです。
 
         Args:
             request_body (Any): Request Body
@@ -124,7 +124,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: EveryoneRequestBody
 
 
-        アカウントのサインアップの最後のステップとして、アカウントを本登録します。 
+        アカウントのサインアップの最後のステップとして、アカウントを本登録します。
 
         Args:
             request_body (Any): Request Body
@@ -150,7 +150,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        [受け取った確認コード](#operation/initiateVerifyEmail)を使い、メールアドレスが有効であることを確認します。 
+        [受け取った確認コード](#operation/initiateVerifyEmail)を使い、メールアドレスが有効であることを確認します。
 
         Args:
             request_body (Any): Request Body
@@ -176,7 +176,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: EveryoneRequestBody
 
 
-        パスワードリセットに必要な確認コードをメールで送付します。 後続の[新しいパスワードに変更](#operation/confirmResetPassword)を実行することで、新しいパスワードに変更できます。 
+        パスワードリセットに必要な確認コードをメールで送付します。 後続の[新しいパスワードに変更](#operation/confirmResetPassword)を実行することで、新しいパスワードに変更できます。
 
         Args:
             request_body (Any): Request Body
@@ -202,7 +202,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        メールアドレス変更プロセスを開始します。  本人からの要求かどうかを検証するための確認コードがメールで送付されます。 
+        メールアドレス変更プロセスを開始します。  本人からの要求かどうかを検証するための確認コードがメールで送付されます。
 
         Args:
             request_body (Any): Request Body
@@ -227,7 +227,7 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        アカウントのサインアップの最初のステップとして、アカウントを仮登録します。  AnnoFab に未登録のメールアドレスであれば、新規アカウントが仮登録状態で作成され、本登録フローのためのメールが送信されます。 このメールには仮パスワードなどが記載されています。  指定したメールアドレスを使うユーザーが仮登録であれば、本登録フローのメールが再送信されます。 指定したメールアドレスを使うユーザーが本登録であれば、不正なリクエストとしてエラーを返します（本登録が仮登録に戻ることはありません）。 
+        アカウントのサインアップの最初のステップとして、アカウントを仮登録します。  AnnoFab に未登録のメールアドレスであれば、新規アカウントが仮登録状態で作成され、本登録フローのためのメールが送信されます。 このメールには仮パスワードなどが記載されています。  指定したメールアドレスを使うユーザーが仮登録であれば、本登録フローのメールが再送信されます。 指定したメールアドレスを使うユーザーが本登録であれば、不正なリクエストとしてエラーを返します（本登録が仮登録に戻ることはありません）。
 
         Args:
             request_body (Any): Request Body
@@ -253,7 +253,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        メールアドレスが有効かどうかの確認プロセスを開始します。  本人からの要求かどうかを検証するための確認コードがメールで送付されます。 
+        メールアドレスが有効かどうかの確認プロセスを開始します。  本人からの要求かどうかを検証するための確認コードがメールで送付されます。
 
         Args:
             request_body (Any): Request Body
@@ -286,7 +286,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectAccepter
 
 
-        複数のアノテーションを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。  **現時点で、このAPIは複数のアノテーションを修正するためのもので、新しいアノテーションを作成することはできません**。 新しいアノテーションを更新や削除の対象に指定した場合、無視されます。  既に作成済みのアノテーションのうち、リクエストボディの配列に含まれないアノテーションは更新されません。  更新対象のアノテーションのうち、属性配列に含まれない属性は更新されません。  更新対象のアノテーションのラベルを変更する場合、異なるアノテーション種別のラベルに変更することはできません。 また、変更後のラベルに含まれない属性は削除されます。  画像全体のアノテーションは、他のラベルに変更することはできません。  塗りつぶしv2アノテーションは、1ラベル1アノテーションの制約のため、他の塗りつぶしv2ラベルに変更することはできません。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。  受入が完了しているタスクのアノテーション更新を含む場合、オーナー以上の権限が必要になります。 
+        複数のアノテーションを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。  **現時点で、このAPIは複数のアノテーションを修正するためのもので、新しいアノテーションを作成することはできません**。 新しいアノテーションを更新や削除の対象に指定した場合、無視されます。  既に作成済みのアノテーションのうち、リクエストボディの配列に含まれないアノテーションは更新されません。  更新対象のアノテーションのうち、属性配列に含まれない属性は更新されません。  更新対象のアノテーションのラベルを変更する場合、異なるアノテーション種別のラベルに変更することはできません。 また、変更後のラベルに含まれない属性は削除されます。  画像全体のアノテーションは、他のラベルに変更することはできません。  塗りつぶしv2アノテーションは、1ラベル1アノテーションの制約のため、他の塗りつぶしv2ラベルに変更することはできません。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。  受入が完了しているタスクのアノテーション更新を含む場合、オーナー以上の権限が必要になります。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -315,7 +315,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定したタスク - 入力データにつけられたアノテーションを一括で取得します。 Simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  なお、プロジェクト全体のアノテーションを一括で取得したい場合には、 [getAnnotationArchive](#operation/getAnnotationArchive) APIを使用することもできます。 
+        指定したタスク - 入力データにつけられたアノテーションを一括で取得します。 Simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  なお、プロジェクト全体のアノテーションを一括で取得したい場合には、 [getAnnotationArchive](#operation/getAnnotationArchive) APIを使用することもできます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -340,7 +340,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーション（Simple版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  SimpleアノテーションZIPのデータ構造については、 [Simple Annotation ZIP](#section/Simple-Annotation-ZIP) を参照ください。  なお、特定のタスクのSimpleアノテーションを取得したい場合には、 [getAnnotation](#operation/getAnnotation) APIを使用することもできます。 
+        プロジェクト内のアノテーション（Simple版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  SimpleアノテーションZIPのデータ構造については、 [Simple Annotation ZIP](#section/Simple-Annotation-ZIP) を参照ください。  なお、特定のタスクのSimpleアノテーションを取得したい場合には、 [getAnnotation](#operation/getAnnotation) APIを使用することもできます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -373,8 +373,8 @@ class AbstractAnnofabApi(abc.ABC):
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
                 aggregate_by_task_and_input (bool):  trueを指定した場合に「タスクIDと入力IDの組」ごとに検索結果を集計するようにする。
-                query (str):  絞り込み条件([AnnotationQuery](#section/AnnotationQuery))をJSON形式で表した文字列。 
-                sort (str):  ソート順の指定。 使用可能キーはtask_id, input_data_id, detail.annotation_id, detail.account_id, detail.label_id, detail.data_holding_type, detail.created_datetime, detail.updated_datetimeのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
+                query (str):  絞り込み条件([AnnotationQuery](#section/AnnotationQuery))をJSON形式で表した文字列。
+                sort (str):  ソート順の指定。 使用可能キーはtask_id, input_data_id, detail.annotation_id, detail.account_id, detail.label_id, detail.data_holding_type, detail.created_datetime, detail.updated_datetimeのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。
 
         Returns:
             Tuple[AnnotationList, requests.Response]
@@ -396,7 +396,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーション（Full版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  FullアノテーションZIPのデータ構造については、 [Full Annotation ZIP](#section/Full-Annotation-ZIP) を参照ください。 
+        プロジェクト内のアノテーション（Full版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  FullアノテーションZIPのデータ構造については、 [Full Annotation ZIP](#section/Full-Annotation-ZIP) を参照ください。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -421,7 +421,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        [putAnnotation](#operation/putAnnotation)が要求する構造のアノテーションを取得します。 このAPIは、[putAnnotation](#operation/putAnnotation)をより利用しやすくする目的で提供しています。 機械学習などで利用する成果物としてのアノテーションを取得するには、以下をご利用いただけます。  * [getAnnotation](#operation/getAnnotation): 特定のタスク - 入力データのアノテーション取得 * [getAnnotationArchive](#operation/getAnnotationArchive): プロジェクト全体のアノテーション（ZIP） 
+        [putAnnotation](#operation/putAnnotation)が要求する構造のアノテーションを取得します。 このAPIは、[putAnnotation](#operation/putAnnotation)をより利用しやすくする目的で提供しています。 機械学習などで利用する成果物としてのアノテーションを取得するには、以下をご利用いただけます。  * [getAnnotation](#operation/getAnnotation): 特定のタスク - 入力データのアノテーション取得 * [getAnnotationArchive](#operation/getAnnotationArchive): プロジェクト全体のアノテーション（ZIP）
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -448,12 +448,12 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーションZIP（Simple版とFull版の両方）の更新を開始します。 ZIPの更新は、データ量に応じて数分〜数十分かかります。  アノテーションZIPは毎日AM 03:00 JSTごろに自動更新されますが、本APIを用いると、自動更新を待たずに更新を要求できます。  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-annotation`）。 
+        プロジェクト内のアノテーションZIP（Simple版とFull版の両方）の更新を開始します。 ZIPの更新は、データ量に応じて数分〜数十分かかります。  アノテーションZIPは毎日AM 03:00 JSTごろに自動更新されますが、本APIを用いると、自動更新を待たずに更新を要求できます。  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-annotation`）。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Message - \"2\"：PostAnnotationArchiveUpdateResponse 
+                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Message - \"2\"：PostAnnotationArchiveUpdateResponse
 
         Returns:
             Tuple[PostAnnotationArchiveUpdateResponseWrapper, requests.Response]
@@ -477,7 +477,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        「過去に誰にも割り当てられていないタスクに含まれる入力データ」に限り、プロジェクトオーナーであればアノテーションを更新できます。 この挙動は、[AnnoFab外部で作成されたアノテーションをインポート](/docs/tutorial/tutorial-ex-importing-annotation.html) する目的にも利用できます。  １度でも誰かに割り当てられたタスクは、タスクの現在の担当者であればアノテーションを更新できます。 タスクの現在の担当者でない場合、エラーになります。 この制限は、アノテーション作業中の予期せぬ同時編集を防ぐためです。  `is_protected`（保護） を `true` にすることで、アノテーションをアノテーションエディタ上での削除から保護できます。 属性の変更もさせたくない場合は、アノテーション仕様で特定の属性を読取専用にすることで保護できます。保護は、  * 外部からインポートしたアノテーション * 別プロジェクトからコピーしたアノテーション  などを誤って削除したくないときに便利です。 `is_protected`は、プロジェクトオーナーのみ変更可能です。  なお、本APIでは `is_protected` によらず、更新や削除が可能です。 
+        「過去に誰にも割り当てられていないタスクに含まれる入力データ」に限り、プロジェクトオーナーであればアノテーションを更新できます。 この挙動は、[AnnoFab外部で作成されたアノテーションをインポート](/docs/tutorial/tutorial-ex-importing-annotation.html) する目的にも利用できます。  １度でも誰かに割り当てられたタスクは、タスクの現在の担当者であればアノテーションを更新できます。 タスクの現在の担当者でない場合、エラーになります。 この制限は、アノテーション作業中の予期せぬ同時編集を防ぐためです。  `is_protected`（保護） を `true` にすることで、アノテーションをアノテーションエディタ上での削除から保護できます。 属性の変更もさせたくない場合は、アノテーション仕様で特定の属性を読取専用にすることで保護できます。保護は、  * 外部からインポートしたアノテーション * 別プロジェクトからコピーしたアノテーション  などを誤って削除したくないときに便利です。 `is_protected`は、プロジェクトオーナーのみ変更可能です。  なお、本APIでは `is_protected` によらず、更新や削除が可能です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -513,13 +513,13 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定したプロジェクトのアノテーション仕様を取得します。  パラメータを指定することで、過去に保存された履歴を取得することもできます。 
+        指定したプロジェクトのアノテーション仕様を取得します。  パラメータを指定することで、過去に保存された履歴を取得することもできます。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                history_id (str):  過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。 未指定時は最新のアノテーション仕様を取得します。 
-                v (str):  取得するアノテーション仕様のフォーマットバージョンを指定します。 
+                history_id (str):  過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。 未指定時は最新のアノテーション仕様を取得します。
+                v (str):  取得するアノテーション仕様のフォーマットバージョンを指定します。
 
         Returns:
             Tuple[AnnotationSpecs, requests.Response]
@@ -541,7 +541,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定されたプロジェクトのアノテーション仕様のすべての履歴を取得します。 
+        指定されたプロジェクトのアノテーション仕様のすべての履歴を取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -566,7 +566,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        アノテーション仕様を更新します。 
+        アノテーション仕様を更新します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -600,7 +600,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        入力データを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、現在「削除」の1通りのみがあります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の削除ができます。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。 
+        入力データを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、現在「削除」の1通りのみがあります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の削除ができます。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -629,12 +629,12 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        「複数の入力データを圧縮したZIPファイル」や「4MBを超える画像」などをAnnoFabに一時的に保存するための、URLと登録用データパスを発行します。  このAPIと他のAPIを以下に示すように使うことで、ZIPファイルなどをAFにアップロードできます。   1. 本APIを実行して、URLを取得する。   * `curl -X POST -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'` 2. 1で取得したURLに、一時保存したいファイルをPUTする。   * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.zip 'https://{発行されたURL}'` 3. 1で取得した登録用データパスを [入力データ登録API](#operation/putInputData)のリクエストボディ `input_data_path` に指定する。   * `curl -X PUT -H 'Content-Type: text/json' -d '{\"input_data_name\":\"{表示名}\", \"input_data_path\":\"{登録用データパス}\" }' 'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}'`  ここで、1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。 ZIPファイルの場合は `application/zip` 、画像ファイルの場合は `image/png` など、適切な Content-Type を指定します。  登録するファイルはどのような内容であれ、アップロードから24時間経過すると削除されます。 したがって、ZIP圧縮した入力データを登録する場合は、URL発行から24時間以内に完了してください。 
+        「複数の入力データを圧縮したZIPファイル」や「4MBを超える画像」などをAnnoFabに一時的に保存するための、URLと登録用データパスを発行します。  このAPIと他のAPIを以下に示すように使うことで、ZIPファイルなどをAFにアップロードできます。   1. 本APIを実行して、URLを取得する。   * `curl -X POST -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'` 2. 1で取得したURLに、一時保存したいファイルをPUTする。   * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.zip 'https://{発行されたURL}'` 3. 1で取得した登録用データパスを [入力データ登録API](#operation/putInputData)のリクエストボディ `input_data_path` に指定する。   * `curl -X PUT -H 'Content-Type: text/json' -d '{\"input_data_name\":\"{表示名}\", \"input_data_path\":\"{登録用データパス}\" }' 'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}'`  ここで、1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。 ZIPファイルの場合は `application/zip` 、画像ファイルの場合は `image/png` など、適切な Content-Type を指定します。  登録するファイルはどのような内容であれ、アップロードから24時間経過すると削除されます。 したがって、ZIP圧縮した入力データを登録する場合は、URL発行から24時間以内に完了してください。
 
         Args:
             project_id (str):  プロジェクトID (required)
             header_params (Dict[str, Any]): Header Parameters
-                content_type (str):  アップロードしたいファイルの Content-Type を指定します。 
+                content_type (str):  アップロードしたいファイルの Content-Type を指定します。
 
         Returns:
             Tuple[DataPath, requests.Response]
@@ -656,7 +656,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        入力データを削除します。  入力データの実体ファイルが AnnoFab のストレージに存在するものであれば、実体ファイルも削除されます。 お客様の管理するプライベートストレージに存在するものであれば、実体ファイルは削除されません。 
+        入力データを削除します。  入力データの実体ファイルが AnnoFab のストレージに存在するものであれば、実体ファイルも削除されます。 お客様の管理するプライベートストレージに存在するものであれば、実体ファイルは削除されません。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -680,7 +680,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定された入力データを取得します。  この API の返す入力データは入力データ名などの項目を含む JSON であり、実体のファイル（画像や動画など）ではありません。 実体ファイルにアクセスする方法は非公開です（詳細を希望される場合はお問い合わせください）。 
+        指定された入力データを取得します。  この API の返す入力データは入力データ名などの項目を含む JSON であり、実体のファイル（画像や動画など）ではありません。 実体ファイルにアクセスする方法は非公開です（詳細を希望される場合はお問い合わせください）。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -706,7 +706,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定されたプロジェクトの入力データを検索します。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。 
+        指定されたプロジェクトの入力データを検索します。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -743,7 +743,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        入力データの実体（画像や動画などのファイルそのもの）にアクセスするための、認証済み一時URLを取得します。  取得したURLは、1時間で失効し、アクセスできなくなります。 
+        入力データの実体（画像や動画などのファイルそのもの）にアクセスするための、認証済み一時URLを取得します。  取得したURLは、1時間で失効し、アクセスできなくなります。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -768,20 +768,20 @@ class AbstractAnnofabApi(abc.ABC):
         request_body: Optional[Any] = None,
         **kwargs,
     ) -> Tuple[Any, requests.Response]:
-        """入力データ更新 
+        """入力データ更新
         https://annofab.com/docs/api/#operation/putInputData
 
 
         authorizations: ProjectOwner
 
 
-        入力データ（画像プロジェクトなら画像、動画プロジェクトなら動画や時系列データ）を登録します。  ファイルの登録には、[アップロード用一時データ保存先作成API](#operation/createTempPath) を組み合わせて使用します。  ## ZIPでまとめてアップロード  画像プロジェクトの場合、複数の画像ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> アノテーション作業生産性を高めるため、画像は「長辺4096px以内」かつ「4MB以内」になるよう縮小されます。<br> 作成されるアノテーションは、元の解像度でつけた場合相当に自動で復元されます。  動画プロジェクトの場合、複数の動画ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> また、複数のストリーミング形式の動画をアップロードすることもできます。<br> この場合はZIP形式必須で、同一のZIPファイル内にm3u8ファイルとtsファイルを両方含めてください。<br> なお、このm3u8ファイルに記述された相対パスでtsファイルが参照可能である必要があります。  ZIPファイルを登録するとバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ### ディレクトリ例 ```   hoge.zip/     hoge.ts     fuga/       foo.m3u8(hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)       foo1.ts       foo2.ts     piyo1/       piyo2/         bar.ts       bar.m3u8(hoge.ts, piyo1/piyo2/bar.tsを参照) ```  ## 注意事項  * `input_data_path` のスキーマが `https` の場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます * `input_data_path` のスキーマが `s3` かつ入力データがtsファイルの場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます 
+        入力データ（画像プロジェクトなら画像、動画プロジェクトなら動画や時系列データ）を登録します。  ファイルの登録には、[アップロード用一時データ保存先作成API](#operation/createTempPath) を組み合わせて使用します。  ## ZIPでまとめてアップロード  画像プロジェクトの場合、複数の画像ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> アノテーション作業生産性を高めるため、画像は「長辺4096px以内」かつ「4MB以内」になるよう縮小されます。<br> 作成されるアノテーションは、元の解像度でつけた場合相当に自動で復元されます。  動画プロジェクトの場合、複数の動画ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> また、複数のストリーミング形式の動画をアップロードすることもできます。<br> この場合はZIP形式必須で、同一のZIPファイル内にm3u8ファイルとtsファイルを両方含めてください。<br> なお、このm3u8ファイルに記述された相対パスでtsファイルが参照可能である必要があります。  ZIPファイルを登録するとバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ### ディレクトリ例 ```   hoge.zip/     hoge.ts     fuga/       foo.m3u8(hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)       foo1.ts       foo2.ts     piyo1/       piyo2/         bar.ts       bar.m3u8(hoge.ts, piyo1/piyo2/bar.tsを参照) ```  ## 注意事項  * `input_data_path` のスキーマが `https` の場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます * `input_data_path` のスキーマが `s3` かつ入力データがtsファイルの場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます
 
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
             query_params (Dict[str, Any]): Query Parameters
-                v (str):  zipファイルを受領時のAPIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：登録処理を開始した旨の固定メッセージ - \"2\"：JobInfo 
+                v (str):  zipファイルを受領時のAPIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：登録処理を開始した旨の固定メッセージ - \"2\"：JobInfo
             request_body (Any): Request Body
                 input_data_request (InputDataRequest):  (required)
 
@@ -813,7 +813,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        検査コメントを一括更新します。 タスクの現在の担当者でない場合、またはタスクの状態が「作業中」でない場合は409エラーになります。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新（作成含む）」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。  既に作成済みの検査コメントのうち、リクエストボディの配列に含まれないものは更新されません。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。 
+        検査コメントを一括更新します。 タスクの現在の担当者でない場合、またはタスクの状態が「作業中」でない場合は409エラーになります。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新（作成含む）」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。  既に作成済みの検査コメントのうち、リクエストボディの配列に含まれないものは更新されません。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -844,7 +844,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定されたタスクで、指定された入力データにつけられた検査コメントをすべて取得します。 
+        指定されたタスクで、指定された入力データにつけられた検査コメントをすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -874,7 +874,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectAccepter, ProjectOwner
 
 
-        プロジェクトの作業ガイドの画像を削除します。 
+        プロジェクトの作業ガイドの画像を削除します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -900,7 +900,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定された版の作業ガイドのHTMLを取得します。 
+        指定された版の作業ガイドのHTMLを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -929,7 +929,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        プロジェクトの作業ガイドの編集履歴を取得します。 取得される編集履歴は日付の新しい順にソートされます。 
+        プロジェクトの作業ガイドの編集履歴を取得します。 取得される編集履歴は日付の新しい順にソートされます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -958,13 +958,13 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectAccepter, ProjectOwner
 
 
-        プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。   作業ガイド画像の登録/更新方法は以下の通りです。 1. `getInstructionImageUrlForPut` APIを実行して、ファイルアップロード用のURLを取得する。   * `curl -X GET -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/instruction-images/{image_id}/put-url'` 2. 手順1で取得したファイルアップロード用のURLに対して、登録/更新する作業ガイド画像ファイル(`hoge.jpg`)をPUTする。   * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.jpg '{ファイルアップロード用のURL}'`  手順1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。 
+        プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。   作業ガイド画像の登録/更新方法は以下の通りです。 1. `getInstructionImageUrlForPut` APIを実行して、ファイルアップロード用のURLを取得する。   * `curl -X GET -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/instruction-images/{image_id}/put-url'` 2. 手順1で取得したファイルアップロード用のURLに対して、登録/更新する作業ガイド画像ファイル(`hoge.jpg`)をPUTする。   * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.jpg '{ファイルアップロード用のURL}'`  手順1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。
 
         Args:
             project_id (str):  プロジェクトID (required)
             image_id (str):  作業ガイド画像ID (required)
             header_params (Dict[str, Any]): Header Parameters
-                content_type (str):  登録する画像ファイルの Content-Type を指定します。 
+                content_type (str):  登録する画像ファイルの Content-Type を指定します。
 
         Returns:
             Tuple[InstructionImagePath, requests.Response]
@@ -986,7 +986,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        プロジェクトの作業ガイドの画像一覧を取得します。 
+        プロジェクトの作業ガイドの画像一覧を取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1011,7 +1011,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectAccepter, ProjectOwner
 
 
-        作業ガイドのHTMLを更新します。 
+        作業ガイドのHTMLを更新します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1045,7 +1045,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        バックグラウンドジョブ情報を削除します。  なお、バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。 
+        バックグラウンドジョブ情報を削除します。  なお、バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1072,14 +1072,14 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        バックグラウンドジョブの情報を取得します。 取得されるジョブ情報は、作成日付の新しい順にソートされています。  バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。 
+        バックグラウンドジョブの情報を取得します。 取得されるジョブ情報は、作成日付の新しい順にソートされています。  バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
                 type (JobType):  取得するジョブの種別。[詳細はこちら](#section/JobType)。 (required)
-                page (int):  検索結果のうち、取得したいページの番号(1始まり)  現在は未実装のパラメータです。(今後対応予定) 
-                limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。 
+                page (int):  検索結果のうち、取得したいページの番号(1始まり)  現在は未実装のパラメータです。(今後対応予定)
+                limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。
                 exclusive_start_created_datetime (str):  取得するデータの直前の作成日時
 
         Returns:
@@ -1107,7 +1107,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: EveryoneRequestBody
 
 
-        [受け取った確認コード](#operation/initiateMyAccountDelete)を使い、アカウントを削除します。 
+        [受け取った確認コード](#operation/initiateMyAccountDelete)を使い、アカウントを削除します。
 
         Args:
             request_body (Any): Request Body
@@ -1133,7 +1133,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        API リクエストユーザーのアカウント情報を取得します。 
+        API リクエストユーザーのアカウント情報を取得します。
 
         Args:
 
@@ -1155,7 +1155,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        備考: システム管理者が自身が所属しないプロジェクトに対して実行した場合、オーナーであるというダミーのプロジェクトメンバー情報が取得できます。ダミーには更新日は含まれません。 
+        備考: システム管理者が自身が所属しないプロジェクトに対して実行した場合、オーナーであるというダミーのプロジェクトメンバー情報が取得できます。ダミーには更新日は含まれません。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1180,12 +1180,12 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        API リクエストユーザーが所属するすべての組織における、自身がどのようなメンバー設定で所属しているかをまとめて取得します。 
+        API リクエストユーザーが所属するすべての組織における、自身がどのようなメンバー設定で所属しているかをまとめて取得します。
 
         Args:
             query_params (Dict[str, Any]): Query Parameters
-                page (int):  表示するページ番号  現在は未実装のパラメータです。(今後対応予定) 
-                limit (int):  1ページあたりの取得するデータ件数  現在は未実装のパラメータです。(今後対応予定) 
+                page (int):  表示するページ番号  現在は未実装のパラメータです。(今後対応予定)
+                limit (int):  1ページあたりの取得するデータ件数  現在は未実装のパラメータです。(今後対応予定)
 
         Returns:
             Tuple[MyOrganizationList, requests.Response]
@@ -1207,7 +1207,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        API リクエストユーザーが所属するすべてのプロジェクトにおける、自身がどのようなメンバー設定で所属しているかをまとめて取得します。 
+        API リクエストユーザーが所属するすべてのプロジェクトにおける、自身がどのようなメンバー設定で所属しているかをまとめて取得します。
 
         Args:
 
@@ -1229,17 +1229,17 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        自身が所属するプロジェクトを一括で取得します。 
+        自身が所属するプロジェクトを一括で取得します。
 
         Args:
             query_params (Dict[str, Any]): Query Parameters
-                page (int):  表示するページ番号 
-                limit (int):  1ページあたりの取得するデータ件数 
-                organization_id (str):  指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。 
-                title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。 
-                status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。 
-                input_data_type (InputDataType):  指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト 
-                sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。 
+                page (int):  表示するページ番号
+                limit (int):  1ページあたりの取得するデータ件数
+                organization_id (str):  指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。
+                title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。
+                status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。
+                input_data_type (InputDataType):  指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト
+                sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。
 
         Returns:
             Tuple[ProjectContainer, requests.Response]
@@ -1261,7 +1261,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        アカウント削除プロセスを開始します。  本人からの要求かどうかを検証するための確認コードがメールで送付されます。 
+        アカウント削除プロセスを開始します。  本人からの要求かどうかを検証するための確認コードがメールで送付されます。
 
         Args:
 
@@ -1283,7 +1283,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        API リクエストユーザーのアカウント情報を更新します。 
+        API リクエストユーザーのアカウント情報を更新します。
 
         Args:
             request_body (Any): Request Body
@@ -1309,7 +1309,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationOwner
 
 
-        同じ name の組織が既に存在する場合は失敗(400)します。 
+        同じ name の組織が既に存在する場合は失敗(400)します。
 
         Args:
             request_body (Any): Request Body
@@ -1340,7 +1340,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        同じ name の組織が既に存在する場合は失敗（400）します。 
+        同じ name の組織が既に存在する場合は失敗（400）します。
 
         Args:
             request_body (Any): Request Body
@@ -1366,7 +1366,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationOwner
 
 
-        組織を完全に削除します。  組織のプロジェクトが1件も存在しない場合のみ削除できます。 組織を削除したい場合は全てのプロジェクトを削除してください。 また、削除された組織は元に戻せませんのでご注意ください。 
+        組織を完全に削除します。  組織のプロジェクトが1件も存在しない場合のみ削除できます。 組織を削除したい場合は全てのプロジェクトを削除してください。 また、削除された組織は元に戻せませんのでご注意ください。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1389,7 +1389,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        指定組織の組織IDなどの情報を取得します。 
+        指定組織の組織IDなどの情報を取得します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1412,7 +1412,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        組織全体でどれだけ AnnoFab ストレージを使用しているかなどの活動の要約を取得します。 
+        組織全体でどれだけ AnnoFab ストレージを使用しているかなどの活動の要約を取得します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1437,19 +1437,19 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        指定した組織のプロジェクトを一括で取得します。 
+        指定した組織のプロジェクトを一括で取得します。
 
         Args:
             organization_name (str):  組織名 (required)
             query_params (Dict[str, Any]): Query Parameters
-                page (int):  表示するページ番号 
-                limit (int):  1ページあたりの取得するデータ件数 
-                account_id (str):  指定したアカウントIDをメンバーに持つプロジェクトで絞り込む。 
-                except_account_id (str):  指定したアカウントIDをメンバーに持たないプロジェクトで絞り込む。 
-                title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。 
-                status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。 
-                input_data_type (InputDataType):  指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト。 
-                sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。 
+                page (int):  表示するページ番号
+                limit (int):  1ページあたりの取得するデータ件数
+                account_id (str):  指定したアカウントIDをメンバーに持つプロジェクトで絞り込む。
+                except_account_id (str):  指定したアカウントIDをメンバーに持たないプロジェクトで絞り込む。
+                title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。
+                status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。
+                input_data_type (InputDataType):  指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト。
+                sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。
 
         Returns:
             Tuple[ProjectList, requests.Response]
@@ -1478,7 +1478,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        指定した組織の[入力データセット](#tag/af-organization-input)の情報を取得します。 組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセットのみが取得できます。 
+        指定した組織の[入力データセット](#tag/af-organization-input)の情報を取得します。 組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセットのみが取得できます。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1502,7 +1502,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator, OrganizationOwner
 
 
-        指定した組織の[入力データセット](#tag/af-organization-input)を一括で取得します。 
+        指定した組織の[入力データセット](#tag/af-organization-input)を一括で取得します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1527,7 +1527,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        指定した組織の[入力データセット](#tag/af-organization-input)内で指定した入力データ情報を取得します。 組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。 
+        指定した組織の[入力データセット](#tag/af-organization-input)内で指定した入力データ情報を取得します。 組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1559,7 +1559,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: EveryoneRequestBody
 
 
-        組織への招待を受諾し、組織へのメンバー登録を完了します。  [組織招待API](#operation/postInviteOrganizationMember)で送信されたメールに記載されているトークンが必要です。 
+        組織への招待を受諾し、組織へのメンバー登録を完了します。  [組織招待API](#operation/postInviteOrganizationMember)で送信されたメールに記載されているトークンが必要です。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1589,7 +1589,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator
 
 
-        指定したメンバーを指定した組織から削除します。  組織の管理者が実行する場合、組織のオーナーは削除できません。(権限エラーになります) 
+        指定したメンバーを指定した組織から削除します。  組織の管理者が実行する場合、組織のオーナーは削除できません。(権限エラーになります)
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1613,7 +1613,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        指定したユーザーが指定した組織にどのようなロールで参加しているかを取得します。 
+        指定したユーザーが指定した組織にどのようなロールで参加しているかを取得します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1637,7 +1637,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        脱退したメンバーは含まれません。 
+        脱退したメンバーは含まれません。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1662,7 +1662,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator
 
 
-        指定したユーザーに、組織への招待（メール）を送信します。  組織の管理者が実行する場合、リクエストボディ内の `role` には `contributor` を指定してください。(それ以外の値を指定した場合エラーとなります) 
+        指定したユーザーに、組織への招待（メール）を送信します。  組織の管理者が実行する場合、リクエストボディ内の `role` には `contributor` を指定してください。(それ以外の値を指定した場合エラーとなります)
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1692,7 +1692,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationOwner
 
 
-        指定された組織メンバーのロールのみを変更します。 
+        指定された組織メンバーのロールのみを変更します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1727,7 +1727,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator, OrganizationOwner
 
 
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを削除します。 
+        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを削除します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1753,7 +1753,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを取得します。 
+        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを取得します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1777,7 +1777,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを一括で取得します。 
+        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを一括で取得します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1802,7 +1802,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator, OrganizationOwner
 
 
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを更新します。 
+        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを更新します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1837,12 +1837,12 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        プロジェクトを完全に削除します。 アノテーション仕様、タスク、入力データ、アノテーションなど、プロジェクト配下のリソースがすべて削除されます。  削除されたプロジェクトは元に戻せません。 完了したプロジェクトは削除せず、プロジェクト状態を「停止中」に変更するのをおすすめします。 
+        プロジェクトを完全に削除します。 アノテーション仕様、タスク、入力データ、アノテーションなど、プロジェクト配下のリソースがすべて削除されます。  削除されたプロジェクトは元に戻せません。 完了したプロジェクトは削除せず、プロジェクト状態を「停止中」に変更するのをおすすめします。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：DeleteProjectResponse 
+                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：DeleteProjectResponse
 
         Returns:
             Tuple[DeleteProjectResponseWrapper, requests.Response]
@@ -1864,7 +1864,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定されたプロジェクトがひもづく組織を取得します。 
+        指定されたプロジェクトがひもづく組織を取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1887,7 +1887,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        プロジェクトを取得します。 
+        プロジェクトを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1910,7 +1910,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        入力データ情報全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### 入力データ情報全件ファイル 入力データ情報全件ファイルには、プロジェクトの入力データ情報がJSON形式（[InputData](#section/InputData)の配列）で記録されています。 ただし`InputData`中の`url`は常に`null`です。 このファイルは毎日AM 02:00 JSTに更新されます。 
+        入力データ情報全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### 入力データ情報全件ファイル 入力データ情報全件ファイルには、プロジェクトの入力データ情報がJSON形式（[InputData](#section/InputData)の配列）で記録されています。 ただし`InputData`中の`url`は常に`null`です。 このファイルは毎日AM 02:00 JSTに更新されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1933,7 +1933,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        検査コメント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### 検査コメント全件ファイル 検査コメント全件ファイルには、プロジェクトの検査コメント情報がJSON形式（[Inspection](#section/Inspection)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 
+        検査コメント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### 検査コメント全件ファイル 検査コメント全件ファイルには、プロジェクトの検査コメント情報がJSON形式（[Inspection](#section/Inspection)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1956,7 +1956,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        タスク履歴全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク履歴全件ファイル タスク履歴イベント全件ファイルには、プロジェクトのタスク履歴情報がJSON形式（キーがタスクID、値が[TaskHistory](#section/TaskHistory)の配列となるマップ）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 
+        タスク履歴全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク履歴全件ファイル タスク履歴イベント全件ファイルには、プロジェクトのタスク履歴情報がJSON形式（キーがタスクID、値が[TaskHistory](#section/TaskHistory)の配列となるマップ）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1980,7 +1980,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        タスク履歴イベント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク履歴イベント全件ファイル タスク履歴イベント全件ファイルには、プロジェクトのタスク履歴イベント情報がJSON形式（[TaskHistoryEvent](#section/TaskHistoryEvent)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 
+        タスク履歴イベント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク履歴イベント全件ファイル タスク履歴イベント全件ファイルには、プロジェクトのタスク履歴イベント情報がJSON形式（[TaskHistoryEvent](#section/TaskHistoryEvent)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2004,7 +2004,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        タスク全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク全件ファイル タスク全件ファイルには、プロジェクトのタスク情報がJSON形式（[Task](#section/Task)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 また、[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを利用することで、手動でタスク全件ファイルを更新することも可能です。 
+        タスク全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  ### タスク全件ファイル タスク全件ファイルには、プロジェクトのタスク情報がJSON形式（[Task](#section/Task)の配列）で記録されています。 このファイルは毎日AM 02:00 JSTに更新されます。 また、[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを利用することで、手動でタスク全件ファイルを更新することも可能です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2033,12 +2033,12 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator, ProjectOwner
 
 
-        指定したプロジェクトのデータを引き継いだ新しいプロジェクトを作成します。 新しいプロジェクトに引き継がれるデータは次の通りです。  * プロジェクト設定 * プロジェクトメンバー * アノテーション仕様  また、オプションを指定することで新しいプロジェクトに次のデータを引き継ぐことも可能です。  |引き継ぎ対象|同時に引き継ぐ必要があるデータ| |:--|:--| |入力データ|| |タスク|入力データ| |アノテーション|入力データ、タスク| |補助情報|入力データ| |作業ガイド|| |Webhook||  このAPIを利用するには、プロジェクトを登録する組織の[OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) かつ コピー元プロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`copy-project`）。 
+        指定したプロジェクトのデータを引き継いだ新しいプロジェクトを作成します。 新しいプロジェクトに引き継がれるデータは次の通りです。  * プロジェクト設定 * プロジェクトメンバー * アノテーション仕様  また、オプションを指定することで新しいプロジェクトに次のデータを引き継ぐことも可能です。  |引き継ぎ対象|同時に引き継ぐ必要があるデータ| |:--|:--| |入力データ|| |タスク|入力データ| |アノテーション|入力データ、タスク| |補助情報|入力データ| |作業ガイド|| |Webhook||  このAPIを利用するには、プロジェクトを登録する組織の[OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) かつ コピー元プロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`copy-project`）。
 
         Args:
             project_id (str):  コピー元となるプロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：ProjectCopyResponse 
+                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：ProjectCopyResponse
             request_body (Any): Request Body
                 project_copy_request (ProjectCopyRequest):  (required)
 
@@ -2063,7 +2063,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        プロジェクト内の入力データ情報全件ファイルの更新を開始します。 ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。 本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs-list`）。  入力データ情報全件ファイルは毎日AM 02:00 JSTに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、入力データ情報全件ファイル以外は更新されません。  入力データ情報全件ファイルについては、[getProjectInputsUrl](#operation/getProjectInputsUrl) APIを参照ください。 
+        プロジェクト内の入力データ情報全件ファイルの更新を開始します。 ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。 本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs-list`）。  入力データ情報全件ファイルは毎日AM 02:00 JSTに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、入力データ情報全件ファイル以外は更新されません。  入力データ情報全件ファイルについては、[getProjectInputsUrl](#operation/getProjectInputsUrl) APIを参照ください。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2088,12 +2088,12 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のタスク全件ファイルの更新を開始します。 ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。 本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks-list`）。  タスク全件ファイルは毎日AM 02:00 JSTに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、タスク全件ファイル以外は更新されません。  タスク全件ファイルについては、[getProjectTasksUrl](#operation/getProjectTasksUrl) APIを参照ください。 
+        プロジェクト内のタスク全件ファイルの更新を開始します。 ファイルの更新時間は、データ量に応じて数分～数十分程度かかります。 本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks-list`）。  タスク全件ファイルは毎日AM 02:00 JSTに自動更新されます。 本APIを用いると、自動更新を待たずに更新を要求できます。 ただし、タスク全件ファイル以外は更新されません。  タスク全件ファイルについては、[getProjectTasksUrl](#operation/getProjectTasksUrl) APIを参照ください。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Message - \"2\"：PostProjectTasksUpdateResponse 
+                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Message - \"2\"：PostProjectTasksUpdateResponse
 
         Returns:
             Tuple[PostProjectTasksUpdateResponseWrapper, requests.Response]
@@ -2121,14 +2121,14 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator, ProjectOwner
 
 
-        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。 
+        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。
 
         Args:
             project_id (str):  プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
             query_params (Dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：PutProjectResponse 
+                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：PutProjectResponse
             request_body (Any): Request Body
-                put_project_request (PutProjectRequest): 
+                put_project_request (PutProjectRequest):
 
         Returns:
             Tuple[Project, requests.Response]
@@ -2156,7 +2156,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        プロジェクトの特定のメンバーを取得します。 
+        プロジェクトの特定のメンバーを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2182,7 +2182,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        備考: 組織に加入していないメンバーも取得できることがあります（[プロジェクト更新](#operation/putProject)でプロジェクトの組織移動をおこなった場合）。 
+        備考: 組織に加入していないメンバーも取得できることがあります（[プロジェクト更新](#operation/putProject)でプロジェクトの組織移動をおこなった場合）。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2211,7 +2211,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        プロジェクトにメンバーを新規に追加、または存在するメンバーの設定を変更します。  メンバーとなるユーザーは、作成するプロジェクトをひもづける組織に加入している必要があります。 
+        プロジェクトにメンバーを新規に追加、または存在するメンバーの設定を変更します。  メンバーとなるユーザーは、作成するプロジェクトをひもづける組織に加入している必要があります。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2244,7 +2244,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        [ユーザー別タスク集計データ](#section/ArrayOfProjectAccountStatistics) を取得するための認証済み一時URLを取得します。 
+        [ユーザー別タスク集計データ](#section/ArrayOfProjectAccountStatistics) を取得するための認証済み一時URLを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2267,7 +2267,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        [検査コメント集計データ](#section/ArrayOfInspectionStatistics) を取得するための認証済み一時URLを取得します。 
+        [検査コメント集計データ](#section/ArrayOfInspectionStatistics) を取得するための認証済み一時URLを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2290,7 +2290,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        [ラベル別アノテーション数集計データ](#section/ArrayOfLabelStatistics) を取得するための認証済み一時URLを取得します。 
+        [ラベル別アノテーション数集計データ](#section/ArrayOfLabelStatistics) を取得するための認証済み一時URLを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2313,7 +2313,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定されたプロジェクトの統計グラフマーカーをすべて取得します。 
+        指定されたプロジェクトの統計グラフマーカーをすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2336,7 +2336,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        [フェーズ別タスク集計データ](#section/ArrayOfTaskPhaseStatistics) を取得するための認証済み一時URLを取得します。 
+        [フェーズ別タスク集計データ](#section/ArrayOfTaskPhaseStatistics) を取得するための認証済み一時URLを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2359,7 +2359,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        [タスク集計データ](#section/ArrayOfProjectTaskStatisticsHistory) を取得するための認証済み一時URLを取得します。 
+        [タスク集計データ](#section/ArrayOfProjectTaskStatisticsHistory) を取得するための認証済み一時URLを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2382,7 +2382,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        [タスク作業時間集計データ](#section/ArrayOfWorktimeStatistics) を取得するための認証済み一時URLを取得します。 
+        [タスク作業時間集計データ](#section/ArrayOfWorktimeStatistics) を取得するための認証済み一時URLを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2407,7 +2407,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        指定されたプロジェクトの統計グラフマーカーを更新します。 
+        指定されたプロジェクトの統計グラフマーカーを更新します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2441,7 +2441,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        指定された補助情報を、実体ファイルとともに削除します。 
+        指定された補助情報を、実体ファイルとともに削除します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2468,7 +2468,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定された入力データにつけられた補助情報をすべて取得します。 
+        指定された入力データにつけられた補助情報をすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2499,7 +2499,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        指定された入力データに補助情報を新規作成または更新します。 
+        指定された入力データに補助情報を新規作成または更新します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2535,7 +2535,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        メンバーもしくは自身にタスクを割当します。  個々のタスクの情報を取得する場合は、[タスク取得](#operation/getTask)を使います。 
+        メンバーもしくは自身にタスクを割当します。  個々のタスクの情報を取得する場合は、[タスク取得](#operation/getTask)を使います。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2564,7 +2564,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        タスクを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、現在「削除」の1通りのみがあります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の削除ができます。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。 
+        タスクを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、現在「削除」の1通りのみがあります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の削除ができます。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2591,7 +2591,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        不要になったタスクや、間違って投入したタスクを削除します。教師データなどは削除せず残すので、あとから復元することも可能です。 
+        不要になったタスクや、間違って投入したタスクを削除します。教師データなどは削除せず残すので、あとから復元することも可能です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2615,7 +2615,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        個々のタスクの情報を取得します。  タスクを割り当てる場合は、[タスク割当](#operation/startTask)を使います。 
+        個々のタスクの情報を取得します。  タスクを割り当てる場合は、[タスク割当](#operation/startTask)を使います。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2639,7 +2639,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定されたタスクの作業履歴をすべて取得します。 
+        指定されたタスクの作業履歴をすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2664,7 +2664,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定したタスクの自動検査で見つかった警告やエラーを一括で取得します。 [タスクの状態遷移](#operation/operateTask)の際に検査を行うようになったので、本APIは非推奨となります。 
+        指定したタスクの自動検査で見つかった警告やエラーを一括で取得します。 [タスクの状態遷移](#operation/operateTask)の際に検査を行うようになったので、本APIは非推奨となります。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2691,7 +2691,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        プロジェクトに含まれる複数のタスクをまとめて取得します。  検索条件を指定することで、特定のユーザが担当するタスクなどを絞り込むことができます。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。 
+        プロジェクトに含まれる複数のタスクをまとめて取得します。  検索条件を指定することで、特定のユーザが担当するタスクなどを絞り込むことができます。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2710,8 +2710,8 @@ class AbstractAnnofabApi(abc.ABC):
                 previous_phase_stage (int):  そのタスクがこれまでに遷移したことのあるステージ（現在のステージ含む）。未指定時は全ステージ
                 rejected_only (str):  差し戻されたタスクだけを絞り込む時に、キーのみ指定します（値は無視されます）。
                 auto_accepted_only (str):  「抜取検査の対象外となり、自動受入されたタスク」だけを絞り込む時に、キーのみ指定します（値は無視されます）。
-                sort (str):  ソート順の指定。 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、phase_stage、status、account_idのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。 
-                annotation (str):  アノテーションの絞り込み条件をJSON形式([AnnotationQuery](#section/AnnotationQuery))で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。 
+                sort (str):  ソート順の指定。 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、phase_stage、status、account_idのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。
+                annotation (str):  アノテーションの絞り込み条件をJSON形式([AnnotationQuery](#section/AnnotationQuery))で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
 
         Returns:
             Tuple[TaskList, requests.Response]
@@ -2739,12 +2739,12 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        典型的なタスク作成ルールにもとづいた、一括作成を行うAPIです。  タスク作成ルールは、リクエストペイロードの `task_generate_rule` フィールドで指定できます。<br> `ByCount` を指定した場合、1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。この作成ルールは、画像を同じ枚数均等にタスクに割り振りたい場合に便利です。<br> `ByDirectory` を指定した場合、入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。この作成ルールは、動画などから切り出した画像をディレクトリ別に格納し、、その動画（ディレクトリ）の単位でタスクを作りたい場合に便利です。 `ByInputDataCsv` を指定した場合、入力データを各タスクに割り振ったCSVへのS3パスを指定してタスクを生成できます。この作成ルールは特定のデータの組み合わせを持ったタスクを作成したい場合に便利です。<br>  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks`）。  #### ByDirectory: ディレクトリ単位でのタスク一括生成の使い方 例えば、次のような `input_data_name_` の入力データが登録されているとします。  * a.zip/dir1/image1.png * a.zip/dir1/image2.png * a.zip/dir1/subdir/image3.png * a.zip/dir1/subdir/image4.png * a.zip/dir1/subdir/image5.png * b.zip/dir2/subdir1/image6.png * b.zip/dir2/subdir1/image7.png * b.zip/dir2/subdir1/image8.png * b.zip/dir2/subdir2/image9.png * b.zip/dir2/subdir2/image10.png  ここで、`input_data_name_prefix`フィールド に `a.zip` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png  次に、`input_data_name_prefix` に `b.zip/dir2` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 2. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  `input_data_name_prefix` が未指定の時は、全ディレクトリごとにタスクが作成されます。つまり次のように4つのタスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png 3. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 4. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  画像プロジェクトの場合、タスクに割り当てられる「ディレクトリ内の入力データ」の順序は、名前の昇順となります。<br> 動画プロジェクトの場合、タスクに割り当てられる「ディレクトリ内の入力データ」の順序は、動画の入力データが先頭に来るようにソートされたうえで、名前の昇順となります。  **注意:** `ByDirectory`では、入力データ名がファイルパス形式になっていない入力データはタスクの作成対象になりません。 例えば、`foo/bar.png` はタスクの作成対象になりますが、ディレクトリを含まない`bar.png` や、最後がディレクトリになっている`foo/bar.png/` は対象になりません。  **注意:** 動画プロジェクトの場合、ディレクトリに含まれる動画の入力データは一つに制限してください。 これが守られない場合、作成されたタスクで動画を再生できない場合があります。  #### ByInputDataCsv: CSVによるタスク一括生成の使い方 以下のように「タスクID,入力データ名,入力データID」を1行毎に指定したCSVを作成します。  ``` task_1,a001.jpg,ca0cb2f9-fec5-49b4-98df-dc34490f9785 task_1,a002.jpg,5ac1987e-ca7c-42a0-9c19-b5b23a41836b task_1,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_2,b001.jpg,4f2ae4d0-7a38-4f9a-be6f-170ba76aba73 task_2,b002.jpg,45ac5852-f20c-4938-9ee9-cc0274401df7 task_2,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_3,c001.jpg,3260c7a0-4820-424d-a26e-db7e91dbc139 task_3,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee ``` CSVのエンコーディングは UTF-8(BOM付き)、UTF-8(BOMなし)、UTF-16(BOM付きLE) のいずれかのみ対応しています。  **注意:** 動画プロジェクトの場合、一つのタスクに含まれる動画の入力データは一つに制限し、動画の入力データの位置は先頭にしてください。 これが守られない場合、作成されたタスクで動画を再生できない場合があります。  [createTempPath](#operation/createTempPath) APIを使ってアップロード用のURLとS3パスを取得してCSVをアップロードした上で`csv_data_path` フィールドに取得したS3パスを記述します。 
+        典型的なタスク作成ルールにもとづいた、一括作成を行うAPIです。  タスク作成ルールは、リクエストペイロードの `task_generate_rule` フィールドで指定できます。<br> `ByCount` を指定した場合、1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。この作成ルールは、画像を同じ枚数均等にタスクに割り振りたい場合に便利です。<br> `ByDirectory` を指定した場合、入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。この作成ルールは、動画などから切り出した画像をディレクトリ別に格納し、、その動画（ディレクトリ）の単位でタスクを作りたい場合に便利です。 `ByInputDataCsv` を指定した場合、入力データを各タスクに割り振ったCSVへのS3パスを指定してタスクを生成できます。この作成ルールは特定のデータの組み合わせを持ったタスクを作成したい場合に便利です。<br>  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks`）。  #### ByDirectory: ディレクトリ単位でのタスク一括生成の使い方 例えば、次のような `input_data_name_` の入力データが登録されているとします。  * a.zip/dir1/image1.png * a.zip/dir1/image2.png * a.zip/dir1/subdir/image3.png * a.zip/dir1/subdir/image4.png * a.zip/dir1/subdir/image5.png * b.zip/dir2/subdir1/image6.png * b.zip/dir2/subdir1/image7.png * b.zip/dir2/subdir1/image8.png * b.zip/dir2/subdir2/image9.png * b.zip/dir2/subdir2/image10.png  ここで、`input_data_name_prefix`フィールド に `a.zip` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png  次に、`input_data_name_prefix` に `b.zip/dir2` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 2. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  `input_data_name_prefix` が未指定の時は、全ディレクトリごとにタスクが作成されます。つまり次のように4つのタスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png 3. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 4. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  画像プロジェクトの場合、タスクに割り当てられる「ディレクトリ内の入力データ」の順序は、名前の昇順となります。<br> 動画プロジェクトの場合、タスクに割り当てられる「ディレクトリ内の入力データ」の順序は、動画の入力データが先頭に来るようにソートされたうえで、名前の昇順となります。  **注意:** `ByDirectory`では、入力データ名がファイルパス形式になっていない入力データはタスクの作成対象になりません。 例えば、`foo/bar.png` はタスクの作成対象になりますが、ディレクトリを含まない`bar.png` や、最後がディレクトリになっている`foo/bar.png/` は対象になりません。  **注意:** 動画プロジェクトの場合、ディレクトリに含まれる動画の入力データは一つに制限してください。 これが守られない場合、作成されたタスクで動画を再生できない場合があります。  #### ByInputDataCsv: CSVによるタスク一括生成の使い方 以下のように「タスクID,入力データ名,入力データID」を1行毎に指定したCSVを作成します。  ``` task_1,a001.jpg,ca0cb2f9-fec5-49b4-98df-dc34490f9785 task_1,a002.jpg,5ac1987e-ca7c-42a0-9c19-b5b23a41836b task_1,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_2,b001.jpg,4f2ae4d0-7a38-4f9a-be6f-170ba76aba73 task_2,b002.jpg,45ac5852-f20c-4938-9ee9-cc0274401df7 task_2,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_3,c001.jpg,3260c7a0-4820-424d-a26e-db7e91dbc139 task_3,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee ``` CSVのエンコーディングは UTF-8(BOM付き)、UTF-8(BOMなし)、UTF-16(BOM付きLE) のいずれかのみ対応しています。  **注意:** 動画プロジェクトの場合、一つのタスクに含まれる動画の入力データは一つに制限し、動画の入力データの位置は先頭にしてください。 これが守られない場合、作成されたタスクで動画を再生できない場合があります。  [createTempPath](#operation/createTempPath) APIを使ってアップロード用のURLとS3パスを取得してCSVをアップロードした上で`csv_data_path` フィールドに取得したS3パスを記述します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：TaskGenerateResponse 
+                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：TaskGenerateResponse
             request_body (Any): Request Body
                 task_generate_request (TaskGenerateRequest):  (required)
 
@@ -2771,7 +2771,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        タスクの状態、もしくはタスクの担当者を変更することができます。  #### ユースケースごとの使い方  * タスクを作業中(working)にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が未着手(not_started)、休憩中(break)、保留(on_hold)のいずれかであるタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"working\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを休憩中にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"break\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを保留(on_hold)にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"on_hold\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを提出(complete)したい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"complete\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの提出を取消し(cancelled)したい場合   * 制約     * タスクを提出したユーザーのみ、この操作を行うことができます。     * タスク提出後に検査/受入(抜取含む)等の作業が一切行われていない場合のみ、この操作を行うことができます。     * 現在の状態が未着手(not_started)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"cancelled\", account_id: \"自身(タスク提出者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを差戻し(rejected)したい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"rejected\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}```   * タスクを強制差戻し(force rejected)したい場合     * 強制差戻しについて       * タスクの状態・フェーズを無視して、フェーズを教師付け(annotation)に、状態を未作業(not started)に変更します。       * タスクの担当者としては、直前の教師付け(annotation)フェーズの担当者を割り当てます。       * この差戻しは差戻しとして扱われず、抜取検査・抜取受入のスキップ判定に影響を及ぼしません。     * 制約       * プロジェクトオーナー(owner)のみ、この操作を行うことができます。       * 現在のタスクの状態、フェーズを問わず、この操作を行うことができます。     * リクエストボディのJSONサンプル       * ```{ status: \"rejected\", account_id: \"自身(プロジェクトオーナー)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\", force: true }``` * タスクの受入完了を取り消したい場合   * 制約     * プロジェクトオーナー(owner)のみ、この操作を行うことができます。     * 現在の状態が完了(completed)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", account_id: \"再度受入を担当させたいアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの担当者を変更したい場合   * 制約     * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", account_id: \"現在のフェーズを担当できるアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの担当者を未割当てにしたい場合   * 制約     * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` 
+        タスクの状態、もしくはタスクの担当者を変更することができます。  #### ユースケースごとの使い方  * タスクを作業中(working)にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が未着手(not_started)、休憩中(break)、保留(on_hold)のいずれかであるタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"working\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを休憩中にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"break\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを保留(on_hold)にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"on_hold\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを提出(complete)したい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"complete\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの提出を取消し(cancelled)したい場合   * 制約     * タスクを提出したユーザーのみ、この操作を行うことができます。     * タスク提出後に検査/受入(抜取含む)等の作業が一切行われていない場合のみ、この操作を行うことができます。     * 現在の状態が未着手(not_started)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"cancelled\", account_id: \"自身(タスク提出者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを差戻し(rejected)したい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"rejected\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}```   * タスクを強制差戻し(force rejected)したい場合     * 強制差戻しについて       * タスクの状態・フェーズを無視して、フェーズを教師付け(annotation)に、状態を未作業(not started)に変更します。       * タスクの担当者としては、直前の教師付け(annotation)フェーズの担当者を割り当てます。       * この差戻しは差戻しとして扱われず、抜取検査・抜取受入のスキップ判定に影響を及ぼしません。     * 制約       * プロジェクトオーナー(owner)のみ、この操作を行うことができます。       * 現在のタスクの状態、フェーズを問わず、この操作を行うことができます。     * リクエストボディのJSONサンプル       * ```{ status: \"rejected\", account_id: \"自身(プロジェクトオーナー)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\", force: true }``` * タスクの受入完了を取り消したい場合   * 制約     * プロジェクトオーナー(owner)のみ、この操作を行うことができます。     * 現在の状態が完了(completed)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", account_id: \"再度受入を担当させたいアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの担当者を変更したい場合   * 制約     * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", account_id: \"現在のフェーズを担当できるアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの担当者を未割当てにしたい場合   * 制約     * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}```
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2801,7 +2801,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        1つのタスクを作成または更新します。 複数のタスクを一括生成する場合は、効率のよい[一括作成API](#operation/initiateTasksGeneration)を検討してください。  このAPIで変更できるのは、タスクの入力データ（`input_data_list`）のみです。タスクに割り当てた画像や動画などの入力データを差し替えることができます。  タスクの担当者やステータスを変更するには、[タスク割当](#operation/startTask)や[タスクの状態遷移](#operation/operateTask)を使用します。 
+        1つのタスクを作成または更新します。 複数のタスクを一括生成する場合は、効率のよい[一括作成API](#operation/initiateTasksGeneration)を検討してください。  このAPIで変更できるのは、タスクの入力データ（`input_data_list`）のみです。タスクに割り当てた画像や動画などの入力データを差し替えることができます。  タスクの担当者やステータスを変更するには、[タスク割当](#operation/startTask)や[タスクの状態遷移](#operation/operateTask)を使用します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2832,7 +2832,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        タスクの割当を要求します。  個々のタスクの情報を取得する場合は、[タスク取得](#operation/getTask)を使います。 
+        タスクの割当を要求します。  個々のタスクの情報を取得する場合は、[タスク取得](#operation/getTask)を使います。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2865,7 +2865,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        指定された Webhook を削除 
+        指定された Webhook を削除
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2889,7 +2889,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        指定されたプロジェクトの Webhook をすべて取得します。 
+        指定されたプロジェクトの Webhook をすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2914,7 +2914,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        プロジェクトのWebhookを新規作成/更新します。  Webhook で送信される body には、event_type によって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip  * project-copy-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{DEST_PROJECT_ID}} :  コピー先プロジェクトID   * {{DEST_PROJECT_TITLE}} : コピー先プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00 
+        プロジェクトのWebhookを新規作成/更新します。  Webhook で送信される body には、event_type によって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip  * project-copy-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{DEST_PROJECT_ID}} :  コピー先プロジェクトID   * {{DEST_PROJECT_TITLE}} : コピー先プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2944,7 +2944,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        得録された登録された URL にテスト用の Webhook を実際に送信します。  送信される Webhook の body に含まれるプレースホルダーは、本 API リクエストで指定されたダミーのプレースホルダーで置き換えられます。 
+        得録された登録された URL にテスト用の Webhook を実際に送信します。  送信される Webhook の body に含まれるプレースホルダーは、本 API リクエストで指定されたダミーのプレースホルダーで置き換えられます。
 
         Args:
             project_id (str):  プロジェクトID (required)

@@ -21,9 +21,7 @@ from annofabapi.models import OrganizationMemberRole, OrganizationMemberStatus
 @dataclass_json
 @dataclass
 class OrganizationMember:
-    """
-    
-    """
+    """"""
 
     organization_id: str
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
