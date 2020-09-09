@@ -19,9 +19,7 @@ from dataclasses_json import dataclass_json
 @dataclass_json
 @dataclass
 class Instruction:
-    """
-    
-    """
+    """"""
 
     html: Optional[str]
     """作業ガイドのHTML"""
@@ -33,9 +31,7 @@ class Instruction:
 @dataclass_json
 @dataclass
 class InstructionHistory:
-    """
-    
-    """
+    """"""
 
     history_id: str
     """作業ガイドの履歴ID"""
@@ -50,9 +46,7 @@ class InstructionHistory:
 @dataclass_json
 @dataclass
 class InstructionImage:
-    """
-    
-    """
+    """"""
 
     image_id: str
     """作業ガイド画像ID"""

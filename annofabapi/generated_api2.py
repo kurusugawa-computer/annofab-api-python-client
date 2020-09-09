@@ -48,14 +48,14 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したプロジェクトのアノテーション仕様を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
+        指定したプロジェクトのアノテーション仕様を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
-                history_id (str):  過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。 未指定時は最新のアノテーション仕様を取得します。 
-                v (str):  取得するアノテーション仕様のフォーマットバージョンを指定します。 
+                cache (str):  CACHE TIMESTAMP
+                history_id (str):  過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。 未指定時は最新のアノテーション仕様を取得します。
+                v (str):  取得するアノテーション仕様のフォーマットバージョンを指定します。
 
         Returns:
             Tuple[AnnotationSpecs, requests.Response]
@@ -84,13 +84,13 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したユーザーが指定した組織にどのようなロールで参加しているかを取得します。 
+        指定したユーザーが指定した組織にどのようなロールで参加しているかを取得します。
 
         Args:
             organization_id (str):  組織ID (required)
             user_id (str):  ユーザID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[OrganizationMember, requests.Response]
@@ -114,12 +114,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        脱退したメンバーは含まれません。 
+        脱退したメンバーは含まれません。
 
         Args:
             organization_id (str):  組織ID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[OrganizationMemberList, requests.Response]
@@ -148,12 +148,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定された組織を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
+        指定された組織を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
 
         Args:
             organization_name (str):  組織名 (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[Organization, requests.Response]
@@ -175,7 +175,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        組織の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。 
+        組織の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -198,7 +198,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        組織の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。 
+        組織の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
 
         Args:
             organization_id (str):  組織ID (required)
@@ -223,12 +223,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定された組織を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
+        指定された組織を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
 
         Args:
             organization_id (str):  組織ID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[Organization, requests.Response]
@@ -252,7 +252,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        プロジェクトのタスク件数を取得します。 
+        プロジェクトのタスク件数を取得します。
 
         Args:
             organization_id (str):  組織ID (required)
@@ -283,13 +283,13 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したプロジェクトメンバーを取得します。 
+        指定したプロジェクトメンバーを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             user_id (str):  アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。 (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[List[ProjectMember], requests.Response]
@@ -313,13 +313,13 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定されたプロジェクトのメンバーを検索します。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。 
+        指定されたプロジェクトのメンバーを検索します。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
                 include_inactive_member (str):  脱退したプロジェクトメンバーも取得する時に、キーのみ指定します（値は無視されます）。
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[ProjectMemberList, requests.Response]
@@ -346,7 +346,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        プロジェクトの各種リソースのキャッシュタイムスタンプを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。 
+        プロジェクトの各種リソースのキャッシュタイムスタンプを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -376,12 +376,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したプロジェクトのユーザー別タスク集計をすべて取得します。 
+        指定したプロジェクトのユーザー別タスク集計をすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[List[ProjectAccountStatistics], requests.Response]
@@ -405,12 +405,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したプロジェクトの検査コメント集計をすべて取得します。 
+        指定したプロジェクトの検査コメント集計をすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[List[InspectionStatistics], requests.Response]
@@ -434,12 +434,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したプロジェクトのラベル別アノテーション数集計をすべて取得します。 
+        指定したプロジェクトのラベル別アノテーション数集計をすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[List[LabelStatistics], requests.Response]
@@ -463,12 +463,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したプロジェクトのフェーズ別タスク集計をすべて取得します。 
+        指定したプロジェクトのフェーズ別タスク集計をすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[List[TaskPhaseStatistics], requests.Response]
@@ -492,12 +492,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したプロジェクトのタスク集計をすべて取得します。 
+        指定したプロジェクトのタスク集計をすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[List[ProjectTaskStatisticsHistory], requests.Response]
@@ -521,12 +521,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。 アカウント毎の集計のby_tasks、by_inputsには、最終日であってもヒストグラムを返却しない。 
+        ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。 アカウント毎の集計のby_tasks、by_inputsには、最終日であってもヒストグラムを返却しない。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[List[WorktimeStatistics], requests.Response]
@@ -555,12 +555,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したユーザーの組織のアカウント情報を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
+        指定したユーザーの組織のアカウント情報を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
 
         Args:
             account_id (str):  アカウントID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[MyAccount, requests.Response]
@@ -582,7 +582,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        ユーザー別の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。 
+        ユーザー別の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
 
         Args:
             account_id (str):  アカウントID (required)
@@ -607,12 +607,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したユーザーが所属する組織を検索します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
+        指定したユーザーが所属する組織を検索します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
 
         Args:
             account_id (str):  アカウントID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[MyOrganizationList, requests.Response]
@@ -636,12 +636,12 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したユーザーが所属するプロジェクトメンバー情報をすべて取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
+        指定したユーザーが所属するプロジェクトメンバー情報をすべて取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
 
         Args:
             account_id (str):  アカウントID (required)
             query_params (Dict[str, Any]): Query Parameters
-                cache (str):  CACHE TIMESTAMP 
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[ProjectMember, requests.Response]
@@ -665,19 +665,19 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したユーザーが所属するプロジェクトを検索します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。 
+        指定したユーザーが所属するプロジェクトを検索します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
 
         Args:
             account_id (str):  アカウントID (required)
             query_params (Dict[str, Any]): Query Parameters
-                page (int):  表示するページ番号 
-                limit (int):  1ページあたりの取得するデータ件数 
-                organization_id (str):  指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。 
-                title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。 
-                status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。 
-                input_data_type (InputDataType):  指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト 
-                sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。 
-                cache (str):  CACHE TIMESTAMP 
+                page (int):  表示するページ番号
+                limit (int):  1ページあたりの取得するデータ件数
+                organization_id (str):  指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。
+                title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。
+                status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。
+                input_data_type (InputDataType):  指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト
+                sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。
+                cache (str):  CACHE TIMESTAMP
 
         Returns:
             Tuple[ProjectContainer, requests.Response]
