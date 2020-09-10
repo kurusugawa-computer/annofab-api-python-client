@@ -271,7 +271,10 @@ class Wrapper:
         return detail
 
     def __to_dest_annotation_detail(
-        self, dest_project_id: str, detail: Dict[str, Any], account_id: str,
+        self,
+        dest_project_id: str,
+        detail: Dict[str, Any],
+        account_id: str,
     ) -> Dict[str, Any]:
         """
         コピー元の１個のアノテーションを、コピー先用に変換する。
@@ -980,6 +983,7 @@ class Wrapper:
         input_data_id: str,
         filter_inspection: Callable[[Inspection], bool],
         inspection_status: InspectionStatus,
+        updated_datetime: Optional[str] = None,
     ) -> List[Inspection]:
         """
         検査コメント（返信コメント以外）のstatusを変更する。
@@ -990,6 +994,7 @@ class Wrapper:
             input_data_id: 入力データID
             filter_inspection: 変更対象の検査コメントを絞り込む条件
             inspection_status: 検査コメントのstatus
+            updated_datetime: 検査コメントの更新日時。タスクの更新日時以降を指定する必要があります。Noneの場合、現在時刻を指定します。
 
         Returns:
             `batch_update_inspections` メソッドのcontent
@@ -1007,12 +1012,11 @@ class Wrapper:
 
         target_inspections = [e for e in inspections if search_updated_inspections(e)]
 
+        if updated_datetime is None:
+            updated_datetime = str_now()
         for inspection in target_inspections:
             inspection["status"] = inspection_status.value
-            if inspection["updated_datetime"] is None:
-                inspection["updated_datetime"] = inspection["created_datetime"]
-            else:
-                inspection["updated_datetime"] = str_now()
+            inspection["updated_datetime"] = updated_datetime
 
         req_inspection = [{"data": e, "_type": "Put"} for e in target_inspections]
         content = self.api.batch_update_inspections(project_id, task_id, input_data_id, req_inspection)[0]

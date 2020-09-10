@@ -53,7 +53,7 @@ class SimpleAnnotationParser(abc.ABC):
         """
         JSONファイルから決まる、input_data_id.
         Simple(v2)版用です。
-         """
+        """
         return self.__input_data_id
 
     @abc.abstractmethod
@@ -125,7 +125,7 @@ class FullAnnotationParser(abc.ABC):
     def input_data_id(self) -> str:
         """
         JSONファイルから決まる、input_data_id
-         """
+        """
         return self.__input_data_id
 
     @abc.abstractmethod
@@ -352,7 +352,7 @@ def __parse_annotation_dir(annotaion_dir_path: Path, clazz) -> Iterator[Any]:
 
 
 def lazy_parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[SimpleAnnotationParser]:
-    """ Simpleアノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
+    """Simpleアノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     Args:
         annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
@@ -365,7 +365,7 @@ def lazy_parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[Simpl
 
 
 def lazy_parse_full_annotation_dir(annotaion_dir_path: Path) -> Iterator[SimpleAnnotationParser]:
-    """ Fullアノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
+    """Fullアノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     Args:
         annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
@@ -490,7 +490,7 @@ def lazy_parse_simple_annotation_zip(zip_file_path: Path) -> Iterator[SimpleAnno
 
 
 def lazy_parse_full_annotation_zip(zip_file_path: Path) -> Iterator[FullAnnotationParser]:
-    """ 引数のFullアノテーションzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
+    """引数のFullアノテーションzipファイル内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     大量のファイルを含むzipファイルを展開せず、task_idなどを確認して最小限のデータのみをparseすることを目的としたユーティリティです。
 

@@ -46,9 +46,7 @@ class Point:
 @dataclass_json
 @dataclass
 class FullAnnotationDataClassification:
-    """
-    
-    """
+    """"""
 
     type: str
     """Classification"""
@@ -71,9 +69,7 @@ class FullAnnotationDataSegmentation:
 @dataclass_json
 @dataclass
 class FullAnnotationDataSegmentationV2:
-    """
-    
-    """
+    """"""
 
     data_uri: str
     """"""
@@ -103,7 +99,7 @@ class FullAnnotationDataBoundingBox:
 @dataclass
 class FullAnnotationDataPoints:
     """
-    頂点座標 {\"x\":int, \"y\":int} の配列。  * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。 
+    頂点座標 {\"x\":int, \"y\":int} の配列。  * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。
     """
 
     points: List[Point]
@@ -147,9 +143,7 @@ class FullAnnotationDataRange:
 @dataclass_json
 @dataclass
 class AdditionalData:
-    """
-    
-    """
+    """"""
 
     additional_data_definition_id: str
     """"""
@@ -170,9 +164,7 @@ class AdditionalData:
 @dataclass_json
 @dataclass
 class FullAnnotationAdditionalData:
-    """
-    
-    """
+    """"""
 
     additional_data_definition_id: Optional[str]
     """"""
@@ -190,9 +182,7 @@ class FullAnnotationAdditionalData:
 @dataclass_json
 @dataclass
 class FullAnnotationDetail:
-    """
-    
-    """
+    """"""
 
     annotation_id: Optional[str]
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
@@ -222,9 +212,7 @@ class FullAnnotationDetail:
 @dataclass_json
 @dataclass
 class FullAnnotation:
-    """
-    
-    """
+    """"""
 
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -260,9 +248,7 @@ class FullAnnotation:
 @dataclass_json
 @dataclass
 class SimpleAnnotationDetail:
-    """
-    
-    """
+    """"""
 
     label: str
     """アノテーション仕様のラベル名です。 """
@@ -280,9 +266,7 @@ class SimpleAnnotationDetail:
 @dataclass_json
 @dataclass
 class SimpleAnnotation:
-    """
-    
-    """
+    """"""
 
     annotation_format_version: str
     """アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 """
@@ -318,9 +302,7 @@ class SimpleAnnotation:
 @dataclass_json
 @dataclass
 class SingleAnnotationDetail:
-    """
-    
-    """
+    """"""
 
     annotation_id: str
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
@@ -356,9 +338,7 @@ class SingleAnnotationDetail:
 @dataclass_json
 @dataclass
 class SingleAnnotation:
-    """
-    
-    """
+    """"""
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -379,9 +359,7 @@ class SingleAnnotation:
 @dataclass_json
 @dataclass
 class AnnotationDetail:
-    """
-    
-    """
+    """"""
 
     annotation_id: str
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
@@ -423,9 +401,7 @@ class AnnotationDetail:
 @dataclass_json
 @dataclass
 class Annotation:
-    """
-    
-    """
+    """"""
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
