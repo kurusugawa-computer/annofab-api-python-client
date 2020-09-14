@@ -757,7 +757,7 @@ class Wrapper:
 
         Args:
             project_id: プロジェクトID
-            data: アップロード対象のdata. ``requests.put`` メソッドの ``data``引数にそのまま渡す。
+            data: アップロード対象のdata. ``requests.put`` メソッドの ``data`` 引数にそのまま渡す。
             content_type: アップロードするfile objectのMIME Type.
 
         Returns:
@@ -1487,7 +1487,7 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             image_id: 作業ガイド画像ID
-            data: アップロード対象のdata. ``requests.put`` メソッドの ``data``引数にそのまま渡す。
+            data: アップロード対象のdata. ``requests.put`` メソッドの ``data`` 引数にそのまま渡す。
             content_type: アップロードするファイルのMIME Type.
 
         Returns:
