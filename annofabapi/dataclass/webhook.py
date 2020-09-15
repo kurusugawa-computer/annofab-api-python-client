@@ -13,14 +13,13 @@ import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import WebhookEventType, WebhookHttpMethod, WebhookStatus
 
 
-@dataclass_json
 @dataclass
-class WebhookHeader:
+class WebhookHeader(DataClassJsonMixin):
     """"""
 
     name: Optional[str]
@@ -30,9 +29,8 @@ class WebhookHeader:
     """"""
 
 
-@dataclass_json
 @dataclass
-class Webhook:
+class Webhook(DataClassJsonMixin):
     """"""
 
     project_id: Optional[str]

@@ -13,14 +13,13 @@ import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import TaskPhase, TaskStatus
 
 
-@dataclass_json
 @dataclass
-class TaskHistory:
+class TaskHistory(DataClassJsonMixin):
     """
     タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
     """
@@ -53,9 +52,8 @@ class TaskHistory:
     """"""
 
 
-@dataclass_json
 @dataclass
-class TaskHistoryShort:
+class TaskHistoryShort(DataClassJsonMixin):
     """
     タスクのあるフェーズを誰が担当したかを表します。
     """
@@ -73,9 +71,8 @@ class TaskHistoryShort:
     """そのフェーズでタスクの作業を行ったかどうか（行った場合はtrue）"""
 
 
-@dataclass_json
 @dataclass
-class Task:
+class Task(DataClassJsonMixin):
     """"""
 
     project_id: str

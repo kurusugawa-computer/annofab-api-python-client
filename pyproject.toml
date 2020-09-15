@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "annofabapi"
-version = "0.38.8"
+version = "0.38.9"
 description = "Python Clinet Library of AnnoFab WebAPI (https://annofab.com/docs/api/)"
 authors = ["yuji38kwmt <yuji38kwmt@gmail.com>"]
 maintainers = ["yuji38kwmt <yuji38kwmt@gmail.com>"]

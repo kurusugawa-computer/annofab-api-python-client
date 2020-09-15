@@ -13,14 +13,13 @@ import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import SupplementaryDataType
 
 
-@dataclass_json
 @dataclass
-class SupplementaryData:
+class SupplementaryData(DataClassJsonMixin):
     """"""
 
     project_id: str

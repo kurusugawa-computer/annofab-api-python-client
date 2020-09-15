@@ -13,7 +13,7 @@ import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import (
     AdditionalDataDefinitionType,
@@ -29,9 +29,8 @@ FullAnnotationData = Dict[str, Any]
 AdditionalDataValue = Dict[str, Any]
 
 
-@dataclass_json
 @dataclass
-class Point:
+class Point(DataClassJsonMixin):
     """
     座標
     """
@@ -43,18 +42,16 @@ class Point:
     """"""
 
 
-@dataclass_json
 @dataclass
-class FullAnnotationDataClassification:
+class FullAnnotationDataClassification(DataClassJsonMixin):
     """"""
 
     type: str
     """Classification"""
 
 
-@dataclass_json
 @dataclass
-class FullAnnotationDataSegmentation:
+class FullAnnotationDataSegmentation(DataClassJsonMixin):
     """
     塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
     """
@@ -66,9 +63,8 @@ class FullAnnotationDataSegmentation:
     """Segmentation"""
 
 
-@dataclass_json
 @dataclass
-class FullAnnotationDataSegmentationV2:
+class FullAnnotationDataSegmentationV2(DataClassJsonMixin):
     """"""
 
     data_uri: str
@@ -78,9 +74,8 @@ class FullAnnotationDataSegmentationV2:
     """SegmentationV2"""
 
 
-@dataclass_json
 @dataclass
-class FullAnnotationDataBoundingBox:
+class FullAnnotationDataBoundingBox(DataClassJsonMixin):
     """
     annotation_type が bounding_boxの場合に、[左上頂点座標, 右下頂点座標]を {\"x\":int, \"y\":int} の形式で記述したもの。
     """
@@ -95,9 +90,8 @@ class FullAnnotationDataBoundingBox:
     """BoundingBox"""
 
 
-@dataclass_json
 @dataclass
-class FullAnnotationDataPoints:
+class FullAnnotationDataPoints(DataClassJsonMixin):
     """
     頂点座標 {\"x\":int, \"y\":int} の配列。  * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。
     """
@@ -109,9 +103,8 @@ class FullAnnotationDataPoints:
     """Points"""
 
 
-@dataclass_json
 @dataclass
-class FullAnnotationDataSinglePoint:
+class FullAnnotationDataSinglePoint(DataClassJsonMixin):
     """
     annotation_type が pointの場合。
     """
@@ -123,9 +116,8 @@ class FullAnnotationDataSinglePoint:
     """SinglePoint。"""
 
 
-@dataclass_json
 @dataclass
-class FullAnnotationDataRange:
+class FullAnnotationDataRange(DataClassJsonMixin):
     """
     annotation_type が rangeの場合に、[開始時間, 終了時間]を {\"begin\":number, \"end\":number} の形式で記述したもの。開始時間・終了時間の単位は秒で、精度はミリ秒まで。
     """
@@ -140,9 +132,8 @@ class FullAnnotationDataRange:
     """Range"""
 
 
-@dataclass_json
 @dataclass
-class AdditionalData:
+class AdditionalData(DataClassJsonMixin):
     """"""
 
     additional_data_definition_id: str
@@ -161,9 +152,8 @@ class AdditionalData:
     """"""
 
 
-@dataclass_json
 @dataclass
-class FullAnnotationAdditionalData:
+class FullAnnotationAdditionalData(DataClassJsonMixin):
     """"""
 
     additional_data_definition_id: Optional[str]
@@ -179,9 +169,8 @@ class FullAnnotationAdditionalData:
     """"""
 
 
-@dataclass_json
 @dataclass
-class FullAnnotationDetail:
+class FullAnnotationDetail(DataClassJsonMixin):
     """"""
 
     annotation_id: Optional[str]
@@ -209,9 +198,8 @@ class FullAnnotationDetail:
     """"""
 
 
-@dataclass_json
 @dataclass
-class FullAnnotation:
+class FullAnnotation(DataClassJsonMixin):
     """"""
 
     project_id: Optional[str]
@@ -245,9 +233,8 @@ class FullAnnotation:
     """アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 """
 
 
-@dataclass_json
 @dataclass
-class SimpleAnnotationDetail:
+class SimpleAnnotationDetail(DataClassJsonMixin):
     """"""
 
     label: str
@@ -263,9 +250,8 @@ class SimpleAnnotationDetail:
     """キーに属性の名前、値に各属性の値が入った辞書構造です。 """
 
 
-@dataclass_json
 @dataclass
-class SimpleAnnotation:
+class SimpleAnnotation(DataClassJsonMixin):
     """"""
 
     annotation_format_version: str
@@ -299,9 +285,8 @@ class SimpleAnnotation:
     """更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。"""
 
 
-@dataclass_json
 @dataclass
-class SingleAnnotationDetail:
+class SingleAnnotationDetail(DataClassJsonMixin):
     """"""
 
     annotation_id: str
@@ -335,9 +320,8 @@ class SingleAnnotationDetail:
     """"""
 
 
-@dataclass_json
 @dataclass
-class SingleAnnotation:
+class SingleAnnotation(DataClassJsonMixin):
     """"""
 
     project_id: str
@@ -356,9 +340,8 @@ class SingleAnnotation:
     """"""
 
 
-@dataclass_json
 @dataclass
-class AnnotationDetail:
+class AnnotationDetail(DataClassJsonMixin):
     """"""
 
     annotation_id: str
@@ -398,9 +381,8 @@ class AnnotationDetail:
     """"""
 
 
-@dataclass_json
 @dataclass
-class Annotation:
+class Annotation(DataClassJsonMixin):
     """"""
 
     project_id: str

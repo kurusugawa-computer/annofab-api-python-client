@@ -13,14 +13,13 @@ import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import AccountAuthority, OrganizationMemberRole, OrganizationMemberStatus, PricePlan
 
 
-@dataclass_json
 @dataclass
-class MyOrganization:
+class MyOrganization(DataClassJsonMixin):
     """"""
 
     organization_id: Optional[str]
@@ -51,9 +50,8 @@ class MyOrganization:
     """"""
 
 
-@dataclass_json
 @dataclass
-class MyAccount:
+class MyAccount(DataClassJsonMixin):
     """"""
 
     account_id: str

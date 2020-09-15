@@ -13,14 +13,13 @@ import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import GraphType, TaskPhase, TaskStatus
 
 
-@dataclass_json
 @dataclass
-class ProjectTaskStatistics:
+class ProjectTaskStatistics(DataClassJsonMixin):
     """"""
 
     phase: TaskPhase
@@ -36,9 +35,8 @@ class ProjectTaskStatistics:
     """累計実作業時間(ミリ秒)"""
 
 
-@dataclass_json
 @dataclass
-class ProjectTaskStatisticsHistory:
+class ProjectTaskStatisticsHistory(DataClassJsonMixin):
     """"""
 
     date: Optional[str]
@@ -48,9 +46,8 @@ class ProjectTaskStatisticsHistory:
     """"""
 
 
-@dataclass_json
 @dataclass
-class ProjectAccountStatisticsHistory:
+class ProjectAccountStatisticsHistory(DataClassJsonMixin):
     """"""
 
     date: str
@@ -66,9 +63,8 @@ class ProjectAccountStatisticsHistory:
     """作業時間（ISO 8601 duration）"""
 
 
-@dataclass_json
 @dataclass
-class ProjectAccountStatistics:
+class ProjectAccountStatistics(DataClassJsonMixin):
     """"""
 
     account_id: str
@@ -78,9 +74,8 @@ class ProjectAccountStatistics:
     """"""
 
 
-@dataclass_json
 @dataclass
-class InspectionStatisticsPhrases:
+class InspectionStatisticsPhrases(DataClassJsonMixin):
     """
     ラベル外指摘の集計結果
     """
@@ -92,9 +87,8 @@ class InspectionStatisticsPhrases:
     """非定型指摘の合計数"""
 
 
-@dataclass_json
 @dataclass
-class InspectionStatisticsBreakdown:
+class InspectionStatisticsBreakdown(DataClassJsonMixin):
     """
     検査コメント数の集計結果
     """
@@ -106,9 +100,8 @@ class InspectionStatisticsBreakdown:
     """"""
 
 
-@dataclass_json
 @dataclass
-class InspectionStatistics:
+class InspectionStatistics(DataClassJsonMixin):
     """"""
 
     project_id: str
@@ -121,9 +114,8 @@ class InspectionStatistics:
     """"""
 
 
-@dataclass_json
 @dataclass
-class PhaseStatistics:
+class PhaseStatistics(DataClassJsonMixin):
     """"""
 
     phase: TaskPhase
@@ -133,9 +125,8 @@ class PhaseStatistics:
     """累積作業時間（ISO 8601 duration）"""
 
 
-@dataclass_json
 @dataclass
-class TaskPhaseStatistics:
+class TaskPhaseStatistics(DataClassJsonMixin):
     """"""
 
     project_id: str
@@ -148,9 +139,8 @@ class TaskPhaseStatistics:
     """タスクのフェーズごとの集計結果"""
 
 
-@dataclass_json
 @dataclass
-class LabelStatistics:
+class LabelStatistics(DataClassJsonMixin):
     """"""
 
     label_id: str
@@ -163,9 +153,8 @@ class LabelStatistics:
     """ラベルごとの受入が完了していないアノテーション数"""
 
 
-@dataclass_json
 @dataclass
-class HistogramItem:
+class HistogramItem(DataClassJsonMixin):
     """"""
 
     begin: float
@@ -178,9 +167,8 @@ class HistogramItem:
     """"""
 
 
-@dataclass_json
 @dataclass
-class WorktimeStatisticsItem:
+class WorktimeStatisticsItem(DataClassJsonMixin):
     """"""
 
     phase: TaskPhase
@@ -196,9 +184,8 @@ class WorktimeStatisticsItem:
     """作業時間の標準偏差（ISO 8601 duration）"""
 
 
-@dataclass_json
 @dataclass
-class AccountWorktimeStatistics:
+class AccountWorktimeStatistics(DataClassJsonMixin):
     """"""
 
     account_id: str
@@ -214,9 +201,8 @@ class AccountWorktimeStatistics:
     """ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）"""
 
 
-@dataclass_json
 @dataclass
-class WorktimeStatistics:
+class WorktimeStatistics(DataClassJsonMixin):
     """"""
 
     project_id: str
@@ -238,9 +224,8 @@ class WorktimeStatistics:
     """ユーザごとの作業時間情報"""
 
 
-@dataclass_json
 @dataclass
-class Marker:
+class Marker(DataClassJsonMixin):
     """"""
 
     marker_id: Optional[str]
@@ -256,9 +241,8 @@ class Marker:
     """グラフ上のマーカー位置(x軸)"""
 
 
-@dataclass_json
 @dataclass
-class Markers:
+class Markers(DataClassJsonMixin):
     """"""
 
     project_id: Optional[str]

@@ -13,14 +13,13 @@ import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 SystemMetadata = Dict[str, Any]
 
 
-@dataclass_json
 @dataclass
-class Resolution:
+class Resolution(DataClassJsonMixin):
     """"""
 
     width: float
@@ -30,9 +29,8 @@ class Resolution:
     """"""
 
 
-@dataclass_json
 @dataclass
-class InputData:
+class InputData(DataClassJsonMixin):
     """
     入力データの情報を表すデータ構造です。
     """
