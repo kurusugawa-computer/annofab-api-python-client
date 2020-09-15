@@ -10,9 +10,8 @@ from annofabapi.models import {{classname}}
 
 {{! enum以外ならばDictとして型ヒントを定義する }}
 
-@dataclass_json
 @dataclass
-class {{classname}}:
+class {{classname}}(DataClassJsonMixin):
     """
     {{#description}}{{{description}}}{{/description}}
     """
