@@ -13,12 +13,11 @@ import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 
-@dataclass_json
 @dataclass
-class Instruction:
+class Instruction(DataClassJsonMixin):
     """"""
 
     html: Optional[str]
@@ -28,9 +27,8 @@ class Instruction:
     """* [getInstruction](#operation/getInstruction) APIのレスポンスの場合: 最後に作業ガイドを更新した日時。 * [putInstruction](#operation/putInstruction) APIのリクエストボディの場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。 """
 
 
-@dataclass_json
 @dataclass
-class InstructionHistory:
+class InstructionHistory(DataClassJsonMixin):
     """"""
 
     history_id: str
@@ -43,9 +41,8 @@ class InstructionHistory:
     """作業ガイドの最終更新日時"""
 
 
-@dataclass_json
 @dataclass
-class InstructionImage:
+class InstructionImage(DataClassJsonMixin):
     """"""
 
     image_id: str

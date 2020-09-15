@@ -13,7 +13,7 @@ import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import AdditionalDataDefinitionType, AnnotationType
 
@@ -24,9 +24,8 @@ AdditionalDataRestrictionCondition = Dict[str, Any]
 AnnotationSpecsOption = Dict[str, Any]
 
 
-@dataclass_json
 @dataclass
-class Keybind:
+class Keybind(DataClassJsonMixin):
     """"""
 
     code: Optional[str]
@@ -42,9 +41,8 @@ class Keybind:
     """"""
 
 
-@dataclass_json
 @dataclass
-class PositionForMinimumBoundingBoxInsertion:
+class PositionForMinimumBoundingBoxInsertion(DataClassJsonMixin):
     """
     `annotation_type` が `bounding_box` かつ `min_warn_rule` が `and` または `or` の場合のみ、挿入する最小矩形アノテーションの原点を指定できます。 画像左上の座標が「x=0, y=0」です。 未指定、もしくは「画像外に飛び出たアノテーション」を許可していないにも関わらず飛び出してしまう場合は、表示範囲の中央に挿入されます。 「スキャンした帳票の記入欄」や「定点カメラで撮影した製品ラベル」など、アノテーションしたい位置やサイズが多くの画像で共通している場合に便利です。  `annotation_type` が `bounding_box` 以外の場合は必ず未指定となります。
     """
@@ -56,9 +54,8 @@ class PositionForMinimumBoundingBoxInsertion:
     """"""
 
 
-@dataclass_json
 @dataclass
-class LabelV1BoundingBoxMetadata:
+class LabelV1BoundingBoxMetadata(DataClassJsonMixin):
     """"""
 
     min_width: Optional[int]
@@ -86,9 +83,8 @@ class LabelV1BoundingBoxMetadata:
     """"""
 
 
-@dataclass_json
 @dataclass
-class LabelV1SegmentationMetadata:
+class LabelV1SegmentationMetadata(DataClassJsonMixin):
     """"""
 
     min_width: Optional[int]
@@ -104,9 +100,8 @@ class LabelV1SegmentationMetadata:
     """"""
 
 
-@dataclass_json
 @dataclass
-class InternationalizationMessageMessages:
+class InternationalizationMessageMessages(DataClassJsonMixin):
     """"""
 
     lang: Optional[str]
@@ -116,9 +111,8 @@ class InternationalizationMessageMessages:
     """"""
 
 
-@dataclass_json
 @dataclass
-class InternationalizationMessage:
+class InternationalizationMessage(DataClassJsonMixin):
     """"""
 
     messages: Optional[List[InternationalizationMessageMessages]]
@@ -128,9 +122,8 @@ class InternationalizationMessage:
     """"""
 
 
-@dataclass_json
 @dataclass
-class InspectionPhrase:
+class InspectionPhrase(DataClassJsonMixin):
     """"""
 
     id: Optional[str]
@@ -140,9 +133,8 @@ class InspectionPhrase:
     """"""
 
 
-@dataclass_json
 @dataclass
-class AnnotationSpecsHistory:
+class AnnotationSpecsHistory(DataClassJsonMixin):
     """"""
 
     history_id: Optional[str]
@@ -164,9 +156,8 @@ class AnnotationSpecsHistory:
     """"""
 
 
-@dataclass_json
 @dataclass
-class Color:
+class Color(DataClassJsonMixin):
     """"""
 
     red: Optional[int]
@@ -179,9 +170,8 @@ class Color:
     """"""
 
 
-@dataclass_json
 @dataclass
-class AdditionalDataDefinitionV1Choices:
+class AdditionalDataDefinitionV1Choices(DataClassJsonMixin):
     """"""
 
     choice_id: Optional[str]
@@ -194,9 +184,8 @@ class AdditionalDataDefinitionV1Choices:
     """"""
 
 
-@dataclass_json
 @dataclass
-class AdditionalDataDefinitionV1:
+class AdditionalDataDefinitionV1(DataClassJsonMixin):
     """"""
 
     additional_data_definition_id: Optional[str]
@@ -233,9 +222,8 @@ class AdditionalDataDefinitionV1:
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
-@dataclass_json
 @dataclass
-class AdditionalDataDefinitionV2:
+class AdditionalDataDefinitionV2(DataClassJsonMixin):
     """"""
 
     additional_data_definition_id: Optional[str]
@@ -263,9 +251,8 @@ class AdditionalDataDefinitionV2:
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
-@dataclass_json
 @dataclass
-class AnnotationEditorFeature:
+class AnnotationEditorFeature(DataClassJsonMixin):
     """"""
 
     append: Optional[bool]
@@ -287,9 +274,8 @@ class AnnotationEditorFeature:
     """"""
 
 
-@dataclass_json
 @dataclass
-class LabelV1:
+class LabelV1(DataClassJsonMixin):
     """"""
 
     label_id: Optional[str]
@@ -326,9 +312,8 @@ class LabelV1:
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
-@dataclass_json
 @dataclass
-class LabelV2:
+class LabelV2(DataClassJsonMixin):
     """"""
 
     label_id: Optional[str]
@@ -365,9 +350,8 @@ class LabelV2:
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
-@dataclass_json
 @dataclass
-class AdditionalDataRestriction:
+class AdditionalDataRestriction(DataClassJsonMixin):
     """"""
 
     additional_data_definition_id: Optional[str]
@@ -377,9 +361,8 @@ class AdditionalDataRestriction:
     """"""
 
 
-@dataclass_json
 @dataclass
-class AnnotationSpecsV1:
+class AnnotationSpecsV1(DataClassJsonMixin):
     """"""
 
     project_id: Optional[str]
@@ -401,9 +384,8 @@ class AnnotationSpecsV1:
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
-@dataclass_json
 @dataclass
-class AnnotationSpecsV2:
+class AnnotationSpecsV2(DataClassJsonMixin):
     """"""
 
     project_id: Optional[str]

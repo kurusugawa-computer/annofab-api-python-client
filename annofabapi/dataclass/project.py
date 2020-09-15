@@ -13,23 +13,21 @@ import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import AssigneeRuleOfResubmittedTask, InputDataType, ProjectStatus, TaskAssignmentType
 
 
-@dataclass_json
 @dataclass
-class ProjectSummary:
+class ProjectSummary(DataClassJsonMixin):
     """"""
 
     last_tasks_updated_datetime: Optional[str]
     """タスクの最終更新日時"""
 
 
-@dataclass_json
 @dataclass
-class ProjectConfiguration:
+class ProjectConfiguration(DataClassJsonMixin):
     """"""
 
     number_of_inspections: Optional[int]
@@ -63,9 +61,8 @@ class ProjectConfiguration:
     """AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 """
 
 
-@dataclass_json
 @dataclass
-class Project:
+class Project(DataClassJsonMixin):
     """"""
 
     project_id: str
