@@ -24,13 +24,8 @@
  
 # 廃止予定
 
-## 2020-05-01以降 utilsのいくつかのメソッドを非公開
-以下のメソッドを非公開にします。以下のメソッドは本来非公開用でして、外部で利用することを想定していなかったためです。
-* utils.raise_for_status
-* utils.log_error_response
-* utils.download
-
-
+## 2020-10-31 以降,
+* `AnnofabApiWrapper.download_annotation_archive`メソッドの引数`v2`引数を削除します。WebAPIに渡す必要がなくなったためです。
 
 # Features
 cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます。
