@@ -6,7 +6,6 @@ import copy
 import datetime
 import json
 import logging
-import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -37,24 +36,6 @@ def _raise_for_status(response: requests.Response) -> None:
         http_error_msg = f"{e.args[0]} , {response.text}"
         e.args = (http_error_msg,)
         raise e
-
-
-def raise_for_status(response: requests.Response) -> None:
-    """
-    HTTP Status CodeがErrorの場合、``requests.exceptions.HTTPError`` を発生させる。
-    そのとき ``response.text`` もHTTPErrorに加えて、HTTPError発生時にエラーの原因が分かるようにする。
-
-    .. deprecated:: 2020-05-01 以降廃止予定です。
-
-    Args:
-        response: Response
-
-    Raises:
-        requests.exceptions.HTTPError:
-
-    """
-    warnings.warn("deprecated", DeprecationWarning)
-    _raise_for_status(response)
 
 
 def _log_error_response(arg_logger: logging.Logger, response: requests.Response) -> None:
@@ -99,22 +80,7 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
         arg_logger.debug("request.body = %s", mask_password(dict_request_body))
 
 
-def log_error_response(arg_logger: logging.Logger, response: requests.Response) -> None:
-    """
-    HTTP Statusが400以上ならば、loggerにresponse/request情報を出力する
-
-    .. deprecated:: 2020-05-01 以降廃止予定です。
-
-    Args:
-        arg_logger: logger
-        response: Response
-
-    """
-    warnings.warn("deprecated", DeprecationWarning)
-    _log_error_response(arg_logger, response)
-
-
-def _download(url: str, dest_path: str) -> None:
+def _download(url: str, dest_path: str) -> requests.Response:
     """
     HTTP GETで取得した内容をファイルに保存する（ダウンロードする）
 
@@ -122,6 +88,9 @@ def _download(url: str, dest_path: str) -> None:
     Args:
         url: ダウンロード対象のURL
         dest_path: 保存先ファイルのパス
+
+    Returns:
+        URLにアクセスしたときのResponse情報
 
     """
     response = requests.get(url)
@@ -131,21 +100,7 @@ def _download(url: str, dest_path: str) -> None:
     p.parent.mkdir(parents=True, exist_ok=True)
     with open(dest_path, "wb") as f:
         f.write(response.content)
-
-
-def download(url: str, dest_path: str) -> None:
-    """
-    HTTP GETで取得した内容をファイルに保存する（ダウンロードする）
-
-    .. deprecated:: 2020-05-01 以降廃止予定です。
-
-    Args:
-        url: ダウンロード対象のURL
-        dest_path: 保存先ファイルのパス
-
-    """
-    warnings.warn("deprecated", DeprecationWarning)
-    _download(url, dest_path)
+    return response
 
 
 def str_now() -> str:

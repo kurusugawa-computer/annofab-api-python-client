@@ -92,43 +92,34 @@ $ poetry run pytest --print_log_annofabapi tests
 
 ## Release
 
+## 事前作業
+
+### PyPIのアカウントを作成
+1. 以下のURLにアクセスして、PyPIのアカウントを作成する。
+https://pypi.org/account/register/
+
+2. 管理者に連絡して、Collaboratorsとして招待してもらう
+https://pypi.org/project/annofabapi/
+
 ## リリース方法
 
 ### 1. annofabapiのバージョンを上げる
-`annofabapi/__version__.py`に記載されているバージョンを上げてください。バージョンはSemantic Versioning 2.0に従います。
+以下のファイルに記載されているバージョンを上げてください。
+* `annofabapi/__version__.py`
+* `pyproject.toml`
 
-* AnnoFabののバージョンアップにより、annofabapiをリリースするときは、マイナーバージョンを上げる。
+バージョンはSemantic Versioning 2.0に従います。
+* メソッドが追加されたときは、マイナーバージョンを上げる。
 * annofabapiのバグ/ドキュメント修正などにより、annofabapiをリリースするときは、パッチバージョンを上げる。
 
 
 ### 2. PyPIに登録する
-1. TestPyPIに登録して、内容を確認する。
-
-```
-$ make publish_test
-```
-
-2. TestPyPIからインストールして、利用できることを確認する。
-
-```
-$ pip uninstall annofabapi
-$ pip install --index-url https://test.pypi.org/simple/ annofabapi --upgrade
-$ python -c "import annofabapi; print(annofabapi.__version__)"
-```
-
-3. PyPIに登録する。
 
 ```
 $ make publish
 ```
 
-4. PyPIからインストールして、利用できることを確認する。
-
-```
-$ pip uninstall annofabapi
-$ pip install annofabapi --upgrade
-$ python -c "import annofabapi; print(annofabapi.__version__)"
-```
+※ PyPIのユーザ名とパスワードの入力が求められます。
 
 
 

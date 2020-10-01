@@ -179,7 +179,8 @@ class Wrapper:
 
         _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
         url = response.headers["Location"]
-        _download(url, dest_path)
+        response2 = _download(url, dest_path)
+        logger.debug(f"type=simple_annotation, Last-Modified={response2.headers.get('Last-Modified')}")
         return url
 
     def download_full_annotation_archive(self, project_id: str, dest_path: str) -> str:
@@ -199,7 +200,8 @@ class Wrapper:
         warnings.warn("deprecated", DeprecationWarning)
         _, response = self.api.get_archive_full_with_pro_id(project_id)
         url = response.headers["Location"]
-        _download(url, dest_path)
+        response2 = _download(url, dest_path)
+        logger.debug(f"type=full_annotation, Last-Modified={response2.headers.get('Last-Modified')}")
         return url
 
     def get_all_annotation_list(
@@ -1136,7 +1138,8 @@ class Wrapper:
         """
         content, _ = self.api.get_project_inputs_url(project_id)
         url = content["url"]
-        _download(url, dest_path)
+        response2 = _download(url, dest_path)
+        logger.debug(f"type=input_data, Last-Modified={response2.headers.get('Last-Modified')}")
         return url
 
     def download_project_tasks_url(self, project_id: str, dest_path: str) -> str:
@@ -1155,7 +1158,8 @@ class Wrapper:
 
         content, _ = self.api.get_project_tasks_url(project_id)
         url = content["url"]
-        _download(url, dest_path)
+        response2 = _download(url, dest_path)
+        logger.debug(f"type=task, Last-Modified={response2.headers.get('Last-Modified')}")
         return url
 
     def download_project_inspections_url(self, project_id: str, dest_path: str) -> str:
@@ -1174,7 +1178,8 @@ class Wrapper:
 
         content, _ = self.api.get_project_inspections_url(project_id)
         url = content["url"]
-        _download(url, dest_path)
+        response2 = _download(url, dest_path)
+        logger.debug(f"type=inspection_comment, Last-Modified={response2.headers.get('Last-Modified')}")
         return url
 
     def download_project_task_history_events_url(self, project_id: str, dest_path: str) -> str:
@@ -1193,7 +1198,8 @@ class Wrapper:
 
         content, _ = self.api.get_project_task_history_events_url(project_id)
         url = content["url"]
-        _download(url, dest_path)
+        response2 = _download(url, dest_path)
+        logger.debug(f"type=task_history_event, Last-Modified={response2.headers.get('Last-Modified')}")
         return url
 
     def download_project_task_histories_url(self, project_id: str, dest_path: str) -> str:
@@ -1212,7 +1218,8 @@ class Wrapper:
 
         content, _ = self.api.get_project_task_histories_url(project_id)
         url = content["url"]
-        _download(url, dest_path)
+        response2 = _download(url, dest_path)
+        logger.debug(f"type=task_history, Last-Modified={response2.headers.get('Last-Modified')}")
         return url
 
     #########################################
