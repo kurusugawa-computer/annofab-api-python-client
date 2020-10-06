@@ -132,35 +132,44 @@ def to_iso8601_extension(d: datetime.datetime, tz: Optional[datetime.tzinfo] = N
     return d.isoformat(timespec="milliseconds")
 
 
-def allow_404_error(function):
+def ignore_http_error(status_code_list: List[int]):
     """
-    Not Found Error(404)を無視(許容)して、処理する。Not Foundのとき戻りはNoneになる。
-    リソースの存在確認などに利用する。
-    try-exceptを行う。また404 Errorが発生したときのエラーログを無効化する
+    HTTPErrorが発生したとき、特定のstatus codeを無視して、処理する。
+    無視した場合、Noneを返す。
     """
 
-    def wrapped(*args, **kwargs):
-        annofabapi_logger_level = logging.getLogger("annofabapi").level
-        backoff_logger_level = logging.getLogger("backoff").level
+    def decorator(function):
+        def wrapped(*args, **kwargs):
+            annofabapi_logger_level = logging.getLogger("annofabapi").level
+            backoff_logger_level = logging.getLogger("backoff").level
 
-        try:
-            # 不要なログが出力されないようにする
-            logging.getLogger("annofabapi").setLevel(level=logging.INFO)
-            logging.getLogger("backoff").setLevel(level=logging.CRITICAL)
+            try:
+                # 不要なログが出力されないようにする
+                logging.getLogger("annofabapi").setLevel(level=logging.INFO)
+                logging.getLogger("backoff").setLevel(level=logging.CRITICAL)
 
-            return function(*args, **kwargs)
+                return function(*args, **kwargs)
 
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == requests.codes.not_found:
-                return None
-            else:
-                raise e
-        finally:
-            # ロガーの設定を元に戻す
-            logging.getLogger("annofabapi").setLevel(level=annofabapi_logger_level)
-            logging.getLogger("backoff").setLevel(level=backoff_logger_level)
+            except requests.exceptions.HTTPError as e:
+                if e.response.status_code in status_code_list:
+                    return None
+                else:
+                    raise e
+            finally:
+                # ロガーの設定を元に戻す
+                logging.getLogger("annofabapi").setLevel(level=annofabapi_logger_level)
+                logging.getLogger("backoff").setLevel(level=backoff_logger_level)
 
-    return wrapped
+        return wrapped
+
+    return decorator
+
+
+allow_404_error = ignore_http_error(status_code_list=[requests.codes.not_found])
+"""
+Not Found Error(404)を無視(許容)して、処理する。Not Found Errorが発生したときはNoneを返す。
+リソースの存在確認などに利用する。
+"""
 
 
 def get_task_history_index_skipped_acceptance(task_history_list: List[TaskHistory]) -> List[int]:
