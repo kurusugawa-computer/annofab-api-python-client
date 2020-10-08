@@ -27,6 +27,7 @@ python = "^3.6"
 requests = "*"
 python-dateutil = "*"
 backoff="*"
+more-itertools = "*"
 dataclasses-json="*"
 dataclasses = { version = "*", python = "<3.7" }
 
