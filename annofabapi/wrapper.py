@@ -1734,8 +1734,8 @@ class Wrapper:
         query_params = {
             "organization_id": "___plannedWorktime___",
             "account_id": account_id,
-            "from_date": from_date,
-            "to_date": to_date,
+            "from": from_date,
+            "to": to_date,
         }
         labor_list, _ = self.api.get_labor_control(query_params)
         return [_to_new_data(e) for e in labor_list]
