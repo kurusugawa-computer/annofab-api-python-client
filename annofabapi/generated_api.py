@@ -711,10 +711,10 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                input_data_id (str):  入力データIDでの部分一致検索で使用。1文字以上あれば使用します。
-                input_data_name (str):  入力データ名での部分一致検索で使用。1文字以上あれば使用します。
+                input_data_id (str):  入力データIDでの部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。
+                input_data_name (str):  入力データ名での部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。
                 input_data_path (str):  入力データパスでの部分一致検索で使用。1文字以上あれば使用します。
-                task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。条件に合致した先頭100件のタスクに使われている入力データを検索します。
+                task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。条件に合致した先頭100件のタスクに使われている入力データを検索します。
                 _from (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
                 to (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
@@ -2786,6 +2786,35 @@ class AbstractAnnofabApi(abc.ABC):
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/operate"
         http_method = "POST"
+        keyword_params: Dict[str, Any] = {
+            "request_body": request_body,
+        }
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def patch_tasks_metadata(
+        self, project_id: str, request_body: Optional[Any] = None, **kwargs
+    ) -> Tuple[Any, requests.Response]:
+        """タスクメタデータの一括更新
+        https://annofab.com/docs/api/#operation/patchTasksMetadata
+
+
+        authorizations: ProjectDataUser
+
+
+        複数の既存タスクのメタデータを一括更新します。
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+            request_body (Any): Request Body
+                request_body (dict(str, __DictStrKeyAnyValue__)):  (required)
+
+        Returns:
+            Tuple[Message, requests.Response]
+
+
+        """
+        url_path = f"/projects/{project_id}/tasks/metadata"
+        http_method = "PATCH"
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }

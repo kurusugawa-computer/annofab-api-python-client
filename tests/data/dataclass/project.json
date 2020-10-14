@@ -2,26 +2,28 @@
   "project_id": "a2345678-abcd-1234-abcd-1234abcd5678",
   "organization_id": "b2345678-abcd-1234-abcd-1234abcd5678",
   "title": "sample",
-  "overview": "",
+  "overview": "sample",
   "project_status": "active",
   "input_data_type": "image",
   "created_datetime": "2019-04-19T16:29:41.06+09:00",
-  "updated_datetime": "2019-11-06T10:30:57.575+09:00",
+  "updated_datetime": "2020-09-09T15:11:37.312+09:00",
   "configuration": {
     "number_of_inspections": 0,
-    "assignee_rule_of_resubmitted_task": "no_assignee",
+    "assignee_rule_of_resubmitted_task": "fixed",
     "task_assignment_type": "random_and_selection",
-    "max_tasks_per_member": 10,
+    "max_tasks_per_member": 1,
     "max_tasks_per_member_including_hold": 20,
     "private_storage_aws_iam_role_arn": null,
+    "plugin_id": null,
+    "custom_task_assignment_plugin_id": null,
     "input_data_set_id_list": [
       "90788848-4c48-4314-86b0-d2c12138dab5"
     ],
     "input_data_max_long_side_length": null,
-    "sampling_inspection_rate": null,
-    "sampling_acceptance_rate": null
+    "sampling_inspection_rate": 85,
+    "sampling_acceptance_rate": 100
   },
   "summary": {
-    "last_tasks_updated_datetime": "2019-11-19T17:26:51.348+09:00"
+    "last_tasks_updated_datetime": "2020-10-15T00:28:20.643+09:00"
   }
 }
