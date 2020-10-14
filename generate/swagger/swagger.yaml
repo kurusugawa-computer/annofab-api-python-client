@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.94.7
+  version: 0.95.7
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -3572,6 +3572,46 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/ErrorStateMismatch"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/tasks/metadata:
+    patch:
+      tags:
+        - af-task
+      summary: タスクメタデータの一括更新
+      description: |
+        複数の既存タスクのメタデータを一括更新します。
+      security:
+        - ProjectDataUser: []
+      operationId: patchTasksMetadata
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "swagger-api-components.yaml#/components/schemas/PatchTasksMetadataRequest"
+      responses:
+        "200":
+          $ref: "swagger-api-components.yaml#/components/responses/SuccessMessage"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
+        "409":
+          description: 停止中プロジェクトに対する操作のため失敗
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/ErrorStateMismatch"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/tasks/{task_id}/operate:
     post:
       tags:
@@ -4317,13 +4357,13 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       - name: input_data_id
         in: query
-        description: 入力データIDでの部分一致検索で使用。1文字以上あれば使用します。
+        description: 入力データIDでの部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
       - name: input_data_name
         in: query
-        description: 入力データ名での部分一致検索で使用。1文字以上あれば使用します。
+        description: 入力データ名での部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。
         required: false
         schema:
           type: string
@@ -4335,7 +4375,7 @@ paths:
           type: string
       - name: task_id
         in: query
-        description: 入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。条件に合致した先頭100件のタスクに使われている入力データを検索します。
+        description: 入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。条件に合致した先頭100件のタスクに使われている入力データを検索します。
         required: false
         schema:
           type: string
