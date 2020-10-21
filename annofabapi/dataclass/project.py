@@ -66,6 +66,9 @@ class ProjectConfiguration(DataClassJsonMixin):
     custom_task_assignment_plugin_id: Optional[str]
     """プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
+    custom_specs_plugin_id: Optional[str]
+    """プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
 
 @dataclass
 class Project(DataClassJsonMixin):
