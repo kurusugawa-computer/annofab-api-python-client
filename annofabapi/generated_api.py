@@ -412,7 +412,7 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_editor_annotation(
-        self, project_id: str, task_id: str, input_data_id: str, **kwargs
+        self, project_id: str, task_id: str, input_data_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク/入力データのアノテーション一括取得
         https://annofab.com/docs/api/#operation/getEditorAnnotation
@@ -427,6 +427,8 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
+            query_params (Dict[str, Any]): Query Parameters
+                task_history_id (str):  過去のフェーズのアノテーションを取得する場合、タスク履歴IDを指定します。未指定時は最新のアノテーションを取得します。
 
         Returns:
             Tuple[Annotation, requests.Response]
@@ -435,7 +437,9 @@ class AbstractAnnofabApi(abc.ABC):
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: Dict[str, Any] = {
+            "query_params": query_params,
+        }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def post_annotation_archive_update(
@@ -1837,7 +1841,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        プロジェクトを完全に削除します。 アノテーション仕様、タスク、入力データ、アノテーションなど、プロジェクト配下のリソースがすべて削除されます。  削除されたプロジェクトは元に戻せません。 完了したプロジェクトは削除せず、プロジェクト状態を「停止中」に変更するのをおすすめします。
+        プロジェクトを完全に削除します。 アノテーション仕様、タスク、入力データ、アノテーションなど、プロジェクト配下のリソースがすべて削除されます。  削除されたプロジェクトは元に戻せません。 完了したプロジェクトは削除せず、プロジェクト状態を「停止中」に変更するのをおすすめします。  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`delete-project`）。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2121,7 +2125,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator, ProjectOwner
 
 
-        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。
+        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。 所属組織が変更された場合バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`move-project`）。
 
         Args:
             project_id (str):  プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
@@ -2943,7 +2947,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        プロジェクトのWebhookを新規作成/更新します。  Webhook で送信される body には、event_type によって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip  * project-copy-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{DEST_PROJECT_ID}} :  コピー先プロジェクトID   * {{DEST_PROJECT_TITLE}} : コピー先プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00
+        プロジェクトのWebhookを新規作成/更新します。  Webhook で送信される body には、event_type によって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip  * project-copy-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{DEST_PROJECT_ID}} :  コピー先プロジェクトID   * {{DEST_PROJECT_TITLE}} : コピー先プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  Webhookが起動されると、ジョブ種別が`invoke-hook`のバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます。
 
         Args:
             project_id (str):  プロジェクトID (required)
