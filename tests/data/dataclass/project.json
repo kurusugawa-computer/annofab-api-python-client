@@ -21,7 +21,8 @@
     ],
     "input_data_max_long_side_length": null,
     "sampling_inspection_rate": 85,
-    "sampling_acceptance_rate": 100
+    "sampling_acceptance_rate": 100,
+    "custom_specs_plugin_id": null
   },
   "summary": {
     "last_tasks_updated_datetime": "2020-10-15T00:28:20.643+09:00"

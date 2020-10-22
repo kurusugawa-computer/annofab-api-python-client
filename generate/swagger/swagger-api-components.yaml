@@ -646,6 +646,8 @@ components:
           $ref: "#/components/schemas/AnnotationEditorUrl"
         task_assignment_url:
           $ref: "#/components/schemas/TaskAssignmentUrl"
+        specs_url:
+          $ref: "#/components/schemas/AnnotationSpecsUrl"
         compatible_input_data_types:
           $ref: "#/components/schemas/PluginCompatibleInputDataTypes"
         created_datetime:
@@ -670,6 +672,8 @@ components:
           $ref: "#/components/schemas/AnnotationEditorUrl"
         task_assignment_url:
           $ref: "#/components/schemas/TaskAssignmentUrl"
+        specs_url:
+          $ref: "#/components/schemas/AnnotationSpecsUrl"
         compatible_input_data_types:
           $ref: "#/components/schemas/PluginCompatibleInputDataTypes"
         last_updated_datetime:
@@ -684,10 +688,12 @@ components:
       enum:
         - custom_annotation_editor
         - custom_task_assignment
+        - custom_specs
       description: |
         プラグイン種別。
         * `custom_annotation_editor` - カスタムアノテーションエディタ用のプラグインを表します。
         * `custom_task_assignment` - カスタムタスク割当用のプラグインを表します。
+        * `custom_specs` - カスタムアノテーション仕様用のプラグインを表します。
     PluginName:
       type: string
       example: "foo-bar"
@@ -707,7 +713,7 @@ components:
       example: ["custom"]
       description: |
         プラグインが対応している入力データです。
-        プラグイン種別がカスタムアノテーションエディタの場合のみ有効です。
+        プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。
     AnnotationEditorUrl:
       type: string
       example: "https://example.com/my/editors?p={projectId}&t={taskId}"
@@ -776,7 +782,16 @@ components:
         * `getMyAccount` : 作業者のアカウント情報を取得できます。
         * `getTasks` : プロジェクトのタスクを取得できます。
         * `assignTasks` : 作業者にタスクを割当することができます。
+    AnnotationSpecsUrl:
+      type: string
+      example: "https://example.com/my/specs?p={projectId}"
+      description: |
+        カスタムアノテーション仕様画面の URL です。
+        プラグイン種別がカスタムアノテーション仕様の場合のみ有効です。
 
+        この URL には、プロジェクトを特定するための以下のパラメータを必ず埋め込んでください。
+
+        * `{projectId}`
     MyOrganization:
       type: object
       properties:
@@ -1091,6 +1106,10 @@ components:
           $ref: "#/components/schemas/PluginId"
           description: |
             `task_assignment_type`に`custom`を設定している場合のみ、カスタムタスク割当のプラグインIDを設定してください。
+        custom_specs_plugin_id:
+          $ref: "#/components/schemas/PluginId"
+          description: |
+            カスタムアノテーション仕様のプラグインID。
     ProjectSummary:
       type: object
       properties:
