@@ -1,3 +1,7 @@
+"""
+annofabapi.dataclass.*.py のテスト。ローカル上にあるファイルからDataClassを生成できるかを確認する。
+ローカル上にあるファイル（`tests/data/dataclass/*.json`）のメンテンナンスが大変なので、このテストコードは実行されないようにした。
+"""
 import configparser
 import json
 import os
