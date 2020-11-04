@@ -627,8 +627,7 @@ components:
       required:
         - organization_id
         - plugin_id
-        - plugin_type
-        - compatible_input_data_types
+        - detail
         - created_datetime
         - updated_datetime
       properties:
@@ -636,20 +635,12 @@ components:
           $ref: "#/components/schemas/OrganizationId"
         plugin_id:
           $ref: "#/components/schemas/PluginId"
-        plugin_type:
-          $ref: "#/components/schemas/PluginType"
         plugin_name:
           $ref: "#/components/schemas/PluginName"
         description:
           $ref: "#/components/schemas/PluginDescription"
-        annotation_editor_url:
-          $ref: "#/components/schemas/AnnotationEditorUrl"
-        task_assignment_url:
-          $ref: "#/components/schemas/TaskAssignmentUrl"
-        specs_url:
-          $ref: "#/components/schemas/AnnotationSpecsUrl"
-        compatible_input_data_types:
-          $ref: "#/components/schemas/PluginCompatibleInputDataTypes"
+        detail:
+          $ref: "#/components/schemas/PluginDetail"
         created_datetime:
           type: string
           format: date-time
@@ -662,20 +653,12 @@ components:
         - plugin_type
         - compatible_input_data_types
       properties:
-        plugin_type:
-          $ref: "#/components/schemas/PluginType"
         plugin_name:
           $ref: "#/components/schemas/PluginName"
         description:
           $ref: "#/components/schemas/PluginDescription"
-        annotation_editor_url:
-          $ref: "#/components/schemas/AnnotationEditorUrl"
-        task_assignment_url:
-          $ref: "#/components/schemas/TaskAssignmentUrl"
-        specs_url:
-          $ref: "#/components/schemas/AnnotationSpecsUrl"
-        compatible_input_data_types:
-          $ref: "#/components/schemas/PluginCompatibleInputDataTypes"
+        detail:
+          $ref: "#/components/schemas/PluginDetail"
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
     PluginId:
@@ -683,17 +666,6 @@ components:
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
         プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID)
-    PluginType:
-      type: string
-      enum:
-        - custom_annotation_editor
-        - custom_task_assignment
-        - custom_specs
-      description: |
-        プラグイン種別。
-        * `custom_annotation_editor` - カスタムアノテーションエディタ用のプラグインを表します。
-        * `custom_task_assignment` - カスタムタスク割当用のプラグインを表します。
-        * `custom_specs` - カスタムアノテーション仕様用のプラグインを表します。
     PluginName:
       type: string
       example: "foo-bar"
@@ -706,6 +678,62 @@ components:
       description: |
         プラグインの説明です。
         プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。
+    PluginDetail:
+      description: |
+        * `PluginDetailAnnotationEditor` - カスタムアノテーションエディタ用のプラグインを表します。
+        * `PluginDetailTaskAssignment` - カスタムタスク割当用のプラグインを表します。
+        * `PluginDetailAnnotationSpecs` - カスタムアノテーション仕様用のプラグインを表します。
+      oneOf:
+        - $ref: "#/components/schemas/PluginDetailAnnotationEditor"
+        - $ref: "#/components/schemas/PluginDetailTaskAssignment"
+        - $ref: "#/components/schemas/PluginDetailAnnotationSpecs"
+    PluginDetailAnnotationEditor:
+      type: object
+      description: |
+        カスタムアノテーションエディタ用のプラグインを表します。
+      required:
+        - compatible_input_data_types
+      properties:
+        url:
+          $ref: "#/components/schemas/AnnotationEditorUrl"
+        compatible_input_data_types:
+          $ref: "#/components/schemas/PluginCompatibleInputDataTypes"
+        _type:
+          type: string
+          description: |
+            `AnnotationEditor`
+            [詳しくはこちら](#section/API-Convention/API-_type)
+          example: "AnnotationEditor"
+    PluginDetailTaskAssignment:
+      type: object
+      description: |
+        カスタムタスク割当用のプラグインを表します。
+      properties:
+        url:
+          $ref: "#/components/schemas/TaskAssignmentUrl"
+        _type:
+          type: string
+          description: |
+            `TaskAssignment`
+            [詳しくはこちら](#section/API-Convention/API-_type)
+          example: "TaskAssignment"
+    PluginDetailAnnotationSpecs:
+      type: object
+      description: |
+        カスタムアノテーション仕様用のプラグインを表します。
+      required:
+        - compatible_input_data_types
+      properties:
+        url:
+          $ref: "#/components/schemas/AnnotationSpecsUrl"
+        compatible_input_data_types:
+          $ref: "#/components/schemas/PluginCompatibleInputDataTypes"
+        _type:
+          type: string
+          description: |
+            `AnnotationSpecs`
+            [詳しくはこちら](#section/API-Convention/API-_type)
+          example: "AnnotationSpecs"
     PluginCompatibleInputDataTypes:
       type: array
       items:
