@@ -82,6 +82,16 @@ class CreatingTestProject:
         task, _ = self.service.api.put_task(project_id, task_id=task_id, request_body=request_body)
         return task
 
+    def upload_instruction(self, project_id: str) -> Dict[str, Any]:
+        image_url = self.service.wrapper.upload_instruction_image(
+            project_id, image_id=str(uuid.uuid4()), file_path="tests/data/lenna.png"
+        )
+        html_data = f"Test Instruction <img src='{image_url}'>"
+        histories, _ = self.service.api.get_instruction_history(project_id)
+        last_updated_datetime = histories[0]["updated_datetime"] if len(histories) > 0 else None
+        put_request_body = {"html": html_data, "last_updated_datetime": last_updated_datetime}
+        return self.service.api.put_instruction(project_id, request_body=put_request_body)[0]
+
     def main(
         self, organization_name: Optional[str], project_id: Optional[str], project_title: Optional[str] = None
     ) -> None:
@@ -107,6 +117,9 @@ class CreatingTestProject:
         task_id = "test_task_1"
         self.create_task(project_id, task_id, input_data_id_list=[input_data_id])
         logger.debug(f"タスクを登録しました。task_id={task_id}")
+
+        self.upload_instruction(project_id)
+        logger.debug(f"作業ガイドを登録しました。")
 
         # 移動前のディレクトリに戻る
         os.chdir(now_dir)
