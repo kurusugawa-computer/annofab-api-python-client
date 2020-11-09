@@ -14,6 +14,11 @@ class CreatingTestProject:
     def __init__(self, service: annofabapi.Resource):
         self.service = service
 
+        self.labels_dict = {
+            "car": "car_label_id"
+        }
+
+
     def create_project(self, organization_name: str, project_title: Optional[str] = None) -> Dict[str, Any]:
         project_id = str(uuid.uuid4())
         DEFAULT_PROJECT_TITLE = "annofabapiのテスト用プロジェクト（自動生成）"
@@ -29,7 +34,7 @@ class CreatingTestProject:
 
     def _create_bbox_label(self) -> Dict[str, Any]:
         label_name = "car"
-        label_id = str(uuid.uuid4())
+        label_id = self.labels_dict[label_name]
         return {
             "label_id": label_id,
             "label_name": {
@@ -59,28 +64,39 @@ class CreatingTestProject:
         annotation_specs, _ = self.service.api.put_annotation_specs(project_id, request_body=request_body)
         return annotation_specs
 
-    def create_input_data(self, project_id: str, image_path: str) -> Dict[str, Any]:
+    def create_input_data(self, project_id: str, input_data_id:str,  image_path: str):
         """
         サンプルの入力データを登録する。
         """
+        old_input_data = self.service.wrapper.get_input_data_or_none(project_id, input_data_id)
+        if old_input_data is not None:
+            logger.debug(f"入力データをすでに存在していたので、登録しません。input_data_id={input_data_id}")
+            return
+
         request_body = {
             "input_data_name": "AnnoFab Logo Image",
             "input_data_path": "https://annofab.com/images/logo.png",
         }
-        input_data = self.service.wrapper.put_input_data_from_file(
-            project_id, input_data_id=str(uuid.uuid4()), file_path=image_path, request_body=request_body
+        self.service.wrapper.put_input_data_from_file(
+            project_id, input_data_id=input_data_id, file_path=image_path, request_body=request_body
         )
-        return input_data
+        logger.debug(f"入力データを登録しました。input_data_id={input_data_id}")
+        return
 
-    def create_task(self, project_id: str, task_id: str, input_data_id_list: List[str]) -> Dict[str, Any]:
+    def create_task(self, project_id: str, task_id: str, input_data_id_list: List[str]):
         """
         サンプルのタスクを登録する。
         """
+        old_task = self.service.wrapper.get_task_or_none(project_id, task_id)
+        if old_task is not None:
+            logger.debug(f"タスクはすでに存在していたので、登録しません。task_id={task_id}")
+
         request_body = {
             "input_data_id_list": input_data_id_list,
         }
-        task, _ = self.service.api.put_task(project_id, task_id=task_id, request_body=request_body)
-        return task
+        self.service.api.put_task(project_id, task_id=task_id, request_body=request_body)
+        logger.debug(f"タスクを登録しました。task_id={task_id}")
+        return
 
     def upload_instruction(self, project_id: str) -> Dict[str, Any]:
         image_url = self.service.wrapper.upload_instruction_image(
@@ -91,6 +107,43 @@ class CreatingTestProject:
         last_updated_datetime = histories[0]["updated_datetime"] if len(histories) > 0 else None
         put_request_body = {"html": html_data, "last_updated_datetime": last_updated_datetime}
         return self.service.api.put_instruction(project_id, request_body=put_request_body)[0]
+
+    def create_annotations(self, project_id:str, task_id:str, input_data_id:str):
+        old_annotation, _ = self.service.api.get_editor_annotation(project_id, task_id, input_data_id)
+        if len(old_annotation["details"]) > 0:
+            logger.debug(f"task_id={task_id}, input_data_id={input_data_id}にすでにアノテーションは存在するので、アノテーションは登録しません。")
+            return
+
+        request_body = {
+            "project_id": project_id,
+            "task_id":task_id,
+            "input_data_id": input_data_id,
+            "details": [
+                {
+                    "annotation_id": str(uuid.uuid4()),
+                    "account_id": self.service.api.account_id,
+                    "label_id": self.labels_dict["car"],
+                    "is_protected": False,
+                    "data_holding_type": "inner",
+                    "additional_data_list": [],
+                    "data": {
+                        "left_top":{"x":0,"y":0},"right_bottom": {"x":10,"y":10}, "_type": "BoundingBox"
+                    },
+                    "etag":None,
+                    "url":None,
+                    "path":None,
+                    "created_datetime":None,
+                    "updated_datetime":None
+
+                }
+            ],
+            "updated_datetime":None
+        }
+        self.service.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)
+        logger.debug(f"アノテーションを作成しました。task_id={task_id}, input_data_id={input_data_id}")
+
+        return
+
 
     def main(
         self, organization_name: Optional[str], project_id: Optional[str], project_title: Optional[str] = None
@@ -110,13 +163,13 @@ class CreatingTestProject:
         now_dir = os.getcwd()
         os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 
-        input_data = self.create_input_data(project_id, image_path="tests/data/lenna.png")
-        input_data_id = input_data["input_data_id"]
-        logger.debug(f"入力データを登録しました。input_data_id={input_data_id}")
+        input_data_id = "test_input_1"
+        self.create_input_data(project_id, input_data_id, image_path="tests/data/lenna.png")
 
         task_id = "test_task_1"
         self.create_task(project_id, task_id, input_data_id_list=[input_data_id])
-        logger.debug(f"タスクを登録しました。task_id={task_id}")
+
+        self.create_annotations(project_id, task_id, input_data_id)
 
         self.upload_instruction(project_id)
         logger.debug(f"作業ガイドを登録しました。")
