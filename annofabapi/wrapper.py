@@ -39,7 +39,7 @@ from annofabapi.models import (
     SimpleAnnotationDetail,
     SupplementaryData,
     Task,
-TaskStatus
+    TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
 from annofabapi.utils import _download, _log_error_response, _raise_for_status, allow_404_error, str_now
@@ -1449,7 +1449,7 @@ class Wrapper:
         """
         return self._get_all_objects(self.api.get_tasks, limit=200, project_id=project_id, query_params=query_params)
 
-    def change_task_status_to_working(self, project_id:str, task_id:str) -> Task:
+    def change_task_status_to_working(self, project_id: str, task_id: str) -> Task:
         """
         タスクのステータスを「作業中」に変更します。
 
@@ -1473,8 +1473,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-
-    def change_task_status_to_break(self, project_id:str, task_id:str)  -> Task:
+    def change_task_status_to_break(self, project_id: str, task_id: str) -> Task:
         """
         タスクのステータスを「休憩中」に変更します。
 
@@ -1498,7 +1497,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def change_task_status_to_on_hold(self, project_id:str, task_id:str) -> Task:
+    def change_task_status_to_on_hold(self, project_id: str, task_id: str) -> Task:
         """
         タスクのステータスを「保留」に変更します。
 
@@ -1522,7 +1521,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def complete_task(self, project_id:str, task_id:str) -> Task:
+    def complete_task(self, project_id: str, task_id: str) -> Task:
         """
         今のフェーズを完了させ、 次のフェーズに遷移させます。
         教師付フェーズのときはタスクを提出します。
@@ -1549,7 +1548,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def cancel_submitted_task(self, project_id:str, task_id:str) -> Task:
+    def cancel_submitted_task(self, project_id: str, task_id: str) -> Task:
         """
         タスクの提出を取り消します。
         「提出されたタスク」とは以下の状態になっています。
@@ -1578,8 +1577,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def cancel_completed_task(
-        self, project_id: str, task_id: str, operator_account_id: str) ->  Task:
+    def cancel_completed_task(self, project_id: str, task_id: str, operator_account_id: str) -> Task:
         """
         タスクの受入完了状態を取り消す。
 
@@ -1592,14 +1590,14 @@ class Wrapper:
             変更後のタスク
         """
 
-        task, _ = self.service.api.get_task(project_id, task_id)
+        task, _ = self.api.get_task(project_id, task_id)
 
         request_body = {
             "status": TaskStatus.NOT_STARTED.value,
-            "account_id": account_id,
+            "account_id": operator_account_id,
             "last_updated_datetime": task["updated_datetime"],
         }
-        updated_task, _ = self.service.api.operate_task(project_id, task_id, request_body=request_body)
+        updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
     def change_task_operator(
@@ -1623,14 +1621,14 @@ class Wrapper:
         task, _ = self.api.get_task(project_id, task_id)
 
         request_body = {
-            "status":TaskStatus.NOT_STARTED.value,
+            "status": TaskStatus.NOT_STARTED.value,
             "account_id": operator_account_id,
             "last_updated_datetime": task["updated_datetime"],
         }
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def reject_task(self, project_id: str, task_id: str, force:bool=False) -> Dict[str, Any]:
+    def reject_task(self, project_id: str, task_id: str, force: bool = False) -> Dict[str, Any]:
         """
         タスクを差し戻します。
         * 通常の差し戻しの場合、タスクの担当者は未割り当てになります。
@@ -1659,10 +1657,10 @@ class Wrapper:
         task, _ = self.api.get_task(project_id, task_id)
 
         request_body = {
-            "status":TaskStatus.REJECTED.value,
+            "status": TaskStatus.REJECTED.value,
             "account_id": self.api.account_id,
             "last_updated_datetime": task["updated_datetime"],
-            "force": force
+            "force": force,
         }
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task

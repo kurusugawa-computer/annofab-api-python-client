@@ -14,10 +14,7 @@ class CreatingTestProject:
     def __init__(self, service: annofabapi.Resource):
         self.service = service
 
-        self.labels_dict = {
-            "car": "car_label_id"
-        }
-
+        self.labels_dict = {"car": "car_label_id"}
 
     def create_project(self, organization_name: str, project_title: Optional[str] = None) -> Dict[str, Any]:
         project_id = str(uuid.uuid4())
@@ -64,7 +61,7 @@ class CreatingTestProject:
         annotation_specs, _ = self.service.api.put_annotation_specs(project_id, request_body=request_body)
         return annotation_specs
 
-    def create_input_data(self, project_id: str, input_data_id:str,  image_path: str):
+    def create_input_data(self, project_id: str, input_data_id: str, image_path: str):
         """
         サンプルの入力データを登録する。
         """
@@ -113,7 +110,7 @@ class CreatingTestProject:
         self.service.api.put_instruction(project_id, request_body=put_request_body)
         logger.debug("作業ガイドを登録しました。")
 
-    def create_annotations(self, project_id:str, task_id:str, input_data_id:str):
+    def create_annotations(self, project_id: str, task_id: str, input_data_id: str):
         old_annotation, _ = self.service.api.get_editor_annotation(project_id, task_id, input_data_id)
         if len(old_annotation["details"]) > 0:
             logger.debug(f"task_id={task_id}, input_data_id={input_data_id}にすでにアノテーションは存在するので、アノテーションは登録しません。")
@@ -121,7 +118,7 @@ class CreatingTestProject:
 
         request_body = {
             "project_id": project_id,
-            "task_id":task_id,
+            "task_id": task_id,
             "input_data_id": input_data_id,
             "details": [
                 {
@@ -131,28 +128,20 @@ class CreatingTestProject:
                     "is_protected": False,
                     "data_holding_type": "inner",
                     "additional_data_list": [],
-                    "data": {
-                        "left_top":{"x":0,"y":0},"right_bottom": {"x":10,"y":10}, "_type": "BoundingBox"
-                    },
-                    "etag":None,
-                    "url":None,
-                    "path":None,
-                    "created_datetime":None,
-                    "updated_datetime":None
-
+                    "data": {"left_top": {"x": 0, "y": 0}, "right_bottom": {"x": 10, "y": 10}, "_type": "BoundingBox"},
+                    "etag": None,
+                    "url": None,
+                    "path": None,
+                    "created_datetime": None,
+                    "updated_datetime": None,
                 }
             ],
-            "updated_datetime":None
+            "updated_datetime": None,
         }
         self.service.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)
         logger.debug(f"アノテーションを作成しました。task_id={task_id}, input_data_id={input_data_id}")
 
         return
-
-
-
-
-
 
     def change_operator_of_task(
         self, project_id: str, task_id: str, account_id: Optional[str] = None
@@ -288,8 +277,7 @@ class CreatingTestProject:
         }
         return self.service.api.operate_task(project_id, task_id, request_body=req)[0]
 
-
-    def change_to_working_status(self, project_id:str, task_id:str) -> Task:
+    def change_to_working_status(self, project_id: str, task_id: str) -> Task:
         """
         必要なら担当者を変更して、作業中状態にします。
 
@@ -315,12 +303,7 @@ class CreatingTestProject:
             logger.warning(f"{task.task_id}: 担当者の変更、または作業中状態への変更に失敗しました。")
             raise e
 
-
-    def complete_task_for_annotation_phase(
-        self,
-        project_id:str,
-        task_id:str
-    ) -> bool:
+    def complete_task_for_annotation_phase(self, project_id: str, task_id: str) -> bool:
         """
         annotation phaseのタスクを完了状態にする。
 
@@ -372,7 +355,7 @@ class CreatingTestProject:
                 logger.info(f"{task.task_id}: 教師付フェーズをフェーズに進めました。")
                 return True
 
-    def create_inspections(self, project_id:str, task_id:str, input_data_id:str):
+    def create_inspections(self, project_id: str, task_id: str, input_data_id: str):
         old_inspections, _ = self.service.api.get_inspections(project_id, task_id, input_data_id)
         if len(old_inspections) > 0:
             logger.debug(f"task_id={task_id}, input_data_id={input_data_id}にすでに検査コメントは存在するので、検査コメントは登録しません。")
@@ -380,7 +363,7 @@ class CreatingTestProject:
 
         request_body = {
             "project_id": project_id,
-            "task_id":task_id,
+            "task_id": task_id,
             "input_data_id": input_data_id,
             "details": [
                 {
@@ -390,24 +373,20 @@ class CreatingTestProject:
                     "is_protected": False,
                     "data_holding_type": "inner",
                     "additional_data_list": [],
-                    "data": {
-                        "left_top":{"x":0,"y":0},"right_bottom": {"x":10,"y":10}, "_type": "BoundingBox"
-                    },
-                    "etag":None,
-                    "url":None,
-                    "path":None,
-                    "created_datetime":None,
-                    "updated_datetime":None
-
+                    "data": {"left_top": {"x": 0, "y": 0}, "right_bottom": {"x": 10, "y": 10}, "_type": "BoundingBox"},
+                    "etag": None,
+                    "url": None,
+                    "path": None,
+                    "created_datetime": None,
+                    "updated_datetime": None,
                 }
             ],
-            "updated_datetime":None
+            "updated_datetime": None,
         }
         self.service.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)
         logger.debug(f"アノテーションを作成しました。task_id={task_id}, input_data_id={input_data_id}")
 
         return
-
 
     def main(
         self, organization_name: Optional[str], project_id: Optional[str], project_title: Optional[str] = None
