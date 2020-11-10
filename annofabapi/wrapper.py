@@ -1577,7 +1577,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def cancel_completed_task(self, project_id: str, task_id: str, operator_account_id: str) -> Task:
+    def cancel_completed_task(self, project_id: str, task_id: str, operator_account_id: Optional[str]=None) -> Task:
         """
         タスクの受入完了状態を取り消す。
 
