@@ -2,60 +2,28 @@
 開発者用のドキュメントです。
 ソースコードの生成、テスト実行、リリース手順などを記載します。
 
-## Requirements
+# Requirements
 * Bash
 * Docker (OpenAPI Generatorを実行するのに必要)
 * python 3.6+
-    * poetry
 
-## Install
+# Install
 以下のコマンドを実行してください。開発に必要な環境が構築されます。
 
 ```bash
 $ make init
 ```
 
-## Source
+# Test
 
-### ソースコードの生成
-annofabapiのいくつかのファイルは、[AnnoFab Web APIのOpenAPI Spec](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
-以下のコマンドを実行すると、ソースコードが生成されます。詳細は[generate/README.md](generate/README.md)を参照してください。
-
-```
-# `generate/swagger/*.yaml`ファイルから、ソースコードを生成する
-$ generate/generate.sh
-
-# AnnoFab WebAPIのOpenAPI Spec を`generate/swagger/`にダウンロードしてから、ソースコードを生成する
-$ generate/generate.sh --download
-
-```
-
-### フォーマットを実行
-以下のコマンドを実行してください。
-
-```
-$ make format
-```
-
-### lintを実行
-以下のコマンドを実行してください。
-
-```
-$ make lint
-```
-
-## Test
-
-### テストの実行方法
+## テストの実行方法
 1. AnnoFabの認証情報を、`.netrc`ファイルまたは環境変数に設定する。
-2. `pytest.ini`に、テスト対象の`project_id`と`task_id`を指定する。
+2. 以下のコマンドを実行して、テスト用のプロジェクトとタスクを作成する。
+     * `poetry run python tests/create_test_project.py --organization ${MY_ORGANIZATION}`
+3. `pytest.ini`に、テスト対象の`project_id`と`task_id`を指定する。
     * `task_id`はプロジェクト`project_id`配下であること
     * **【注意】テストを実行すると、AnnoFabプロジェクトの内容が変更される**
-3. `$ make test`コマンドを実行する。
-
-#### タスクの前提条件
-* タスクの先頭画像にアノテーションが1個以上付与されている
-* タスクの先頭画像に検査コメントが1個以上付与されている
+4. `$ make test`コマンドを実行する。
 
 
 #### テストメソッドを指定してテストする方法
@@ -89,8 +57,17 @@ $ poetry run pytest --print_log_annofabapi tests
 * 「パスワード変更」など使用頻度が少なく、実行や確認がしづらいメソッド
 
 
+# Versioning
+annofabapiのバージョンはSemantic Versioning 2.0に従います。
+* メソッドが追加されたときは、マイナーバージョンを上げる。
+* annofabapiのバグ/ドキュメント修正などにより、annofabapiをリリースするときは、パッチバージョンを上げる。
 
-## Release
+annofabapiのバージョンは以下のファイルで定義しています。
+* `annofabapi/__version__.py`
+* `pyproject.toml`
+
+
+# PyPIへのリリース方法
 
 ## 事前作業
 
@@ -102,29 +79,11 @@ https://pypi.org/account/register/
 https://pypi.org/project/annofabapi/
 
 ## リリース方法
-
-### 1. annofabapiのバージョンを上げる
-以下のファイルに記載されているバージョンを上げてください。
-* `annofabapi/__version__.py`
-* `pyproject.toml`
-
-バージョンはSemantic Versioning 2.0に従います。
-* メソッドが追加されたときは、マイナーバージョンを上げる。
-* annofabapiのバグ/ドキュメント修正などにより、annofabapiをリリースするときは、パッチバージョンを上げる。
-
-
-### 2. PyPIに登録する
+以下のコマンドを実行してください。PyPIのユーザ名とパスワードの入力が求められます。
 
 ```
 $ make publish
 ```
-
-※ PyPIのユーザ名とパスワードの入力が求められます。
-
-
-
-### 3. GitHubのリリースページに追加
-GitHubのRelease機能を使って、リリース情報を記載します。
 
 
 ## Document
@@ -143,3 +102,44 @@ ReadTheDocsのビルド結果は https://readthedocs.org/projects/annofab-api-py
 ## 開発フロー
 * masterブランチを元にしてブランチを作成して、プルリクを作成してください。masterブランチへの直接pushすることはGitHub上で禁止しています。
 * リリース時のソースはGitHubのRelease機能、またはPyPIからダウンロードしてください。
+
+
+
+
+-----------------
+# AnnoFab WebAPIの更新により、リリースする
+### 1.ソースコードの生成
+
+annofabapiのいくつかのファイルは、[AnnoFab Web APIのOpenAPI Spec](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
+以下のコマンドを実行すると、ソースコードが生成されます。詳細は[generate/README.md](generate/README.md)を参照してください。
+
+```
+# `generate/swagger/*.yaml`ファイルから、ソースコードを生成する
+$ generate/generate.sh
+
+# AnnoFab WebAPIのOpenAPI Spec を`generate/swagger/`にダウンロードしてから、ソースコードを生成する
+$ generate/generate.sh --download
+
+$ make format && make lint
+```
+
+### 2.テストの実施
+「テストの実行方法」を参照
+
+### 3.versionを上げる
+「Versioning」を参照
+
+### 4.プルリクを作ってマージする
+
+### 5.PyPIへパッケージをアップロードする
+「PyPIへのリリース方法」を参照
+
+### 6.GitHubのリリースページに追加
+GitHubのRelease機能を使って、リリース情報を記載します。
+
+
+
+
+
+
+
