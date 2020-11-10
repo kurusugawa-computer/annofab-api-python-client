@@ -6,6 +6,7 @@ from argparse import ArgumentParser
 from typing import Any, Dict, List, Optional
 
 import annofabapi
+from annofabapi.models import TaskPhase
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +88,7 @@ class CreatingTestProject:
         old_task = self.service.wrapper.get_task_or_none(project_id, task_id)
         if old_task is not None:
             logger.debug(f"タスクはすでに存在していたので、登録しません。task_id={task_id}")
+            return
 
         request_body = {
             "input_data_id_list": input_data_id_list,
@@ -143,250 +145,72 @@ class CreatingTestProject:
 
         return
 
-    def change_operator_of_task(
-        self, project_id: str, task_id: str, account_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+
+    def add_inspection_comment(
+        self,
+        project_id: str,
+        task: Dict[str,Any],
+        input_data_id:str,
+        inspection_comment: str,
+    ):
         """
-        タスクの担当者を変更する
-        Args:
-            self:
-            project_id:
-            task_id:
-            account_id: 新しい担当者のuser_id. Noneの場合未割り当てになる。
-
-        Returns:
-            変更後のtask情報
-
+        検査コメントを付与する。
+        先頭画像の左上に付与する。
         """
-        task, _ = self.service.api.get_task(project_id, task_id)
+        inspection_data = {"x": 0, "y": 0, "_type": "Point"}
 
-        req = {
-            "status": "not_started",
-            "account_id": account_id,
-            "last_updated_datetime": task["updated_datetime"],
-        }
-        return self.service.api.operate_task(project_id, task_id, request_body=req)[0]
+        req_inspection = [
+            {
+                "data": {
+                    "project_id": project_id,
+                    "comment": inspection_comment,
+                    "task_id": task["task_id"],
+                    "input_data_id": input_data_id,
+                    "inspection_id": str(uuid.uuid4()),
+                    "phase": task["phase"],
+                    "commenter_account_id": self.service.api.account_id,
+                    "data": inspection_data,
+                    "status": "annotator_action_required",
+                    "created_datetime": task["updated_datetime"],
+                },
+                "_type": "Put",
+            }
+        ]
 
-    def change_to_working_status(self, project_id: str, task_id: str, account_id: str) -> Dict[str, Any]:
+        return self.service.api.batch_update_inspections(
+            project_id, task["task_id"], input_data_id, request_body=req_inspection
+        )[0]
+
+
+    def create_inspection_comment(self, project_id: str, task_id: str, input_data_id:str):
         """
-        タスクを作業中に変更する
-        Args:
-            self:
-            project_id:
-            task_id:
-            account_id:
-
-        Returns:
-            変更後のtask情報
-
-        """
-        task, _ = self.service.api.get_task(project_id, task_id)
-        req = {
-            "status": "working",
-            "account_id": account_id,
-            "last_updated_datetime": task["updated_datetime"],
-        }
-        return self.service.api.operate_task(project_id, task_id, request_body=req)[0]
-
-    def change_to_break_phase(self, project_id: str, task_id: str) -> Dict[str, Any]:
-        """
-        タスクを休憩中に変更する
-        Returns:
-            変更後のtask情報
-        """
-        task, _ = self.service.api.get_task(project_id, task_id)
-
-        req = {
-            "status": "break",
-            "account_id": self.service.api.account_id,
-            "last_updated_datetime": task["updated_datetime"],
-        }
-        return self.service.api.operate_task(project_id, task_id, request_body=req)[0]
-
-    def reject_task(
-        self, project_id: str, task_id: str, account_id: str, annotator_account_id: Optional[str] = None
-    ) -> Dict[str, Any]:
-        """
-        タスクを強制的に差し戻し、annotator_account_id　に担当を割り当てる。
-
-        Args:
-            task_id:
-            account_id: 差し戻すときのユーザのaccount_id
-            annotator_account_id: 差し戻したあとに割り当てるユーザ。Noneの場合は直前のannotation phase担当者に割り当てる。
-
-        Returns:
-            変更あとのtask情報
-
+        検査コメントを付与する。
         """
 
-        # タスクを差し戻す
-        task, _ = self.service.api.get_task(project_id, task_id)
-
-        req_reject = {
-            "status": "rejected",
-            "account_id": account_id,
-            "last_updated_datetime": task["updated_datetime"],
-            "force": True,
-        }
-        rejected_task, _ = self.service.api.operate_task(project_id, task_id, request_body=req_reject)
-
-        req_change_operator = {
-            "status": "not_started",
-            "account_id": annotator_account_id,
-            "last_updated_datetime": rejected_task["updated_datetime"],
-        }
-        updated_task, _ = self.service.api.operate_task(project_id, task["task_id"], request_body=req_change_operator)
-        return updated_task
-
-    def reject_task_assign_last_annotator(self, project_id: str, task_id: str) -> Dict[str, Any]:
-        """
-        タスクを差し戻したあとに、最後のannotation phase担当者に割り当てる。
-
-        Args:
-            task_id:
-            account_id: 差し戻すときのユーザのaccount_id
-
-        Returns:
-            変更後のtask情報
-
-        """
-
-        task, _ = self.service.api.get_task(project_id, task_id)
-        req_reject = {
-            "status": "rejected",
-            "account_id": self.service.api.account_id,
-            "last_updated_datetime": task["updated_datetime"],
-            "force": True,
-        }
-        rejected_task, _ = self.service.api.operate_task(project_id, task_id, request_body=req_reject)
-        # 強制的に差し戻すと、タスクの担当者は直前の教師付け(annotation)フェーズの担当者を割り当てられるので、`operate_task`を実行しない。
-        return rejected_task
-
-    def complete_task(self, project_id: str, task_id: str) -> Dict[str, Any]:
-        """
-        タスクを完了状態にする。
-        注意：サーバ側ではタスクの検査は実施されない。
-        タスクを完了状態にする前にクライアント側であらかじめ「タスクの自動検査」を実施する必要がある。
-        """
-        task, _ = self.service.api.get_task(project_id, task_id)
-
-        req = {
-            "status": "complete",
-            "account_id": self.service.api.account_id,
-            "last_updated_datetime": task["updated_datetime"],
-        }
-        return self.service.api.operate_task(project_id, task_id, request_body=req)[0]
-
-    def change_to_working_status(self, project_id: str, task_id: str) -> Task:
-        """
-        必要なら担当者を変更して、作業中状態にします。
-
-        Args:
-            task:
-
-        Returns:
-            作業中状態後のタスク
-        """
-        # 担当者変更
-        my_account_id = self.service.api.account_id
-        try:
-            if task.account_id != my_account_id:
-                self.facade.change_operator_of_task(task.project_id, task.task_id, my_account_id)
-                logger.debug(f"{task.task_id}: 担当者を自分自身に変更しました。")
-
-            dict_task = self.facade.change_to_working_status(
-                project_id=task.project_id, task_id=task.task_id, account_id=my_account_id
-            )
-            return Task.from_dict(dict_task)
-
-        except requests.HTTPError as e:
-            logger.warning(f"{task.task_id}: 担当者の変更、または作業中状態への変更に失敗しました。")
-            raise e
-
-    def complete_task_for_annotation_phase(self, project_id: str, task_id: str) -> bool:
-        """
-        annotation phaseのタスクを完了状態にする。
-
-        Args:
-            project_id:
-            task: 操作対象のタスク。annotation phase状態であること前提。
-            reply_comment: 未処置の検査コメントに対する返信コメント。Noneの場合、スキップする。
-
-        Returns:
-            成功したかどうか
-        """
-
-        unanswered_comment_list_dict: Dict[str, List[Inspection]] = {}
-        for input_data_id in task.input_data_id_list:
-            unanswered_comment_list = self.get_unanswered_comment_list(task, input_data_id)
-            unanswered_comment_list_dict[input_data_id] = unanswered_comment_list
-
-        unanswered_comment_count_for_task = sum([len(e) for e in unanswered_comment_list_dict.values()])
-        if unanswered_comment_count_for_task == 0:
-            if not self.confirm_processing(f"タスク'{task.task_id}'の教師付フェーズを次のフェーズに進めますか？"):
-                return False
-
-            self.change_to_working_status(task)
-            self.facade.complete_task(task.project_id, task.task_id)
-            logger.info(f"{task.task_id}: 教師付フェーズを次のフェーズに進めました。")
-            return True
-        else:
-            logger.debug(f"{task.task_id}: 未回答の検査コメントが {unanswered_comment_count_for_task} 件あります。")
-            if reply_comment is None:
-                logger.warning(f"{task.task_id}: 未回答の検査コメントに対する返信コメント（'--reply_comment'）が指定されていないので、スキップします。")
-                return False
-            elif not self.confirm_processing(f"タスク'{task.task_id}'の教師付フェーズを次のフェーズに進めますか？"):
-                return False
-            else:
-                changed_task = self.change_to_working_status(task)
-
-                logger.debug(f"{task.task_id}: 未回答の検査コメント {unanswered_comment_count_for_task} 件に対して、返信コメントを付与します。")
-                for input_data_id, unanswered_comment_list in unanswered_comment_list_dict.items():
-                    if len(unanswered_comment_list) == 0:
-                        continue
-                    self.reply_inspection_comment(
-                        changed_task,
-                        input_data_id=input_data_id,
-                        unanswered_comment_list=unanswered_comment_list,
-                        reply_comment=reply_comment,
-                    )
-
-                self.facade.complete_task(task.project_id, task.task_id)
-                logger.info(f"{task.task_id}: 教師付フェーズをフェーズに進めました。")
-                return True
-
-    def create_inspections(self, project_id: str, task_id: str, input_data_id: str):
         old_inspections, _ = self.service.api.get_inspections(project_id, task_id, input_data_id)
         if len(old_inspections) > 0:
             logger.debug(f"task_id={task_id}, input_data_id={input_data_id}にすでに検査コメントは存在するので、検査コメントは登録しません。")
             return
 
-        request_body = {
-            "project_id": project_id,
-            "task_id": task_id,
-            "input_data_id": input_data_id,
-            "details": [
-                {
-                    "annotation_id": str(uuid.uuid4()),
-                    "account_id": self.service.api.account_id,
-                    "label_id": self.labels_dict["car"],
-                    "is_protected": False,
-                    "data_holding_type": "inner",
-                    "additional_data_list": [],
-                    "data": {"left_top": {"x": 0, "y": 0}, "right_bottom": {"x": 10, "y": 10}, "_type": "BoundingBox"},
-                    "etag": None,
-                    "url": None,
-                    "path": None,
-                    "created_datetime": None,
-                    "updated_datetime": None,
-                }
-            ],
-            "updated_datetime": None,
-        }
-        self.service.api.put_annotation(project_id, task_id, input_data_id, request_body=request_body)
-        logger.debug(f"アノテーションを作成しました。task_id={task_id}, input_data_id={input_data_id}")
+        # 自分自身を担当者にする
 
-        return
+
+        task, _ = self.service.api.get_task(project_id, task_id)
+        if task["phase"] != TaskPhase.ACCEPTANCE.value:
+            # 受け入れフェーズに移行する
+            self.service.wrapper.change_task_operator(project_id, task_id,
+                                                      operator_account_id=self.service.api.account_id)
+            self.service.wrapper.change_task_status_to_working(project_id, task_id)
+            self.service.wrapper.complete_task(project_id, task_id)
+
+        # 検査コメントの付与
+        self.service.wrapper.change_task_operator(project_id, task_id, operator_account_id=self.service.api.account_id)
+        self.service.wrapper.change_task_status_to_working(project_id, task_id)
+        task, _ = self.service.api.get_task(project_id, task_id)
+        self.add_inspection_comment(project_id, task, input_data_id=input_data_id, inspection_comment="テストコメント（自動生成）")
+        logger.debug(f"検査コメントを作成しました。task_id={task_id}, input_data_id={input_data_id}")
+        self.service.wrapper.change_task_status_to_break(project_id, task_id)
+
 
     def main(
         self, organization_name: Optional[str], project_id: Optional[str], project_title: Optional[str] = None
@@ -413,6 +237,7 @@ class CreatingTestProject:
         self.create_task(project_id, task_id, input_data_id_list=[input_data_id])
 
         self.create_annotations(project_id, task_id, input_data_id)
+        self.create_inspection_comment(project_id, task_id, input_data_id)
 
         self.upload_instruction(project_id)
         logger.debug(f"作業ガイドを登録しました。")
