@@ -145,12 +145,11 @@ class CreatingTestProject:
 
         return
 
-
     def add_inspection_comment(
         self,
         project_id: str,
-        task: Dict[str,Any],
-        input_data_id:str,
+        task: Dict[str, Any],
+        input_data_id: str,
         inspection_comment: str,
     ):
         """
@@ -181,8 +180,7 @@ class CreatingTestProject:
             project_id, task["task_id"], input_data_id, request_body=req_inspection
         )[0]
 
-
-    def create_inspection_comment(self, project_id: str, task_id: str, input_data_id:str):
+    def create_inspection_comment(self, project_id: str, task_id: str, input_data_id: str):
         """
         検査コメントを付与する。
         """
@@ -194,12 +192,12 @@ class CreatingTestProject:
 
         # 自分自身を担当者にする
 
-
         task, _ = self.service.api.get_task(project_id, task_id)
         if task["phase"] != TaskPhase.ACCEPTANCE.value:
             # 受け入れフェーズに移行する
-            self.service.wrapper.change_task_operator(project_id, task_id,
-                                                      operator_account_id=self.service.api.account_id)
+            self.service.wrapper.change_task_operator(
+                project_id, task_id, operator_account_id=self.service.api.account_id
+            )
             self.service.wrapper.change_task_status_to_working(project_id, task_id)
             self.service.wrapper.complete_task(project_id, task_id)
 
@@ -210,7 +208,6 @@ class CreatingTestProject:
         self.add_inspection_comment(project_id, task, input_data_id=input_data_id, inspection_comment="テストコメント（自動生成）")
         logger.debug(f"検査コメントを作成しました。task_id={task_id}, input_data_id={input_data_id}")
         self.service.wrapper.change_task_status_to_break(project_id, task_id)
-
 
     def main(
         self, organization_name: Optional[str], project_id: Optional[str], project_title: Optional[str] = None
