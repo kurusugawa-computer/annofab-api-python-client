@@ -1902,13 +1902,25 @@ class Wrapper:
         to_date: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """
-        実績作業時間(actual_worktime)と予定作業時間(plan_worktime)を取得する。
+        実績作業時間(actual_worktime)と予定作業時間(plan_worktime)を扱いやすいフォーマットで取得する。
+        ただし、organization_id または project_id のいずれかを指定する必要がある。
 
         Args:
-            query_params:
+            organization_id: 絞り込み対象の組織ID
+            project_id: 絞り込み対象のプロジェクトID
+            account_id: 絞り込み対象のアカウントID
+            from_date: 絞り込み対象の開始日（YYYY-MM-DD）
+            to_date: 絞り込み対象の終了日（YYYY-MM-DD）
 
         Returns:
-
+            労務管理情報
+                * organization_id
+                * project_id
+                * account_id
+                * date
+                * actual_worktime：実績作業時間[hour]
+                * plan_worktime：予定作業時間[hour]
+                * working_description：実績に関するコメント
         """
 
         def _to_new_data(labor: Dict[str, Any]) -> Dict[str, Any]:
@@ -1917,6 +1929,9 @@ class Wrapper:
             labor["working_description"] = self._get_working_description_from_labor(labor)
             labor.pop("values", None)
             return labor
+
+        if organization_id is None and project_id is None:
+            raise ValueError("one of the arguments organization_id project_id is required")
 
         query_params = {
             "organization_id": organization_id,
@@ -1929,18 +1944,21 @@ class Wrapper:
         return [_to_new_data(e) for e in labor_list]
 
     def get_labor_control_availability(
-        self, account_id: str = None, from_date: Optional[str] = None, to_date: Optional[str] = None
+        self, account_id: str, from_date: Optional[str] = None, to_date: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         """
         労務管理の予定稼働時間を取得する。
 
         Args:
-            account_id:
-            from_date:
-            to_date:
+            account_id: 絞り込み対象のアカウントID
+            from_date: 絞り込み対象の開始日（YYYY-MM-DD）
+            to_date: 絞り込み対象の終了日（YYYY-MM-DD）
 
         Returns:
             予定稼働時間情報
+                * account_id
+                * date
+                * availability：予定稼働時間[hour]
         """
 
         def _to_new_data(labor: Dict[str, Any]) -> Dict[str, Any]:
