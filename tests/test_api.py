@@ -473,6 +473,10 @@ class TestLabor:
     def test_get_labor_control_worktime(self):
         wrapper.get_labor_control_worktime(project_id=project_id)
 
+    def test_get_labor_control_worktime_raise(self):
+        with pytest.raises(ValueError):
+            wrapper.get_labor_control_worktime(account_id=api.account_id)
+
     def test_get_labor_control_availability(self):
         wrapper.get_labor_control_availability(account_id=api.account_id)
 
