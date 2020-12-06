@@ -118,13 +118,17 @@ ContentはReponseの中身です。
 ```python
 project_id = "ZZZZZZ"
 # `status`が`complete`のタスクを取得する
-content, response = service.api.get_tasks(project_id, query_params={'status': 'complete'})
-print(content)
-# {'list': [{'project_id': ...
+content, response = service.api.get_tasks(project_id, query_params={"status": "complete"})
 
-# simpleアノテーションzipのダウンロード用URLを取得する
-content, response = service.api.get_annotation_archive(project_id)
-url = response.headers['Location']
+print(type(content))
+# <class 'dict'>
+print(content)
+# {'list': [{'project_id': 'ZZZZZZ', 'task_id': '20190317_2', 'phase': 'acceptance', ...
+
+print(type(response))
+# <class 'requests.models.Response'>
+print(response.headers["Content-Type"])
+# application/json
 ```
 
 ## `service.wrapper`のサンプルコード
@@ -134,24 +138,18 @@ url = response.headers['Location']
 
 ```python
 # `status`が`complete`のタスクすべてを取得する
-tasks = service.wrapper.get_all_tasks(project_id, query_params={'status': 'complete'})
+tasks = service.wrapper.get_all_tasks(project_id, query_params={"status": "complete"})
+print(type(tasks))
+# <class 'list'>
 print(tasks)
-# [{'project_id': ...
+# [{'project_id': 'ZZZZZZ', 'task_id': '20190317_2', 'phase': 'acceptance', ...
+
 
 # simpleアノテーションzipのダウンロード
 service.wrapper.download_annotation_archive(project_id, 'output_dir')
 
 # 画像ファイルを入力データとして登録する
 service.wrapper.put_input_data_from_file(project_id, 'sample_input_data_id', f'sample.png')
-
-src_project_id = "AAAAAA"
-dest_project_id = "BBBBBB"
-
-# プロジェクトメンバをコピー（誤って実行しないように注意すること）
-service.wrapper.copy_project_members(src_project_id, dest_project_id)
-
-# アノテーション仕様のコピー（誤って実行しないように注意すること）
-service.wrapper.copy_annotation_specs(src_project_id, dest_project_id)
 ```
 
 ## アノテーションzipの読み込み
@@ -195,7 +193,6 @@ with zipfile.ZipFile('simple-annotation.zip', 'r') as zip_file:
 parser = SimpleAnnotationDirParser(Path("task01/12345678-abcd-1234-abcd-1234abcd5678.json"))
 simple_annotation = parser.parse()
 print(simple_annotation)
-
 
 
 ```

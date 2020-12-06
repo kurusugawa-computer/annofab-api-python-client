@@ -39,8 +39,8 @@ def build(
     """
     AnnofabApi, Wrapperのインスタンスを保持するインスタンスを生成する。
 
-    ``login_user_id``と``login_password``の両方がNoneの場合は、``.netrc``ファイルまたは環境変数から認証情報を取得する。
-    認証情報は、``.netrc``ファイル、環境変数の順に読み込む。
+    ``login_user_id`` と ``login_password`` の両方がNoneの場合は、``.netrc`` ファイルまたは環境変数から認証情報を取得する。
+    認証情報は、``.netrc`` ファイル、環境変数の順に読み込む。
 
     環境変数は``ANNOFAB_USER_ID`` , ``ANNOFAB_PASSWORD`` を参照する。
 

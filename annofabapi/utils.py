@@ -213,10 +213,10 @@ def get_task_history_index_skipped_acceptance(task_history_list: List[TaskHistor
 def get_task_history_index_skipped_inspection(task_history_list: List[TaskHistory]) -> List[int]:
     """
         検査フェーズがスキップされたタスク履歴のインデックス番号（0始まり）を返す。
-    ​
+
         Args:
             task_history_list: タスク履歴List
-    ​
+
         Returns:
             検査フェーズがスキップされた履歴のインデックス番号（0始まり）。検査がスキップされていない場合は空リストを返す。
     """
