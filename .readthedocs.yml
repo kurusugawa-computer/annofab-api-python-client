@@ -21,4 +21,6 @@ formats:
 python:
   version: 3
   install:
-    - path: .
+    - requirements: docs/requirements.txt
+    - method: pip
+      path: .
