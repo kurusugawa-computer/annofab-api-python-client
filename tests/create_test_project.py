@@ -232,7 +232,8 @@ class CreatingTestProject:
 
         input_data_id = "test_input_1"
         supplementary_data_id = "test_supplementary_data_1"
-        self.service.wrapper.put_supplementary_data_from_file(project_id, input_data_id=input_data_id, supplementary_data_id=supplementary_data_id)
+        self.service.wrapper.put_supplementary_data_from_file(project_id, input_data_id=input_data_id, supplementary_data_id=supplementary_data_id, file_path="annofabapi/__version__.py", request_body={"supplementary_data_number":1}, content_type="text/plain")
+
         task_id = "test_task_1"
         self.create_task(project_id, task_id, input_data_id_list=[input_data_id])
 
