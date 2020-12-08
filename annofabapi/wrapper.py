@@ -166,9 +166,7 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先のファイルパス
-            v2: True:v2形式(JSONファイル名がinput_data_id)をダウンロード.
-                False: v1形式(JSONファイル名がinput_data_name) をダウンロード.
-                v1形式はいずれ廃止される。v1形式が廃止されたら、引数v2のデフォルト値はTrueにする予定。
+            v2:  互換性を保つために残している引数。2020-10-31以降に廃止する。
 
         Returns:
             ダウンロード元のURL
@@ -177,6 +175,7 @@ class Wrapper:
         query_params = None
         if v2:
             query_params = {"v2": True}
+            logger.warning("メソッド引数`v2`は2020-10-31以降に廃止します。")
 
         _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
         url = response.headers["Location"]
@@ -188,7 +187,7 @@ class Wrapper:
         """
         FullアノテーションZIPをダウンロードする。
 
-        .. deprecated:: 0.21.1
+        .. deprecated:: X
 
         Args:
             project_id: プロジェクトID
@@ -334,7 +333,7 @@ class Wrapper:
         self,
         src: TaskFrameKey,
         dest: TaskFrameKey,
-        account_id: Optional[str]=None,
+        account_id: Optional[str] = None,
         annotation_specs_relation: Optional[AnnotationSpecsRelation] = None,
     ) -> bool:
         """
@@ -1262,6 +1261,8 @@ class Wrapper:
         """
         複数のプロジェクトメンバを追加/更新/削除する.
 
+        .. deprecated:: 2020-01-01
+
         Args:
             project_id: プロジェクトID
             project_members: 追加/更新するメンバのList. `user_id` , `member_status` , `member_role` をKeyに持つこと
@@ -1270,6 +1271,7 @@ class Wrapper:
             `putProjectMember` APIのContentのList
 
         """
+        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
 
         # 追加/更新前のプロジェクトメンバ
         dest_project_members = self.get_all_project_members(project_id)
@@ -1309,6 +1311,8 @@ class Wrapper:
         """
         複数のプロジェクトメンバに1つのロールを割り当てる。
 
+        .. deprecated:: 2020-01-01
+
         Note:
             誤って実行しないようにすること
 
@@ -1321,6 +1325,7 @@ class Wrapper:
             `putProjectMember` APIのContentのList
 
         """
+        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
 
         project_members = []
         for user_id in user_id_list:
@@ -1333,6 +1338,8 @@ class Wrapper:
         """
         複数のプロジェクトメンバを、プロジェクトから脱退させる
 
+        .. deprecated:: 2020-01-01
+
         Note:
             誤って実行しないようにすること
 
@@ -1343,6 +1350,7 @@ class Wrapper:
         Returns:
             `putProjectMember` APIのContentのList
         """
+        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
 
         project_members = []
         for user_id in user_id_list:
@@ -1361,6 +1369,8 @@ class Wrapper:
         """
         プロジェクトメンバを、別のプロジェクトにコピーする。
 
+        .. deprecated:: 2020-01-01
+
         Note:
             誤って実行しないようにすること
 
@@ -1373,6 +1383,8 @@ class Wrapper:
             `putProjectMember` APIのContentのList
 
         """
+        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
+
         src_project_members = self.get_all_project_members(src_project_id)
         dest_project_members = self.get_all_project_members(dest_project_id)
 
@@ -1759,7 +1771,6 @@ class Wrapper:
     def get_all_project_job(self, project_id: str, query_params: Dict[str, Any]) -> List[JobInfo]:
         """
         すべてのバックグランドジョブを取得する。
-        2019/01時点でAPIが未実装のため、このメソッドも未実装。
 
         Args:
             project_id: プロジェクトID
@@ -1768,15 +1779,11 @@ class Wrapper:
         Returns:
             すべてのバックグランドジョブ一覧
         """
-
-        # return self._get_all_objects(self.api.get_project_job,
-        #                              limit=200,
-        #                              project_id=project_id, query_params=query_params)
-        #
         copied_params = copy.deepcopy(query_params) if query_params is not None else {}
 
         all_jobs: List[Dict[str, Any]] = []
         limit = 200
+        # クエリパラメタ`page`が未実装なため、`1`を指定する
         copied_params.update({"page": 1, "limit": limit})
         r = self.api.get_project_job(project_id, query_params=copied_params)[0]
         all_jobs.extend(r["list"])

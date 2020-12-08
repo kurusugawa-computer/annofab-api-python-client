@@ -27,6 +27,15 @@
 ## 2020-10-31 以降,
 * `AnnofabApiWrapper.download_annotation_archive`メソッドの引数`v2`引数を削除します。WebAPIに渡す必要がなくなったためです。
 
+## 2021-01-01 以降,
+* `AnnofabApiWrapper`のプロジェクトメンバの更新系メソッドを廃止します。特殊なケースにしか対応しておらず、汎用的なメソッドでないためです。
+    * [assign_role_to_project_members](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.assign_role_to_project_members)
+    * [copy_project_members](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.copy_project_members)
+    * [drop_role_to_project_members](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.drop_role_to_project_members)
+    * [put_project_members](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.put_project_members)
+
+
+
 # Features
 cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます。
 

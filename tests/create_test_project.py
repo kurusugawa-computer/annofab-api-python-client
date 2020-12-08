@@ -230,6 +230,9 @@ class CreatingTestProject:
         input_data_id = "test_input_1"
         self.create_input_data(project_id, input_data_id, image_path="tests/data/lenna.png")
 
+        input_data_id = "test_input_1"
+        supplementary_data_id = "test_supplementary_data_1"
+        self.service.wrapper.put_supplementary_data_from_file(project_id, input_data_id=input_data_id, supplementary_data_id=supplementary_data_id)
         task_id = "test_task_1"
         self.create_task(project_id, task_id, input_data_id_list=[input_data_id])
 
