@@ -5,6 +5,8 @@ import uuid
 from argparse import ArgumentParser
 from typing import Any, Dict, List, Optional
 
+from more_itertools import first_true
+
 import annofabapi
 from annofabapi.models import TaskPhase
 
@@ -79,6 +81,29 @@ class CreatingTestProject:
             project_id, input_data_id=input_data_id, file_path=image_path, request_body=request_body
         )
         logger.debug(f"入力データを登録しました。input_data_id={input_data_id}")
+        return
+
+    def create_supplementary_data(
+        self, project_id: str, input_data_id: str, supplementary_data_id: str, supplementary_data_path: str
+    ):
+        supplementary_data_list, _ = self.service.api.get_supplementary_data_list(project_id, input_data_id)
+        old_supplementary_data = first_true(
+            supplementary_data_list, pred=lambda e: e["supplementary_data_id"] == supplementary_data_id
+        )
+        if old_supplementary_data is not None:
+            logger.debug(f"補助情報はすでに存在していたので、登録しません。supplementary_data_id={supplementary_data_id}")
+            return
+
+        # 適当なファイルをアップロードする
+        self.service.wrapper.put_supplementary_data_from_file(
+            project_id,
+            input_data_id=input_data_id,
+            supplementary_data_id=supplementary_data_id,
+            file_path=supplementary_data_path,
+            request_body={"supplementary_data_number": 1},
+            content_type="image",
+        )
+        logger.debug(f"補助情報を登録しました。supplementary_data_id={supplementary_data_id}")
         return
 
     def create_task(self, project_id: str, task_id: str, input_data_id_list: List[str]):
@@ -232,7 +257,12 @@ class CreatingTestProject:
 
         input_data_id = "test_input_1"
         supplementary_data_id = "test_supplementary_data_1"
-        self.service.wrapper.put_supplementary_data_from_file(project_id, input_data_id=input_data_id, supplementary_data_id=supplementary_data_id, file_path="annofabapi/__version__.py", request_body={"supplementary_data_number":1}, content_type="text/plain")
+        self.create_supplementary_data(
+            project_id,
+            input_data_id=input_data_id,
+            supplementary_data_id=supplementary_data_id,
+            supplementary_data_path="tests/data/lenna.png",
+        )
 
         task_id = "test_task_1"
         self.create_task(project_id, task_id, input_data_id_list=[input_data_id])
