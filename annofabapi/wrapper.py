@@ -334,7 +334,7 @@ class Wrapper:
         self,
         src: TaskFrameKey,
         dest: TaskFrameKey,
-        account_id: str,
+        account_id: Optional[str]=None,
         annotation_specs_relation: Optional[AnnotationSpecsRelation] = None,
     ) -> bool:
         """
@@ -343,7 +343,7 @@ class Wrapper:
         Args:
             src: コピー元のTaskFrame情報
             dest: コピー先のTaskFrame情報
-            account_id: アノテーションを登録するユーザのアカウントID
+            account_id: アノテーションを登録するユーザのアカウントID。Noneの場合、自分自身のアカウントIDで登録する。
             annotation_specs_relation: アノテーション仕様間の紐付け情報。``get_annotation_specs_relation`` メソッドで紐付け情報を取得できる。
                 Noneの場合、コピー元のアノテーション仕様のID情報（ラベルID、属性ID、選択肢ID）を変換せずに、アノテーションをコピーします。
 
@@ -366,7 +366,7 @@ class Wrapper:
             dest.task_id,
             dest.input_data_id,
             src_details=src_annotation_details,
-            account_id=account_id,
+            account_id=account_id if account_id is not None else self.api.account_id,
             annotation_specs_relation=annotation_specs_relation,
         )
         request_body["updated_datetime"] = updated_datetime
