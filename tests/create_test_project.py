@@ -32,6 +32,22 @@ class CreatingTestProject:
         new_project, _ = self.service.api.put_project(project_id, request_body=request_body)
         return new_project
 
+    def create_webhook(self, project_id: str, webhook_id: str):
+        request_body = {
+            "project_id": project_id,
+            "event_type": "annotation-archive-updated",
+            "webhook_id": webhook_id,
+            "webhook_status": "active",
+            "method": "POST",
+            "headers": [{"name": "Content-Type", "value": "application/json"}],
+            "body": "test",
+            "url": "https://annofab.com/",
+            "created_datetime": None,
+            "updated_datetime": None,
+        }
+        self.service.api.put_webhook(project_id, webhook_id, request_body=request_body)
+        logger.debug(f"webhookを登録しました。webhook_id={webhook_id}")
+
     def _create_bbox_label(self) -> Dict[str, Any]:
         label_name = "car"
         label_id = self.labels_dict[label_name]
@@ -243,10 +259,9 @@ class CreatingTestProject:
                 project_id = project["project_id"]
                 logger.debug(f"project_id={project_id} プロジェクトを作成しました。")
             else:
-                raise RuntimeError(f"organization_name がNoneなので、プロジェクトを作成できません")
+                raise RuntimeError("organization_name がNoneなので、プロジェクトを作成できません")
 
-        annotation_specs = self.create_annotation_specs(project_id)
-        logger.debug(f"アノテーション仕様を作成しました。")
+        logger.debug("アノテーション仕様を作成しました。")
 
         # プロジェクトトップに移動する
         now_dir = os.getcwd()
@@ -271,7 +286,9 @@ class CreatingTestProject:
         self.create_inspection_comment(project_id, task_id, input_data_id)
 
         self.upload_instruction(project_id)
-        logger.debug(f"作業ガイドを登録しました。")
+        logger.debug("作業ガイドを登録しました。")
+
+        self.create_webhook(project_id, webhook_id="test_webhook_1")
 
         # 移動前のディレクトリに戻る
         os.chdir(now_dir)

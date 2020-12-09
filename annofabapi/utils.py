@@ -241,7 +241,7 @@ def get_number_of_rejections(task_histories: List[TaskHistoryShort], phase: Task
 def can_put_annotation(task: Task, my_account_id: str) -> bool:
     """
     対象タスクが、`put_annotation` APIで、アノテーションを更新できる状態かどうか。
-    過去に担当者が割り当たっている場合、または現在の担当者自分自身の場合は、アノテーションを更新できる。
+    過去に担当者が割り当たっている場合、または現在の担当者が自分自身の場合は、アノテーションを更新できる。
 
     Args:
         task: 対象タスク

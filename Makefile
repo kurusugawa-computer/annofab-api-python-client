@@ -10,9 +10,9 @@ format:
 	poetry run black annofabapi tests
 
 lint:
-	poetry run mypy annofabapi
-	poetry run flake8 annofabapi
-	poetry run pylint annofabapi
+	poetry run mypy annofabapi tests/create_test_project.py
+	poetry run flake8 annofabapi tests/create_test_project.py
+	poetry run pylint annofabapi tests/create_test_project.py
 
 test:
 	poetry run pytest -n auto  --cov=annofabapi --cov-report=html tests
