@@ -1,3 +1,4 @@
+from functools import wraps
 import copy
 import datetime
 import json
@@ -267,8 +268,8 @@ def ignore_http_error(status_code_list: List[int]):
         status_code_list: 無視するhttp status codeのList
 
     """
-
     def decorator(function):
+        @wraps(function)
         def wrapped(*args, **kwargs):
             annofabapi_logger_level = logging.getLogger("annofabapi").level
             backoff_logger_level = logging.getLogger("backoff").level
