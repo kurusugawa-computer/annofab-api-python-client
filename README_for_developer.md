@@ -88,14 +88,22 @@ $ make publish
 
 ## Document
 ### ドキュメントの作成
-masterブランチが更新されると、自動的に[ReadTheDocsのサイト](https://annofab-api-python-client.readthedocs.io/)が更新されます。
-ReadTheDocsのビルド結果は https://readthedocs.org/projects/annofab-api-python-client/builds/ で確認できます。
-
-ローカルでドキュメントを確認したい場合は、`$ make docs` コマンドを実行してください。`docs/_build/html/`にHTMLファイルが生成されます。
+`$ make docs` コマンドを実行すると、`docs/_build/html/`にHTMLファイルが生成されます。
 
 
 ### ドキュメントの修正
 `docs/*.rst`ファイルを修正してください。rstファイルは[Sphinx](https://www.sphinx-doc.org/en/master/)でビルドしています。
+
+
+### ドキュメントのホスティング
+ドキュメントは、https://readthedocs.org/ にホスティングしています。
+masterブランチにプッシュすると、[ReadTheDocsのドキュメント](https://annofab-api-python-client.readthedocs.io/)が自動的に更新されます。
+
+ReadTheDocsに通知するタイミングは、[GitHubのwebhook設定画面](https://github.com/kurusugawa-computer/annofab-api-python-client/settings/hooks)で設定してください。
+ドキュメント生成元のブランチは、[ReadTheDocsの管理画面](https://readthedocs.org/dashboard/annofab-api-python-client/advanced/)で設定してください。
+
+ReadTheDocsのビルド結果は https://readthedocs.org/projects/annofab-api-python-client/builds/ で確認できます。
+メンテナンスする場合は、事前に管理者からメンテナスとして招待してもらってください。
 
 
 

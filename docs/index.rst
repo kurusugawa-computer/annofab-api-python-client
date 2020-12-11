@@ -14,7 +14,7 @@ Table of Contents
    :maxdepth: 2
 
    api_reference/index
-   user_guide
+   user_guide/index
    faq
 
 

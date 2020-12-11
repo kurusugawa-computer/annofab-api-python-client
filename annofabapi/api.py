@@ -27,7 +27,7 @@ def my_backoff(function):
         def fatal_code(e):
             """
             リトライするかどうか
-            HTTPErrorのとき、Too many Requests(429)のときはリトライする。それ以外の4XXはretryしない
+            status codeが5xxのとき、またはToo many Requests(429)のときはリトライする。429以外の4XXはリトライしない
             https://requests.kennethreitz.org/en/master/user/quickstart/#errors-and-exceptions
 
             Args:

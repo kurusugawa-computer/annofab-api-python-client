@@ -452,7 +452,7 @@ class TestWebhook:
         test_webhook_id = str(uuid.uuid4())
         request_body = {
             "project_id": project_id,
-            "event_type": "task-completed",
+            "event_type": "annotation-archive-updated",
             "webhook_id": test_webhook_id,
             "webhook_status": "active",
             "method": "POST",
