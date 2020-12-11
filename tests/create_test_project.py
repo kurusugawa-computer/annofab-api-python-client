@@ -5,6 +5,8 @@ import uuid
 from argparse import ArgumentParser
 from typing import Any, Dict, List, Optional
 
+from more_itertools import first_true
+
 import annofabapi
 from annofabapi.models import TaskPhase
 
@@ -29,6 +31,22 @@ class CreatingTestProject:
         }
         new_project, _ = self.service.api.put_project(project_id, request_body=request_body)
         return new_project
+
+    def create_webhook(self, project_id: str, webhook_id: str):
+        request_body = {
+            "project_id": project_id,
+            "event_type": "annotation-archive-updated",
+            "webhook_id": webhook_id,
+            "webhook_status": "active",
+            "method": "POST",
+            "headers": [{"name": "Content-Type", "value": "application/json"}],
+            "body": "test",
+            "url": "https://annofab.com/",
+            "created_datetime": None,
+            "updated_datetime": None,
+        }
+        self.service.api.put_webhook(project_id, webhook_id, request_body=request_body)
+        logger.debug(f"webhookを登録しました。webhook_id={webhook_id}")
 
     def _create_bbox_label(self) -> Dict[str, Any]:
         label_name = "car"
@@ -79,6 +97,29 @@ class CreatingTestProject:
             project_id, input_data_id=input_data_id, file_path=image_path, request_body=request_body
         )
         logger.debug(f"入力データを登録しました。input_data_id={input_data_id}")
+        return
+
+    def create_supplementary_data(
+        self, project_id: str, input_data_id: str, supplementary_data_id: str, supplementary_data_path: str
+    ):
+        supplementary_data_list, _ = self.service.api.get_supplementary_data_list(project_id, input_data_id)
+        old_supplementary_data = first_true(
+            supplementary_data_list, pred=lambda e: e["supplementary_data_id"] == supplementary_data_id
+        )
+        if old_supplementary_data is not None:
+            logger.debug(f"補助情報はすでに存在していたので、登録しません。supplementary_data_id={supplementary_data_id}")
+            return
+
+        # 適当なファイルをアップロードする
+        self.service.wrapper.put_supplementary_data_from_file(
+            project_id,
+            input_data_id=input_data_id,
+            supplementary_data_id=supplementary_data_id,
+            file_path=supplementary_data_path,
+            request_body={"supplementary_data_number": 1},
+            content_type="image",
+        )
+        logger.debug(f"補助情報を登録しました。supplementary_data_id={supplementary_data_id}")
         return
 
     def create_task(self, project_id: str, task_id: str, input_data_id_list: List[str]):
@@ -218,10 +259,9 @@ class CreatingTestProject:
                 project_id = project["project_id"]
                 logger.debug(f"project_id={project_id} プロジェクトを作成しました。")
             else:
-                raise RuntimeError(f"organization_name がNoneなので、プロジェクトを作成できません")
+                raise RuntimeError("organization_name がNoneなので、プロジェクトを作成できません")
 
-        annotation_specs = self.create_annotation_specs(project_id)
-        logger.debug(f"アノテーション仕様を作成しました。")
+        logger.debug("アノテーション仕様を作成しました。")
 
         # プロジェクトトップに移動する
         now_dir = os.getcwd()
@@ -230,6 +270,15 @@ class CreatingTestProject:
         input_data_id = "test_input_1"
         self.create_input_data(project_id, input_data_id, image_path="tests/data/lenna.png")
 
+        input_data_id = "test_input_1"
+        supplementary_data_id = "test_supplementary_data_1"
+        self.create_supplementary_data(
+            project_id,
+            input_data_id=input_data_id,
+            supplementary_data_id=supplementary_data_id,
+            supplementary_data_path="tests/data/lenna.png",
+        )
+
         task_id = "test_task_1"
         self.create_task(project_id, task_id, input_data_id_list=[input_data_id])
 
@@ -237,7 +286,9 @@ class CreatingTestProject:
         self.create_inspection_comment(project_id, task_id, input_data_id)
 
         self.upload_instruction(project_id)
-        logger.debug(f"作業ガイドを登録しました。")
+        logger.debug("作業ガイドを登録しました。")
+
+        self.create_webhook(project_id, webhook_id="test_webhook_1")
 
         # 移動前のディレクトリに戻る
         os.chdir(now_dir)
