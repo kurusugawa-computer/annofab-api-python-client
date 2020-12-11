@@ -13,8 +13,8 @@ Table of Contents
 .. toctree::
    :maxdepth: 2
 
-   api_reference/index
    user_guide/index
+   api_reference/index
    faq
 
 
