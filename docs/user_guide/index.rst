@@ -6,6 +6,5 @@ User Guide
 
    basic_usage
    advanced_usage
-   parser
    for_developer
 
