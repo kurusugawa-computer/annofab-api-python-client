@@ -4,6 +4,8 @@ User Guide
 .. toctree::
    :maxdepth: 2
 
-   annofabapi_class
-   wrapper_class
+   basic_usage
+   advanced_usage
+   parser
+   for_developer
 

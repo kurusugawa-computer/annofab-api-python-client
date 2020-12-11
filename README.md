@@ -212,12 +212,12 @@ print(simple_annotation)
 これらのクラスを利用すれば、属性で各値にアクセスできます。
 
 ```python
-from annofabapi.dataclass.task import Task, TaskHistory
+from annofabapi.dataclass.task import Task
 dict_task, _ = service.api.get_task(project_id, task_id)
 task = Task.from_dict(dict_task)
 
 print(task.task_id)
-print(task.task_status)
+print(task.status)
 
 ```
 

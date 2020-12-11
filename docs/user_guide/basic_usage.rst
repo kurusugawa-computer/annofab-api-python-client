@@ -1,18 +1,14 @@
 ==================================================
-基本的な使い方
+Basiv Usage
 ==================================================
 
-
-レベル２
-========
-
-
-WebAPIにリクエストを投げる方法（基本的）
+WebAPIにリクエストを投げる方法
 --------------------------------------------------
 
 ``service.api`` には、Web APIに対応するメソッドが定義されています。
 メソッド名は、AnnoFab Web APIのOpenAPI specificationに記載されている ``operationId`` を、スネークケース"input1","input2"に変換したものです。
-各メソッドの戻り値の型は ``Tupple[Content, Response]`` です。 ResponseはrequestsモジュールのReponseオブジェクトです。 ContentはReponseの中身です。
+各メソッドの戻り値の型は ``Tupple[Content, Response]`` です。 ``Response`` はrequestsモジュールの ``Reponse`` オブジェクトです。
+``Content`` は ``Reponse`` の中身です。
 
 .. code-block:: python
 
@@ -21,7 +17,7 @@ WebAPIにリクエストを投げる方法（基本的）
     user_id = "XXXXXX"
     password = "YYYYYY"
     
-    # インスタタンス生成"input1","input2"
+    # インスタタンス生成
     service = build(user_id, password)
 
     project_id = "test_project_id"
@@ -34,7 +30,7 @@ WebAPIにリクエストを投げる方法（基本的）
     # 'input_data_id_list': ['db6f7b26-4012-4728-8438-e5e7f000671b',
     #                         '68187d94-8df5-41f3-90a1-f4c9e426fb27'],
     # 'metadata': {},
-    # 'number_of_rejections': 0,"input1","input2""input1","input2""input1","input2"
+    # 'number_of_rejections': 0,
     # 'phase': 'annotation',
     # 'phase_stage': 1,
     # 'project_id': 'test_project_id',
@@ -58,7 +54,7 @@ WebAPIにリクエストを投げる方法（基本的）
 
 
 
-``response`` はステータスコードなどのレスポンス情報や、リクエスト情報を確認できます。
+``response`` はステータスコードなどのレスポンス情報や、リクエスト情報が格納されています。
 
 .. code-block:: python
 
@@ -78,7 +74,7 @@ WebAPIにリクエストを投げる方法（基本的）
     # {'User-Agent': 'python-requests/2.24.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'
 
 
-``response`` はステータスコードなどのレスポンス情報や、リクエスト情報を確認できます。
+
 
 
 
@@ -108,7 +104,7 @@ HTTPステータスコードが429(Too many Requests)または5xxのときは、
 エラーと例外
 --------------------------------------------------
 HTTPステータスコードが4xxまたは5xxのときは、`requests.exceptions.HTTPError <https://requests.readthedocs.io/en/master/api/#requests.HTTPError>`_ をスローします。
-ステータスコード
+
 
 
 ログの出力
