@@ -1,8 +1,8 @@
-from functools import wraps
 import copy
 import datetime
 import json
 import logging
+from functools import wraps
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -268,6 +268,7 @@ def ignore_http_error(status_code_list: List[int]):
         status_code_list: 無視するhttp status codeのList
 
     """
+
     def decorator(function):
         @wraps(function)
         def wrapped(*args, **kwargs):

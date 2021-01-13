@@ -78,6 +78,7 @@ service.wrapper.download_xxx メソッド
 
 
 .. code-block:: python
+
     # アノテーションzipをダウンロードする
     service.wrapper.download_annotation_archive(project_id, "out/simple_annotation.zip")
 
@@ -99,6 +100,7 @@ service.api.operate_task を使いやすくしたメソッド
 
 
 .. code-block:: python
+
     # タスクのステータスを「作業中」に変更する
     task = service.wrapper.change_task_status_to_working(project_id, "test_task_id")
 
@@ -117,6 +119,7 @@ statistics系APIは、統計情報が格納されたJSONのファイルパスを
 
 
 .. code-block:: python
+
     # タスクのステータスを「作業中」に変更する
     account_statistics = service.wrapper.get_account_statistics(project_id)
 
@@ -221,7 +224,7 @@ JSONファイルの中身については、https://annofab.com/docs/api/#tag/x-a
 
 
 アノテーションzip内のすべてのJSONをタスク単位で読み込む
---------------------------------------------------
+----------------------------------------------------------------------------------------------------
 ``annofabapi.parser.lazy_parse_simple_annotation_zip_by_task`` メソッドを利用すると、アノテーションzip内のすべてのJSONを、タスク単位で読み込むことができます。
 
 .. code-block:: python
