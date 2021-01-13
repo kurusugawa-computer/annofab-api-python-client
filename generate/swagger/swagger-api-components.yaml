@@ -1740,9 +1740,6 @@ components:
     PatchTasksMetadataRequest:
       type: object
       description: タスクIDとメタデータのkey-valueペア(Dictionary)です。
-      additionalProperties: {
-        $ref: "#/components/schemas/TaskMetadata"
-      }
     InspectionStatisticsPhrases:
       type: object
       description: ラベル外指摘の集計結果
@@ -2663,7 +2660,18 @@ components:
       description: |
         ユーザーが自由に登録できるkey-value型のメタデータです。
         keyにはメタデータ名、valueには値を指定してください。
-        valueには文字列、数値、真偽値を指定できます。
+
+        keyに指定できる文字種は次の通りです。
+
+        * 半角英数字
+        * `_` (アンダースコア)
+        * `-` (ハイフン)
+
+        valueに指定できる値は次の通りです。
+
+        * 文字列
+        * 数値
+        * 真偽値
     TaskRequest:
       type: object
       required:
@@ -3063,7 +3071,7 @@ components:
           $ref: "#/components/schemas/Resolution"
           description: |
             入力データの元画像サイズ。
-            入力データ登録時に画像がリサイズされた場合のみ設定される。
+            AnnoFabにアップロードされる入力データとS3プライベートストレージの場合のみ設定されます。
         resized_resolution:
           deprecated: true
           $ref: "#/components/schemas/Resolution"
@@ -3120,7 +3128,7 @@ components:
           $ref: "#/components/schemas/Resolution"
           description: |
             入力データの元画像サイズ。
-            入力データ登録時に画像がリサイズされた場合のみ設定される。
+            AnnoFabにアップロードされる入力データとS3プライベートストレージの場合のみ設定されます。
         resized_resolution:
           $ref: "#/components/schemas/Resolution"
           description: |

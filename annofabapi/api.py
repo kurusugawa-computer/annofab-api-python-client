@@ -254,7 +254,7 @@ class AnnofabApi(AbstractAnnofabApi):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def _request_get_with_cookie(self, project_id: str, url: str) -> requests.Response:
+    def request_get_with_cookie(self, project_id: str, url: str) -> requests.Response:
         """
         Signed Cookie を使って、AnnoFabのURLにGET requestを投げる。
 

@@ -2714,7 +2714,8 @@ class AbstractAnnofabApi(abc.ABC):
                 previous_phase_stage (int):  そのタスクがこれまでに遷移したことのあるステージ（現在のステージ含む）。未指定時は全ステージ
                 rejected_only (str):  差し戻されたタスクだけを絞り込む時に、キーのみ指定します（値は無視されます）。
                 auto_accepted_only (str):  「抜取検査の対象外となり、自動受入されたタスク」だけを絞り込む時に、キーのみ指定します（値は無視されます）。
-                sort (str):  ソート順の指定。 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、phase_stage、status、account_idのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。
+                metadata (str):  メタデータからタスクを検索できます。<br> 例えば、 `priority` (数値) や `assignable` (真偽値) といったメタデータを個々のタスクに登録していたとします。 その場合、次のように検索できます。  ``` // priorityが5のタスクを検索 https://annofab.com/~/tasks?metadata=priority:5  // priorityが5以外のタスクを検索 https://annofab.com/~/tasks?metadata=-priority:5  // priorityが1より大きいタスクを検索 https://annofab.com/~/tasks?metadata=priority:>1  // priorityが1以上のタスクを検索 https://annofab.com/~/tasks?metadata=priority:>=1  // priorityが100未満のタスクを検索 https://annofab.com/~/tasks?metadata=priority:<100  // priorityが100以下のタスクを検索 https://annofab.com/~/tasks?metadata=priority:<=100  // priorityが1~100のタスクを検索 (複数の検索条件は半角スペースで区切ります) https://annofab.com/~/tasks?metadata=priority:>=1 priority:<=100  // priorityが1以上、且つ、assignableがtrueのタスクを検索 https://annofab.com/~/tasks?metadata=priority:>=1 assignable:true ```  次の検索構文は <span style=\"color: red\">deprecated</span> です。  ``` // priorityが5のタスクを検索 https://annofab.com/~/tasks?metadata.priority=5  // priorityが1以上のタスクを検索 https://annofab.com/~/tasks?metadata.priority>=1  // priorityが100以下のタスクを検索 https://annofab.com/~/tasks?metadata.priority<=100  // priorityが1~100のタスクを検索 https://annofab.com/~/tasks?metadata.priority>=1&metadata.priority<=100  // 教師付けフェーズ、且つ、priorityが5のタスクを検索 https://annofab.com/~/tasks?phase=annotation&metadata.priority=5 ```  (注意) これらの例は、説明の都合上「URLエンコード」を施していません。<br> 実際には、URLエンコードを施してください。
+                sort (str):  ソート順の指定。  * 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、phase_stage、status、account_id, metadataのいずれかです。 * metadata指定時は、`metadata.{メタデータ名}` の形式で指定します。 * 降順指定時は先頭に-(ハイフン)を付与します。 * 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。
                 annotation (str):  アノテーションの絞り込み条件をJSON形式([AnnotationQuery](#section/AnnotationQuery))で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
 
         Returns:
@@ -2810,7 +2811,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                request_body (dict(str, __DictStrKeyAnyValue__)):  (required)
+                body (__DictStrKeyAnyValue__):  タスクIDとメタデータのkey-valueペア(Dictionary)を指定してください。<br> メタデータは、メタデータ名と値のkey-valueペア(Dictionary)です。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値  ``` (例)  {   \"task_1\": { \"metadata_1\": \"str\", \"metadata_2\": 100 },   \"task_2\": { \"metadata_3\": true } } ```  (required)
 
         Returns:
             Tuple[Message, requests.Response]
