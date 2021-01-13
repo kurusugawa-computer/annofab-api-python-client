@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.97.0
+  version: 0.104.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -650,6 +650,12 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "409":
+          description: 外部アカウントでログインしているユーザーのメールアドレスを変更しようとした
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/ErrorStateMismatch"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /confirm-reset-email:
@@ -3187,14 +3193,75 @@ paths:
         allowEmptyValue: true
         schema:
           type: string
+      - name: metadata
+        in: query
+        description: |
+          メタデータからタスクを検索できます。<br>
+          例えば、 `priority` (数値) や `assignable` (真偽値) といったメタデータを個々のタスクに登録していたとします。
+          その場合、次のように検索できます。
+
+          ```
+          // priorityが5のタスクを検索
+          https://annofab.com/~/tasks?metadata=priority:5
+
+          // priorityが5以外のタスクを検索
+          https://annofab.com/~/tasks?metadata=-priority:5
+
+          // priorityが1より大きいタスクを検索
+          https://annofab.com/~/tasks?metadata=priority:>1
+
+          // priorityが1以上のタスクを検索
+          https://annofab.com/~/tasks?metadata=priority:>=1
+
+          // priorityが100未満のタスクを検索
+          https://annofab.com/~/tasks?metadata=priority:<100
+
+          // priorityが100以下のタスクを検索
+          https://annofab.com/~/tasks?metadata=priority:<=100
+
+          // priorityが1~100のタスクを検索 (複数の検索条件は半角スペースで区切ります)
+          https://annofab.com/~/tasks?metadata=priority:>=1 priority:<=100
+
+          // priorityが1以上、且つ、assignableがtrueのタスクを検索
+          https://annofab.com/~/tasks?metadata=priority:>=1 assignable:true
+          ```
+
+          次の検索構文は <span style="color: red">deprecated</span> です。
+
+          ```
+          // priorityが5のタスクを検索
+          https://annofab.com/~/tasks?metadata.priority=5
+
+          // priorityが1以上のタスクを検索
+          https://annofab.com/~/tasks?metadata.priority>=1
+
+          // priorityが100以下のタスクを検索
+          https://annofab.com/~/tasks?metadata.priority<=100
+
+          // priorityが1~100のタスクを検索
+          https://annofab.com/~/tasks?metadata.priority>=1&metadata.priority<=100
+
+          // 教師付けフェーズ、且つ、priorityが5のタスクを検索
+          https://annofab.com/~/tasks?phase=annotation&metadata.priority=5
+          ```
+
+          (注意) これらの例は、説明の都合上「URLエンコード」を施していません。<br>
+          実際には、URLエンコードを施してください。
+        required: false
+        schema:
+          type: string
       - name: sort
         in: query
         description: |
           ソート順の指定。
-          使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、phase_stage、status、account_idのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。
-          複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。
+
+          * 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、phase_stage、status、account_id, metadataのいずれかです。
+          * metadata指定時は、`metadata.{メタデータ名}` の形式で指定します。
+          * 降順指定時は先頭に-(ハイフン)を付与します。
+          * 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。
+
         required: false
-        example: account_id,-updated_datetime
+        example: metadata.priority,-updated_datetime
         schema:
           type: string
       - name: annotation
@@ -3614,6 +3681,30 @@ paths:
             $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       requestBody:
         required: true
+        description: |
+          タスクIDとメタデータのkey-valueペア(Dictionary)を指定してください。<br>
+          メタデータは、メタデータ名と値のkey-valueペア(Dictionary)です。
+
+          keyに指定できる文字種は次の通りです。
+
+          * 半角英数字
+          * `_` (アンダースコア)
+          * `-` (ハイフン)
+
+          valueに指定できる値は次の通りです。
+
+          * 文字列
+          * 数値
+          * 真偽値
+
+          ```
+          (例)
+
+          {
+            "task_1": { "metadata_1": "str", "metadata_2": 100 },
+            "task_2": { "metadata_3": true }
+          }
+          ```
         content:
           application/json:
             schema:
