@@ -736,34 +736,6 @@ class AbstractAnnofabApi(abc.ABC):
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_signed_url_of_input_data(
-        self, project_id: str, input_data_id: str, **kwargs
-    ) -> Tuple[Any, requests.Response]:
-        """実体参照用認証済みURL取得
-        https://annofab.com/docs/api/#operation/getSignedUrlOfInputData
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        入力データの実体（画像や動画などのファイルそのもの）にアクセスするための、認証済み一時URLを取得します。  取得したURLは、1時間で失効し、アクセスできなくなります。
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-            input_data_id (str):  入力データID (required)
-
-        Returns:
-            Tuple[str, requests.Response]
-
-
-        """
-        warnings.warn("deprecated", DeprecationWarning)
-        url_path = f"/projects/{project_id}/inputs/{input_data_id}/data"
-        http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
     def put_input_data(
         self,
         project_id: str,
@@ -2659,32 +2631,6 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_task_validation(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """タスク自動検査
-        https://annofab.com/docs/api/#operation/getTaskValidation
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        指定したタスクの自動検査で見つかった警告やエラーを一括で取得します。 [タスクの状態遷移](#operation/operateTask)の際に検査を行うようになったので、本APIは非推奨となります。
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-            task_id (str):  タスクID (required)
-
-        Returns:
-            Tuple[TaskValidation, requests.Response]
-
-
-        """
-        warnings.warn("deprecated", DeprecationWarning)
-        url_path = f"/projects/{project_id}/tasks/{task_id}/validation"
-        http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
     def get_tasks(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
@@ -2702,7 +2648,7 @@ class AbstractAnnofabApi(abc.ABC):
             query_params (Dict[str, Any]): Query Parameters
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
-                task_id (str):  タスクIDでの部分一致検索で使用。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません
+                task_id (str):  タスクIDでの部分一致検索で使用。最大文字列長300文字。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません
                 input_data_ids (str):  指定された入力データIDを使用しているタスクを絞り込みます。カンマ区切りで複数の入力データIDを指定可能です。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません
                 phase (TaskPhase):  絞り込み条件となるフェーズ名。未指定時は全フェーズ
                 phase_stage (int):  絞り込み条件となるステージ。未指定時は全ステージ
@@ -2850,37 +2796,6 @@ class AbstractAnnofabApi(abc.ABC):
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
-            "request_body": request_body,
-        }
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def start_task(
-        self, project_id: str, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
-        """タスク割当
-        https://annofab.com/docs/api/#operation/startTask
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        タスクの割当を要求します。  個々のタスクの情報を取得する場合は、[タスク取得](#operation/getTask)を使います。
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-            request_body (Any): Request Body
-                task_start (TaskStart):  (required)
-
-        Returns:
-            Tuple[Task, requests.Response]
-
-
-        """
-        warnings.warn("deprecated", DeprecationWarning)
-        url_path = f"/projects/{project_id}/start-task"
-        http_method = "POST"
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
