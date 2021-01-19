@@ -385,13 +385,13 @@ AdditionalDataRestrictionCondition = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    
+    `Imply` [詳しくはこちら](#section/API-Convention/API-_type) 
 * enable: bool
-    
+    false を指定することで、入力を許可しないようにできます。 Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
 * value: str
-    
-* values: str
-    
+    指定された正規表現に合致しないことを要求します。
+* labels: List[str]
+    リンク属性において、リンク先として指定可能なラベルIDを制限します。
 * premise: AdditionalDataRestriction
     
 * condition: AdditionalDataRestrictionCondition
@@ -401,51 +401,51 @@ Kyes of Dict
 
 AdditionalDataRestrictionConditionCanInput = Dict[str, Any]
 """
-enable=false とすることで、入力を許可しないようにできます。 Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
+
 
 Kyes of Dict
 
 * type: str
-    
+    `CanInput` [詳しくはこちら](#section/API-Convention/API-_type) 
 * enable: bool
-    
+    false を指定することで、入力を許可しないようにできます。 Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
 
 """
 
 AdditionalDataRestrictionConditionEquals = Dict[str, Any]
 """
-指定された値と等しいことを要求します。
+
 
 Kyes of Dict
 
 * type: str
-    
+    `Equals` [詳しくはこちら](#section/API-Convention/API-_type) 
 * value: str
-    
+    指定された値と等しいことを要求します。
 
 """
 
 AdditionalDataRestrictionConditionHasLabel = Dict[str, Any]
 """
-リンク属性において、リンク先として指定可能なラベルIDを制限します。
+
 
 Kyes of Dict
 
 * type: str
-    
-* values: str
-    
+    `HasLabel` [詳しくはこちら](#section/API-Convention/API-_type) 
+* labels: List[str]
+    リンク属性において、リンク先として指定可能なラベルIDを制限します。
 
 """
 
 AdditionalDataRestrictionConditionImply = Dict[str, Any]
 """
-premise で指定された条件を満たすとき、condition で指定された条件を満たすことを要求します。 
+
 
 Kyes of Dict
 
 * type: str
-    
+    `Imply` [詳しくはこちら](#section/API-Convention/API-_type) 
 * premise: AdditionalDataRestriction
     
 * condition: AdditionalDataRestrictionCondition
@@ -455,40 +455,40 @@ Kyes of Dict
 
 AdditionalDataRestrictionConditionMatches = Dict[str, Any]
 """
-指定された正規表現に合致することを要求します。
+
 
 Kyes of Dict
 
 * type: str
-    
+    `Matches` [詳しくはこちら](#section/API-Convention/API-_type) 
 * value: str
-    
+    指定された正規表現に合致することを要求します。
 
 """
 
 AdditionalDataRestrictionConditionNotEquals = Dict[str, Any]
 """
-指定された値と異なることを要求します。 value に \"\" を指定することで、入力を必須とすることができます。 
+
 
 Kyes of Dict
 
 * type: str
-    
+    `NotEquals` [詳しくはこちら](#section/API-Convention/API-_type) 
 * value: str
-    
+    指定された値と異なることを要求します。 value に \"\" を指定することで、入力を必須とすることができます。 
 
 """
 
 AdditionalDataRestrictionConditionNotMatches = Dict[str, Any]
 """
-指定された正規表現に合致しないことを要求します。
+
 
 Kyes of Dict
 
 * type: str
-    
+    `NotMatches` [詳しくはこちら](#section/API-Convention/API-_type) 
 * value: str
-    
+    指定された正規表現に合致しないことを要求します。
 
 """
 
@@ -714,11 +714,11 @@ Kyes of Dict
 * task_id: str
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * exact_match_task_id: bool
-    タスクIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は中間一致検索です。 
+    タスクIDの検索方法を指定します。 最大文字列長300文字。 trueの場合は完全一致検索、falseの場合は中間一致検索です。 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * exact_match_input_data_id: bool
-    入力データIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は中間一致検索です。 
+    入力データIDの検索方法を指定します。 最大文字列長300文字。 trueの場合は完全一致検索、falseの場合は中間一致検索です。 
 * label_id: str
     
 * attributes: List[AdditionalData]
@@ -4274,17 +4274,6 @@ Kyes of Dict
     
 * metadata: __DictStrKeyAnyValue__
     ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 
-
-"""
-
-TaskStart = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* phase: TaskPhase
-    
 
 """
 
