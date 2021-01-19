@@ -283,11 +283,17 @@ components:
           description: 多言語対応
     InternationalizationMessage:
       type: object
+      required:
+        - messages
+        - default_lang
       properties:
         messages:
           type: array
           items:
             type: object
+            required:
+              - lang
+              - message
             properties:
               lang:
                 type: string
@@ -687,6 +693,12 @@ components:
         - $ref: "#/components/schemas/PluginDetailAnnotationEditor"
         - $ref: "#/components/schemas/PluginDetailTaskAssignment"
         - $ref: "#/components/schemas/PluginDetailAnnotationSpecs"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          AnnotationEditor: "#/components/schemas/PluginDetailAnnotationEditor"
+          TaskAssignment: "#/components/schemas/PluginDetailTaskAssignment"
+          AnnotationSpecs: "#/components/schemas/PluginDetailAnnotationSpecs"
     PluginDetailAnnotationEditor:
       type: object
       description: |
@@ -1956,6 +1968,11 @@ components:
           $ref: "#/components/schemas/LastUpdatedDatetime"
     AnnotationSpecsV1:
       type: object
+      required:
+        - project_id
+        - labels
+        - inspection_phrases
+        - metadata
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -1982,6 +1999,14 @@ components:
             type: string
     AnnotationSpecsV2:
       type: object
+      required:
+        - project_id
+        - labels
+        - additionals
+        - restrictions
+        - inspection_phrases
+        - format_version
+        - metadata
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -2118,6 +2143,8 @@ components:
         動画プロジェクトで値が未指定の場合、AnnotationSpecsOption内の値はすべてデフォルト値が指定されたものとして扱われる。
     AnnotationSpecsMovieOption:
       type: object
+      required:
+        - can_overwrap
       properties:
         can_overwrap:
           type: boolean
@@ -2126,6 +2153,11 @@ components:
             動画プロジェクトのアノテーションに重複配置を許すか否か。
     AnnotationSpecsHistory:
       type: object
+      required:
+        - history_id
+        - project_id
+        - updated_datetime
+        - url
       properties:
         history_id:
           type: string
@@ -2142,6 +2174,9 @@ components:
           type: string
     InspectionPhrase:
       type: object
+      required:
+        - id
+        - text
       properties:
         id:
           type: string
@@ -2208,6 +2243,16 @@ components:
           type: integer
     LabelV1:
       type: object
+      required:
+        - label_id
+        - label_name
+        - keybind
+        - annotation_type
+        - additional_data_definitions
+        - color
+        - annotation_editor_feature
+        - allow_out_of_image_bounds
+        - metadata
       properties:
         label_id:
           $ref: "#/components/schemas/LabelId"
@@ -2221,6 +2266,10 @@ components:
           $ref: "#/components/schemas/AnnotationType"
         bounding_box_metadata:
           type: object
+          required:
+            - min_width
+            - min_height
+            - min_warn_rule
           properties:
             min_width:
               type: integer
@@ -2243,6 +2292,10 @@ components:
               type: integer
         segmentation_metadata:
           type: object
+          required:
+            - min_width
+            - min_height
+            - min_warn_rule
           properties:
             min_width:
               type: integer
@@ -2272,6 +2325,16 @@ components:
             type: string
     LabelV2:
       type: object
+      required:
+        - label_id
+        - label_name
+        - keybind
+        - annotation_type
+        - additional_data_definitions
+        - color
+        - annotation_editor_feature
+        - allow_out_of_image_bounds
+        - metadata
       properties:
         label_id:
           $ref: "#/components/schemas/LabelId"
@@ -2285,6 +2348,10 @@ components:
           $ref: "#/components/schemas/AnnotationType"
         bounding_box_metadata:
           type: object
+          required:
+            - min_width
+            - min_height
+            - min_warn_rule
           properties:
             min_width:
               type: integer
@@ -2307,6 +2374,10 @@ components:
               type: integer
         segmentation_metadata:
           type: object
+          required:
+            - min_width
+            - min_height
+            - min_warn_rule
           properties:
             min_width:
               type: integer
@@ -2336,6 +2407,10 @@ components:
             type: string
     Color:
       type: object
+      required:
+        - red
+        - green
+        - blue
       properties:
         red:
           type: integer
@@ -2351,6 +2426,13 @@ components:
           maximum: 255
     AnnotationEditorFeature:
       type: object
+      required:
+        - append
+        - erase
+        - freehand
+        - rectangle_fill
+        - polygon_fill
+        - fill_near
       properties:
         append:
           type: boolean
@@ -2366,6 +2448,16 @@ components:
           type: boolean
     AdditionalDataDefinitionV1:
       type: object
+      required:
+        - additional_data_definition_id
+        - read_only
+        - name
+        - default
+        - keybind
+        - type
+        - choices
+        - label_ids
+        - metadata
       properties:
         additional_data_definition_id:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
@@ -2386,6 +2478,10 @@ components:
           type: array
           items:
             type: object
+            required:
+              - choice_id
+              - name
+              - keybind
             properties:
               choice_id:
                 $ref: "#/components/schemas/ChoiceId"
@@ -2413,6 +2509,15 @@ components:
             type: string
     AdditionalDataDefinitionV2:
       type: object
+      required:
+        - additional_data_definition_id
+        - read_only
+        - name
+        - default
+        - keybind
+        - type
+        - choices
+        - metadata
       properties:
         additional_data_definition_id:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
@@ -2433,6 +2538,10 @@ components:
           type: array
           items:
             type: object
+            required:
+              - choice_id
+              - name
+              - keybind
             properties:
               choice_id:
                 $ref: "#/components/schemas/ChoiceId"
@@ -2450,6 +2559,9 @@ components:
             type: string
     AdditionalDataRestriction:
       type: object
+      required:
+        - additional_data_definition_id
+        - condition
       properties:
         additional_data_definition_id:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
@@ -2476,76 +2588,126 @@ components:
           Imply: "#/components/schemas/AdditionalDataRestrictionConditionImply"
     AdditionalDataRestrictionConditionCanInput:
       type: object
-      description: |
-        enable=false とすることで、入力を許可しないようにできます。
-        Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。
+      required:
+        - _type
+        - enable
       properties:
         _type:
           type: string
+          description: |
+            `CanInput`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "CanInput"
         enable:
           type: boolean
+          description: |
+            false を指定することで、入力を許可しないようにできます。
+            Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。
     AdditionalDataRestrictionConditionEquals:
       type: object
-      description: 指定された値と等しいことを要求します。
+      required:
+        - _type
+        - value
       properties:
         _type:
           type: string
+          description: |
+            `Equals`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Equals"
         value:
           type: string
+          description: 指定された値と等しいことを要求します。
     AdditionalDataRestrictionConditionNotEquals:
       type: object
-      description: |
-        指定された値と異なることを要求します。
-        value に "" を指定することで、入力を必須とすることができます。
+      required:
+        - _type
+        - value
       properties:
         _type:
           type: string
+          description: |
+            `NotEquals`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "NotEquals"
         value:
           type: string
+          description: |
+            指定された値と異なることを要求します。
+            value に "" を指定することで、入力を必須とすることができます。
     AdditionalDataRestrictionConditionMatches:
       type: object
-      description: 指定された正規表現に合致することを要求します。
+      required:
+        - _type
+        - value
       properties:
         _type:
           type: string
+          description: |
+            `Matches`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Matches"
         value:
           type: string
+          description: 指定された正規表現に合致することを要求します。
     AdditionalDataRestrictionConditionNotMatches:
       type: object
-      description: 指定された正規表現に合致しないことを要求します。
+      required:
+        - _type
+        - value
       properties:
         _type:
           type: string
+          description: |
+            `NotMatches`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "NotMatches"
         value:
           type: string
+          description: 指定された正規表現に合致しないことを要求します。
     AdditionalDataRestrictionConditionHasLabel:
       type: object
-      description: リンク属性において、リンク先として指定可能なラベルIDを制限します。
+      required:
+        - _type
+        - labels
       properties:
         _type:
           type: string
+          description: |
+            `HasLabel`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "HasLabel"
-        values:
-          type: string
+        labels:
+          type: array
+          description: リンク属性において、リンク先として指定可能なラベルIDを制限します。
+          items:
+            type: string
     AdditionalDataRestrictionConditionImply:
       type: object
-      description: |
-        premise で指定された条件を満たすとき、condition で指定された条件を満たすことを要求します。
+      required:
+        - _type
+        - premise
+        - condition
       properties:
         _type:
           type: string
+          description: |
+            `Imply`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Imply"
         premise:
           $ref: "#/components/schemas/AdditionalDataRestriction"
+          description: |
+            premise で指定された条件を満たすとき、condition で指定された条件を満たすことを要求します。
         condition:
           $ref: "#/components/schemas/AdditionalDataRestrictionCondition"
     Keybind:
       type: object
+      required:
+        - code
+        - shift
+        - ctrl
+        - alt
       properties:
         code:
           type: string
@@ -2808,12 +2970,6 @@ components:
           default: false
           description: |
             タスクの強制操作を行う場合に立てるフラグ。現在、強制操作は強制差戻しのみがサポートされています。
-    TaskStart:
-      type: object
-      properties:
-        phase:
-          $ref: "#/components/schemas/TaskPhase"
-          description: 開始するタスクのフェーズ
     TaskAssignRequest:
       type: object
       required:
@@ -3037,6 +3193,7 @@ components:
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
         project_id:
+          deprecated: true
           $ref: "#/components/schemas/ProjectId"
         input_data_name:
           type: string
@@ -3394,6 +3551,7 @@ components:
         exact_match_task_id:
           description: |
             タスクIDの検索方法を指定します。
+            最大文字列長300文字。
             trueの場合は完全一致検索、falseの場合は中間一致検索です。
           type: boolean
           default: true
@@ -3402,6 +3560,7 @@ components:
         exact_match_input_data_id:
           description: |
             入力データIDの検索方法を指定します。
+            最大文字列長300文字。
             trueの場合は完全一致検索、falseの場合は中間一致検索です。
           type: boolean
           default: true
@@ -4298,6 +4457,10 @@ components:
     AggregationResult:
       oneOf:
         - $ref: "#/components/schemas/CountResult"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          CountResult: "#/components/schemas/CountResult"
     CountResult:
       type: object
       properties:

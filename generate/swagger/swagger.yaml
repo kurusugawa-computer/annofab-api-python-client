@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.104.1
+  version: 0.105.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/images/logo_landscape.png"
@@ -1678,6 +1678,7 @@ paths:
         schema:
           type: integer
           minimum: 0
+          default: 30
           maximum: 200
       - name: organization_id
         in: query
@@ -3033,53 +3034,6 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/start-task:
-    post:
-      deprecated: true
-      tags:
-      - af-task
-      summary: タスク割当
-      description: |
-        タスクの割当を要求します。
-
-        個々のタスクの情報を取得する場合は、[タスク取得](#operation/getTask)を使います。
-      security:
-      - AllProjectMember: []
-      operationId: startTask
-      parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "swagger-api-components.yaml#/components/schemas/TaskStart"
-      responses:
-        "200":
-          description: 正常
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/Task"
-        "400":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "409":
-          description: タスクを開始できる状態ではない
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/ErrorStateMismatch"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/tasks:
     get:
       tags:
@@ -3120,7 +3074,7 @@ paths:
           default: 30
       - name: task_id
         in: query
-        description: タスクIDでの部分一致検索で使用。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません
+        description: タスクIDでの部分一致検索で使用。最大文字列長300文字。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/TaskId"
@@ -3845,42 +3799,6 @@ paths:
             application/json:
               schema:
                 $ref: "swagger-api-components.yaml#/components/schemas/ErrorStateMismatch"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/tasks/{task_id}/validation:
-    get:
-      deprecated: true
-      tags:
-      - af-task
-      summary: タスク自動検査
-      description: |
-        指定したタスクの自動検査で見つかった警告やエラーを一括で取得します。
-        [タスクの状態遷移](#operation/operateTask)の際に検査を行うようになったので、本APIは非推奨となります。
-      security:
-      - AllProjectMember: []
-      operationId: getTaskValidation
-      parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: task_id
-        in: path
-        description: タスクID
-        required: true
-        schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/TaskId"
-      responses:
-        "200":
-          description: 正常
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/TaskValidation"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/tasks/{task_id}/histories:
@@ -4793,51 +4711,6 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/inputs/{input_data_id}/data:
-    get:
-      deprecated: true
-      tags:
-      - af-input
-      summary: 実体参照用認証済みURL取得
-      description: |
-        入力データの実体（画像や動画などのファイルそのもの）にアクセスするための、認証済み一時URLを取得します。
-
-        取得したURLは、1時間で失効し、アクセスできなくなります。
-      security:
-      - AllProjectMember: []
-      operationId: getSignedUrlOfInputData
-      parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: input_data_id
-        in: path
-        description: 入力データID
-        required: true
-        schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
-      responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: string
-                description: 認証済み一時URL
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/inputs/{input_data_id}/supplementary-data:
     get:
       tags:
@@ -5108,7 +4981,9 @@ paths:
         required: false
         schema:
           type: integer
-          minimum: 30
+          default: 30
+          minimum: 0
+          maximum: 10000
       responses:
         "200":
           description: 正常
