@@ -108,12 +108,16 @@ service = build_from_env()
 
 
 ### `.netrc`または環境変数に認証情報を設定する場合
-`.netrc`、環境変数の順に認証情報を読み込みます。
+``build()`` を実行すると、環境変数または `.netrc` ファイルから認証情報を読み込みます。
 
 ```python
 from annofabapi import build
 service = build()
 ```
+
+優先順位は以下の通りです。
+1. 環境変数
+2. `.netrc`
 
 
 ## `service.api`のサンプルコード
