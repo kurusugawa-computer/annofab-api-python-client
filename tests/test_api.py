@@ -534,14 +534,14 @@ class TestProtectedMethod:
     def test__request_get_with_cookie(self):
         images, _ = api.get_instruction_images(project_id)
         url = images[0]["url"]
-        r = api.request_get_with_cookie(project_id, url)
+        r = api._request_get_with_cookie(project_id, url)
         # エラーがないことを確認する
 
     def test_request_get_with_cookie_failed(self):
         # SignedCookieに対応するプロジェクトと、アクセス対象のプロジェクトが異なっているときの対応
         url = "https://annofab.com/projects/foo/annotation_specs_histories/foo.json"
         with pytest.raises(requests.HTTPError):
-            api.request_get_with_cookie(project_id, url)
+            api._request_get_with_cookie(project_id, url)
 
 
 class TestProperty:
