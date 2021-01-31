@@ -555,7 +555,11 @@ def lazy_parse_simple_annotation_dir_by_task(annotaion_dir_path: Path) -> Iterat
         if not task_dir.is_dir():
             continue
 
-        yield SimpleAnnotationDirParserByTask(task_dir)
+        task_parser = SimpleAnnotationDirParserByTask(task_dir)
+        # lazy_parse_simple_annotation_zip_by_task の動きと対応させる
+        if len(task_parser.json_file_path_list) == 0:
+            continue
+        yield task_parser
 
 
 def __parse_annotation_zip(zip_file_path: Path, clazz) -> Iterator[Any]:
