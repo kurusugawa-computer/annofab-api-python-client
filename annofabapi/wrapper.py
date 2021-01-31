@@ -2010,18 +2010,6 @@ class Wrapper:
         Returns:
             登録後の労務管理データ
         """
-        request_body = {
-            "organization_id": organization_id,
-            "project_id": project_id,
-            "account_id": account_id,
-            "date": date,
-            "values": {
-                "working_time_by_user": {
-                    "description": working_description,
-                    "results": _hour_to_millisecond(actual_worktime),
-                }
-            },
-        }
         labor_list, _ = self.api.get_labor_control(
             query_params={
                 "organization_id": organization_id,
@@ -2031,15 +2019,29 @@ class Wrapper:
                 "to": date,
             }
         )
+        target_working_time_by_user = {
+            "description": working_description,
+            "results": _hour_to_millisecond(actual_worktime),
+        }
+
         if len(labor_list) > 0:
             assert len(labor_list) == 1, "get_labor_control APIで取得した労務管理データが2件以上存在した。"
             labor = labor_list[0]
-            request_body.update(
-                {
-                    "last_updated_datetime": labor["updated_datetime"],
-                    "labor_control_data_id": labor["labor_control_data_id"],
-                }
-            )
+            request_body = labor
+            request_body["last_updated_datetime"] = labor["updated_datetime"]
+
+            if "working_time_by_user" in request_body["values"]:
+                request_body["values"]["working_time_by_user"].update(target_working_time_by_user)
+            else:
+                request_body["values"]["working_time_by_user"] = target_working_time_by_user
+        else:
+            request_body = {
+                "organization_id": organization_id,
+                "project_id": project_id,
+                "account_id": account_id,
+                "date": date,
+                "values": {"working_time_by_user": target_working_time_by_user},
+            }
         content, _ = self.api.put_labor_control(request_body=request_body)
         return content
 
@@ -2065,13 +2067,6 @@ class Wrapper:
             登録後の労務管理データ
 
         """
-        request_body = {
-            "organization_id": organization_id,
-            "project_id": project_id,
-            "account_id": account_id,
-            "date": date,
-            "values": {"working_time_by_user": {"plans": _hour_to_millisecond(plan_worktime)}},
-        }
         labor_list, _ = self.api.get_labor_control(
             query_params={
                 "organization_id": organization_id,
@@ -2081,15 +2076,27 @@ class Wrapper:
                 "to": date,
             }
         )
+        target_working_time_by_user = {"plans": _hour_to_millisecond(plan_worktime)}
+
         if len(labor_list) > 0:
             assert len(labor_list) == 1, "get_labor_control APIで取得した労務管理データが2件以上存在した。"
             labor = labor_list[0]
-            request_body.update(
-                {
-                    "last_updated_datetime": labor["updated_datetime"],
-                    "labor_control_data_id": labor["labor_control_data_id"],
-                }
-            )
+            request_body = labor
+            request_body["last_updated_datetime"] = labor["updated_datetime"]
+
+            if "working_time_by_user" in request_body["values"]:
+                request_body["values"]["working_time_by_user"].update(target_working_time_by_user)
+            else:
+                request_body["values"]["working_time_by_user"] = target_working_time_by_user
+
+        else:
+            request_body = {
+                "organization_id": organization_id,
+                "project_id": project_id,
+                "account_id": account_id,
+                "date": date,
+                "values": {"working_time_by_user": target_working_time_by_user},
+            }
         content, _ = self.api.put_labor_control(request_body=request_body)
         return content
 
@@ -2113,25 +2120,30 @@ class Wrapper:
         """
 
         organization_id = _ORGNIZATION_ID_FOR_AVAILABILITY
-        request_body = {
-            "organization_id": organization_id,
-            "account_id": account_id,
-            "date": date,
-            "values": {"working_time_by_user": {"plans": _hour_to_millisecond(availability)}},
-        }
 
         labor_list, _ = self.api.get_labor_control(
             query_params={"organization_id": organization_id, "account_id": account_id, "from": date, "to": date}
         )
+        target_working_time_by_user = {"plans": _hour_to_millisecond(availability)}
+
         if len(labor_list) > 0:
             assert len(labor_list) == 1, "get_labor_control APIで取得した労務管理データが2件以上存在した。"
             labor = labor_list[0]
-            request_body.update(
-                {
-                    "last_updated_datetime": labor["updated_datetime"],
-                    "labor_control_data_id": labor["labor_control_data_id"],
-                }
-            )
+            request_body = labor
+            request_body["last_updated_datetime"] = labor["updated_datetime"]
+
+            if "working_time_by_user" in request_body["values"]:
+                request_body["values"]["working_time_by_user"].update(target_working_time_by_user)
+            else:
+                request_body["values"]["working_time_by_user"] = target_working_time_by_user
+
+        else:
+            request_body = {
+                "organization_id": organization_id,
+                "account_id": account_id,
+                "date": date,
+                "values": {"working_time_by_user": target_working_time_by_user},
+            }
 
         content, _ = self.api.put_labor_control(request_body=request_body)
         return content
