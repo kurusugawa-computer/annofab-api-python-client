@@ -25,7 +25,7 @@ inifile.read("./pytest.ini", "UTF-8")
 test_dir = Path("./tests/data")
 
 
-class TestSimpleAnnotationV2:
+class TestSimpleAnnotation:
     def test_simple_annotation_zip(self):
         zip_path = Path(test_dir / "simple-annotation.zip")
         iter_parser = annofabapi.parser.lazy_parse_simple_annotation_zip(zip_path)
