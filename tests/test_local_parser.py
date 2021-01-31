@@ -16,6 +16,7 @@ from annofabapi.parser import (
     SimpleAnnotationDirParser,
     SimpleAnnotationDirParserByTask,
     SimpleAnnotationZipParser,
+    SimpleAnnotationZipParserByTask,
 )
 
 # プロジェクトトップに移動する
@@ -99,17 +100,33 @@ class TestSimpleAnnotation:
 
 class TestSimpleAnnotationParserByTask:
     def test_SimpleAnnotationDirParserByTask(self):
-        task_parser = SimpleAnnotationDirParserByTask(test_dir / "simple-annotation/sample_1")
+        annotation_dir = test_dir / "simple-annotation"
+        task_parser = SimpleAnnotationDirParserByTask(annotation_dir / "sample_1")
         assert task_parser.task_id == "sample_1"
         json_file_path_list = task_parser.json_file_path_list
-        assert "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json" in json_file_path_list
-        assert "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json" in json_file_path_list
+        assert str(annotation_dir / "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json") in json_file_path_list
+        assert str(annotation_dir / "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json") in json_file_path_list
 
-        input_data_parser = task_parser.get_parser("sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
+        input_data_parser = task_parser.get_parser(
+            str(annotation_dir / "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
+        )
         assert input_data_parser.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"
         assert input_data_parser.json_file_path == str(
             test_dir / "simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json"
         )
+
+    def test_SimpleAnnotationZipParserByTask(self):
+        with zipfile.ZipFile(test_dir / "simple-annotation.zip") as zip_file:
+            task_parser = SimpleAnnotationZipParserByTask(zip_file, "sample_1")
+
+            assert task_parser.task_id == "sample_1"
+            json_file_path_list = task_parser.json_file_path_list
+            assert "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json" in json_file_path_list
+            assert "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json" in json_file_path_list
+
+            input_data_parser = task_parser.get_parser("sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
+            assert input_data_parser.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"
+            assert input_data_parser.json_file_path == str("sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
 
 
 class TestFullAnnotation:

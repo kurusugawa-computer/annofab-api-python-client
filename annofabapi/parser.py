@@ -45,7 +45,6 @@ class SimpleAnnotationParser(abc.ABC):
     def json_file_path(self) -> str:
         """
         パースするJSONファイルのパス。
-        "{task_id}/{input_data_id}.json"
         """
         return self.__json_file_path
 
@@ -201,7 +200,7 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
     Examples:
         JSONファイルをパースする::
 
-            p = SimpleAnnotationDirParser(Path("task_id/input_data_id.json"))
+            p = SimpleAnnotationDirParser(Path("annotation/task_id/input_data_id.json"))
             annotation = p.parse()
 
     """
@@ -315,8 +314,7 @@ class SimpleAnnotationParserByTask(abc.ABC):
     @abc.abstractmethod
     def json_file_path_list(self) -> List[str]:
         """
-        タスクディレクトリ内に存在するJSONファイルパスのリスト
-        "{task_id}/{input_data_id}.json"
+        パースするJSONファイルパスのリスト
         """
 
     @abc.abstractmethod
@@ -326,7 +324,6 @@ class SimpleAnnotationParserByTask(abc.ABC):
 
         Args:
             json_file_path: パースするJSONファイルのパス。``json_file_path_list`` に含まれる値を指定すること。
-                (ex): "{task_id}/{input_data_id}.json"
 
         Returns:
             Simple Annotation parser
@@ -348,13 +345,14 @@ class SimpleAnnotationZipParserByTask(SimpleAnnotationParserByTask):
     Args:
         zip_file: Simple Annotation zipのzipfileオブジェクト
         task_id: タスクID
-        json_path_list: タスク配下のJSONパスのリスト。パスにはtask_idを含む。
+        json_path_list: パースするJSONパスのリスト。
+            Noneの場合は、``zipfile.ZipFile.infolist()`` 関数を呼び出して、JSONパスのリストを生成します。
 
     Examples:
         JSONファイルをパースする::
 
             with zipfile.ZipFile("simple-annotation.zip", "r") as zip_file:
-                p = SimpleAnnotationZipParserByTask(zip_file, "task1", ["task1/input1.json","task1/input2.json"])
+                p = SimpleAnnotationZipParserByTask(zip_file, "task1")
 
     """
 
@@ -433,17 +431,11 @@ class SimpleAnnotationDirParserByTask(SimpleAnnotationParserByTask):
 
     @property
     def json_file_path_list(self) -> List[str]:
-        # Simple Annotation ディレクトリの長さ（末尾のスラッシュ分を含む）
-        string_length = len(str(self.__task_dir_path.parent)) + 1
-
-        def _path_to_str(p: Path) -> str:
-            return str(p)[string_length:]
-
-        return [_path_to_str(e) for e in self.__task_dir_path.iterdir() if e.is_file() and e.suffix == ".json"]
+        return [str(e) for e in self.__task_dir_path.iterdir() if e.is_file() and e.suffix == ".json"]
 
     def get_parser(self, json_file_path: str) -> SimpleAnnotationParser:
         if json_file_path in self.json_file_path_list:
-            return SimpleAnnotationDirParser(self.__task_dir_path.parent / json_file_path)
+            return SimpleAnnotationDirParser(Path(json_file_path))
         else:
             raise ValueError(f"json_file_path '{json_file_path}' は `json_file_path_list` に含まれていません。")
 
