@@ -14,7 +14,9 @@ from annofabapi.parser import (
     FullAnnotationDirParser,
     FullAnnotationZipParser,
     SimpleAnnotationDirParser,
+    SimpleAnnotationDirParserByTask,
     SimpleAnnotationZipParser,
+    SimpleAnnotationZipParserByTask,
 )
 
 # プロジェクトトップに移動する
@@ -25,7 +27,61 @@ inifile.read("./pytest.ini", "UTF-8")
 test_dir = Path("./tests/data")
 
 
-class TestSimpleAnnotationV2:
+class TestSimpleAnnotationParser:
+    def test_SimpleAnnotationZipParser(self):
+        zip_path = Path(test_dir / "simple-annotation.zip")
+        with zipfile.ZipFile(zip_path) as zip_file:
+            parser = SimpleAnnotationZipParser(zip_file, "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
+            assert parser.task_id == "sample_1"
+            assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
+            assert parser.json_file_path == "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json"
+            with pytest.raises(AnnotationOuterFileNotFoundError):
+                parser.open_outer_file("foo")
+
+    def test_SimpleAnnotationDirParser(self):
+        dir_path = Path(test_dir / "simple-annotation")
+
+        parser = SimpleAnnotationDirParser(dir_path / "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
+        assert parser.task_id == "sample_1"
+        assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
+        assert parser.json_file_path == str(dir_path / "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
+        with pytest.raises(AnnotationOuterFileNotFoundError):
+            parser.open_outer_file("foo")
+
+
+class TestSimpleAnnotationParserByTask:
+    def test_SimpleAnnotationDirParserByTask(self):
+        annotation_dir = test_dir / "simple-annotation"
+        task_parser = SimpleAnnotationDirParserByTask(annotation_dir / "sample_1")
+        assert task_parser.task_id == "sample_1"
+        json_file_path_list = task_parser.json_file_path_list
+        assert str(annotation_dir / "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json") in json_file_path_list
+        assert str(annotation_dir / "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json") in json_file_path_list
+
+        input_data_parser = task_parser.get_parser(
+            str(annotation_dir / "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
+        )
+        assert input_data_parser.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"
+        assert input_data_parser.json_file_path == str(
+            test_dir / "simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json"
+        )
+
+
+    def test_SimpleAnnotationZipParserByTask(self):
+        with zipfile.ZipFile(test_dir / "simple-annotation.zip") as zip_file:
+            task_parser = SimpleAnnotationZipParserByTask(zip_file, "sample_1")
+
+            assert task_parser.task_id == "sample_1"
+            json_file_path_list = task_parser.json_file_path_list
+            assert "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json" in json_file_path_list
+            assert "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json" in json_file_path_list
+
+            input_data_parser = task_parser.get_parser("sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
+            assert input_data_parser.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"
+            assert input_data_parser.json_file_path == str("sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
+
+
+class TestSimpleAnnotation:
     def test_simple_annotation_zip(self):
         zip_path = Path(test_dir / "simple-annotation.zip")
         iter_parser = annofabapi.parser.lazy_parse_simple_annotation_zip(zip_path)
@@ -42,13 +98,6 @@ class TestSimpleAnnotationV2:
 
         assert index == 4
 
-        with zipfile.ZipFile(zip_path) as zip_file:
-            parser = SimpleAnnotationZipParser(zip_file, "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
-            assert parser.task_id == "sample_1"
-            assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
-            with pytest.raises(AnnotationOuterFileNotFoundError):
-                parser.open_outer_file("foo")
-
     def test_simple_annotation_dir(self):
         dir_path = Path(test_dir / "simple-annotation")
         iter_parser = annofabapi.parser.lazy_parse_simple_annotation_dir(dir_path)
@@ -60,12 +109,6 @@ class TestSimpleAnnotationV2:
             index += 1
 
         assert index == 4
-
-        parser = SimpleAnnotationDirParser(dir_path / "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
-        assert parser.task_id == "sample_1"
-        assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
-        with pytest.raises(AnnotationOuterFileNotFoundError):
-            parser.open_outer_file("foo")
 
     def test_lazy_parse_simple_annotation_zip_by_task(self):
         zip_path = Path(test_dir / "simple-annotation.zip")
@@ -81,6 +124,8 @@ class TestSimpleAnnotationV2:
         assert len([e for e in parser_list if e.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"]) == 1
         assert len([e for e in parser_list if e.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"]) == 1
 
+
+
     def test_lazy_parse_simple_annotation_dir_by_task(self):
         zip_path = Path(test_dir / "simple-annotation")
         task_parser_list = list(annofabapi.parser.lazy_parse_simple_annotation_dir_by_task(zip_path))
@@ -94,6 +139,8 @@ class TestSimpleAnnotationV2:
         assert len(parser_list) == 2
         assert len([e for e in parser_list if e.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"]) == 1
         assert len([e for e in parser_list if e.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"]) == 1
+
+
 
 
 class TestFullAnnotation:

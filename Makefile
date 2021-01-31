@@ -10,7 +10,7 @@ format:
 	poetry run black annofabapi tests
 
 lint:
-	poetry run mypy annofabapi tests/create_test_project.py
+	poetry run mypy annofabapi tests
 	poetry run flake8 annofabapi tests/create_test_project.py
 	poetry run pylint annofabapi tests/create_test_project.py
 
