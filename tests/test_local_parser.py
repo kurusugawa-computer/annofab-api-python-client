@@ -14,6 +14,7 @@ from annofabapi.parser import (
     FullAnnotationDirParser,
     FullAnnotationZipParser,
     SimpleAnnotationDirParser,
+    SimpleAnnotationDirParserByTask,
     SimpleAnnotationZipParser,
 )
 
@@ -94,6 +95,21 @@ class TestSimpleAnnotation:
         assert len(parser_list) == 2
         assert len([e for e in parser_list if e.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"]) == 1
         assert len([e for e in parser_list if e.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"]) == 1
+
+
+class TestSimpleAnnotationParserByTask:
+    def test_SimpleAnnotationDirParserByTask(self):
+        task_parser = SimpleAnnotationDirParserByTask(test_dir / "simple-annotation/sample_1")
+        assert task_parser.task_id == "sample_1"
+        json_file_path_list = task_parser.json_file_path_list
+        assert "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json" in json_file_path_list
+        assert "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json" in json_file_path_list
+
+        input_data_parser = task_parser.get_parser("sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
+        assert input_data_parser.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"
+        assert input_data_parser.json_file_path == str(
+            test_dir / "simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json"
+        )
 
 
 class TestFullAnnotation:

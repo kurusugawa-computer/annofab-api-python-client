@@ -311,8 +311,8 @@ class SimpleAnnotationParserByTask(abc.ABC):
     def task_id(self) -> str:
         return self.__task_id
 
-    @abc.abstractmethod
     @property
+    @abc.abstractmethod
     def json_file_path_list(self) -> List[str]:
         """
         タスクディレクトリ内に存在するJSONファイルパスのリスト
@@ -358,9 +358,36 @@ class SimpleAnnotationZipParserByTask(SimpleAnnotationParserByTask):
 
     """
 
-    def __init__(self, zip_file: zipfile.ZipFile, task_id: str, json_path_list: List[str]):
+    def __get_json_file_path_list(self, task_id: str) -> List[str]:
+        """
+        task_idとJSONパスリストの辞書を取得する。
+        """
+
+        def _match_task_id_and_contain_input_data_json(zip_info: zipfile.ZipInfo) -> bool:
+            """
+            task_idディレクトリ配下の入力データJSONかどうか
+            """
+            paths = [p for p in zip_info.filename.split("/") if len(p) != 0]
+            if len(paths) != 2:
+                return False
+            if paths[0] != task_id:
+                return False
+            if not paths[1].endswith(".json"):
+                return False
+            return True
+
+        return [
+            zip_info.filename
+            for zip_info in self.__zip_file.infolist()
+            if _match_task_id_and_contain_input_data_json(zip_info)
+        ]
+
+    def __init__(self, zip_file: zipfile.ZipFile, task_id: str, json_path_list: Optional[List[str]] = None):
         self.__zip_file = zip_file
-        self.__json_path_list = json_path_list
+        if json_path_list is not None:
+            self.__json_path_list = json_path_list
+        else:
+            self.__json_path_list = self.__get_json_file_path_list(task_id)
         super().__init__(task_id)
 
     def lazy_parse(self) -> Iterator[SimpleAnnotationZipParser]:
@@ -416,7 +443,7 @@ class SimpleAnnotationDirParserByTask(SimpleAnnotationParserByTask):
 
     def get_parser(self, json_file_path: str) -> SimpleAnnotationParser:
         if json_file_path in self.json_file_path_list:
-            return SimpleAnnotationDirParser(self.__task_dir_path / json_file_path)
+            return SimpleAnnotationDirParser(self.__task_dir_path.parent / json_file_path)
         else:
             raise ValueError(f"json_file_path '{json_file_path}' は `json_file_path_list` に含まれていません。")
 
