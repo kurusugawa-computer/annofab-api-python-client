@@ -6,6 +6,7 @@ python:
   - "3.8"
 install:
   - pip install poetry
+  - poetry install
   - echo -e "machine annofab.com\nlogin FOO\npassword BAR\n" > ~/.netrc && chmod 600 ~/.netrc
 script:
    - make lint
