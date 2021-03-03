@@ -15,7 +15,13 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import DataClassJsonMixin
 
-from annofabapi.models import AssigneeRuleOfResubmittedTask, InputDataType, ProjectStatus, TaskAssignmentType
+from annofabapi.models import (
+    AssigneeRuleOfResubmittedTask,
+    InputDataType,
+    ProjectStatus,
+    TaskAssignmentProperty,
+    TaskAssignmentType,
+)
 
 
 @dataclass

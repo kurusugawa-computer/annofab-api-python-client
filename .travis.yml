@@ -8,9 +8,7 @@ install:
   - pip install . flake8 mypy pylint pytest
   - echo -e "machine annofab.com\nlogin FOO\npassword BAR\n" > ~/.netrc && chmod 600 ~/.netrc
 script:
-   - flake8 annofabapi
-   - mypy annofabapi
-   - pylint annofabapi
+   - make lint
    - pytest tests/test_local*.py
 branches:
   only:
