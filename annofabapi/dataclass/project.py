@@ -15,7 +15,13 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import DataClassJsonMixin
 
-from annofabapi.models import AssigneeRuleOfResubmittedTask, InputDataType, ProjectStatus, TaskAssignmentType
+from annofabapi.models import (
+    AssigneeRuleOfResubmittedTask,
+    InputDataType,
+    ProjectStatus,
+    TaskAssignmentProperty,
+    TaskAssignmentType,
+)
 
 
 @dataclass
@@ -37,6 +43,9 @@ class ProjectConfiguration(DataClassJsonMixin):
     """"""
 
     task_assignment_type: Optional[TaskAssignmentType]
+    """"""
+
+    task_assignment_property: Optional[TaskAssignmentProperty]
     """"""
 
     max_tasks_per_member: Optional[int]

@@ -12,7 +12,7 @@ format:
 lint:
 	poetry run mypy annofabapi tests
 	poetry run flake8 annofabapi tests/create_test_project.py
-	poetry run pylint annofabapi tests/create_test_project.py
+	poetry run pylint --jobs=0 annofabapi tests/create_test_project.py
 
 test:
 	poetry run pytest -n auto  --cov=annofabapi --cov-report=html tests

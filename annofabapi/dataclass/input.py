@@ -56,15 +56,6 @@ class InputData(DataClassJsonMixin):
     original_input_data_path: Optional[str]
     """AF外部のストレージから登録された場合、その外部ストレージ中のパス。 それ以外の場合は値なし """
 
-    original_resolution: Optional[Resolution]
-    """"""
-
-    resized_resolution: Optional[Resolution]
-    """"""
-
-    input_duration: Optional[float]
-    """入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。  動画の長さが取得できなかった場合、あるいは入力データが画像の場合は値なし。 """
-
     updated_datetime: str
     """"""
 
