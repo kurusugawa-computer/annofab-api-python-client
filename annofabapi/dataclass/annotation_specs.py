@@ -82,6 +82,9 @@ class LabelV1BoundingBoxMetadata(DataClassJsonMixin):
     tolerance: Optional[int]
     """"""
 
+    has_direction: Optional[bool]
+    """`annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。 この値が `true` の場合、AnnoFabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。  `annotationType` が `polyline` 以外の場合は必ず `false` となります。 """
+
 
 @dataclass
 class LabelV1SegmentationMetadata(DataClassJsonMixin):

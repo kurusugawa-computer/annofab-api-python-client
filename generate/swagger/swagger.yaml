@@ -3,7 +3,7 @@ openapi: "3.0.0"
 info:
   description: |
     [AnnoFab](https://annofab.com) のWeb APIです。
-    キャッシュが有効になって[大幅に高速化された v2 はこちら](/docs/api/v2) です。
+    キャッシュが有効になって[大幅に高速化された v2 はこちら](/docs/api/v2/) です。
 
     APIベースURL: https://annofab.com/api/v1<br>
     例） /projects というAPIを使う場合、 https://annofab.com/api/v1/projects をリクエストします。
@@ -116,10 +116,10 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.105.0
+  version: 0.108.0
   title: AnnoFab Web API
   x-logo:
-    url: "https://annofab.com/images/logo_landscape.png"
+    url: "https://annofab.com/resource/images/logo_landscape.png"
     href: "https://annofab.com/"
   contact:
     url: "https://annofab.com/docs/forms/trouble-shooting.html"
@@ -1817,7 +1817,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/PutProjectResponseWrapper"
+                $ref: "swagger-api-components.yaml#/components/schemas/PutProjectResponse"
         "400":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
@@ -1855,25 +1855,13 @@ paths:
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: v
-        in: query
-        description: |
-          APIの戻り型のバージョンを指定します。
-          値と戻り型の対応は以下です。
-          - "1"：Project
-          - "2"：DeleteProjectResponse
-        required: false
-        schema:
-          type: string
-          default: "1"
-          example: "2"
       responses:
         "202":
           description: バッチにてプロジェクトの削除開始
           content:
             application/json:
               schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/DeleteProjectResponseWrapper"
+                $ref: "swagger-api-components.yaml#/components/schemas/DeleteProjectResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "403":
@@ -1956,18 +1944,6 @@ paths:
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: v
-        in: query
-        description: |
-          APIの戻り型のバージョンを指定します。
-          値と戻り型の対応は以下です。
-          - "1"：Project
-          - "2"：ProjectCopyResponse
-        required: false
-        schema:
-          type: string
-          default: "1"
-          example: "2"
       requestBody:
         required: true
         content:
@@ -1980,7 +1956,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/ProjectCopyResponseWrapper"
+                $ref: "swagger-api-components.yaml#/components/schemas/ProjectCopyResponse"
         "400":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
@@ -2126,25 +2102,13 @@ paths:
           required: true
           schema:
             $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-        - name: v
-          in: query
-          description: |
-            APIの戻り型のバージョンを指定します。
-            値と戻り型の対応は以下です。
-            - "1"：Message
-            - "2"：PostProjectTasksUpdateResponse
-          required: false
-          schema:
-            type: string
-            default: "1"
-            example: "2"
       responses:
         "202":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/PostProjectTasksUpdateResponseWrapper"
+                $ref: "swagger-api-components.yaml#/components/schemas/PostProjectTasksUpdateResponse"
         "400":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
@@ -3399,18 +3363,6 @@ paths:
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: v
-        in: query
-        description: |
-          APIの戻り型のバージョンを指定します。
-          値と戻り型の対応は以下です。
-          - "1"：Project
-          - "2"：TaskGenerateResponse
-        required: false
-        schema:
-          type: string
-          default: "1"
-          example: "2"
       requestBody:
         required: true
         content:
@@ -3423,7 +3375,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/TaskGenerateResponseWrapper"
+                $ref: "swagger-api-components.yaml#/components/schemas/TaskGenerateResponse"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "409":
@@ -3835,6 +3787,8 @@ paths:
                   $ref: "swagger-api-components.yaml#/components/schemas/TaskHistory"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/annotations:
@@ -4237,25 +4191,13 @@ paths:
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: v
-        in: query
-        description: |
-          APIの戻り型のバージョンを指定します。
-          値と戻り型の対応は以下です。
-          - "1"：Message
-          - "2"：PostAnnotationArchiveUpdateResponse
-        required: false
-        schema:
-          type: string
-          default: "1"
-          example: "2"
       responses:
         "202":
           description: 正常
           content:
             application/json:
               schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/PostAnnotationArchiveUpdateResponseWrapper"
+                $ref: "swagger-api-components.yaml#/components/schemas/PostAnnotationArchiveUpdateResponse"
         "400":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
@@ -4402,25 +4344,25 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       - name: input_data_id
         in: query
-        description: 入力データIDでの部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。
+        description: 入力データIDでの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
       - name: input_data_name
         in: query
-        description: 入力データ名での部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。
+        description: 入力データ名での部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。
         required: false
         schema:
           type: string
       - name: input_data_path
         in: query
-        description: 入力データパスでの部分一致検索で使用。1文字以上あれば使用します。
+        description: 入力データパスでの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。
         required: false
         schema:
           type: string
       - name: task_id
         in: query
-        description: 入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。条件に合致した先頭100件のタスクに使われている入力データを検索します。
+        description: 入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。条件に合致した先頭100件のタスクに使われている入力データを検索します。
         required: false
         schema:
           type: string
@@ -4624,18 +4566,6 @@ paths:
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
-      - name: v
-        in: query
-        description: |
-          zipファイルを受領時のAPIの戻り型のバージョンを指定します。
-          値と戻り型の対応は以下です。
-          - "1"：登録処理を開始した旨の固定メッセージ
-          - "2"：JobInfo
-        required: false
-        schema:
-          type: string
-          default: "1"
-          example: "2"
       requestBody:
         required: true
         content:
@@ -4654,7 +4584,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/MessageOrJobInfo"
+                $ref: "swagger-api-components.yaml#/components/schemas/JobInfo"
         "400":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":

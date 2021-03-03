@@ -1097,6 +1097,8 @@ components:
           default: no_assignee
         task_assignment_type:
           $ref: "#/components/schemas/TaskAssignmentType"
+        task_assignment_property:
+          $ref: "#/components/schemas/TaskAssignmentProperty"
         max_tasks_per_member:
           description: 保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
           type: integer
@@ -1146,6 +1148,7 @@ components:
           $ref: "#/components/schemas/PluginId"
           description: |
             `task_assignment_type`に`custom`を設定している場合のみ、カスタムタスク割当のプラグインIDを設定してください。
+            `custom`以外の場合は空文字とするか、値を設定しないでください。
         custom_specs_plugin_id:
           $ref: "#/components/schemas/PluginId"
           description: |
@@ -1164,6 +1167,7 @@ components:
         - random
         - selection
         - random_and_selection
+        - task_property
         - custom
       description: |
         プロジェクトで使用するタスクの割当方式。
@@ -1171,7 +1175,37 @@ components:
         * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。
         * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。
         * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。
+        * `task_property` - タスクのプロパティ(タスクID/更新日時/メタデータ)と並び順(昇順/降順)を設定して、その順番通りにタスクを割当する方式です。順番が同じタスクが複数ある場合は、その中からランダムに1つのタスクを割当します。プロパティと並び順は`TaskAssignmentProperty` から設定します。
         * `custom` - タスク割当アルゴリズム (API) を独自に定義してタスクを割当する方式です。
+    TaskAssignmentProperty:
+      type: object
+      description: |
+        プロジェクト設定でタスクプロパティ割当を有効にしている場合のみ指定してください。
+      required:
+        - name
+        - order
+      properties:
+        name:
+          type: string
+          description: |
+            タスクの割当優先度を決定するためのタスクプロパティ。<br>
+            指定できるプロパティは次のいずれかです。
+
+            * `task_id`
+            * `updated_datetime`
+            * `metadata` (`metadata.{メタデータ名}` の形式で指定してください)
+        order:
+          $ref: "#/components/schemas/TaskAssignmentOrder"
+    TaskAssignmentOrder:
+      type: string
+      enum:
+        - asc
+        - desc
+      description: |
+        タスクの割当優先度を決定するための並び順。
+
+        * `asc` -  昇順
+        * `desc` - 降順
     JobInfo:
       type: object
       properties:
@@ -2290,6 +2324,14 @@ components:
               $ref: "#/components/schemas/PositionForMinimumBoundingBoxInsertion"
             tolerance:
               type: integer
+            has_direction:
+              type: boolean
+              default: false
+              description: |
+                `annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。
+                この値が `true` の場合、AnnoFabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。
+
+                `annotationType` が `polyline` 以外の場合は必ず `false` となります。
         segmentation_metadata:
           type: object
           required:
@@ -2372,6 +2414,14 @@ components:
               $ref: "#/components/schemas/PositionForMinimumBoundingBoxInsertion"
             tolerance:
               type: integer
+            has_direction:
+              type: boolean
+              default: false
+              description: |
+                `annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。
+                この値が `true` の場合、AnnoFabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。
+
+                `annotationType` が `polyline` 以外の場合は必ず `false` となります。
         segmentation_metadata:
           type: object
           required:
@@ -2981,14 +3031,17 @@ components:
       description: |
         * `TaskAssignRequestTypeRandom`: タスクフェーズのみを指定してランダムにタスクを自身に割当します。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。
         * `TaskAssignRequestTypeSelection`: 担当者とタスクを明示的に指定してタスクを割当します。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。
+        * `TaskAssignRequestTypeTaskProperty`: タスクフェーズのみを指定して、タスクプロパティ割当の設定に基づいてタスクを自身に割当します。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。
       oneOf:
         - $ref: "#/components/schemas/TaskAssignRequestTypeRandom"
         - $ref: "#/components/schemas/TaskAssignRequestTypeSelection"
+        - $ref: "#/components/schemas/TaskAssignRequestTypeTaskProperty"
       discriminator:
         propertyName: "_type"
         mapping:
           Random: "#/components/schemas/TaskAssignRequestTypeRandom"
           Selection: "#/components/schemas/TaskAssignRequestTypeSelection"
+          TaskProperty: "#/components/schemas/TaskAssignRequestTypeTaskProperty"
     TaskAssignRequestTypeRandom:
       type: object
       required:
@@ -3019,6 +3072,18 @@ components:
           type: string
           description: Selection
           example: "Selection"
+    TaskAssignRequestTypeTaskProperty:
+      type: object
+      required:
+        - phase
+      properties:
+        phase:
+          $ref: "#/components/schemas/TaskPhase"
+          description: 割当するタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+        _type:
+          type: string
+          description: TaskPropertry
+          example: "TaskProperty"
     TaskHistoryShort:
       description: タスクのあるフェーズを誰が担当したかを表します。
       type: object
@@ -3223,25 +3288,6 @@ components:
           description: |
             AF外部のストレージから登録された場合、その外部ストレージ中のパス。
             それ以外の場合は値なし
-        original_resolution:
-          deprecated: true
-          $ref: "#/components/schemas/Resolution"
-          description: |
-            入力データの元画像サイズ。
-            AnnoFabにアップロードされる入力データとS3プライベートストレージの場合のみ設定されます。
-        resized_resolution:
-          deprecated: true
-          $ref: "#/components/schemas/Resolution"
-          description: |
-            入力データのリサイズ後サイズ。
-            入力データ登録時に画像がリサイズされた場合のみ設定される。
-        input_duration:
-          deprecated: true
-          type: number
-          description: |
-            入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。
-
-            動画の長さが取得できなかった場合、あるいは入力データが画像の場合は値なし。
         updated_datetime:
           type: string
           format: date-time
@@ -3547,20 +3593,22 @@ components:
       type: object
       properties:
         task_id:
+          description: |
+            最大文字列長300文字。
           $ref: "#/components/schemas/TaskId"
         exact_match_task_id:
           description: |
             タスクIDの検索方法を指定します。
-            最大文字列長300文字。
             trueの場合は完全一致検索、falseの場合は中間一致検索です。
           type: boolean
           default: true
         input_data_id:
+          description: |
+            最大文字列長300文字。
           $ref: "#/components/schemas/InputDataId"
         exact_match_input_data_id:
           description: |
             入力データIDの検索方法を指定します。
-            最大文字列長300文字。
             trueの場合は完全一致検索、falseの場合は中間一致検索です。
           type: boolean
           default: true
@@ -3869,6 +3917,14 @@ components:
           description: 更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。
     BatchAnnotation:
       type: object
+      required:
+        - project_id
+        - task_id
+        - input_data_id
+        - annotation_id
+        - label_id
+        - additional_data_list
+        - updated_datetime
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -5118,22 +5174,6 @@ components:
         属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。
 
         なお、トラッキングとリンクには初期値を設定できません。
-    DeleteProjectResponseWrapper:
-      oneOf:
-        - $ref: "#/components/schemas/Project"
-        - $ref: "#/components/schemas/DeleteProjectResponse"
-    ProjectCopyResponseWrapper:
-      oneOf:
-        - $ref: "#/components/schemas/Project"
-        - $ref: "#/components/schemas/ProjectCopyResponse"
-    PostProjectTasksUpdateResponseWrapper:
-      oneOf:
-        - $ref: "#/components/schemas/Message"
-        - $ref: "#/components/schemas/PostProjectTasksUpdateResponse"
-    PutProjectResponseWrapper:
-      oneOf:
-        - $ref: "swagger-api-components.yaml#/components/schemas/Project"
-        - $ref: "swagger-api-components.yaml#/components/schemas/PutProjectResponse"
     AnnotationSpecs:
       oneOf:
         - $ref: "#/components/schemas/AnnotationSpecsV1"
@@ -5142,15 +5182,3 @@ components:
       oneOf:
         - $ref: "#/components/schemas/AnnotationSpecsRequestV1"
         - $ref: "#/components/schemas/AnnotationSpecsRequestV2"
-    TaskGenerateResponseWrapper:
-      oneOf:
-        - $ref: "#/components/schemas/Project"
-        - $ref: "#/components/schemas/TaskGenerateResponse"
-    PostAnnotationArchiveUpdateResponseWrapper:
-      oneOf:
-        - $ref: "#/components/schemas/Message"
-        - $ref: "#/components/schemas/PostAnnotationArchiveUpdateResponse"
-    MessageOrJobInfo:
-      oneOf:
-        - $ref: "#/components/schemas/Message"
-        - $ref: "#/components/schemas/JobInfo"
