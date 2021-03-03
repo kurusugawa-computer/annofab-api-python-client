@@ -39,8 +39,8 @@ def build(
     """
     AnnofabApi, Wrapperのインスタンスを保持するインスタンスを生成する。
 
-    ``login_user_id``と``login_password``の両方がNoneの場合は、``.netrc``ファイルまたは環境変数から認証情報を取得する。
-    認証情報は、``.netrc``ファイル、環境変数の順に読み込む。
+    ``login_user_id`` と ``login_password`` の両方がNoneの場合は、``.netrc`` ファイルまたは環境変数から認証情報を取得する。
+    認証情報は、環境変数, ``.netrc`` ファイルの順に読み込む。
 
     環境変数は``ANNOFAB_USER_ID`` , ``ANNOFAB_PASSWORD`` を参照する。
 
@@ -58,16 +58,16 @@ def build(
 
     elif login_user_id is None and login_password is None:
         try:
-            return build_from_netrc(endpoint_url)
-        except AnnofabApiException:
-            pass
-
-        try:
             return build_from_env(endpoint_url)
         except AnnofabApiException:
             pass
 
-        raise AnnofabApiException("`.netrc`ファイルまたは環境変数にAnnoFab認証情報はありませんでした。")
+        try:
+            return build_from_netrc(endpoint_url)
+        except AnnofabApiException:
+            pass
+
+        raise AnnofabApiException("環境変数または`.netrc`ファイルにAnnoFab認証情報はありませんでした。")
 
     else:
         raise ValueError()

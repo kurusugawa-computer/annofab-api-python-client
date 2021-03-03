@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "annofabapi"
-version = "0.40.2"
+version = "0.43.0"
 description = "Python Clinet Library of AnnoFab WebAPI (https://annofab.com/docs/api/)"
 authors = ["yuji38kwmt"]
 license = "MIT"
@@ -26,7 +26,6 @@ python = "^3.6"
 requests = "*"
 python-dateutil = "*"
 backoff="*"
-more-itertools = "*"
 dataclasses-json="*"
 dataclasses = { version = "*", python = "<3.7" }
 
@@ -35,6 +34,9 @@ dataclasses = { version = "*", python = "<3.7" }
 pytest = "*"
 pytest-xdist = "*"
 pytest-cov = "*"
+
+# テストコード用に追加
+more-itertools = "*"
 
 # format library
 isort = "*"
@@ -49,11 +51,8 @@ pylint = "*"
 # document library
 sphinx = "*"
 docutils = "*"
+pydata-sphinx-theme = "*"
 
-
-[build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
 
 [tool.black]
 line-length = 120
@@ -67,4 +66,8 @@ multi_line_output=3
 include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
 

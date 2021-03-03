@@ -71,6 +71,14 @@ def _first_true(iterable, default=None, pred=None):
     return next(filter(pred, iterable), default)
 
 
+def _hour_to_millisecond(hour: Optional[float]) -> Optional[int]:
+    return int(hour * 3600_000) if hour is not None else None
+
+
+_ORGNIZATION_ID_FOR_AVAILABILITY = "___plannedWorktime___"
+"""予定稼働時間用の組織ID"""
+
+
 class Wrapper:
     """
     AnnofabApiのラッパー.
@@ -166,9 +174,7 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先のファイルパス
-            v2: True:v2形式(JSONファイル名がinput_data_id)をダウンロード.
-                False: v1形式(JSONファイル名がinput_data_name) をダウンロード.
-                v1形式はいずれ廃止される。v1形式が廃止されたら、引数v2のデフォルト値はTrueにする予定。
+            v2:  互換性を保つために残している引数。2020-10-31以降に廃止する。
 
         Returns:
             ダウンロード元のURL
@@ -177,6 +183,7 @@ class Wrapper:
         query_params = None
         if v2:
             query_params = {"v2": True}
+            logger.warning("メソッド引数`v2`は2020-10-31以降に廃止します。")
 
         _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
         url = response.headers["Location"]
@@ -188,7 +195,7 @@ class Wrapper:
         """
         FullアノテーションZIPをダウンロードする。
 
-        .. deprecated:: 0.21.1
+        .. deprecated:: X
 
         Args:
             project_id: プロジェクトID
@@ -334,7 +341,7 @@ class Wrapper:
         self,
         src: TaskFrameKey,
         dest: TaskFrameKey,
-        account_id: str,
+        account_id: Optional[str] = None,
         annotation_specs_relation: Optional[AnnotationSpecsRelation] = None,
     ) -> bool:
         """
@@ -343,7 +350,7 @@ class Wrapper:
         Args:
             src: コピー元のTaskFrame情報
             dest: コピー先のTaskFrame情報
-            account_id: アノテーションを登録するユーザのアカウントID
+            account_id: アノテーションを登録するユーザのアカウントID。Noneの場合、自分自身のアカウントIDで登録する。
             annotation_specs_relation: アノテーション仕様間の紐付け情報。``get_annotation_specs_relation`` メソッドで紐付け情報を取得できる。
                 Noneの場合、コピー元のアノテーション仕様のID情報（ラベルID、属性ID、選択肢ID）を変換せずに、アノテーションをコピーします。
 
@@ -366,7 +373,7 @@ class Wrapper:
             dest.task_id,
             dest.input_data_id,
             src_details=src_annotation_details,
-            account_id=account_id,
+            account_id=account_id if account_id is not None else self.api.account_id,
             annotation_specs_relation=annotation_specs_relation,
         )
         request_body["updated_datetime"] = updated_datetime
@@ -1262,8 +1269,7 @@ class Wrapper:
         """
         複数のプロジェクトメンバを追加/更新/削除する.
 
-        Note:
-            誤って実行しないようにすること
+        .. deprecated:: 2020-01-01
 
         Args:
             project_id: プロジェクトID
@@ -1273,6 +1279,7 @@ class Wrapper:
             `putProjectMember` APIのContentのList
 
         """
+        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
 
         # 追加/更新前のプロジェクトメンバ
         dest_project_members = self.get_all_project_members(project_id)
@@ -1312,6 +1319,8 @@ class Wrapper:
         """
         複数のプロジェクトメンバに1つのロールを割り当てる。
 
+        .. deprecated:: 2020-01-01
+
         Note:
             誤って実行しないようにすること
 
@@ -1324,6 +1333,7 @@ class Wrapper:
             `putProjectMember` APIのContentのList
 
         """
+        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
 
         project_members = []
         for user_id in user_id_list:
@@ -1336,6 +1346,8 @@ class Wrapper:
         """
         複数のプロジェクトメンバを、プロジェクトから脱退させる
 
+        .. deprecated:: 2020-01-01
+
         Note:
             誤って実行しないようにすること
 
@@ -1346,6 +1358,7 @@ class Wrapper:
         Returns:
             `putProjectMember` APIのContentのList
         """
+        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
 
         project_members = []
         for user_id in user_id_list:
@@ -1364,6 +1377,8 @@ class Wrapper:
         """
         プロジェクトメンバを、別のプロジェクトにコピーする。
 
+        .. deprecated:: 2020-01-01
+
         Note:
             誤って実行しないようにすること
 
@@ -1376,6 +1391,8 @@ class Wrapper:
             `putProjectMember` APIのContentのList
 
         """
+        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
+
         src_project_members = self.get_all_project_members(src_project_id)
         dest_project_members = self.get_all_project_members(dest_project_id)
 
@@ -1552,8 +1569,8 @@ class Wrapper:
         """
         タスクの提出を取り消します。
         「提出されたタスク」とは以下の状態になっています。
-         * 教師付フェーズで「提出」ボタンを押して、検査/受入フェーズへ遷移したタスク
-         * 検査フェーズから「合格」ボタンを押して、受入フェーズへ遷移したタスク
+        * 教師付フェーズで「提出」ボタンを押して、検査/受入フェーズへ遷移したタスク
+        * 検査フェーズから「合格」ボタンを押して、受入フェーズへ遷移したタスク
 
         Notes:
             * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。
@@ -1762,7 +1779,6 @@ class Wrapper:
     def get_all_project_job(self, project_id: str, query_params: Dict[str, Any]) -> List[JobInfo]:
         """
         すべてのバックグランドジョブを取得する。
-        2019/01時点でAPIが未実装のため、このメソッドも未実装。
 
         Args:
             project_id: プロジェクトID
@@ -1771,15 +1787,11 @@ class Wrapper:
         Returns:
             すべてのバックグランドジョブ一覧
         """
-
-        # return self._get_all_objects(self.api.get_project_job,
-        #                              limit=200,
-        #                              project_id=project_id, query_params=query_params)
-        #
         copied_params = copy.deepcopy(query_params) if query_params is not None else {}
 
         all_jobs: List[Dict[str, Any]] = []
         limit = 200
+        # クエリパラメタ`page`が未実装なため、`1`を指定する
         copied_params.update({"page": 1, "limit": limit})
         r = self.api.get_project_job(project_id, query_params=copied_params)[0]
         all_jobs.extend(r["list"])
@@ -1967,10 +1979,171 @@ class Wrapper:
             return labor
 
         query_params = {
-            "organization_id": "___plannedWorktime___",
+            "organization_id": _ORGNIZATION_ID_FOR_AVAILABILITY,
             "account_id": account_id,
             "from": from_date,
             "to": to_date,
         }
         labor_list, _ = self.api.get_labor_control(query_params)
         return [_to_new_data(e) for e in labor_list]
+
+    def put_labor_control_actual_worktime(
+        self,
+        organization_id: str,
+        project_id: str,
+        account_id: str,
+        date: str,
+        actual_worktime: Optional[float],
+        working_description: Optional[str],
+    ) -> Dict[str, Any]:
+        """
+        労務管理の実績作業時間を登録する。
+
+        Args:
+            organization_id: 組織ID
+            project_id: プロジェクトID
+            account_id: account_id
+            date: 登録対象日
+            actual_worktime: 実績作業時間[hour]
+            working_description: 実績に関するコメント
+
+        Returns:
+            登録後の労務管理データ
+        """
+        labor_list, _ = self.api.get_labor_control(
+            query_params={
+                "organization_id": organization_id,
+                "project_id": project_id,
+                "account_id": account_id,
+                "from": date,
+                "to": date,
+            }
+        )
+        target_working_time_by_user = {
+            "description": working_description,
+            "results": _hour_to_millisecond(actual_worktime),
+        }
+
+        if len(labor_list) > 0:
+            assert len(labor_list) == 1, "get_labor_control APIで取得した労務管理データが2件以上存在した。"
+            labor = labor_list[0]
+            request_body = labor
+            request_body["last_updated_datetime"] = labor["updated_datetime"]
+
+            if "working_time_by_user" in request_body["values"]:
+                request_body["values"]["working_time_by_user"].update(target_working_time_by_user)
+            else:
+                request_body["values"]["working_time_by_user"] = target_working_time_by_user
+        else:
+            request_body = {
+                "organization_id": organization_id,
+                "project_id": project_id,
+                "account_id": account_id,
+                "date": date,
+                "values": {"working_time_by_user": target_working_time_by_user},
+            }
+        content, _ = self.api.put_labor_control(request_body=request_body)
+        return content
+
+    def put_labor_control_plan_worktime(
+        self,
+        organization_id: str,
+        project_id: str,
+        account_id: str,
+        date: str,
+        plan_worktime: Optional[float],
+    ) -> Dict[str, Any]:
+        """
+        労務管理の予定作業時間を登録する。
+
+        Args:
+            organization_id: 組織ID
+            project_id: プロジェクトID
+            account_id: account_id
+            date: 登録対象日
+            plan_worktime: 予定作業時間[hour]
+
+        Returns:
+            登録後の労務管理データ
+
+        """
+        labor_list, _ = self.api.get_labor_control(
+            query_params={
+                "organization_id": organization_id,
+                "project_id": project_id,
+                "account_id": account_id,
+                "from": date,
+                "to": date,
+            }
+        )
+        target_working_time_by_user = {"plans": _hour_to_millisecond(plan_worktime)}
+
+        if len(labor_list) > 0:
+            assert len(labor_list) == 1, "get_labor_control APIで取得した労務管理データが2件以上存在した。"
+            labor = labor_list[0]
+            request_body = labor
+            request_body["last_updated_datetime"] = labor["updated_datetime"]
+
+            if "working_time_by_user" in request_body["values"]:
+                request_body["values"]["working_time_by_user"].update(target_working_time_by_user)
+            else:
+                request_body["values"]["working_time_by_user"] = target_working_time_by_user
+
+        else:
+            request_body = {
+                "organization_id": organization_id,
+                "project_id": project_id,
+                "account_id": account_id,
+                "date": date,
+                "values": {"working_time_by_user": target_working_time_by_user},
+            }
+        content, _ = self.api.put_labor_control(request_body=request_body)
+        return content
+
+    def put_labor_control_availability(
+        self,
+        account_id: str,
+        date: str,
+        availability: Optional[float],
+    ) -> Dict[str, Any]:
+        """
+        労務管理の予定稼働時間を登録する
+
+        Args:
+            account_id: account_id
+            date: 登録対象日
+            availability: 予定稼働時間[hour]
+
+        Returns:
+            登録後の労務管理データ
+
+        """
+
+        organization_id = _ORGNIZATION_ID_FOR_AVAILABILITY
+
+        labor_list, _ = self.api.get_labor_control(
+            query_params={"organization_id": organization_id, "account_id": account_id, "from": date, "to": date}
+        )
+        target_working_time_by_user = {"plans": _hour_to_millisecond(availability)}
+
+        if len(labor_list) > 0:
+            assert len(labor_list) == 1, "get_labor_control APIで取得した労務管理データが2件以上存在した。"
+            labor = labor_list[0]
+            request_body = labor
+            request_body["last_updated_datetime"] = labor["updated_datetime"]
+
+            if "working_time_by_user" in request_body["values"]:
+                request_body["values"]["working_time_by_user"].update(target_working_time_by_user)
+            else:
+                request_body["values"]["working_time_by_user"] = target_working_time_by_user
+
+        else:
+            request_body = {
+                "organization_id": organization_id,
+                "account_id": account_id,
+                "date": date,
+                "values": {"working_time_by_user": target_working_time_by_user},
+            }
+
+        content, _ = self.api.put_labor_control(request_body=request_body)
+        return content

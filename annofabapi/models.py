@@ -385,13 +385,13 @@ AdditionalDataRestrictionCondition = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    
+    `Imply` [詳しくはこちら](#section/API-Convention/API-_type) 
 * enable: bool
-    
+    false を指定することで、入力を許可しないようにできます。 Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
 * value: str
-    
-* values: str
-    
+    指定された正規表現に合致しないことを要求します。
+* labels: List[str]
+    リンク属性において、リンク先として指定可能なラベルIDを制限します。
 * premise: AdditionalDataRestriction
     
 * condition: AdditionalDataRestrictionCondition
@@ -401,51 +401,51 @@ Kyes of Dict
 
 AdditionalDataRestrictionConditionCanInput = Dict[str, Any]
 """
-enable=false とすることで、入力を許可しないようにできます。 Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
+
 
 Kyes of Dict
 
 * type: str
-    
+    `CanInput` [詳しくはこちら](#section/API-Convention/API-_type) 
 * enable: bool
-    
+    false を指定することで、入力を許可しないようにできます。 Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
 
 """
 
 AdditionalDataRestrictionConditionEquals = Dict[str, Any]
 """
-指定された値と等しいことを要求します。
+
 
 Kyes of Dict
 
 * type: str
-    
+    `Equals` [詳しくはこちら](#section/API-Convention/API-_type) 
 * value: str
-    
+    指定された値と等しいことを要求します。
 
 """
 
 AdditionalDataRestrictionConditionHasLabel = Dict[str, Any]
 """
-リンク属性において、リンク先として指定可能なラベルIDを制限します。
+
 
 Kyes of Dict
 
 * type: str
-    
-* values: str
-    
+    `HasLabel` [詳しくはこちら](#section/API-Convention/API-_type) 
+* labels: List[str]
+    リンク属性において、リンク先として指定可能なラベルIDを制限します。
 
 """
 
 AdditionalDataRestrictionConditionImply = Dict[str, Any]
 """
-premise で指定された条件を満たすとき、condition で指定された条件を満たすことを要求します。 
+
 
 Kyes of Dict
 
 * type: str
-    
+    `Imply` [詳しくはこちら](#section/API-Convention/API-_type) 
 * premise: AdditionalDataRestriction
     
 * condition: AdditionalDataRestrictionCondition
@@ -455,40 +455,40 @@ Kyes of Dict
 
 AdditionalDataRestrictionConditionMatches = Dict[str, Any]
 """
-指定された正規表現に合致することを要求します。
+
 
 Kyes of Dict
 
 * type: str
-    
+    `Matches` [詳しくはこちら](#section/API-Convention/API-_type) 
 * value: str
-    
+    指定された正規表現に合致することを要求します。
 
 """
 
 AdditionalDataRestrictionConditionNotEquals = Dict[str, Any]
 """
-指定された値と異なることを要求します。 value に \"\" を指定することで、入力を必須とすることができます。 
+
 
 Kyes of Dict
 
 * type: str
-    
+    `NotEquals` [詳しくはこちら](#section/API-Convention/API-_type) 
 * value: str
-    
+    指定された値と異なることを要求します。 value に \"\" を指定することで、入力を必須とすることができます。 
 
 """
 
 AdditionalDataRestrictionConditionNotMatches = Dict[str, Any]
 """
-指定された正規表現に合致しないことを要求します。
+
 
 Kyes of Dict
 
 * type: str
-    
+    `NotMatches` [詳しくはこちら](#section/API-Convention/API-_type) 
 * value: str
-    
+    指定された正規表現に合致しないことを要求します。
 
 """
 
@@ -1297,39 +1297,6 @@ Kyes of Dict
 
 """
 
-DeleteProjectResponseWrapper = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* organization_id: str
-    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* title: str
-    プロジェクトのタイトル
-* overview: str
-    プロジェクトの概要
-* project_status: ProjectStatus
-    
-* input_data_type: InputDataType
-    
-* configuration: ProjectConfiguration
-    
-* created_datetime: str
-    
-* updated_datetime: str
-    
-* summary: ProjectSummary
-    
-* job: JobInfo
-    
-* project: Project
-    
-
-"""
-
 Duplicated = Dict[str, Any]
 """
 値の重複が許可されていない属性の重複エラー
@@ -1657,12 +1624,6 @@ Kyes of Dict
     
 * original_input_data_path: str
     AF外部のストレージから登録された場合、その外部ストレージ中のパス。 それ以外の場合は値なし 
-* original_resolution: Resolution
-    
-* resized_resolution: Resolution
-    
-* input_duration: float
-    入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。  動画の長さが取得できなかった場合、あるいは入力データが画像の場合は値なし。 
 * updated_datetime: str
     
 * sign_required: bool
@@ -2215,31 +2176,6 @@ Kyes of Dict
 
 """
 
-JobInfo2 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* job_type: JobType
-    
-* job_id: str
-    
-* job_status: JobStatus
-    
-* job_execution: __DictStrKeyAnyValue__
-    ジョブの内部情報
-* job_detail: __DictStrKeyAnyValue__
-    ジョブ結果の内部情報
-* created_datetime: str
-    
-* updated_datetime: str
-    
-
-"""
-
 JobInfoContainer = Dict[str, Any]
 """
 
@@ -2363,6 +2299,8 @@ Kyes of Dict
     
 * tolerance: int
     
+* has_direction: bool
+    `annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。 この値が `true` の場合、AnnoFabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。  `annotationType` が `polyline` 以外の場合は必ず `false` となります。 
 
 """
 
@@ -2478,33 +2416,6 @@ Kyes of Dict
 
 * message: str
     多言語対応
-
-"""
-
-MessageOrJobInfo = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* message: str
-    多言語対応
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* job_type: JobType
-    
-* job_id: str
-    
-* job_status: JobStatus
-    
-* job_execution: __DictStrKeyAnyValue__
-    ジョブの内部情報
-* job_detail: __DictStrKeyAnyValue__
-    ジョブ結果の内部情報
-* created_datetime: str
-    
-* updated_datetime: str
-    
 
 """
 
@@ -2939,38 +2850,12 @@ Kyes of Dict
 
 """
 
-PostAnnotationArchiveUpdateResponseWrapper = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* message: str
-    多言語対応
-* job: JobInfo
-    
-
-"""
-
 PostProjectTasksUpdateResponse = Dict[str, Any]
 """
 
 
 Kyes of Dict
 
-* job: JobInfo
-    
-
-"""
-
-PostProjectTasksUpdateResponseWrapper = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* message: str
-    多言語対応
 * job: JobInfo
     
 
@@ -3003,35 +2888,6 @@ Kyes of Dict
 * input_data_type: InputDataType
     
 * configuration: ProjectConfiguration
-    
-* created_datetime: str
-    
-* updated_datetime: str
-    
-* summary: ProjectSummary
-    
-
-"""
-
-Project2 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* organization_id: str
-    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* title: str
-    プロジェクトのタイトル
-* overview: str
-    プロジェクトの概要
-* project_status: ProjectStatus
-    
-* input_data_type: InputDataType
-    
-* configuration: ProjectConfiguration2
     
 * created_datetime: str
     
@@ -3109,40 +2965,7 @@ Kyes of Dict
     
 * task_assignment_type: TaskAssignmentType
     
-* max_tasks_per_member: int
-    保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
-* max_tasks_per_member_including_hold: int
-    保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は20件として扱う。
-* input_data_set_id_list: List[str]
-    このフィールドは内部用でまだ何も意味を成しません。今は空配列を指定してください。
-* input_data_max_long_side_length: int
-    入力データ画像の長辺の最大値（未指定時は4096px）。  画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。 アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。  大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。 
-* sampling_inspection_rate: int
-    抜取検査率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
-* sampling_acceptance_rate: int
-    抜取受入率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
-* private_storage_aws_iam_role_arn: str
-    AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
-* plugin_id: str
-    プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* custom_task_assignment_plugin_id: str
-    プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* custom_specs_plugin_id: str
-    プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-
-"""
-
-ProjectConfiguration2 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* number_of_inspections: int
-    検査回数。 * 0回：教師付け -> 受入 * 1回：教師付け -> 検査 -> 受入 * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入 
-* assignee_rule_of_resubmitted_task: AssigneeRuleOfResubmittedTask
-    
-* task_assignment_type: TaskAssignmentType
+* task_assignment_property: TaskAssignmentProperty
     
 * max_tasks_per_member: int
     保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
@@ -3213,39 +3036,6 @@ ProjectCopyResponse = Dict[str, Any]
 
 Kyes of Dict
 
-* job: JobInfo
-    
-* dest_project: Project
-    
-
-"""
-
-ProjectCopyResponseWrapper = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* organization_id: str
-    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* title: str
-    プロジェクトのタイトル
-* overview: str
-    プロジェクトの概要
-* project_status: ProjectStatus
-    
-* input_data_type: InputDataType
-    
-* configuration: ProjectConfiguration
-    
-* created_datetime: str
-    
-* updated_datetime: str
-    
-* summary: ProjectSummary
-    
 * job: JobInfo
     
 * dest_project: Project
@@ -3568,52 +3358,6 @@ Kyes of Dict
 
 """
 
-PutProjectResponse2 = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* job: JobInfo2
-    
-* project: Project2
-    
-
-"""
-
-PutProjectResponseWrapper = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* organization_id: str
-    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* title: str
-    プロジェクトのタイトル
-* overview: str
-    プロジェクトの概要
-* project_status: ProjectStatus
-    
-* input_data_type: InputDataType
-    
-* configuration: ProjectConfiguration2
-    
-* created_datetime: str
-    
-* updated_datetime: str
-    
-* summary: ProjectSummary
-    
-* job: JobInfo2
-    
-* project: Project2
-    
-
-"""
-
 RefreshTokenRequest = Dict[str, Any]
 """
 
@@ -3913,7 +3657,7 @@ Kyes of Dict
 * sampling: str
     * `inspection_skipped` - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。 * `inspection_stages_skipped` - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。 * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する) 
 * metadata: __DictStrKeyAnyValue__
-    ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。 valueには文字列、数値、真偽値を指定できます。 
+    ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 
 
 """
 
@@ -3930,14 +3674,14 @@ Kyes of Dict
 
 TaskAssignRequestType = Dict[str, Any]
 """
-* `TaskAssignRequestTypeRandom`: タスクフェーズのみを指定してランダムにタスクを自身に割当します。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: 担当者とタスクを明示的に指定してタスクを割当します。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 
+* `TaskAssignRequestTypeRandom`: タスクフェーズのみを指定してランダムにタスクを自身に割当します。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: 担当者とタスクを明示的に指定してタスクを割当します。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeTaskProperty`: タスクフェーズのみを指定して、タスクプロパティ割当の設定に基づいてタスクを自身に割当します。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。 
 
 Kyes of Dict
 
 * phase: TaskPhase
     
 * type: str
-    Selection
+    TaskPropertry
 * user_id: str
     
 * task_ids: List[str]
@@ -3973,15 +3717,52 @@ Kyes of Dict
 
 """
 
+TaskAssignRequestTypeTaskProperty = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* phase: TaskPhase
+    
+* type: str
+    TaskPropertry
+
+"""
+
+
+class TaskAssignmentOrder(Enum):
+    """
+    タスクの割当優先度を決定するための並び順。  * `asc` -  昇順 * `desc` - 降順
+    """
+
+    ASC = "asc"
+    DESC = "desc"
+
+
+TaskAssignmentProperty = Dict[str, Any]
+"""
+プロジェクト設定でタスクプロパティ割当を有効にしている場合のみ指定してください。 
+
+Kyes of Dict
+
+* name: str
+    タスクの割当優先度を決定するためのタスクプロパティ。<br> 指定できるプロパティは次のいずれかです。  * `task_id` * `updated_datetime` * `metadata` (`metadata.{メタデータ名}` の形式で指定してください) 
+* order: TaskAssignmentOrder
+    
+
+"""
+
 
 class TaskAssignmentType(Enum):
     """
-    プロジェクトで使用するタスクの割当方式。  * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。 * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。 * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。 * `custom` - タスク割当アルゴリズム (API) を独自に定義してタスクを割当する方式です。
+    プロジェクトで使用するタスクの割当方式。  * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。 * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。 * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。 * `task_property` - タスクのプロパティ(タスクID/更新日時/メタデータ)と並び順(昇順/降順)を設定して、その順番通りにタスクを割当する方式です。順番が同じタスクが複数ある場合は、その中からランダムに1つのタスクを割当します。プロパティと並び順は`TaskAssignmentProperty` から設定します。 * `custom` - タスク割当アルゴリズム (API) を独自に定義してタスクを割当する方式です。
     """
 
     RANDOM = "random"
     SELECTION = "selection"
     RANDOM_AND_SELECTION = "random_and_selection"
+    TASK_PROPERTY = "task_property"
     CUSTOM = "custom"
 
 
@@ -4004,39 +3785,6 @@ TaskGenerateResponse = Dict[str, Any]
 
 Kyes of Dict
 
-* job: JobInfo
-    
-* project: Project
-    
-
-"""
-
-TaskGenerateResponseWrapper = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* organization_id: str
-    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* title: str
-    プロジェクトのタイトル
-* overview: str
-    プロジェクトの概要
-* project_status: ProjectStatus
-    
-* input_data_type: InputDataType
-    
-* configuration: ProjectConfiguration
-    
-* created_datetime: str
-    
-* updated_datetime: str
-    
-* summary: ProjectSummary
-    
 * job: JobInfo
     
 * project: Project
@@ -4273,18 +4021,7 @@ Kyes of Dict
 * input_data_id_list: List[str]
     
 * metadata: __DictStrKeyAnyValue__
-    ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。 valueには文字列、数値、真偽値を指定できます。 
-
-"""
-
-TaskStart = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* phase: TaskPhase
-    
+    ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 
 
 """
 

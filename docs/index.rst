@@ -3,26 +3,24 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-annofabapi : AnnoFab API Client Library for Python
+annofabapi documentation
 ==================================================
+
+--------------------------------------------------
+Table of Contents
+--------------------------------------------------
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-   api
-   api2
-   wrapper
-   resource
-   utils
-   parser
-   models
-   dataclass
-   exceptions
+   user_guide/index
+   api_reference/index
+   faq
 
 
+--------------------------------------------------
 Indices and tables
-==================
+--------------------------------------------------
 
 * :ref:`genindex`
 * :ref:`search`

@@ -283,11 +283,17 @@ components:
           description: 多言語対応
     InternationalizationMessage:
       type: object
+      required:
+        - messages
+        - default_lang
       properties:
         messages:
           type: array
           items:
             type: object
+            required:
+              - lang
+              - message
             properties:
               lang:
                 type: string
@@ -687,6 +693,12 @@ components:
         - $ref: "#/components/schemas/PluginDetailAnnotationEditor"
         - $ref: "#/components/schemas/PluginDetailTaskAssignment"
         - $ref: "#/components/schemas/PluginDetailAnnotationSpecs"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          AnnotationEditor: "#/components/schemas/PluginDetailAnnotationEditor"
+          TaskAssignment: "#/components/schemas/PluginDetailTaskAssignment"
+          AnnotationSpecs: "#/components/schemas/PluginDetailAnnotationSpecs"
     PluginDetailAnnotationEditor:
       type: object
       description: |
@@ -1085,6 +1097,8 @@ components:
           default: no_assignee
         task_assignment_type:
           $ref: "#/components/schemas/TaskAssignmentType"
+        task_assignment_property:
+          $ref: "#/components/schemas/TaskAssignmentProperty"
         max_tasks_per_member:
           description: 保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
           type: integer
@@ -1134,6 +1148,7 @@ components:
           $ref: "#/components/schemas/PluginId"
           description: |
             `task_assignment_type`に`custom`を設定している場合のみ、カスタムタスク割当のプラグインIDを設定してください。
+            `custom`以外の場合は空文字とするか、値を設定しないでください。
         custom_specs_plugin_id:
           $ref: "#/components/schemas/PluginId"
           description: |
@@ -1152,6 +1167,7 @@ components:
         - random
         - selection
         - random_and_selection
+        - task_property
         - custom
       description: |
         プロジェクトで使用するタスクの割当方式。
@@ -1159,7 +1175,37 @@ components:
         * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。
         * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。
         * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。
+        * `task_property` - タスクのプロパティ(タスクID/更新日時/メタデータ)と並び順(昇順/降順)を設定して、その順番通りにタスクを割当する方式です。順番が同じタスクが複数ある場合は、その中からランダムに1つのタスクを割当します。プロパティと並び順は`TaskAssignmentProperty` から設定します。
         * `custom` - タスク割当アルゴリズム (API) を独自に定義してタスクを割当する方式です。
+    TaskAssignmentProperty:
+      type: object
+      description: |
+        プロジェクト設定でタスクプロパティ割当を有効にしている場合のみ指定してください。
+      required:
+        - name
+        - order
+      properties:
+        name:
+          type: string
+          description: |
+            タスクの割当優先度を決定するためのタスクプロパティ。<br>
+            指定できるプロパティは次のいずれかです。
+
+            * `task_id`
+            * `updated_datetime`
+            * `metadata` (`metadata.{メタデータ名}` の形式で指定してください)
+        order:
+          $ref: "#/components/schemas/TaskAssignmentOrder"
+    TaskAssignmentOrder:
+      type: string
+      enum:
+        - asc
+        - desc
+      description: |
+        タスクの割当優先度を決定するための並び順。
+
+        * `asc` -  昇順
+        * `desc` - 降順
     JobInfo:
       type: object
       properties:
@@ -1740,9 +1786,6 @@ components:
     PatchTasksMetadataRequest:
       type: object
       description: タスクIDとメタデータのkey-valueペア(Dictionary)です。
-      additionalProperties: {
-        $ref: "#/components/schemas/TaskMetadata"
-      }
     InspectionStatisticsPhrases:
       type: object
       description: ラベル外指摘の集計結果
@@ -1959,6 +2002,11 @@ components:
           $ref: "#/components/schemas/LastUpdatedDatetime"
     AnnotationSpecsV1:
       type: object
+      required:
+        - project_id
+        - labels
+        - inspection_phrases
+        - metadata
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -1985,6 +2033,14 @@ components:
             type: string
     AnnotationSpecsV2:
       type: object
+      required:
+        - project_id
+        - labels
+        - additionals
+        - restrictions
+        - inspection_phrases
+        - format_version
+        - metadata
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -2121,6 +2177,8 @@ components:
         動画プロジェクトで値が未指定の場合、AnnotationSpecsOption内の値はすべてデフォルト値が指定されたものとして扱われる。
     AnnotationSpecsMovieOption:
       type: object
+      required:
+        - can_overwrap
       properties:
         can_overwrap:
           type: boolean
@@ -2129,6 +2187,11 @@ components:
             動画プロジェクトのアノテーションに重複配置を許すか否か。
     AnnotationSpecsHistory:
       type: object
+      required:
+        - history_id
+        - project_id
+        - updated_datetime
+        - url
       properties:
         history_id:
           type: string
@@ -2145,6 +2208,9 @@ components:
           type: string
     InspectionPhrase:
       type: object
+      required:
+        - id
+        - text
       properties:
         id:
           type: string
@@ -2211,6 +2277,16 @@ components:
           type: integer
     LabelV1:
       type: object
+      required:
+        - label_id
+        - label_name
+        - keybind
+        - annotation_type
+        - additional_data_definitions
+        - color
+        - annotation_editor_feature
+        - allow_out_of_image_bounds
+        - metadata
       properties:
         label_id:
           $ref: "#/components/schemas/LabelId"
@@ -2224,6 +2300,10 @@ components:
           $ref: "#/components/schemas/AnnotationType"
         bounding_box_metadata:
           type: object
+          required:
+            - min_width
+            - min_height
+            - min_warn_rule
           properties:
             min_width:
               type: integer
@@ -2244,8 +2324,20 @@ components:
               $ref: "#/components/schemas/PositionForMinimumBoundingBoxInsertion"
             tolerance:
               type: integer
+            has_direction:
+              type: boolean
+              default: false
+              description: |
+                `annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。
+                この値が `true` の場合、AnnoFabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。
+
+                `annotationType` が `polyline` 以外の場合は必ず `false` となります。
         segmentation_metadata:
           type: object
+          required:
+            - min_width
+            - min_height
+            - min_warn_rule
           properties:
             min_width:
               type: integer
@@ -2275,6 +2367,16 @@ components:
             type: string
     LabelV2:
       type: object
+      required:
+        - label_id
+        - label_name
+        - keybind
+        - annotation_type
+        - additional_data_definitions
+        - color
+        - annotation_editor_feature
+        - allow_out_of_image_bounds
+        - metadata
       properties:
         label_id:
           $ref: "#/components/schemas/LabelId"
@@ -2288,6 +2390,10 @@ components:
           $ref: "#/components/schemas/AnnotationType"
         bounding_box_metadata:
           type: object
+          required:
+            - min_width
+            - min_height
+            - min_warn_rule
           properties:
             min_width:
               type: integer
@@ -2308,8 +2414,20 @@ components:
               $ref: "#/components/schemas/PositionForMinimumBoundingBoxInsertion"
             tolerance:
               type: integer
+            has_direction:
+              type: boolean
+              default: false
+              description: |
+                `annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。
+                この値が `true` の場合、AnnoFabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。
+
+                `annotationType` が `polyline` 以外の場合は必ず `false` となります。
         segmentation_metadata:
           type: object
+          required:
+            - min_width
+            - min_height
+            - min_warn_rule
           properties:
             min_width:
               type: integer
@@ -2339,6 +2457,10 @@ components:
             type: string
     Color:
       type: object
+      required:
+        - red
+        - green
+        - blue
       properties:
         red:
           type: integer
@@ -2354,6 +2476,13 @@ components:
           maximum: 255
     AnnotationEditorFeature:
       type: object
+      required:
+        - append
+        - erase
+        - freehand
+        - rectangle_fill
+        - polygon_fill
+        - fill_near
       properties:
         append:
           type: boolean
@@ -2369,6 +2498,16 @@ components:
           type: boolean
     AdditionalDataDefinitionV1:
       type: object
+      required:
+        - additional_data_definition_id
+        - read_only
+        - name
+        - default
+        - keybind
+        - type
+        - choices
+        - label_ids
+        - metadata
       properties:
         additional_data_definition_id:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
@@ -2389,6 +2528,10 @@ components:
           type: array
           items:
             type: object
+            required:
+              - choice_id
+              - name
+              - keybind
             properties:
               choice_id:
                 $ref: "#/components/schemas/ChoiceId"
@@ -2416,6 +2559,15 @@ components:
             type: string
     AdditionalDataDefinitionV2:
       type: object
+      required:
+        - additional_data_definition_id
+        - read_only
+        - name
+        - default
+        - keybind
+        - type
+        - choices
+        - metadata
       properties:
         additional_data_definition_id:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
@@ -2436,6 +2588,10 @@ components:
           type: array
           items:
             type: object
+            required:
+              - choice_id
+              - name
+              - keybind
             properties:
               choice_id:
                 $ref: "#/components/schemas/ChoiceId"
@@ -2453,6 +2609,9 @@ components:
             type: string
     AdditionalDataRestriction:
       type: object
+      required:
+        - additional_data_definition_id
+        - condition
       properties:
         additional_data_definition_id:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
@@ -2479,76 +2638,126 @@ components:
           Imply: "#/components/schemas/AdditionalDataRestrictionConditionImply"
     AdditionalDataRestrictionConditionCanInput:
       type: object
-      description: |
-        enable=false とすることで、入力を許可しないようにできます。
-        Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。
+      required:
+        - _type
+        - enable
       properties:
         _type:
           type: string
+          description: |
+            `CanInput`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "CanInput"
         enable:
           type: boolean
+          description: |
+            false を指定することで、入力を許可しないようにできます。
+            Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。
     AdditionalDataRestrictionConditionEquals:
       type: object
-      description: 指定された値と等しいことを要求します。
+      required:
+        - _type
+        - value
       properties:
         _type:
           type: string
+          description: |
+            `Equals`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Equals"
         value:
           type: string
+          description: 指定された値と等しいことを要求します。
     AdditionalDataRestrictionConditionNotEquals:
       type: object
-      description: |
-        指定された値と異なることを要求します。
-        value に "" を指定することで、入力を必須とすることができます。
+      required:
+        - _type
+        - value
       properties:
         _type:
           type: string
+          description: |
+            `NotEquals`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "NotEquals"
         value:
           type: string
+          description: |
+            指定された値と異なることを要求します。
+            value に "" を指定することで、入力を必須とすることができます。
     AdditionalDataRestrictionConditionMatches:
       type: object
-      description: 指定された正規表現に合致することを要求します。
+      required:
+        - _type
+        - value
       properties:
         _type:
           type: string
+          description: |
+            `Matches`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Matches"
         value:
           type: string
+          description: 指定された正規表現に合致することを要求します。
     AdditionalDataRestrictionConditionNotMatches:
       type: object
-      description: 指定された正規表現に合致しないことを要求します。
+      required:
+        - _type
+        - value
       properties:
         _type:
           type: string
+          description: |
+            `NotMatches`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "NotMatches"
         value:
           type: string
+          description: 指定された正規表現に合致しないことを要求します。
     AdditionalDataRestrictionConditionHasLabel:
       type: object
-      description: リンク属性において、リンク先として指定可能なラベルIDを制限します。
+      required:
+        - _type
+        - labels
       properties:
         _type:
           type: string
+          description: |
+            `HasLabel`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "HasLabel"
-        values:
-          type: string
+        labels:
+          type: array
+          description: リンク属性において、リンク先として指定可能なラベルIDを制限します。
+          items:
+            type: string
     AdditionalDataRestrictionConditionImply:
       type: object
-      description: |
-        premise で指定された条件を満たすとき、condition で指定された条件を満たすことを要求します。
+      required:
+        - _type
+        - premise
+        - condition
       properties:
         _type:
           type: string
+          description: |
+            `Imply`
+            [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Imply"
         premise:
           $ref: "#/components/schemas/AdditionalDataRestriction"
+          description: |
+            premise で指定された条件を満たすとき、condition で指定された条件を満たすことを要求します。
         condition:
           $ref: "#/components/schemas/AdditionalDataRestrictionCondition"
     Keybind:
       type: object
+      required:
+        - code
+        - shift
+        - ctrl
+        - alt
       properties:
         code:
           type: string
@@ -2663,7 +2872,18 @@ components:
       description: |
         ユーザーが自由に登録できるkey-value型のメタデータです。
         keyにはメタデータ名、valueには値を指定してください。
-        valueには文字列、数値、真偽値を指定できます。
+
+        keyに指定できる文字種は次の通りです。
+
+        * 半角英数字
+        * `_` (アンダースコア)
+        * `-` (ハイフン)
+
+        valueに指定できる値は次の通りです。
+
+        * 文字列
+        * 数値
+        * 真偽値
     TaskRequest:
       type: object
       required:
@@ -2800,12 +3020,6 @@ components:
           default: false
           description: |
             タスクの強制操作を行う場合に立てるフラグ。現在、強制操作は強制差戻しのみがサポートされています。
-    TaskStart:
-      type: object
-      properties:
-        phase:
-          $ref: "#/components/schemas/TaskPhase"
-          description: 開始するタスクのフェーズ
     TaskAssignRequest:
       type: object
       required:
@@ -2817,14 +3031,17 @@ components:
       description: |
         * `TaskAssignRequestTypeRandom`: タスクフェーズのみを指定してランダムにタスクを自身に割当します。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。
         * `TaskAssignRequestTypeSelection`: 担当者とタスクを明示的に指定してタスクを割当します。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。
+        * `TaskAssignRequestTypeTaskProperty`: タスクフェーズのみを指定して、タスクプロパティ割当の設定に基づいてタスクを自身に割当します。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。
       oneOf:
         - $ref: "#/components/schemas/TaskAssignRequestTypeRandom"
         - $ref: "#/components/schemas/TaskAssignRequestTypeSelection"
+        - $ref: "#/components/schemas/TaskAssignRequestTypeTaskProperty"
       discriminator:
         propertyName: "_type"
         mapping:
           Random: "#/components/schemas/TaskAssignRequestTypeRandom"
           Selection: "#/components/schemas/TaskAssignRequestTypeSelection"
+          TaskProperty: "#/components/schemas/TaskAssignRequestTypeTaskProperty"
     TaskAssignRequestTypeRandom:
       type: object
       required:
@@ -2855,6 +3072,18 @@ components:
           type: string
           description: Selection
           example: "Selection"
+    TaskAssignRequestTypeTaskProperty:
+      type: object
+      required:
+        - phase
+      properties:
+        phase:
+          $ref: "#/components/schemas/TaskPhase"
+          description: 割当するタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+        _type:
+          type: string
+          description: TaskPropertry
+          example: "TaskProperty"
     TaskHistoryShort:
       description: タスクのあるフェーズを誰が担当したかを表します。
       type: object
@@ -3029,6 +3258,7 @@ components:
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
         project_id:
+          deprecated: true
           $ref: "#/components/schemas/ProjectId"
         input_data_name:
           type: string
@@ -3058,25 +3288,6 @@ components:
           description: |
             AF外部のストレージから登録された場合、その外部ストレージ中のパス。
             それ以外の場合は値なし
-        original_resolution:
-          deprecated: true
-          $ref: "#/components/schemas/Resolution"
-          description: |
-            入力データの元画像サイズ。
-            入力データ登録時に画像がリサイズされた場合のみ設定される。
-        resized_resolution:
-          deprecated: true
-          $ref: "#/components/schemas/Resolution"
-          description: |
-            入力データのリサイズ後サイズ。
-            入力データ登録時に画像がリサイズされた場合のみ設定される。
-        input_duration:
-          deprecated: true
-          type: number
-          description: |
-            入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。
-
-            動画の長さが取得できなかった場合、あるいは入力データが画像の場合は値なし。
         updated_datetime:
           type: string
           format: date-time
@@ -3120,7 +3331,7 @@ components:
           $ref: "#/components/schemas/Resolution"
           description: |
             入力データの元画像サイズ。
-            入力データ登録時に画像がリサイズされた場合のみ設定される。
+            AnnoFabにアップロードされる入力データとS3プライベートストレージの場合のみ設定されます。
         resized_resolution:
           $ref: "#/components/schemas/Resolution"
           description: |
@@ -3382,6 +3593,8 @@ components:
       type: object
       properties:
         task_id:
+          description: |
+            最大文字列長300文字。
           $ref: "#/components/schemas/TaskId"
         exact_match_task_id:
           description: |
@@ -3390,6 +3603,8 @@ components:
           type: boolean
           default: true
         input_data_id:
+          description: |
+            最大文字列長300文字。
           $ref: "#/components/schemas/InputDataId"
         exact_match_input_data_id:
           description: |
@@ -3702,6 +3917,14 @@ components:
           description: 更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。
     BatchAnnotation:
       type: object
+      required:
+        - project_id
+        - task_id
+        - input_data_id
+        - annotation_id
+        - label_id
+        - additional_data_list
+        - updated_datetime
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -4290,6 +4513,10 @@ components:
     AggregationResult:
       oneOf:
         - $ref: "#/components/schemas/CountResult"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          CountResult: "#/components/schemas/CountResult"
     CountResult:
       type: object
       properties:
@@ -4947,22 +5174,6 @@ components:
         属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。
 
         なお、トラッキングとリンクには初期値を設定できません。
-    DeleteProjectResponseWrapper:
-      oneOf:
-        - $ref: "#/components/schemas/Project"
-        - $ref: "#/components/schemas/DeleteProjectResponse"
-    ProjectCopyResponseWrapper:
-      oneOf:
-        - $ref: "#/components/schemas/Project"
-        - $ref: "#/components/schemas/ProjectCopyResponse"
-    PostProjectTasksUpdateResponseWrapper:
-      oneOf:
-        - $ref: "#/components/schemas/Message"
-        - $ref: "#/components/schemas/PostProjectTasksUpdateResponse"
-    PutProjectResponseWrapper:
-      oneOf:
-        - $ref: "swagger-api-components.yaml#/components/schemas/Project"
-        - $ref: "swagger-api-components.yaml#/components/schemas/PutProjectResponse"
     AnnotationSpecs:
       oneOf:
         - $ref: "#/components/schemas/AnnotationSpecsV1"
@@ -4971,15 +5182,3 @@ components:
       oneOf:
         - $ref: "#/components/schemas/AnnotationSpecsRequestV1"
         - $ref: "#/components/schemas/AnnotationSpecsRequestV2"
-    TaskGenerateResponseWrapper:
-      oneOf:
-        - $ref: "#/components/schemas/Project"
-        - $ref: "#/components/schemas/TaskGenerateResponse"
-    PostAnnotationArchiveUpdateResponseWrapper:
-      oneOf:
-        - $ref: "#/components/schemas/Message"
-        - $ref: "#/components/schemas/PostAnnotationArchiveUpdateResponse"
-    MessageOrJobInfo:
-      oneOf:
-        - $ref: "#/components/schemas/Message"
-        - $ref: "#/components/schemas/JobInfo"

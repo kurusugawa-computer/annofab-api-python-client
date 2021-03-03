@@ -28,16 +28,16 @@ AnnotationSpecsOption = Dict[str, Any]
 class Keybind(DataClassJsonMixin):
     """"""
 
-    code: Optional[str]
+    code: str
     """"""
 
-    shift: Optional[bool]
+    shift: bool
     """"""
 
-    ctrl: Optional[bool]
+    ctrl: bool
     """"""
 
-    alt: Optional[bool]
+    alt: bool
     """"""
 
 
@@ -58,13 +58,13 @@ class PositionForMinimumBoundingBoxInsertion(DataClassJsonMixin):
 class LabelV1BoundingBoxMetadata(DataClassJsonMixin):
     """"""
 
-    min_width: Optional[int]
+    min_width: int
     """"""
 
-    min_height: Optional[int]
+    min_height: int
     """"""
 
-    min_warn_rule: Optional[str]
+    min_warn_rule: str
     """"""
 
     min_area: Optional[int]
@@ -82,18 +82,21 @@ class LabelV1BoundingBoxMetadata(DataClassJsonMixin):
     tolerance: Optional[int]
     """"""
 
+    has_direction: Optional[bool]
+    """`annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。 この値が `true` の場合、AnnoFabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。  `annotationType` が `polyline` 以外の場合は必ず `false` となります。 """
+
 
 @dataclass
 class LabelV1SegmentationMetadata(DataClassJsonMixin):
     """"""
 
-    min_width: Optional[int]
+    min_width: int
     """"""
 
-    min_height: Optional[int]
+    min_height: int
     """"""
 
-    min_warn_rule: Optional[str]
+    min_warn_rule: str
     """"""
 
     tolerance: Optional[int]
@@ -104,10 +107,10 @@ class LabelV1SegmentationMetadata(DataClassJsonMixin):
 class InternationalizationMessageMessages(DataClassJsonMixin):
     """"""
 
-    lang: Optional[str]
+    lang: str
     """"""
 
-    message: Optional[str]
+    message: str
     """"""
 
 
@@ -115,10 +118,10 @@ class InternationalizationMessageMessages(DataClassJsonMixin):
 class InternationalizationMessage(DataClassJsonMixin):
     """"""
 
-    messages: Optional[List[InternationalizationMessageMessages]]
+    messages: List[InternationalizationMessageMessages]
     """"""
 
-    default_lang: Optional[str]
+    default_lang: str
     """"""
 
 
@@ -126,10 +129,10 @@ class InternationalizationMessage(DataClassJsonMixin):
 class InspectionPhrase(DataClassJsonMixin):
     """"""
 
-    id: Optional[str]
+    id: str
     """"""
 
-    text: Optional[InternationalizationMessage]
+    text: InternationalizationMessage
     """"""
 
 
@@ -137,16 +140,16 @@ class InspectionPhrase(DataClassJsonMixin):
 class AnnotationSpecsHistory(DataClassJsonMixin):
     """"""
 
-    history_id: Optional[str]
+    history_id: str
     """"""
 
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    updated_datetime: Optional[str]
+    updated_datetime: str
     """"""
 
-    url: Optional[str]
+    url: str
     """"""
 
     account_id: Optional[str]
@@ -160,13 +163,13 @@ class AnnotationSpecsHistory(DataClassJsonMixin):
 class Color(DataClassJsonMixin):
     """"""
 
-    red: Optional[int]
+    red: int
     """"""
 
-    green: Optional[int]
+    green: int
     """"""
 
-    blue: Optional[int]
+    blue: int
     """"""
 
 
@@ -174,13 +177,13 @@ class Color(DataClassJsonMixin):
 class AdditionalDataDefinitionV1Choices(DataClassJsonMixin):
     """"""
 
-    choice_id: Optional[str]
+    choice_id: str
     """"""
 
-    name: Optional[InternationalizationMessage]
+    name: InternationalizationMessage
     """"""
 
-    keybind: Optional[List[Keybind]]
+    keybind: List[Keybind]
     """"""
 
 
@@ -188,37 +191,37 @@ class AdditionalDataDefinitionV1Choices(DataClassJsonMixin):
 class AdditionalDataDefinitionV1(DataClassJsonMixin):
     """"""
 
-    additional_data_definition_id: Optional[str]
+    additional_data_definition_id: str
     """"""
 
-    read_only: Optional[bool]
+    read_only: bool
     """"""
 
-    name: Optional[InternationalizationMessage]
+    name: InternationalizationMessage
     """"""
 
-    default: Optional[AdditionalDataDefaultType]
+    default: AdditionalDataDefaultType
     """"""
 
-    keybind: Optional[List[Keybind]]
+    keybind: List[Keybind]
     """"""
 
-    type: Optional[AdditionalDataDefinitionType]
+    type: AdditionalDataDefinitionType
     """"""
 
-    choices: Optional[List[AdditionalDataDefinitionV1Choices]]
+    choices: List[AdditionalDataDefinitionV1Choices]
     """"""
 
     regex: Optional[str]
     """"""
 
-    label_ids: Optional[List[str]]
+    label_ids: List[str]
     """リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）"""
 
     required: Optional[bool]
     """リンク属性において、入力を必須とするかどうか"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -226,28 +229,28 @@ class AdditionalDataDefinitionV1(DataClassJsonMixin):
 class AdditionalDataDefinitionV2(DataClassJsonMixin):
     """"""
 
-    additional_data_definition_id: Optional[str]
+    additional_data_definition_id: str
     """"""
 
-    read_only: Optional[bool]
+    read_only: bool
     """"""
 
-    name: Optional[InternationalizationMessage]
+    name: InternationalizationMessage
     """"""
 
-    default: Optional[AdditionalDataDefaultType]
+    default: AdditionalDataDefaultType
     """"""
 
-    keybind: Optional[List[Keybind]]
+    keybind: List[Keybind]
     """"""
 
-    type: Optional[AdditionalDataDefinitionType]
+    type: AdditionalDataDefinitionType
     """"""
 
-    choices: Optional[List[AdditionalDataDefinitionV1Choices]]
+    choices: List[AdditionalDataDefinitionV1Choices]
     """"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -255,22 +258,22 @@ class AdditionalDataDefinitionV2(DataClassJsonMixin):
 class AnnotationEditorFeature(DataClassJsonMixin):
     """"""
 
-    append: Optional[bool]
+    append: bool
     """"""
 
-    erase: Optional[bool]
+    erase: bool
     """"""
 
-    freehand: Optional[bool]
+    freehand: bool
     """"""
 
-    rectangle_fill: Optional[bool]
+    rectangle_fill: bool
     """"""
 
-    polygon_fill: Optional[bool]
+    polygon_fill: bool
     """"""
 
-    fill_near: Optional[bool]
+    fill_near: bool
     """"""
 
 
@@ -278,16 +281,16 @@ class AnnotationEditorFeature(DataClassJsonMixin):
 class LabelV1(DataClassJsonMixin):
     """"""
 
-    label_id: Optional[str]
+    label_id: str
     """"""
 
-    label_name: Optional[InternationalizationMessage]
+    label_name: InternationalizationMessage
     """"""
 
-    keybind: Optional[List[Keybind]]
+    keybind: List[Keybind]
     """"""
 
-    annotation_type: Optional[AnnotationType]
+    annotation_type: AnnotationType
     """"""
 
     bounding_box_metadata: Optional[LabelV1BoundingBoxMetadata]
@@ -296,19 +299,19 @@ class LabelV1(DataClassJsonMixin):
     segmentation_metadata: Optional[LabelV1SegmentationMetadata]
     """"""
 
-    additional_data_definitions: Optional[List[AdditionalDataDefinitionV1]]
+    additional_data_definitions: List[AdditionalDataDefinitionV1]
     """"""
 
-    color: Optional[Color]
+    color: Color
     """"""
 
-    annotation_editor_feature: Optional[AnnotationEditorFeature]
+    annotation_editor_feature: AnnotationEditorFeature
     """"""
 
-    allow_out_of_image_bounds: Optional[bool]
+    allow_out_of_image_bounds: bool
     """"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -316,16 +319,16 @@ class LabelV1(DataClassJsonMixin):
 class LabelV2(DataClassJsonMixin):
     """"""
 
-    label_id: Optional[str]
+    label_id: str
     """"""
 
-    label_name: Optional[InternationalizationMessage]
+    label_name: InternationalizationMessage
     """"""
 
-    keybind: Optional[List[Keybind]]
+    keybind: List[Keybind]
     """"""
 
-    annotation_type: Optional[AnnotationType]
+    annotation_type: AnnotationType
     """"""
 
     bounding_box_metadata: Optional[LabelV1BoundingBoxMetadata]
@@ -334,19 +337,19 @@ class LabelV2(DataClassJsonMixin):
     segmentation_metadata: Optional[LabelV1SegmentationMetadata]
     """"""
 
-    additional_data_definitions: Optional[List[str]]
+    additional_data_definitions: List[str]
     """"""
 
-    color: Optional[Color]
+    color: Color
     """"""
 
-    annotation_editor_feature: Optional[AnnotationEditorFeature]
+    annotation_editor_feature: AnnotationEditorFeature
     """"""
 
-    allow_out_of_image_bounds: Optional[bool]
+    allow_out_of_image_bounds: bool
     """"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -354,10 +357,10 @@ class LabelV2(DataClassJsonMixin):
 class AdditionalDataRestriction(DataClassJsonMixin):
     """"""
 
-    additional_data_definition_id: Optional[str]
+    additional_data_definition_id: str
     """"""
 
-    condition: Optional[AdditionalDataRestrictionCondition]
+    condition: AdditionalDataRestrictionCondition
     """"""
 
 
@@ -365,13 +368,13 @@ class AdditionalDataRestriction(DataClassJsonMixin):
 class AnnotationSpecsV1(DataClassJsonMixin):
     """"""
 
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    labels: Optional[List[LabelV1]]
+    labels: List[LabelV1]
     """"""
 
-    inspection_phrases: Optional[List[InspectionPhrase]]
+    inspection_phrases: List[InspectionPhrase]
     """"""
 
     updated_datetime: Optional[str]
@@ -380,7 +383,7 @@ class AnnotationSpecsV1(DataClassJsonMixin):
     option: Optional[AnnotationSpecsOption]
     """"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -388,22 +391,22 @@ class AnnotationSpecsV1(DataClassJsonMixin):
 class AnnotationSpecsV2(DataClassJsonMixin):
     """"""
 
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    labels: Optional[List[LabelV2]]
+    labels: List[LabelV2]
     """"""
 
-    additionals: Optional[List[AdditionalDataDefinitionV2]]
+    additionals: List[AdditionalDataDefinitionV2]
     """"""
 
-    restrictions: Optional[List[AdditionalDataRestriction]]
+    restrictions: List[AdditionalDataRestriction]
     """"""
 
-    inspection_phrases: Optional[List[InspectionPhrase]]
+    inspection_phrases: List[InspectionPhrase]
     """"""
 
-    format_version: Optional[str]
+    format_version: str
     """"""
 
     updated_datetime: Optional[str]
@@ -412,5 +415,5 @@ class AnnotationSpecsV2(DataClassJsonMixin):
     option: Optional[AnnotationSpecsOption]
     """"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """

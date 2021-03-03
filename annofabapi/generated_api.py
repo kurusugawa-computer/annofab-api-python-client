@@ -442,9 +442,7 @@ class AbstractAnnofabApi(abc.ABC):
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def post_annotation_archive_update(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    def post_annotation_archive_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """アノテーションZIP更新開始
         https://annofab.com/docs/api/#operation/postAnnotationArchiveUpdate
 
@@ -456,19 +454,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Message - \"2\"：PostAnnotationArchiveUpdateResponse
 
         Returns:
-            Tuple[PostAnnotationArchiveUpdateResponseWrapper, requests.Response]
+            Tuple[PostAnnotationArchiveUpdateResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/archive/update"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
-            "query_params": query_params,
-        }
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_annotation(
@@ -715,10 +709,10 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                input_data_id (str):  入力データIDでの部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。
-                input_data_name (str):  入力データ名での部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。
-                input_data_path (str):  入力データパスでの部分一致検索で使用。1文字以上あれば使用します。
-                task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。大文字小文字は区別しません。条件に合致した先頭100件のタスクに使われている入力データを検索します。
+                input_data_id (str):  入力データIDでの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。
+                input_data_name (str):  入力データ名での部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。
+                input_data_path (str):  入力データパスでの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。
+                task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。条件に合致した先頭100件のタスクに使われている入力データを検索します。
                 _from (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
                 to (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
@@ -736,41 +730,8 @@ class AbstractAnnofabApi(abc.ABC):
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_signed_url_of_input_data(
-        self, project_id: str, input_data_id: str, **kwargs
-    ) -> Tuple[Any, requests.Response]:
-        """実体参照用認証済みURL取得
-        https://annofab.com/docs/api/#operation/getSignedUrlOfInputData
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        入力データの実体（画像や動画などのファイルそのもの）にアクセスするための、認証済み一時URLを取得します。  取得したURLは、1時間で失効し、アクセスできなくなります。
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-            input_data_id (str):  入力データID (required)
-
-        Returns:
-            Tuple[str, requests.Response]
-
-
-        """
-        warnings.warn("deprecated", DeprecationWarning)
-        url_path = f"/projects/{project_id}/inputs/{input_data_id}/data"
-        http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
     def put_input_data(
-        self,
-        project_id: str,
-        input_data_id: str,
-        query_params: Optional[Dict[str, Any]] = None,
-        request_body: Optional[Any] = None,
-        **kwargs,
+        self, project_id: str, input_data_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """入力データ更新
         https://annofab.com/docs/api/#operation/putInputData
@@ -784,8 +745,6 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
-            query_params (Dict[str, Any]): Query Parameters
-                v (str):  zipファイルを受領時のAPIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：登録処理を開始した旨の固定メッセージ - \"2\"：JobInfo
             request_body (Any): Request Body
                 input_data_request (InputDataRequest):  (required)
 
@@ -797,7 +756,6 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/inputs/{input_data_id}"
         http_method = "PUT"
         keyword_params: Dict[str, Any] = {
-            "query_params": query_params,
             "request_body": request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -1831,9 +1789,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def delete_project(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    def delete_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクト削除
         https://annofab.com/docs/api/#operation/deleteProject
 
@@ -1845,19 +1801,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：DeleteProjectResponse
 
         Returns:
-            Tuple[DeleteProjectResponseWrapper, requests.Response]
+            Tuple[DeleteProjectResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {
-            "query_params": query_params,
-        }
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_of_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2024,11 +1976,7 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_project_copy(
-        self,
-        project_id: str,
-        query_params: Optional[Dict[str, Any]] = None,
-        request_body: Optional[Any] = None,
-        **kwargs,
+        self, project_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プロジェクト複製
         https://annofab.com/docs/api/#operation/initiateProjectCopy
@@ -2041,20 +1989,17 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  コピー元となるプロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：ProjectCopyResponse
             request_body (Any): Request Body
                 project_copy_request (ProjectCopyRequest):  (required)
 
         Returns:
-            Tuple[ProjectCopyResponseWrapper, requests.Response]
+            Tuple[ProjectCopyResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/copy"
         http_method = "POST"
         keyword_params: Dict[str, Any] = {
-            "query_params": query_params,
             "request_body": request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -2082,9 +2027,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def post_project_tasks_update(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    def post_project_tasks_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
         """プロジェクトのタスク全件ファイル更新開始
         https://annofab.com/docs/api/#operation/postProjectTasksUpdate
 
@@ -2096,19 +2039,15 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Message - \"2\"：PostProjectTasksUpdateResponse
 
         Returns:
-            Tuple[PostProjectTasksUpdateResponseWrapper, requests.Response]
+            Tuple[PostProjectTasksUpdateResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/rawdata/tasks"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
-            "query_params": query_params,
-        }
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_project(
@@ -2659,32 +2598,6 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_task_validation(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """タスク自動検査
-        https://annofab.com/docs/api/#operation/getTaskValidation
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        指定したタスクの自動検査で見つかった警告やエラーを一括で取得します。 [タスクの状態遷移](#operation/operateTask)の際に検査を行うようになったので、本APIは非推奨となります。
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-            task_id (str):  タスクID (required)
-
-        Returns:
-            Tuple[TaskValidation, requests.Response]
-
-
-        """
-        warnings.warn("deprecated", DeprecationWarning)
-        url_path = f"/projects/{project_id}/tasks/{task_id}/validation"
-        http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
     def get_tasks(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
@@ -2702,7 +2615,7 @@ class AbstractAnnofabApi(abc.ABC):
             query_params (Dict[str, Any]): Query Parameters
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
-                task_id (str):  タスクIDでの部分一致検索で使用。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません
+                task_id (str):  タスクIDでの部分一致検索で使用。最大文字列長300文字。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません
                 input_data_ids (str):  指定された入力データIDを使用しているタスクを絞り込みます。カンマ区切りで複数の入力データIDを指定可能です。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません
                 phase (TaskPhase):  絞り込み条件となるフェーズ名。未指定時は全フェーズ
                 phase_stage (int):  絞り込み条件となるステージ。未指定時は全ステージ
@@ -2714,7 +2627,8 @@ class AbstractAnnofabApi(abc.ABC):
                 previous_phase_stage (int):  そのタスクがこれまでに遷移したことのあるステージ（現在のステージ含む）。未指定時は全ステージ
                 rejected_only (str):  差し戻されたタスクだけを絞り込む時に、キーのみ指定します（値は無視されます）。
                 auto_accepted_only (str):  「抜取検査の対象外となり、自動受入されたタスク」だけを絞り込む時に、キーのみ指定します（値は無視されます）。
-                sort (str):  ソート順の指定。 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、phase_stage、status、account_idのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。
+                metadata (str):  メタデータからタスクを検索できます。<br> 例えば、 `priority` (数値) や `assignable` (真偽値) といったメタデータを個々のタスクに登録していたとします。 その場合、次のように検索できます。  ``` // priorityが5のタスクを検索 https://annofab.com/~/tasks?metadata=priority:5  // priorityが5以外のタスクを検索 https://annofab.com/~/tasks?metadata=-priority:5  // priorityが1より大きいタスクを検索 https://annofab.com/~/tasks?metadata=priority:>1  // priorityが1以上のタスクを検索 https://annofab.com/~/tasks?metadata=priority:>=1  // priorityが100未満のタスクを検索 https://annofab.com/~/tasks?metadata=priority:<100  // priorityが100以下のタスクを検索 https://annofab.com/~/tasks?metadata=priority:<=100  // priorityが1~100のタスクを検索 (複数の検索条件は半角スペースで区切ります) https://annofab.com/~/tasks?metadata=priority:>=1 priority:<=100  // priorityが1以上、且つ、assignableがtrueのタスクを検索 https://annofab.com/~/tasks?metadata=priority:>=1 assignable:true ```  次の検索構文は <span style=\"color: red\">deprecated</span> です。  ``` // priorityが5のタスクを検索 https://annofab.com/~/tasks?metadata.priority=5  // priorityが1以上のタスクを検索 https://annofab.com/~/tasks?metadata.priority>=1  // priorityが100以下のタスクを検索 https://annofab.com/~/tasks?metadata.priority<=100  // priorityが1~100のタスクを検索 https://annofab.com/~/tasks?metadata.priority>=1&metadata.priority<=100  // 教師付けフェーズ、且つ、priorityが5のタスクを検索 https://annofab.com/~/tasks?phase=annotation&metadata.priority=5 ```  (注意) これらの例は、説明の都合上「URLエンコード」を施していません。<br> 実際には、URLエンコードを施してください。
+                sort (str):  ソート順の指定。  * 使用可能キーはtask_id、updated_datetime、number_of_rejections、phase、phase_stage、status、account_id, metadataのいずれかです。 * metadata指定時は、`metadata.{メタデータ名}` の形式で指定します。 * 降順指定時は先頭に-(ハイフン)を付与します。 * 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。
                 annotation (str):  アノテーションの絞り込み条件をJSON形式([AnnotationQuery](#section/AnnotationQuery))で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
 
         Returns:
@@ -2730,11 +2644,7 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_tasks_generation(
-        self,
-        project_id: str,
-        query_params: Optional[Dict[str, Any]] = None,
-        request_body: Optional[Any] = None,
-        **kwargs,
+        self, project_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """タスク一括作成
         https://annofab.com/docs/api/#operation/initiateTasksGeneration
@@ -2747,20 +2657,17 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：TaskGenerateResponse
             request_body (Any): Request Body
                 task_generate_request (TaskGenerateRequest):  (required)
 
         Returns:
-            Tuple[TaskGenerateResponseWrapper, requests.Response]
+            Tuple[TaskGenerateResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/generate-tasks"
         http_method = "POST"
         keyword_params: Dict[str, Any] = {
-            "query_params": query_params,
             "request_body": request_body,
         }
         return self._request_wrapper(http_method, url_path, **keyword_params)
@@ -2810,7 +2717,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                request_body (dict(str, __DictStrKeyAnyValue__)):  (required)
+                body (__DictStrKeyAnyValue__):  タスクIDとメタデータのkey-valueペア(Dictionary)を指定してください。<br> メタデータは、メタデータ名と値のkey-valueペア(Dictionary)です。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値  ``` (例)  {   \"task_1\": { \"metadata_1\": \"str\", \"metadata_2\": 100 },   \"task_2\": { \"metadata_3\": true } } ```  (required)
 
         Returns:
             Tuple[Message, requests.Response]
@@ -2849,37 +2756,6 @@ class AbstractAnnofabApi(abc.ABC):
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
-            "request_body": request_body,
-        }
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def start_task(
-        self, project_id: str, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
-        """タスク割当
-        https://annofab.com/docs/api/#operation/startTask
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        タスクの割当を要求します。  個々のタスクの情報を取得する場合は、[タスク取得](#operation/getTask)を使います。
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-            request_body (Any): Request Body
-                task_start (TaskStart):  (required)
-
-        Returns:
-            Tuple[Task, requests.Response]
-
-
-        """
-        warnings.warn("deprecated", DeprecationWarning)
-        url_path = f"/projects/{project_id}/start-task"
-        http_method = "POST"
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
