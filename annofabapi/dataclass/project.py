@@ -39,6 +39,9 @@ class ProjectConfiguration(DataClassJsonMixin):
     task_assignment_type: Optional[TaskAssignmentType]
     """"""
 
+    task_assignment_property: Optional[TaskAssignmentProperty]
+    """"""
+
     max_tasks_per_member: Optional[int]
     """保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。"""
 

@@ -66,7 +66,6 @@ class TestSimpleAnnotationParserByTask:
             test_dir / "simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json"
         )
 
-
     def test_SimpleAnnotationZipParserByTask(self):
         with zipfile.ZipFile(test_dir / "simple-annotation.zip") as zip_file:
             task_parser = SimpleAnnotationZipParserByTask(zip_file, "sample_1")
@@ -124,8 +123,6 @@ class TestSimpleAnnotation:
         assert len([e for e in parser_list if e.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"]) == 1
         assert len([e for e in parser_list if e.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"]) == 1
 
-
-
     def test_lazy_parse_simple_annotation_dir_by_task(self):
         zip_path = Path(test_dir / "simple-annotation")
         task_parser_list = list(annofabapi.parser.lazy_parse_simple_annotation_dir_by_task(zip_path))
@@ -139,8 +136,6 @@ class TestSimpleAnnotation:
         assert len(parser_list) == 2
         assert len([e for e in parser_list if e.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"]) == 1
         assert len([e for e in parser_list if e.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"]) == 1
-
-
 
 
 class TestFullAnnotation:
