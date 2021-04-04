@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.108.0
+  version: 0.111.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -175,7 +175,9 @@ tags:
 - name: af-organization-input
   x-displayName: Organization Input
   description: |
-    組織の入力データセットと入力データに対する操作
+    入力データセットと入力データに対する操作
+
+    **入力データセットに関するAPIは開発中のため、予告なく変更されることがあります。**
 
     **入力データセット**とは、プロジェクトが用いる入力データの集合です。入力データセットは組織に所属します。
     現時点では入力データセットはプロジェクトを新規作成するごとに一つずつ作成されるようになっています。
@@ -500,6 +502,52 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/Token"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorRefreshTokenExpired"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /plugin-token:
+    post:
+      tags:
+        - af-login
+      summary: プラグイン用トークン発行
+      description: |
+        プラグイン用のトークンを発行します。
+        ここで発行されるアクセストークンは、プラグインの種別に応じた範囲のAPIアクセスに使用することができます。
+
+        現時点ではカスタムアノテーションエディタ用のプラグインのみに対応しています。
+
+        #### authorization_code を使う場合 (PluginTokenRequestAuthorizationCode)
+        1. プラグイン: PKCE (RFC 7636) の code_challenge_method=S256 の場合に準ずる形で `code_verifier` `code_challenge`  を生成
+        1. プラグイン: `https://annofab.com/project/{project_id}/authorize-plugin?plugin_type={plugin_type}&code_challenge={code_challenge}` へリダイレクト
+          - `plugin_type` はカスタムアノテーションエディタの場合は `AnnotationEditor` を、カスタムアノテーション仕様の場合は `AnnotationSpecs` を指定
+        1. AnnoFab: リクエストやユーザー権限の確認後、プラグインの auth_redirect_url に設定されたURLへクエリパラメータ `code` つきでリダイレクト
+        1. プラグイン: 本APIに上記 code および1で生成した code_verifier を渡し、access_token と refresh_token を得る
+
+        code付きでカスタムエディタにリダイレクトする際のURLは、タスク一覧等からのリダイレクトに使うURLとは別に設定し、projectIdやtaskIdは含まれません。
+        AnnoFabへリダイレクトする前に `location.href` などを保存しておき、トークン取得後にURL書き換えやリダイレクトを行うことを推奨します。
+
+        この手順で取得したaccess_tokenを使って他のAPIをリクエストする際には `Authorization: Bearer <access_token>` としてBearer付きでアクセスしてください。
+
+        #### refresh_token を使う場合 (PluginTokenRequestRefreshToken)
+        1. プラグイン: 前回のトークン発行時に access_token と共に発行される refresh_token を記憶しておく
+        1. プラグイン: 本APIに上記 refresh_token を渡し、 access_token と refresh_token を得る
+      security:
+        - EveryoneRequestBody: []
+      operationId: requestPluginToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "swagger-api-components.yaml#/components/schemas/PluginTokenRequest"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/PluginTokenResponse"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /sign-up:
@@ -1607,6 +1655,141 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+    put:
+      operationId: putInputDataSet
+      summary: 入力データセット新規作成/更新
+      description: |
+        指定した組織の[入力データセット](#tag/af-organization-input)の情報を新規登録/更新します。
+      tags:
+        - af-organization-input
+      security:
+        - OrganizationAdministrator: []
+        - OrganizationOwner: []
+      parameters:
+        - name: organization_name
+          in: path
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
+          description: 組織名
+        - name: input_data_set_id
+          in: path
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/InputDataSetId"
+          description: 入力データセットID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "swagger-api-components.yaml#/components/schemas/PutInputDataSetRequest"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/InputDataSet"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /organizations/{organization_name}/input_data_set/{input_data_set_id}/inputs:
+    get:
+      tags:
+        - af-organization-input
+      summary: 入力データセット内の入力データ一括取得
+      description: |
+        指定された入力データセットの入力データを検索します。
+        組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。
+
+        パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。
+      security:
+        - AllOrganizationMember: []
+      operationId: getOrganizationInputDataList
+      parameters:
+        - name: organization_name
+          in: path
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
+          description: 組織名
+        - name: input_data_set_id
+          in: path
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/InputDataSetId"
+          description: 入力データセットID
+        - name: input_data_id
+          in: query
+          description: 入力データIDでの部分一致検索で使用。1文字以上あれば使用します。
+          required: false
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
+        - name: input_data_name
+          in: query
+          description: 入力データ名での部分一致検索で使用。1文字以上あれば使用します。
+          required: false
+          schema:
+            type: string
+        - name: input_data_path
+          in: query
+          description: 入力データパスでの部分一致検索で使用。1文字以上あれば使用します。
+          required: false
+          schema:
+            type: string
+        - name: task_id
+          in: query
+          description: 入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。条件に合致した先頭100件のタスクに使われている入力データを検索します。
+          required: false
+          schema:
+            type: string
+        - name: from
+          in: query
+          description: 更新日時での範囲検索で使用（ISO 8601 拡張形式）
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          description: 更新日時での範囲検索で使用（ISO 8601 拡張形式）
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: page
+          in: query
+          description: 検索結果のうち、取得したいページの番号(1始まり）
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: 1ページあたりの取得するデータ件数
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 30
+      responses:
+        "200":
+          description: 指定された条件にあてはまる入力データを返します。条件にあてはまる入力データが多数に及ぶことがあるので、すべての結果を得るにはページングしてください。
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/InputDataList"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /organizations/{organization_name}/input_data_set/{input_data_set_id}/inputs/{input_data_id}:
     get:
       tags:
@@ -1618,6 +1801,48 @@ paths:
       security:
         - AllOrganizationMember: []
       operationId: getOrganizationInputData
+      parameters:
+        - name: organization_name
+          in: path
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
+          description: 組織名
+        - name: input_data_set_id
+          in: path
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/InputDataSetId"
+          description: 入力データセットID
+        - name: input_data_id
+          in: path
+          description: 入力データID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/InputData"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+    delete:
+      tags:
+        - af-organization-input
+      summary: 入力データセットの入力データ削除
+      description: |
+        指定した組織の[入力データセット](#tag/af-organization-input)内で指定した入力データ情報を削除します。
+      security:
+        - OrganizationAdministrator: []
+        - ProjectOwner: []
+      operationId: deleteOrganizationInputData
       parameters:
         - name: organization_name
           in: path
