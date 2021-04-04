@@ -183,7 +183,7 @@ class AdditionalDataDefinitionV1Choices(DataClassJsonMixin):
     name: InternationalizationMessage
     """"""
 
-    keybind: List[Keybind]
+    keybind: Optional[List[Keybind]]
     """"""
 
 
@@ -194,34 +194,34 @@ class AdditionalDataDefinitionV1(DataClassJsonMixin):
     additional_data_definition_id: str
     """"""
 
-    read_only: bool
+    read_only: Optional[bool]
     """"""
 
-    name: InternationalizationMessage
+    name: Optional[InternationalizationMessage]
     """"""
 
-    default: AdditionalDataDefaultType
+    default: Optional[AdditionalDataDefaultType]
     """"""
 
-    keybind: List[Keybind]
+    keybind: Optional[List[Keybind]]
     """"""
 
     type: AdditionalDataDefinitionType
     """"""
 
-    choices: List[AdditionalDataDefinitionV1Choices]
+    choices: Optional[List[AdditionalDataDefinitionV1Choices]]
     """"""
 
     regex: Optional[str]
     """"""
 
-    label_ids: List[str]
+    label_ids: Optional[List[str]]
     """リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）"""
 
     required: Optional[bool]
     """リンク属性において、入力を必須とするかどうか"""
 
-    metadata: Dict[str, str]
+    metadata: Optional[Dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -232,25 +232,25 @@ class AdditionalDataDefinitionV2(DataClassJsonMixin):
     additional_data_definition_id: str
     """"""
 
-    read_only: bool
+    read_only: Optional[bool]
     """"""
 
     name: InternationalizationMessage
     """"""
 
-    default: AdditionalDataDefaultType
+    default: Optional[AdditionalDataDefaultType]
     """"""
 
-    keybind: List[Keybind]
+    keybind: Optional[List[Keybind]]
     """"""
 
     type: AdditionalDataDefinitionType
     """"""
 
-    choices: List[AdditionalDataDefinitionV1Choices]
+    choices: Optional[List[AdditionalDataDefinitionV1Choices]]
     """"""
 
-    metadata: Dict[str, str]
+    metadata: Optional[Dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -308,10 +308,10 @@ class LabelV1(DataClassJsonMixin):
     annotation_editor_feature: AnnotationEditorFeature
     """"""
 
-    allow_out_of_image_bounds: bool
+    allow_out_of_image_bounds: Optional[bool]
     """"""
 
-    metadata: Dict[str, str]
+    metadata: Optional[Dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -346,10 +346,10 @@ class LabelV2(DataClassJsonMixin):
     annotation_editor_feature: AnnotationEditorFeature
     """"""
 
-    allow_out_of_image_bounds: bool
+    allow_out_of_image_bounds: Optional[bool]
     """"""
 
-    metadata: Dict[str, str]
+    metadata: Optional[Dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 

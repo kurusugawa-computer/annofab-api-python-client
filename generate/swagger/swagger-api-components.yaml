@@ -368,6 +368,59 @@ components:
       properties:
         refresh_token:
           type: string
+    PluginTokenRequest:
+      oneOf:
+        - $ref: "#/components/schemas/PluginTokenRequestAuthorizationCode"
+        - $ref: "#/components/schemas/PluginTokenRequestRefreshToken"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          AuthorizationCode: "#/components/schemas/PluginTokenRequestAuthorizationCode"
+          RefreshToken: "#/components/schemas/PluginTokenRequestRefreshToken"
+    PluginTokenRequestAuthorizationCode:
+      type: object
+      required:
+        - _type
+        - authorization_code
+        - code_verifier
+      properties:
+        _type:
+          type: string
+          default: AuthorizationCode
+          description: "`AuthorizationCode` を指定します"
+        authorization_code:
+          type: string
+          description: リダイレクト時にクエリパラメータ `code` として受け取った文字列
+        code_verifier:
+          type: string
+          description: 認可リクエスト時に渡した `code_challenge` に対応するverifier文字列
+    PluginTokenRequestRefreshToken:
+      type: object
+      required:
+        - _type
+        - refresh_token
+      properties:
+        _type:
+          type: string
+          default: RefreshToken
+          description: "`RefreshToken` を指定します"
+        refresh_token:
+          type: string
+          description: 前回のトークン発行で得られた `refresh_token`
+    PluginTokenResponse:
+      type: object
+      required:
+        - access_token
+        - refresh_token
+      properties:
+        access_token:
+          type: string
+          description: |
+            APIアクセスに用いるトークン。
+            リクエストヘッダにおいて `Authorization: Bearer {access_token}` の形で指定します。
+        refresh_token:
+          type: string
+          description: トークンの更新に用いるトークン。
     ChangePasswordRequest:
       type: object
       required:
@@ -708,6 +761,14 @@ components:
       properties:
         url:
           $ref: "#/components/schemas/AnnotationEditorUrl"
+        auth_redirect_url:
+          type: string
+          description: |
+            認証後のリダイレクト先。このURLに `?code=xxx` をつけてリダイレクトされます。
+            url プロパティとは異なり、 `{projectId}` や `{taskId}` といったパラメータの置換は行われません。
+
+            詳しくは [requestPluginToken API](#operation/requestPluginToken) を参照してください。
+          example: "https://example.com/my/editors"
         compatible_input_data_types:
           $ref: "#/components/schemas/PluginCompatibleInputDataTypes"
         _type:
@@ -738,6 +799,10 @@ components:
       properties:
         url:
           $ref: "#/components/schemas/AnnotationSpecsUrl"
+        auth_redirect_url:
+          type: string
+          description: |
+            認証後のリダイレクト先
         compatible_input_data_types:
           $ref: "#/components/schemas/PluginCompatibleInputDataTypes"
         _type:
@@ -2285,8 +2350,6 @@ components:
         - additional_data_definitions
         - color
         - annotation_editor_feature
-        - allow_out_of_image_bounds
-        - metadata
       properties:
         label_id:
           $ref: "#/components/schemas/LabelId"
@@ -2375,8 +2438,6 @@ components:
         - additional_data_definitions
         - color
         - annotation_editor_feature
-        - allow_out_of_image_bounds
-        - metadata
       properties:
         label_id:
           $ref: "#/components/schemas/LabelId"
@@ -2500,14 +2561,9 @@ components:
       type: object
       required:
         - additional_data_definition_id
-        - read_only
-        - name
-        - default
-        - keybind
+        # 正確にはnameもrequiredだが、annofab-api-js-clientでAnnotationSpecsV2を読む際に支障があるので消している #8590
+        # - name
         - type
-        - choices
-        - label_ids
-        - metadata
       properties:
         additional_data_definition_id:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
@@ -2531,7 +2587,6 @@ components:
             required:
               - choice_id
               - name
-              - keybind
             properties:
               choice_id:
                 $ref: "#/components/schemas/ChoiceId"
@@ -2561,13 +2616,8 @@ components:
       type: object
       required:
         - additional_data_definition_id
-        - read_only
         - name
-        - default
-        - keybind
         - type
-        - choices
-        - metadata
       properties:
         additional_data_definition_id:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
@@ -2591,7 +2641,6 @@ components:
             required:
               - choice_id
               - name
-              - keybind
             properties:
               choice_id:
                 $ref: "#/components/schemas/ChoiceId"
@@ -3242,6 +3291,28 @@ components:
             [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
           example: "arn:aws:iam::123456789012:role/AnnoFabPrivateStorageAccessor"
         updated_datetime:
+          type: string
+          format: date-time
+          description: 入力データセットの最終更新日時
+    PutInputDataSetRequest:
+      description: 入力データセット新規作成/更新
+      type: object
+      required:
+        - input_data_set_name
+        - input_data_type
+      properties:
+        input_data_set_name:
+          type: string
+          description: 表示用の名前です。
+        input_data_type:
+          $ref: "#/components/schemas/InputDataType"
+        private_storage_arn:
+          type: string
+          description: |
+            AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。
+            [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
+          example: "arn:aws:iam::123456789012:role/AnnoFabPrivateStorageAccessor"
+        last_updated_datetime:
           type: string
           format: date-time
           description: 入力データセットの最終更新日時
