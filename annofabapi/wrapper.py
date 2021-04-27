@@ -78,6 +78,22 @@ def _hour_to_millisecond(hour: Optional[float]) -> Optional[int]:
 _ORGNIZATION_ID_FOR_AVAILABILITY = "___plannedWorktime___"
 """予定稼働時間用の組織ID"""
 
+_JOB_CONCURRENCY_LIMIT = {
+    JobType.COPY_PROJECT: {JobType.GEN_INPUTS, JobType.GEN_TASKS, JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
+    JobType.GEN_INPUTS: {JobType.COPY_PROJECT, JobType.GEN_INPUTS, JobType.GEN_TASKS, JobType.GEN_INPUTS_LIST, JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
+    JobType.GEN_TASKS: {JobType.COPY_PROJECT, JobType.GEN_INPUTS, JobType.GEN_TASKS, JobType.GEN_ANNOTATION, JobType.GEN_TASKS_LIST,
+                         JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
+    JobType.GEN_ANNOTATION: {JobType.GEN_TASKS, JobType.GEN_ANNOTATION,
+                        JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
+    JobType.GEN_TASKS_LIST: {JobType.GEN_TASKS, JobType.GEN_TASKS_LIST,
+                             JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
+    JobType.GEN_INPUTS_LIST: {JobType.GEN_iNPUTS, JobType.GEN_INPUTS_LIST,
+                             JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
+    JobType.INVOKE_HOOK: {JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
+    JobType.DELETE_PROJECT: {e for e in JobType},
+    JobType.MOVE_PROJECT: {e for e in JobType},
+}
+"""同時に実行できないジョブを表しています。valueに指定されたジョブが1つ以上実行されている場合、keyに指定されたジョブは実行できません。"""
 
 class Wrapper:
     """
@@ -1870,6 +1886,48 @@ class Wrapper:
                 else:
                     logger.debug("job_id = %s のジョブに %d 回アクセスしましたが、完了しませんでした。", job["job_id"], job_access_count)
                     return False
+
+    def can_execute_job(self, project_id: str, job_type: JobType) -> bool:
+        """
+        ジョブが実行できる状態か否か。他のジョブが実行中で同時に実行できない場合はFalseを返す。
+
+        Args:
+            project_id: プロジェクトID
+            job_type: ジョブ種別
+
+        Returns:
+            ジョブが実行できる状態か否か
+        """
+        job_list = _JOB_CONCURRENCY_LIMIT[job_type]
+
+        self.job_in_progress()
+        job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
+        if len(job_list) == 0:
+            return False
+
+        job = job_list[0]
+        return job["job_status"] == JobStatus.PROGRESS.value
+
+    def wait_until_being_able_to_execute_job(self, project_id: str, job_type: JobType) -> bool:
+        """
+        ジョブが実行できる状態か否か。他のジョブが実行中で同時に実行できない場合はFalseを返す。
+
+        Args:
+            project_id: プロジェクトID
+            job_type: ジョブ種別
+
+        Returns:
+            ジョブが実行できる状態か否か
+        """
+        job_list = _JOB_CONCURRENCY_LIMIT[job_type]
+
+        self.job_in_progress()
+        job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
+        if len(job_list) == 0:
+            return False
+
+        job = job_list[0]
+        return job["job_status"] == JobStatus.PROGRESS.value
 
     #########################################
     # Public Method : Labor Control
