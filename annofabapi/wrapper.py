@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+import asyncio
 import copy
 import logging
 import mimetypes
@@ -87,7 +88,7 @@ _JOB_CONCURRENCY_LIMIT = {
                         JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
     JobType.GEN_TASKS_LIST: {JobType.GEN_TASKS, JobType.GEN_TASKS_LIST,
                              JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
-    JobType.GEN_INPUTS_LIST: {JobType.GEN_iNPUTS, JobType.GEN_INPUTS_LIST,
+    JobType.GEN_INPUTS_LIST: {JobType.GEN_INPUTS, JobType.GEN_INPUTS_LIST,
                              JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
     JobType.INVOKE_HOOK: {JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
     JobType.DELETE_PROJECT: {e for e in JobType},
@@ -1887,6 +1888,12 @@ class Wrapper:
                     logger.debug("job_id = %s のジョブに %d 回アクセスしましたが、完了しませんでした。", job["job_id"], job_access_count)
                     return False
 
+    async def _job_in_progress_async(self, project_id: str, job_type: JobType) -> bool:
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(
+            None, self.job_in_progress, project_id, job_type
+        )
+
     def can_execute_job(self, project_id: str, job_type: JobType) -> bool:
         """
         ジョブが実行できる状態か否か。他のジョブが実行中で同時に実行できない場合はFalseを返す。
@@ -1898,15 +1905,20 @@ class Wrapper:
         Returns:
             ジョブが実行できる状態か否か
         """
-        job_list = _JOB_CONCURRENCY_LIMIT[job_type]
+        job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
 
-        self.job_in_progress()
-        job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
-        if len(job_list) == 0:
-            return False
+        # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
+        if self.api.token_dict is None:
+            self.api.login()
 
-        job = job_list[0]
-        return job["job_status"] == JobStatus.PROGRESS.value
+        # 複数のジョブに対して進行中かどうかを確認する
+        gather = asyncio.gather(
+            *[self._job_in_progress_async(project_id, job_type) for job_type in job_type_list]
+        )
+        loop = asyncio.get_event_loop()
+        result = loop.run_until_complete(gather)
+
+        return all([not e for e in result])
 
     def wait_until_being_able_to_execute_job(self, project_id: str, job_type: JobType) -> bool:
         """
