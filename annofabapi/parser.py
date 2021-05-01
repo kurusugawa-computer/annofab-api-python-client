@@ -38,7 +38,7 @@ class SimpleAnnotationParser(abc.ABC):
 
     @property
     def task_id(self) -> str:
-        """JSONファイルの親ディレクトリ名から決まる task_id """
+        """JSONファイルの親ディレクトリ名から決まる task_id"""
         return self.__task_id
 
     @property
@@ -110,7 +110,7 @@ class FullAnnotationParser(abc.ABC):
 
     @property
     def task_id(self) -> str:
-        """JSONファイルの親ディレクトリ名から決まる task_id """
+        """JSONファイルの親ディレクトリ名から決まる task_id"""
         return self.__task_id
 
     @property
@@ -218,7 +218,7 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
-            return open(outer_file_path, mode="rb")
+            return open(outer_file_path, mode="rb")  # pylint: disable=consider-using-with
         except FileNotFoundError as e:
             raise AnnotationOuterFileNotFoundError(str(outer_file_path)) from e
 
@@ -289,7 +289,7 @@ class FullAnnotationDirParser(FullAnnotationParser):
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
-            return open(outer_file_path, mode="rb")
+            return open(outer_file_path, mode="rb")  # pylint: disable=consider-using-with
         except FileNotFoundError as e:
             raise AnnotationOuterFileNotFoundError(str(outer_file_path)) from e
 

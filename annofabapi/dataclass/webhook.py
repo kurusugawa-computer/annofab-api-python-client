@@ -20,7 +20,7 @@ from annofabapi.models import WebhookEventType, WebhookHttpMethod, WebhookStatus
 
 @dataclass
 class WebhookHeader(DataClassJsonMixin):
-    """"""
+    """ """
 
     name: Optional[str]
     """"""
@@ -31,7 +31,7 @@ class WebhookHeader(DataClassJsonMixin):
 
 @dataclass
 class Webhook(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

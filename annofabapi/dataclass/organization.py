@@ -20,7 +20,7 @@ from annofabapi.models import PricePlan
 
 @dataclass
 class OrganizationActivity(DataClassJsonMixin):
-    """"""
+    """ """
 
     organization_id: str
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -34,7 +34,7 @@ class OrganizationActivity(DataClassJsonMixin):
 
 @dataclass
 class Organization(DataClassJsonMixin):
-    """"""
+    """ """
 
     organization_id: str
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

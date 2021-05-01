@@ -81,20 +81,37 @@ _ORGNIZATION_ID_FOR_AVAILABILITY = "___plannedWorktime___"
 
 _JOB_CONCURRENCY_LIMIT = {
     JobType.COPY_PROJECT: {JobType.GEN_INPUTS, JobType.GEN_TASKS, JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
-    JobType.GEN_INPUTS: {JobType.COPY_PROJECT, JobType.GEN_INPUTS, JobType.GEN_TASKS, JobType.GEN_INPUTS_LIST, JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
-    JobType.GEN_TASKS: {JobType.COPY_PROJECT, JobType.GEN_INPUTS, JobType.GEN_TASKS, JobType.GEN_ANNOTATION, JobType.GEN_TASKS_LIST,
-                         JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
-    JobType.GEN_ANNOTATION: {JobType.GEN_TASKS, JobType.GEN_ANNOTATION,
-                        JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
-    JobType.GEN_TASKS_LIST: {JobType.GEN_TASKS, JobType.GEN_TASKS_LIST,
-                             JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
-    JobType.GEN_INPUTS_LIST: {JobType.GEN_INPUTS, JobType.GEN_INPUTS_LIST,
-                             JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
+    JobType.GEN_INPUTS: {
+        JobType.COPY_PROJECT,
+        JobType.GEN_INPUTS,
+        JobType.GEN_TASKS,
+        JobType.GEN_INPUTS_LIST,
+        JobType.DELETE_PROJECT,
+        JobType.MOVE_PROJECT,
+    },
+    JobType.GEN_TASKS: {
+        JobType.COPY_PROJECT,
+        JobType.GEN_INPUTS,
+        JobType.GEN_TASKS,
+        JobType.GEN_ANNOTATION,
+        JobType.GEN_TASKS_LIST,
+        JobType.DELETE_PROJECT,
+        JobType.MOVE_PROJECT,
+    },
+    JobType.GEN_ANNOTATION: {JobType.GEN_TASKS, JobType.GEN_ANNOTATION, JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
+    JobType.GEN_TASKS_LIST: {JobType.GEN_TASKS, JobType.GEN_TASKS_LIST, JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
+    JobType.GEN_INPUTS_LIST: {
+        JobType.GEN_INPUTS,
+        JobType.GEN_INPUTS_LIST,
+        JobType.DELETE_PROJECT,
+        JobType.MOVE_PROJECT,
+    },
     JobType.INVOKE_HOOK: {JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
-    JobType.DELETE_PROJECT: {e for e in JobType},
-    JobType.MOVE_PROJECT: {e for e in JobType},
+    JobType.DELETE_PROJECT: set(JobType),
+    JobType.MOVE_PROJECT: set(JobType),
 }
 """同時に実行できないジョブを表しています。valueに指定されたジョブが1つ以上実行されている場合、keyに指定されたジョブは実行できません。"""
+
 
 class Wrapper:
     """
@@ -1862,36 +1879,52 @@ class Wrapper:
         while True:
             job = get_latest_job()
             if job is None:
-                logger.debug("ジョブは存在しませんでした。")
+                logger.debug("job_type = %s のジョブは存在しませんでした。", job_type.value)
                 return True
             else:
                 if job_access_count == 0 and job["job_status"] != "progress":
-                    logger.debug("進行中のジョブはありませんでした。")
+                    logger.debug("job_type = %s である進行中のジョブはありませんでした。", job_type.value)
                     return True
 
             job_access_count += 1
 
             if job["job_status"] == "succeeded":
-                logger.debug("job_id = %s のジョブが成功しました。", job["job_id"])
+                logger.debug("job_id = %s, job_type = %s のジョブが成功しました。", job["job_id"], job_type.value)
                 return True
 
             elif job["job_status"] == "failed":
-                logger.info("job_id = %s のジョブが失敗しました。", job["job_id"])
+                logger.info("job_id = %s, job_type = %s のジョブが失敗しました。", job["job_id"], job_type.value)
                 return False
 
             else:
                 # 進行中
                 if job_access_count < max_job_access:
-                    logger.debug("job_id = %s のジョブが進行中です。%d 秒間待ちます。", job["job_id"], job_access_interval)
+                    logger.debug(
+                        "job_id = %s, job_type = %s のジョブが進行中です。%d 秒間待ちます。",
+                        job["job_id"],
+                        job_type.value,
+                        job_access_interval,
+                    )
                     time.sleep(job_access_interval)
                 else:
-                    logger.debug("job_id = %s のジョブに %d 回アクセスしましたが、完了しませんでした。", job["job_id"], job_access_count)
+                    logger.debug(
+                        "job_id = %s, job_type = %s のジョブに %d 回アクセスしましたが、完了しませんでした。",
+                        job["job_id"],
+                        job_type.value,
+                        job_access_count,
+                    )
                     return False
 
     async def _job_in_progress_async(self, project_id: str, job_type: JobType) -> bool:
         loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, self.job_in_progress, project_id, job_type)
+
+    async def _wait_for_completion(
+        self, project_id: str, job_type: JobType, job_access_interval: int, max_job_access: int
+    ) -> bool:
+        loop = asyncio.get_event_loop()
         return await loop.run_in_executor(
-            None, self.job_in_progress, project_id, job_type
+            None, self.wait_for_completion, project_id, job_type, job_access_interval, max_job_access
         )
 
     def can_execute_job(self, project_id: str, job_type: JobType) -> bool:
@@ -1912,34 +1945,39 @@ class Wrapper:
             self.api.login()
 
         # 複数のジョブに対して進行中かどうかを確認する
-        gather = asyncio.gather(
-            *[self._job_in_progress_async(project_id, job_type) for job_type in job_type_list]
-        )
+        gather = asyncio.gather(*[self._job_in_progress_async(project_id, job_type) for job_type in job_type_list])
         loop = asyncio.get_event_loop()
         result = loop.run_until_complete(gather)
 
-        return all([not e for e in result])
+        return all(not e for e in result)
 
-    def wait_until_being_able_to_execute_job(self, project_id: str, job_type: JobType) -> bool:
+    def wait_until_job_is_executable(
+        self, project_id: str, job_type: JobType, job_access_interval: int = 60, max_job_access: int = 360
+    ):
         """
-        ジョブが実行できる状態か否か。他のジョブが実行中で同時に実行できない場合はFalseを返す。
+        ジョブが実行可能な状態になるまで待ちます。他のジョブが実行されているときは、他のジョブが終了するまで待ちます。
 
         Args:
             project_id: プロジェクトID
             job_type: ジョブ種別
+            job_access_interval: ジョブにアクセスする間隔[sec]
+            max_job_access: ジョブに最大何回アクセスするか
 
-        Returns:
-            ジョブが実行できる状態か否か
         """
-        job_list = _JOB_CONCURRENCY_LIMIT[job_type]
+        job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
+        # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
+        if self.api.token_dict is None:
+            self.api.login()
 
-        self.job_in_progress()
-        job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
-        if len(job_list) == 0:
-            return False
-
-        job = job_list[0]
-        return job["job_status"] == JobStatus.PROGRESS.value
+        # 複数のジョブに対して進行中かどうかを確認する
+        gather = asyncio.gather(
+            *[
+                self._wait_for_completion(project_id, job_type, job_access_interval, max_job_access)
+                for job_type in job_type_list
+            ]
+        )
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(gather)
 
     #########################################
     # Public Method : Labor Control
