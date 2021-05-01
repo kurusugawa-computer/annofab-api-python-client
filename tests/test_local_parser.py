@@ -35,6 +35,11 @@ class TestSimpleAnnotationParser:
             assert parser.task_id == "sample_1"
             assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
             assert parser.json_file_path == "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json"
+
+            with parser.open_outer_file("e2a1fbe3-fa8e-413c-be31-882f12ef62b9") as f:
+                data = f.read()
+                assert len(data) > 0
+
             with pytest.raises(AnnotationOuterFileNotFoundError):
                 parser.open_outer_file("foo")
 
@@ -45,8 +50,14 @@ class TestSimpleAnnotationParser:
         assert parser.task_id == "sample_1"
         assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
         assert parser.json_file_path == str(dir_path / "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
+
+        with parser.open_outer_file("e2a1fbe3-fa8e-413c-be31-882f12ef62b9") as f:
+            data = f.read()
+            assert len(data) > 0
+
         with pytest.raises(AnnotationOuterFileNotFoundError):
-            parser.open_outer_file("foo")
+            with parser.open_outer_file("foo"):
+                pass
 
 
 class TestSimpleAnnotationParserByTask:
