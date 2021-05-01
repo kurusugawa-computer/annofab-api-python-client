@@ -190,7 +190,8 @@ class TestJob:
         assert type(wrapper.can_execute_job(project_id, JobType.GEN_TASKS)) == bool
 
     def test_wait_until_job_is_executable(self):
-        assert type(wrapper.wait_until_job_is_executable(project_id, JobType.GEN_TASKS)) == bool
+        # ただ実行するだけ
+        type(wrapper.wait_until_job_is_executable(project_id, JobType.GEN_TASKS))
 
     @pytest.mark.submitting_job
     def test_delete_project_job(self):
