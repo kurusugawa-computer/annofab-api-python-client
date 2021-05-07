@@ -44,7 +44,7 @@ class Point(DataClassJsonMixin):
 
 @dataclass
 class FullAnnotationDataClassification(DataClassJsonMixin):
-    """"""
+    """ """
 
     type: str
     """Classification"""
@@ -65,7 +65,7 @@ class FullAnnotationDataSegmentation(DataClassJsonMixin):
 
 @dataclass
 class FullAnnotationDataSegmentationV2(DataClassJsonMixin):
-    """"""
+    """ """
 
     data_uri: str
     """"""
@@ -134,7 +134,7 @@ class FullAnnotationDataRange(DataClassJsonMixin):
 
 @dataclass
 class AdditionalData(DataClassJsonMixin):
-    """"""
+    """ """
 
     additional_data_definition_id: str
     """"""
@@ -154,7 +154,7 @@ class AdditionalData(DataClassJsonMixin):
 
 @dataclass
 class FullAnnotationAdditionalData(DataClassJsonMixin):
-    """"""
+    """ """
 
     additional_data_definition_id: Optional[str]
     """"""
@@ -171,7 +171,7 @@ class FullAnnotationAdditionalData(DataClassJsonMixin):
 
 @dataclass
 class FullAnnotationDetail(DataClassJsonMixin):
-    """"""
+    """ """
 
     annotation_id: Optional[str]
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
@@ -200,7 +200,7 @@ class FullAnnotationDetail(DataClassJsonMixin):
 
 @dataclass
 class FullAnnotation(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -235,7 +235,7 @@ class FullAnnotation(DataClassJsonMixin):
 
 @dataclass
 class SimpleAnnotationDetail(DataClassJsonMixin):
-    """"""
+    """ """
 
     label: str
     """アノテーション仕様のラベル名です。 """
@@ -252,7 +252,7 @@ class SimpleAnnotationDetail(DataClassJsonMixin):
 
 @dataclass
 class SimpleAnnotation(DataClassJsonMixin):
-    """"""
+    """ """
 
     annotation_format_version: str
     """アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 """
@@ -287,7 +287,7 @@ class SimpleAnnotation(DataClassJsonMixin):
 
 @dataclass
 class SingleAnnotationDetail(DataClassJsonMixin):
-    """"""
+    """ """
 
     annotation_id: str
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
@@ -322,7 +322,7 @@ class SingleAnnotationDetail(DataClassJsonMixin):
 
 @dataclass
 class SingleAnnotation(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -342,7 +342,7 @@ class SingleAnnotation(DataClassJsonMixin):
 
 @dataclass
 class AnnotationDetail(DataClassJsonMixin):
-    """"""
+    """ """
 
     annotation_id: str
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
@@ -383,7 +383,7 @@ class AnnotationDetail(DataClassJsonMixin):
 
 @dataclass
 class Annotation(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
