@@ -201,7 +201,7 @@ Kyes of Dict
 
 
 class AccountAuthority(Enum):
-    """"""
+    """ """
 
     USER = "user"
     ADMIN = "admin"
@@ -2191,7 +2191,7 @@ Kyes of Dict
 
 
 class JobStatus(Enum):
-    """"""
+    """ """
 
     PROGRESS = "progress"
     SUCCEEDED = "succeeded"
@@ -2629,7 +2629,7 @@ Kyes of Dict
 
 
 class OrganizationMemberRole(Enum):
-    """"""
+    """ """
 
     OWNER = "owner"
     ADMINISTRATOR = "administrator"
@@ -2927,7 +2927,7 @@ Kyes of Dict
 
 
 class PricePlan(Enum):
-    """"""
+    """ """
 
     FREE = "free"
     BUSINESS = "business"
@@ -3212,7 +3212,7 @@ Kyes of Dict
 
 
 class ProjectMemberRole(Enum):
-    """"""
+    """ """
 
     OWNER = "owner"
     WORKER = "worker"
@@ -3642,7 +3642,7 @@ Kyes of Dict
 
 
 class SupplementaryDataType(Enum):
-    """"""
+    """ """
 
     IMAGE = "image"
     TEXT = "text"
@@ -4318,7 +4318,7 @@ Kyes of Dict
 
 
 class WebhookHttpMethod(Enum):
-    """"""
+    """ """
 
     POST = "POST"
     PUT = "PUT"
@@ -4329,7 +4329,7 @@ class WebhookHttpMethod(Enum):
 
 
 class WebhookStatus(Enum):
-    """"""
+    """ """
 
     ACTIVE = "active"
     INACTIVE = "inactive"

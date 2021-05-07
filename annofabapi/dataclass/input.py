@@ -20,7 +20,7 @@ SystemMetadata = Dict[str, Any]
 
 @dataclass
 class Resolution(DataClassJsonMixin):
-    """"""
+    """ """
 
     width: float
     """"""

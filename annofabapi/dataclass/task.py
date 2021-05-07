@@ -73,7 +73,7 @@ class TaskHistoryShort(DataClassJsonMixin):
 
 @dataclass
 class Task(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

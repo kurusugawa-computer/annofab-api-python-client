@@ -20,7 +20,7 @@ from annofabapi.models import AccountAuthority, OrganizationMemberRole, Organiza
 
 @dataclass
 class MyOrganization(DataClassJsonMixin):
-    """"""
+    """ """
 
     organization_id: Optional[str]
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -52,7 +52,7 @@ class MyOrganization(DataClassJsonMixin):
 
 @dataclass
 class MyAccount(DataClassJsonMixin):
-    """"""
+    """ """
 
     account_id: str
     """"""

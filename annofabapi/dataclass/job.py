@@ -20,7 +20,7 @@ from annofabapi.models import JobStatus, JobType
 
 @dataclass
 class JobInfo(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

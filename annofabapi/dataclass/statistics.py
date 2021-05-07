@@ -20,7 +20,7 @@ from annofabapi.models import GraphType, TaskPhase, TaskStatus
 
 @dataclass
 class ProjectTaskStatistics(DataClassJsonMixin):
-    """"""
+    """ """
 
     phase: TaskPhase
     """"""
@@ -37,7 +37,7 @@ class ProjectTaskStatistics(DataClassJsonMixin):
 
 @dataclass
 class ProjectTaskStatisticsHistory(DataClassJsonMixin):
-    """"""
+    """ """
 
     date: Optional[str]
     """"""
@@ -48,7 +48,7 @@ class ProjectTaskStatisticsHistory(DataClassJsonMixin):
 
 @dataclass
 class ProjectAccountStatisticsHistory(DataClassJsonMixin):
-    """"""
+    """ """
 
     date: str
     """"""
@@ -65,7 +65,7 @@ class ProjectAccountStatisticsHistory(DataClassJsonMixin):
 
 @dataclass
 class ProjectAccountStatistics(DataClassJsonMixin):
-    """"""
+    """ """
 
     account_id: str
     """"""
@@ -102,7 +102,7 @@ class InspectionStatisticsBreakdown(DataClassJsonMixin):
 
 @dataclass
 class InspectionStatistics(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -116,7 +116,7 @@ class InspectionStatistics(DataClassJsonMixin):
 
 @dataclass
 class PhaseStatistics(DataClassJsonMixin):
-    """"""
+    """ """
 
     phase: TaskPhase
     """"""
@@ -127,7 +127,7 @@ class PhaseStatistics(DataClassJsonMixin):
 
 @dataclass
 class TaskPhaseStatistics(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -141,7 +141,7 @@ class TaskPhaseStatistics(DataClassJsonMixin):
 
 @dataclass
 class LabelStatistics(DataClassJsonMixin):
-    """"""
+    """ """
 
     label_id: str
     """"""
@@ -155,7 +155,7 @@ class LabelStatistics(DataClassJsonMixin):
 
 @dataclass
 class HistogramItem(DataClassJsonMixin):
-    """"""
+    """ """
 
     begin: float
     """"""
@@ -169,7 +169,7 @@ class HistogramItem(DataClassJsonMixin):
 
 @dataclass
 class WorktimeStatisticsItem(DataClassJsonMixin):
-    """"""
+    """ """
 
     phase: TaskPhase
     """"""
@@ -186,7 +186,7 @@ class WorktimeStatisticsItem(DataClassJsonMixin):
 
 @dataclass
 class AccountWorktimeStatistics(DataClassJsonMixin):
-    """"""
+    """ """
 
     account_id: str
     """"""
@@ -203,7 +203,7 @@ class AccountWorktimeStatistics(DataClassJsonMixin):
 
 @dataclass
 class WorktimeStatistics(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -226,7 +226,7 @@ class WorktimeStatistics(DataClassJsonMixin):
 
 @dataclass
 class Marker(DataClassJsonMixin):
-    """"""
+    """ """
 
     marker_id: Optional[str]
     """マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -243,7 +243,7 @@ class Marker(DataClassJsonMixin):
 
 @dataclass
 class Markers(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

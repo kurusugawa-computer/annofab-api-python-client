@@ -26,7 +26,7 @@ AnnotationSpecsOption = Dict[str, Any]
 
 @dataclass
 class Keybind(DataClassJsonMixin):
-    """"""
+    """ """
 
     code: str
     """"""
@@ -56,7 +56,7 @@ class PositionForMinimumBoundingBoxInsertion(DataClassJsonMixin):
 
 @dataclass
 class LabelV1BoundingBoxMetadata(DataClassJsonMixin):
-    """"""
+    """ """
 
     min_width: int
     """"""
@@ -88,7 +88,7 @@ class LabelV1BoundingBoxMetadata(DataClassJsonMixin):
 
 @dataclass
 class LabelV1SegmentationMetadata(DataClassJsonMixin):
-    """"""
+    """ """
 
     min_width: int
     """"""
@@ -105,7 +105,7 @@ class LabelV1SegmentationMetadata(DataClassJsonMixin):
 
 @dataclass
 class InternationalizationMessageMessages(DataClassJsonMixin):
-    """"""
+    """ """
 
     lang: str
     """"""
@@ -116,7 +116,7 @@ class InternationalizationMessageMessages(DataClassJsonMixin):
 
 @dataclass
 class InternationalizationMessage(DataClassJsonMixin):
-    """"""
+    """ """
 
     messages: List[InternationalizationMessageMessages]
     """"""
@@ -127,7 +127,7 @@ class InternationalizationMessage(DataClassJsonMixin):
 
 @dataclass
 class InspectionPhrase(DataClassJsonMixin):
-    """"""
+    """ """
 
     id: str
     """"""
@@ -138,7 +138,7 @@ class InspectionPhrase(DataClassJsonMixin):
 
 @dataclass
 class AnnotationSpecsHistory(DataClassJsonMixin):
-    """"""
+    """ """
 
     history_id: str
     """"""
@@ -161,7 +161,7 @@ class AnnotationSpecsHistory(DataClassJsonMixin):
 
 @dataclass
 class Color(DataClassJsonMixin):
-    """"""
+    """ """
 
     red: int
     """"""
@@ -175,7 +175,7 @@ class Color(DataClassJsonMixin):
 
 @dataclass
 class AdditionalDataDefinitionV1Choices(DataClassJsonMixin):
-    """"""
+    """ """
 
     choice_id: str
     """"""
@@ -189,7 +189,7 @@ class AdditionalDataDefinitionV1Choices(DataClassJsonMixin):
 
 @dataclass
 class AdditionalDataDefinitionV1(DataClassJsonMixin):
-    """"""
+    """ """
 
     additional_data_definition_id: str
     """"""
@@ -227,7 +227,7 @@ class AdditionalDataDefinitionV1(DataClassJsonMixin):
 
 @dataclass
 class AdditionalDataDefinitionV2(DataClassJsonMixin):
-    """"""
+    """ """
 
     additional_data_definition_id: str
     """"""
@@ -256,7 +256,7 @@ class AdditionalDataDefinitionV2(DataClassJsonMixin):
 
 @dataclass
 class AnnotationEditorFeature(DataClassJsonMixin):
-    """"""
+    """ """
 
     append: bool
     """"""
@@ -279,7 +279,7 @@ class AnnotationEditorFeature(DataClassJsonMixin):
 
 @dataclass
 class LabelV1(DataClassJsonMixin):
-    """"""
+    """ """
 
     label_id: str
     """"""
@@ -317,7 +317,7 @@ class LabelV1(DataClassJsonMixin):
 
 @dataclass
 class LabelV2(DataClassJsonMixin):
-    """"""
+    """ """
 
     label_id: str
     """"""
@@ -355,7 +355,7 @@ class LabelV2(DataClassJsonMixin):
 
 @dataclass
 class AdditionalDataRestriction(DataClassJsonMixin):
-    """"""
+    """ """
 
     additional_data_definition_id: str
     """"""
@@ -366,7 +366,7 @@ class AdditionalDataRestriction(DataClassJsonMixin):
 
 @dataclass
 class AnnotationSpecsV1(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
@@ -389,7 +389,7 @@ class AnnotationSpecsV1(DataClassJsonMixin):
 
 @dataclass
 class AnnotationSpecsV2(DataClassJsonMixin):
-    """"""
+    """ """
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
