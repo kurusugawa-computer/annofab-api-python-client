@@ -186,6 +186,13 @@ class TestJob:
     def test_job_in_progress(self):
         assert type(wrapper.job_in_progress(project_id, JobType.GEN_TASKS)) == bool
 
+    def test_can_execute_job(self):
+        assert type(wrapper.can_execute_job(project_id, JobType.GEN_TASKS)) == bool
+
+    def test_wait_until_job_is_executable(self):
+        # ただ実行するだけ
+        type(wrapper.wait_until_job_is_executable(project_id, JobType.GEN_TASKS))
+
     @pytest.mark.submitting_job
     def test_delete_project_job(self):
         content, _ = api.post_project_tasks_update(project_id, {"v": "2"})

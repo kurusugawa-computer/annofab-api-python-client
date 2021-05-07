@@ -18,7 +18,7 @@ from dataclasses_json import DataClassJsonMixin
 
 @dataclass
 class Instruction(DataClassJsonMixin):
-    """"""
+    """ """
 
     html: Optional[str]
     """作業ガイドのHTML"""
@@ -29,7 +29,7 @@ class Instruction(DataClassJsonMixin):
 
 @dataclass
 class InstructionHistory(DataClassJsonMixin):
-    """"""
+    """ """
 
     history_id: str
     """作業ガイドの履歴ID"""
@@ -43,7 +43,7 @@ class InstructionHistory(DataClassJsonMixin):
 
 @dataclass
 class InstructionImage(DataClassJsonMixin):
-    """"""
+    """ """
 
     image_id: str
     """作業ガイド画像ID"""
