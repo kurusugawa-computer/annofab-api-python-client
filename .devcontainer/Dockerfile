@@ -127,5 +127,5 @@ ENV LC_ALL=C.UTF-8
 
 USER vscode
 
-ADD .devcontainer/entrypoint.sh /entrypoint.sh
+ADD entrypoint.sh /entrypoint.sh
 ENTRYPOINT [ "bash", "-eux", "/entrypoint.sh" ]
