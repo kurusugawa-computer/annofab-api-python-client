@@ -41,5 +41,9 @@
         "**/.git/objects/**",
         ".devcontainer/",
         ".vscode/"
+    ],
+    "cSpell.words": [
+        "pylint",
+        "asyncio"
     ]
 }

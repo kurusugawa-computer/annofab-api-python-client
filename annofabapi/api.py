@@ -34,7 +34,7 @@ def my_backoff(function):
                 e: exception
 
             Returns:
-                True: giveup(リトライしない), False: リトライする
+                True: give up(リトライしない), False: リトライする
 
             """
             if isinstance(e, requests.exceptions.HTTPError):
@@ -164,7 +164,7 @@ class AnnofabApi(AbstractAnnofabApi):
     @staticmethod
     def _response_to_content(response: requests.Response) -> Any:
         """
-        Reponseのcontentを、Content-Typeに対応した型に変換する。
+        Responseのcontentを、Content-Typeに対応した型に変換する。
 
         Args:
             response:
@@ -200,7 +200,7 @@ class AnnofabApi(AbstractAnnofabApi):
         request_body: Optional[Any] = None,
     ) -> Tuple[Any, requests.Response]:
         """
-        HTTP　Requestを投げて、Reponseを返す。
+        HTTP　Requestを投げて、Responseを返す。
 
         Args:
             http_method:
@@ -313,7 +313,7 @@ class AnnofabApi(AbstractAnnofabApi):
         json_obj = response.json()
         self.token_dict = json_obj["token"]
 
-        logger.debug("Logined successfully. user_id = %s", self.login_user_id)
+        logger.debug("Logged in successfully. user_id = %s", self.login_user_id)
         return json_obj, response
 
     def logout(self) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
