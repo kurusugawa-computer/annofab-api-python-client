@@ -1,0 +1,49 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.autoComplete.extraPaths": [
+        ".venv/lib/python3.8/site-packages/"
+    ],
+
+    "python.formatting.blackPath": ".venv/bin/black",
+    "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "python.linting.lintOnSave": true,
+    "python.linting.pylintPath": ".venv/bin/pylint",
+    "python.linting.pylintArgs": [
+        "--rcfile setup.cfg",
+    ],
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Path": ".venv/bin/flake8",
+    "python.linting.flake8Args": [],
+    "python.linting.mypyEnabled": true,
+    "python.linting.mypyPath": ".venv/bin/mypy",
+    "python.linting.mypyArgs": [],
+    "python.linting.banditEnabled": false,
+    "python.linting.pylamaEnabled": false,
+    "python.linting.prospectorEnabled": false,
+    "python.linting.pydocstyleEnabled": false,
+    "python.linting.pycodestyleEnabled": false,
+    "python.linting.ignorePatterns": [
+        ".vscode/*.py",
+        "**/site-packages/**/*.py"
+    ],
+    "python.analysis.extraPaths": [
+        ".venv/lib/python3.8/site-packages/"
+    ],
+    "python.analysis.completeFunctionParens": true,
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+    },
+    "cSpell.ignorePaths": [
+        "**/.git/objects/**",
+        ".devcontainer/",
+        ".vscode/"
+    ],
+    "cSpell.words": [
+        "pylint",
+        "asyncio"
+    ]
+}
