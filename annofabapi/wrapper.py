@@ -76,7 +76,7 @@ def _hour_to_millisecond(hour: Optional[float]) -> Optional[int]:
     return int(hour * 3600_000) if hour is not None else None
 
 
-_ORGNIZATION_ID_FOR_AVAILABILITY = "___plannedWorktime___"
+_ORGANIZATION_ID_FOR_AVAILABILITY = "___plannedWorktime___"
 """予定稼働時間用の組織ID"""
 
 _JOB_CONCURRENCY_LIMIT = {
@@ -2087,7 +2087,7 @@ class Wrapper:
             return labor
 
         query_params = {
-            "organization_id": _ORGNIZATION_ID_FOR_AVAILABILITY,
+            "organization_id": _ORGANIZATION_ID_FOR_AVAILABILITY,
             "account_id": account_id,
             "from": from_date,
             "to": to_date,
@@ -2227,7 +2227,7 @@ class Wrapper:
 
         """
 
-        organization_id = _ORGNIZATION_ID_FOR_AVAILABILITY
+        organization_id = _ORGANIZATION_ID_FOR_AVAILABILITY
 
         labor_list, _ = self.api.get_labor_control(
             query_params={"organization_id": organization_id, "account_id": account_id, "from": date, "to": date}
