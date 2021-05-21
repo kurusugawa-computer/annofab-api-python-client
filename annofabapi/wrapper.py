@@ -542,13 +542,46 @@ class Wrapper:
 
         return dest_obj
 
+    def __convert_annotation_specs_labels_v2_to_v1(
+        self, labels_v2: List[Dict[str, Any]], additionals_v2: List[Dict[str, Any]]
+    ) -> List[LabelV1]:
+        """アノテーション仕様のV2版からV1版に変換する。V1版の方が扱いやすいので。
+
+        Args:
+            labels_v2 (List[Dict[str, Any]]): V2版のラベル情報
+            additionals_v2 (List[Dict[str, Any]]): V2版の属性情報
+
+        Returns:
+            List[LabelV1]: V1版のラベル情報
+        """
+
+        def to_label_v1(label_v2, additionals_v2) -> LabelV1:
+            additional_data_definition_id_list = label_v2["additional_data_definitions"]
+            new_additional_data_definitions = []
+            for additional_data_definition_id in additional_data_definition_id_list:
+                additional = _first_true(
+                    additionals_v2, pred=lambda e: e["additional_data_definition_id"] == additional_data_definition_id
+                )
+                if additional is not None:
+                    new_additional_data_definitions.append(additional)
+                else:
+                    raise ValueError(
+                        f"additional_data_definition_id={additional_data_definition_id} に対応する属性情報が存在しません。"
+                        "label_id={label_v2['label_id'], label_name_en={self.__get_label_name_en(label_v2))}"
+                    )
+            label_v2["additional_data_definitions"] = new_additional_data_definitions
+            return label_v2
+
+        return [to_label_v1(labels_v2, additionals_v2) for label_v2 in labels_v2]
+
     def put_annotation_for_simple_annotation_json(
         self,
         project_id: str,
         task_id: str,
         input_data_id: str,
         simple_annotation_json: str,
-        annotation_specs_labels: List[LabelV1],
+        annotation_specs_labels: List[Dict[str, Any]],
+        annotation_specs_additionals: Optional[List[Dict[str, Any]]] = None,
     ) -> bool:
         """
         AnnoFabからダウンロードしたアノテーションzip配下のJSONと同じフォーマット（Simple Annotation)の内容から、アノテーションを登録する。
@@ -557,10 +590,15 @@ class Wrapper:
             project_id:
             task_id:
             input_data_id:
-            simple_annotation_json:
+            simple_annotation_json: AnnoFabからダウンロードしたアノテーションzip配下のJSONのパス
+            annotation_specs_labels: アノテーション仕様のラベル情報。annotation_specs_additionalsが指定されている場合はV2版、指定されない場合はV1版。
+            annotation_specs_additionals: アノテーション仕様の属性情報（V2版）
 
         Returns:
             True:アノテーション情報をした。False: 登録するアノテーション情報がなかったため、登録しなかった。
+
+        Notes:
+            2021/07以降、引数annotation_specs_labelsはV1版をサポートしなくなる予定です。
         """
         parser = SimpleAnnotationDirParser(Path(simple_annotation_json))
         annotation = parser.load_json()
@@ -571,9 +609,14 @@ class Wrapper:
             return False
 
         request_details: List[Dict[str, Any]] = []
+        annotation_specs_labels_v1 = (
+            self.__convert_annotation_specs_labels_v2_to_v1(annotation_specs_labels, annotation_specs_additionals)
+            if annotation_specs_additionals is not None
+            else annotation_specs_labels
+        )
         for detail in details:
             request_detail = self.__to_annotation_detail_for_request(
-                project_id, parser, detail, annotation_specs_labels
+                project_id, parser, detail, annotation_specs_labels_v1
             )
             if request_detail is not None:
                 request_details.append(request_detail)
