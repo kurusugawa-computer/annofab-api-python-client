@@ -40,7 +40,8 @@
     "cSpell.ignorePaths": [
         "**/.git/objects/**",
         ".devcontainer/",
-        ".vscode/"
+        ".vscode/",
+        "LICENSE"
     ],
     "cSpell.words": [
         "pylint",
