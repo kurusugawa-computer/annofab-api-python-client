@@ -576,7 +576,7 @@ class Wrapper:
             label_v2["additional_data_definitions"] = new_additional_data_definitions
             return label_v2
 
-        return [to_label_v1(labels_v2, additionals_v2) for label_v2 in labels_v2]
+        return [to_label_v1(labels_v2) for label_v2 in labels_v2]
 
     def put_annotation_for_simple_annotation_json(
         self,
