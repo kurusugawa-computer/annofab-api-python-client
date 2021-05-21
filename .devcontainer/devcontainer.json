@@ -21,11 +21,16 @@
 		"--init",
 		"--net=host"
 	],
+	"containerEnv": {
+		"CONTAINER_WORKSPACE": "${containerWorkspaceFolder}",
+		"LOCAL_WORKSPACE": "${localWorkspaceFolder}"
+	},
 	"postStartCommand": "poetry install",
 	"extensions": [
 		"mosapride.zenkaku",
 		"ms-python.python",
 		"ms-python.vscode-pylance",
-		"streetsidesoftware.code-spell-checker"
+		"streetsidesoftware.code-spell-checker",
+		"bungcip.better-toml"
 	]
 }
