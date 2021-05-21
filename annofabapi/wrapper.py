@@ -542,8 +542,9 @@ class Wrapper:
 
         return dest_obj
 
+    @staticmethod
     def __convert_annotation_specs_labels_v2_to_v1(
-        self, labels_v2: List[Dict[str, Any]], additionals_v2: List[Dict[str, Any]]
+        labels_v2: List[Dict[str, Any]], additionals_v2: List[Dict[str, Any]]
     ) -> List[LabelV1]:
         """アノテーション仕様のV2版からV1版に変換する。V1版の方が扱いやすいので。
 
@@ -555,13 +556,16 @@ class Wrapper:
             List[LabelV1]: V1版のラベル情報
         """
 
-        def to_label_v1(label_v2, additionals_v2) -> LabelV1:
+        def get_additional(additional_data_definition_id: str) -> Optional[Dict[str, Any]]:
+            return _first_true(
+                additionals_v2, pred=lambda e: e["additional_data_definition_id"] == additional_data_definition_id
+            )
+
+        def to_label_v1(label_v2) -> LabelV1:
             additional_data_definition_id_list = label_v2["additional_data_definitions"]
             new_additional_data_definitions = []
             for additional_data_definition_id in additional_data_definition_id_list:
-                additional = _first_true(
-                    additionals_v2, pred=lambda e: e["additional_data_definition_id"] == additional_data_definition_id
-                )
+                additional = get_additional(additional_data_definition_id)
                 if additional is not None:
                     new_additional_data_definitions.append(additional)
                 else:
