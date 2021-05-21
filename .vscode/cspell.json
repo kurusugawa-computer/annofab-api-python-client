@@ -1,0 +1,23 @@
+{
+    "version": "0.1",
+    "ignorePaths": [
+        "**/.git/objects/**",
+        ".devcontainer/",
+        ".vscode/",
+        "LICENSE",
+        "tests/",
+        "generated_*.py",
+        "models.py"
+    ],
+    "enabledLanguageIds": [
+        "python"
+    ],
+    "words": [
+        "additionals",
+        "astimezone",
+        "asyncio",
+        "dateutil",
+        "pylint",
+        "tzlocal"
+    ]
+}

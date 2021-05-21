@@ -37,14 +37,5 @@
             "source.organizeImports": true
         },
     },
-    "cSpell.ignorePaths": [
-        "**/.git/objects/**",
-        ".devcontainer/",
-        ".vscode/",
-        "LICENSE"
-    ],
-    "cSpell.words": [
-        "pylint",
-        "asyncio"
-    ]
+
 }
