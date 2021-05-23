@@ -542,9 +542,8 @@ class Wrapper:
 
         return dest_obj
 
-    @staticmethod
     def __convert_annotation_specs_labels_v2_to_v1(
-        labels_v2: List[Dict[str, Any]], additionals_v2: List[Dict[str, Any]]
+        self, labels_v2: List[Dict[str, Any]], additionals_v2: List[Dict[str, Any]]
     ) -> List[LabelV1]:
         """アノテーション仕様のV2版からV1版に変換する。V1版の方が扱いやすいので。
 
@@ -570,13 +569,13 @@ class Wrapper:
                     new_additional_data_definitions.append(additional)
                 else:
                     raise ValueError(
-                        f"additional_data_definition_id={additional_data_definition_id} に対応する属性情報が存在しません。"
-                        "label_id={label_v2['label_id'], label_name_en={self.__get_label_name_en(label_v2))}"
+                        f"additional_data_definition_id='{additional_data_definition_id}' に対応する属性情報が存在しません。"
+                        f"label_id='{label_v2['label_id']}', label_name_en='{self.__get_label_name_en(label_v2)}'"
                     )
             label_v2["additional_data_definitions"] = new_additional_data_definitions
             return label_v2
 
-        return [to_label_v1(labels_v2) for label_v2 in labels_v2]
+        return [to_label_v1(label_v2) for label_v2 in labels_v2]
 
     def put_annotation_for_simple_annotation_json(
         self,
