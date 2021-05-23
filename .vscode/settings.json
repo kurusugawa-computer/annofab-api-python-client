@@ -1,13 +1,19 @@
 {
-    "python.linting.pylintEnabled": true,
+
+    "python.pythonPath": ".venv/bin/python",
+    "python.languageServer": "Pylance",
+    "python.autoComplete.addBrackets": true,
     "python.autoComplete.extraPaths": [
         ".venv/lib/python3.8/site-packages/"
     ],
+    // "poetry run"コマンドで実行することを想定しているので、venv環境を自動的にactivateしないようにする
+    "python.terminal.activateEnvironment":false,
 
     "python.formatting.blackPath": ".venv/bin/black",
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
     "python.linting.lintOnSave": true,
+    "python.linting.pylintEnabled": true,
     "python.linting.pylintPath": ".venv/bin/pylint",
     "python.linting.pylintArgs": [
         "--rcfile setup.cfg",

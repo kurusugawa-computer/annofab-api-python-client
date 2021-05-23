@@ -6,8 +6,10 @@
         ".vscode/",
         "LICENSE",
         "tests/",
+        // 以下は自動生成されるファイルなのでチェックしない
         "generated_*.py",
-        "models.py"
+        "models.py",
+        "annofabapi/dataclass/*.py"
     ],
     "enabledLanguageIds": [
         "python"
