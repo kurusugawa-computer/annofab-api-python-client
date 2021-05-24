@@ -1,4 +1,4 @@
-dist: xenial
+version: ~> 1.0
 language: python
 python:
   - "3.6"
@@ -8,7 +8,9 @@ python:
 install:
   - pip install poetry
   - poetry install
-  - echo -e "machine annofab.com\nlogin FOO\npassword BAR\n" > ~/.netrc && chmod 600 ~/.netrc
+env:
+  # PyPIへのアクセス過多などで失敗するケースがあるので、タイムアウトを設定する
+  - PIP_DEFAULT_TIMEOUT=100
 script:
    - make lint
    - pytest tests/test_local*.py
