@@ -1,0 +1,25 @@
+{
+    "version": "0.1",
+    "ignorePaths": [
+        "**/.git/objects/**",
+        ".devcontainer/",
+        ".vscode/",
+        "LICENSE",
+        "tests/",
+        // 以下は自動生成されるファイルなのでチェックしない
+        "generated_*.py",
+        "models.py",
+        "annofabapi/dataclass/*.py"
+    ],
+    "enabledLanguageIds": [
+        "python"
+    ],
+    "words": [
+        "additionals",
+        "astimezone",
+        "asyncio",
+        "dateutil",
+        "pylint",
+        "tzlocal"
+    ]
+}

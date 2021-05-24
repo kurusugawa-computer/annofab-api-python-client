@@ -45,7 +45,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
         request_body: Optional[Any] = None,
     ) -> Tuple[Any, requests.Response]:
         """
-        HTTP　Requestを投げて、Reponseを返す。
+        HTTP　Requestを投げて、Responseを返す。
         Args:
             http_method:
             url_path:

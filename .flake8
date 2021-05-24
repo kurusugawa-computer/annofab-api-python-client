@@ -5,4 +5,5 @@ max-line-length = 120
 # https://black.readthedocs.io/en/stable/the_black_code_style.html#line-length
 extend-ignore = E203, W503
 
+exclude = test_*.py
 

@@ -19,7 +19,9 @@
 	"forwardPorts": [],
 	"runArgs": [
 		"--init",
-		"--net=host"
+		"--net=host",
+		"--env=ANNOFAB_USER_ID",
+		"--env=ANNOFAB_PASSWORD"
 	],
 	"containerEnv": {
 		"CONTAINER_WORKSPACE": "${containerWorkspaceFolder}",
@@ -31,6 +33,7 @@
 		"ms-python.python",
 		"ms-python.vscode-pylance",
 		"streetsidesoftware.code-spell-checker",
-		"bungcip.better-toml"
+		"bungcip.better-toml",
+		"njpwerner.autodocstring"
 	]
 }
