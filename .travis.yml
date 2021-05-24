@@ -8,6 +8,9 @@ python:
 install:
   - pip install poetry
   - poetry install
+env:
+  # PyPIへのアクセス過多などで失敗するケースがあるので、タイムアウトを設定する
+  - PIP_DEFAULT_TIMEOUT=100
 script:
    - make lint
    - pytest tests/test_local*.py
