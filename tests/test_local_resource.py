@@ -6,7 +6,7 @@ import os
 import pytest
 
 import annofabapi.exceptions
-from annofabapi.resource import build, build_from_env, build_from_netrc
+from annofabapi.resource import build, build_from_env
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
