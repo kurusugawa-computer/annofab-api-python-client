@@ -1913,53 +1913,14 @@ class Wrapper:
             Falseならば、ジョブが失敗 or ``max_job_access`` 回アクセスしても、ジョブが完了しなかった。
 
         """
+        job_status = self.wait_until_job_finished(
+            project_id, job_type, job_access_interval=job_access_interval, max_job_access=max_job_access
+        )
+        if job_status is None:
+            # 実行中のジョブが存在しない
+            return True
 
-        def get_latest_job() -> Optional[JobInfo]:
-            job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
-            if len(job_list) > 0:
-                return job_list[0]
-            else:
-                return None
-
-        job_access_count = 0
-        while True:
-            job = get_latest_job()
-            if job is None:
-                logger.debug("job_type = %s のジョブは存在しませんでした。", job_type.value)
-                return True
-            else:
-                if job_access_count == 0 and job["job_status"] != "progress":
-                    logger.debug("job_type = %s である進行中のジョブはありませんでした。", job_type.value)
-                    return True
-
-            job_access_count += 1
-
-            if job["job_status"] == "succeeded":
-                logger.debug("job_id = %s, job_type = %s のジョブが成功しました。", job["job_id"], job_type.value)
-                return True
-
-            elif job["job_status"] == "failed":
-                logger.info("job_id = %s, job_type = %s のジョブが失敗しました。", job["job_id"], job_type.value)
-                return False
-
-            else:
-                # 進行中
-                if job_access_count < max_job_access:
-                    logger.debug(
-                        "job_id = %s, job_type = %s のジョブが進行中です。%d 秒間待ちます。",
-                        job["job_id"],
-                        job_type.value,
-                        job_access_interval,
-                    )
-                    time.sleep(job_access_interval)
-                else:
-                    logger.debug(
-                        "job_id = %s, job_type = %s のジョブに %d 回アクセスしましたが、完了しませんでした。",
-                        job["job_id"],
-                        job_type.value,
-                        job_access_count,
-                    )
-                    return False
+        return job_status == JobStatus.SUCCEEDED
 
     def wait_until_job_finished(
         self,
@@ -1980,7 +1941,7 @@ class Wrapper:
             job_id: ジョブID。Noneの場合は、現在進行中のジョブが終了するまで待つ。
 
         Returns:
-            待った後のジョブのステータスを返す。
+            指定した時間（アクセス頻度と回数）待った後のジョブのステータスを返す。
             指定したジョブ（job_idがNoneの場合は現在進行中のジョブ）が存在しない場合は、Noneを返す。
 
         """
@@ -1993,7 +1954,8 @@ class Wrapper:
                 return None
 
         def get_job_from_job_id(arg_job_id: str) -> Optional[JobInfo]:
-            job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
+            content, _ = self.api.get_project_job(project_id, query_params={"type": job_type.value})
+            job_list = content["list"]
             return _first_true(job_list, pred=lambda e: e["job_id"] == arg_job_id)
 
         job_access_count = 0
@@ -2004,7 +1966,7 @@ class Wrapper:
                 # 初回のみ
                 job = get_latest_job()
                 if job is None or job["job_status"] != JobStatus.PROGRESS.value:
-                    logger.debug("job_type='%s' である進行中のジョブは存在しません。", job_type.value, job_id)
+                    logger.debug("job_type='%s' である進行中のジョブは存在しません。", job_type.value)
                     return None
                 job_id = job["job_id"]
 
@@ -2034,10 +1996,10 @@ class Wrapper:
                     time.sleep(job_access_interval)
                 else:
                     logger.debug(
-                        "job_id='%s', job_type='%s' のジョブは %d 分経過しても、終了しませんでした。",
+                        "job_id='%s', job_type='%s' のジョブは %.1f 分以上経過しても、終了しませんでした。",
                         job["job_id"],
                         job_type.value,
-                        job_access_interval * job_access_count * 60,
+                        job_access_interval * job_access_count / 60,
                     )
                     return JobStatus.PROGRESS
 
