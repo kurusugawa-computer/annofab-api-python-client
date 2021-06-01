@@ -2052,7 +2052,7 @@ class Wrapper:
             max_job_access: ジョブに最大何回アクセスするか
 
         Returns:
-            True：ジョブが実行可能な状態, False：まだ進行中のジョブが存在するため、ジョブが実行不可能な状態
+            指定した時間（アクセス頻度と回数）待った後、ジョブが実行可能な状態かどうか。進行中のジョブが存在する場合は、ジョブが実行不可能。
 
         """
         job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
