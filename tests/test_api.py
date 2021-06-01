@@ -17,7 +17,7 @@ from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.models import GraphType, JobType
+from annofabapi.models import GraphType, JobStatus, JobType
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
@@ -177,6 +177,11 @@ class TestJob:
         result = wrapper.wait_for_completion(project_id, JobType.GEN_TASKS, job_access_interval=1, max_job_access=1)
         assert result == True
 
+    def test_wait_until_job_finished(self):
+        # 実行中のジョブはないはずので、必ずTrue
+        result = wrapper.wait_until_job_finished(project_id, JobType.GEN_TASKS, job_access_interval=1, max_job_access=1)
+        assert result is None
+
     def test_get_all_project_job(self):
         assert len(wrapper.get_all_project_job(project_id, {"type": JobType.GEN_INPUTS.value})) >= 0
 
@@ -195,7 +200,7 @@ class TestJob:
 
     @pytest.mark.submitting_job
     def test_delete_project_job(self):
-        content, _ = api.post_project_tasks_update(project_id, {"v": "2"})
+        content, _ = api.post_project_tasks_update(project_id)
         job = content["job"]
         job_type = job["job_type"]
         job_id = job["job_id"]
