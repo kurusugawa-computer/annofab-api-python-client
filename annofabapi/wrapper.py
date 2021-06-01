@@ -2041,7 +2041,7 @@ class Wrapper:
 
     def wait_until_job_is_executable(
         self, project_id: str, job_type: JobType, job_access_interval: int = 60, max_job_access: int = 360
-    ):
+    ) -> bool:
         """
         ジョブが実行可能な状態になるまで待ちます。他のジョブが実行されているときは、他のジョブが終了するまで待ちます。
 
