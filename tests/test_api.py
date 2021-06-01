@@ -17,7 +17,7 @@ from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.models import GraphType, JobStatus, JobType
+from annofabapi.models import GraphType, JobType
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
@@ -196,7 +196,8 @@ class TestJob:
 
     def test_wait_until_job_is_executable(self):
         # ただ実行するだけ
-        type(wrapper.wait_until_job_is_executable(project_id, JobType.GEN_TASKS))
+        result = wrapper.wait_until_job_is_executable(project_id, JobType.GEN_TASKS)
+        type(result) == bool
 
     @pytest.mark.submitting_job
     def test_delete_project_job(self):

@@ -2051,6 +2051,9 @@ class Wrapper:
             job_access_interval: ジョブにアクセスする間隔[sec]
             max_job_access: ジョブに最大何回アクセスするか
 
+        Returns:
+            True：ジョブが実行可能な状態, False：まだ進行中のジョブが存在するため、ジョブが実行不可能な状態
+
         """
         job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
         # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
@@ -2066,7 +2069,10 @@ class Wrapper:
             return_exceptions=True,
         )
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(gather)
+        result = loop.run_until_complete(gather)
+
+        # 依存するジョブが一つ以上進行中状態なら、Falseを返す
+        return all(e != JobStatus.PROGRESS for e in result)
 
     #########################################
     # Public Method : Labor Control
