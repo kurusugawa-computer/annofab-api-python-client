@@ -2,18 +2,10 @@
 AnnoFabプロジェクトやタスクに大きく依存したテストコードです。
 """
 import configparser
-import datetime
 import os
-import uuid
-
-import pytest
-import requests
-from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.models import GraphType, JobType
-from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
