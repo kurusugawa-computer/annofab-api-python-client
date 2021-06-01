@@ -1961,16 +1961,96 @@ class Wrapper:
                     )
                     return False
 
+    def wait_until_job_finished(
+        self,
+        project_id: str,
+        job_type: JobType,
+        job_id: Optional[str] = None,
+        job_access_interval: int = 60,
+        max_job_access: int = 360,
+    ) -> Optional[JobStatus]:
+        """
+        指定したジョブが終了するまで待つ。
+
+        Args:
+            project_id: プロジェクトID
+            job_type: 取得するジョブ種別
+            job_access_interval: ジョブにアクセスする間隔[sec]
+            max_job_access: ジョブに最大何回アクセスするか
+            job_id: ジョブID。Noneの場合は、現在進行中のジョブが終了するまで待つ。
+
+        Returns:
+            待った後のジョブのステータスを返す。
+            指定したジョブ（job_idがNoneの場合は現在進行中のジョブ）が存在しない場合は、Noneを返す。
+
+        """
+
+        def get_latest_job() -> Optional[JobInfo]:
+            job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
+            if len(job_list) > 0:
+                return job_list[0]
+            else:
+                return None
+
+        def get_job_from_job_id(arg_job_id: str) -> Optional[JobInfo]:
+            job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
+            return _first_true(job_list, pred=lambda e: e["job_id"] == arg_job_id)
+
+        job_access_count = 0
+        while True:
+            if job_id is not None:
+                job = get_job_from_job_id(job_id)
+            else:
+                # 初回のみ
+                job = get_latest_job()
+                if job is None or job["job_status"] != JobStatus.PROGRESS.value:
+                    logger.debug("job_type='%s' である進行中のジョブは存在しません。", job_type.value, job_id)
+                    return None
+                job_id = job["job_id"]
+
+            if job is None:
+                logger.debug("job_id='%s', job_type='%s' のジョブは存在しません。", job_type.value, job_id)
+                return None
+
+            job_access_count += 1
+
+            if job["job_status"] == JobStatus.SUCCEEDED.value:
+                logger.debug("job_id='%s', job_type='%s' のジョブが成功しました。", job_id, job_type.value)
+                return JobStatus.SUCCEEDED
+
+            elif job["job_status"] == JobStatus.FAILED.value:
+                logger.debug("job_id='%s', job_type='%s' のジョブが失敗しました。", job_id, job_type.value)
+                return JobStatus.FAILED
+
+            else:
+                # 進行中
+                if job_access_count < max_job_access:
+                    logger.debug(
+                        "job_id='%s', job_type='%s' のジョブは進行中です。%d 秒間待ちます。",
+                        job_id,
+                        job_type.value,
+                        job_access_interval,
+                    )
+                    time.sleep(job_access_interval)
+                else:
+                    logger.debug(
+                        "job_id='%s', job_type='%s' のジョブは %d 分経過しても、終了しませんでした。",
+                        job["job_id"],
+                        job_type.value,
+                        job_access_interval * job_access_count * 60,
+                    )
+                    return JobStatus.PROGRESS
+
     async def _job_in_progress_async(self, project_id: str, job_type: JobType) -> bool:
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, self.job_in_progress, project_id, job_type)
 
-    async def _wait_for_completion(
-        self, project_id: str, job_type: JobType, job_access_interval: int, max_job_access: int
-    ) -> bool:
+    async def _wait_until_job_finished_async(
+        self, project_id: str, job_type: JobType, job_id: Optional[str], job_access_interval: int, max_job_access: int
+    ) -> Optional[JobStatus]:
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(
-            None, self.wait_for_completion, project_id, job_type, job_access_interval, max_job_access
+            None, self.wait_until_job_finished, project_id, job_type, job_id, job_access_interval, max_job_access
         )
 
     def can_execute_job(self, project_id: str, job_type: JobType) -> bool:
@@ -2018,9 +2098,10 @@ class Wrapper:
         # 複数のジョブに対して進行中かどうかを確認する
         gather = asyncio.gather(
             *[
-                self._wait_for_completion(project_id, job_type, job_access_interval, max_job_access)
+                self._wait_until_job_finished_async(project_id, job_type, None, job_access_interval, max_job_access)
                 for job_type in job_type_list
-            ]
+            ],
+            return_exceptions=True,
         )
         loop = asyncio.get_event_loop()
         loop.run_until_complete(gather)
