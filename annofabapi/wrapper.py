@@ -28,14 +28,14 @@ from annofabapi.models import (
     Inspection,
     InspectionStatus,
     Instruction,
-    JobInfo,
     JobStatus,
-    JobType,
     LabelV1,
     MyOrganization,
     Organization,
     OrganizationMember,
     Project,
+    ProjectJobInfo,
+    ProjectJobType,
     ProjectMember,
     SimpleAnnotationDetail,
     SupplementaryData,
@@ -80,35 +80,50 @@ _ORGANIZATION_ID_FOR_AVAILABILITY = "___plannedWorktime___"
 """予定稼働時間用の組織ID"""
 
 _JOB_CONCURRENCY_LIMIT = {
-    JobType.COPY_PROJECT: {JobType.GEN_INPUTS, JobType.GEN_TASKS, JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
-    JobType.GEN_INPUTS: {
-        JobType.COPY_PROJECT,
-        JobType.GEN_INPUTS,
-        JobType.GEN_TASKS,
-        JobType.GEN_INPUTS_LIST,
-        JobType.DELETE_PROJECT,
-        JobType.MOVE_PROJECT,
+    ProjectJobType.COPY_PROJECT: {
+        ProjectJobType.GEN_INPUTS,
+        ProjectJobType.GEN_TASKS,
+        ProjectJobType.DELETE_PROJECT,
+        ProjectJobType.MOVE_PROJECT,
     },
-    JobType.GEN_TASKS: {
-        JobType.COPY_PROJECT,
-        JobType.GEN_INPUTS,
-        JobType.GEN_TASKS,
-        JobType.GEN_ANNOTATION,
-        JobType.GEN_TASKS_LIST,
-        JobType.DELETE_PROJECT,
-        JobType.MOVE_PROJECT,
+    ProjectJobType.GEN_INPUTS: {
+        ProjectJobType.COPY_PROJECT,
+        ProjectJobType.GEN_INPUTS,
+        ProjectJobType.GEN_TASKS,
+        ProjectJobType.GEN_INPUTS_LIST,
+        ProjectJobType.DELETE_PROJECT,
+        ProjectJobType.MOVE_PROJECT,
     },
-    JobType.GEN_ANNOTATION: {JobType.GEN_TASKS, JobType.GEN_ANNOTATION, JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
-    JobType.GEN_TASKS_LIST: {JobType.GEN_TASKS, JobType.GEN_TASKS_LIST, JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
-    JobType.GEN_INPUTS_LIST: {
-        JobType.GEN_INPUTS,
-        JobType.GEN_INPUTS_LIST,
-        JobType.DELETE_PROJECT,
-        JobType.MOVE_PROJECT,
+    ProjectJobType.GEN_TASKS: {
+        ProjectJobType.COPY_PROJECT,
+        ProjectJobType.GEN_INPUTS,
+        ProjectJobType.GEN_TASKS,
+        ProjectJobType.GEN_ANNOTATION,
+        ProjectJobType.GEN_TASKS_LIST,
+        ProjectJobType.DELETE_PROJECT,
+        ProjectJobType.MOVE_PROJECT,
     },
-    JobType.INVOKE_HOOK: {JobType.DELETE_PROJECT, JobType.MOVE_PROJECT},
-    JobType.DELETE_PROJECT: set(JobType),
-    JobType.MOVE_PROJECT: set(JobType),
+    ProjectJobType.GEN_ANNOTATION: {
+        ProjectJobType.GEN_TASKS,
+        ProjectJobType.GEN_ANNOTATION,
+        ProjectJobType.DELETE_PROJECT,
+        ProjectJobType.MOVE_PROJECT,
+    },
+    ProjectJobType.GEN_TASKS_LIST: {
+        ProjectJobType.GEN_TASKS,
+        ProjectJobType.GEN_TASKS_LIST,
+        ProjectJobType.DELETE_PROJECT,
+        ProjectJobType.MOVE_PROJECT,
+    },
+    ProjectJobType.GEN_INPUTS_LIST: {
+        ProjectJobType.GEN_INPUTS,
+        ProjectJobType.GEN_INPUTS_LIST,
+        ProjectJobType.DELETE_PROJECT,
+        ProjectJobType.MOVE_PROJECT,
+    },
+    ProjectJobType.INVOKE_HOOK: {ProjectJobType.DELETE_PROJECT, ProjectJobType.MOVE_PROJECT},
+    ProjectJobType.DELETE_PROJECT: set(ProjectJobType),
+    ProjectJobType.MOVE_PROJECT: set(ProjectJobType),
 }
 """同時に実行できないジョブを表しています。valueに指定されたジョブが1つ以上実行されている場合、keyに指定されたジョブは実行できません。"""
 
@@ -1834,7 +1849,7 @@ class Wrapper:
     #########################################
     # Public Method : Job
     #########################################
-    def delete_all_succeeded_job(self, project_id: str, job_type: JobType) -> List[JobInfo]:
+    def delete_all_succeeded_job(self, project_id: str, job_type: ProjectJobType) -> List[ProjectJobInfo]:
         """
         成功したジョブをすべて削除する
 
@@ -1856,7 +1871,7 @@ class Wrapper:
 
         return deleted_jobs
 
-    def get_all_project_job(self, project_id: str, query_params: Dict[str, Any]) -> List[JobInfo]:
+    def get_all_project_job(self, project_id: str, query_params: Dict[str, Any]) -> List[ProjectJobInfo]:
         """
         すべてのバックグランドジョブを取得する。
 
@@ -1877,7 +1892,7 @@ class Wrapper:
         all_jobs.extend(r["list"])
         return all_jobs
 
-    def job_in_progress(self, project_id: str, job_type: JobType) -> bool:
+    def job_in_progress(self, project_id: str, job_type: ProjectJobType) -> bool:
         """
         ジョブが進行中かどうか
 
@@ -1897,7 +1912,7 @@ class Wrapper:
         return job["job_status"] == JobStatus.PROGRESS.value
 
     def wait_for_completion(
-        self, project_id: str, job_type: JobType, job_access_interval: int = 60, max_job_access: int = 10
+        self, project_id: str, job_type: ProjectJobType, job_access_interval: int = 60, max_job_access: int = 10
     ) -> bool:
         """
         ジョブが完了するまで待つ。
@@ -1925,7 +1940,7 @@ class Wrapper:
     def wait_until_job_finished(
         self,
         project_id: str,
-        job_type: JobType,
+        job_type: ProjectJobType,
         job_id: Optional[str] = None,
         job_access_interval: int = 60,
         max_job_access: int = 360,
@@ -1946,14 +1961,14 @@ class Wrapper:
 
         """
 
-        def get_latest_job() -> Optional[JobInfo]:
+        def get_latest_job() -> Optional[ProjectJobInfo]:
             job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
             if len(job_list) > 0:
                 return job_list[0]
             else:
                 return None
 
-        def get_job_from_job_id(arg_job_id: str) -> Optional[JobInfo]:
+        def get_job_from_job_id(arg_job_id: str) -> Optional[ProjectJobInfo]:
             content, _ = self.api.get_project_job(project_id, query_params={"type": job_type.value})
             job_list = content["list"]
             return _first_true(job_list, pred=lambda e: e["job_id"] == arg_job_id)
@@ -2003,19 +2018,24 @@ class Wrapper:
                     )
                     return JobStatus.PROGRESS
 
-    async def _job_in_progress_async(self, project_id: str, job_type: JobType) -> bool:
+    async def _job_in_progress_async(self, project_id: str, job_type: ProjectJobType) -> bool:
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, self.job_in_progress, project_id, job_type)
 
     async def _wait_until_job_finished_async(
-        self, project_id: str, job_type: JobType, job_id: Optional[str], job_access_interval: int, max_job_access: int
+        self,
+        project_id: str,
+        job_type: ProjectJobType,
+        job_id: Optional[str],
+        job_access_interval: int,
+        max_job_access: int,
     ) -> Optional[JobStatus]:
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(
             None, self.wait_until_job_finished, project_id, job_type, job_id, job_access_interval, max_job_access
         )
 
-    def can_execute_job(self, project_id: str, job_type: JobType) -> bool:
+    def can_execute_job(self, project_id: str, job_type: ProjectJobType) -> bool:
         """
         ジョブが実行できる状態か否か。他のジョブが実行中で同時に実行できない場合はFalseを返す。
 
@@ -2040,7 +2060,7 @@ class Wrapper:
         return all(not e for e in result)
 
     def wait_until_job_is_executable(
-        self, project_id: str, job_type: JobType, job_access_interval: int = 60, max_job_access: int = 360
+        self, project_id: str, job_type: ProjectJobType, job_access_interval: int = 60, max_job_access: int = 360
     ) -> bool:
         """
         ジョブが実行可能な状態になるまで待ちます。他のジョブが実行されているときは、他のジョブが終了するまで待ちます。
