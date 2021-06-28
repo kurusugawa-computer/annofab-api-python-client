@@ -1,1 +1,1 @@
-from annofabapi.models import JobType, JobStatus
+from annofabapi.models import JobStatus, ProjectJobType

@@ -15,17 +15,18 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import DataClassJsonMixin
 
-from annofabapi.models import JobStatus, JobType
+from annofabapi._utils import moved_class
+from annofabapi.models import JobStatus, ProjectJobType
 
 
 @dataclass
-class JobInfo(DataClassJsonMixin):
+class ProjectJobInfo(DataClassJsonMixin):
     """ """
 
     project_id: Optional[str]
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    job_type: Optional[JobType]
+    job_type: Optional[ProjectJobType]
     """"""
 
     job_id: Optional[str]
@@ -45,3 +46,6 @@ class JobInfo(DataClassJsonMixin):
 
     updated_datetime: Optional[str]
     """"""
+
+
+JobInfo = moved_class(ProjectJobInfo, "JobInfo", "2021-09-01")
