@@ -92,7 +92,7 @@ RUN set -x \
 RUN set -x \
     && mkdir -p /usr/local/devcontainer-tool/bin \
     && curl -fsSL -o /usr/local/devcontainer-tool/bin/docker https://github.com/thamaji/devcontainer-docker/releases/download/v1.0.1/docker \
-    && chmod +x /usr/local/devcontainer-tool/bin/docker
+    && chmod +x /usr/local/devcontainer-tool/bin/docker \
     && curl -fsSL -o /usr/local/devcontainer-tool/bin/docker-compose https://github.com/thamaji/devcontainer-compose/releases/download/v1.0.2/docker-compose \
     && chmod +x /usr/local/devcontainer-tool/bin/docker-compose
 ENV PATH=/usr/local/devcontainer-tool/bin:${PATH}
