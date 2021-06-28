@@ -30,6 +30,7 @@ backoff="*"
 dataclasses-json="*"
 dataclasses = { version = "*", python = "<3.7" }
 
+
 [tool.poetry.dev-dependencies]
 # test library
 pytest = "*"
@@ -53,6 +54,10 @@ pylint = "*"
 sphinx = "*"
 docutils = "*"
 pydata-sphinx-theme = "*"
+
+# type stub package
+types-requests = "*"
+types-python-dateutil = "*"
 
 ipython = "*"
 
