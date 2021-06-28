@@ -54,6 +54,7 @@ sphinx = "*"
 docutils = "*"
 pydata-sphinx-theme = "*"
 
+ipython = "*"
 
 [tool.black]
 line-length = 120
