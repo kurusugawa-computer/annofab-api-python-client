@@ -11,7 +11,7 @@ def _process_class(cls, deprecated_date: str, new_class_name: Optional[str] = No
             message = f"deprecated: '{old_class_name}'は{deprecated_date}以降に廃止します。"
             if new_class_name is not None:
                 message += f"替わりに'{new_class_name}'を使用してください。"
-            warnings.warn(message, FutureWarning, stacklevel=2)
+            warnings.warn(message, FutureWarning, stacklevel=4)
             return function(*args, **kwargs)
 
         return wrapped

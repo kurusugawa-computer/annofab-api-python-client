@@ -14,8 +14,6 @@ import warnings  # pylint: disable=unused-import
 from enum import Enum
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from annofabapi._utils import moved_class
-
 ### 手動の部分
 
 AccountId = NewType("AccountId", str)
@@ -4520,6 +4518,6 @@ Kyes of Dict
 """
 
 
-JobType = moved_class(ProjectJobType, "JobType", "2021-09-01")
 JobInfo = ProjectJobInfo
 JobInfoContainer = ProjectJobInfoContainer
+JobType = ProjectJobType
