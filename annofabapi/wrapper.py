@@ -1871,7 +1871,7 @@ class Wrapper:
 
         return deleted_jobs
 
-    def get_all_project_job(self, project_id: str, query_params: Dict[str, Any]) -> List[ProjectJobInfo]:
+    def get_all_project_job(self, project_id: str, query_params: Dict[str, Any] = None) -> List[ProjectJobInfo]:
         """
         すべてのバックグランドジョブを取得する。
 
