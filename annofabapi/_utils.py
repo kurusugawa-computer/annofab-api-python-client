@@ -1,21 +1,31 @@
 import warnings
 from functools import wraps
+from typing import Optional
 
 
-def moved_class(new_class, old_class_name: str, deprecated_date: str):
-    """Deprecates a class that was moved to another location."""
-
+def _process_class(cls, deprecated_date: str, new_class_name: Optional[str] = None):
     def decorator(function):
         @wraps(function)
         def wrapped(*args, **kwargs):
-            warnings.warn(
-                f"deprecated: {deprecated_date}以降に廃止します。替わりに'{new_class.__module__}.{new_class.__name__}'を使用してください。",
-                DeprecationWarning,
-            )
+            old_class_name = f"{cls.__module__}.{cls.__name__}"
+            message = f"deprecated: '{old_class_name}'は{deprecated_date}以降に廃止します。"
+            if new_class_name is not None:
+                message += f"替わりに'{new_class_name}'を使用してください。"
+            warnings.warn(message, FutureWarning, stacklevel=2)
+            return function(*args, **kwargs)
 
         return wrapped
 
-    old_class = type(old_class_name, (new_class,), {})
-    old_class.__init__ = decorator(old_class.__init__)  # type: ignore
-    old_class.__doc__ = "[deprecation]\n{new_class.__doc__}"
-    return old_class
+    cls.__init__ = decorator(cls.__init__)  # type: ignore
+    return cls
+
+
+def deprecated_class(_cls=None, *, deprecated_date: str, new_class_name: Optional[str] = None):
+    """クラスを非推奨にします。"""
+
+    def wrap(cls):
+        return _process_class(cls, deprecated_date=deprecated_date, new_class_name=new_class_name)
+
+    if _cls is None:
+        return wrap
+    return wrap(_cls)
