@@ -66,7 +66,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
 
 cat partial-header/generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
 # job_typeの型がJobTypeだとEnumのため都合が悪いので、型をstrに変換する
-sed  -e "s/job_type: JobType/job_type: str/g"  ../annofabapi/generated_api.py  --in-place
+sed  -e "s/job_type: ProjectJobType/job_type: str/g"  ../annofabapi/generated_api.py  --in-place
 
 rm -Rf out/openapi_client
 
@@ -92,7 +92,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${
     --global-property ,models,modelTests=false,modelDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
-cat partial-header/models_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/models.py
+cat partial-header/models_partial_header_v1.py out/openapi_client/models/*.py partial-footer/models_partial_footer.py> ../annofabapi/models.py
 rm -Rf out/openapi_client
 
 # v1 apiのmodelからDataClass用のpythonファイルを生成する。
@@ -172,9 +172,9 @@ cat partial-header/dataclass/common.py partial-header/dataclass/instruction.py  
  ${model_files[@]} > ../annofabapi/dataclass/instruction.py
 
 # Job
-declare -a model_files=(${MODELS_DIR}/job_info.py)
+declare -a model_files=(${MODELS_DIR}/project_job_info.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/job.py  \
- ${model_files[@]} > ../annofabapi/dataclass/job.py
+ ${model_files[@]} partial-footer/dataclass/job.py > ../annofabapi/dataclass/job.py
 
 # My
 declare -a model_files=(${MODELS_DIR}/my_organization.py ${MODELS_DIR}/my_account.py)
