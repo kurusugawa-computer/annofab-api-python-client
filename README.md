@@ -24,17 +24,12 @@
  
 # 廃止予定
 
-## 2020-10-31 以降,
-* `AnnofabApiWrapper.download_annotation_archive`メソッドの引数`v2`引数を削除します。WebAPIに渡す必要がなくなったためです。
 
-## 2021-01-01 以降,
-* `AnnofabApiWrapper`のプロジェクトメンバの更新系メソッドを廃止します。特殊なケースにしか対応しておらず、汎用的なメソッドでないためです。
-    * [assign_role_to_project_members](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.assign_role_to_project_members)
-    * [copy_project_members](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.copy_project_members)
-    * [drop_role_to_project_members](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.drop_role_to_project_members)
-    * [put_project_members](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.put_project_members)
+### 2021-09-01 以降
 
-
+* [annofabapi.wrapper.AnnofabApiWrapper.copy_annotation_specs](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.copy_annotation_specs) を廃止します。特殊なケースにしか対応しておらず、汎用的なメソッドでないためです。
+* `annofabapi.models.JobType` を廃止します。替わりに`annofabapi.models.ProjectJobType`を使用してください。
+* `annofabapi.dataclass.job.JobInfo`を廃止します。替わりに`annofabapi.models.ProjectJobInfo`を使用してください。
 
 # Features
 cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます。

@@ -52,7 +52,7 @@
 
         """
         {{#isDeprecated}}
-        warnings.warn("deprecated", DeprecationWarning)
+        warnings.warn("deprecated", FutureWarning)
         {{/isDeprecated}}
         url_path = f'{{{path}}}'
         http_method = '{{httpMethod}}'

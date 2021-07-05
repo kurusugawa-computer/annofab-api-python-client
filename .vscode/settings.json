@@ -30,6 +30,7 @@
     "python.linting.pydocstyleEnabled": false,
     "python.linting.pycodestyleEnabled": false,
     "python.linting.ignorePatterns": [
+        "generate/**/*.py",
         ".vscode/*.py",
         "**/site-packages/**/*.py"
     ],
