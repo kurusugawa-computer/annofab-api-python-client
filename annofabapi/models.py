@@ -14,6 +14,8 @@ import warnings  # pylint: disable=unused-import
 from enum import Enum
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
+from annofabapi._utils import deprecated_class
+
 ### 手動の部分
 
 AccountId = NewType("AccountId", str)
@@ -4520,4 +4522,22 @@ Kyes of Dict
 
 JobInfo = ProjectJobInfo
 JobInfoContainer = ProjectJobInfoContainer
-JobType = ProjectJobType
+
+
+@deprecated_class(deprecated_date="2021-09-01", new_class_name=f"{ProjectJobType.__module__}.{ProjectJobType.__name__}")
+class JobType(Enum):
+    """
+    プロジェクトのジョブ種別
+
+    .. deprecated:: 2021-09-01
+    """
+
+    COPY_PROJECT = "copy-project"
+    GEN_INPUTS = "gen-inputs"
+    GEN_TASKS = "gen-tasks"
+    GEN_ANNOTATION = "gen-annotation"
+    GEN_TASKS_LIST = "gen-tasks-list"
+    GEN_INPUTS_LIST = "gen-inputs-list"
+    DELETE_PROJECT = "delete-project"
+    INVOKE_HOOK = "invoke-hook"
+    MOVE_PROJECT = "move-project"

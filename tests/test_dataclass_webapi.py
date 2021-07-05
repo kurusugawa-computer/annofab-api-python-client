@@ -124,18 +124,26 @@ class TestJob:
     def test_job_deprecated(self):
         job_list = service.wrapper.get_all_project_job(project_id)
         if len(job_list) > 0:
-            with warnings.catch_warnings(record=True) as found_warnings:
-                job = JobInfo.from_dict(job_list[0])
-                assert type(job) == JobInfo
+            job = JobInfo.from_dict(job_list[0])
+            assert type(job) == JobInfo
 
+        else:
+            print(f"ジョブが存在しませんでした。")
+
+    def test_job_deprecated_warning_message(self):
+        with warnings.catch_warnings(record=True) as found_warnings:
+            try:
+                JobInfo()
+            except Exception:
+                pass
+            finally:
                 assert len(found_warnings) == 1
                 single_warning = found_warnings[0]
+                print(single_warning)
                 assert str(single_warning.message) == (
                     "deprecated: 'annofabapi.dataclass.job.JobInfo'は2021-09-01以降に廃止します。"
                     "替わりに'annofabapi.dataclass.job.ProjectJobInfo'を使用してください。"
                 )
-        else:
-            print(f"ジョブが存在しませんでした。")
 
 
 class TestMy:
