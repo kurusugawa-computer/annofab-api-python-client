@@ -14,7 +14,7 @@ import warnings  # pylint: disable=unused-import
 from enum import Enum
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
-from annofabapi._utils import deprecated_class
+from annofabapi._utils import deprecated_class  # pylint: disable=unused-import
 
 ### 手動の部分
 

@@ -92,7 +92,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${
     --global-property ,models,modelTests=false,modelDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
-cat partial-header/models_partial_header_v1.py out/openapi_client/models/*.py > ../annofabapi/models.py
+cat partial-header/models_partial_header_v1.py out/openapi_client/models/*.py partial-footer/models_partial_footer.py> ../annofabapi/models.py
 rm -Rf out/openapi_client
 
 # v1 apiのmodelからDataClass用のpythonファイルを生成する。
@@ -174,7 +174,7 @@ cat partial-header/dataclass/common.py partial-header/dataclass/instruction.py  
 # Job
 declare -a model_files=(${MODELS_DIR}/project_job_info.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/job.py  \
- ${model_files[@]} > ../annofabapi/dataclass/job.py
+ ${model_files[@]} partial-footer/dataclass/job.py > ../annofabapi/dataclass/job.py
 
 # My
 declare -a model_files=(${MODELS_DIR}/my_organization.py ${MODELS_DIR}/my_account.py)
