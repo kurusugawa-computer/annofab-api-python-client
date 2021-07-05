@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.116.2
+  version: 0.117.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -4305,7 +4305,7 @@ paths:
         タスクの現在の担当者でない場合、エラーになります。
         この制限は、アノテーション作業中の予期せぬ同時編集を防ぐためです。
 
-        `is_protected`（保護） を `true` にすることで、アノテーションをアノテーションエディタ上での削除から保護できます。
+        `is_protected`（保護） を `true` にすることで、アノテーションをアノテーションエディタ上での変形・削除から保護できます。
         属性の変更もさせたくない場合は、アノテーション仕様で特定の属性を読取専用にすることで保護できます。保護は、
 
         * 外部からインポートしたアノテーション
@@ -4314,7 +4314,7 @@ paths:
         などを誤って削除したくないときに便利です。
         `is_protected`は、プロジェクトオーナーのみ変更可能です。
 
-        なお、本APIでは `is_protected` によらず、更新や削除が可能です。
+        なお、本APIでは `is_protected` によらず、変形・更新や削除が可能です。
       security:
       - AllProjectMember: []
       operationId: putAnnotation

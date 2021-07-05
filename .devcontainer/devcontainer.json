@@ -34,6 +34,7 @@
 		"ms-python.vscode-pylance",
 		"streetsidesoftware.code-spell-checker",
 		"bungcip.better-toml",
-		"njpwerner.autodocstring"
+		"njpwerner.autodocstring",
+		"dawhite.mustache"
 	]
 }
