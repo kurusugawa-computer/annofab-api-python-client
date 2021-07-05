@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "annofabapi"
-version = "0.45.2"
+version = "0.46.0"
 description = "Python Clinet Library of AnnoFab WebAPI (https://annofab.com/docs/api/)"
 authors = ["yuji38kwmt"]
 license = "MIT"
@@ -30,6 +30,7 @@ backoff="*"
 dataclasses-json="*"
 dataclasses = { version = "*", python = "<3.7" }
 
+
 [tool.poetry.dev-dependencies]
 # test library
 pytest = "*"
@@ -54,6 +55,15 @@ sphinx = "*"
 docutils = "*"
 pydata-sphinx-theme = "*"
 
+# type stub package
+types-requests = "*"
+types-python-dateutil = "*"
+types-dataclasses = { version = "*", python = "<3.7" }
+
+ipython = "*"
+# ipythonとjediの組み合わせによるバグを避けるため、バージョン指定
+# https://zenn.dev/hige/articles/282bf79d47378e
+jedi = "<0.19"
 
 [tool.black]
 line-length = 120
