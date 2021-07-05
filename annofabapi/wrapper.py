@@ -250,7 +250,7 @@ class Wrapper:
             ダウンロード元のURL
 
         """
-        warnings.warn("deprecated", DeprecationWarning)
+        warnings.warn("deprecated", FutureWarning)
         _, response = self.api.get_archive_full_with_pro_id(project_id)
         url = response.headers["Location"]
         response2 = _download(url, dest_path)
@@ -652,6 +652,9 @@ class Wrapper:
         """
         アノテーション仕様を、別のプロジェクトにコピーする。
 
+        .. deprecated:: 2021-09-01
+
+
         Note:
             誤って実行しないようにすること
 
@@ -663,6 +666,8 @@ class Wrapper:
         Returns:
             put_annotation_specsのContent
         """
+        warnings.warn("2021-09-01以降に削除します。", FutureWarning)
+
         src_annotation_specs = self.api.get_annotation_specs(src_project_id)[0]
 
         if comment is None:
@@ -1347,152 +1352,6 @@ class Wrapper:
         # ページングされないので、そのままAPIを実行する
         content, _ = self.api.get_project_members(project_id, query_params=query_params)
         return content["list"]
-
-    def put_project_members(self, project_id, project_members: List[Dict[str, Any]]) -> List[ProjectMember]:
-        """
-        複数のプロジェクトメンバを追加/更新/削除する.
-
-        .. deprecated:: 2020-01-01
-
-        Args:
-            project_id: プロジェクトID
-            project_members: 追加/更新するメンバのList. `user_id` , `member_status` , `member_role` をKeyに持つこと
-
-        Returns:
-            `putProjectMember` APIのContentのList
-
-        """
-        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
-
-        # 追加/更新前のプロジェクトメンバ
-        dest_project_members = self.get_all_project_members(project_id)
-
-        updated_project_members = []
-        # プロジェクトメンバを追加/更新する
-        for member in project_members:
-            dest_member = [e for e in dest_project_members if e["user_id"] == member["user_id"]]
-            last_updated_datetime = dest_member[0]["updated_datetime"] if len(dest_member) > 0 else None
-
-            request_body = {
-                "member_status": member["member_status"],
-                "member_role": member["member_role"],
-                "sampling_inspection_rate": member.get("sampling_inspection_rate"),
-                "sampling_acceptance_rate": member.get("sampling_acceptance_rate"),
-                "last_updated_datetime": last_updated_datetime,
-            }
-            updated_project_member = self.api.put_project_member(
-                project_id, member["user_id"], request_body=request_body
-            )[0]
-            updated_project_members.append(updated_project_member)
-
-            command_name = "追加" if last_updated_datetime is None else "更新"
-            logger.debug(
-                "プロジェクトメンバの'%s' 完了." " project_id=%s, user_id=%s, " "last_updated_datetime=%s",
-                command_name,
-                project_id,
-                member["user_id"],
-                last_updated_datetime,
-            )
-
-        return updated_project_members
-
-    def assign_role_to_project_members(
-        self, project_id: str, user_id_list: List[str], member_role: str
-    ) -> List[ProjectMember]:
-        """
-        複数のプロジェクトメンバに1つのロールを割り当てる。
-
-        .. deprecated:: 2020-01-01
-
-        Note:
-            誤って実行しないようにすること
-
-        Args:
-            project_id: プロジェクトID
-            user_id_list: 追加/更新するメンバのuser_idのList
-            member_role: 割り当てるロール.
-
-        Returns:
-            `putProjectMember` APIのContentのList
-
-        """
-        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
-
-        project_members = []
-        for user_id in user_id_list:
-            member = {"user_id": user_id, "member_status": "active", "member_role": member_role}
-            project_members.append(member)
-
-        return self.put_project_members(project_id, project_members)
-
-    def drop_role_to_project_members(self, project_id, user_id_list: List[str]) -> List[ProjectMember]:
-        """
-        複数のプロジェクトメンバを、プロジェクトから脱退させる
-
-        .. deprecated:: 2020-01-01
-
-        Note:
-            誤って実行しないようにすること
-
-        Args:
-            project_id: プロジェクトID
-            user_id_list: 脱退させるメンバのuser_idのList
-
-        Returns:
-            `putProjectMember` APIのContentのList
-        """
-        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
-
-        project_members = []
-        for user_id in user_id_list:
-            member = {
-                "user_id": user_id,
-                "member_status": "inactive",
-                "member_role": "worker",  # 何か指定しないとエラーになったため、指定する
-            }
-            project_members.append(member)
-
-        return self.put_project_members(project_id, project_members)
-
-    def copy_project_members(
-        self, src_project_id: str, dest_project_id: str, delete_dest: bool = False
-    ) -> List[ProjectMember]:
-        """
-        プロジェクトメンバを、別のプロジェクトにコピーする。
-
-        .. deprecated:: 2020-01-01
-
-        Note:
-            誤って実行しないようにすること
-
-        Args:
-            src_project_id: コピー元のproject_id
-            dest_project_id: コピー先のproject_id
-            delete_dest: Trueならばコピー先にしか存在しないプロジェクトメンバを削除する。
-
-        Returns:
-            `putProjectMember` APIのContentのList
-
-        """
-        warnings.warn("deprecated: 2021-01-01以降に廃止します。", DeprecationWarning)
-
-        src_project_members = self.get_all_project_members(src_project_id)
-        dest_project_members = self.get_all_project_members(dest_project_id)
-
-        if delete_dest:
-            # コピー先にしかいないメンバを削除する
-            src_account_ids = [e["account_id"] for e in src_project_members]
-            deleted_dest_members = [e for e in dest_project_members if e["account_id"] not in src_account_ids]
-
-            def to_inactive(arg_member):
-                arg_member["member_status"] = "inactive"
-                return arg_member
-
-            deleted_dest_members = list(map(to_inactive, deleted_dest_members))
-            return self.put_project_members(dest_project_id, src_project_members + deleted_dest_members)
-
-        else:
-            return self.put_project_members(dest_project_id, src_project_members)
 
     #########################################
     # Public Method : Task
