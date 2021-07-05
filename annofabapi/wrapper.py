@@ -217,24 +217,19 @@ class Wrapper:
     #########################################
     # Public Method : Annotation
     #########################################
-    def download_annotation_archive(self, project_id: str, dest_path: str, v2: bool = False) -> str:
+    def download_annotation_archive(self, project_id: str, dest_path: str) -> str:
         """
         simpleアノテーションZIPをダウンロードする。
 
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先のファイルパス
-            v2:  互換性を保つために残している引数。2020-10-31以降に廃止する。
 
         Returns:
             ダウンロード元のURL
 
         """
         query_params = None
-        if v2:
-            query_params = {"v2": True}
-            logger.warning("メソッド引数`v2`は2020-10-31以降に廃止します。")
-
         _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
         url = response.headers["Location"]
         response2 = _download(url, dest_path)
