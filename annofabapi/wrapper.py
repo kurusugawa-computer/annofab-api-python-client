@@ -280,14 +280,6 @@ class Wrapper:
         )
 
     @staticmethod
-    def __create_annotation_id(detail: Dict[str, Any]) -> str:
-        if detail["data_holding_type"] == AnnotationDataHoldingType.INNER.value and detail["data"] is None:
-            # annotation_typeがclassificationのときは、label_idとannotation_idを一致させる必要がある。
-            return detail["label_id"]
-        else:
-            return str(uuid.uuid4())
-
-    @staticmethod
     def __replace_annotation_specs_id(
         detail: Dict[str, Any], annotation_specs_relation: AnnotationSpecsRelation
     ) -> Optional[Dict[str, Any]]:
