@@ -475,7 +475,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        「過去に誰にも割り当てられていないタスクに含まれる入力データ」に限り、プロジェクトオーナーであればアノテーションを更新できます。 この挙動は、[AnnoFab外部で作成されたアノテーションをインポート](/docs/tutorial/tutorial-ex-importing-annotation.html) する目的にも利用できます。  １度でも誰かに割り当てられたタスクは、タスクの現在の担当者であればアノテーションを更新できます。 タスクの現在の担当者でない場合、エラーになります。 この制限は、アノテーション作業中の予期せぬ同時編集を防ぐためです。  `is_protected`（保護） を `true` にすることで、アノテーションをアノテーションエディタ上での削除から保護できます。 属性の変更もさせたくない場合は、アノテーション仕様で特定の属性を読取専用にすることで保護できます。保護は、  * 外部からインポートしたアノテーション * 別プロジェクトからコピーしたアノテーション  などを誤って削除したくないときに便利です。 `is_protected`は、プロジェクトオーナーのみ変更可能です。  なお、本APIでは `is_protected` によらず、更新や削除が可能です。
+        「過去に誰にも割り当てられていないタスクに含まれる入力データ」に限り、プロジェクトオーナーであればアノテーションを更新できます。 この挙動は、[AnnoFab外部で作成されたアノテーションをインポート](/docs/tutorial/tutorial-ex-importing-annotation.html) する目的にも利用できます。  １度でも誰かに割り当てられたタスクは、タスクの現在の担当者であればアノテーションを更新できます。 タスクの現在の担当者でない場合、エラーになります。 この制限は、アノテーション作業中の予期せぬ同時編集を防ぐためです。  `is_protected`（保護） を `true` にすることで、アノテーションをアノテーションエディタ上での変形・削除から保護できます。 属性の変更もさせたくない場合は、アノテーション仕様で特定の属性を読取専用にすることで保護できます。保護は、  * 外部からインポートしたアノテーション * 別プロジェクトからコピーしたアノテーション  などを誤って削除したくないときに便利です。 `is_protected`は、プロジェクトオーナーのみ変更可能です。  なお、本APIでは `is_protected` によらず、変形・更新や削除が可能です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2073,7 +2073,7 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn("deprecated", DeprecationWarning)
+        warnings.warn("deprecated", FutureWarning)
         url_path = f"/projects/{project_id}/rawdata/task_history_events"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
