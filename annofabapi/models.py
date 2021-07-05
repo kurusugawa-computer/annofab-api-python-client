@@ -4519,7 +4519,7 @@ Kyes of Dict
 
 """
 
-
+# 以下は2021-09-01以降に廃止する予定
 JobInfo = ProjectJobInfo
 JobInfoContainer = ProjectJobInfoContainer
 

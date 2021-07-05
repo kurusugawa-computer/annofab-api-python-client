@@ -48,6 +48,7 @@ class ProjectJobInfo(DataClassJsonMixin):
     """"""
 
 
+# 2021-09-01以降に削除する予定
 @deprecated_class(deprecated_date="2021-09-01", new_class_name=f"{ProjectJobInfo.__module__}.{ProjectJobInfo.__name__}")
 @dataclass
 class JobInfo(DataClassJsonMixin):
