@@ -10,7 +10,7 @@ import uuid
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import requests
 
@@ -29,6 +29,7 @@ from annofabapi.models import (
     InspectionStatus,
     Instruction,
     JobStatus,
+    JobType,
     LabelV1,
     MyOrganization,
     Organization,
@@ -1849,7 +1850,9 @@ class Wrapper:
     #########################################
     # Public Method : Job
     #########################################
-    def delete_all_succeeded_job(self, project_id: str, job_type: ProjectJobType) -> List[ProjectJobInfo]:
+    def delete_all_succeeded_job(
+        self, project_id: str, job_type: Union[ProjectJobType, JobType]
+    ) -> List[ProjectJobInfo]:
         """
         成功したジョブをすべて削除する
 
@@ -1860,7 +1863,6 @@ class Wrapper:
         Returns:
             削除したジョブの一覧
         """
-
         jobs = self.get_all_project_job(project_id, {"type": job_type.value})
         deleted_jobs = []
         for job in jobs:
@@ -1892,7 +1894,7 @@ class Wrapper:
         all_jobs.extend(r["list"])
         return all_jobs
 
-    def job_in_progress(self, project_id: str, job_type: ProjectJobType) -> bool:
+    def job_in_progress(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
         """
         ジョブが進行中かどうか
 
@@ -1912,7 +1914,11 @@ class Wrapper:
         return job["job_status"] == JobStatus.PROGRESS.value
 
     def wait_for_completion(
-        self, project_id: str, job_type: ProjectJobType, job_access_interval: int = 60, max_job_access: int = 10
+        self,
+        project_id: str,
+        job_type: Union[ProjectJobType, JobType],
+        job_access_interval: int = 60,
+        max_job_access: int = 10,
     ) -> bool:
         """
         ジョブが完了するまで待つ。
@@ -1940,7 +1946,7 @@ class Wrapper:
     def wait_until_job_finished(
         self,
         project_id: str,
-        job_type: ProjectJobType,
+        job_type: Union[ProjectJobType, JobType],
         job_id: Optional[str] = None,
         job_access_interval: int = 60,
         max_job_access: int = 360,
@@ -2018,14 +2024,14 @@ class Wrapper:
                     )
                     return JobStatus.PROGRESS
 
-    async def _job_in_progress_async(self, project_id: str, job_type: ProjectJobType) -> bool:
+    async def _job_in_progress_async(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, self.job_in_progress, project_id, job_type)
 
     async def _wait_until_job_finished_async(
         self,
         project_id: str,
-        job_type: ProjectJobType,
+        job_type: Union[ProjectJobType, JobType],
         job_id: Optional[str],
         job_access_interval: int,
         max_job_access: int,
@@ -2035,7 +2041,7 @@ class Wrapper:
             None, self.wait_until_job_finished, project_id, job_type, job_id, job_access_interval, max_job_access
         )
 
-    def can_execute_job(self, project_id: str, job_type: ProjectJobType) -> bool:
+    def can_execute_job(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
         """
         ジョブが実行できる状態か否か。他のジョブが実行中で同時に実行できない場合はFalseを返す。
 
@@ -2046,21 +2052,30 @@ class Wrapper:
         Returns:
             ジョブが実行できる状態か否か
         """
-        job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
+        # TODO: JobTypeが削除されたら、この処理も削除する
+        new_job_type: ProjectJobType = ProjectJobType(job_type.value) if isinstance(job_type, JobType) else job_type
+
+        job_type_list = _JOB_CONCURRENCY_LIMIT[new_job_type]
 
         # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
         if self.api.token_dict is None:
             self.api.login()
 
         # 複数のジョブに対して進行中かどうかを確認する
-        gather = asyncio.gather(*[self._job_in_progress_async(project_id, job_type) for job_type in job_type_list])
+        gather = asyncio.gather(
+            *[self._job_in_progress_async(project_id, new_job_type) for new_job_type in job_type_list]
+        )
         loop = asyncio.get_event_loop()
         result = loop.run_until_complete(gather)
 
         return all(not e for e in result)
 
     def wait_until_job_is_executable(
-        self, project_id: str, job_type: ProjectJobType, job_access_interval: int = 60, max_job_access: int = 360
+        self,
+        project_id: str,
+        job_type: Union[ProjectJobType, JobType],
+        job_access_interval: int = 60,
+        max_job_access: int = 360,
     ) -> bool:
         """
         ジョブが実行可能な状態になるまで待ちます。他のジョブが実行されているときは、他のジョブが終了するまで待ちます。
@@ -2075,7 +2090,10 @@ class Wrapper:
             指定した時間（アクセス頻度と回数）待った後、ジョブが実行可能な状態かどうか。進行中のジョブが存在する場合は、ジョブが実行不可能。
 
         """
-        job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
+        # TODO: JobTypeが削除されたら、この処理も削除する
+        new_job_type: ProjectJobType = ProjectJobType(job_type.value) if isinstance(job_type, JobType) else job_type
+
+        job_type_list = _JOB_CONCURRENCY_LIMIT[new_job_type]
         # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
         if self.api.token_dict is None:
             self.api.login()
@@ -2083,8 +2101,8 @@ class Wrapper:
         # 複数のジョブに対して進行中かどうかを確認する
         gather = asyncio.gather(
             *[
-                self._wait_until_job_finished_async(project_id, job_type, None, job_access_interval, max_job_access)
-                for job_type in job_type_list
+                self._wait_until_job_finished_async(project_id, new_job_type, None, job_access_interval, max_job_access)
+                for new_job_type in job_type_list
             ],
             return_exceptions=True,
         )
