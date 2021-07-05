@@ -96,13 +96,13 @@ class Task(DataClassJsonMixin):
     account_id: Optional[str]
     """"""
 
-    histories_by_phase: Optional[List[TaskHistoryShort]]
+    histories_by_phase: List[TaskHistoryShort]
     """簡易的なタスク履歴（あるフェーズを誰が担当したか）"""
 
     work_time_span: int
     """累計実作業時間(ミリ秒)"""
 
-    number_of_rejections: Optional[int]
+    number_of_rejections: int
     """このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計  このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。 `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。  例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。 """
 
     started_datetime: Optional[str]

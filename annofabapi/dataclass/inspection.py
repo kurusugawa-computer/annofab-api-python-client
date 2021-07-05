@@ -50,6 +50,9 @@ class Inspection(DataClassJsonMixin):
     annotation_id: Optional[str]
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
+    label_id: Optional[str]
+    """"""
+
     data: InspectionData
     """"""
 

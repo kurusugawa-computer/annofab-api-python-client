@@ -1271,13 +1271,13 @@ components:
 
         * `asc` -  昇順
         * `desc` - 降順
-    JobInfo:
+    ProjectJobInfo:
       type: object
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
         job_type:
-          $ref: "#/components/schemas/JobType"
+          $ref: "#/components/schemas/ProjectJobType"
         job_id:
           $ref: "#/components/schemas/JobId"
         job_status:
@@ -1294,7 +1294,30 @@ components:
         updated_datetime:
           type: string
           format: date-time
-    JobType:
+    OrganizationJobInfo:
+      type: object
+      properties:
+        organization_id:
+          $ref: "#/components/schemas/OrganizationId"
+        job_type:
+          $ref: "#/components/schemas/OrganizationJobType"
+        job_id:
+          $ref: "#/components/schemas/JobId"
+        job_status:
+          $ref: "#/components/schemas/JobStatus"
+        job_execution:
+          type: object
+          description: ジョブの内部情報
+        job_detail:
+          type: object
+          description: ジョブ結果の内部情報
+        created_datetime:
+          type: string
+          format: date-time
+        updated_datetime:
+          type: string
+          format: date-time
+    ProjectJobType:
       type: string
       enum:
         - copy-project
@@ -1387,6 +1410,11 @@ components:
 
         ### move-project
         他のジョブが実行されていない場合**のみ**実行できます。
+    OrganizationJobType:
+      type: string
+      description: |
+        ジョブの同時実行制御のために用いる、ジョブの種別。
+        (現在はまだ、この種別に該当するものはありません)
 
     JobStatus:
         type: string
@@ -1398,45 +1426,45 @@ components:
       type: object
       properties:
         job:
-          $ref: "#/components/schemas/JobInfo"
+          $ref: "#/components/schemas/ProjectJobInfo"
     PostProjectTasksUpdateResponse:
       type: object
       properties:
         job:
-          $ref: "#/components/schemas/JobInfo"
+          $ref: "#/components/schemas/ProjectJobInfo"
     ProjectCopyResponse:
       type: object
       properties:
         job:
-          $ref: "#/components/schemas/JobInfo"
+          $ref: "#/components/schemas/ProjectJobInfo"
         dest_project:
           $ref: "#/components/schemas/Project"
     DeleteProjectResponse:
       type: object
       properties:
         job:
-          $ref: "#/components/schemas/JobInfo"
+          $ref: "#/components/schemas/ProjectJobInfo"
         project:
           $ref: "#/components/schemas/Project"
     PutProjectResponse:
       type: object
       properties:
         job:
-          $ref: "#/components/schemas/JobInfo"
+          $ref: "#/components/schemas/ProjectJobInfo"
         project:
           $ref: "#/components/schemas/Project"
     TaskGenerateResponse:
       type: object
       properties:
         job:
-          $ref: "#/components/schemas/JobInfo"
+          $ref: "#/components/schemas/ProjectJobInfo"
         project:
           $ref: "#/components/schemas/Project"
     ProjectInputsUpdateResponse:
       type: object
       properties:
         job:
-          $ref: "#/components/schemas/JobInfo"
+          $ref: "#/components/schemas/ProjectJobInfo"
     Webhook:
       type: object
       properties:
@@ -2825,6 +2853,8 @@ components:
         - phase_stage
         - status
         - input_data_id_list
+        - histories_by_phase
+        - number_of_rejections
         - work_time_span
         - updated_datetime
       properties:
@@ -4440,8 +4470,28 @@ components:
         annotation_id:
           $ref: "#/components/schemas/AnnotationId"
           description: |
+            ##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合
+
             検査コメントに紐づくアノテーションのID。アノテーションに紐付けられていない場合（アノテーションの付け忘れに対する指定など）は未指定。
             [詳細はこちら](#section/AnnotationId)。
+
+            ##### 返信コメントである（`parent_inspection_id` に値がある）場合
+
+            現在は使用しておらず、レスポンスに含まれる値は不定です。APIのレスポンスにこの値を含む場合でも、「スレッドの先頭のコメント」の値を利用してください。
+
+            リクエストボディに指定する場合は、スレッドの先頭のコメントと同じ値を指定します。
+        label_id:
+          $ref: "#/components/schemas/LabelId"
+          description: |
+            ##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合
+
+            `annotation_id` に対応するラベルのID。 `annotation_id` を指定しない場合は未指定。
+
+            ##### 返信コメントである（`parent_inspection_id` に値がある）場合
+
+            現在は使用しておらず、レスポンスに含まれる値は不定です。APIのレスポンスにこの値を含む場合でも、「スレッドの先頭のコメント」の値を利用してください。
+
+            リクエストボディに指定する場合は、スレッドの先頭のコメントと同じ値を指定します。
         data:
           $ref: "#/components/schemas/InspectionData"
         parent_inspection_id:
@@ -4468,12 +4518,20 @@ components:
           format: date-time
     InspectionData:
       description: |
+        ##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合
+
         検査コメントの座標値や区間。
 
         * `InspectionDataPoint`：点で検査コメントを付与したときの座標値
         * `InspectionDataPolyline`：ポリラインで検査コメントを付与したときの座標値
         * `InspectionDataTime`：検査コメントを付与した区間（動画プロジェクトの場合）
         * `InspectionDataCustom`：カスタム
+
+        ##### 返信コメントである（`parent_inspection_id` に値がある）場合
+
+        現在は使用しておらず、レスポンスに含まれる値は不定です。APIのレスポンスにこの値を含む場合でも、「スレッドの先頭のコメント」の値を利用してください。
+
+        リクエストボディに指定する場合は、スレッドの先頭のコメントと同じ値を指定します。
       oneOf:
         - $ref: "#/components/schemas/InspectionDataPoint"
         - $ref: "#/components/schemas/InspectionDataPolyline"
@@ -4577,10 +4635,18 @@ components:
         - error_corrected
         - no_comment_inspection
       description: |
+        ##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合
+
         * `annotator_action_required` - 未処置。`annotation`フェーズ担当者が何らかの回答をする必要あり
         * `no_correction_required` - 処置不要。`annotation`フェーズ担当者が、検査コメントによる修正は不要、と回答した
         * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した
         * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力
+
+        ##### 返信コメントである（`parent_inspection_id` に値がある）場合
+
+        現在は使用しておらず、レスポンスに含まれる値は不定です。APIのレスポンスにこの値を含む場合でも、「スレッドの先頭のコメント」の値を利用してください。
+
+        リクエストボディに指定する場合は、スレッドの先頭のコメントと同じ値を指定します。
     AggregationResult:
       oneOf:
         - $ref: "#/components/schemas/CountResult"
@@ -5031,13 +5097,22 @@ components:
             $ref: "#/components/schemas/AggregationResult"
           description: |
             [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
-    JobInfoContainer:
+    ProjectJobInfoContainer:
       type: object
       properties:
         list:
           type: array
           items:
-            $ref: "#/components/schemas/JobInfo"
+            $ref: "#/components/schemas/ProjectJobInfo"
+        has_next:
+          type: boolean
+    OrganizationJobInfoContainer:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrganizationJobInfo"
         has_next:
           type: boolean
     MyOrganizationList:
@@ -5253,3 +5328,15 @@ components:
       oneOf:
         - $ref: "#/components/schemas/AnnotationSpecsRequestV1"
         - $ref: "#/components/schemas/AnnotationSpecsRequestV2"
+    TaskGenerateResponseWrapper:
+      oneOf:
+        - $ref: "#/components/schemas/Project"
+        - $ref: "#/components/schemas/TaskGenerateResponse"
+    PostAnnotationArchiveUpdateResponseWrapper:
+      oneOf:
+        - $ref: "#/components/schemas/Message"
+        - $ref: "#/components/schemas/PostAnnotationArchiveUpdateResponse"
+    MessageOrJobInfo:
+      oneOf:
+        - $ref: "#/components/schemas/Message"
+        - $ref: "#/components/schemas/ProjectJobInfo"

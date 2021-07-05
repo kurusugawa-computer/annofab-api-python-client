@@ -1,5 +1,6 @@
 import configparser
 import os
+import warnings
 from pathlib import Path
 
 import annofabapi
@@ -9,7 +10,7 @@ from annofabapi.dataclass.annotation_specs import AnnotationSpecsV1
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
 from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
-from annofabapi.dataclass.job import JobInfo
+from annofabapi.dataclass.job import JobInfo, ProjectJobInfo
 from annofabapi.dataclass.my import MyAccount, MyOrganization
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember
@@ -113,12 +114,36 @@ class TestInstruction:
 
 class TestJob:
     def test_job(self):
-        job_list = service.wrapper.get_all_project_job(project_id, query_params={"type": "gen-annotation"})
+        job_list = service.wrapper.get_all_project_job(project_id)
+        if len(job_list) > 0:
+            job = ProjectJobInfo.from_dict(job_list[0])
+            assert type(job) == ProjectJobInfo
+        else:
+            print(f"ジョブが存在しませんでした。")
+
+    def test_job_deprecated(self):
+        job_list = service.wrapper.get_all_project_job(project_id)
         if len(job_list) > 0:
             job = JobInfo.from_dict(job_list[0])
             assert type(job) == JobInfo
+
         else:
-            print(f"'gen-annotation'のジョブが存在しませんでした。")
+            print(f"ジョブが存在しませんでした。")
+
+    def test_job_deprecated_warning_message(self):
+        with warnings.catch_warnings(record=True) as found_warnings:
+            try:
+                JobInfo()
+            except Exception:
+                pass
+            finally:
+                assert len(found_warnings) == 1
+                single_warning = found_warnings[0]
+                print(single_warning)
+                assert str(single_warning.message) == (
+                    "deprecated: 'annofabapi.dataclass.job.JobInfo'は2021-09-01以降に廃止します。"
+                    "替わりに'annofabapi.dataclass.job.ProjectJobInfo'を使用してください。"
+                )
 
 
 class TestMy:

@@ -1011,7 +1011,7 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            job_type (JobType):  ジョブの種別。[詳細はこちら](#section/JobType)。 (required)
+            job_type (ProjectJobType):  ジョブの種別。[詳細はこちら](#section/ProjectJobType)。 (required)
             job_id (str):  ジョブID (required)
 
         Returns:
@@ -1024,28 +1024,60 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
+    def get_organization_job(
+        self, organization_name: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
+    ) -> Tuple[Any, requests.Response]:
+        """組織のバックグラウンドジョブ情報取得
+        https://annofab.com/docs/api/#operation/getOrganizationJob
+
+
+        authorizations: AllOrganizationMember
+
+
+        組織のバックグラウンドジョブの情報を取得します。 取得されるジョブ情報は、作成日付の新しい順にソートされています。  バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
+
+        Args:
+            organization_name (str):  組織名 (required)
+            query_params (Dict[str, Any]): Query Parameters
+                type (str):  取得するジョブの種別。[詳細はこちら](#section/OrganizationJobType)。
+                page (int):  検索結果のうち、取得したいページの番号(1始まり)  現在は未実装のパラメータです。(今後対応予定)
+                limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。
+                exclusive_start_created_datetime (str):  取得するデータの直前の作成日時
+
+        Returns:
+            Tuple[OrganizationJobInfoContainer, requests.Response]
+
+
+        """
+        url_path = f"/organizations/{organization_name}/jobs"
+        http_method = "GET"
+        keyword_params: Dict[str, Any] = {
+            "query_params": query_params,
+        }
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
     def get_project_job(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """バックグラウンドジョブ情報取得
+        """プロジェクトのバックグラウンドジョブ情報取得
         https://annofab.com/docs/api/#operation/getProjectJob
 
 
         authorizations: AllProjectMember
 
 
-        バックグラウンドジョブの情報を取得します。 取得されるジョブ情報は、作成日付の新しい順にソートされています。  バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
+        プロジェクトのバックグラウンドジョブの情報を取得します。 取得されるジョブ情報は、作成日付の新しい順にソートされています。  バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                type (JobType):  取得するジョブの種別。[詳細はこちら](#section/JobType)。 (required)
+                type (ProjectJobType):  取得するジョブの種別。[詳細はこちら](#section/ProjectJobType)。
                 page (int):  検索結果のうち、取得したいページの番号(1始まり)  現在は未実装のパラメータです。(今後対応予定)
                 limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。
                 exclusive_start_created_datetime (str):  取得するデータの直前の作成日時
 
         Returns:
-            Tuple[JobInfoContainer, requests.Response]
+            Tuple[ProjectJobInfoContainer, requests.Response]
 
 
         """
@@ -1410,6 +1442,7 @@ class AbstractAnnofabApi(abc.ABC):
                 except_account_id (str):  指定したアカウントIDをメンバーに持たないプロジェクトで絞り込む。
                 title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。
                 status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。
+                plugin_id (str):  指定したプラグインIDを使用しているプロジェクトで絞り込む。未指定時は指定なし。
                 input_data_type (InputDataType):  指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト。
                 sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。
 

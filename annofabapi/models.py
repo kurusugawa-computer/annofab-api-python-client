@@ -14,6 +14,8 @@ import warnings  # pylint: disable=unused-import
 from enum import Enum
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
+from annofabapi._utils import deprecated_class  # pylint: disable=unused-import
+
 ### 手動の部分
 
 AccountId = NewType("AccountId", str)
@@ -1290,7 +1292,7 @@ DeleteProjectResponse = Dict[str, Any]
 
 Kyes of Dict
 
-* job: JobInfo
+* job: ProjectJobInfo
     
 * project: Project
     
@@ -1776,6 +1778,8 @@ Kyes of Dict
     
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+* label_id: str
+    
 * data: InspectionData
     
 * parent_inspection_id: str
@@ -1795,7 +1799,7 @@ Kyes of Dict
 
 InspectionData = Dict[str, Any]
 """
-検査コメントの座標値や区間。  * `InspectionDataPoint`：点で検査コメントを付与したときの座標値 * `InspectionDataPolyline`：ポリラインで検査コメントを付与したときの座標値 * `InspectionDataTime`：検査コメントを付与した区間（動画プロジェクトの場合） * `InspectionDataCustom`：カスタム 
+##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合  検査コメントの座標値や区間。  * `InspectionDataPoint`：点で検査コメントを付与したときの座標値 * `InspectionDataPolyline`：ポリラインで検査コメントを付与したときの座標値 * `InspectionDataTime`：検査コメントを付与した区間（動画プロジェクトの場合） * `InspectionDataCustom`：カスタム  ##### 返信コメントである（`parent_inspection_id` に値がある）場合  現在は使用しておらず、レスポンスに含まれる値は不定です。APIのレスポンスにこの値を含む場合でも、「スレッドの先頭のコメント」の値を利用してください。  リクエストボディに指定する場合は、スレッドの先頭のコメントと同じ値を指定します。 
 
 Kyes of Dict
 
@@ -1953,7 +1957,7 @@ Kyes of Dict
 
 class InspectionStatus(Enum):
     """
-    * `annotator_action_required` - 未処置。`annotation`フェーズ担当者が何らかの回答をする必要あり * `no_correction_required` - 処置不要。`annotation`フェーズ担当者が、検査コメントによる修正は不要、と回答した * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力
+    ##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合  * `annotator_action_required` - 未処置。`annotation`フェーズ担当者が何らかの回答をする必要あり * `no_correction_required` - 処置不要。`annotation`フェーズ担当者が、検査コメントによる修正は不要、と回答した * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力  ##### 返信コメントである（`parent_inspection_id` に値がある）場合  現在は使用しておらず、レスポンスに含まれる値は不定です。APIのレスポンスにこの値を含む場合でも、「スレッドの先頭のコメント」の値を利用してください。  リクエストボディに指定する場合は、スレッドの先頭のコメントと同じ値を指定します。
     """
 
     ANNOTATOR_ACTION_REQUIRED = "annotator_action_required"
@@ -2151,44 +2155,6 @@ Kyes of Dict
 
 """
 
-JobInfo = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* job_type: JobType
-    
-* job_id: str
-    
-* job_status: JobStatus
-    
-* job_execution: __DictStrKeyAnyValue__
-    ジョブの内部情報
-* job_detail: __DictStrKeyAnyValue__
-    ジョブ結果の内部情報
-* created_datetime: str
-    
-* updated_datetime: str
-    
-
-"""
-
-JobInfoContainer = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[JobInfo]
-    
-* has_next: bool
-    
-
-"""
-
 
 class JobStatus(Enum):
     """ """
@@ -2196,22 +2162,6 @@ class JobStatus(Enum):
     PROGRESS = "progress"
     SUCCEEDED = "succeeded"
     FAILED = "failed"
-
-
-class JobType(Enum):
-    """
-    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。  ## ジョブの同時実行制限  AnnoFab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。  ジョブの同時実行可否はジョブの種別によって異なります。  ### copy-project 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-tasks` * `delete-project` * `move-project`  ### gen-inputs 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-inputs-list` * `delete-project` * `move-project`  ### gen-tasks 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-annotation` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-annotation 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-annotation` * `delete-project` * `move-project`  ### gen-tasks-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-inputs-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-inputs-list` * `delete-project` * `move-project`  ### delete-project 他のジョブが実行されていない場合**のみ**実行できます。  ### invoke-hook 次のジョブが実行されている場合、このジョブを実行することはできません。  * `delete-project` * `move-project`  ### move-project 他のジョブが実行されていない場合**のみ**実行できます。
-    """
-
-    COPY_PROJECT = "copy-project"
-    GEN_INPUTS = "gen-inputs"
-    GEN_TASKS = "gen-tasks"
-    GEN_ANNOTATION = "gen-annotation"
-    GEN_TASKS_LIST = "gen-tasks-list"
-    GEN_INPUTS_LIST = "gen-inputs-list"
-    DELETE_PROJECT = "delete-project"
-    INVOKE_HOOK = "invoke-hook"
-    MOVE_PROJECT = "move-project"
 
 
 Keybind = Dict[str, Any]
@@ -2419,6 +2369,33 @@ Kyes of Dict
 
 """
 
+MessageOrJobInfo = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* message: str
+    多言語対応
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* job_type: ProjectJobType
+    
+* job_id: str
+    
+* job_status: JobStatus
+    
+* job_execution: __DictStrKeyAnyValue__
+    ジョブの内部情報
+* job_detail: __DictStrKeyAnyValue__
+    ジョブ結果の内部情報
+* created_datetime: str
+    
+* updated_datetime: str
+    
+
+"""
+
 MyAccount = Dict[str, Any]
 """
 
@@ -2575,6 +2552,44 @@ Kyes of Dict
 * statistics: str
     
 * organization: str
+    
+
+"""
+
+OrganizationJobInfo = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* job_type: str
+    ジョブの同時実行制御のために用いる、ジョブの種別。 (現在はまだ、この種別に該当するものはありません) 
+* job_id: str
+    
+* job_status: JobStatus
+    
+* job_execution: __DictStrKeyAnyValue__
+    ジョブの内部情報
+* job_detail: __DictStrKeyAnyValue__
+    ジョブ結果の内部情報
+* created_datetime: str
+    
+* updated_datetime: str
+    
+
+"""
+
+OrganizationJobInfoContainer = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[OrganizationJobInfo]
+    
+* has_next: bool
     
 
 """
@@ -2909,7 +2924,20 @@ PostAnnotationArchiveUpdateResponse = Dict[str, Any]
 
 Kyes of Dict
 
-* job: JobInfo
+* job: ProjectJobInfo
+    
+
+"""
+
+PostAnnotationArchiveUpdateResponseWrapper = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* message: str
+    多言語対応
+* job: ProjectJobInfo
     
 
 """
@@ -2920,7 +2948,7 @@ PostProjectTasksUpdateResponse = Dict[str, Any]
 
 Kyes of Dict
 
-* job: JobInfo
+* job: ProjectJobInfo
     
 
 """
@@ -3100,7 +3128,7 @@ ProjectCopyResponse = Dict[str, Any]
 
 Kyes of Dict
 
-* job: JobInfo
+* job: ProjectJobInfo
     
 * dest_project: Project
     
@@ -3113,10 +3141,65 @@ ProjectInputsUpdateResponse = Dict[str, Any]
 
 Kyes of Dict
 
-* job: JobInfo
+* job: ProjectJobInfo
     
 
 """
+
+ProjectJobInfo = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* job_type: ProjectJobType
+    
+* job_id: str
+    
+* job_status: JobStatus
+    
+* job_execution: __DictStrKeyAnyValue__
+    ジョブの内部情報
+* job_detail: __DictStrKeyAnyValue__
+    ジョブ結果の内部情報
+* created_datetime: str
+    
+* updated_datetime: str
+    
+
+"""
+
+ProjectJobInfoContainer = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* list: List[ProjectJobInfo]
+    
+* has_next: bool
+    
+
+"""
+
+
+class ProjectJobType(Enum):
+    """
+    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。  ## ジョブの同時実行制限  AnnoFab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。  ジョブの同時実行可否はジョブの種別によって異なります。  ### copy-project 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-tasks` * `delete-project` * `move-project`  ### gen-inputs 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-inputs-list` * `delete-project` * `move-project`  ### gen-tasks 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-annotation` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-annotation 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-annotation` * `delete-project` * `move-project`  ### gen-tasks-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-inputs-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-inputs-list` * `delete-project` * `move-project`  ### delete-project 他のジョブが実行されていない場合**のみ**実行できます。  ### invoke-hook 次のジョブが実行されている場合、このジョブを実行することはできません。  * `delete-project` * `move-project`  ### move-project 他のジョブが実行されていない場合**のみ**実行できます。
+    """
+
+    COPY_PROJECT = "copy-project"
+    GEN_INPUTS = "gen-inputs"
+    GEN_TASKS = "gen-tasks"
+    GEN_ANNOTATION = "gen-annotation"
+    GEN_TASKS_LIST = "gen-tasks-list"
+    GEN_INPUTS_LIST = "gen-inputs-list"
+    DELETE_PROJECT = "delete-project"
+    INVOKE_HOOK = "invoke-hook"
+    MOVE_PROJECT = "move-project"
+
 
 ProjectList = Dict[str, Any]
 """
@@ -3432,7 +3515,7 @@ PutProjectResponse = Dict[str, Any]
 
 Kyes of Dict
 
-* job: JobInfo
+* job: ProjectJobInfo
     
 * project: Project
     
@@ -3866,7 +3949,40 @@ TaskGenerateResponse = Dict[str, Any]
 
 Kyes of Dict
 
-* job: JobInfo
+* job: ProjectJobInfo
+    
+* project: Project
+    
+
+"""
+
+TaskGenerateResponseWrapper = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* title: str
+    プロジェクトのタイトル
+* overview: str
+    プロジェクトの概要
+* project_status: ProjectStatus
+    
+* input_data_type: InputDataType
+    
+* configuration: ProjectConfiguration
+    
+* created_datetime: str
+    
+* updated_datetime: str
+    
+* summary: ProjectSummary
+    
+* job: ProjectJobInfo
     
 * project: Project
     
@@ -4402,3 +4518,26 @@ Kyes of Dict
     作業時間の標準偏差（ISO 8601 duration）
 
 """
+
+# 以下は2021-09-01以降に廃止する予定
+JobInfo = ProjectJobInfo
+JobInfoContainer = ProjectJobInfoContainer
+
+
+@deprecated_class(deprecated_date="2021-09-01", new_class_name=f"{ProjectJobType.__module__}.{ProjectJobType.__name__}")
+class JobType(Enum):
+    """
+    プロジェクトのジョブ種別
+
+    .. deprecated:: 2021-09-01
+    """
+
+    COPY_PROJECT = "copy-project"
+    GEN_INPUTS = "gen-inputs"
+    GEN_TASKS = "gen-tasks"
+    GEN_ANNOTATION = "gen-annotation"
+    GEN_TASKS_LIST = "gen-tasks-list"
+    GEN_INPUTS_LIST = "gen-inputs-list"
+    DELETE_PROJECT = "delete-project"
+    INVOKE_HOOK = "invoke-hook"
+    MOVE_PROJECT = "move-project"

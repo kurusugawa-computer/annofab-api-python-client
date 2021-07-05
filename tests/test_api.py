@@ -17,7 +17,7 @@ from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.models import GraphType, JobType
+from annofabapi.models import GraphType, ProjectJobType
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
@@ -75,7 +75,7 @@ class TestAnnotation:
     def test_post_annotation_archive_update(self):
         content = api.post_annotation_archive_update(project_id, query_params={"v": "2"})[0]
         job = content["job"]
-        assert job["job_type"] == JobType.GEN_ANNOTATION.value
+        assert job["job_type"] == ProjectJobType.GEN_ANNOTATION.value
 
 
 class TestAnnotationSpecs:
@@ -174,29 +174,33 @@ class TestInstruction:
 class TestJob:
     def test_wait_for_completion(self):
         # 実行中のジョブはないので、必ずTrue
-        result = wrapper.wait_for_completion(project_id, JobType.GEN_TASKS, job_access_interval=1, max_job_access=1)
+        result = wrapper.wait_for_completion(
+            project_id, ProjectJobType.GEN_TASKS, job_access_interval=1, max_job_access=1
+        )
         assert result == True
 
     def test_wait_until_job_finished(self):
         # 実行中のジョブはないはずので、必ずTrue
-        result = wrapper.wait_until_job_finished(project_id, JobType.GEN_TASKS, job_access_interval=1, max_job_access=1)
+        result = wrapper.wait_until_job_finished(
+            project_id, ProjectJobType.GEN_TASKS, job_access_interval=1, max_job_access=1
+        )
         assert result is None
 
     def test_get_all_project_job(self):
-        assert len(wrapper.get_all_project_job(project_id, {"type": JobType.GEN_INPUTS.value})) >= 0
+        assert len(wrapper.get_all_project_job(project_id, {"type": ProjectJobType.GEN_INPUTS.value})) >= 0
 
     def test_delete_all_succeeded_job(self):
-        assert len(wrapper.delete_all_succeeded_job(project_id, JobType.GEN_TASKS)) >= 0
+        assert len(wrapper.delete_all_succeeded_job(project_id, ProjectJobType.GEN_TASKS)) >= 0
 
     def test_job_in_progress(self):
-        assert type(wrapper.job_in_progress(project_id, JobType.GEN_TASKS)) == bool
+        assert type(wrapper.job_in_progress(project_id, ProjectJobType.GEN_TASKS)) == bool
 
     def test_can_execute_job(self):
-        assert type(wrapper.can_execute_job(project_id, JobType.GEN_TASKS)) == bool
+        assert type(wrapper.can_execute_job(project_id, ProjectJobType.GEN_TASKS)) == bool
 
     def test_wait_until_job_is_executable(self):
         # ただ実行するだけ
-        result = wrapper.wait_until_job_is_executable(project_id, JobType.GEN_TASKS)
+        result = wrapper.wait_until_job_is_executable(project_id, ProjectJobType.GEN_TASKS)
         type(result) == bool
 
     @pytest.mark.submitting_job
