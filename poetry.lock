@@ -889,6 +889,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "types-dataclasses"
+version = "0.1.5"
+description = "Typing stubs for dataclasses"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "types-python-dateutil"
 version = "0.1.4"
 description = "Typing stubs for python-dateutil"
@@ -968,7 +976,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.2"
-content-hash = "d2bac5c48a3542bded71e45600a2caf65a33f38b8d802a13dcba8b85699529c9"
+content-hash = "4fc4d0f85efdcc2ab1d342c3eb699b4026cf52292196bf1390548f9f5c1aab8e"
 
 [metadata.files]
 alabaster = [
@@ -1463,6 +1471,10 @@ typed-ast = [
     {file = "typed_ast-1.4.3-cp39-cp39-win32.whl", hash = "sha256:209596a4ec71d990d71d5e0d312ac935d86930e6eecff6ccc7007fe54d703808"},
     {file = "typed_ast-1.4.3-cp39-cp39-win_amd64.whl", hash = "sha256:9c6d1a54552b5330bc657b7ef0eae25d00ba7ffe85d9ea8ae6540d2197a3788c"},
     {file = "typed_ast-1.4.3.tar.gz", hash = "sha256:fb1bbeac803adea29cedd70781399c99138358c26d05fcbd23c13016b7f5ec65"},
+]
+types-dataclasses = [
+    {file = "types-dataclasses-0.1.5.tar.gz", hash = "sha256:7b5f4099fb21c209f2df3a83c2b64308c29955769d610a457244dc0eebe1cafc"},
+    {file = "types_dataclasses-0.1.5-py2.py3-none-any.whl", hash = "sha256:c19491cfb981bff9cafd9c113c291a7a54adccc6298ded8ca3de0d7abe211984"},
 ]
 types-python-dateutil = [
     {file = "types-python-dateutil-0.1.4.tar.gz", hash = "sha256:e6486ca27b6dde73e0ec079a9e1b03e208766e6bc7f1e08964a7e9104a5c7d7a"},
