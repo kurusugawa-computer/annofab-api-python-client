@@ -12,6 +12,8 @@ from annofabapi.models import TaskPhase
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_PROJECT_TITLE = "annofabapiのテスト用プロジェクト（自動生成）"
+
 
 class CreatingTestProject:
     def __init__(self, service: annofabapi.Resource):
@@ -21,7 +23,6 @@ class CreatingTestProject:
 
     def create_project(self, organization_name: str, project_title: Optional[str] = None) -> Dict[str, Any]:
         project_id = str(uuid.uuid4())
-        DEFAULT_PROJECT_TITLE = "annofabapiのテスト用プロジェクト（自動生成）"
 
         request_body = {
             "title": project_title if project_title is not None else DEFAULT_PROJECT_TITLE,
@@ -250,17 +251,12 @@ class CreatingTestProject:
         logger.debug(f"検査コメントを作成しました。task_id={task_id}, input_data_id={input_data_id}")
         self.service.wrapper.change_task_status_to_break(project_id, task_id)
 
-    def main(
-        self, organization_name: Optional[str], project_id: Optional[str], project_title: Optional[str] = None
-    ) -> None:
-        if project_id is None:
-            if organization_name is not None:
-                project = self.create_project(organization_name=organization_name, project_title=project_title)
-                project_id = project["project_id"]
-                logger.debug(f"project_id={project_id} プロジェクトを作成しました。")
-            else:
-                raise RuntimeError("organization_name がNoneなので、プロジェクトを作成できません")
+    def main(self, organization_name: str, project_title: Optional[str] = None) -> None:
+        project = self.create_project(organization_name=organization_name, project_title=project_title)
+        project_id = project["project_id"]
+        logger.debug(f"project_id={project_id} プロジェクトを作成しました。")
 
+        self.create_annotation_specs(project_id)
         logger.debug("アノテーション仕様を作成しました。")
 
         # プロジェクトトップに移動する
@@ -289,7 +285,7 @@ class CreatingTestProject:
         logger.debug("作業ガイドを登録しました。")
 
         self.create_webhook(project_id, webhook_id="test_webhook_1")
-
+        logger.info(f"テストプロジェクトを作成しました。https://annofab.com/projects/{project_id}")
         # 移動前のディレクトリに戻る
         os.chdir(now_dir)
 
@@ -299,9 +295,8 @@ def parse_args():
         description="annofabapiのテスト用プロジェクトを生成します。", formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    project_group = parser.add_mutually_exclusive_group(required=True)
-    project_group.add_argument("-p", "--project_id", type=str, help="テスト用プロジェクトのproject_id。指定しない場合はプロジェクトを作成します。")
-    project_group.add_argument("-org", "--organization", type=str, help="プロジェクトを作成する対象の組織を指定してください。")
+    parser.add_argument("-org", "--organization", type=str, required=True, help="プロジェクトを作成する対象の組織を指定してください。")
+    parser.add_argument("--project_title", type=str, default=DEFAULT_PROJECT_TITLE, help="作成するプロジェクトのタイトルを指定してください。")
 
     return parser.parse_args()
 
@@ -319,7 +314,7 @@ def main() -> None:
     args = parse_args()
 
     main_obj = CreatingTestProject(annofabapi.build())
-    main_obj.main(organization_name=args.organization, project_id=args.project_id)
+    main_obj.main(organization_name=args.organization, project_title=args.project_title)
 
 
 if __name__ == "__main__":
