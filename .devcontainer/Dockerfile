@@ -116,7 +116,8 @@ RUN set -x \
 RUN set -x \
     && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | sudo -u vscode -i python - \
     && sudo -u vscode -i /home/vscode/.local/bin/poetry config virtualenvs.in-project true
-ENV PATH=$PATH:/home/vscode/.local/bin
+ENV PATH=$PATH:/home/vscode/.local/bin \
+    PIP_DEFAULT_TIMEOUT=100
 
 # fix poetry issue (see: https://github.com/python-poetry/poetry/issues/221)
 RUN set -x \
