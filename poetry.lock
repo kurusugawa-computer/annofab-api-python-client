@@ -90,7 +90,7 @@ python-versions = "*"
 
 [[package]]
 name = "backoff"
-version = "1.11.0"
+version = "1.11.1"
 description = "Function decoration for backoff and retry"
 category = "main"
 optional = false
@@ -1018,8 +1018,8 @@ backcall = [
     {file = "backcall-0.2.0.tar.gz", hash = "sha256:5cbdbf27be5e7cfadb448baf0aa95508f91f2bbc6c6437cd9cd06e2a4c215e1e"},
 ]
 backoff = [
-    {file = "backoff-1.11.0-py2.py3-none-any.whl", hash = "sha256:48373089ccc81b094281884e48305cbf879b4fc7a80ab7c6de2011e2f741267b"},
-    {file = "backoff-1.11.0.tar.gz", hash = "sha256:dfaca81d40554e271a53a5f0e7c920100c948d38f5448600de0eab551fcd4fed"},
+    {file = "backoff-1.11.1-py2.py3-none-any.whl", hash = "sha256:61928f8fa48d52e4faa81875eecf308eccfb1016b018bb6bd21e05b5d90a96c5"},
+    {file = "backoff-1.11.1.tar.gz", hash = "sha256:ccb962a2378418c667b3c979b504fdeb7d9e0d29c0579e3b13b86467177728cb"},
 ]
 beautifulsoup4 = [
     {file = "beautifulsoup4-4.9.3-py2-none-any.whl", hash = "sha256:4c98143716ef1cb40bf7f39a8e3eec8f8b009509e74904ba3a7b315431577e35"},
