@@ -19,6 +19,7 @@
         "astimezone",
         "asyncio",
         "dateutil",
+        "giveup",
         "pylint",
         "tzlocal"
     ]

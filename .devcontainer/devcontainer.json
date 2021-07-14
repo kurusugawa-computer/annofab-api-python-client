@@ -35,6 +35,7 @@
 		"streetsidesoftware.code-spell-checker",
 		"bungcip.better-toml",
 		"njpwerner.autodocstring",
-		"dawhite.mustache"
+		"dawhite.mustache",
+		"lextudio.restructuredtext"
 	]
 }
