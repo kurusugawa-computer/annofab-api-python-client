@@ -1,5 +1,5 @@
 {
-
+    "terminal.integrated.allowChords": false, // terminal上でEmacsキーバインドを使うための設定
     "python.pythonPath": ".venv/bin/python",
     "python.languageServer": "Pylance",
     "python.autoComplete.addBrackets": true,

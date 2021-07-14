@@ -43,16 +43,15 @@ def my_backoff(function):
                 code = e.response.status_code
                 return 400 <= code < 500 and code != 429
 
-            elif isinstance(e, requests.exceptions.ConnectionError):
-                # the event of a network problem (e.g. DNS failure, refused connection, etc)
-                return False
-
-            elif isinstance(e, requests.exceptions.Timeout):
-                # request times out
-                return False
-
-            elif isinstance(e, requests.exceptions.TooManyRedirects):
-                # a request exceeds the configured number of maximum redirections
+            elif isinstance(
+                e,
+                (
+                    requests.exceptions.TooManyRedirects,
+                    requests.exceptions.Timeout,
+                    requests.exceptions.ConnectionError,
+                    ConnectionError,
+                ),
+            ):
                 return False
 
             else:
