@@ -15,6 +15,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 import requests
 
 from annofabapi import AnnofabApi
+from annofabapi.api import my_backoff
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (
     AdditionalData,
@@ -914,6 +915,7 @@ class Wrapper:
     #########################################
     # Public Method : Statistics
     #########################################
+    @my_backoff
     def _request_location_header_url(self, response: requests.Response) -> Any:
         """
         Location headerに記載されているURLの中身を返す。
@@ -1663,6 +1665,7 @@ class Wrapper:
         with open(file_path, "rb") as f:
             return self.upload_data_as_instruction_image(project_id, image_id, data=f, content_type=new_content_type)
 
+    @my_backoff
     def upload_data_as_instruction_image(self, project_id: str, image_id: str, data: Any, content_type: str) -> str:
         """
         data を作業ガイドの画像としてアップロードする。
