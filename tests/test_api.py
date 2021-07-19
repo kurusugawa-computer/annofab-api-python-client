@@ -325,10 +325,6 @@ class TestProjectMember:
     def test_wrapper_get_all_project_members(self):
         assert len(wrapper.get_all_project_members(project_id)) >= 0
 
-    def test_wrapper_copy_project_member(self):
-        content = wrapper.copy_project_members(src_project_id=project_id, dest_project_id=project_id, delete_dest=False)
-        assert type(content) == list
-
 
 class TestStatistics:
     def test_wrapper_statistics(self):
