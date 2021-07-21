@@ -1,4 +1,4 @@
-.PHONY: docs lint test format test publish_test publish
+.PHONY: docs lint test format test publish
 
 init:
 	pip install poetry --upgrade
