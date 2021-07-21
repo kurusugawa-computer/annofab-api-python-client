@@ -15,6 +15,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 import requests
 
 from annofabapi import AnnofabApi
+from annofabapi.api import my_backoff
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (
     AdditionalData,
@@ -914,6 +915,7 @@ class Wrapper:
     #########################################
     # Public Method : Statistics
     #########################################
+    @my_backoff
     def _request_location_header_url(self, response: requests.Response) -> Any:
         """
         Location headerに記載されているURLの中身を返す。
