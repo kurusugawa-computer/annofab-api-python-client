@@ -1665,7 +1665,6 @@ class Wrapper:
         with open(file_path, "rb") as f:
             return self.upload_data_as_instruction_image(project_id, image_id, data=f, content_type=new_content_type)
 
-
     def upload_data_as_instruction_image(self, project_id: str, image_id: str, data: Any, content_type: str) -> str:
         """
         data を作業ガイドの画像としてアップロードする。
