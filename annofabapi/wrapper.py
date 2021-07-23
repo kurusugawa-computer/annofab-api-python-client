@@ -916,7 +916,7 @@ class Wrapper:
     # Public Method : Statistics
     #########################################
     @my_backoff
-    def _request_location_header_url(self, response: requests.Response) -> Any:
+    def _request_location_header_url(self, response: requests.Response) -> Optional[Any]:
         """
         Location headerに記載されているURLの中身を返す。
 
@@ -924,10 +924,15 @@ class Wrapper:
             response:
 
         Returns:
-            Location headerに記載されているURLの中身
+            Location headerに記載されているURLの中身。
+            レスポンスヘッダにLocationがない場合は、Noneを返す。
 
         """
-        url = response.headers["Location"]
+        url = response.headers.get("Location")
+        if url is None:
+            # プロジェクト作成直後などが該当する
+            logger.warning(f"レスポンスヘッダに'Location'がありません。method={response.request.method}, url={response.request.url}")
+            return None
 
         response = self.api.session.get(url)
         _log_error_response(logger, response)
@@ -949,7 +954,11 @@ class Wrapper:
 
         """
         _, response = self.api.get_task_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
 
     def get_account_statistics(self, project_id: str) -> List[Any]:
         """
@@ -962,7 +971,11 @@ class Wrapper:
 
         """
         _, response = self.api.get_account_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
 
     def get_inspection_statistics(self, project_id: str) -> List[Any]:
         """
@@ -975,7 +988,11 @@ class Wrapper:
 
         """
         _, response = self.api.get_inspection_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
 
     def get_task_phase_statistics(self, project_id: str) -> List[Any]:
         """
@@ -988,7 +1005,11 @@ class Wrapper:
 
         """
         _, response = self.api.get_task_phase_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
 
     def get_label_statistics(self, project_id: str) -> List[Any]:
         """
@@ -1001,7 +1022,11 @@ class Wrapper:
 
         """
         _, response = self.api.get_label_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
 
     def get_worktime_statistics(self, project_id: str) -> List[Any]:
         """
@@ -1016,7 +1041,11 @@ class Wrapper:
 
         """
         _, response = self.api.get_worktime_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
 
     #########################################
     # Public Method : Supplementary

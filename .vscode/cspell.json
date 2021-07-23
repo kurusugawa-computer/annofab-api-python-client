@@ -19,7 +19,9 @@
         "astimezone",
         "asyncio",
         "dateutil",
+        "favicon",
         "giveup",
+        "pydata",
         "pylint",
         "tzlocal"
     ]
