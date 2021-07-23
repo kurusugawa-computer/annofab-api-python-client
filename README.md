@@ -33,6 +33,9 @@
 * `annofabapi.models.JobType` を廃止します。替わりに`annofabapi.models.ProjectJobType`を使用してください。
 * `annofabapi.dataclass.job.JobInfo`を廃止します。替わりに`annofabapi.models.ProjectJobInfo`を使用してください。
 
+### 2022-01-01 以降
+* Python3.6のサポートを停止し、対応するPythonバージョンを3.7以上にします。
+
 # Features
 cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます。
 
