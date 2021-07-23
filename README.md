@@ -5,6 +5,7 @@
 [![CodeQL](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml)
 [![PyPI version](https://badge.fury.io/py/annofabapi.svg)](https://badge.fury.io/py/annofabapi)
 [![Python Versions](https://img.shields.io/pypi/pyversions/annofabapi.svg)](https://pypi.org/project/annofabapi/)
+[![Documentation Status](https://readthedocs.org/projects/annofab-api-python-client/badge/?version=latest)](https://annofab-api-python-client.readthedocs.io/en/latest/?badge=latest)
 
 
 
@@ -31,6 +32,9 @@
 * [annofabapi.wrapper.AnnofabApiWrapper.copy_annotation_specs](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.copy_annotation_specs) を廃止します。特殊なケースにしか対応しておらず、汎用的なメソッドでないためです。
 * `annofabapi.models.JobType` を廃止します。替わりに`annofabapi.models.ProjectJobType`を使用してください。
 * `annofabapi.dataclass.job.JobInfo`を廃止します。替わりに`annofabapi.models.ProjectJobInfo`を使用してください。
+
+### 2022-01-01 以降
+* Python3.6のサポートを停止し、対応するPythonバージョンを3.7以上にします。
 
 # Features
 cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます。

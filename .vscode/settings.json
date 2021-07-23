@@ -32,7 +32,8 @@
     "python.linting.ignorePatterns": [
         "generate/**/*.py",
         ".vscode/*.py",
-        "**/site-packages/**/*.py"
+        "**/site-packages/**/*.py",
+        "docs/**/*.py"
     ],
     "python.analysis.extraPaths": [
         ".venv/lib/python3.8/site-packages/"
