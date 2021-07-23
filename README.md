@@ -5,6 +5,7 @@
 [![CodeQL](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml)
 [![PyPI version](https://badge.fury.io/py/annofabapi.svg)](https://badge.fury.io/py/annofabapi)
 [![Python Versions](https://img.shields.io/pypi/pyversions/annofabapi.svg)](https://pypi.org/project/annofabapi/)
+[![Documentation Status](https://readthedocs.org/projects/annofab-api-python-client/badge/?version=latest)](https://annofab-api-python-client.readthedocs.io/en/latest/?badge=latest)
 
 
 
