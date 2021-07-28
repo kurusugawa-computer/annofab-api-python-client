@@ -199,7 +199,7 @@ class AnnofabApi(AbstractAnnofabApi):
         request_body: Optional[Any] = None,
     ) -> Tuple[Any, requests.Response]:
         """
-        HTTP　Requestを投げて、Responseを返す。
+        HTTP Requestを投げて、Responseを返す。
 
         Args:
             http_method:
@@ -236,7 +236,9 @@ class AnnofabApi(AbstractAnnofabApi):
         content = self._response_to_content(response)
         return content, response
 
-    def _get_signed_cookie(self, project_id) -> Tuple[Dict[str, Any], requests.Response]:
+    def _get_signed_cookie(
+        self, project_id, query_params: Optional[Dict[str, Any]] = None
+    ) -> Tuple[Dict[str, Any], requests.Response]:
         """
         アノテーション仕様の履歴情報を取得するために、非公開APIにアクセスする。
         変更される可能性あり.
@@ -250,7 +252,7 @@ class AnnofabApi(AbstractAnnofabApi):
         """
         url_path = f"/internal/projects/{project_id}/sign-headers"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: Dict[str, Any] = {"query_params": query_params}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def _request_get_with_cookie(self, project_id: str, url: str) -> requests.Response:
@@ -265,23 +267,22 @@ class AnnofabApi(AbstractAnnofabApi):
             Response
 
         """
-
-        def request(cookies):
-            kwargs = {"cookies": cookies}
-            return self.session.get(url, **kwargs)
-
-        if self.cookies is None:
-            _, r = self._get_signed_cookie(project_id)
-            self.cookies = r.cookies
-
-        response = request(self.cookies)
+        # Sessionオブジェクトに保存されているCookieを利用して、URLにアクセスする
+        response = self.session.get(url)
 
         # CloudFrontから403 Errorが発生したときは、別プロジェクトのcookieを渡している可能性があるので、
         # Signed Cookieを発行して、再度リクエストを投げる
         if response.status_code == requests.codes.forbidden and response.headers.get("server") == "CloudFront":
-            _, r = self._get_signed_cookie(project_id)
-            self.cookies = r.cookies
-            response = request(self.cookies)
+            query_params = {}
+            if "/input_data_set/" in url:
+                query_params.update({"resource": "input_data_set"})
+            else:
+                query_params.update({"resource": "project"})
+
+            _, r = self._get_signed_cookie(project_id, query_params=query_params)
+            for cookie in r.cookies:
+                self.session.cookies.set_cookie(cookie)
+            response = self.session.get(url)
 
         _log_error_response(logger, response)
         _raise_for_status(response)
