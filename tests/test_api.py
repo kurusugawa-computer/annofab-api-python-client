@@ -594,11 +594,20 @@ class TestGetObjOrNone:
 
 
 class TestProtectedMethod:
-    def test__request_get_with_cookie(self):
+    @classmethod
+    def setup_class(cls):
+        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
+    def test__request_get_with_cookie_with_project_url(self):
         images, _ = api.get_instruction_images(project_id)
         url = images[0]["url"]
         r = api._request_get_with_cookie(project_id, url)
-        # エラーがないことを確認する
+        assert r.status_code == 200
+
+    def test__request_get_with_cookie_with_input_data_set_url(self):
+        input_data, _ = api.get_input_data(project_id, self.input_data_id)
+        r = api._request_get_with_cookie(project_id, input_data["url"])
+        assert r.status_code == 200
 
     def test_request_get_with_cookie_failed(self):
         # SignedCookieに対応するプロジェクトと、アクセス対象のプロジェクトが異なっているときの対応
