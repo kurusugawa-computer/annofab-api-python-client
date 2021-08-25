@@ -3,12 +3,12 @@ import json
 import os
 import zipfile
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional,Callable
+from typing import Any, Callable, Dict, Iterator, List, Optional
 
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
 
-CONVERT_ANNOTATION_DETAIL_DATA_FUNC=Callable[[Dict[str,Any]], Any]
+CONVERT_ANNOTATION_DETAIL_DATA_FUNC = Callable[[Dict[str, Any]], Any]
 
 
 def _trim_extension(file_path: str) -> str:
@@ -74,7 +74,9 @@ class SimpleAnnotationParser(abc.ABC):
 
         """
 
-    def parse(self, convert_deitail_data_func:Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC]=None) -> SimpleAnnotation:
+    def parse(
+        self, convert_deitail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None
+    ) -> SimpleAnnotation:
         """JSONファイルをパースする
 
         Args:
@@ -84,12 +86,12 @@ class SimpleAnnotationParser(abc.ABC):
         Returns:
             SimpleAnnotationインスタンス
         """
-        
-        simple_annotation = SimpleAnnotation.from_dict(self.load_json())  # type: ignore        
-        for detail in simple_annotation.details:
-            detail.data = convert_deitail_data_func(detail.data) 
-        return simple_annotation
 
+        simple_annotation = SimpleAnnotation.from_dict(self.load_json())  # type: ignore
+        if convert_deitail_data_func is not None:
+            for detail in simple_annotation.details:
+                detail.data = convert_deitail_data_func(detail.data)
+        return simple_annotation
 
     @abc.abstractmethod
     def load_json(self) -> Any:
@@ -162,7 +164,7 @@ class FullAnnotationParser(abc.ABC):
         JSONファイルをloadします。
         """
 
-    def parse(self, convert_deitail_data_func:Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC]=None) -> FullAnnotation:
+    def parse(self, convert_deitail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None) -> FullAnnotation:
         """JSONファイルをパースする
 
         Args:
@@ -172,12 +174,12 @@ class FullAnnotationParser(abc.ABC):
         Returns:
             FullAnnotationインスタンス
         """
-        
-        full_annotation = FullAnnotation.from_dict(self.load_json())  # type: ignore        
-        for detail in full_annotation.details:
-            detail.data = convert_deitail_data_func(detail.data) 
-        return full_annotation
 
+        full_annotation = FullAnnotation.from_dict(self.load_json())  # type: ignore
+        if convert_deitail_data_func is not None:
+            for detail in full_annotation.details:
+                detail.data = convert_deitail_data_func(detail.data)
+        return full_annotation
 
 
 class SimpleAnnotationZipParser(SimpleAnnotationParser):
@@ -201,7 +203,6 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
     def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str):
         self.__zip_file = zip_file
         super().__init__(json_file_path)
-
 
     def load_json(self) -> Any:
         with self.__zip_file.open(self.json_file_path) as entry:
