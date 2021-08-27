@@ -8,7 +8,7 @@ import pytest
 import annofabapi
 import annofabapi.parser
 import annofabapi.utils
-from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
+from annofabapi.dataclass.annotation import FullAnnotation, FullAnnotationDataPoints, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
 from annofabapi.parser import (
     FullAnnotationDirParser,
@@ -42,6 +42,24 @@ class TestSimpleAnnotationParser:
 
             with pytest.raises(AnnotationOuterFileNotFoundError):
                 parser.open_outer_file("foo")
+
+    def convert_deitail_data(self, dict_data):
+        if dict_data["_type"] == "Points":
+            dict_data["type"] = dict_data["_type"]
+            return FullAnnotationDataPoints.from_dict(dict_data)
+        else:
+            return dict_data
+
+    def test_parse_for_zip(self):
+        zip_path = Path(test_dir / "simple-annotation.zip")
+        with zipfile.ZipFile(zip_path) as zip_file:
+            parser = SimpleAnnotationZipParser(zip_file, "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
+
+            simple_annotation = parser.parse()
+            assert type(simple_annotation.details[0].data) == dict
+
+            simple_annotation2 = parser.parse(self.convert_deitail_data)
+            assert type(simple_annotation2.details[0].data) == FullAnnotationDataPoints
 
     def test_SimpleAnnotationDirParser(self):
         dir_path = Path(test_dir / "simple-annotation")
@@ -118,6 +136,10 @@ class TestSimpleAnnotation:
             assert type(simple_annotation) == SimpleAnnotation
             index += 1
 
+            dict_simple_annotation = parser.load_json()
+            assert type(dict_simple_annotation) == dict
+            assert "details" in dict_simple_annotation
+
         assert index == 4
 
     def test_lazy_parse_simple_annotation_zip_by_task(self):
@@ -166,6 +188,11 @@ class TestFullAnnotation:
             parser = FullAnnotationZipParser(zip_file, "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
             assert parser.task_id == "sample_1"
             assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
+
+            dict_simple_annotation = parser.load_json()
+            assert type(dict_simple_annotation) == dict
+            assert "details" in dict_simple_annotation
+
             with pytest.raises(AnnotationOuterFileNotFoundError):
                 parser.open_outer_file("foo")
 
@@ -186,5 +213,28 @@ class TestFullAnnotation:
         )
         assert parser.task_id == "sample_1"
         assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
+
+        dict_simple_annotation = parser.load_json()
+        assert type(dict_simple_annotation) == dict
+        assert "details" in dict_simple_annotation
+
         with pytest.raises(AnnotationOuterFileNotFoundError):
             parser.open_outer_file("foo")
+
+    def convert_deitail_data(self, dict_data):
+        if dict_data["_type"] == "Points":
+            dict_data["type"] = dict_data["_type"]
+            return FullAnnotationDataPoints.from_dict(dict_data)
+        else:
+            return dict_data
+
+    def test_parse_for_zip(self):
+        zip_path = Path(test_dir / "full-annotation.zip")
+        with zipfile.ZipFile(zip_path) as zip_file:
+            parser = FullAnnotationZipParser(zip_file, "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
+
+            full_annotation = parser.parse()
+            assert type(full_annotation.details[0].data) == dict
+
+            full_annotation2 = parser.parse(self.convert_deitail_data)
+            assert type(full_annotation2.details[0].data) == FullAnnotationDataPoints
