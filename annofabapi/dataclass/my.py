@@ -78,6 +78,9 @@ class MyAccount(DataClassJsonMixin):
     authority: AccountAuthority
     """"""
 
+    is_external_account: bool
+    """[外部アカウント連携](/docs/faq/#mpl0n7)済みのアカウントである場合true """
+
     updated_datetime: Optional[str]
     """"""
 
