@@ -104,6 +104,59 @@ class TestAnnotationSpecs:
         assert type(result) == annofabapi.wrapper.AnnotationSpecsRelation
 
 
+class TestComment:
+    @classmethod
+    def setup_class(cls):
+        wrapper.change_task_operator(project_id, task_id, operator_account_id=api.account_id)
+        cls.task = wrapper.change_task_status_to_working(project_id, task_id)
+
+    def test_put_get_delete_comment(self):
+        task = self.task
+        comment_id = str(uuid.uuid4())
+        put_request_body = [
+            {
+                "comment_id": comment_id,
+                "phase": task["phase"],
+                "phase_stage": task["phase_stage"],
+                "account_id": api.account_id,
+                "comment_type": "onhold",
+                "phrases": [],
+                "comment": "foo-bar",
+                "comment_node": {
+                    "data": None,
+                    "annotation_id": None,
+                    "label_id": None,
+                    "status": "open",
+                    "_type": "Root",
+                },
+                "datetime_for_sorting": annofabapi.utils.str_now(),
+                "_type": "Put",
+            }
+        ]
+        input_data_id = task["input_data_id_list"][0]
+        result, _ = api.batch_update_comments(project_id, task_id, input_data_id, request_body=put_request_body)
+
+        comments, _ = api.get_comments(project_id, task_id, input_data_id)
+        assert first_true(comments, pred=lambda e: e["comment_id"] == comment_id) is not None
+
+        # コメントの削除
+        delete_request_body = [
+            {
+                "comment_id": comment_id,
+                "_type": "Delete",
+            }
+        ]
+        api.batch_update_comments(project_id, task_id, input_data_id, request_body=delete_request_body)
+
+        # コメントの削除確認
+        comments, _ = api.get_comments(project_id, task_id, input_data_id)
+        assert first_true(comments, pred=lambda e: e["comment_id"] == comment_id) is None
+
+    @classmethod
+    def teardown_class(cls):
+        wrapper.change_task_status_to_break(project_id, task_id)
+
+
 class TestInput:
     @classmethod
     def setup_class(cls):
