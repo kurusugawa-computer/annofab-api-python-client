@@ -25,7 +25,7 @@ from annofabapi.models import (
 )
 
 AnnotationData = Union[str, Dict[str, Any]]
-FullAnnotationData = Dict[str, Any]
+FullAnnotationData = Any
 AdditionalDataValue = Dict[str, Any]
 
 
@@ -191,7 +191,7 @@ class FullAnnotationDetail(DataClassJsonMixin):
     data_holding_type: Optional[AnnotationDataHoldingType]
     """"""
 
-    data: Optional[FullAnnotationData]
+    data: FullAnnotationData
     """"""
 
     additional_data_list: Optional[List[FullAnnotationAdditionalData]]
@@ -223,7 +223,7 @@ class FullAnnotation(DataClassJsonMixin):
     input_data_name: Optional[str]
     """"""
 
-    details: Optional[List[FullAnnotationDetail]]
+    details: List[FullAnnotationDetail]
     """"""
 
     updated_datetime: Optional[str]

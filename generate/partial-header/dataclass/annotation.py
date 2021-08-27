@@ -1,12 +1,12 @@
 from annofabapi.models import (
-    AnnotationDataHoldingType,
-    InternationalizationMessage,
     AdditionalDataDefinitionType,
+    AnnotationDataHoldingType,
     AnnotationType,
+    InternationalizationMessage,
     TaskPhase,
     TaskStatus,
 )
 
 AnnotationData = Union[str, Dict[str, Any]]
-FullAnnotationData = Dict[str, Any]
+FullAnnotationData = Any
 AdditionalDataValue = Dict[str, Any]

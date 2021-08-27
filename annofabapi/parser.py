@@ -3,10 +3,12 @@ import json
 import os
 import zipfile
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Any, Callable, Dict, Iterator, List, Optional
 
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
+
+CONVERT_ANNOTATION_DETAIL_DATA_FUNC = Callable[[Dict[str, Any]], Any]
 
 
 def _trim_extension(file_path: str) -> str:
@@ -72,11 +74,24 @@ class SimpleAnnotationParser(abc.ABC):
 
         """
 
-    @abc.abstractmethod
-    def parse(self) -> SimpleAnnotation:
+    def parse(
+        self, convert_deitail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None
+    ) -> SimpleAnnotation:
+        """JSONファイルをパースする
+
+        Args:
+            convert_deitail_data_func: SimpleAnnotationDetailクラスのdataプロパティを変換する関数を指定します。
+                dictからdataclassに変換する際に使います。
+
+        Returns:
+            SimpleAnnotationインスタンス
         """
-        JSONファイルをパースする。
-        """
+
+        simple_annotation = SimpleAnnotation.from_dict(self.load_json())  # type: ignore
+        if convert_deitail_data_func is not None:
+            for detail in simple_annotation.details:
+                detail.data = convert_deitail_data_func(detail.data)
+        return simple_annotation
 
     @abc.abstractmethod
     def load_json(self) -> Any:
@@ -144,10 +159,27 @@ class FullAnnotationParser(abc.ABC):
         """
 
     @abc.abstractmethod
-    def parse(self) -> FullAnnotation:
+    def load_json(self) -> Any:
         """
-        JSONファイルをパースする。
+        JSONファイルをloadします。
         """
+
+    def parse(self, convert_deitail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None) -> FullAnnotation:
+        """JSONファイルをパースする
+
+        Args:
+            convert_deitail_data_func: FullAnnotationDetailクラスのdataプロパティを変換する関数を指定します。
+                dictからdataclassに変換する際に使います。
+
+        Returns:
+            FullAnnotationインスタンス
+        """
+
+        full_annotation = FullAnnotation.from_dict(self.load_json())  # type: ignore
+        if convert_deitail_data_func is not None:
+            for detail in full_annotation.details:
+                detail.data = convert_deitail_data_func(detail.data)
+        return full_annotation
 
 
 class SimpleAnnotationZipParser(SimpleAnnotationParser):
@@ -171,9 +203,6 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
     def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str):
         self.__zip_file = zip_file
         super().__init__(json_file_path)
-
-    def parse(self) -> SimpleAnnotation:
-        return SimpleAnnotation.from_dict(self.load_json())  # type: ignore
 
     def load_json(self) -> Any:
         with self.__zip_file.open(self.json_file_path) as entry:
@@ -207,9 +236,6 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
 
     def __init__(self, json_file_path: Path):
         super().__init__(str(json_file_path))
-
-    def parse(self) -> SimpleAnnotation:
-        return SimpleAnnotation.from_dict(self.load_json())  # type: ignore
 
     def load_json(self) -> Any:
         with open(self.json_file_path, encoding="utf-8") as f:
@@ -245,11 +271,9 @@ class FullAnnotationZipParser(FullAnnotationParser):
         self.__zip_file = zip_file
         super().__init__(json_file_path)
 
-    def parse(self) -> FullAnnotation:
+    def load_json(self) -> Any:
         with self.__zip_file.open(self.json_file_path) as entry:
-            anno_dict: dict = json.load(entry)
-            # mypyの "has no attribute "from_dict" " をignore
-            return FullAnnotation.from_dict(anno_dict)  # type: ignore
+            return json.load(entry)
 
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
@@ -281,10 +305,9 @@ class FullAnnotationDirParser(FullAnnotationParser):
     def __init__(self, json_file_path: Path):
         super().__init__(str(json_file_path))
 
-    def parse(self) -> FullAnnotation:
+    def load_json(self) -> Any:
         with open(self.json_file_path, encoding="utf-8") as f:
-            anno_dict: dict = json.load(f)
-            return FullAnnotation.from_dict(anno_dict)  # type: ignore
+            return json.load(f)
 
     def open_outer_file(self, data_uri: str):
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
