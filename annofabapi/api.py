@@ -77,6 +77,10 @@ class AnnofabApi(AbstractAnnofabApi):
         login_user_id: AnnoFabにログインするときのユーザID
         login_password: AnnoFabにログインするときのパスワード
         endpoint_url: AnnoFab APIのエンドポイント。
+
+    Attributes:
+        token_dict: login, refresh_tokenで取得したtoken情報
+        cookies: Signed Cookie情報
     """
 
     def __init__(self, login_user_id: str, login_password: str, endpoint_url: str = DEFAULT_ENDPOINT_URL):
@@ -90,13 +94,13 @@ class AnnofabApi(AbstractAnnofabApi):
         self.url_prefix = f"{endpoint_url}/api/v1"
         self.session = requests.Session()
 
-    #: login, refresh_tokenで取得したtoken情報
-    token_dict: Optional[Dict[str, Any]] = None
+        #: login, refresh_tokenで取得したtoken情報
+        self.token_dict: Optional[Dict[str, Any]] = None
 
-    #: Signed Cookie情報
-    cookies: Optional[RequestsCookieJar] = None
+        #: Signed Cookie情報
+        self.cookies: Optional[RequestsCookieJar] = None
 
-    __account_id: Optional[str] = None
+        self.__account_id: Optional[str] = None
 
     class __MyToken(AuthBase):
         """
