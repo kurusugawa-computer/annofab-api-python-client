@@ -186,6 +186,44 @@ JSONファイルの中身については、https://annofab.com/docs/api/#tag/x-a
         # SimpleAnnotation(annotation_format_version='1.2.0', project_id='test_project_id', task_id='task_1', task_phase=<TaskPhase.ACCEPTANCE: 'acceptance'>, ...
 
 
+
+
+``SimpleAnnotationDetail`` クラスのdataプロパティをdictからデータクラスに変換する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``SimpleAnnotationParser.parse`` 関数に、``SimpleAnnotationDetail`` クラスの ``data``  プロパティをdictからデータクラスに変換する関数を渡すことができます。
+        
+
+.. code-block:: python
+
+    from annofabapi.dataclass.annotation import FullAnnotationDataBoundingBox
+
+    def convert_deitail_data(self, dict_data):
+        if dict_data["_type"] == "BoundingBox":
+            dict_data["type"] = dict_data["_type"]
+            return FullAnnotationDataBoundingBox.from_dict(dict_data)
+        else:
+            return dict_data
+
+            
+    # Simpleアノテーションzip内の"task_1/12345678-abcd-1234-abcd-1234abcd5678.json" を読み込む
+    with zipfile.ZipFile("simple-annotation.zip", "r") as zip_file:
+        parser = SimpleAnnotationZipParser(zip_file, "task_1/12345678-abcd-1234-abcd-1234abcd5678.json")
+
+        simple_annotation = parser.parse()
+        print(type(simple_annotation.details[0].data)
+        # dict
+
+        simple_annotation = parser.parse()
+        print(type(simple_annotation.details[0].data)
+        # => dict
+
+        simple_annotation2 = parser.parse()
+        print(type(simple_annotation2.details[0].data)
+        # => FullAnnotationDataBoundingBox
+
+
+
+
 塗りつぶし画像を読み込む
 --------------------------------------------------
 ``SimpleAnnotationParser.open_outer_file()`` メソッドを実行すると、塗りつぶし画像を読み込みます。
