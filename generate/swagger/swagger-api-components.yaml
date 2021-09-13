@@ -4162,6 +4162,15 @@ components:
             is_foo_bar_buz: true
     FullAnnotation:
       type: object
+      required:
+        - project_id
+        - task_id
+        - task_phase
+        - task_phase_stage
+        - task_status
+        - input_data_id
+        - details
+        - annotation_format_version
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -4190,6 +4199,15 @@ components:
           $ref: "#/components/schemas/AnnotationFormatVersion"
     FullAnnotationDetail:
       type: object
+      required:
+        - annotation_id
+        - user_id
+        - label_id
+        - label_name
+        - annotation_type
+        - data_holding_type
+        - data
+        - additional_data_list
       properties:
         annotation_id:
           $ref: "#/components/schemas/AnnotationId"
