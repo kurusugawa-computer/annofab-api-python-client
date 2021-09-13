@@ -2087,7 +2087,8 @@ class Wrapper:
                 dt_new_to_date = dt_from_date + datetime.timedelta(days=diff_days // 2)
                 dt_new_from_date = dt_new_to_date + datetime.timedelta(days=1)
                 logger.debug(
-                    f"取得対象の期間が広すぎるため、データを取得できませんでした。取得対象の期間を{from_date}~{str(dt_new_to_date)}, {str(dt_new_from_date)}~{to_date}に分割して、再度取得します。"
+                    "取得対象の期間が広すぎるため、データを取得できませんでした。"
+                    f"取得対象の期間を{from_date}~{str(dt_new_to_date)}, {str(dt_new_from_date)}~{to_date}に分割して、再度取得します。"
                 )
                 labor_list = []
                 tmp1 = self.get_labor_control_worktime(
