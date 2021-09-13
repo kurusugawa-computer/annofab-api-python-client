@@ -39,12 +39,6 @@
         ".venv/lib/python3.8/site-packages/"
     ],
     "python.analysis.completeFunctionParens": true,
-    "[python]": {
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": true
-        },
-    },
     "python.testing.autoTestDiscoverOnSaveEnabled": false,
 
 }

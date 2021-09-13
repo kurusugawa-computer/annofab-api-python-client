@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 import asyncio
 import copy
+import datetime
 import logging
 import mimetypes
 import time
@@ -2025,6 +2026,7 @@ class Wrapper:
 
     def get_labor_control_worktime(
         self,
+        *,
         organization_id: Optional[str] = None,
         project_id: Optional[str] = None,
         account_id: Optional[str] = None,
@@ -2070,8 +2072,47 @@ class Wrapper:
             "from": from_date,
             "to": to_date,
         }
-        labor_list, _ = self.api.get_labor_control(query_params)
-        return [_to_new_data(e) for e in labor_list]
+        try:
+            labor_list, _ = self.api.get_labor_control(query_params)
+            return [_to_new_data(e) for e in labor_list]
+        except requests.HTTPError as e:
+            # "502 Server Error"が発生するときは、取得するレスポンスが大きすぎる可能性があるので、取得期間を分割する。
+            # ただし、取得する期間が指定されている場合のみ
+            # 注意：5XX系のエラーだと、backoffでリトライがタイムアウトしてから、この関数で処理される
+            DATE_FORMAT = "%Y-%m-%d"
+            if e.response.status_code == requests.codes.bad_gateway and from_date is not None and to_date is not None:
+                dt_from_date = datetime.datetime.strptime(from_date, DATE_FORMAT)
+                dt_to_date = datetime.datetime.strptime(to_date, DATE_FORMAT)
+                diff_days = (dt_to_date - dt_from_date).days
+
+                dt_new_to_date = dt_from_date + datetime.timedelta(days=diff_days // 2)
+                dt_new_from_date = dt_new_to_date + datetime.timedelta(days=1)
+                logger.debug(
+                    "取得対象の期間が広すぎるため、データを取得できませんでした。"
+                    f"取得対象の期間を{from_date}~{dt_new_to_date.strftime(DATE_FORMAT)}, "
+                    f"{dt_new_from_date.strftime(DATE_FORMAT)}~{to_date}に分割して、再度取得します。"
+                )
+                tmp_list = []
+                tmp1 = self.get_labor_control_worktime(
+                    organization_id=organization_id,
+                    project_id=project_id,
+                    account_id=account_id,
+                    from_date=from_date,
+                    to_date=dt_new_to_date.strftime(DATE_FORMAT),
+                )
+                tmp_list.extend(tmp1)
+
+                tmp2 = self.get_labor_control_worktime(
+                    organization_id=organization_id,
+                    project_id=project_id,
+                    account_id=account_id,
+                    from_date=dt_new_from_date.strftime(DATE_FORMAT),
+                    to_date=to_date,
+                )
+                tmp_list.extend(tmp2)
+                return tmp_list
+
+            raise e
 
     def get_labor_control_availability(
         self, account_id: str, from_date: Optional[str] = None, to_date: Optional[str] = None
