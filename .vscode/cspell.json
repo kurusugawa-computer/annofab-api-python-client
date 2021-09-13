@@ -21,6 +21,7 @@
         "dateutil",
         "favicon",
         "giveup",
+        "kurusugawa",
         "pydata",
         "pylint",
         "tzlocal"
