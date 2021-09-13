@@ -2074,6 +2074,7 @@ class Wrapper:
         }
         try:
             labor_list, _ = self.api.get_labor_control(query_params)
+            return [_to_new_data(e) for e in labor_list]
         except requests.HTTPError as e:
             # "502 Server Error"が発生するときは、取得するレスポンスが大きすぎる可能性があるので、取得期間を分割する。
             # ただし、取得する期間が指定されている場合のみ
@@ -2088,29 +2089,30 @@ class Wrapper:
                 dt_new_from_date = dt_new_to_date + datetime.timedelta(days=1)
                 logger.debug(
                     "取得対象の期間が広すぎるため、データを取得できませんでした。"
-                    f"取得対象の期間を{from_date}~{str(dt_new_to_date)}, {str(dt_new_from_date)}~{to_date}に分割して、再度取得します。"
+                    f"取得対象の期間を{from_date}~{dt_new_to_date.strftime(DATE_FORMAT)}, "
+                    f"{dt_new_from_date.strftime(DATE_FORMAT)}~{to_date}に分割して、再度取得します。"
                 )
-                labor_list = []
+                tmp_list = []
                 tmp1 = self.get_labor_control_worktime(
                     organization_id=organization_id,
                     project_id=project_id,
                     account_id=account_id,
                     from_date=from_date,
-                    to_date=str(dt_new_to_date),
+                    to_date=dt_new_to_date.strftime(DATE_FORMAT),
                 )
-                labor_list.extend(tmp1)
+                tmp_list.extend(tmp1)
 
                 tmp2 = self.get_labor_control_worktime(
                     organization_id=organization_id,
                     project_id=project_id,
                     account_id=account_id,
-                    from_date=str(dt_new_from_date),
+                    from_date=dt_new_from_date.strftime(DATE_FORMAT),
                     to_date=to_date,
                 )
-                labor_list.extend(tmp2)
+                tmp_list.extend(tmp2)
+                return tmp_list
 
             raise e
-        return [_to_new_data(e) for e in labor_list]
 
     def get_labor_control_availability(
         self, account_id: str, from_date: Optional[str] = None, to_date: Optional[str] = None
