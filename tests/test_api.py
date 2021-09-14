@@ -6,6 +6,7 @@ AnnofabApi, Wrapperのテストコード
 * 基本的にHTTP GETのテストのみ行うこと。PUT/POST/DELETEのテストがあると、間違えて修正してまうおそれあり。
 
 """
+from annofabapi.wrapper import TaskFrameKey
 import configparser
 import datetime
 import os
@@ -76,6 +77,13 @@ class TestAnnotation:
         content = api.post_annotation_archive_update(project_id, query_params={"v": "2"})[0]
         job = content["job"]
         assert job["job_type"] == ProjectJobType.GEN_ANNOTATION.value
+
+    def test_wrapper_copy_annotation(self):
+        src = TaskFrameKey(project_id, task_id, self.input_data_id)
+        dest = TaskFrameKey(project_id, task_id, self.input_data_id)
+        result = wrapper.copy_annotation(src,dest)
+        assert result == True
+        
 
 
 class TestAnnotationSpecs:
