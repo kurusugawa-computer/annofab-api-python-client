@@ -215,6 +215,28 @@ class Wrapper:
 
         return all_objects
 
+    @my_backoff
+    def _request_get_wrapper(self, url: str) -> requests.Response:
+        """
+        HTTP GETのリクエスト。
+        リトライするためにメソッドを切り出した。
+        """
+        return self.api.session.get(url)
+
+    @my_backoff
+    def _request_put_wrapper(
+        self,
+        url: str,
+        params: Optional[Dict[str, Any]] = None,
+        data: Optional[Any] = None,
+        headers: Optional[Dict[str, Any]] = None,
+    ) -> requests.Response:
+        """
+        HTTP PUTのリクエスト。
+        リトライするためにメソッドを切り出した
+        """
+        return self.api.session.put(url, params=params, data=data, headers=headers)
+
     #########################################
     # Public Method : Annotation
     #########################################
@@ -335,7 +357,7 @@ class Wrapper:
         dest_detail["account_id"] = account_id
         if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
             outer_file_url = detail["url"]
-            src_response = self.api.session.get(outer_file_url)
+            src_response = self._request_get_wrapper(outer_file_url)
             s3_path = self.upload_data_to_s3(
                 dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
             )
@@ -872,7 +894,9 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={"content-type": content_type})
+        res_put = self._request_put_wrapper(
+            url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
+        )
 
         _log_error_response(logger, res_put)
         _raise_for_status(res_put)
@@ -934,7 +958,7 @@ class Wrapper:
             logger.warning(f"レスポンスヘッダに'Location'がありません。method={response.request.method}, url={response.request.url}")
             return None
 
-        response = self.api.session.get(url)
+        response = self._request_get_wrapper(url)
         _log_error_response(logger, response)
 
         response.encoding = "utf-8"
@@ -1719,7 +1743,9 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={"content-type": content_type})
+        res_put = self._request_put_wrapper(
+            url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
+        )
         _log_error_response(logger, res_put)
         _raise_for_status(res_put)
         return content["path"]
