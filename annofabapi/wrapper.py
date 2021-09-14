@@ -16,7 +16,6 @@ from typing import Any, Callable, Dict, List, Optional, Union
 import requests
 
 from annofabapi import AnnofabApi
-from annofabapi.api import my_backoff
 from annofabapi.exceptions import AnnofabApiException
 from annofabapi.models import (
     AdditionalData,
@@ -46,7 +45,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
-from annofabapi.utils import _download, _log_error_response, _raise_for_status, allow_404_error, str_now
+from annofabapi.utils import _download, _log_error_response, _raise_for_status, allow_404_error, my_backoff, str_now
 
 logger = logging.getLogger(__name__)
 
