@@ -6,6 +6,7 @@ from functools import wraps
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+import backoff
 import dateutil
 import dateutil.tz
 import requests
@@ -258,6 +259,58 @@ def can_put_annotation(task: Task, my_account_id: str) -> bool:
 #########################################
 # Public Method: Decorator
 #########################################
+
+
+def my_backoff(function):
+    """
+    HTTP Status Codeが429 or 5XXのときはリトライする. 最大5分間リトライする。
+    """
+
+    @wraps(function)
+    def wrapped(*args, **kwargs):
+        def fatal_code(e):
+            """
+            リトライするかどうか
+            status codeが5xxのとき、またはToo many Requests(429)のときはリトライする。429以外の4XXはリトライしない
+            https://requests.kennethreitz.org/en/master/user/quickstart/#errors-and-exceptions
+
+            Args:
+                e: exception
+
+            Returns:
+                True: give up(リトライしない), False: リトライする
+
+            """
+            if isinstance(e, requests.exceptions.HTTPError):
+                if e.response is None:
+                    return True
+                code = e.response.status_code
+                return 400 <= code < 500 and code != 429
+
+            elif isinstance(
+                e,
+                (
+                    requests.exceptions.TooManyRedirects,
+                    requests.exceptions.Timeout,
+                    requests.exceptions.ConnectionError,
+                    ConnectionError,
+                ),
+            ):
+                return False
+
+            else:
+                # リトライする
+                return False
+
+        return backoff.on_exception(
+            backoff.expo,
+            (requests.exceptions.RequestException, ConnectionError),
+            jitter=backoff.full_jitter,
+            max_time=300,
+            giveup=fatal_code,
+        )(function)(*args, **kwargs)
+
+    return wrapped
 
 
 def ignore_http_error(status_code_list: List[int]):

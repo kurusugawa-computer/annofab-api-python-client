@@ -1,72 +1,18 @@
-import functools
 import json
 import logging
 from typing import Any, Dict, Optional, Tuple
 
-import backoff
 import requests
 from requests.auth import AuthBase
 from requests.cookies import RequestsCookieJar
 
 from annofabapi.generated_api import AbstractAnnofabApi
-from annofabapi.utils import _log_error_response, _raise_for_status
+from annofabapi.utils import _log_error_response, _raise_for_status, my_backoff
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_ENDPOINT_URL = "https://annofab.com"
 """AnnoFab WebAPIのデフォルトのエンドポイントURL"""
-
-
-def my_backoff(function):
-    """
-    HTTP Status Codeが429 or 5XXのときはリトライする. 最大5分間リトライする。
-    """
-
-    @functools.wraps(function)
-    def wrapped(*args, **kwargs):
-        def fatal_code(e):
-            """
-            リトライするかどうか
-            status codeが5xxのとき、またはToo many Requests(429)のときはリトライする。429以外の4XXはリトライしない
-            https://requests.kennethreitz.org/en/master/user/quickstart/#errors-and-exceptions
-
-            Args:
-                e: exception
-
-            Returns:
-                True: give up(リトライしない), False: リトライする
-
-            """
-            if isinstance(e, requests.exceptions.HTTPError):
-                if e.response is None:
-                    return True
-                code = e.response.status_code
-                return 400 <= code < 500 and code != 429
-
-            elif isinstance(
-                e,
-                (
-                    requests.exceptions.TooManyRedirects,
-                    requests.exceptions.Timeout,
-                    requests.exceptions.ConnectionError,
-                    ConnectionError,
-                ),
-            ):
-                return False
-
-            else:
-                # リトライする
-                return False
-
-        return backoff.on_exception(
-            backoff.expo,
-            requests.exceptions.RequestException,
-            jitter=backoff.full_jitter,
-            max_time=300,
-            giveup=fatal_code,
-        )(function)(*args, **kwargs)
-
-    return wrapped
 
 
 class AnnofabApi(AbstractAnnofabApi):

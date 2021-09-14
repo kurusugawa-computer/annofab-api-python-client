@@ -18,6 +18,7 @@ from more_itertools import first_true
 import annofabapi
 import annofabapi.utils
 from annofabapi.models import GraphType, ProjectJobType
+from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
@@ -77,6 +78,12 @@ class TestAnnotation:
         job = content["job"]
         assert job["job_type"] == ProjectJobType.GEN_ANNOTATION.value
 
+    def test_wrapper_copy_annotation(self):
+        src = TaskFrameKey(project_id, task_id, self.input_data_id)
+        dest = TaskFrameKey(project_id, task_id, self.input_data_id)
+        result = wrapper.copy_annotation(src, dest)
+        assert result == True
+
 
 class TestAnnotationSpecs:
     def test_get_annotation_specs(self):
@@ -107,8 +114,12 @@ class TestAnnotationSpecs:
 class TestComment:
     @classmethod
     def setup_class(cls):
-        wrapper.change_task_operator(project_id, task_id, operator_account_id=api.account_id)
-        cls.task = wrapper.change_task_status_to_working(project_id, task_id)
+        task, _ = api.get_task(project_id, task_id)
+        if task["account_id"] != api.account_id:
+            task = wrapper.change_task_operator(project_id, task_id, operator_account_id=api.account_id)
+        if task["status"] != "working":
+            task = wrapper.change_task_status_to_working(project_id, task_id)
+        cls.task = task
 
     def test_put_get_delete_comment(self):
         task = self.task
@@ -480,14 +491,9 @@ class TestTask:
         request_body = {"request_type": {"phase": "annotation", "_type": "Random"}}
         assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == list
 
-    def test_operate_task(self):
-        task, _ = api.get_task(project_id, task_id)
-        request_body = {
-            "status": "not_started",
-            "last_updated_datetime": task["updated_datetime"],
-            "account_id": api.account_id,
-        }
-        assert type(api.operate_task(project_id, task_id, request_body=request_body)[0]) == dict
+    def test_operate_task_in_change_task_status_to_break(self):
+        task = wrapper.change_task_status_to_break(project_id, task_id)
+        assert task["status"] == "break"
 
     def test_get_task_histories(self):
         assert len(api.get_task_histories(project_id, task_id)[0]) > 0
