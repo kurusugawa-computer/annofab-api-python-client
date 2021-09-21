@@ -376,7 +376,7 @@ class Wrapper:
                 )
                 raise UploadedDataInconsistencyError(
                     message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
-                ) as e
+                ) from e
 
         return dest_detail
 
@@ -587,7 +587,7 @@ class Wrapper:
                     )
                     raise UploadedDataInconsistencyError(
                         message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
-                    ) as e
+                    ) from e
 
         return dest_obj
 
@@ -902,7 +902,7 @@ class Wrapper:
                 )
                 raise UploadedDataInconsistencyError(
                     message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
-                ) as e
+                ) from e
 
     def upload_data_to_s3(self, project_id: str, data: Any, content_type: str) -> str:
         """
@@ -919,6 +919,16 @@ class Wrapper:
         Raises:
             UploadedDataInconsistencyError: アップロードしたデータのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagが一致しない
         """
+
+        def get_md5_value_from_file(fp):
+            md5_obj = hashlib.md5()
+            while True:
+                chunk = fp.read(2048 * hash.block_size)
+                if len(chunk) == 0:
+                    break
+                md5_obj.update(chunk)
+            return md5_obj.hexdigest()
+
         # 一時データ保存先を取得
         content = self.api.create_temp_path(project_id, header_params={"content-type": content_type})[0]
 
@@ -940,7 +950,7 @@ class Wrapper:
         if hasattr(data, "read"):
             # 読み込み位置を先頭に戻す
             data.seek(0)
-            uploaded_data_hash = hashlib.md5(data.read()).hexdigest()
+            uploaded_data_hash = get_md5_value_from_file(data)
         else:
             uploaded_data_hash = hashlib.md5(data).hexdigest()
 
