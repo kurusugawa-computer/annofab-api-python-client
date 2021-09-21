@@ -923,7 +923,7 @@ class Wrapper:
         def get_md5_value_from_file(fp):
             md5_obj = hashlib.md5()
             while True:
-                chunk = fp.read(2048 * hash.block_size)
+                chunk = fp.read(2048 * md5_obj.block_size)
                 if len(chunk) == 0:
                     break
                 md5_obj.update(chunk)
