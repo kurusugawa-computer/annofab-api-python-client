@@ -353,6 +353,10 @@ class Wrapper:
 
         Notes:
             annotation_id をUUIDv4で生成すると、アノテーションリンク属性をコピーしたときに対応できないので、暫定的にannotation_idは維持するようにする。
+
+        Raises:
+            UploadedDataInconsistencyError: アップロードした外部アノテーションファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagに一致しない
+
         """
         dest_detail = detail
         dest_detail["account_id"] = account_id
@@ -546,6 +550,9 @@ class Wrapper:
             detail:
 
         Returns:
+
+        Raises:
+            UploadedDataInconsistencyError: アップロードした外部アノテーションファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagに一致しない
 
         """
         label_info = self.__get_label_info_from_label_name(detail["label"], annotation_specs_labels)
@@ -888,6 +895,10 @@ class Wrapper:
 
         Returns:
             一時データ保存先であるS3パス
+
+        Raises:
+            UploadedDataInconsistencyError: アップロードしたファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
+
         """
 
         # content_type を推測
@@ -917,7 +928,7 @@ class Wrapper:
             一時データ保存先であるS3パス
 
         Raises:
-            UploadedDataInconsistencyError: アップロードしたデータのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagが一致しない
+            UploadedDataInconsistencyError: アップロードしたデータのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
         """
 
         def get_md5_value_from_file(fp):
