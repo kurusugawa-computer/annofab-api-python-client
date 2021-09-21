@@ -2,6 +2,7 @@
 import asyncio
 import copy
 import datetime
+import hashlib
 import logging
 import mimetypes
 import time
@@ -16,7 +17,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 import requests
 
 from annofabapi import AnnofabApi
-from annofabapi.exceptions import AnnofabApiException
+from annofabapi.exceptions import AnnofabApiException, UploadedDataInconsistencyError
 from annofabapi.models import (
     AdditionalData,
     AdditionalDataDefinitionType,
@@ -870,7 +871,16 @@ class Wrapper:
         # content_type を推測
         new_content_type = self._get_content_type(file_path, content_type)
         with open(file_path, "rb") as f:
-            return self.upload_data_to_s3(project_id, data=f, content_type=new_content_type)
+            try:
+                return self.upload_data_to_s3(project_id, data=f, content_type=new_content_type)
+            except UploadedDataInconsistencyError as e:
+                message = (
+                    f"アップロードしたファイル'{file_path}'のMD5ハッシュ値('{e.uploaded_data_hash}')が、"
+                    f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                )
+                raise UploadedDataInconsistencyError(
+                    message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
+                )
 
     def upload_data_to_s3(self, project_id: str, data: Any, content_type: str) -> str:
         """
@@ -878,11 +888,14 @@ class Wrapper:
 
         Args:
             project_id: プロジェクトID
-            data: アップロード対象のdata. ``requests.put`` メソッドの ``data`` 引数にそのまま渡す。
+            data: アップロード対象のdata. ``open(mode="b")`` 関数の戻り値、またはバイナリ型の値です。 ``requests.put`` メソッドの ``data`` 引数にそのまま渡します。
             content_type: アップロードするfile objectのMIME Type.
 
         Returns:
             一時データ保存先であるS3パス
+
+        Raises:
+            UploadedDataInconsistencyError: アップロードしたデータのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagが一致しない
         """
         # 一時データ保存先を取得
         content = self.api.create_temp_path(project_id, header_params={"content-type": content_type})[0]
@@ -900,6 +913,29 @@ class Wrapper:
 
         _log_error_response(logger, res_put)
         _raise_for_status(res_put)
+
+        # アップロードしたファイルが破損していなかをチェックする
+        md = hashlib.md5()
+
+        if hasattr(data, "read"):
+            md.update(data.read())
+        else:
+            md.update(data)
+        uploaded_data_hash = md.hexdigest()
+
+        # ETagにはダブルクォートが含まれているため、`str_md5`もそれに合わせる
+        response_etag = res_put.headers["ETag"]
+        print(response_etag)
+        print(uploaded_data_hash)
+        if f"\"{uploaded_data_hash}\"" != response_etag:
+            message = (
+                f"アップロードしたデータのMD5ハッシュ値('{uploaded_data_hash}')が、"
+                f"AWS S3にアップロードしたときのレスポンスのETag('{response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+            )
+            raise UploadedDataInconsistencyError(
+                message=message, uploaded_data_hash=uploaded_data_hash, response_etag=response_etag
+            )
+
         return content["path"]
 
     def put_input_data_from_file(
