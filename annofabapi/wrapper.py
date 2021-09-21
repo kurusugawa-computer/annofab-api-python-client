@@ -915,18 +915,16 @@ class Wrapper:
         _raise_for_status(res_put)
 
         # アップロードしたファイルが破損していなかをチェックする
-        md = hashlib.md5()
-
         if hasattr(data, "read"):
-            md.update(data.read())
+            # 読み込み位置を先頭に戻す
+            data.seek(0)
+            uploaded_data_hash = hashlib.md5(data.read()).hexdigest()
         else:
-            md.update(data)
-        uploaded_data_hash = md.hexdigest()
+            uploaded_data_hash = hashlib.md5(data).hexdigest()
 
         # ETagにはダブルクォートが含まれているため、`str_md5`もそれに合わせる
         response_etag = res_put.headers["ETag"]
-        print(response_etag)
-        print(uploaded_data_hash)
+
         if f"\"{uploaded_data_hash}\"" != response_etag:
             message = (
                 f"アップロードしたデータのMD5ハッシュ値('{uploaded_data_hash}')が、"
