@@ -669,39 +669,6 @@ class Wrapper:
     #########################################
     # Public Method : AnnotationSpecs
     #########################################
-    def copy_annotation_specs(
-        self, src_project_id: str, dest_project_id: str, comment: Optional[str] = None
-    ) -> AnnotationSpecsV1:
-        """
-        アノテーション仕様を、別のプロジェクトにコピーする。
-
-        .. deprecated:: 2021-09-01
-
-
-        Note:
-            誤って実行しないようにすること
-
-        Args:
-            src_project_id: コピー元のproject_id
-            dest_project_id: コピー先のproject_id
-            comment: アノテーション仕様を保存するときのコメント。Noneならば、コピーした旨を記載する。
-
-        Returns:
-            put_annotation_specsのContent
-        """
-        warnings.warn("2021-09-01以降に削除します。", FutureWarning)
-
-        src_annotation_specs = self.api.get_annotation_specs(src_project_id)[0]
-
-        if comment is None:
-            comment = f"Copied the annotation specification of project {src_project_id} on {str_now()}"
-
-        request_body = {
-            "labels": src_annotation_specs["labels"],
-            "inspection_phrases": src_annotation_specs["inspection_phrases"],
-            "comment": comment,
-        }
-        return self.api.put_annotation_specs(dest_project_id, request_body=request_body)[0]
 
     @staticmethod
     def __get_label_name_en(label: Dict[str, Any]) -> str:
