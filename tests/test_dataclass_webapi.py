@@ -10,7 +10,7 @@ from annofabapi.dataclass.annotation_specs import AnnotationSpecsV1
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
 from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
-from annofabapi.dataclass.job import JobInfo, ProjectJobInfo
+from annofabapi.dataclass.job import ProjectJobInfo
 from annofabapi.dataclass.my import MyAccount, MyOrganization
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember

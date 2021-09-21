@@ -11,7 +11,7 @@ import uuid
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 
 import requests
 
@@ -29,7 +29,6 @@ from annofabapi.models import (
     InspectionStatus,
     Instruction,
     JobStatus,
-    JobType,
     LabelV1,
     MyOrganization,
     Organization,
@@ -1719,9 +1718,7 @@ class Wrapper:
     #########################################
     # Public Method : Job
     #########################################
-    def delete_all_succeeded_job(
-        self, project_id: str, job_type: Union[ProjectJobType, JobType]
-    ) -> List[ProjectJobInfo]:
+    def delete_all_succeeded_job(self, project_id: str, job_type: ProjectJobType) -> List[ProjectJobInfo]:
         """
         成功したジョブをすべて削除する
 
@@ -1763,7 +1760,7 @@ class Wrapper:
         all_jobs.extend(r["list"])
         return all_jobs
 
-    def job_in_progress(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
+    def job_in_progress(self, project_id: str, job_type: ProjectJobType) -> bool:
         """
         ジョブが進行中かどうか
 
@@ -1785,7 +1782,7 @@ class Wrapper:
     def wait_for_completion(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_access_interval: int = 60,
         max_job_access: int = 10,
     ) -> bool:
@@ -1815,7 +1812,7 @@ class Wrapper:
     def wait_until_job_finished(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_id: Optional[str] = None,
         job_access_interval: int = 60,
         max_job_access: int = 360,
@@ -1893,14 +1890,14 @@ class Wrapper:
                     )
                     return JobStatus.PROGRESS
 
-    async def _job_in_progress_async(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
+    async def _job_in_progress_async(self, project_id: str, job_type: ProjectJobType) -> bool:
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, self.job_in_progress, project_id, job_type)
 
     async def _wait_until_job_finished_async(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_id: Optional[str],
         job_access_interval: int,
         max_job_access: int,
