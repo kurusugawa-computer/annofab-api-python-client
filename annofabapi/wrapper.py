@@ -23,7 +23,6 @@ from annofabapi.models import (
     AdditionalDataDefinitionV1,
     AnnotationDataHoldingType,
     AnnotationDetail,
-    AnnotationSpecsV1,
     FullAnnotationData,
     InputData,
     Inspection,
@@ -1911,7 +1910,7 @@ class Wrapper:
             None, self.wait_until_job_finished, project_id, job_type, job_id, job_access_interval, max_job_access
         )
 
-    def can_execute_job(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
+    def can_execute_job(self, project_id: str, job_type: ProjectJobType) -> bool:
         """
         ジョブが実行できる状態か否か。他のジョブが実行中で同時に実行できない場合はFalseを返す。
 
@@ -1922,19 +1921,14 @@ class Wrapper:
         Returns:
             ジョブが実行できる状態か否か
         """
-        # TODO: JobTypeが削除されたら、この処理も削除する
-        new_job_type: ProjectJobType = ProjectJobType(job_type.value) if isinstance(job_type, JobType) else job_type
-
-        job_type_list = _JOB_CONCURRENCY_LIMIT[new_job_type]
+        job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
 
         # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
         if self.api.token_dict is None:
             self.api.login()
 
         # 複数のジョブに対して進行中かどうかを確認する
-        gather = asyncio.gather(
-            *[self._job_in_progress_async(project_id, new_job_type) for new_job_type in job_type_list]
-        )
+        gather = asyncio.gather(*[self._job_in_progress_async(project_id, job_type) for job_type in job_type_list])
         loop = asyncio.get_event_loop()
         result = loop.run_until_complete(gather)
 
@@ -1943,7 +1937,7 @@ class Wrapper:
     def wait_until_job_is_executable(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_access_interval: int = 60,
         max_job_access: int = 360,
     ) -> bool:
@@ -1960,10 +1954,8 @@ class Wrapper:
             指定した時間（アクセス頻度と回数）待った後、ジョブが実行可能な状態かどうか。進行中のジョブが存在する場合は、ジョブが実行不可能。
 
         """
-        # TODO: JobTypeが削除されたら、この処理も削除する
-        new_job_type: ProjectJobType = ProjectJobType(job_type.value) if isinstance(job_type, JobType) else job_type
 
-        job_type_list = _JOB_CONCURRENCY_LIMIT[new_job_type]
+        job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
         # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
         if self.api.token_dict is None:
             self.api.login()
