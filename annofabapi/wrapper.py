@@ -349,7 +349,7 @@ class Wrapper:
     ) -> Dict[str, Any]:
         """
         コピー元の１個のアノテーションを、コピー先用に変換する。
-        塗りつぶし画像の場合、S3にアップロードする。
+        塗りつぶし画像などの外部アノテーションファイルがある場合、S3にアップロードする。
 
         Notes:
             annotation_id をUUIDv4で生成すると、アノテーションリンク属性をコピーしたときに対応できないので、暫定的にannotation_idは維持するようにする。
@@ -357,15 +357,26 @@ class Wrapper:
         dest_detail = detail
         dest_detail["account_id"] = account_id
         if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
-            outer_file_url = detail["url"]
-            src_response = self._request_get_wrapper(outer_file_url)
-            s3_path = self.upload_data_to_s3(
-                dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
-            )
-            logger.debug("%s に塗りつぶし画像をアップロードしました。", s3_path)
-            dest_detail["path"] = s3_path
-            dest_detail["url"] = None
-            dest_detail["etag"] = None
+
+            try:
+                outer_file_url = detail["url"]
+                src_response = self._request_get_wrapper(outer_file_url)
+                s3_path = self.upload_data_to_s3(
+                    dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
+                )
+                logger.debug("%s に外部アノテーションファイルをアップロードしました。", s3_path)
+                dest_detail["path"] = s3_path
+                dest_detail["url"] = None
+                dest_detail["etag"] = None
+
+            except UploadedDataInconsistencyError as e:
+                message = (
+                    f"外部アノテーションファイル {outer_file_url} のレスポンスのMD5ハッシュ値('{e.uploaded_data_hash}')が、"
+                    f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                )
+                raise UploadedDataInconsistencyError(
+                    message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
+                ) as e
 
         return dest_detail
 
@@ -562,10 +573,21 @@ class Wrapper:
 
         if data_holding_type == AnnotationDataHoldingType.OUTER.value:
             data_uri = detail["data"]["data_uri"]
+            outer_file_path = f"{parser.task_id}/{parser.input_data_id}/{data_uri}"
             with parser.open_outer_file(data_uri) as f:
-                s3_path = self.upload_data_to_s3(project_id, f, content_type="image/png")
-                dest_obj["path"] = s3_path
-                logger.debug(f"{parser.task_id}/{parser.input_data_id}/{data_uri} をS3にアップロードしました。")
+                try:
+                    s3_path = self.upload_data_to_s3(project_id, f, content_type="image/png")
+                    dest_obj["path"] = s3_path
+                    logger.debug(f"{outer_file_path} をS3にアップロードしました。")
+
+                except UploadedDataInconsistencyError as e:
+                    message = (
+                        f"アップロードした外部アノテーションファイル'{outer_file_path}'のMD5ハッシュ値('{e.uploaded_data_hash}')が、"
+                        f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                    )
+                    raise UploadedDataInconsistencyError(
+                        message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
+                    ) as e
 
         return dest_obj
 
@@ -880,7 +902,7 @@ class Wrapper:
                 )
                 raise UploadedDataInconsistencyError(
                     message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
-                )
+                ) as e
 
     def upload_data_to_s3(self, project_id: str, data: Any, content_type: str) -> str:
         """
@@ -925,7 +947,7 @@ class Wrapper:
         # ETagにはダブルクォートが含まれているため、`str_md5`もそれに合わせる
         response_etag = res_put.headers["ETag"]
 
-        if f"\"{uploaded_data_hash}\"" != response_etag:
+        if f'"{uploaded_data_hash}"' != response_etag:
             message = (
                 f"アップロードしたデータのMD5ハッシュ値('{uploaded_data_hash}')が、"
                 f"AWS S3にアップロードしたときのレスポンスのETag('{response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
