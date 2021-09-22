@@ -938,9 +938,7 @@ class Wrapper:
                 f"アップロードしたデータのMD5ハッシュ値('{uploaded_data_hash}')が、"
                 f"AWS S3にアップロードしたときのレスポンスのETag('{response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
             )
-            raise CheckSumError(
-                message=message, uploaded_data_hash=uploaded_data_hash, response_etag=response_etag
-            )
+            raise CheckSumError(message=message, uploaded_data_hash=uploaded_data_hash, response_etag=response_etag)
 
         return content["path"]
 
