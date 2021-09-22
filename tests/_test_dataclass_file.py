@@ -12,7 +12,7 @@ from annofabapi.dataclass.annotation_specs import AnnotationSpecsV1
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.inspection import Inspection
 from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
-from annofabapi.dataclass.job import JobInfo
+from annofabapi.dataclass.job import ProjectJobInfo
 from annofabapi.dataclass.my import MyAccount, MyOrganization
 from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember
@@ -124,8 +124,8 @@ class TestJob:
         job_json = test_dir / "job.json"
         with job_json.open(encoding="utf-8") as f:
             dict_job = json.load(f)
-        job = JobInfo.from_dict(dict_job)
-        assert type(job) == JobInfo
+        job = ProjectJobInfo.from_dict(dict_job)
+        assert type(job) == ProjectJobInfo
 
 
 class TestMy:
