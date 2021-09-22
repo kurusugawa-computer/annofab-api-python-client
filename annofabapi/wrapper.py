@@ -17,7 +17,7 @@ from typing import Any, Callable, Dict, List, Optional
 import requests
 
 from annofabapi import AnnofabApi
-from annofabapi.exceptions import AnnofabApiException, UploadedDataInconsistencyError
+from annofabapi.exceptions import AnnofabApiException, CheckSumError
 from annofabapi.models import (
     AdditionalData,
     AdditionalDataDefinitionType,
@@ -353,7 +353,7 @@ class Wrapper:
             annotation_id をUUIDv4で生成すると、アノテーションリンク属性をコピーしたときに対応できないので、暫定的にannotation_idは維持するようにする。
 
         Raises:
-            UploadedDataInconsistencyError: アップロードした外部アノテーションファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagに一致しない
+            CheckSumError: アップロードした外部アノテーションファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagに一致しない
 
         """
         dest_detail = detail
@@ -371,12 +371,12 @@ class Wrapper:
                 dest_detail["url"] = None
                 dest_detail["etag"] = None
 
-            except UploadedDataInconsistencyError as e:
+            except CheckSumError as e:
                 message = (
                     f"外部アノテーションファイル {outer_file_url} のレスポンスのMD5ハッシュ値('{e.uploaded_data_hash}')が、"
                     f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
                 )
-                raise UploadedDataInconsistencyError(
+                raise CheckSumError(
                     message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
                 ) from e
 
@@ -550,7 +550,7 @@ class Wrapper:
         Returns:
 
         Raises:
-            UploadedDataInconsistencyError: アップロードした外部アノテーションファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagに一致しない
+            CheckSumError: アップロードした外部アノテーションファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagに一致しない
 
         """
         label_info = self.__get_label_info_from_label_name(detail["label"], annotation_specs_labels)
@@ -585,12 +585,12 @@ class Wrapper:
                     dest_obj["path"] = s3_path
                     logger.debug(f"{outer_file_path} をS3にアップロードしました。")
 
-                except UploadedDataInconsistencyError as e:
+                except CheckSumError as e:
                     message = (
                         f"アップロードした外部アノテーションファイル'{outer_file_path}'のMD5ハッシュ値('{e.uploaded_data_hash}')が、"
                         f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
                     )
-                    raise UploadedDataInconsistencyError(
+                    raise CheckSumError(
                         message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
                     ) from e
 
@@ -862,7 +862,7 @@ class Wrapper:
             一時データ保存先であるS3パス
 
         Raises:
-            UploadedDataInconsistencyError: アップロードしたファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
+            CheckSumError: アップロードしたファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
 
         """
 
@@ -871,12 +871,12 @@ class Wrapper:
         with open(file_path, "rb") as f:
             try:
                 return self.upload_data_to_s3(project_id, data=f, content_type=new_content_type)
-            except UploadedDataInconsistencyError as e:
+            except CheckSumError as e:
                 message = (
                     f"アップロードしたファイル'{file_path}'のMD5ハッシュ値('{e.uploaded_data_hash}')が、"
                     f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
                 )
-                raise UploadedDataInconsistencyError(
+                raise CheckSumError(
                     message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
                 ) from e
 
@@ -893,7 +893,7 @@ class Wrapper:
             一時データ保存先であるS3パス
 
         Raises:
-            UploadedDataInconsistencyError: アップロードしたデータのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
+            CheckSumError: アップロードしたデータのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
         """
 
         def get_md5_value_from_file(fp):
@@ -938,7 +938,7 @@ class Wrapper:
                 f"アップロードしたデータのMD5ハッシュ値('{uploaded_data_hash}')が、"
                 f"AWS S3にアップロードしたときのレスポンスのETag('{response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
             )
-            raise UploadedDataInconsistencyError(
+            raise CheckSumError(
                 message=message, uploaded_data_hash=uploaded_data_hash, response_etag=response_etag
             )
 

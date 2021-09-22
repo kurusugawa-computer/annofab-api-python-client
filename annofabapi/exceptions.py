@@ -32,7 +32,7 @@ class AnnotationOuterFileNotFoundError(AnnofabApiException):
         super().__init__(message)
 
 
-class UploadedDataInconsistencyError(AnnofabApiException):
+class CheckSumError(AnnofabApiException):
     """
     アップロードしたデータ（ファイルやバイナリデータ）の整合性が一致していないときのエラー。
 
