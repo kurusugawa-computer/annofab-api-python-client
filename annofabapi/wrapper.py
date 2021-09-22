@@ -12,7 +12,7 @@ import uuid
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 
 import requests
 
@@ -24,14 +24,12 @@ from annofabapi.models import (
     AdditionalDataDefinitionV1,
     AnnotationDataHoldingType,
     AnnotationDetail,
-    AnnotationSpecsV1,
     FullAnnotationData,
     InputData,
     Inspection,
     InspectionStatus,
     Instruction,
     JobStatus,
-    JobType,
     LabelV1,
     MyOrganization,
     Organization,
@@ -699,39 +697,6 @@ class Wrapper:
     #########################################
     # Public Method : AnnotationSpecs
     #########################################
-    def copy_annotation_specs(
-        self, src_project_id: str, dest_project_id: str, comment: Optional[str] = None
-    ) -> AnnotationSpecsV1:
-        """
-        アノテーション仕様を、別のプロジェクトにコピーする。
-
-        .. deprecated:: 2021-09-01
-
-
-        Note:
-            誤って実行しないようにすること
-
-        Args:
-            src_project_id: コピー元のproject_id
-            dest_project_id: コピー先のproject_id
-            comment: アノテーション仕様を保存するときのコメント。Noneならば、コピーした旨を記載する。
-
-        Returns:
-            put_annotation_specsのContent
-        """
-        warnings.warn("2021-09-01以降に削除します。", FutureWarning)
-
-        src_annotation_specs = self.api.get_annotation_specs(src_project_id)[0]
-
-        if comment is None:
-            comment = f"Copied the annotation specification of project {src_project_id} on {str_now()}"
-
-        request_body = {
-            "labels": src_annotation_specs["labels"],
-            "inspection_phrases": src_annotation_specs["inspection_phrases"],
-            "comment": comment,
-        }
-        return self.api.put_annotation_specs(dest_project_id, request_body=request_body)[0]
 
     @staticmethod
     def __get_label_name_en(label: Dict[str, Any]) -> str:
@@ -1830,9 +1795,7 @@ class Wrapper:
     #########################################
     # Public Method : Job
     #########################################
-    def delete_all_succeeded_job(
-        self, project_id: str, job_type: Union[ProjectJobType, JobType]
-    ) -> List[ProjectJobInfo]:
+    def delete_all_succeeded_job(self, project_id: str, job_type: ProjectJobType) -> List[ProjectJobInfo]:
         """
         成功したジョブをすべて削除する
 
@@ -1874,7 +1837,7 @@ class Wrapper:
         all_jobs.extend(r["list"])
         return all_jobs
 
-    def job_in_progress(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
+    def job_in_progress(self, project_id: str, job_type: ProjectJobType) -> bool:
         """
         ジョブが進行中かどうか
 
@@ -1896,7 +1859,7 @@ class Wrapper:
     def wait_for_completion(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_access_interval: int = 60,
         max_job_access: int = 10,
     ) -> bool:
@@ -1926,7 +1889,7 @@ class Wrapper:
     def wait_until_job_finished(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_id: Optional[str] = None,
         job_access_interval: int = 60,
         max_job_access: int = 360,
@@ -2004,14 +1967,14 @@ class Wrapper:
                     )
                     return JobStatus.PROGRESS
 
-    async def _job_in_progress_async(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
+    async def _job_in_progress_async(self, project_id: str, job_type: ProjectJobType) -> bool:
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, self.job_in_progress, project_id, job_type)
 
     async def _wait_until_job_finished_async(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_id: Optional[str],
         job_access_interval: int,
         max_job_access: int,
@@ -2021,7 +1984,7 @@ class Wrapper:
             None, self.wait_until_job_finished, project_id, job_type, job_id, job_access_interval, max_job_access
         )
 
-    def can_execute_job(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
+    def can_execute_job(self, project_id: str, job_type: ProjectJobType) -> bool:
         """
         ジョブが実行できる状態か否か。他のジョブが実行中で同時に実行できない場合はFalseを返す。
 
@@ -2032,19 +1995,14 @@ class Wrapper:
         Returns:
             ジョブが実行できる状態か否か
         """
-        # TODO: JobTypeが削除されたら、この処理も削除する
-        new_job_type: ProjectJobType = ProjectJobType(job_type.value) if isinstance(job_type, JobType) else job_type
-
-        job_type_list = _JOB_CONCURRENCY_LIMIT[new_job_type]
+        job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
 
         # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
         if self.api.token_dict is None:
             self.api.login()
 
         # 複数のジョブに対して進行中かどうかを確認する
-        gather = asyncio.gather(
-            *[self._job_in_progress_async(project_id, new_job_type) for new_job_type in job_type_list]
-        )
+        gather = asyncio.gather(*[self._job_in_progress_async(project_id, job_type) for job_type in job_type_list])
         loop = asyncio.get_event_loop()
         result = loop.run_until_complete(gather)
 
@@ -2053,7 +2011,7 @@ class Wrapper:
     def wait_until_job_is_executable(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_access_interval: int = 60,
         max_job_access: int = 360,
     ) -> bool:
@@ -2070,10 +2028,8 @@ class Wrapper:
             指定した時間（アクセス頻度と回数）待った後、ジョブが実行可能な状態かどうか。進行中のジョブが存在する場合は、ジョブが実行不可能。
 
         """
-        # TODO: JobTypeが削除されたら、この処理も削除する
-        new_job_type: ProjectJobType = ProjectJobType(job_type.value) if isinstance(job_type, JobType) else job_type
 
-        job_type_list = _JOB_CONCURRENCY_LIMIT[new_job_type]
+        job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
         # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
         if self.api.token_dict is None:
             self.api.login()
