@@ -1,6 +1,5 @@
 import configparser
 import os
-import warnings
 from pathlib import Path
 
 import annofabapi
@@ -120,7 +119,6 @@ class TestJob:
             assert type(job) == ProjectJobInfo
         else:
             print(f"ジョブが存在しませんでした。")
-
 
 
 class TestMy:

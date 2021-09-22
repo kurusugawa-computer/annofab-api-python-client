@@ -28,7 +28,7 @@ inifile.read("./pytest.ini", "UTF-8")
 
 project_id = inifile["annofab"]["project_id"]
 task_id = inifile["annofab"]["task_id"]
-
+changed_task_id = inifile["annofab"]["changed_task_id"]
 
 test_dir = "./tests/data"
 out_dir = "./tests/out"
@@ -83,6 +83,18 @@ class TestAnnotation:
         dest = TaskFrameKey(project_id, task_id, self.input_data_id)
         result = wrapper.copy_annotation(src, dest)
         assert result == True
+
+    def test_wrapper_put_annotation_for_simple_annotation_json(self):
+        input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+        annotation_specs_v2, _ = service.api.get_annotation_specs(project_id, query_params={"v": "2"})
+        wrapper.put_annotation_for_simple_annotation_json(
+            project_id,
+            changed_task_id,
+            input_data_id,
+            simple_annotation_json="tests/data/simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json",
+            annotation_specs_labels=annotation_specs_v2["labels"],
+            annotation_specs_additionals=annotation_specs_v2["additionals"],
+        )
 
 
 class TestAnnotationSpecs:
@@ -168,7 +180,7 @@ class TestComment:
         wrapper.change_task_status_to_break(project_id, task_id)
 
 
-class TestInput:
+class TestInputData:
     @classmethod
     def setup_class(cls):
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
