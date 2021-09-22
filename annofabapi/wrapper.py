@@ -2,6 +2,7 @@
 import asyncio
 import copy
 import datetime
+import hashlib
 import logging
 import mimetypes
 import time
@@ -16,7 +17,7 @@ from typing import Any, Callable, Dict, List, Optional
 import requests
 
 from annofabapi import AnnofabApi
-from annofabapi.exceptions import AnnofabApiException
+from annofabapi.exceptions import AnnofabApiException, CheckSumError
 from annofabapi.models import (
     AdditionalData,
     AdditionalDataDefinitionType,
@@ -346,23 +347,38 @@ class Wrapper:
     ) -> Dict[str, Any]:
         """
         コピー元の１個のアノテーションを、コピー先用に変換する。
-        塗りつぶし画像の場合、S3にアップロードする。
+        塗りつぶし画像などの外部アノテーションファイルがある場合、S3にアップロードする。
 
         Notes:
             annotation_id をUUIDv4で生成すると、アノテーションリンク属性をコピーしたときに対応できないので、暫定的にannotation_idは維持するようにする。
+
+        Raises:
+            CheckSumError: アップロードした外部アノテーションファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagに一致しない
+
         """
         dest_detail = detail
         dest_detail["account_id"] = account_id
         if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
-            outer_file_url = detail["url"]
-            src_response = self._request_get_wrapper(outer_file_url)
-            s3_path = self.upload_data_to_s3(
-                dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
-            )
-            logger.debug("%s に塗りつぶし画像をアップロードしました。", s3_path)
-            dest_detail["path"] = s3_path
-            dest_detail["url"] = None
-            dest_detail["etag"] = None
+
+            try:
+                outer_file_url = detail["url"]
+                src_response = self._request_get_wrapper(outer_file_url)
+                s3_path = self.upload_data_to_s3(
+                    dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
+                )
+                logger.debug("%s に外部アノテーションファイルをアップロードしました。", s3_path)
+                dest_detail["path"] = s3_path
+                dest_detail["url"] = None
+                dest_detail["etag"] = None
+
+            except CheckSumError as e:
+                message = (
+                    f"外部アノテーションファイル {outer_file_url} のレスポンスのMD5ハッシュ値('{e.uploaded_data_hash}')が、"
+                    f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                )
+                raise CheckSumError(
+                    message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
+                ) from e
 
         return dest_detail
 
@@ -533,6 +549,9 @@ class Wrapper:
 
         Returns:
 
+        Raises:
+            CheckSumError: アップロードした外部アノテーションファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagに一致しない
+
         """
         label_info = self.__get_label_info_from_label_name(detail["label"], annotation_specs_labels)
         if label_info is None:
@@ -559,10 +578,21 @@ class Wrapper:
 
         if data_holding_type == AnnotationDataHoldingType.OUTER.value:
             data_uri = detail["data"]["data_uri"]
+            outer_file_path = f"{parser.task_id}/{parser.input_data_id}/{data_uri}"
             with parser.open_outer_file(data_uri) as f:
-                s3_path = self.upload_data_to_s3(project_id, f, content_type="image/png")
-                dest_obj["path"] = s3_path
-                logger.debug(f"{parser.task_id}/{parser.input_data_id}/{data_uri} をS3にアップロードしました。")
+                try:
+                    s3_path = self.upload_data_to_s3(project_id, f, content_type="image/png")
+                    dest_obj["path"] = s3_path
+                    logger.debug(f"{outer_file_path} をS3にアップロードしました。")
+
+                except CheckSumError as e:
+                    message = (
+                        f"アップロードした外部アノテーションファイル'{outer_file_path}'のMD5ハッシュ値('{e.uploaded_data_hash}')が、"
+                        f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                    )
+                    raise CheckSumError(
+                        message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
+                    ) from e
 
         return dest_obj
 
@@ -830,12 +860,25 @@ class Wrapper:
 
         Returns:
             一時データ保存先であるS3パス
+
+        Raises:
+            CheckSumError: アップロードしたファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
+
         """
 
         # content_type を推測
         new_content_type = self._get_content_type(file_path, content_type)
         with open(file_path, "rb") as f:
-            return self.upload_data_to_s3(project_id, data=f, content_type=new_content_type)
+            try:
+                return self.upload_data_to_s3(project_id, data=f, content_type=new_content_type)
+            except CheckSumError as e:
+                message = (
+                    f"アップロードしたファイル'{file_path}'のMD5ハッシュ値('{e.uploaded_data_hash}')が、"
+                    f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                )
+                raise CheckSumError(
+                    message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
+                ) from e
 
     def upload_data_to_s3(self, project_id: str, data: Any, content_type: str) -> str:
         """
@@ -843,12 +886,25 @@ class Wrapper:
 
         Args:
             project_id: プロジェクトID
-            data: アップロード対象のdata. ``requests.put`` メソッドの ``data`` 引数にそのまま渡す。
+            data: アップロード対象のdata. ``open(mode="b")`` 関数の戻り値、またはバイナリ型の値です。 ``requests.put`` メソッドの ``data`` 引数にそのまま渡します。
             content_type: アップロードするfile objectのMIME Type.
 
         Returns:
             一時データ保存先であるS3パス
+
+        Raises:
+            CheckSumError: アップロードしたデータのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
         """
+
+        def get_md5_value_from_file(fp):
+            md5_obj = hashlib.md5()
+            while True:
+                chunk = fp.read(2048 * md5_obj.block_size)
+                if len(chunk) == 0:
+                    break
+                md5_obj.update(chunk)
+            return md5_obj.hexdigest()
+
         # 一時データ保存先を取得
         content = self.api.create_temp_path(project_id, header_params={"content-type": content_type})[0]
 
@@ -865,6 +921,25 @@ class Wrapper:
 
         _log_error_response(logger, res_put)
         _raise_for_status(res_put)
+
+        # アップロードしたファイルが破損していなかをチェックする
+        if hasattr(data, "read"):
+            # 読み込み位置を先頭に戻す
+            data.seek(0)
+            uploaded_data_hash = get_md5_value_from_file(data)
+        else:
+            uploaded_data_hash = hashlib.md5(data).hexdigest()
+
+        # ETagにはダブルクォートが含まれているため、`str_md5`もそれに合わせる
+        response_etag = res_put.headers["ETag"]
+
+        if f'"{uploaded_data_hash}"' != response_etag:
+            message = (
+                f"アップロードしたデータのMD5ハッシュ値('{uploaded_data_hash}')が、"
+                f"AWS S3にアップロードしたときのレスポンスのETag('{response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+            )
+            raise CheckSumError(message=message, uploaded_data_hash=uploaded_data_hash, response_etag=response_etag)
+
         return content["path"]
 
     def put_input_data_from_file(
