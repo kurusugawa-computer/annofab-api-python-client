@@ -27,12 +27,6 @@
 # 廃止予定
 
 
-### 2021-09-01 以降
-
-* [annofabapi.wrapper.AnnofabApiWrapper.copy_annotation_specs](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.copy_annotation_specs) を廃止します。特殊なケースにしか対応しておらず、汎用的なメソッドでないためです。
-* `annofabapi.models.JobType` を廃止します。替わりに`annofabapi.models.ProjectJobType`を使用してください。
-* `annofabapi.dataclass.job.JobInfo`を廃止します。替わりに`annofabapi.models.ProjectJobInfo`を使用してください。
-
 ### 2022-01-01 以降
 * Python3.6のサポートを停止し、対応するPythonバージョンを3.7以上にします。
 
