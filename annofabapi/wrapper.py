@@ -159,7 +159,7 @@ class Wrapper:
         content_type, _ = mimetypes.guess_type(file_path)
         if content_type is not None:
             return content_type
-        
+
         logger.info("ファイルパス '%s' からMIME Typeを推測できませんでした。MIME Typeは `application/octet-stream' とみなします。", file_path)
         return "application/octet-stream"
 
