@@ -1,10 +1,9 @@
-import pytest
-import requests
 
-from annofabapi.models import TaskPhase
-from annofabapi.wrapper import Wrapper
 import os
 from pathlib import Path
+
+from annofabapi.wrapper import Wrapper
+
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 
