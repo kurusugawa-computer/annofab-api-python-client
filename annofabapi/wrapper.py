@@ -145,35 +145,23 @@ class Wrapper:
     # Private Method
     #########################################
     @staticmethod
-    def _get_content_type(file_path: str, content_type: Optional[str] = None) -> str:
+    def _get_mime_type(file_path: str) -> str:
         """
-        ファイルパスからContent-Typeを取得する。
+        ファイルパスからMIME Typeを返す。MIME Typeが推測できない場合は、``application/octet-stream`` を返す。
 
         Args:
-            file_path: アップロードするファイルのパス
-            content_type: アップロードするファイルのMIME Type. Noneの場合、ファイルパスから推測する。
+            file_path: MIME Typeを取得したいファイルのパス
 
         Returns:
-            APIに渡すContent-Type
-
-        Raises:
-            AnnofabApiException: Content-Typeを取得できなかった
+            ファイルパスから取得したMIME Type
 
         """
-
-        if content_type is None:
-            new_content_type = mimetypes.guess_type(file_path)[0]
-            if new_content_type is None:
-                logger.info("mimetypes.guess_type function can't guess type. file_path = %s", file_path)
-                new_content_type = content_type
-
-        else:
-            new_content_type = content_type
-
-        if new_content_type is None:
-            raise AnnofabApiException("content_type is none")
-
-        return new_content_type
+        content_type, _ = mimetypes.guess_type(file_path)
+        if content_type is not None:
+            return content_type
+        
+        logger.info("ファイルパス '%s' からMIME Typeを推測できませんでした。MIME Typeは `application/octet-stream' とみなします。", file_path)
+        return "application/octet-stream"
 
     @staticmethod
     def _get_all_objects(func_get_list: Callable, limit: int, **kwargs_for_func_get_list) -> List[Dict[str, Any]]:
@@ -867,7 +855,7 @@ class Wrapper:
         """
 
         # content_type を推測
-        new_content_type = self._get_content_type(file_path, content_type)
+        new_content_type = self._get_mime_type(file_path) if content_type is None else content_type
         with open(file_path, "rb") as f:
             try:
                 return self.upload_data_to_s3(project_id, data=f, content_type=new_content_type)
@@ -1141,7 +1129,7 @@ class Wrapper:
         """
 
         # content_type を推測
-        new_content_type = self._get_content_type(file_path, content_type)
+        new_content_type = self._get_mime_type(file_path) if content_type is None else content_type
 
         # S3にファイルアップロード
         s3_path = self.upload_file_to_s3(project_id, file_path, new_content_type)
@@ -1754,7 +1742,8 @@ class Wrapper:
         Returns:
             一時データ保存先であるS3パス
         """
-        new_content_type = self._get_content_type(file_path, content_type)
+        new_content_type = self._get_mime_type(file_path) if content_type is None else content_type
+
         with open(file_path, "rb") as f:
             return self.upload_data_as_instruction_image(project_id, image_id, data=f, content_type=new_content_type)
 
