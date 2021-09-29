@@ -79,7 +79,7 @@ class MyAccount(DataClassJsonMixin):
     """"""
 
     is_external_account: bool
-    """[外部アカウント連携](/docs/faq/#mpl0n7)済みのアカウントである場合true """
+    """[外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合true。  外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合false。 """
 
     updated_datetime: Optional[str]
     """"""
