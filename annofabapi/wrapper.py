@@ -991,8 +991,8 @@ class Wrapper:
 
         response.encoding = "utf-8"
         _raise_for_status(response)
-        content = self.api._response_to_content(response)
-        return content
+        # Locationヘッダに記載されているURLの中身はJSONであること前提
+        return response.json()
 
     def get_task_statistics(self, project_id: str) -> List[Any]:
         """
