@@ -4678,6 +4678,51 @@ Kyes of Dict
 
 """
 
+WorktimeStatisticsByAccount = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* account_id: str
+    
+* data_series: List[WorktimeStatisticsData]
+    プロジェクトメンバーの日毎の作業時間統計データ
+
+"""
+
+WorktimeStatisticsByProject = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* data_series: List[WorktimeStatisticsData]
+    プロジェクトの日毎の作業時間統計データ
+
+"""
+
+WorktimeStatisticsData = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* date: str
+    
+* grouped_by_input: List[WorktimeStatisticsItem]
+    ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+* grouped_by_task: List[WorktimeStatisticsItem]
+    ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+* grouped_by_minute: List[WorktimeStatisticsItem]
+    ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
+
+"""
+
 WorktimeStatisticsItem = Dict[str, Any]
 """
 
