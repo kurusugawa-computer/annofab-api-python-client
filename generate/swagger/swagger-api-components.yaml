@@ -1988,6 +1988,61 @@ components:
           description: ユーザごとの作業時間情報
           items:
             $ref: "#/components/schemas/AccountWorktimeStatistics"
+    WorktimeStatisticsByAccount:
+      type: object
+      required:
+        - project_id
+        - account_id
+        - data_series
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+        data_series:
+          type: array
+          description: プロジェクトメンバーの日毎の作業時間統計データ
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsData"
+    WorktimeStatisticsByProject:
+      type: object
+      required:
+        - project_id
+        - data_series
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        data_series:
+          type: array
+          description: プロジェクトの日毎の作業時間統計データ
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsData"
+    WorktimeStatisticsData:
+      type: object
+      required:
+        - date
+        - grouped_by_input
+        - grouped_by_task
+        - grouped_by_minute
+      properties:
+        date:
+          type: string
+          format: date
+        grouped_by_input:
+          description: ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+          type: array
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsItem"
+        grouped_by_task:
+          description: ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+          type: array
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsItem"
+        grouped_by_minute:
+          description: ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
+          type: array
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsItem"
     WorktimeStatisticsItem:
       type: object
       required:
