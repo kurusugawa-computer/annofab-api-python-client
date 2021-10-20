@@ -998,6 +998,8 @@ class Wrapper:
         """
         getTaskStatistics APIのLocation headerの中身を返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:  プロジェクトID
 
@@ -1005,6 +1007,7 @@ class Wrapper:
 
 
         """
+        warnings.warn("deprecated", FutureWarning)
         _, response = self.api.get_task_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1016,12 +1019,15 @@ class Wrapper:
         """
         getAccountStatistics APIのLocation headerの中身を返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:
 
         Returns:
 
         """
+        warnings.warn("deprecated", FutureWarning)
         _, response = self.api.get_account_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1033,12 +1039,15 @@ class Wrapper:
         """
         getInspectionStatistics APIのLocation headerの中身を返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:
 
         Returns:
 
         """
+        warnings.warn("deprecated", FutureWarning)
         _, response = self.api.get_inspection_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1050,12 +1059,15 @@ class Wrapper:
         """
         getTaskPhaseStatistics APIのLocation headerの中身を返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:
 
         Returns:
 
         """
+        warnings.warn("deprecated", FutureWarning)
         _, response = self.api.get_task_phase_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1085,6 +1097,8 @@ class Wrapper:
         タスク作業時間集計取得.
         Location Headerに記載されたURLのレスポンスをJSON形式で返す。
 
+        .. deprecated:: 2022-1-25以降
+        
         Args:
             project_id:  プロジェクトID
 
@@ -1092,6 +1106,7 @@ class Wrapper:
             タスク作業時間集計
 
         """
+        warnings.warn("deprecated", FutureWarning)
         _, response = self.api.get_worktime_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
