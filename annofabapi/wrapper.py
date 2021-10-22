@@ -2,6 +2,7 @@
 import asyncio
 import copy
 import datetime
+import functools
 import hashlib
 import logging
 import mimetypes
@@ -12,9 +13,11 @@ import uuid
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import requests
+from dateutil.relativedelta import relativedelta
+from requests import Response
 
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException, CheckSumError
@@ -1098,7 +1101,7 @@ class Wrapper:
         Location Headerに記載されたURLのレスポンスをJSON形式で返す。
 
         .. deprecated:: 2022-1-25以降
-        
+
         Args:
             project_id:  プロジェクトID
 
@@ -1113,6 +1116,72 @@ class Wrapper:
             return result
         else:
             return []
+
+    def _get_statistics_daily_xxx(
+        self,
+        function: Callable[[Dict[str, Any]], Tuple[List[Dict[str, Any]], Response]],
+        dt_from_date: datetime.date,
+        dt_to_date: datetime.date,
+    ) -> List[Dict[str, Any]]:
+        """statistics daily apiの結果を、3ヶ月ごと（webapiの制約の都合）に再帰的に取得する。
+
+        Args:
+            function (Callable): 実行する関数
+            dt_from_date: 取得する期間の開始日
+            dt_to_date: 取得する期間の終了日
+
+        Returns:
+
+        """
+        print(f"{dt_from_date=}, {dt_to_date=}")
+        results: List[Dict[str, Any]] = []
+        dt_max_to_date = dt_from_date + relativedelta(months=3, days=-1)
+        dt_tmp_to_date = min(dt_max_to_date, dt_to_date)
+
+        query_params = {"from": str(dt_from_date), "to": str(dt_tmp_to_date)}
+        tmp_result: List[Dict[str, Any]] = function(query_params)[0]
+        results.extend(tmp_result)
+
+        dt_tmp_from_date = dt_tmp_to_date + datetime.timedelta(days=1)
+
+        if dt_tmp_from_date <= dt_to_date:
+            tmp_result = self._get_statistics_daily_xxx(function, dt_from_date=dt_tmp_from_date, dt_to_date=dt_to_date)
+            results.extend(tmp_result)
+
+        return results
+
+    def _get_from_and_to_date_for_statistics_webapi(
+        self, project_id: str, from_date: Optional[str], to_date: Optional[str]
+    ) -> Tuple[datetime.date, datetime.date]:
+        """statistics webapi用に、from_date, to_dateを取得する。
+
+        Args:
+            project_id (str): プロジェクトID。プロジェクト作成日を取得する際に参照します。
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            Tuple[datetime.date, datetime.date]: [description]
+        """
+        if from_date is None:
+            project, _ = self.api.get_project(project_id)
+            from_date = project["created_datetime"][0:10]  # "YYYY-MM-DD"の部分を抽出
+        if to_date is None:
+            to_date = str(datetime.datetime.today().date())
+
+        DATE_FORMAT = "%Y-%m-%d"
+        dt_from_date = datetime.datetime.strptime(from_date, DATE_FORMAT).date()
+        dt_to_date = datetime.datetime.strptime(to_date, DATE_FORMAT).date()
+        return dt_from_date, dt_to_date
+
+    def get_account_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = functools.partial(self.api.get_account_daily_statistics, project_id)
+        return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
     #########################################
     # Public Method : Supplementary
