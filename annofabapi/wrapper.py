@@ -1133,7 +1133,6 @@ class Wrapper:
         Returns:
 
         """
-        print(f"{dt_from_date=}, {dt_to_date=}")
         results: List[Dict[str, Any]] = []
         dt_max_to_date = dt_from_date + relativedelta(months=3, days=-1)
         dt_tmp_to_date = min(dt_max_to_date, dt_to_date)
@@ -1177,11 +1176,79 @@ class Wrapper:
     def get_account_daily_statistics(
         self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
     ) -> List[Dict[str, Any]]:
+        """指定した期間の ユーザ別タスク集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            ユーザ別タスク集計データ
+        """
         dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
             project_id, from_date=from_date, to_date=to_date
         )
         func = functools.partial(self.api.get_account_daily_statistics, project_id)
         return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
+    def get_inspection_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> List[Dict[str, Any]]:
+        """
+        指定した期間の 検査コメント集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            検査コメント集計データ
+
+        """
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = functools.partial(self.api.get_inspection_daily_statistics, project_id)
+        return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
+    def get_phase_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> List[Dict[str, Any]]:
+        """指定した期間の フェーズ別タスク集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            フェーズ別タスク集計データ
+
+        """
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = functools.partial(self.api.get_phase_daily_statistics, project_id)
+        return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
+
+    def get_task_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> List[Dict[str, Any]]:
+        """指定した期間の タスク集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            タスク集計データ
+
+        """
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = functools.partial(self.api.get_task_daily_statistics, project_id)
+        return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
 
     #########################################
     # Public Method : Supplementary
