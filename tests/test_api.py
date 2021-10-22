@@ -403,6 +403,87 @@ class TestProjectMember:
 
 
 class TestStatistics:
+    def test_get_account_daily_statistics(self):
+        actual, _ = api.get_account_daily_statistics(
+            project_id, query_params={"from": "2021-09-01", "to": "2021-09-30"}
+        )
+        assert type(actual) == list
+
+    def test_get_inspection_daily_statistics(self):
+        actual, _ = api.get_inspection_daily_statistics(
+            project_id, query_params={"from": "2021-09-01", "to": "2021-09-30"}
+        )
+        assert type(actual) == list
+
+    def test_get_phase_daily_statistics(self):
+        actual, _ = api.get_phase_daily_statistics(project_id, query_params={"from": "2021-09-01", "to": "2021-09-30"})
+        assert type(actual) == list
+
+    def test_get_task_daily_statistics(self):
+        actual, _ = api.get_task_daily_statistics(project_id, query_params={"from": "2021-09-01", "to": "2021-09-30"})
+        assert type(actual) == list
+
+    def test_get_worktime_daily_statistics_by_account(self):
+        actual, _ = api.get_worktime_daily_statistics_by_account(
+            project_id, api.account_id, query_params={"from": "2021-09-01", "to": "2021-09-30"}
+        )
+        assert type(actual) == dict
+
+    def test_get_worktime_daily_statistics(self):
+        actual, _ = api.get_worktime_daily_statistics(
+            project_id, query_params={"from": "2021-09-01", "to": "2021-09-30"}
+        )
+        print(actual)
+        assert type(actual) == dict
+
+    def test_wrapper_get_account_daily_statistics(self):
+        actual = wrapper.get_account_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == list
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_account_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == list
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_account_daily_statistics(project_id)
+        assert type(actual) == list
+
+    def test_wrapper_get_inspection_daily_statistics(self):
+        actual = wrapper.get_inspection_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == list
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_inspection_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == list
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_inspection_daily_statistics(project_id)
+        assert type(actual) == list
+
+    def test_wrapper_get_phase_daily_statistics(self):
+        actual = wrapper.get_phase_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == list
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_phase_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == list
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_phase_daily_statistics(project_id)
+        assert type(actual) == list
+
+    def test_wrapper_get_task_daily_statistics(self):
+        actual = wrapper.get_task_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == list
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_task_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == list
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_task_daily_statistics(project_id)
+        assert type(actual) == list
+
     def test_wrapper_statistics(self):
         actual = wrapper.get_task_statistics(project_id)
         assert type(actual) == list

@@ -11,13 +11,13 @@ import urllib
 import urllib.parse
 import uuid
 import warnings
+from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import requests
 from dateutil.relativedelta import relativedelta
-from requests import Response
 
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException, CheckSumError
@@ -1119,7 +1119,7 @@ class Wrapper:
 
     def _get_statistics_daily_xxx(
         self,
-        function: Callable[[Dict[str, Any]], Tuple[List[Dict[str, Any]], Response]],
+        function: Callable[[Dict[str, Any]], List[Dict[str, Any]]],
         dt_from_date: datetime.date,
         dt_to_date: datetime.date,
     ) -> List[Dict[str, Any]]:
@@ -1134,11 +1134,12 @@ class Wrapper:
 
         """
         results: List[Dict[str, Any]] = []
+        # 取得期間が最大3ヶ月になるようにする
         dt_max_to_date = dt_from_date + relativedelta(months=3, days=-1)
         dt_tmp_to_date = min(dt_max_to_date, dt_to_date)
 
         query_params = {"from": str(dt_from_date), "to": str(dt_tmp_to_date)}
-        tmp_result: List[Dict[str, Any]] = function(query_params)[0]
+        tmp_result: List[Dict[str, Any]] = function(query_params)
         results.extend(tmp_result)
 
         dt_tmp_from_date = dt_tmp_to_date + datetime.timedelta(days=1)
@@ -1186,13 +1187,30 @@ class Wrapper:
         Returns:
             ユーザ別タスク集計データ
         """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
         dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
             project_id, from_date=from_date, to_date=to_date
         )
-        func = functools.partial(self.api.get_account_daily_statistics, project_id)
-        return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+        func = decorator(self.api.get_account_daily_statistics, project_id)
+        result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
-    def get_inspection_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> List[Dict[str, Any]]:
+        tmp_dict_results = defaultdict(list)
+        for elm in result:
+            tmp_dict_results[elm["account_id"]].extend(elm["histories"])
+
+        return [{"account_id": k, "histories": v} for k, v in tmp_dict_results.items()]
+
+    def get_inspection_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """
         指定した期間の 検査コメント集計データ を取得します。
 
@@ -1206,13 +1224,23 @@ class Wrapper:
 
         """
 
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
         dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
             project_id, from_date=from_date, to_date=to_date
         )
-        func = functools.partial(self.api.get_inspection_daily_statistics, project_id)
+        func = decorator(self.api.get_inspection_daily_statistics, project_id)
         return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
-    def get_phase_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> List[Dict[str, Any]]:
+    def get_phase_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """指定した期間の フェーズ別タスク集計データ を取得します。
 
         Args:
@@ -1224,14 +1252,24 @@ class Wrapper:
             フェーズ別タスク集計データ
 
         """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
         dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
             project_id, from_date=from_date, to_date=to_date
         )
-        func = functools.partial(self.api.get_phase_daily_statistics, project_id)
+        func = decorator(self.api.get_phase_daily_statistics, project_id)
         return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
-
-    def get_task_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> List[Dict[str, Any]]:
+    def get_task_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """指定した期間の タスク集計データ を取得します。
 
         Args:
@@ -1243,12 +1281,20 @@ class Wrapper:
             タスク集計データ
 
         """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
         dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
             project_id, from_date=from_date, to_date=to_date
         )
-        func = functools.partial(self.api.get_task_daily_statistics, project_id)
+        func = decorator(self.api.get_task_daily_statistics, project_id)
         return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
-
 
     #########################################
     # Public Method : Supplementary
