@@ -1307,7 +1307,7 @@ class Wrapper:
             to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
 
         Returns:
-            Dict[str, Any]: [description]
+            プロジェクト全体のタスク作業時間集計データ
         """
 
         def decorator(f, project_id: str):
@@ -1337,7 +1337,7 @@ class Wrapper:
             to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
 
         Returns:
-            Dict[str, Any]: [description]
+            プロジェクトメンバーのタスク作業時間集計データ
         """
 
         def decorator(f, project_id: str, account_id: str):
