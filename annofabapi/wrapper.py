@@ -1296,6 +1296,65 @@ class Wrapper:
         func = decorator(self.api.get_task_daily_statistics, project_id)
         return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
+    def get_worktime_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """プロジェクト全体のタスク作業時間集計データを取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            Dict[str, Any]: [description]
+        """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content["data_series"]
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_worktime_daily_statistics, project_id)
+        result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+        return {"project_id": project_id, "data_series": result}
+
+    def get_worktime_daily_statistics_by_account(
+        self, project_id: str, account_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """指定したプロジェクトメンバーのタスク作業時間集計データを取得します。
+
+        Args:
+            project_id: プロジェクトID
+            account_id: アカウントID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            Dict[str, Any]: [description]
+        """
+
+        def decorator(f, project_id: str, account_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, account_id, *args, **kwargs)
+                return content["data_series"]
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_worktime_daily_statistics_by_account, project_id, account_id)
+        result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+        return {"project_id": project_id, "account_id": account_id, "data_series": result}
+
     #########################################
     # Public Method : Supplementary
     #########################################
