@@ -430,7 +430,7 @@ class Wrapper:
         old_dest_annotation, _ = self.api.get_editor_annotation(dest.project_id, dest.task_id, dest.input_data_id)
         updated_datetime = old_dest_annotation["updated_datetime"]
 
-        request_body = self.__create_request_body_for_copy_annotation(
+        request_body = self._create_request_body_for_copy_annotation(
             dest.project_id,
             dest.task_id,
             dest.input_data_id,
