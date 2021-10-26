@@ -373,7 +373,7 @@ class Wrapper:
 
         return dest_detail
 
-    def __create_request_body_for_copy_annotation(
+    def _create_request_body_for_copy_annotation(
         self,
         project_id: str,
         task_id: str,
@@ -433,7 +433,7 @@ class Wrapper:
         old_dest_annotation, _ = self.api.get_editor_annotation(dest.project_id, dest.task_id, dest.input_data_id)
         updated_datetime = old_dest_annotation["updated_datetime"]
 
-        request_body = self.__create_request_body_for_copy_annotation(
+        request_body = self._create_request_body_for_copy_annotation(
             dest.project_id,
             dest.task_id,
             dest.input_data_id,
@@ -1732,6 +1732,21 @@ class Wrapper:
             タスク
         """
         content, _ = self.api.get_task(project_id, task_id)
+        return content
+
+    @allow_404_error
+    def get_task_histories_or_none(self, project_id: str, task_id: str) -> Optional[Task]:
+        """
+        タスク履歴一覧を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            project_id:
+            task_id:
+
+        Returns:
+            タスク履歴一覧
+        """
+        content, _ = self.api.get_task_histories(project_id, task_id)
         return content
 
     def get_all_tasks(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[Task]:

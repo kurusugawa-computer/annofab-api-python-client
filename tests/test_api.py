@@ -715,6 +715,13 @@ class TestGetObjOrNone:
 
         assert wrapper.get_task_or_none("not-exists", task_id) is None
 
+    def test_get_task_histories_or_none(self):
+        assert type(wrapper.get_task_histories_or_none(project_id, task_id)) == list
+
+        assert wrapper.get_task_histories_or_none(project_id, "not-exists") is None
+
+        assert wrapper.get_task_histories_or_none("not-exists", task_id) is None
+
 
 class TestProtectedMethod:
     @classmethod
