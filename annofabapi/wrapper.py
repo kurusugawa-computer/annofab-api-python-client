@@ -2114,7 +2114,7 @@ class Wrapper:
                 * date
                 * actual_worktime：実績作業時間[hour]
                 * plan_worktime：予定作業時間[hour]
-                * working_description：実績に関するコメント
+                * working_description：実績に関するコメント(optional)
         """
         warnings.warn("deprecated", FutureWarning)
 
@@ -2137,7 +2137,7 @@ class Wrapper:
         }
         try:
             labor_list, _ = self.api.get_labor_control(query_params)
-            return [_to_new_data(e) for e in labor_list if e["account_id"] is not None]
+            return [_to_new_data(elm) for elm in labor_list if elm["account_id"] is not None]
         except requests.HTTPError as e:
             # "502 Server Error"が発生するときは、取得するレスポンスが大きすぎる可能性があるので、取得期間を分割する。
             # ただし、取得する期間が指定されている場合のみ
