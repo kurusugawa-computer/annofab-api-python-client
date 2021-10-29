@@ -30,6 +30,13 @@
 ### 2022-01-01 以降
 * Python3.6のサポートを停止し、対応するPythonバージョンを3.7以上にします。
 
+### 2022-02-01 以降
+* 以下の関数を非推奨にします。WebAPIが将来的に廃止されるためです。
+    * AnnofabApi.get_labor_control
+    * Wrapper.get_labor_control_worktime
+    * Wrapper.get_labor_control_availability
+
+
 # Features
 cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます。
 
