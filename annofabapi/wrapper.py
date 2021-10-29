@@ -2054,28 +2054,28 @@ class Wrapper:
     # Public Method : Labor Control
     #########################################
     @staticmethod
-    def _get_actual_worktime_hour_from_labor(labor: Dict[str, Any]) -> Optional[float]:
+    def _get_actual_worktime_hour_from_labor(labor: Dict[str, Any]) -> float:
         working_time_by_user = labor["values"]["working_time_by_user"]
         if working_time_by_user is None:
-            return None
+            return 0
 
         actual_worktime = working_time_by_user.get("results")
         if actual_worktime is None:
-            return None
+            return 0
         else:
             return actual_worktime / 3600 / 1000
 
     @staticmethod
-    def _get_plan_worktime_hour_from_labor(labor: Dict[str, Any]) -> Optional[float]:
+    def _get_plan_worktime_hour_from_labor(labor: Dict[str, Any]) -> float:
         working_time_by_user = labor["values"]["working_time_by_user"]
         if working_time_by_user is None:
-            return None
+            return 0
 
-        actual_worktime = working_time_by_user.get("plans")
-        if actual_worktime is None:
-            return None
+        plan_worktime = working_time_by_user.get("plans")
+        if plan_worktime is None:
+            return 0
         else:
-            return actual_worktime / 3600 / 1000
+            return plan_worktime / 3600 / 1000
 
     @staticmethod
     def _get_working_description_from_labor(labor: Dict[str, Any]) -> Optional[str]:
@@ -2097,6 +2097,8 @@ class Wrapper:
         実績作業時間(actual_worktime)と予定作業時間(plan_worktime)を扱いやすいフォーマットで取得する。
         ただし、organization_id または project_id のいずれかを指定する必要がある。
 
+        .. deprecated:: 2022-02-01 以降に削除する予定です
+
         Args:
             organization_id: 絞り込み対象の組織ID
             project_id: 絞り込み対象のプロジェクトID
@@ -2114,6 +2116,7 @@ class Wrapper:
                 * plan_worktime：予定作業時間[hour]
                 * working_description：実績に関するコメント
         """
+        warnings.warn("deprecated", FutureWarning)
 
         def _to_new_data(labor: Dict[str, Any]) -> Dict[str, Any]:
             labor["actual_worktime"] = self._get_actual_worktime_hour_from_labor(labor)
@@ -2134,7 +2137,7 @@ class Wrapper:
         }
         try:
             labor_list, _ = self.api.get_labor_control(query_params)
-            return [_to_new_data(e) for e in labor_list]
+            return [_to_new_data(e) for e in labor_list if e["account_id"] is not None]
         except requests.HTTPError as e:
             # "502 Server Error"が発生するときは、取得するレスポンスが大きすぎる可能性があるので、取得期間を分割する。
             # ただし、取得する期間が指定されている場合のみ
@@ -2180,6 +2183,8 @@ class Wrapper:
         """
         労務管理の予定稼働時間を取得する。
 
+        .. deprecated:: 2022-02-01 以降に削除する予定です
+
         Args:
             account_id: 絞り込み対象のアカウントID
             from_date: 絞り込み対象の開始日（YYYY-MM-DD）
@@ -2191,6 +2196,7 @@ class Wrapper:
                 * date
                 * availability：予定稼働時間[hour]
         """
+        warnings.warn("deprecated", FutureWarning)
 
         def _to_new_data(labor: Dict[str, Any]) -> Dict[str, Any]:
             labor["availability"] = self._get_plan_worktime_hour_from_labor(labor)
@@ -2204,7 +2210,7 @@ class Wrapper:
             "to": to_date,
         }
         labor_list, _ = self.api.get_labor_control(query_params)
-        return [_to_new_data(e) for e in labor_list]
+        return [_to_new_data(e) for e in labor_list if e["account_id"] is not None]
 
     def put_labor_control_actual_worktime(
         self,

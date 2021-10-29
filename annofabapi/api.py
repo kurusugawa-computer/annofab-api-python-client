@@ -1,5 +1,6 @@
 import json
 import logging
+import warnings
 from typing import Any, Dict, Optional, Tuple
 
 import requests
@@ -314,6 +315,7 @@ class AnnofabApi(AbstractAnnofabApi):
     def get_labor_control(self, query_params: Optional[Dict[str, Any]] = None) -> Tuple[Any, requests.Response]:
         """労務管理関連データを一括で取得します。
 
+        .. deprecated:: 2022-02-01 以降に削除する予定です
 
         Args:
             query_params: Query Parameters
@@ -323,6 +325,8 @@ class AnnofabApi(AbstractAnnofabApi):
 
 
         """
+        warnings.warn("deprecated", FutureWarning)
+
         url_path = "/labor-control"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {
