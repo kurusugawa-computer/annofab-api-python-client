@@ -2,6 +2,7 @@
 import asyncio
 import copy
 import datetime
+import functools
 import hashlib
 import logging
 import mimetypes
@@ -10,11 +11,13 @@ import urllib
 import urllib.parse
 import uuid
 import warnings
+from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import requests
+from dateutil.relativedelta import relativedelta
 
 from annofabapi import AnnofabApi
 from annofabapi.exceptions import AnnofabApiException, CheckSumError
@@ -998,6 +1001,8 @@ class Wrapper:
         """
         getTaskStatistics APIのLocation headerの中身を返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:  プロジェクトID
 
@@ -1005,6 +1010,7 @@ class Wrapper:
 
 
         """
+        warnings.warn("deprecated", FutureWarning)
         _, response = self.api.get_task_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1016,12 +1022,15 @@ class Wrapper:
         """
         getAccountStatistics APIのLocation headerの中身を返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:
 
         Returns:
 
         """
+        warnings.warn("deprecated", FutureWarning)
         _, response = self.api.get_account_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1033,12 +1042,15 @@ class Wrapper:
         """
         getInspectionStatistics APIのLocation headerの中身を返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:
 
         Returns:
 
         """
+        warnings.warn("deprecated", FutureWarning)
         _, response = self.api.get_inspection_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1050,12 +1062,15 @@ class Wrapper:
         """
         getTaskPhaseStatistics APIのLocation headerの中身を返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:
 
         Returns:
 
         """
+        warnings.warn("deprecated", FutureWarning)
         _, response = self.api.get_task_phase_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1085,6 +1100,8 @@ class Wrapper:
         タスク作業時間集計取得.
         Location Headerに記載されたURLのレスポンスをJSON形式で返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:  プロジェクトID
 
@@ -1092,12 +1109,251 @@ class Wrapper:
             タスク作業時間集計
 
         """
+        warnings.warn("deprecated", FutureWarning)
         _, response = self.api.get_worktime_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
             return result
         else:
             return []
+
+    def _get_statistics_daily_xxx(
+        self,
+        function: Callable[[Dict[str, Any]], List[Dict[str, Any]]],
+        dt_from_date: datetime.date,
+        dt_to_date: datetime.date,
+    ) -> List[Dict[str, Any]]:
+        """statistics daily apiの結果を、3ヶ月ごと（webapiの制約の都合）に再帰的に取得する。
+
+        Args:
+            function (Callable): 実行する関数
+            dt_from_date: 取得する期間の開始日
+            dt_to_date: 取得する期間の終了日
+
+        Returns:
+
+        """
+        results: List[Dict[str, Any]] = []
+        # 取得期間が最大3ヶ月になるようにする
+        dt_max_to_date = dt_from_date + relativedelta(months=3, days=-1)
+        dt_tmp_to_date = min(dt_max_to_date, dt_to_date)
+
+        query_params = {"from": str(dt_from_date), "to": str(dt_tmp_to_date)}
+        tmp_result: List[Dict[str, Any]] = function(query_params)
+        results.extend(tmp_result)
+
+        dt_tmp_from_date = dt_tmp_to_date + datetime.timedelta(days=1)
+
+        if dt_tmp_from_date <= dt_to_date:
+            tmp_result = self._get_statistics_daily_xxx(function, dt_from_date=dt_tmp_from_date, dt_to_date=dt_to_date)
+            results.extend(tmp_result)
+
+        return results
+
+    def _get_from_and_to_date_for_statistics_webapi(
+        self, project_id: str, from_date: Optional[str], to_date: Optional[str]
+    ) -> Tuple[datetime.date, datetime.date]:
+        """statistics webapi用に、from_date, to_dateを取得する。
+
+        Args:
+            project_id (str): プロジェクトID。プロジェクト作成日を取得する際に参照します。
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            Tuple[datetime.date, datetime.date]: [description]
+        """
+        if from_date is None:
+            project, _ = self.api.get_project(project_id)
+            from_date = project["created_datetime"][0:10]  # "YYYY-MM-DD"の部分を抽出
+        if to_date is None:
+            to_date = str(datetime.datetime.today().date())
+
+        DATE_FORMAT = "%Y-%m-%d"
+        dt_from_date = datetime.datetime.strptime(from_date, DATE_FORMAT).date()
+        dt_to_date = datetime.datetime.strptime(to_date, DATE_FORMAT).date()
+        return dt_from_date, dt_to_date
+
+    def get_account_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """指定した期間の ユーザ別タスク集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            ユーザ別タスク集計データ
+        """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_account_daily_statistics, project_id)
+        result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
+        tmp_dict_results = defaultdict(list)
+        for elm in result:
+            tmp_dict_results[elm["account_id"]].extend(elm["histories"])
+
+        return [{"account_id": k, "histories": v} for k, v in tmp_dict_results.items()]
+
+    def get_inspection_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        指定した期間の 検査コメント集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            検査コメント集計データ
+
+        """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_inspection_daily_statistics, project_id)
+        return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
+    def get_phase_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """指定した期間の フェーズ別タスク集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            フェーズ別タスク集計データ
+
+        """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_phase_daily_statistics, project_id)
+        return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
+    def get_task_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """指定した期間の タスク集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            タスク集計データ
+
+        """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_task_daily_statistics, project_id)
+        return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
+    def get_worktime_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """プロジェクト全体のタスク作業時間集計データを取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            プロジェクト全体のタスク作業時間集計データ
+        """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content["data_series"]
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_worktime_daily_statistics, project_id)
+        result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+        return {"project_id": project_id, "data_series": result}
+
+    def get_worktime_daily_statistics_by_account(
+        self, project_id: str, account_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """指定したプロジェクトメンバーのタスク作業時間集計データを取得します。
+
+        Args:
+            project_id: プロジェクトID
+            account_id: アカウントID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            プロジェクトメンバーのタスク作業時間集計データ
+        """
+
+        def decorator(f, project_id: str, account_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, account_id, *args, **kwargs)
+                return content["data_series"]
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_worktime_daily_statistics_by_account, project_id, account_id)
+        result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+        return {"project_id": project_id, "account_id": account_id, "data_series": result}
 
     #########################################
     # Public Method : Supplementary

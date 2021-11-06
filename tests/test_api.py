@@ -403,28 +403,80 @@ class TestProjectMember:
 
 
 class TestStatistics:
-    def test_wrapper_statistics(self):
-        actual = wrapper.get_task_statistics(project_id)
+    def test_wrapper_get_account_daily_statistics(self):
+        actual = wrapper.get_account_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
         assert type(actual) == list
 
-    def test_wrapper_get_account_statistics(self):
-        actual = wrapper.get_account_statistics(project_id)
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_account_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
         assert type(actual) == list
 
-    def test_wrapper_get_inspection_statistics(self):
-        actual = wrapper.get_inspection_statistics(project_id)
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_account_daily_statistics(project_id)
         assert type(actual) == list
 
-    def test_wrapper_get_task_phase_statistics(self):
-        actual = wrapper.get_task_phase_statistics(project_id)
+    def test_wrapper_get_inspection_daily_statistics(self):
+        actual = wrapper.get_inspection_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
         assert type(actual) == list
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_inspection_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == list
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_inspection_daily_statistics(project_id)
+        assert type(actual) == list
+
+    def test_wrapper_get_phase_daily_statistics(self):
+        actual = wrapper.get_phase_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == list
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_phase_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == list
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_phase_daily_statistics(project_id)
+        assert type(actual) == list
+
+    def test_wrapper_get_task_daily_statistics(self):
+        actual = wrapper.get_task_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == list
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_task_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == list
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_task_daily_statistics(project_id)
+        assert type(actual) == list
+
+    def test_wrapper_get_worktime_daily_statistics(self):
+        actual = wrapper.get_worktime_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == dict
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_worktime_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == dict
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_worktime_daily_statistics(project_id)
+        assert type(actual) == dict
+
+    def test_wrapper_get_worktime_daily_statistics_by_account(self):
+        actual = wrapper.get_worktime_daily_statistics_by_account(project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == dict
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_worktime_daily_statistics_by_account(project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == dict
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_worktime_daily_statistics_by_account(project_id, account_id=api.account_id, )
+        assert type(actual) == dict
 
     def test_wrapper_get_label_statistics(self):
         actual = wrapper.get_label_statistics(project_id)
-        assert type(actual) == list
-
-    def test_wrapper_get_worktime_statistics(self):
-        actual = wrapper.get_worktime_statistics(project_id)
         assert type(actual) == list
 
     def test_graph_marker(self):
