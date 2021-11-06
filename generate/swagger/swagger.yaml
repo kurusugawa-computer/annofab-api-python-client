@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.123.0
+  version: 0.125.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -2592,11 +2592,56 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/tasks:
+  /projects/{project_id}/statistics/tasks/daily:
     get:
       tags:
       - af-statistics
       summary: タスク集計取得
+      description: |
+        指定した期間の [タスク集計データ](#section/ArrayOfProjectTaskStatisticsHistory) を取得できるAPI。取得期間は最大3か月です。
+      security:
+      - AllProjectMember: []
+      operationId: getTaskDailyStatistics
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: from
+        in: query
+        description: 取得する統計の区間の開始日 - `YYYY-MM-DD`
+        required: true
+        schema:
+          type: string
+      - name: to
+        in: query
+        description: 取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/ArrayOfProjectTaskStatisticsHistory"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/tasks:
+    get:
+      deprecated: true
+      tags:
+      - af-statistics
+      summary: タスク集計ファイルへのURL取得
       description: |
         [タスク集計データ](#section/ArrayOfProjectTaskStatisticsHistory) を取得するための認証済み一時URLを取得します。
       security:
@@ -2620,9 +2665,10 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/statistics/accounts:
     get:
+      deprecated: true
       tags:
       - af-statistics
-      summary: ユーザー別タスク集計取得
+      summary: ユーザー別タスク集計ファイルへのURL取得
       description: |
         [ユーザー別タスク集計データ](#section/ArrayOfProjectAccountStatistics) を取得するための認証済み一時URLを取得します。
       security:
@@ -2644,11 +2690,56 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/inspections:
+  /projects/{project_id}/statistics/accounts/daily:
     get:
       tags:
+        - af-statistics
+      summary: ユーザー別タスク集計取得
+      description: |
+        指定した期間の [ユーザー別タスク集計データ](#section/ArrayOfProjectAccountStatistics) を取得できるAPI。取得期間は最大3か月です。
+      security:
+        - AllProjectMember: [ ]
+      operationId: getAccountDailyStatistics
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+        - name: from
+          in: query
+          description: 取得する統計の区間の開始日 - `YYYY-MM-DD`
+          required: true
+          schema:
+            type: string
+        - name: to
+          in: query
+          description: 取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/ArrayOfProjectAccountStatistics"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/inspections:
+    get:
+      deprecated: true
+      tags:
       - af-statistics
-      summary: 検査コメント集計取得
+      summary: 検査コメント集計ファイルへのURL取得
       description: |
         [検査コメント集計データ](#section/ArrayOfInspectionStatistics) を取得するための認証済み一時URLを取得します。
       security:
@@ -2670,11 +2761,56 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/task-phases:
+  /projects/{project_id}/statistics/inspections/daily:
     get:
       tags:
       - af-statistics
-      summary: フェーズ別タスク集計取得
+      summary: 検査コメント集計取得
+      description: |
+        指定した期間の [検査コメント集計データ](#section/ArrayOfInspectionStatistics) を取得できるAPI。取得期間は最大3か月です。
+      security:
+      - AllProjectMember: [ ]
+      operationId: getInspectionDailyStatistics
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: from
+        in: query
+        description: 取得する統計の区間の開始日 - `YYYY-MM-DD`
+        required: true
+        schema:
+          type: string
+      - name: to
+        in: query
+        description: 取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/ArrayOfInspectionStatistics"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/task-phases:
+    get:
+      deprecated: true
+      tags:
+      - af-statistics
+      summary: フェーズ別タスク集計ファイルへのURL取得
       description: |
         [フェーズ別タスク集計データ](#section/ArrayOfTaskPhaseStatistics) を取得するための認証済み一時URLを取得します。
       security:
@@ -2690,6 +2826,50 @@ paths:
       responses:
         "201":
           $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/task-phases/daily:
+    get:
+      tags:
+      - af-statistics
+      summary: フェーズ別タスク集計取得
+      description: |
+        指定した期間の [フェーズ別タスク集計データ](#section/ArrayOfTaskPhaseStatistics) を取得できるAPI。取得期間は最大3か月です。
+      security:
+      - AllProjectMember: [ ]
+      operationId: getPhaseDailyStatistics
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: from
+        in: query
+        description: 取得する統計の区間の開始日 - `YYYY-MM-DD`
+        required: true
+        schema:
+          type: string
+      - name: to
+        in: query
+        description: 取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/ArrayOfTaskPhaseStatistics"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -2724,9 +2904,10 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/statistics/worktimes:
     get:
+      deprecated: true
       tags:
       - af-statistics
-      summary: タスク作業時間集計取得
+      summary: タスク作業時間集計ファイルへのURL取得
       description: |
         [タスク作業時間集計データ](#section/ArrayOfWorktimeStatistics) を取得するための認証済み一時URLを取得します。
       security:
@@ -2742,6 +2923,100 @@ paths:
       responses:
         "201":
           $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/worktimes/daily:
+    get:
+      tags:
+        - af-statistics
+      summary: プロジェクト単位のフェーズ別タスク集計取得
+      description: |
+        指定したプロジェクトのタスク作業時間集計データを指定した期間分取得できるAPI。取得期間は最大3か月です。
+      security:
+        - AllProjectMember: [ ]
+      operationId: getWorktimeDailyStatistics
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+        - name: from
+          in: query
+          description: 取得する統計の区間の開始日 - `YYYY-MM-DD`
+          required: true
+          schema:
+            type: string
+        - name: to
+          in: query
+          description: 取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/WorktimeStatisticsByProject"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/worktimes-by-account/{account_id}/daily:
+    get:
+      tags:
+        - af-statistics
+      summary: プロジェクトメンバー単位のフェーズ別タスク集計取得
+      description: |
+        指定したプロジェクトメンバーのタスク作業時間集計データを指定した期間分取得できるAPI。取得期間は最大3か月です。
+      security:
+        - AllProjectMember: [ ]
+      operationId: getWorktimeDailyStatisticsByAccount
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+        - name: account_id
+          in: path
+          description: アカウントID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/AccountId"
+        - name: from
+          in: query
+          description: 取得する統計の区間の開始日 - `YYYY-MM-DD`
+          required: true
+          schema:
+            type: string
+        - name: to
+          in: query
+          description: 取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/WorktimeStatisticsByAccount"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
