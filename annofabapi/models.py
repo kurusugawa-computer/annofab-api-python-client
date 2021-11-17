@@ -2531,6 +2531,8 @@ Kyes of Dict
     ジョブの内部情報
 * job_detail: __DictStrKeyAnyValue__
     ジョブ結果の内部情報
+* errors: Errors
+    
 * created_datetime: str
     
 * updated_datetime: str
@@ -2718,6 +2720,8 @@ Kyes of Dict
     ジョブの内部情報
 * job_detail: __DictStrKeyAnyValue__
     ジョブ結果の内部情報
+* errors: Errors
+    
 * created_datetime: str
     
 * updated_datetime: str
@@ -3308,6 +3312,8 @@ Kyes of Dict
     ジョブの内部情報
 * job_detail: __DictStrKeyAnyValue__
     ジョブ結果の内部情報
+* errors: Errors
+    
 * created_datetime: str
     
 * updated_datetime: str
