@@ -246,7 +246,9 @@ class Wrapper:
         _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
         url = response.headers["Location"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=simple_annotation, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=simple_annotation, Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     def download_full_annotation_archive(self, project_id: str, dest_path: str) -> str:
@@ -267,7 +269,9 @@ class Wrapper:
         _, response = self.api.get_archive_full_with_pro_id(project_id)
         url = response.headers["Location"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=full_annotation, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=full_annotation, Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     def get_all_annotation_list(
@@ -357,7 +361,7 @@ class Wrapper:
                 s3_path = self.upload_data_to_s3(
                     dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
                 )
-                logger.debug("%s に外部アノテーションファイルをアップロードしました。", s3_path)
+                logger.debug("project_id='%s', %s に外部アノテーションファイルをアップロードしました。", dest_project_id, s3_path)
                 dest_detail["path"] = s3_path
                 dest_detail["url"] = None
                 dest_detail["etag"] = None
@@ -427,7 +431,7 @@ class Wrapper:
         src_annotation_details: List[Dict[str, Any]] = src_annotation["details"]
 
         if len(src_annotation_details) == 0:
-            logger.debug("コピー元にアノテーションが１つもないため、アノテーションのコピーをスキップします。")
+            logger.debug(f"コピー元にアノテーションが１つもないため、アノテーションのコピーをスキップします。:: src='{src}'")
             return False
 
         old_dest_annotation, _ = self.api.get_editor_annotation(dest.project_id, dest.task_id, dest.input_data_id)
@@ -574,7 +578,7 @@ class Wrapper:
                 try:
                     s3_path = self.upload_data_to_s3(project_id, f, content_type="image/png")
                     dest_obj["path"] = s3_path
-                    logger.debug(f"{outer_file_path} をS3にアップロードしました。")
+                    logger.debug(f"project_id='{project_id}', {outer_file_path} をS3にアップロードしました。")
 
                 except CheckSumError as e:
                     message = (
@@ -1574,7 +1578,9 @@ class Wrapper:
         content, _ = self.api.get_project_inputs_url(project_id)
         url = content["url"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=input_data, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=input_data, Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     def download_project_tasks_url(self, project_id: str, dest_path: str) -> str:
@@ -1594,7 +1600,7 @@ class Wrapper:
         content, _ = self.api.get_project_tasks_url(project_id)
         url = content["url"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=task, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(f"project_id='{project_id}', type=task, Last-Modified={response2.headers.get('Last-Modified')}")
         return url
 
     def download_project_inspections_url(self, project_id: str, dest_path: str) -> str:
@@ -1614,7 +1620,10 @@ class Wrapper:
         content, _ = self.api.get_project_inspections_url(project_id)
         url = content["url"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=inspection_comment, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=inspection_comment,"
+            f"Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     def download_project_task_history_events_url(self, project_id: str, dest_path: str) -> str:
@@ -1634,7 +1643,10 @@ class Wrapper:
         content, _ = self.api.get_project_task_history_events_url(project_id)
         url = content["url"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=task_history_event, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=task_history_event, "
+            f"Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     def download_project_task_histories_url(self, project_id: str, dest_path: str) -> str:
@@ -1654,7 +1666,9 @@ class Wrapper:
         content, _ = self.api.get_project_task_histories_url(project_id)
         url = content["url"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=task_history, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=task_history, Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     #########################################
@@ -2068,7 +2082,7 @@ class Wrapper:
         deleted_jobs = []
         for job in jobs:
             if job["job_status"] == "succeeded":
-                logger.debug("job_id=%s のジョブを削除します。", job["job_id"])
+                logger.debug(f"project_id='{project_id}', job_id='{job['job_id']}'のジョブを削除します。")
                 self.api.delete_project_job(project_id, job_type=job_type.value, job_id=job["job_id"])
                 deleted_jobs.append(job)
 
@@ -2188,29 +2202,36 @@ class Wrapper:
                 # 初回のみ
                 job = get_latest_job()
                 if job is None or job["job_status"] != JobStatus.PROGRESS.value:
-                    logger.debug("job_type='%s' である進行中のジョブは存在しません。", job_type.value)
+                    logger.debug("project_id='%s', job_type='%s' である進行中のジョブは存在しません。", project_id, job_type.value)
                     return None
                 job_id = job["job_id"]
 
             if job is None:
-                logger.debug("job_id='%s', job_type='%s' のジョブは存在しません。", job_type.value, job_id)
+                logger.debug(
+                    "project_id='%s', job_id='%s', job_type='%s' のジョブは存在しません。", project_id, job_type.value, job_id
+                )
                 return None
 
             job_access_count += 1
 
             if job["job_status"] == JobStatus.SUCCEEDED.value:
-                logger.debug("job_id='%s', job_type='%s' のジョブが成功しました。", job_id, job_type.value)
+                logger.debug(
+                    "project_id='%s', job_id='%s', job_type='%s' のジョブが成功しました。", project_id, job_id, job_type.value
+                )
                 return JobStatus.SUCCEEDED
 
             elif job["job_status"] == JobStatus.FAILED.value:
-                logger.debug("job_id='%s', job_type='%s' のジョブが失敗しました。", job_id, job_type.value)
+                logger.debug(
+                    "project_id='%s', job_id='%s', job_type='%s' のジョブが失敗しました。", project_id, job_id, job_type.value
+                )
                 return JobStatus.FAILED
 
             else:
                 # 進行中
                 if job_access_count < max_job_access:
                     logger.debug(
-                        "job_id='%s', job_type='%s' のジョブは進行中です。%d 秒間待ちます。",
+                        "project_id='%s', job_id='%s', job_type='%s' のジョブは進行中です。%d 秒間待ちます。",
+                        project_id,
                         job_id,
                         job_type.value,
                         job_access_interval,
@@ -2218,7 +2239,8 @@ class Wrapper:
                     time.sleep(job_access_interval)
                 else:
                     logger.debug(
-                        "job_id='%s', job_type='%s' のジョブは %.1f 分以上経過しても、終了しませんでした。",
+                        "project_id='%s', job_id='%s', job_type='%s' のジョブは %.1f 分以上経過しても、終了しませんでした。",
+                        project_id,
                         job["job_id"],
                         job_type.value,
                         job_access_interval * job_access_count / 60,
@@ -2407,7 +2429,7 @@ class Wrapper:
                 dt_new_to_date = dt_from_date + datetime.timedelta(days=diff_days // 2)
                 dt_new_from_date = dt_new_to_date + datetime.timedelta(days=1)
                 logger.debug(
-                    "取得対象の期間が広すぎるため、データを取得できませんでした。"
+                    f"project_id='{project_id}': 取得対象の期間が広すぎるため、データを取得できませんでした。"
                     f"取得対象の期間を{from_date}~{dt_new_to_date.strftime(DATE_FORMAT)}, "
                     f"{dt_new_from_date.strftime(DATE_FORMAT)}~{to_date}に分割して、再度取得します。"
                 )
