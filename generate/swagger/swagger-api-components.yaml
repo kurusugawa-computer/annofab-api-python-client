@@ -1300,6 +1300,8 @@ components:
         job_detail:
           type: object
           description: ジョブ結果の内部情報
+        errors:
+          $ref: "#/components/schemas/Errors"
         created_datetime:
           type: string
           format: date-time
@@ -1323,6 +1325,8 @@ components:
         job_detail:
           type: object
           description: ジョブ結果の内部情報
+        errors:
+          $ref: "#/components/schemas/Errors"
         created_datetime:
           type: string
           format: date-time
