@@ -35,6 +35,19 @@
     * AnnofabApi.get_labor_control
     * Wrapper.get_labor_control_worktime
     * Wrapper.get_labor_control_availability
+* 統計関係の関数を非推奨にします。WebAPIが将来的に廃止されるためです。
+   * annofabapi.Wrapper
+       * get_task_statistics
+       * get_account_statistics
+       * get_inspection_statistics
+       * get_task_phase_statistics
+       * get_worktime_statistics
+    * annofabapi.AnnofabApi
+       * get_task_statistics
+       * get_account_statistics
+       * get_inspection_statistics
+       * get_task_phase_statistics
+       * get_worktime_statistics
 
 
 # Features
