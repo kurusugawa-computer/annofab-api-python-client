@@ -1,2 +1,2 @@
 from annofabapi._utils import deprecated_class
-from annofabapi.models import JobStatus, ProjectJobType
+from annofabapi.models import JobStatus, ProjectJobType, Errors

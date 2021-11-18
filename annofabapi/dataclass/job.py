@@ -15,7 +15,7 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import DataClassJsonMixin
 
-from annofabapi.models import JobStatus, ProjectJobType
+from annofabapi.models import Errors, JobStatus, ProjectJobType
 
 
 @dataclass
@@ -39,6 +39,9 @@ class ProjectJobInfo(DataClassJsonMixin):
 
     job_detail: Optional[Dict[str, Any]]
     """ジョブ結果の内部情報"""
+
+    errors: Optional[Errors]
+    """"""
 
     created_datetime: Optional[str]
     """"""

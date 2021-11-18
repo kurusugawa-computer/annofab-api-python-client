@@ -32,6 +32,10 @@ class Resource:
         #: AnnofabApi2 Instance
         self.api2 = AnnofabApi2(self.api)
 
+        logger.debug(
+            "Create annofabapi resource instance :: %s", {"login_user_id": login_user_id, "endpoint_url": endpoint_url}
+        )
+
 
 def build(
     login_user_id: Optional[str] = None, login_password: Optional[str] = None, endpoint_url: str = DEFAULT_ENDPOINT_URL
@@ -75,13 +79,13 @@ def build(
 
 def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     """
-    ``.netrc`` ファイルから、annnofabapi.Resourceインスタンスを生成する。
+    ``.netrc`` ファイルから、annofabapi.Resourceインスタンスを生成する。
 
     Args:
         endpoint_url: AnnoFab APIのエンドポイント。
 
     Returns:
-        annnofabapi.Resourceインスタンス
+        annofabapi.Resourceインスタンス
 
     """
     try:
@@ -100,19 +104,18 @@ def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     if login_user_id is None or login_password is None:
         raise AnnofabApiException("User ID or password in the .netrc file are None.")
 
-    logger.debug(".netrcファイルからAnnoFab認証情報を読み込みました。")
     return Resource(login_user_id, login_password, endpoint_url=endpoint_url)
 
 
 def build_from_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     """
-    環境変数 ``ANNOFAB_USER_ID`` , ``ANNOFAB_PASSWORD`` から、annnofabapi.Resourceインスタンスを生成する。
+    環境変数 ``ANNOFAB_USER_ID`` , ``ANNOFAB_PASSWORD`` から、annofabapi.Resourceインスタンスを生成する。
 
     Args:
         endpoint_url: AnnoFab APIのエンドポイント。
 
     Returns:
-        annnofabapi.Resourceインスタンス
+        annofabapi.Resourceインスタンス
 
     """
     login_user_id = os.environ.get("ANNOFAB_USER_ID")
@@ -120,5 +123,4 @@ def build_from_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     if login_user_id is None or login_password is None:
         raise AnnofabApiException("`ANNOFAB_USER_ID` or `ANNOFAB_PASSWORD`  environment variable are empty.")
 
-    logger.debug("環境変数からAnnoFab認証情報を読み込みました。")
     return Resource(login_user_id, login_password, endpoint_url=endpoint_url)

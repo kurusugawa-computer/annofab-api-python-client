@@ -464,15 +464,22 @@ class TestStatistics:
         assert type(actual) == dict
 
     def test_wrapper_get_worktime_daily_statistics_by_account(self):
-        actual = wrapper.get_worktime_daily_statistics_by_account(project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-06-30")
+        actual = wrapper.get_worktime_daily_statistics_by_account(
+            project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-06-30"
+        )
         assert type(actual) == dict
 
         # 最大取得期間の3ヶ月を超えている場合
-        actual = wrapper.get_worktime_daily_statistics_by_account(project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-07-01")
+        actual = wrapper.get_worktime_daily_statistics_by_account(
+            project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-07-01"
+        )
         assert type(actual) == dict
 
         # 開始日と終了日を指定しない場合
-        actual = wrapper.get_worktime_daily_statistics_by_account(project_id, account_id=api.account_id, )
+        actual = wrapper.get_worktime_daily_statistics_by_account(
+            project_id,
+            account_id=api.account_id,
+        )
         assert type(actual) == dict
 
     def test_wrapper_get_label_statistics(self):

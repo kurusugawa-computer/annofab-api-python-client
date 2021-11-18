@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "annofabapi"
-version = "0.50.0"
+version = "0.50.1"
 description = "Python Clinet Library of AnnoFab WebAPI (https://annofab.com/docs/api/)"
 authors = ["yuji38kwmt"]
 license = "MIT"
@@ -32,6 +32,10 @@ dataclasses = { version = "*", python = "<3.7" }
 
 
 [tool.poetry.dev-dependencies]
+
+# https://github.com/PyCQA/astroid/issues/1239 のエラーを回避するためバージョンを下げる
+astroid = "<2.8.5"
+
 # test library
 pytest = "*"
 pytest-xdist = "*"
