@@ -2137,7 +2137,11 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.AnnofabApi.get_project_task_history_events_url() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         url_path = f"/projects/{project_id}/rawdata/task_history_events"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
@@ -2419,7 +2423,11 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.AnnofabApi.get_account_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         url_path = f"/projects/{project_id}/statistics/accounts"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
@@ -2474,7 +2482,11 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.AnnofabApi.get_inspection_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         url_path = f"/projects/{project_id}/statistics/inspections"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
@@ -2605,7 +2617,11 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.AnnofabApi.get_task_phase_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         url_path = f"/projects/{project_id}/statistics/task-phases"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
@@ -2630,7 +2646,11 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.AnnofabApi.get_task_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         url_path = f"/projects/{project_id}/statistics/tasks"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
@@ -2716,7 +2736,11 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.AnnofabApi.get_worktime_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         url_path = f"/projects/{project_id}/statistics/worktimes"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}

@@ -265,7 +265,11 @@ class Wrapper:
             ダウンロード元のURL
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.Wrapper.download_full_annotation_archive() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         _, response = self.api.get_archive_full_with_pro_id(project_id)
         url = response.headers["Location"]
         response2 = _download(url, dest_path)
@@ -1014,7 +1018,9 @@ class Wrapper:
 
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.Wrapper.get_task_statistics() is deprecated and will be removed.", FutureWarning, stacklevel=2
+        )
         _, response = self.api.get_task_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1034,7 +1040,11 @@ class Wrapper:
         Returns:
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.Wrapper.get_account_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         _, response = self.api.get_account_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1054,7 +1064,11 @@ class Wrapper:
         Returns:
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.Wrapper.get_inspection_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         _, response = self.api.get_inspection_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1074,7 +1088,11 @@ class Wrapper:
         Returns:
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.Wrapper.get_task_phase_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         _, response = self.api.get_task_phase_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -1113,7 +1131,11 @@ class Wrapper:
             タスク作業時間集計
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.Wrapper.get_worktime_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         _, response = self.api.get_worktime_statistics(project_id)
         result = self._request_location_header_url(response)
         if result is not None:
@@ -2394,7 +2416,11 @@ class Wrapper:
                 * plan_worktime：予定作業時間[hour]
                 * working_description：実績に関するコメント(optional)
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.Wrapper.get_labor_control_worktime() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
 
         def _to_new_data(labor: Dict[str, Any]) -> Dict[str, Any]:
             labor["actual_worktime"] = self._get_actual_worktime_hour_from_labor(labor)
@@ -2474,7 +2500,11 @@ class Wrapper:
                 * date
                 * availability：予定稼働時間[hour]
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.Wrapper.get_labor_control_availability() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
 
         def _to_new_data(labor: Dict[str, Any]) -> Dict[str, Any]:
             labor["availability"] = self._get_plan_worktime_hour_from_labor(labor)
