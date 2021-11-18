@@ -2,8 +2,7 @@ version: ~> 1.0
 language: python
 python:
   - "3.6"
-  # 3.7.0だとpylintのエラーが発生するので、3.7.2を指定した
-  - "3.7.2"
+  - "3.7"
   - "3.8"
   - "3.9"
 install:
