@@ -1106,7 +1106,7 @@ class AbstractAnnofabApi(abc.ABC):
                 type (str):  取得するジョブの種別。[詳細はこちら](#section/OrganizationJobType)。
                 page (int):  検索結果のうち、取得したいページの番号(1始まり)  現在は未実装のパラメータです。(今後対応予定)
                 limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。
-                exclusive_start_created_datetime (str):  取得するデータの直前の作成日時
+                exclusive_start_created_datetime (str):  取得するデータの直前の作成日時（ISO 8601 拡張形式）
 
         Returns:
             Tuple[OrganizationJobInfoContainer, requests.Response]
@@ -1138,7 +1138,7 @@ class AbstractAnnofabApi(abc.ABC):
                 type (ProjectJobType):  取得するジョブの種別。[詳細はこちら](#section/ProjectJobType)。
                 page (int):  検索結果のうち、取得したいページの番号(1始まり)  現在は未実装のパラメータです。(今後対応予定)
                 limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。
-                exclusive_start_created_datetime (str):  取得するデータの直前の作成日時
+                exclusive_start_created_datetime (str):  取得するデータの直前の作成日時（ISO 8601 拡張形式）
 
         Returns:
             Tuple[ProjectJobInfoContainer, requests.Response]
