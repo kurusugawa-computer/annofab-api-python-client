@@ -66,7 +66,7 @@ types-dataclasses = { version = "*", python = "<3.7" }
 ipython = "*"
 # ipythonとjediの組み合わせによるバグを避けるため、バージョン指定
 # https://zenn.dev/hige/articles/282bf79d47378e
-jedi = "<0.18"
+jedi = "<0.19"
 
 [tool.black]
 line-length = 120
