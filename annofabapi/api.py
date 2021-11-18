@@ -325,8 +325,9 @@ class AnnofabApi(AbstractAnnofabApi):
 
 
         """
-        warnings.warn("deprecated", FutureWarning)
-
+        warnings.warn(
+            "annofabapi.AnnofabApi.get_labor_control() is deprecated and will be removed.", FutureWarning, stacklevel=2
+        )
         url_path = "/labor-control"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {
