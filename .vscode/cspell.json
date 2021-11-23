@@ -19,7 +19,11 @@
         "astimezone",
         "asyncio",
         "dateutil",
+        "favicon",
         "giveup",
+        "kurusugawa",
+        "netrc",
+        "pydata",
         "pylint",
         "tzlocal"
     ]

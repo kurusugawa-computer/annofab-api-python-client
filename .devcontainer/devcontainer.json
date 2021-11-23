@@ -12,9 +12,13 @@
 	"remoteUser": "vscode",
 	"updateRemoteUserUID": true,
 	"overrideCommand": false,
+	// 事前にマウントするディレクトリを作成する
+	"initializeCommand": "mkdir -p ${localWorkspaceFolder}/.devcontainer/venv",
 	"mounts": [
 		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
-		"source=${localWorkspaceFolder}/.devcontainer/.extensions,target=/home/vscode/.vscode-server/extensions,type=bind"
+		"source=${localWorkspaceFolder}/.devcontainer/.extensions,target=/home/vscode/.vscode-server/extensions,type=bind",
+		//ホスト側のvenvとコンテナ側のvenvを分離して、ホスト側でもpoetryコマンドを実行できるようにする
+		"source=${localWorkspaceFolder}/.devcontainer/venv,target=${containerWorkspaceFolder}/.venv,type=bind"
 	],
 	"forwardPorts": [],
 	"runArgs": [

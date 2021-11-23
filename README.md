@@ -2,8 +2,10 @@
 [AnnoFab Web API](https://annofab.com/docs/api/) のPythonクライアントライブラリです。
 
 [![Build Status](https://travis-ci.com/kurusugawa-computer/annofab-api-python-client.svg?branch=master)](https://travis-ci.com/kurusugawa-computer/annofab-api-python-client)
+[![CodeQL](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml)
 [![PyPI version](https://badge.fury.io/py/annofabapi.svg)](https://badge.fury.io/py/annofabapi)
 [![Python Versions](https://img.shields.io/pypi/pyversions/annofabapi.svg)](https://pypi.org/project/annofabapi/)
+[![Documentation Status](https://readthedocs.org/projects/annofab-api-python-client/badge/?version=latest)](https://annofab-api-python-client.readthedocs.io/en/latest/?badge=latest)
 
 
 
@@ -25,11 +27,28 @@
 # 廃止予定
 
 
-### 2021-09-01 以降
+### 2022-01-01 以降
+* Python3.6のサポートを停止し、対応するPythonバージョンを3.7以上にします。
 
-* [annofabapi.wrapper.AnnofabApiWrapper.copy_annotation_specs](https://annofab-api-python-client.readthedocs.io/en/latest/wrapper.html#annofabapi.Wrapper.copy_annotation_specs) を廃止します。特殊なケースにしか対応しておらず、汎用的なメソッドでないためです。
-* `annofabapi.models.JobType` を廃止します。替わりに`annofabapi.models.ProjectJobType`を使用してください。
-* `annofabapi.dataclass.job.JobInfo`を廃止します。替わりに`annofabapi.models.ProjectJobInfo`を使用してください。
+### 2022-02-01 以降
+* 以下の関数を非推奨にします。WebAPIが将来的に廃止されるためです。
+    * AnnofabApi.get_labor_control
+    * Wrapper.get_labor_control_worktime
+    * Wrapper.get_labor_control_availability
+* 統計関係の関数を非推奨にします。WebAPIが将来的に廃止されるためです。
+   * annofabapi.Wrapper
+       * get_task_statistics
+       * get_account_statistics
+       * get_inspection_statistics
+       * get_task_phase_statistics
+       * get_worktime_statistics
+    * annofabapi.AnnofabApi
+       * get_task_statistics
+       * get_account_statistics
+       * get_inspection_statistics
+       * get_task_phase_statistics
+       * get_worktime_statistics
+
 
 # Features
 cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます。

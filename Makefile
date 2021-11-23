@@ -1,4 +1,4 @@
-.PHONY: docs lint test format test publish_test publish
+.PHONY: docs lint test format test publish
 
 init:
 	pip install poetry --upgrade
@@ -15,7 +15,8 @@ lint:
 	poetry run pylint --jobs=0 annofabapi tests/create_test_project.py
 
 test:
-	poetry run pytest -n auto  --cov=annofabapi --cov-report=html tests
+	# 並列で実行するとエラーになるので、シーケンシャルで実行する
+	poetry run pytest --cov=annofabapi --cov-report=html tests
 
 publish:
 	poetry publish --build

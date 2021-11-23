@@ -1,72 +1,19 @@
-import functools
 import json
 import logging
+import warnings
 from typing import Any, Dict, Optional, Tuple
 
-import backoff
 import requests
 from requests.auth import AuthBase
 from requests.cookies import RequestsCookieJar
 
 from annofabapi.generated_api import AbstractAnnofabApi
-from annofabapi.utils import _log_error_response, _raise_for_status
+from annofabapi.utils import _log_error_response, _raise_for_status, my_backoff
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_ENDPOINT_URL = "https://annofab.com"
 """AnnoFab WebAPIのデフォルトのエンドポイントURL"""
-
-
-def my_backoff(function):
-    """
-    HTTP Status Codeが429 or 5XXのときはリトライする. 最大5分間リトライする。
-    """
-
-    @functools.wraps(function)
-    def wrapped(*args, **kwargs):
-        def fatal_code(e):
-            """
-            リトライするかどうか
-            status codeが5xxのとき、またはToo many Requests(429)のときはリトライする。429以外の4XXはリトライしない
-            https://requests.kennethreitz.org/en/master/user/quickstart/#errors-and-exceptions
-
-            Args:
-                e: exception
-
-            Returns:
-                True: give up(リトライしない), False: リトライする
-
-            """
-            if isinstance(e, requests.exceptions.HTTPError):
-                if e.response is None:
-                    return True
-                code = e.response.status_code
-                return 400 <= code < 500 and code != 429
-
-            elif isinstance(
-                e,
-                (
-                    requests.exceptions.TooManyRedirects,
-                    requests.exceptions.Timeout,
-                    requests.exceptions.ConnectionError,
-                    ConnectionError,
-                ),
-            ):
-                return False
-
-            else:
-                # リトライする
-                return False
-
-        return backoff.on_exception(
-            backoff.expo,
-            requests.exceptions.RequestException,
-            jitter=backoff.full_jitter,
-            max_time=300,
-            giveup=fatal_code,
-        )(function)(*args, **kwargs)
-
-    return wrapped
 
 
 class AnnofabApi(AbstractAnnofabApi):
@@ -77,6 +24,10 @@ class AnnofabApi(AbstractAnnofabApi):
         login_user_id: AnnoFabにログインするときのユーザID
         login_password: AnnoFabにログインするときのパスワード
         endpoint_url: AnnoFab APIのエンドポイント。
+
+    Attributes:
+        token_dict: login, refresh_tokenで取得したtoken情報
+        cookies: Signed Cookie情報
     """
 
     def __init__(self, login_user_id: str, login_password: str, endpoint_url: str = DEFAULT_ENDPOINT_URL):
@@ -90,13 +41,13 @@ class AnnofabApi(AbstractAnnofabApi):
         self.url_prefix = f"{endpoint_url}/api/v1"
         self.session = requests.Session()
 
-    #: login, refresh_tokenで取得したtoken情報
-    token_dict: Optional[Dict[str, Any]] = None
+        #: login, refresh_tokenで取得したtoken情報
+        self.token_dict: Optional[Dict[str, Any]] = None
 
-    #: Signed Cookie情報
-    cookies: Optional[RequestsCookieJar] = None
+        #: Signed Cookie情報
+        self.cookies: Optional[RequestsCookieJar] = None
 
-    __account_id: Optional[str] = None
+        self.__account_id: Optional[str] = None
 
     class __MyToken(AuthBase):
         """
@@ -199,7 +150,7 @@ class AnnofabApi(AbstractAnnofabApi):
         request_body: Optional[Any] = None,
     ) -> Tuple[Any, requests.Response]:
         """
-        HTTP　Requestを投げて、Responseを返す。
+        HTTP Requestを投げて、Responseを返す。
 
         Args:
             http_method:
@@ -236,7 +187,9 @@ class AnnofabApi(AbstractAnnofabApi):
         content = self._response_to_content(response)
         return content, response
 
-    def _get_signed_cookie(self, project_id) -> Tuple[Dict[str, Any], requests.Response]:
+    def _get_signed_cookie(
+        self, project_id, query_params: Optional[Dict[str, Any]] = None
+    ) -> Tuple[Dict[str, Any], requests.Response]:
         """
         アノテーション仕様の履歴情報を取得するために、非公開APIにアクセスする。
         変更される可能性あり.
@@ -250,7 +203,7 @@ class AnnofabApi(AbstractAnnofabApi):
         """
         url_path = f"/internal/projects/{project_id}/sign-headers"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: Dict[str, Any] = {"query_params": query_params}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def _request_get_with_cookie(self, project_id: str, url: str) -> requests.Response:
@@ -265,23 +218,22 @@ class AnnofabApi(AbstractAnnofabApi):
             Response
 
         """
-
-        def request(cookies):
-            kwargs = {"cookies": cookies}
-            return self.session.get(url, **kwargs)
-
-        if self.cookies is None:
-            _, r = self._get_signed_cookie(project_id)
-            self.cookies = r.cookies
-
-        response = request(self.cookies)
+        # Sessionオブジェクトに保存されているCookieを利用して、URLにアクセスする
+        response = self.session.get(url)
 
         # CloudFrontから403 Errorが発生したときは、別プロジェクトのcookieを渡している可能性があるので、
         # Signed Cookieを発行して、再度リクエストを投げる
         if response.status_code == requests.codes.forbidden and response.headers.get("server") == "CloudFront":
-            _, r = self._get_signed_cookie(project_id)
-            self.cookies = r.cookies
-            response = request(self.cookies)
+            query_params = {}
+            if "/input_data_set/" in url:
+                query_params.update({"resource": "input_data_set"})
+            else:
+                query_params.update({"resource": "project"})
+
+            _, r = self._get_signed_cookie(project_id, query_params=query_params)
+            for cookie in r.cookies:
+                self.session.cookies.set_cookie(cookie)
+            response = self.session.get(url)
 
         _log_error_response(logger, response)
         _raise_for_status(response)
@@ -363,6 +315,7 @@ class AnnofabApi(AbstractAnnofabApi):
     def get_labor_control(self, query_params: Optional[Dict[str, Any]] = None) -> Tuple[Any, requests.Response]:
         """労務管理関連データを一括で取得します。
 
+        .. deprecated:: 2022-02-01 以降に削除する予定です
 
         Args:
             query_params: Query Parameters
@@ -372,6 +325,9 @@ class AnnofabApi(AbstractAnnofabApi):
 
 
         """
+        warnings.warn(
+            "annofabapi.AnnofabApi.get_labor_control() is deprecated and will be removed.", FutureWarning, stacklevel=2
+        )
         url_path = "/labor-control"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {

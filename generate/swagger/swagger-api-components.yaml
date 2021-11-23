@@ -504,6 +504,7 @@ components:
         - lang
         - keylayout
         - authority
+        - is_external_account
       properties:
         account_id:
           $ref: "#/components/schemas/AccountId"
@@ -522,6 +523,12 @@ components:
           type: string
         authority:
           $ref: "#/components/schemas/AccountAuthority"
+        is_external_account:
+          type: boolean
+          description: |
+            [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合true。
+
+            外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合false。
         updated_datetime:
           type: string
           format: date-time
@@ -878,7 +885,7 @@ components:
         ※1 以下の情報が送られます。
 
         * HTTPボディ (JSON形式)
-          * `authorization_token` : 作業者の認証トークン。AnnoFabのAPIを利用する際に使用します。
+          * `authorization_token` : タスク割当専用の認証トークン。AnnoFabのAPIを利用する際に使用します。
           * `project_id` : タスクの割当リクエストが行われたプロジェクトのID。
           * `phase` : 作業者が割当を要求したタスクフェーズ。このフェーズのタスクを割当してください。
 
@@ -1039,6 +1046,11 @@ components:
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
         検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+    CommentId:
+      type: string
+      example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     MarkerId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -1288,6 +1300,8 @@ components:
         job_detail:
           type: object
           description: ジョブ結果の内部情報
+        errors:
+          $ref: "#/components/schemas/Errors"
         created_datetime:
           type: string
           format: date-time
@@ -1311,6 +1325,8 @@ components:
         job_detail:
           type: object
           description: ジョブ結果の内部情報
+        errors:
+          $ref: "#/components/schemas/Errors"
         created_datetime:
           type: string
           format: date-time
@@ -1484,7 +1500,7 @@ components:
             $ref: "#/components/schemas/WebhookHeader"
         body:
           type: string
-          example: '{\"message\": \"{{PROJECT_ID}} is updated at {{COMPLETE_DATETIME}}\"}'
+          example: '{"message": "{{PROJECT_ID}} is updated at {{COMPLETE_DATETIME}}"}'
         url:
           type: string
           format: uri
@@ -1976,6 +1992,61 @@ components:
           description: ユーザごとの作業時間情報
           items:
             $ref: "#/components/schemas/AccountWorktimeStatistics"
+    WorktimeStatisticsByAccount:
+      type: object
+      required:
+        - project_id
+        - account_id
+        - data_series
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+        data_series:
+          type: array
+          description: プロジェクトメンバーの日毎の作業時間統計データ
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsData"
+    WorktimeStatisticsByProject:
+      type: object
+      required:
+        - project_id
+        - data_series
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        data_series:
+          type: array
+          description: プロジェクトの日毎の作業時間統計データ
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsData"
+    WorktimeStatisticsData:
+      type: object
+      required:
+        - date
+        - grouped_by_input
+        - grouped_by_task
+        - grouped_by_minute
+      properties:
+        date:
+          type: string
+          format: date
+        grouped_by_input:
+          description: ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+          type: array
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsItem"
+        grouped_by_task:
+          description: ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+          type: array
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsItem"
+        grouped_by_minute:
+          description: ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
+          type: array
+          items:
+            $ref: "#/components/schemas/WorktimeStatisticsItem"
     WorktimeStatisticsItem:
       type: object
       required:
@@ -4152,6 +4223,15 @@ components:
             is_foo_bar_buz: true
     FullAnnotation:
       type: object
+      required:
+        - project_id
+        - task_id
+        - task_phase
+        - task_phase_stage
+        - task_status
+        - input_data_id
+        - details
+        - annotation_format_version
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -4180,6 +4260,15 @@ components:
           $ref: "#/components/schemas/AnnotationFormatVersion"
     FullAnnotationDetail:
       type: object
+      required:
+        - annotation_id
+        - user_id
+        - label_id
+        - label_name
+        - annotation_type
+        - data_holding_type
+        - data
+        - additional_data_list
       properties:
         annotation_id:
           $ref: "#/components/schemas/AnnotationId"
@@ -4254,7 +4343,7 @@ components:
           * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2ののアノテーションデータです。塗りつぶしv2はSemantic Segmentationに特化しています。
           * `FullAnnotationDataBoundingBox`: 矩形のアノテーションデータです。
           * `FullAnnotationDataPoints`: ポリゴン（閉じた頂点集合）のアノテーションデータです。
-          * `FullAnnotationDataSegmentation`: 点のアノテーションデータです。
+          * `FullAnnotationDataSinglePoint`: 点のアノテーションデータです。
           * `FullAnnotationDataRange`: 動画区間のアノテーションデータです。
     FullAnnotationDataClassification:
       type: object
@@ -4647,6 +4736,254 @@ components:
         現在は使用しておらず、レスポンスに含まれる値は不定です。APIのレスポンスにこの値を含む場合でも、「スレッドの先頭のコメント」の値を利用してください。
 
         リクエストボディに指定する場合は、スレッドの先頭のコメントと同じ値を指定します。
+    Comment:
+      type: object
+      description: コメント
+      required:
+        - project_id
+        - task_id
+        - input_data_id
+        - comment_id
+        - phase
+        - phase_stage
+        - account_id
+        - comment_type
+        - comment
+        - comment_node
+        - datetime_for_sorting
+        - created_datetime
+        - updated_datetime
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        task_id:
+          $ref: "#/components/schemas/TaskId"
+        input_data_id:
+          $ref: "#/components/schemas/InputDataId"
+        comment_id:
+          $ref: "#/components/schemas/CommentId"
+        phase:
+          $ref: "#/components/schemas/TaskPhase"
+          description: コメントを作成したときのタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+        phase_stage:
+          type: integer
+          description: コメントを作成したときのフェーズのステージ。
+          default: 1
+          minimum: 1
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+          description: コメントを作成したユーザのアカウントID。
+        comment_type:
+          type: string
+          enum:
+            - onhold
+          description: |
+            コメントの種別。
+
+            * `onhold` - 保留コメントとして扱われます。
+        phrases:
+          type: array
+          description: |
+            `comment_type` の値によって扱いが異なります。
+
+            * `onhold` の場合
+              * 使用しません（空配列）
+          items:
+            $ref: "#/components/schemas/PhraseId"
+        comment:
+          type: string
+          description: |
+            コメント本文。
+          example: 確認中のため対応保留します
+        comment_node:
+          $ref: "#/components/schemas/CommentNode"
+        datetime_for_sorting:
+          type: string
+          format: date-time
+          description: |
+            コメントのソート順を決める日時。
+
+            AnnoFab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。
+        created_datetime:
+          type: string
+          format: date-time
+          description: コメントの作成日時。
+        updated_datetime:
+          type: string
+          format: date-time
+          description: コメントの更新日時。
+    CommentNode:
+      description: |
+        コメントのノード固有のデータ。
+
+        * `RootComment` - スレッドの先頭のコメント（ルートコメント）。
+        * `ReplyComment` - あるコメントへの返信コメント。
+      oneOf:
+        - $ref: "#/components/schemas/RootComment"
+        - $ref: "#/components/schemas/ReplyComment"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          Root: "#/components/schemas/RootComment"
+          Reply: "#/components/schemas/ReplyComment"
+    RootComment:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/InspectionData"
+          description: |
+            `comment_type` の値によって扱いが異なります。
+
+            * `onhold` の場合
+              * 使用しません（値なし）
+        annotation_id:
+          $ref: "#/components/schemas/AnnotationId"
+          description: |
+            `comment_type` の値によって扱いが異なります。
+
+            * `onhold` の場合
+              * 使用しません（値なし）
+        label_id:
+          $ref: "#/components/schemas/LabelId"
+          description: |
+            `comment_type` の値によって扱いが異なります。
+
+            * `onhold` の場合
+              * 使用しません（値なし）
+        status:
+          $ref: "#/components/schemas/CommentStatus"
+        _type:
+          type: string
+          description: |
+            `Root`
+            [詳しくはこちら](#section/API-Convention/API-_type)
+          example: "Root"
+    ReplyComment:
+      type: object
+      required:
+        - root_comment_id
+      properties:
+        root_comment_id:
+          $ref: "#/components/schemas/CommentId"
+          description: |
+            返信先コメントのコメントID。返信先のコメントは「スレッド内の直前のコメント」ではなく「スレッドの先頭のコメント」を指します。
+        _type:
+          type: string
+          description: |
+            `Reply`
+            [詳しくはこちら](#section/API-Convention/API-_type)
+          example: "Reply"
+    CommentStatus:
+      type: string
+      enum:
+        - open
+        - resolved
+        - closed
+      description: |
+        `comment_type` の値によってコメントのステータスに格納される値とステータスの意味が変わります。
+
+        * `onhold` の場合
+          * `open`（未対応）、`resolved`（対応完了）を指定可能
+    BatchCommentRequestItem:
+      oneOf:
+        - $ref: "#/components/schemas/BatchCommentRequestItemPut"
+        - $ref: "#/components/schemas/BatchCommentRequestItemDelete"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          Put: "#/components/schemas/BatchCommentRequestItemPut"
+          Delete: "#/components/schemas/BatchCommentRequestItemDelete"
+    BatchCommentRequestItemPut:
+      type: object
+      description: コメント更新
+      required:
+        - comment_id
+        - phase
+        - phase_stage
+        - account_id
+        - comment_type
+        - comment
+        - comment_node
+      properties:
+        comment_id:
+          $ref: "#/components/schemas/CommentId"
+        phase:
+          $ref: "#/components/schemas/TaskPhase"
+          description: コメントを作成したときのタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+        phase_stage:
+          type: integer
+          description: コメントを作成したときのフェーズのステージ。
+          default: 1
+          minimum: 1
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+          description:
+            コメントを作成したユーザのアカウントID。
+        comment_type:
+          type: string
+          enum:
+            - onhold
+          description: |
+            コメントの種別。次の値が指定できます。
+
+            * `onhold` - 保留コメントとして扱われます。
+
+            返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。
+
+            コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。
+        phrases:
+          type: array
+          description: |
+            `comment_type` の値によって指定可能な値が異なります。
+
+            * `onhold` の場合
+              * 使用しません（空配列 or 指定なし）
+          items:
+            $ref: "#/components/schemas/PhraseId"
+        comment:
+          type: string
+          description: |
+            コメント本文。
+          example: 確認中のため対応保留します
+        comment_node:
+          $ref: "#/components/schemas/CommentNode"
+          description: |
+            コメントのノード固有のデータ。
+
+            コメント更新時、 `comment_node` 内の値を変更することは条件次第では可能ですが、 `comment_node` そのものを異なる構造に差し替えて更新することはできません。
+        datetime_for_sorting:
+          type: string
+          format: date-time
+          description: |
+            コメントのソート順を決める日時。コメント作成時のみ指定可能です。
+
+            AnnoFab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。
+
+            コメント作成時に未指定とした場合は、作成操作オブジェクトの順序に応じてコメント作成日時からずれた時刻が自動設定されます（ソート順を一意とするため）。
+
+            なお、この値は後から更新することはできません（値を指定しても無視されます）。
+        _type:
+          type: string
+          description: |
+            `Put`
+
+            [詳しくはこちら](#section/API-Convention/API-_type)
+          example: "Put"
+    BatchCommentRequestItemDelete:
+      type: object
+      description: コメント削除
+      required:
+        - comment_id
+      properties:
+        comment_id:
+          $ref: "#/components/schemas/CommentId"
+        _type:
+          type: string
+          description: |
+            `Delete`
+
+            [詳しくはこちら](#section/API-Convention/API-_type)
+          example: "Delete"
     AggregationResult:
       oneOf:
         - $ref: "#/components/schemas/CountResult"

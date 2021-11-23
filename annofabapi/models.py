@@ -196,6 +196,8 @@ Kyes of Dict
     
 * authority: AccountAuthority
     
+* is_external_account: bool
+    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合true。  外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合false。 
 * updated_datetime: str
     
 
@@ -1035,6 +1037,77 @@ Kyes of Dict
 
 """
 
+BatchCommentRequestItem = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* comment_id: str
+    コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* phase: TaskPhase
+    
+* phase_stage: int
+    コメントを作成したときのフェーズのステージ。
+* account_id: str
+    
+* comment_type: str
+    コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 
+* phrases: List[str]
+    `comment_type` の値によって指定可能な値が異なります。  * `onhold` の場合   * 使用しません（空配列 or 指定なし） 
+* comment: str
+    コメント本文。 
+* comment_node: CommentNode
+    
+* datetime_for_sorting: str
+    コメントのソート順を決める日時。コメント作成時のみ指定可能です。  AnnoFab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。  コメント作成時に未指定とした場合は、作成操作オブジェクトの順序に応じてコメント作成日時からずれた時刻が自動設定されます（ソート順を一意とするため）。  なお、この値は後から更新することはできません（値を指定しても無視されます）。 
+* type: str
+    `Delete`  [詳しくはこちら](#section/API-Convention/API-_type) 
+
+"""
+
+BatchCommentRequestItemDelete = Dict[str, Any]
+"""
+コメント削除
+
+Kyes of Dict
+
+* comment_id: str
+    コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* type: str
+    `Delete`  [詳しくはこちら](#section/API-Convention/API-_type) 
+
+"""
+
+BatchCommentRequestItemPut = Dict[str, Any]
+"""
+コメント更新
+
+Kyes of Dict
+
+* comment_id: str
+    コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* phase: TaskPhase
+    
+* phase_stage: int
+    コメントを作成したときのフェーズのステージ。
+* account_id: str
+    
+* comment_type: str
+    コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 
+* phrases: List[str]
+    `comment_type` の値によって指定可能な値が異なります。  * `onhold` の場合   * 使用しません（空配列 or 指定なし） 
+* comment: str
+    コメント本文。 
+* comment_node: CommentNode
+    
+* datetime_for_sorting: str
+    コメントのソート順を決める日時。コメント作成時のみ指定可能です。  AnnoFab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。  コメント作成時に未指定とした場合は、作成操作オブジェクトの順序に応じてコメント作成日時からずれた時刻が自動設定されます（ソート順を一意とするため）。  なお、この値は後から更新することはできません（値を指定しても無視されます）。 
+* type: str
+    `Put`  [詳しくはこちら](#section/API-Convention/API-_type) 
+
+"""
+
 BatchInputDataRequestItem = Dict[str, Any]
 """
 
@@ -1165,6 +1238,75 @@ Kyes of Dict
     
 
 """
+
+Comment = Dict[str, Any]
+"""
+コメント
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* comment_id: str
+    コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* phase: TaskPhase
+    
+* phase_stage: int
+    コメントを作成したときのフェーズのステージ。
+* account_id: str
+    
+* comment_type: str
+    コメントの種別。  * `onhold` - 保留コメントとして扱われます。 
+* phrases: List[str]
+    `comment_type` の値によって扱いが異なります。  * `onhold` の場合   * 使用しません（空配列） 
+* comment: str
+    コメント本文。 
+* comment_node: CommentNode
+    
+* datetime_for_sorting: str
+    コメントのソート順を決める日時。  AnnoFab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。 
+* created_datetime: str
+    コメントの作成日時。
+* updated_datetime: str
+    コメントの更新日時。
+
+"""
+
+CommentNode = Dict[str, Any]
+"""
+コメントのノード固有のデータ。  * `RootComment` - スレッドの先頭のコメント（ルートコメント）。 * `ReplyComment` - あるコメントへの返信コメント。 
+
+Kyes of Dict
+
+* data: InspectionData
+    
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+* label_id: str
+    
+* status: CommentStatus
+    
+* type: str
+    `Reply` [詳しくはこちら](#section/API-Convention/API-_type) 
+* root_comment_id: str
+    コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+
+"""
+
+
+class CommentStatus(Enum):
+    """
+    `comment_type` の値によってコメントのステータスに格納される値とステータスの意味が変わります。  * `onhold` の場合   * `open`（未対応）、`resolved`（対応完了）を指定可能
+    """
+
+    OPEN = "open"
+    RESOLVED = "resolved"
+    CLOSED = "closed"
+
 
 ConfirmAccountDeleteRequest = Dict[str, Any]
 """
@@ -1407,7 +1549,7 @@ Kyes of Dict
 
 FullAnnotationData = Dict[str, Any]
 """
-アノテーションのデータが格納されます。   * `FullAnnotationDataClassification`: 入力データ全体に対するアノテーションデータです。   * `FullAnnotationDataSegmentation`: ピクセルレベルでの塗りつぶし（ラスター）のアノテーションデータです。   * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2ののアノテーションデータです。塗りつぶしv2はSemantic Segmentationに特化しています。   * `FullAnnotationDataBoundingBox`: 矩形のアノテーションデータです。   * `FullAnnotationDataPoints`: ポリゴン（閉じた頂点集合）のアノテーションデータです。   * `FullAnnotationDataSegmentation`: 点のアノテーションデータです。   * `FullAnnotationDataRange`: 動画区間のアノテーションデータです。 
+アノテーションのデータが格納されます。   * `FullAnnotationDataClassification`: 入力データ全体に対するアノテーションデータです。   * `FullAnnotationDataSegmentation`: ピクセルレベルでの塗りつぶし（ラスター）のアノテーションデータです。   * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2ののアノテーションデータです。塗りつぶしv2はSemantic Segmentationに特化しています。   * `FullAnnotationDataBoundingBox`: 矩形のアノテーションデータです。   * `FullAnnotationDataPoints`: ポリゴン（閉じた頂点集合）のアノテーションデータです。   * `FullAnnotationDataSinglePoint`: 点のアノテーションデータです。   * `FullAnnotationDataRange`: 動画区間のアノテーションデータです。 
 
 Kyes of Dict
 
@@ -2389,6 +2531,8 @@ Kyes of Dict
     ジョブの内部情報
 * job_detail: __DictStrKeyAnyValue__
     ジョブ結果の内部情報
+* errors: Errors
+    
 * created_datetime: str
     
 * updated_datetime: str
@@ -2418,6 +2562,8 @@ Kyes of Dict
     
 * authority: AccountAuthority
     
+* is_external_account: bool
+    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合true。  外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合false。 
 * updated_datetime: str
     
 * reset_requested_email: str
@@ -2574,6 +2720,8 @@ Kyes of Dict
     ジョブの内部情報
 * job_detail: __DictStrKeyAnyValue__
     ジョブ結果の内部情報
+* errors: Errors
+    
 * created_datetime: str
     
 * updated_datetime: str
@@ -2828,7 +2976,7 @@ PluginDetailTaskAssignment = Dict[str, Any]
 Kyes of Dict
 
 * url: str
-    「カスタムタスク割当API」のURLです。 プラグイン種別がカスタムタスク割当の場合のみ有効です。  #### カスタムタスク割当APIについて。  * 独自のアルゴリズムで作業者にタスクを割当するAPIです。 * AnnoFabから提供されるものではなく、第三者 (ユーザー様) が用意します。 * 作業者がタスク一覧やアノテーションエディタのタスク取得ボタンを押すと、指定したURLに複数の情報 (※1) と共にHTTPリクエスト (POST) が送られます。 * カスタムタスク割当APIでは、AnnoFabで提供しているAPI (※2) を使用して作業者にタスクを割当してください。 * タスクの割当に成功した場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: 割当した単一のタスク   * ステータスコード: 200 * 作業者に割当できるタスクがない場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"MISSING_RESOURCE\"}]}`   * ステータスコード: 404 * 作業者の認証トークンの期限が切れている場合があります。その場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"EXPIRED_TOKEN\"}]}`   * ステータスコード: 401  #### Preflightリクエストについて。  * AnnoFabからカスタムタスク割当APIへCross-OriginなHTTPリクエストを送信するより前に、ブラウザの仕様により「Preflightリクエスト」と呼ばれるHTTPリクエストが送られます。 * カスタムタスク割当を利用するためには、カスタムタスク割当APIとは別に「Preflightリクエスト対応API」を用意する必要があります。 * 以下の要件を満たす「Preflightリクエスト対応API」を用意してください。   * URL: カスタムタスク割当APIと同じURL   * HTTPメソッド: OPTIONS   * レスポンスヘッダ:     * `Access-Control-Allow-Origin: https://annofab.com`     * `Access-Control-Allow-Headers: Content-Type`   * レスポンスボディ: 空(から)   * ステータスコード: 200  ※1 以下の情報が送られます。  * HTTPボディ (JSON形式)   * `authorization_token` : 作業者の認証トークン。AnnoFabのAPIを利用する際に使用します。   * `project_id` : タスクの割当リクエストが行われたプロジェクトのID。   * `phase` : 作業者が割当を要求したタスクフェーズ。このフェーズのタスクを割当してください。  ※2 例えば以下のAPIがあります。(詳しい情報はAPIドキュメントを参照してください)  * `getMyAccount` : 作業者のアカウント情報を取得できます。 * `getTasks` : プロジェクトのタスクを取得できます。 * `assignTasks` : 作業者にタスクを割当することができます。 
+    「カスタムタスク割当API」のURLです。 プラグイン種別がカスタムタスク割当の場合のみ有効です。  #### カスタムタスク割当APIについて。  * 独自のアルゴリズムで作業者にタスクを割当するAPIです。 * AnnoFabから提供されるものではなく、第三者 (ユーザー様) が用意します。 * 作業者がタスク一覧やアノテーションエディタのタスク取得ボタンを押すと、指定したURLに複数の情報 (※1) と共にHTTPリクエスト (POST) が送られます。 * カスタムタスク割当APIでは、AnnoFabで提供しているAPI (※2) を使用して作業者にタスクを割当してください。 * タスクの割当に成功した場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: 割当した単一のタスク   * ステータスコード: 200 * 作業者に割当できるタスクがない場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"MISSING_RESOURCE\"}]}`   * ステータスコード: 404 * 作業者の認証トークンの期限が切れている場合があります。その場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"EXPIRED_TOKEN\"}]}`   * ステータスコード: 401  #### Preflightリクエストについて。  * AnnoFabからカスタムタスク割当APIへCross-OriginなHTTPリクエストを送信するより前に、ブラウザの仕様により「Preflightリクエスト」と呼ばれるHTTPリクエストが送られます。 * カスタムタスク割当を利用するためには、カスタムタスク割当APIとは別に「Preflightリクエスト対応API」を用意する必要があります。 * 以下の要件を満たす「Preflightリクエスト対応API」を用意してください。   * URL: カスタムタスク割当APIと同じURL   * HTTPメソッド: OPTIONS   * レスポンスヘッダ:     * `Access-Control-Allow-Origin: https://annofab.com`     * `Access-Control-Allow-Headers: Content-Type`   * レスポンスボディ: 空(から)   * ステータスコード: 200  ※1 以下の情報が送られます。  * HTTPボディ (JSON形式)   * `authorization_token` : タスク割当専用の認証トークン。AnnoFabのAPIを利用する際に使用します。   * `project_id` : タスクの割当リクエストが行われたプロジェクトのID。   * `phase` : 作業者が割当を要求したタスクフェーズ。このフェーズのタスクを割当してください。  ※2 例えば以下のAPIがあります。(詳しい情報はAPIドキュメントを参照してください)  * `getMyAccount` : 作業者のアカウント情報を取得できます。 * `getTasks` : プロジェクトのタスクを取得できます。 * `assignTasks` : 作業者にタスクを割当することができます。 
 * type: str
     `TaskAssignment` [詳しくはこちら](#section/API-Convention/API-_type) 
 
@@ -3164,6 +3312,8 @@ Kyes of Dict
     ジョブの内部情報
 * job_detail: __DictStrKeyAnyValue__
     ジョブ結果の内部情報
+* errors: Errors
+    
 * created_datetime: str
     
 * updated_datetime: str
@@ -3533,6 +3683,19 @@ Kyes of Dict
 
 """
 
+ReplyComment = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* root_comment_id: str
+    コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* type: str
+    `Reply` [詳しくはこちら](#section/API-Convention/API-_type) 
+
+"""
+
 ReplyRequired = Dict[str, Any]
 """
 返信が必要な検査コメントが残っている時のエラー
@@ -3567,6 +3730,25 @@ Kyes of Dict
     
 * height: float
     
+
+"""
+
+RootComment = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* data: InspectionData
+    
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+* label_id: str
+    
+* status: CommentStatus
+    
+* type: str
+    `Root` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
@@ -4502,6 +4684,51 @@ Kyes of Dict
 
 """
 
+WorktimeStatisticsByAccount = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* account_id: str
+    
+* data_series: List[WorktimeStatisticsData]
+    プロジェクトメンバーの日毎の作業時間統計データ
+
+"""
+
+WorktimeStatisticsByProject = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* data_series: List[WorktimeStatisticsData]
+    プロジェクトの日毎の作業時間統計データ
+
+"""
+
+WorktimeStatisticsData = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* date: str
+    
+* grouped_by_input: List[WorktimeStatisticsItem]
+    ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+* grouped_by_task: List[WorktimeStatisticsItem]
+    ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+* grouped_by_minute: List[WorktimeStatisticsItem]
+    ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
+
+"""
+
 WorktimeStatisticsItem = Dict[str, Any]
 """
 
@@ -4518,26 +4745,3 @@ Kyes of Dict
     作業時間の標準偏差（ISO 8601 duration）
 
 """
-
-# 以下は2021-09-01以降に廃止する予定
-JobInfo = ProjectJobInfo
-JobInfoContainer = ProjectJobInfoContainer
-
-
-@deprecated_class(deprecated_date="2021-09-01", new_class_name=f"{ProjectJobType.__module__}.{ProjectJobType.__name__}")
-class JobType(Enum):
-    """
-    プロジェクトのジョブ種別
-
-    .. deprecated:: 2021-09-01
-    """
-
-    COPY_PROJECT = "copy-project"
-    GEN_INPUTS = "gen-inputs"
-    GEN_TASKS = "gen-tasks"
-    GEN_ANNOTATION = "gen-annotation"
-    GEN_TASKS_LIST = "gen-tasks-list"
-    GEN_INPUTS_LIST = "gen-inputs-list"
-    DELETE_PROJECT = "delete-project"
-    INVOKE_HOOK = "invoke-hook"
-    MOVE_PROJECT = "move-project"

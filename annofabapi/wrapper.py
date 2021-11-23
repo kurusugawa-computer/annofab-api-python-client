@@ -1,6 +1,9 @@
 # pylint: disable=too-many-lines
 import asyncio
 import copy
+import datetime
+import functools
+import hashlib
 import logging
 import mimetypes
 import time
@@ -8,28 +11,28 @@ import urllib
 import urllib.parse
 import uuid
 import warnings
+from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import requests
+from dateutil.relativedelta import relativedelta
 
 from annofabapi import AnnofabApi
-from annofabapi.exceptions import AnnofabApiException
+from annofabapi.exceptions import AnnofabApiException, CheckSumError
 from annofabapi.models import (
     AdditionalData,
     AdditionalDataDefinitionType,
     AdditionalDataDefinitionV1,
     AnnotationDataHoldingType,
     AnnotationDetail,
-    AnnotationSpecsV1,
     FullAnnotationData,
     InputData,
     Inspection,
     InspectionStatus,
     Instruction,
     JobStatus,
-    JobType,
     LabelV1,
     MyOrganization,
     Organization,
@@ -44,7 +47,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
-from annofabapi.utils import _download, _log_error_response, _raise_for_status, allow_404_error, str_now
+from annofabapi.utils import _download, _log_error_response, _raise_for_status, allow_404_error, my_backoff, str_now
 
 logger = logging.getLogger(__name__)
 
@@ -145,35 +148,23 @@ class Wrapper:
     # Private Method
     #########################################
     @staticmethod
-    def _get_content_type(file_path: str, content_type: Optional[str] = None) -> str:
+    def _get_mime_type(file_path: str) -> str:
         """
-        ファイルパスからContent-Typeを取得する。
+        ファイルパスからMIME Typeを返す。MIME Typeが推測できない場合は、``application/octet-stream`` を返す。
 
         Args:
-            file_path: アップロードするファイルのパス
-            content_type: アップロードするファイルのMIME Type. Noneの場合、ファイルパスから推測する。
+            file_path: MIME Typeを取得したいファイルのパス
 
         Returns:
-            APIに渡すContent-Type
-
-        Raises:
-            AnnofabApiException: Content-Typeを取得できなかった
+            ファイルパスから取得したMIME Type
 
         """
+        content_type, _ = mimetypes.guess_type(file_path)
+        if content_type is not None:
+            return content_type
 
-        if content_type is None:
-            new_content_type = mimetypes.guess_type(file_path)[0]
-            if new_content_type is None:
-                logger.info("mimetypes.guess_type function can't guess type. file_path = %s", file_path)
-                new_content_type = content_type
-
-        else:
-            new_content_type = content_type
-
-        if new_content_type is None:
-            raise AnnofabApiException("content_type is none")
-
-        return new_content_type
+        logger.info("ファイルパス '%s' からMIME Typeを推測できませんでした。MIME Typeは `application/octet-stream' とみなします。", file_path)
+        return "application/octet-stream"
 
     @staticmethod
     def _get_all_objects(func_get_list: Callable, limit: int, **kwargs_for_func_get_list) -> List[Dict[str, Any]]:
@@ -214,6 +205,28 @@ class Wrapper:
 
         return all_objects
 
+    @my_backoff
+    def _request_get_wrapper(self, url: str) -> requests.Response:
+        """
+        HTTP GETのリクエスト。
+        リトライするためにメソッドを切り出した。
+        """
+        return self.api.session.get(url)
+
+    @my_backoff
+    def _request_put_wrapper(
+        self,
+        url: str,
+        params: Optional[Dict[str, Any]] = None,
+        data: Optional[Any] = None,
+        headers: Optional[Dict[str, Any]] = None,
+    ) -> requests.Response:
+        """
+        HTTP PUTのリクエスト。
+        リトライするためにメソッドを切り出した
+        """
+        return self.api.session.put(url, params=params, data=data, headers=headers)
+
     #########################################
     # Public Method : Annotation
     #########################################
@@ -233,7 +246,9 @@ class Wrapper:
         _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
         url = response.headers["Location"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=simple_annotation, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=simple_annotation, Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     def download_full_annotation_archive(self, project_id: str, dest_path: str) -> str:
@@ -250,11 +265,17 @@ class Wrapper:
             ダウンロード元のURL
 
         """
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn(
+            "annofabapi.Wrapper.download_full_annotation_archive() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         _, response = self.api.get_archive_full_with_pro_id(project_id)
         url = response.headers["Location"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=full_annotation, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=full_annotation, Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     def get_all_annotation_list(
@@ -325,27 +346,42 @@ class Wrapper:
     ) -> Dict[str, Any]:
         """
         コピー元の１個のアノテーションを、コピー先用に変換する。
-        塗りつぶし画像の場合、S3にアップロードする。
+        塗りつぶし画像などの外部アノテーションファイルがある場合、S3にアップロードする。
 
         Notes:
             annotation_id をUUIDv4で生成すると、アノテーションリンク属性をコピーしたときに対応できないので、暫定的にannotation_idは維持するようにする。
+
+        Raises:
+            CheckSumError: アップロードした外部アノテーションファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagに一致しない
+
         """
         dest_detail = detail
         dest_detail["account_id"] = account_id
         if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
-            outer_file_url = detail["url"]
-            src_response = self.api.session.get(outer_file_url)
-            s3_path = self.upload_data_to_s3(
-                dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
-            )
-            logger.debug("%s に塗りつぶし画像をアップロードしました。", s3_path)
-            dest_detail["path"] = s3_path
-            dest_detail["url"] = None
-            dest_detail["etag"] = None
+
+            try:
+                outer_file_url = detail["url"]
+                src_response = self._request_get_wrapper(outer_file_url)
+                s3_path = self.upload_data_to_s3(
+                    dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
+                )
+                logger.debug("project_id='%s', %s に外部アノテーションファイルをアップロードしました。", dest_project_id, s3_path)
+                dest_detail["path"] = s3_path
+                dest_detail["url"] = None
+                dest_detail["etag"] = None
+
+            except CheckSumError as e:
+                message = (
+                    f"外部アノテーションファイル {outer_file_url} のレスポンスのMD5ハッシュ値('{e.uploaded_data_hash}')が、"
+                    f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                )
+                raise CheckSumError(
+                    message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
+                ) from e
 
         return dest_detail
 
-    def __create_request_body_for_copy_annotation(
+    def _create_request_body_for_copy_annotation(
         self,
         project_id: str,
         task_id: str,
@@ -399,13 +435,13 @@ class Wrapper:
         src_annotation_details: List[Dict[str, Any]] = src_annotation["details"]
 
         if len(src_annotation_details) == 0:
-            logger.debug("コピー元にアノテーションが１つもないため、アノテーションのコピーをスキップします。")
+            logger.debug(f"コピー元にアノテーションが１つもないため、アノテーションのコピーをスキップします。:: src='{src}'")
             return False
 
         old_dest_annotation, _ = self.api.get_editor_annotation(dest.project_id, dest.task_id, dest.input_data_id)
         updated_datetime = old_dest_annotation["updated_datetime"]
 
-        request_body = self.__create_request_body_for_copy_annotation(
+        request_body = self._create_request_body_for_copy_annotation(
             dest.project_id,
             dest.task_id,
             dest.input_data_id,
@@ -512,6 +548,9 @@ class Wrapper:
 
         Returns:
 
+        Raises:
+            CheckSumError: アップロードした外部アノテーションファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagに一致しない
+
         """
         label_info = self.__get_label_info_from_label_name(detail["label"], annotation_specs_labels)
         if label_info is None:
@@ -538,10 +577,21 @@ class Wrapper:
 
         if data_holding_type == AnnotationDataHoldingType.OUTER.value:
             data_uri = detail["data"]["data_uri"]
+            outer_file_path = f"{parser.task_id}/{parser.input_data_id}/{data_uri}"
             with parser.open_outer_file(data_uri) as f:
-                s3_path = self.upload_data_to_s3(project_id, f, content_type="image/png")
-                dest_obj["path"] = s3_path
-                logger.debug(f"{parser.task_id}/{parser.input_data_id}/{data_uri} をS3にアップロードしました。")
+                try:
+                    s3_path = self.upload_data_to_s3(project_id, f, content_type="image/png")
+                    dest_obj["path"] = s3_path
+                    logger.debug(f"project_id='{project_id}', {outer_file_path} をS3にアップロードしました。")
+
+                except CheckSumError as e:
+                    message = (
+                        f"アップロードした外部アノテーションファイル'{outer_file_path}'のMD5ハッシュ値('{e.uploaded_data_hash}')が、"
+                        f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                    )
+                    raise CheckSumError(
+                        message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
+                    ) from e
 
         return dest_obj
 
@@ -646,39 +696,6 @@ class Wrapper:
     #########################################
     # Public Method : AnnotationSpecs
     #########################################
-    def copy_annotation_specs(
-        self, src_project_id: str, dest_project_id: str, comment: Optional[str] = None
-    ) -> AnnotationSpecsV1:
-        """
-        アノテーション仕様を、別のプロジェクトにコピーする。
-
-        .. deprecated:: 2021-09-01
-
-
-        Note:
-            誤って実行しないようにすること
-
-        Args:
-            src_project_id: コピー元のproject_id
-            dest_project_id: コピー先のproject_id
-            comment: アノテーション仕様を保存するときのコメント。Noneならば、コピーした旨を記載する。
-
-        Returns:
-            put_annotation_specsのContent
-        """
-        warnings.warn("2021-09-01以降に削除します。", FutureWarning)
-
-        src_annotation_specs = self.api.get_annotation_specs(src_project_id)[0]
-
-        if comment is None:
-            comment = f"Copied the annotation specification of project {src_project_id} on {str_now()}"
-
-        request_body = {
-            "labels": src_annotation_specs["labels"],
-            "inspection_phrases": src_annotation_specs["inspection_phrases"],
-            "comment": comment,
-        }
-        return self.api.put_annotation_specs(dest_project_id, request_body=request_body)[0]
 
     @staticmethod
     def __get_label_name_en(label: Dict[str, Any]) -> str:
@@ -842,12 +859,25 @@ class Wrapper:
 
         Returns:
             一時データ保存先であるS3パス
+
+        Raises:
+            CheckSumError: アップロードしたファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
+
         """
 
         # content_type を推測
-        new_content_type = self._get_content_type(file_path, content_type)
+        new_content_type = self._get_mime_type(file_path) if content_type is None else content_type
         with open(file_path, "rb") as f:
-            return self.upload_data_to_s3(project_id, data=f, content_type=new_content_type)
+            try:
+                return self.upload_data_to_s3(project_id, data=f, content_type=new_content_type)
+            except CheckSumError as e:
+                message = (
+                    f"アップロードしたファイル'{file_path}'のMD5ハッシュ値('{e.uploaded_data_hash}')が、"
+                    f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                )
+                raise CheckSumError(
+                    message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
+                ) from e
 
     def upload_data_to_s3(self, project_id: str, data: Any, content_type: str) -> str:
         """
@@ -855,12 +885,25 @@ class Wrapper:
 
         Args:
             project_id: プロジェクトID
-            data: アップロード対象のdata. ``requests.put`` メソッドの ``data`` 引数にそのまま渡す。
+            data: アップロード対象のdata. ``open(mode="b")`` 関数の戻り値、またはバイナリ型の値です。 ``requests.put`` メソッドの ``data`` 引数にそのまま渡します。
             content_type: アップロードするfile objectのMIME Type.
 
         Returns:
             一時データ保存先であるS3パス
+
+        Raises:
+            CheckSumError: アップロードしたデータのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
         """
+
+        def get_md5_value_from_file(fp):
+            md5_obj = hashlib.md5()
+            while True:
+                chunk = fp.read(2048 * md5_obj.block_size)
+                if len(chunk) == 0:
+                    break
+                md5_obj.update(chunk)
+            return md5_obj.hexdigest()
+
         # 一時データ保存先を取得
         content = self.api.create_temp_path(project_id, header_params={"content-type": content_type})[0]
 
@@ -871,10 +914,31 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={"content-type": content_type})
+        res_put = self._request_put_wrapper(
+            url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
+        )
 
         _log_error_response(logger, res_put)
         _raise_for_status(res_put)
+
+        # アップロードしたファイルが破損していなかをチェックする
+        if hasattr(data, "read"):
+            # 読み込み位置を先頭に戻す
+            data.seek(0)
+            uploaded_data_hash = get_md5_value_from_file(data)
+        else:
+            uploaded_data_hash = hashlib.md5(data).hexdigest()
+
+        # ETagにはダブルクォートが含まれているため、`str_md5`もそれに合わせる
+        response_etag = res_put.headers["ETag"]
+
+        if f'"{uploaded_data_hash}"' != response_etag:
+            message = (
+                f"アップロードしたデータのMD5ハッシュ値('{uploaded_data_hash}')が、"
+                f"AWS S3にアップロードしたときのレスポンスのETag('{response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+            )
+            raise CheckSumError(message=message, uploaded_data_hash=uploaded_data_hash, response_etag=response_etag)
+
         return content["path"]
 
     def put_input_data_from_file(
@@ -914,7 +978,8 @@ class Wrapper:
     #########################################
     # Public Method : Statistics
     #########################################
-    def _request_location_header_url(self, response: requests.Response) -> Any:
+    @my_backoff
+    def _request_location_header_url(self, response: requests.Response) -> Optional[Any]:
         """
         Location headerに記載されているURLの中身を返す。
 
@@ -922,22 +987,29 @@ class Wrapper:
             response:
 
         Returns:
-            Location headerに記載されているURLの中身
+            Location headerに記載されているURLの中身。
+            レスポンスヘッダにLocationがない場合は、Noneを返す。
 
         """
-        url = response.headers["Location"]
+        url = response.headers.get("Location")
+        if url is None:
+            # プロジェクト作成直後などが該当する
+            logger.warning(f"レスポンスヘッダに'Location'がありません。method={response.request.method}, url={response.request.url}")
+            return None
 
-        response = self.api.session.get(url)
+        response = self._request_get_wrapper(url)
         _log_error_response(logger, response)
 
         response.encoding = "utf-8"
         _raise_for_status(response)
-        content = self.api._response_to_content(response)
-        return content
+        # Locationヘッダに記載されているURLの中身はJSONであること前提
+        return response.json()
 
     def get_task_statistics(self, project_id: str) -> List[Any]:
         """
         getTaskStatistics APIのLocation headerの中身を返す。
+
+        .. deprecated:: 2022-1-25以降
 
         Args:
             project_id:  プロジェクトID
@@ -946,47 +1018,87 @@ class Wrapper:
 
 
         """
+        warnings.warn(
+            "annofabapi.Wrapper.get_task_statistics() is deprecated and will be removed.", FutureWarning, stacklevel=2
+        )
         _, response = self.api.get_task_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
 
     def get_account_statistics(self, project_id: str) -> List[Any]:
         """
         getAccountStatistics APIのLocation headerの中身を返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:
 
         Returns:
 
         """
+        warnings.warn(
+            "annofabapi.Wrapper.get_account_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         _, response = self.api.get_account_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
 
     def get_inspection_statistics(self, project_id: str) -> List[Any]:
         """
         getInspectionStatistics APIのLocation headerの中身を返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:
 
         Returns:
 
         """
+        warnings.warn(
+            "annofabapi.Wrapper.get_inspection_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         _, response = self.api.get_inspection_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
 
     def get_task_phase_statistics(self, project_id: str) -> List[Any]:
         """
         getTaskPhaseStatistics APIのLocation headerの中身を返す。
 
+        .. deprecated:: 2022-1-25以降
+
         Args:
             project_id:
 
         Returns:
 
         """
+        warnings.warn(
+            "annofabapi.Wrapper.get_task_phase_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         _, response = self.api.get_task_phase_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
 
     def get_label_statistics(self, project_id: str) -> List[Any]:
         """
@@ -999,12 +1111,18 @@ class Wrapper:
 
         """
         _, response = self.api.get_label_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
 
     def get_worktime_statistics(self, project_id: str) -> List[Any]:
         """
         タスク作業時間集計取得.
         Location Headerに記載されたURLのレスポンスをJSON形式で返す。
+
+        .. deprecated:: 2022-1-25以降
 
         Args:
             project_id:  プロジェクトID
@@ -1013,8 +1131,255 @@ class Wrapper:
             タスク作業時間集計
 
         """
+        warnings.warn(
+            "annofabapi.Wrapper.get_worktime_statistics() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         _, response = self.api.get_worktime_statistics(project_id)
-        return self._request_location_header_url(response)
+        result = self._request_location_header_url(response)
+        if result is not None:
+            return result
+        else:
+            return []
+
+    def _get_statistics_daily_xxx(
+        self,
+        function: Callable[[Dict[str, Any]], List[Dict[str, Any]]],
+        dt_from_date: datetime.date,
+        dt_to_date: datetime.date,
+    ) -> List[Dict[str, Any]]:
+        """statistics daily apiの結果を、3ヶ月ごと（webapiの制約の都合）に再帰的に取得する。
+
+        Args:
+            function (Callable): 実行する関数
+            dt_from_date: 取得する期間の開始日
+            dt_to_date: 取得する期間の終了日
+
+        Returns:
+
+        """
+        results: List[Dict[str, Any]] = []
+        # 取得期間が最大3ヶ月になるようにする
+        dt_max_to_date = dt_from_date + relativedelta(months=3, days=-1)
+        dt_tmp_to_date = min(dt_max_to_date, dt_to_date)
+
+        query_params = {"from": str(dt_from_date), "to": str(dt_tmp_to_date)}
+        tmp_result: List[Dict[str, Any]] = function(query_params)
+        results.extend(tmp_result)
+
+        dt_tmp_from_date = dt_tmp_to_date + datetime.timedelta(days=1)
+
+        if dt_tmp_from_date <= dt_to_date:
+            tmp_result = self._get_statistics_daily_xxx(function, dt_from_date=dt_tmp_from_date, dt_to_date=dt_to_date)
+            results.extend(tmp_result)
+
+        return results
+
+    def _get_from_and_to_date_for_statistics_webapi(
+        self, project_id: str, from_date: Optional[str], to_date: Optional[str]
+    ) -> Tuple[datetime.date, datetime.date]:
+        """statistics webapi用に、from_date, to_dateを取得する。
+
+        Args:
+            project_id (str): プロジェクトID。プロジェクト作成日を取得する際に参照します。
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            Tuple[datetime.date, datetime.date]: [description]
+        """
+        if from_date is None:
+            project, _ = self.api.get_project(project_id)
+            from_date = project["created_datetime"][0:10]  # "YYYY-MM-DD"の部分を抽出
+        if to_date is None:
+            to_date = str(datetime.datetime.today().date())
+
+        DATE_FORMAT = "%Y-%m-%d"
+        dt_from_date = datetime.datetime.strptime(from_date, DATE_FORMAT).date()
+        dt_to_date = datetime.datetime.strptime(to_date, DATE_FORMAT).date()
+        return dt_from_date, dt_to_date
+
+    def get_account_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """指定した期間の ユーザ別タスク集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            ユーザ別タスク集計データ
+        """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_account_daily_statistics, project_id)
+        result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
+        tmp_dict_results = defaultdict(list)
+        for elm in result:
+            tmp_dict_results[elm["account_id"]].extend(elm["histories"])
+
+        return [{"account_id": k, "histories": v} for k, v in tmp_dict_results.items()]
+
+    def get_inspection_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        指定した期間の 検査コメント集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            検査コメント集計データ
+
+        """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_inspection_daily_statistics, project_id)
+        return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
+    def get_phase_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """指定した期間の フェーズ別タスク集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            フェーズ別タスク集計データ
+
+        """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_phase_daily_statistics, project_id)
+        return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
+    def get_task_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """指定した期間の タスク集計データ を取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            タスク集計データ
+
+        """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_task_daily_statistics, project_id)
+        return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+
+    def get_worktime_daily_statistics(
+        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """プロジェクト全体のタスク作業時間集計データを取得します。
+
+        Args:
+            project_id: プロジェクトID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            プロジェクト全体のタスク作業時間集計データ
+        """
+
+        def decorator(f, project_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, *args, **kwargs)
+                return content["data_series"]
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_worktime_daily_statistics, project_id)
+        result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+        return {"project_id": project_id, "data_series": result}
+
+    def get_worktime_daily_statistics_by_account(
+        self, project_id: str, account_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """指定したプロジェクトメンバーのタスク作業時間集計データを取得します。
+
+        Args:
+            project_id: プロジェクトID
+            account_id: アカウントID
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+
+        Returns:
+            プロジェクトメンバーのタスク作業時間集計データ
+        """
+
+        def decorator(f, project_id: str, account_id: str):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                content, _ = f(project_id, account_id, *args, **kwargs)
+                return content["data_series"]
+
+            return wrapper
+
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
+            project_id, from_date=from_date, to_date=to_date
+        )
+        func = decorator(self.api.get_worktime_daily_statistics_by_account, project_id, account_id)
+        result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
+        return {"project_id": project_id, "account_id": account_id, "data_series": result}
 
     #########################################
     # Public Method : Supplementary
@@ -1046,7 +1411,7 @@ class Wrapper:
         """
 
         # content_type を推測
-        new_content_type = self._get_content_type(file_path, content_type)
+        new_content_type = self._get_mime_type(file_path) if content_type is None else content_type
 
         # S3にファイルアップロード
         s3_path = self.upload_file_to_s3(project_id, file_path, new_content_type)
@@ -1235,7 +1600,9 @@ class Wrapper:
         content, _ = self.api.get_project_inputs_url(project_id)
         url = content["url"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=input_data, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=input_data, Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     def download_project_tasks_url(self, project_id: str, dest_path: str) -> str:
@@ -1255,7 +1622,7 @@ class Wrapper:
         content, _ = self.api.get_project_tasks_url(project_id)
         url = content["url"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=task, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(f"project_id='{project_id}', type=task, Last-Modified={response2.headers.get('Last-Modified')}")
         return url
 
     def download_project_inspections_url(self, project_id: str, dest_path: str) -> str:
@@ -1275,7 +1642,10 @@ class Wrapper:
         content, _ = self.api.get_project_inspections_url(project_id)
         url = content["url"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=inspection_comment, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=inspection_comment,"
+            f"Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     def download_project_task_history_events_url(self, project_id: str, dest_path: str) -> str:
@@ -1295,7 +1665,10 @@ class Wrapper:
         content, _ = self.api.get_project_task_history_events_url(project_id)
         url = content["url"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=task_history_event, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=task_history_event, "
+            f"Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     def download_project_task_histories_url(self, project_id: str, dest_path: str) -> str:
@@ -1315,7 +1688,9 @@ class Wrapper:
         content, _ = self.api.get_project_task_histories_url(project_id)
         url = content["url"]
         response2 = _download(url, dest_path)
-        logger.debug(f"type=task_history, Last-Modified={response2.headers.get('Last-Modified')}")
+        logger.debug(
+            f"project_id='{project_id}', type=task_history, Last-Modified={response2.headers.get('Last-Modified')}"
+        )
         return url
 
     #########################################
@@ -1393,6 +1768,21 @@ class Wrapper:
             タスク
         """
         content, _ = self.api.get_task(project_id, task_id)
+        return content
+
+    @allow_404_error
+    def get_task_histories_or_none(self, project_id: str, task_id: str) -> Optional[Task]:
+        """
+        タスク履歴一覧を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            project_id:
+            task_id:
+
+        Returns:
+            タスク履歴一覧
+        """
+        content, _ = self.api.get_task_histories(project_id, task_id)
         return content
 
     def get_all_tasks(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[Task]:
@@ -1659,7 +2049,8 @@ class Wrapper:
         Returns:
             一時データ保存先であるS3パス
         """
-        new_content_type = self._get_content_type(file_path, content_type)
+        new_content_type = self._get_mime_type(file_path) if content_type is None else content_type
+
         with open(file_path, "rb") as f:
             return self.upload_data_as_instruction_image(project_id, image_id, data=f, content_type=new_content_type)
 
@@ -1688,7 +2079,9 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self.api.session.put(s3_url, params=query_dict, data=data, headers={"content-type": content_type})
+        res_put = self._request_put_wrapper(
+            url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
+        )
         _log_error_response(logger, res_put)
         _raise_for_status(res_put)
         return content["path"]
@@ -1696,9 +2089,7 @@ class Wrapper:
     #########################################
     # Public Method : Job
     #########################################
-    def delete_all_succeeded_job(
-        self, project_id: str, job_type: Union[ProjectJobType, JobType]
-    ) -> List[ProjectJobInfo]:
+    def delete_all_succeeded_job(self, project_id: str, job_type: ProjectJobType) -> List[ProjectJobInfo]:
         """
         成功したジョブをすべて削除する
 
@@ -1713,7 +2104,7 @@ class Wrapper:
         deleted_jobs = []
         for job in jobs:
             if job["job_status"] == "succeeded":
-                logger.debug("job_id=%s のジョブを削除します。", job["job_id"])
+                logger.debug(f"project_id='{project_id}', job_id='{job['job_id']}'のジョブを削除します。")
                 self.api.delete_project_job(project_id, job_type=job_type.value, job_id=job["job_id"])
                 deleted_jobs.append(job)
 
@@ -1740,7 +2131,7 @@ class Wrapper:
         all_jobs.extend(r["list"])
         return all_jobs
 
-    def job_in_progress(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
+    def job_in_progress(self, project_id: str, job_type: ProjectJobType) -> bool:
         """
         ジョブが進行中かどうか
 
@@ -1762,7 +2153,7 @@ class Wrapper:
     def wait_for_completion(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_access_interval: int = 60,
         max_job_access: int = 10,
     ) -> bool:
@@ -1792,7 +2183,7 @@ class Wrapper:
     def wait_until_job_finished(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_id: Optional[str] = None,
         job_access_interval: int = 60,
         max_job_access: int = 360,
@@ -1833,29 +2224,36 @@ class Wrapper:
                 # 初回のみ
                 job = get_latest_job()
                 if job is None or job["job_status"] != JobStatus.PROGRESS.value:
-                    logger.debug("job_type='%s' である進行中のジョブは存在しません。", job_type.value)
+                    logger.debug("project_id='%s', job_type='%s' である進行中のジョブは存在しません。", project_id, job_type.value)
                     return None
                 job_id = job["job_id"]
 
             if job is None:
-                logger.debug("job_id='%s', job_type='%s' のジョブは存在しません。", job_type.value, job_id)
+                logger.debug(
+                    "project_id='%s', job_id='%s', job_type='%s' のジョブは存在しません。", project_id, job_type.value, job_id
+                )
                 return None
 
             job_access_count += 1
 
             if job["job_status"] == JobStatus.SUCCEEDED.value:
-                logger.debug("job_id='%s', job_type='%s' のジョブが成功しました。", job_id, job_type.value)
+                logger.debug(
+                    "project_id='%s', job_id='%s', job_type='%s' のジョブが成功しました。", project_id, job_id, job_type.value
+                )
                 return JobStatus.SUCCEEDED
 
             elif job["job_status"] == JobStatus.FAILED.value:
-                logger.debug("job_id='%s', job_type='%s' のジョブが失敗しました。", job_id, job_type.value)
+                logger.debug(
+                    "project_id='%s', job_id='%s', job_type='%s' のジョブが失敗しました。", project_id, job_id, job_type.value
+                )
                 return JobStatus.FAILED
 
             else:
                 # 進行中
                 if job_access_count < max_job_access:
                     logger.debug(
-                        "job_id='%s', job_type='%s' のジョブは進行中です。%d 秒間待ちます。",
+                        "project_id='%s', job_id='%s', job_type='%s' のジョブは進行中です。%d 秒間待ちます。",
+                        project_id,
                         job_id,
                         job_type.value,
                         job_access_interval,
@@ -1863,21 +2261,22 @@ class Wrapper:
                     time.sleep(job_access_interval)
                 else:
                     logger.debug(
-                        "job_id='%s', job_type='%s' のジョブは %.1f 分以上経過しても、終了しませんでした。",
+                        "project_id='%s', job_id='%s', job_type='%s' のジョブは %.1f 分以上経過しても、終了しませんでした。",
+                        project_id,
                         job["job_id"],
                         job_type.value,
                         job_access_interval * job_access_count / 60,
                     )
                     return JobStatus.PROGRESS
 
-    async def _job_in_progress_async(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
+    async def _job_in_progress_async(self, project_id: str, job_type: ProjectJobType) -> bool:
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, self.job_in_progress, project_id, job_type)
 
     async def _wait_until_job_finished_async(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_id: Optional[str],
         job_access_interval: int,
         max_job_access: int,
@@ -1887,7 +2286,7 @@ class Wrapper:
             None, self.wait_until_job_finished, project_id, job_type, job_id, job_access_interval, max_job_access
         )
 
-    def can_execute_job(self, project_id: str, job_type: Union[ProjectJobType, JobType]) -> bool:
+    def can_execute_job(self, project_id: str, job_type: ProjectJobType) -> bool:
         """
         ジョブが実行できる状態か否か。他のジョブが実行中で同時に実行できない場合はFalseを返す。
 
@@ -1898,19 +2297,14 @@ class Wrapper:
         Returns:
             ジョブが実行できる状態か否か
         """
-        # TODO: JobTypeが削除されたら、この処理も削除する
-        new_job_type: ProjectJobType = ProjectJobType(job_type.value) if isinstance(job_type, JobType) else job_type
-
-        job_type_list = _JOB_CONCURRENCY_LIMIT[new_job_type]
+        job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
 
         # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
         if self.api.token_dict is None:
             self.api.login()
 
         # 複数のジョブに対して進行中かどうかを確認する
-        gather = asyncio.gather(
-            *[self._job_in_progress_async(project_id, new_job_type) for new_job_type in job_type_list]
-        )
+        gather = asyncio.gather(*[self._job_in_progress_async(project_id, job_type) for job_type in job_type_list])
         loop = asyncio.get_event_loop()
         result = loop.run_until_complete(gather)
 
@@ -1919,7 +2313,7 @@ class Wrapper:
     def wait_until_job_is_executable(
         self,
         project_id: str,
-        job_type: Union[ProjectJobType, JobType],
+        job_type: ProjectJobType,
         job_access_interval: int = 60,
         max_job_access: int = 360,
     ) -> bool:
@@ -1936,10 +2330,8 @@ class Wrapper:
             指定した時間（アクセス頻度と回数）待った後、ジョブが実行可能な状態かどうか。進行中のジョブが存在する場合は、ジョブが実行不可能。
 
         """
-        # TODO: JobTypeが削除されたら、この処理も削除する
-        new_job_type: ProjectJobType = ProjectJobType(job_type.value) if isinstance(job_type, JobType) else job_type
 
-        job_type_list = _JOB_CONCURRENCY_LIMIT[new_job_type]
+        job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
         # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
         if self.api.token_dict is None:
             self.api.login()
@@ -1962,28 +2354,28 @@ class Wrapper:
     # Public Method : Labor Control
     #########################################
     @staticmethod
-    def _get_actual_worktime_hour_from_labor(labor: Dict[str, Any]) -> Optional[float]:
+    def _get_actual_worktime_hour_from_labor(labor: Dict[str, Any]) -> float:
         working_time_by_user = labor["values"]["working_time_by_user"]
         if working_time_by_user is None:
-            return None
+            return 0
 
         actual_worktime = working_time_by_user.get("results")
         if actual_worktime is None:
-            return None
+            return 0
         else:
             return actual_worktime / 3600 / 1000
 
     @staticmethod
-    def _get_plan_worktime_hour_from_labor(labor: Dict[str, Any]) -> Optional[float]:
+    def _get_plan_worktime_hour_from_labor(labor: Dict[str, Any]) -> float:
         working_time_by_user = labor["values"]["working_time_by_user"]
         if working_time_by_user is None:
-            return None
+            return 0
 
-        actual_worktime = working_time_by_user.get("plans")
-        if actual_worktime is None:
-            return None
+        plan_worktime = working_time_by_user.get("plans")
+        if plan_worktime is None:
+            return 0
         else:
-            return actual_worktime / 3600 / 1000
+            return plan_worktime / 3600 / 1000
 
     @staticmethod
     def _get_working_description_from_labor(labor: Dict[str, Any]) -> Optional[str]:
@@ -1994,6 +2386,7 @@ class Wrapper:
 
     def get_labor_control_worktime(
         self,
+        *,
         organization_id: Optional[str] = None,
         project_id: Optional[str] = None,
         account_id: Optional[str] = None,
@@ -2003,6 +2396,8 @@ class Wrapper:
         """
         実績作業時間(actual_worktime)と予定作業時間(plan_worktime)を扱いやすいフォーマットで取得する。
         ただし、organization_id または project_id のいずれかを指定する必要がある。
+
+        .. deprecated:: 2022-02-01 以降に削除する予定です
 
         Args:
             organization_id: 絞り込み対象の組織ID
@@ -2019,8 +2414,13 @@ class Wrapper:
                 * date
                 * actual_worktime：実績作業時間[hour]
                 * plan_worktime：予定作業時間[hour]
-                * working_description：実績に関するコメント
+                * working_description：実績に関するコメント(optional)
         """
+        warnings.warn(
+            "annofabapi.Wrapper.get_labor_control_worktime() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
 
         def _to_new_data(labor: Dict[str, Any]) -> Dict[str, Any]:
             labor["actual_worktime"] = self._get_actual_worktime_hour_from_labor(labor)
@@ -2039,14 +2439,55 @@ class Wrapper:
             "from": from_date,
             "to": to_date,
         }
-        labor_list, _ = self.api.get_labor_control(query_params)
-        return [_to_new_data(e) for e in labor_list]
+        try:
+            labor_list, _ = self.api.get_labor_control(query_params)
+            return [_to_new_data(elm) for elm in labor_list if elm["account_id"] is not None]
+        except requests.HTTPError as e:
+            # "502 Server Error"が発生するときは、取得するレスポンスが大きすぎる可能性があるので、取得期間を分割する。
+            # ただし、取得する期間が指定されている場合のみ
+            # 注意：5XX系のエラーだと、backoffでリトライがタイムアウトしてから、この関数で処理される
+            DATE_FORMAT = "%Y-%m-%d"
+            if e.response.status_code == requests.codes.bad_gateway and from_date is not None and to_date is not None:
+                dt_from_date = datetime.datetime.strptime(from_date, DATE_FORMAT)
+                dt_to_date = datetime.datetime.strptime(to_date, DATE_FORMAT)
+                diff_days = (dt_to_date - dt_from_date).days
+
+                dt_new_to_date = dt_from_date + datetime.timedelta(days=diff_days // 2)
+                dt_new_from_date = dt_new_to_date + datetime.timedelta(days=1)
+                logger.debug(
+                    f"project_id='{project_id}': 取得対象の期間が広すぎるため、データを取得できませんでした。"
+                    f"取得対象の期間を{from_date}~{dt_new_to_date.strftime(DATE_FORMAT)}, "
+                    f"{dt_new_from_date.strftime(DATE_FORMAT)}~{to_date}に分割して、再度取得します。"
+                )
+                tmp_list = []
+                tmp1 = self.get_labor_control_worktime(
+                    organization_id=organization_id,
+                    project_id=project_id,
+                    account_id=account_id,
+                    from_date=from_date,
+                    to_date=dt_new_to_date.strftime(DATE_FORMAT),
+                )
+                tmp_list.extend(tmp1)
+
+                tmp2 = self.get_labor_control_worktime(
+                    organization_id=organization_id,
+                    project_id=project_id,
+                    account_id=account_id,
+                    from_date=dt_new_from_date.strftime(DATE_FORMAT),
+                    to_date=to_date,
+                )
+                tmp_list.extend(tmp2)
+                return tmp_list
+
+            raise e
 
     def get_labor_control_availability(
         self, account_id: str, from_date: Optional[str] = None, to_date: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         """
         労務管理の予定稼働時間を取得する。
+
+        .. deprecated:: 2022-02-01 以降に削除する予定です
 
         Args:
             account_id: 絞り込み対象のアカウントID
@@ -2059,6 +2500,11 @@ class Wrapper:
                 * date
                 * availability：予定稼働時間[hour]
         """
+        warnings.warn(
+            "annofabapi.Wrapper.get_labor_control_availability() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
 
         def _to_new_data(labor: Dict[str, Any]) -> Dict[str, Any]:
             labor["availability"] = self._get_plan_worktime_hour_from_labor(labor)
@@ -2072,7 +2518,7 @@ class Wrapper:
             "to": to_date,
         }
         labor_list, _ = self.api.get_labor_control(query_params)
-        return [_to_new_data(e) for e in labor_list]
+        return [_to_new_data(e) for e in labor_list if e["account_id"] is not None]
 
     def put_labor_control_actual_worktime(
         self,

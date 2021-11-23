@@ -25,7 +25,7 @@ from annofabapi.models import (
 )
 
 AnnotationData = Union[str, Dict[str, Any]]
-FullAnnotationData = Dict[str, Any]
+FullAnnotationData = Any
 AdditionalDataValue = Dict[str, Any]
 
 
@@ -173,28 +173,28 @@ class FullAnnotationAdditionalData(DataClassJsonMixin):
 class FullAnnotationDetail(DataClassJsonMixin):
     """ """
 
-    annotation_id: Optional[str]
+    annotation_id: str
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
-    user_id: Optional[str]
+    user_id: str
     """"""
 
-    label_id: Optional[str]
+    label_id: str
     """"""
 
-    label_name: Optional[InternationalizationMessage]
+    label_name: InternationalizationMessage
     """"""
 
-    annotation_type: Optional[AnnotationType]
+    annotation_type: AnnotationType
     """"""
 
-    data_holding_type: Optional[AnnotationDataHoldingType]
+    data_holding_type: AnnotationDataHoldingType
     """"""
 
-    data: Optional[FullAnnotationData]
+    data: FullAnnotationData
     """"""
 
-    additional_data_list: Optional[List[FullAnnotationAdditionalData]]
+    additional_data_list: List[FullAnnotationAdditionalData]
     """"""
 
 
@@ -202,34 +202,34 @@ class FullAnnotationDetail(DataClassJsonMixin):
 class FullAnnotation(DataClassJsonMixin):
     """ """
 
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    task_id: Optional[str]
+    task_id: str
     """タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    task_phase: Optional[TaskPhase]
+    task_phase: TaskPhase
     """"""
 
-    task_phase_stage: Optional[int]
+    task_phase_stage: int
     """"""
 
-    task_status: Optional[TaskStatus]
+    task_status: TaskStatus
     """"""
 
-    input_data_id: Optional[str]
+    input_data_id: str
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     input_data_name: Optional[str]
     """"""
 
-    details: Optional[List[FullAnnotationDetail]]
+    details: List[FullAnnotationDetail]
     """"""
 
     updated_datetime: Optional[str]
     """"""
 
-    annotation_format_version: Optional[str]
+    annotation_format_version: str
     """アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 """
 
 

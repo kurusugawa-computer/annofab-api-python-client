@@ -18,6 +18,7 @@ from more_itertools import first_true
 import annofabapi
 import annofabapi.utils
 from annofabapi.models import GraphType, ProjectJobType
+from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
 # プロジェクトトップに移動する
@@ -27,7 +28,7 @@ inifile.read("./pytest.ini", "UTF-8")
 
 project_id = inifile["annofab"]["project_id"]
 task_id = inifile["annofab"]["task_id"]
-
+changed_task_id = inifile["annofab"]["changed_task_id"]
 
 test_dir = "./tests/data"
 out_dir = "./tests/out"
@@ -77,6 +78,24 @@ class TestAnnotation:
         job = content["job"]
         assert job["job_type"] == ProjectJobType.GEN_ANNOTATION.value
 
+    def test_wrapper_copy_annotation(self):
+        src = TaskFrameKey(project_id, task_id, self.input_data_id)
+        dest = TaskFrameKey(project_id, task_id, self.input_data_id)
+        result = wrapper.copy_annotation(src, dest)
+        assert result == True
+
+    def test_wrapper_put_annotation_for_simple_annotation_json(self):
+        input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+        annotation_specs_v2, _ = service.api.get_annotation_specs(project_id, query_params={"v": "2"})
+        wrapper.put_annotation_for_simple_annotation_json(
+            project_id,
+            changed_task_id,
+            input_data_id,
+            simple_annotation_json="tests/data/simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json",
+            annotation_specs_labels=annotation_specs_v2["labels"],
+            annotation_specs_additionals=annotation_specs_v2["additionals"],
+        )
+
 
 class TestAnnotationSpecs:
     def test_get_annotation_specs(self):
@@ -104,7 +123,64 @@ class TestAnnotationSpecs:
         assert type(result) == annofabapi.wrapper.AnnotationSpecsRelation
 
 
-class TestInput:
+class TestComment:
+    @classmethod
+    def setup_class(cls):
+        task, _ = api.get_task(project_id, task_id)
+        if task["account_id"] != api.account_id:
+            task = wrapper.change_task_operator(project_id, task_id, operator_account_id=api.account_id)
+        if task["status"] != "working":
+            task = wrapper.change_task_status_to_working(project_id, task_id)
+        cls.task = task
+
+    def test_put_get_delete_comment(self):
+        task = self.task
+        comment_id = str(uuid.uuid4())
+        put_request_body = [
+            {
+                "comment_id": comment_id,
+                "phase": task["phase"],
+                "phase_stage": task["phase_stage"],
+                "account_id": api.account_id,
+                "comment_type": "onhold",
+                "phrases": [],
+                "comment": "foo-bar",
+                "comment_node": {
+                    "data": None,
+                    "annotation_id": None,
+                    "label_id": None,
+                    "status": "open",
+                    "_type": "Root",
+                },
+                "datetime_for_sorting": annofabapi.utils.str_now(),
+                "_type": "Put",
+            }
+        ]
+        input_data_id = task["input_data_id_list"][0]
+        result, _ = api.batch_update_comments(project_id, task_id, input_data_id, request_body=put_request_body)
+
+        comments, _ = api.get_comments(project_id, task_id, input_data_id)
+        assert first_true(comments, pred=lambda e: e["comment_id"] == comment_id) is not None
+
+        # コメントの削除
+        delete_request_body = [
+            {
+                "comment_id": comment_id,
+                "_type": "Delete",
+            }
+        ]
+        api.batch_update_comments(project_id, task_id, input_data_id, request_body=delete_request_body)
+
+        # コメントの削除確認
+        comments, _ = api.get_comments(project_id, task_id, input_data_id)
+        assert first_true(comments, pred=lambda e: e["comment_id"] == comment_id) is None
+
+    @classmethod
+    def teardown_class(cls):
+        wrapper.change_task_status_to_break(project_id, task_id)
+
+
+class TestInputData:
     @classmethod
     def setup_class(cls):
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
@@ -325,34 +401,89 @@ class TestProjectMember:
     def test_wrapper_get_all_project_members(self):
         assert len(wrapper.get_all_project_members(project_id)) >= 0
 
-    def test_wrapper_copy_project_member(self):
-        content = wrapper.copy_project_members(src_project_id=project_id, dest_project_id=project_id, delete_dest=False)
-        assert type(content) == list
-
 
 class TestStatistics:
-    def test_wrapper_statistics(self):
-        actual = wrapper.get_task_statistics(project_id)
+    def test_wrapper_get_account_daily_statistics(self):
+        actual = wrapper.get_account_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
         assert type(actual) == list
 
-    def test_wrapper_get_account_statistics(self):
-        actual = wrapper.get_account_statistics(project_id)
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_account_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
         assert type(actual) == list
 
-    def test_wrapper_get_inspection_statistics(self):
-        actual = wrapper.get_inspection_statistics(project_id)
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_account_daily_statistics(project_id)
         assert type(actual) == list
 
-    def test_wrapper_get_task_phase_statistics(self):
-        actual = wrapper.get_task_phase_statistics(project_id)
+    def test_wrapper_get_inspection_daily_statistics(self):
+        actual = wrapper.get_inspection_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
         assert type(actual) == list
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_inspection_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == list
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_inspection_daily_statistics(project_id)
+        assert type(actual) == list
+
+    def test_wrapper_get_phase_daily_statistics(self):
+        actual = wrapper.get_phase_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == list
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_phase_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == list
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_phase_daily_statistics(project_id)
+        assert type(actual) == list
+
+    def test_wrapper_get_task_daily_statistics(self):
+        actual = wrapper.get_task_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == list
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_task_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == list
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_task_daily_statistics(project_id)
+        assert type(actual) == list
+
+    def test_wrapper_get_worktime_daily_statistics(self):
+        actual = wrapper.get_worktime_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == dict
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_worktime_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == dict
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_worktime_daily_statistics(project_id)
+        assert type(actual) == dict
+
+    def test_wrapper_get_worktime_daily_statistics_by_account(self):
+        actual = wrapper.get_worktime_daily_statistics_by_account(
+            project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-06-30"
+        )
+        assert type(actual) == dict
+
+        # 最大取得期間の3ヶ月を超えている場合
+        actual = wrapper.get_worktime_daily_statistics_by_account(
+            project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-07-01"
+        )
+        assert type(actual) == dict
+
+        # 開始日と終了日を指定しない場合
+        actual = wrapper.get_worktime_daily_statistics_by_account(
+            project_id,
+            account_id=api.account_id,
+        )
+        assert type(actual) == dict
 
     def test_wrapper_get_label_statistics(self):
         actual = wrapper.get_label_statistics(project_id)
-        assert type(actual) == list
-
-    def test_wrapper_get_worktime_statistics(self):
-        actual = wrapper.get_worktime_statistics(project_id)
         assert type(actual) == list
 
     def test_graph_marker(self):
@@ -431,14 +562,9 @@ class TestTask:
         request_body = {"request_type": {"phase": "annotation", "_type": "Random"}}
         assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == list
 
-    def test_operate_task(self):
-        task, _ = api.get_task(project_id, task_id)
-        request_body = {
-            "status": "not_started",
-            "last_updated_datetime": task["updated_datetime"],
-            "account_id": api.account_id,
-        }
-        assert type(api.operate_task(project_id, task_id, request_body=request_body)[0]) == dict
+    def test_operate_task_in_change_task_status_to_break(self):
+        task = wrapper.change_task_status_to_break(project_id, task_id)
+        assert task["status"] == "break"
 
     def test_get_task_histories(self):
         assert len(api.get_task_histories(project_id, task_id)[0]) > 0
@@ -596,13 +722,29 @@ class TestGetObjOrNone:
 
         assert wrapper.get_task_or_none("not-exists", task_id) is None
 
+    def test_get_task_histories_or_none(self):
+        assert type(wrapper.get_task_histories_or_none(project_id, task_id)) == list
+
+        assert wrapper.get_task_histories_or_none(project_id, "not-exists") is None
+
+        assert wrapper.get_task_histories_or_none("not-exists", task_id) is None
+
 
 class TestProtectedMethod:
-    def test__request_get_with_cookie(self):
+    @classmethod
+    def setup_class(cls):
+        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
+
+    def test__request_get_with_cookie_with_project_url(self):
         images, _ = api.get_instruction_images(project_id)
         url = images[0]["url"]
         r = api._request_get_with_cookie(project_id, url)
-        # エラーがないことを確認する
+        assert r.status_code == 200
+
+    def test__request_get_with_cookie_with_input_data_set_url(self):
+        input_data, _ = api.get_input_data(project_id, self.input_data_id)
+        r = api._request_get_with_cookie(project_id, input_data["url"])
+        assert r.status_code == 200
 
     def test_request_get_with_cookie_failed(self):
         # SignedCookieに対応するプロジェクトと、アクセス対象のプロジェクトが異なっているときの対応

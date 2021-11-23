@@ -52,7 +52,7 @@
 
         """
         {{#isDeprecated}}
-        warnings.warn("deprecated", FutureWarning)
+        warnings.warn("annofabapi.AnnofabApi.{{operationId}}() is deprecated and will be removed.", FutureWarning, stacklevel=2)
         {{/isDeprecated}}
         url_path = f'{{{path}}}'
         http_method = '{{httpMethod}}'

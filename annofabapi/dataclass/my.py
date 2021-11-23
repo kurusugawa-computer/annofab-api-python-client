@@ -78,6 +78,9 @@ class MyAccount(DataClassJsonMixin):
     authority: AccountAuthority
     """"""
 
+    is_external_account: bool
+    """[外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合true。  外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合false。 """
+
     updated_datetime: Optional[str]
     """"""
 

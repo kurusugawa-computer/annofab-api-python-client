@@ -174,7 +174,7 @@ cat partial-header/dataclass/common.py partial-header/dataclass/instruction.py  
 # Job
 declare -a model_files=(${MODELS_DIR}/project_job_info.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/job.py  \
- ${model_files[@]} partial-footer/dataclass/job.py > ../annofabapi/dataclass/job.py
+ ${model_files[@]}  > ../annofabapi/dataclass/job.py
 
 # My
 declare -a model_files=(${MODELS_DIR}/my_organization.py ${MODELS_DIR}/my_account.py)

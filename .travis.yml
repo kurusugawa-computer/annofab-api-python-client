@@ -7,10 +7,7 @@ python:
   - "3.9"
 install:
   - pip install poetry
-  - poetry install
-env:
-  # PyPIへのアクセス過多などで失敗するケースがあるので、タイムアウトを設定する
-  - PIP_DEFAULT_TIMEOUT=100
+  - travis_retry poetry install
 script:
    - make lint
    - pytest tests/test_local*.py
@@ -18,6 +15,8 @@ branches:
   only:
   - master
 env:
-  # `poetry install`時に`Max retries exceeded with`が発生しないようにするため、タイムアウト時間を指定する
   - PIP_DEFAULT_TIMEOUT=100
+
+cache: pip
+
 
