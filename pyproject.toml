@@ -32,10 +32,6 @@ dataclasses = { version = "*", python = "<3.7" }
 
 
 [tool.poetry.dev-dependencies]
-
-# https://github.com/PyCQA/astroid/issues/1239 のエラーを回避するためバージョンを下げる
-astroid = "<2.8.5"
-
 # test library
 pytest = "*"
 pytest-xdist = "*"
@@ -47,7 +43,7 @@ more-itertools = "*"
 # format library
 isort = "*"
 autoflake = "*"
-black = {version = "^21.6b0", allow-prereleases = true}
+black = {version = "^21.11b0", allow-prereleases = true}
 
 # lint library
 flake8 = "*"
@@ -64,9 +60,6 @@ types-requests = "*"
 types-python-dateutil = "*"
 types-dataclasses = { version = "*", python = "<3.7" }
 ipython = "*"
-# ipythonとjediの組み合わせによるバグを避けるため、バージョン指定
-# https://zenn.dev/hige/articles/282bf79d47378e
-jedi = "<0.18"
 
 [tool.black]
 line-length = 120
