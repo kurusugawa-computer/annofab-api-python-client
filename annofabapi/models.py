@@ -728,9 +728,9 @@ Kyes of Dict
 * attributes: List[AdditionalData]
     
 * updated_from: str
-    開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日。updated_toより後ろに指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、本日であるとして扱われる。 
+    開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日（ISO 8601 拡張形式または基本形式）。  `updated_to` より後の日付が指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。 
 * updated_to: str
-    開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、終了日。未指定の場合、本日であるとして扱われる。 
+    開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、終了日（ISO 8601 拡張形式または基本形式）。  未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。 
 
 """
 
@@ -1428,6 +1428,19 @@ Kyes of Dict
 
 """
 
+DateRange = Dict[str, Any]
+"""
+日付の期間
+
+Kyes of Dict
+
+* _from: str
+    区間開始日（ISO 8601 拡張形式）
+* to: str
+    区間終了日（ISO 8601 拡張形式）
+
+"""
+
 DeleteProjectResponse = Dict[str, Any]
 """
 
@@ -2099,13 +2112,12 @@ Kyes of Dict
 
 class InspectionStatus(Enum):
     """
-    ##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合  * `annotator_action_required` - 未処置。`annotation`フェーズ担当者が何らかの回答をする必要あり * `no_correction_required` - 処置不要。`annotation`フェーズ担当者が、検査コメントによる修正は不要、と回答した * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力  ##### 返信コメントである（`parent_inspection_id` に値がある）場合  現在は使用しておらず、レスポンスに含まれる値は不定です。APIのレスポンスにこの値を含む場合でも、「スレッドの先頭のコメント」の値を利用してください。  リクエストボディに指定する場合は、スレッドの先頭のコメントと同じ値を指定します。
+    ##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合  * `annotator_action_required` - 未処置。`annotation`フェーズ担当者が何らかの回答をする必要あり * `no_correction_required` - 処置不要。`annotation`フェーズ担当者が、検査コメントによる修正は不要、と回答した * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した  ##### 返信コメントである（`parent_inspection_id` に値がある）場合  現在は使用しておらず、レスポンスに含まれる値は不定です。APIのレスポンスにこの値を含む場合でも、「スレッドの先頭のコメント」の値を利用してください。  リクエストボディに指定する場合は、スレッドの先頭のコメントと同じ値を指定します。
     """
 
     ANNOTATOR_ACTION_REQUIRED = "annotator_action_required"
     NO_CORRECTION_REQUIRED = "no_correction_required"
     ERROR_CORRECTED = "error_corrected"
-    NO_COMMENT_INSPECTION = "no_comment_inspection"
 
 
 class InspectionSummary(Enum):
@@ -3227,6 +3239,8 @@ Kyes of Dict
     プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * custom_specs_plugin_id: str
     プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* editor_version: str
+    標準アノテーションエディタのバージョン。  * `stable`     * 安定版。通常はこちらを利用してください。 * `preview`     * 最新版。新機能やUI変更の先行リリース版。  プロジェクト更新時に未指定の場合は `stable` が指定されたものとみなします。 
 
 """
 
