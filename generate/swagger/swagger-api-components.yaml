@@ -179,6 +179,10 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorRefreshTokenExpired"
   schemas:
+    ArrayOfDateRanges:
+      type: array
+      items:
+        $ref: "#/components/schemas/DateRange"
     ArrayOfProjectTaskStatisticsHistory:
       type: array
       items:
@@ -275,6 +279,18 @@ components:
       $ref: '#/components/schemas/Errors'
     ErrorUnderMaintenance:
       $ref: '#/components/schemas/Errors'
+    DateRange:
+      type: object
+      description: 日付の期間
+      properties:
+        from:
+          type: string
+          format: date
+          description: 区間開始日（ISO 8601 拡張形式）
+        to:
+          type: string
+          format: date
+          description: 区間終了日（ISO 8601 拡張形式）
     Message:
       type: object
       properties:
@@ -1230,6 +1246,17 @@ components:
           $ref: "#/components/schemas/PluginId"
           description: |
             カスタムアノテーション仕様のプラグインID。
+        editor_version:
+          type: string
+          description: |
+            標準アノテーションエディタのバージョン。
+
+            * `stable`
+                * 安定版。通常はこちらを利用してください。
+            * `preview`
+                * 最新版。新機能やUI変更の先行リリース版。
+
+            プロジェクト更新時に未指定の場合は `stable` が指定されたものとみなします。
     ProjectSummary:
       type: object
       properties:
@@ -3792,14 +3819,18 @@ components:
             $ref: "#/components/schemas/AdditionalData"
         updated_from:
           description: |
-            開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日。updated_toより後ろに指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、本日であるとして扱われる。
+            開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日（ISO 8601 拡張形式または基本形式）。
+
+            `updated_to` より後の日付が指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。
           type: string
-          example: "20191010"
+          format: date
         updated_to:
           description: |
-            開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、終了日。未指定の場合、本日であるとして扱われる。
+            開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、終了日（ISO 8601 拡張形式または基本形式）。
+
+            未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。
           type: string
-          example: "20191010"
+          format: date
     Annotation:
       type: object
       required:
@@ -4722,14 +4753,12 @@ components:
         - annotator_action_required
         - no_correction_required
         - error_corrected
-        - no_comment_inspection
       description: |
         ##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合
 
         * `annotator_action_required` - 未処置。`annotation`フェーズ担当者が何らかの回答をする必要あり
         * `no_correction_required` - 処置不要。`annotation`フェーズ担当者が、検査コメントによる修正は不要、と回答した
         * `error_corrected` - 修正済み。`annotation`フェーズ担当者が、検査コメントの指示どおり修正した
-        * `no_comment_inspection` - 作成途中。検査コメントの中身が未入力
 
         ##### 返信コメントである（`parent_inspection_id` に値がある）場合
 
