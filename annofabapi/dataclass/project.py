@@ -78,6 +78,9 @@ class ProjectConfiguration(DataClassJsonMixin):
     custom_specs_plugin_id: Optional[str]
     """プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
+    editor_version: Optional[str]
+    """標準アノテーションエディタのバージョン。  * `stable`     * 安定版。通常はこちらを利用してください。 * `preview`     * 最新版。新機能やUI変更の先行リリース版。  プロジェクト更新時に未指定の場合は `stable` が指定されたものとみなします。 """
+
 
 @dataclass
 class Project(DataClassJsonMixin):

@@ -429,7 +429,7 @@ class AbstractAnnofabApi(abc.ABC):
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
             query_params (Dict[str, Any]): Query Parameters
-                task_history_id (str):  過去のフェーズのアノテーションを取得する場合、タスク履歴IDを指定します。未指定時は最新のアノテーションを取得します。
+                task_history_id (str):  過去のフェーズのアノテーションを取得する場合、タスク履歴IDを指定します。未指定時は最新のアノテーションを取得します。  過去のアノテーションデータは最後に保存してから30日前のデータまで取得できます。 30日より前のデータを取得しようとした場合はアノテーションデータは空リストとなります。
 
         Returns:
             Tuple[Annotation, requests.Response]
@@ -2566,6 +2566,29 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def get_statistics_available_dates(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+        """プロジェクト統計記録期間取得
+        https://annofab.com/docs/api/#operation/getStatisticsAvailableDates
+
+
+        authorizations: AllProjectMember
+
+
+        プロジェクトの統計情報が記録されている日付期間を取得します。  日付期間とは、from（日付）からto（日付）までの連続する日付を指します。fromとtoの日付は期間に含みます。  プロジェクトが一度も停止されていない場合、プロジェクト作成日から昨日までの日付期間が一つだけ返ります。  プロジェクトを停止した場合、プロジェクトの作成日から停止した日までの日付期間が一つだけ返ります。  プロジェクトを再開した場合、統計情報が記録されない（プロジェクトの停止）期間を除いた日付期間が複数返ります。以降、プロジェクトの停止と再開を繰り返すたびに結果の日付期間が増えていきます。
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+
+        Returns:
+            Tuple[List[DateRange], requests.Response]
+
+
+        """
+        url_path = f"/projects/{project_id}/statistics/dates"
+        http_method = "GET"
+        keyword_params: Dict[str, Any] = {}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task_daily_statistics(

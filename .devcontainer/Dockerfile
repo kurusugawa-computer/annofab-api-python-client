@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 as devcontainer
+FROM ubuntu:20.04 as devcontainer
 
 RUN set -x \
     && sed -i.bak -r 's!(deb|deb-src) \S+!\1 mirror://mirrors.ubuntu.com/mirrors.txt!' /etc/apt/sources.list
@@ -101,25 +101,22 @@ RUN set -x \
     && chmod +x /usr/local/devcontainer-tool/bin/docker-compose
 ENV PATH=/usr/local/devcontainer-tool/bin:${PATH}
 
-# python3.8
+# python3.9
 RUN set -x \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-        python3.8 \
-        python3-distutils \
+        python3.9 \
+        python3.9-dev \
+        python3-pip \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* \
-    && ln -s $(which python3.8) /usr/local/bin/python
-
-# pip
-RUN set -x \
-    && curl -sSL https://bootstrap.pypa.io/get-pip.py | sudo -u vscode -i python - 
+    && ln -s $(which python3.9) /usr/local/bin/python
 ENV PIP_DEFAULT_TIMEOUT=100
 
 # poetry
 RUN set -x \
-    && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | sudo -u vscode -i python - \
-    && sudo -u vscode -i /home/vscode/.local/bin/poetry config virtualenvs.in-project true
-ENV PATH=$PATH:/home/vscode/.local/bin
+    && python -m pip install -U pip setuptools \
+    && pip install poetry \
+    && sudo -u vscode -i poetry config virtualenvs.in-project true
 
 # fix poetry issue (see: https://github.com/python-poetry/poetry/issues/221)
 RUN set -x \
