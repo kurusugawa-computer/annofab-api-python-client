@@ -43,7 +43,7 @@ more-itertools = "*"
 # format library
 isort = "*"
 autoflake = "*"
-black = {version = "^21.11b0", allow-prereleases = true}
+black = {version = "^21.12b0", allow-prereleases = true}
 
 # lint library
 flake8 = "*"
