@@ -2259,7 +2259,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator, ProjectOwner
 
 
-        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。 所属組織が変更された場合バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`move-project`）。
+        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。 所属組織が変更された場合バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`move-project`）。  制限事項として、このAPIでプロジェクト状態を「初期化中」へ変更することはできません。 また、プロジェクト状態が「初期化中」の場合は、所属組織変更をおこなうことはできません。
 
         Args:
             project_id (str):  プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
