@@ -1152,6 +1152,7 @@ components:
         プロジェクトの状態
         * `active` - プロジェクトが進行中
         * `suspended` - プロジェクトが停止中
+        * `initializing` - プロジェクトが初期化中
     AssigneeRuleOfResubmittedTask:
       type: string
       enum:
@@ -1388,6 +1389,8 @@ components:
         AnnoFab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。
 
         ジョブの同時実行可否はジョブの種別によって異なります。
+
+        なお、ジョブを実行するプロジェクトが初期化中 (`project_status = "initializing"`) の場合は、どのジョブも実行できません。
 
         ### copy-project
         次のジョブが実行されている場合、このジョブを実行することはできません。
