@@ -387,9 +387,11 @@ class Wrapper:
         task_id: str,
         input_data_id: str,
         src_details: List[Dict[str, Any]],
-        account_id: str,
+        account_id: Optional[str] = None,
         annotation_specs_relation: Optional[AnnotationSpecsRelation] = None,
     ) -> Dict[str, Any]:
+        if account_id is None:
+            account_id = self.api.account_id
         dest_details: List[Dict[str, Any]] = []
 
         for src_detail in src_details:

@@ -2259,7 +2259,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator, ProjectOwner
 
 
-        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。 所属組織が変更された場合バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`move-project`）。  制限事項として、このAPIでプロジェクト状態を「初期化中」へ変更することはできません。 また、プロジェクト状態が「初期化中」の場合は、所属組織変更をおこなうことはできません。
+        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。 所属組織が変更された場合バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`move-project`）。
 
         Args:
             project_id (str):  プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
@@ -2578,7 +2578,7 @@ class AbstractAnnofabApi(abc.ABC):
 
         プロジェクトの統計情報が記録されている日付期間を取得します。  日付期間とは、from（日付）からto（日付）までの連続する日付を指します。fromとtoの日付は期間に含みます。  プロジェクトが一度も停止されていない場合、プロジェクト作成日から昨日までの日付期間が一つだけ返ります。  プロジェクトを停止した場合、プロジェクトの作成日から停止した日までの日付期間が一つだけ返ります。  プロジェクトを再開した場合、統計情報が記録されない（プロジェクトの停止）期間を除いた日付期間が複数返ります。以降、プロジェクトの停止と再開を繰り返すたびに結果の日付期間が増えていきます。
 
-        Args:
+        Args:58a2a621-7d4b-41e7-927b-cdc570c1114a
             project_id (str):  プロジェクトID (required)
 
         Returns:
