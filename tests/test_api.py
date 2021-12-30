@@ -504,7 +504,7 @@ class TestStatistics:
         assert type(api.put_markers(project_id, request_body=request_body)[0]) == dict
 
     def test_get_statistics_available_dates(self):
-        content, _ = api.s.api.get_statistics_available_dates(project_id)
+        content, _ = api.get_statistics_available_dates(project_id)
         assert type(content) == list
 
 
