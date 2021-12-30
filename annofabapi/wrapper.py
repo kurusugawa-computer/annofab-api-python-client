@@ -171,7 +171,7 @@ class Wrapper:
         """
         get_all_XXX関数の共通処理
 
-        Args:ｃ
+        Args:
             func_get_list: AnnofabApiのget_XXX関数
             limit: 1ページあたりの取得するデータ件数
             **kwargs_for_func_get_list: `func_get_list`に渡す引数。
@@ -189,9 +189,8 @@ class Wrapper:
         kwargs_for_func_get_list["query_params"] = copied_query_params
         content, _ = func_get_list(**kwargs_for_func_get_list)
 
-        logger.debug("%s %d 件 取得します。", func_get_list.__name__, content.get("total_count"))
-        if content.get("over_limit"):
-            logger.warning("検索結果が10,000件を超えてますが、Web APIの都合上10,000件までしか取得できません。")
+        if content["over_limit"]:
+            logger.warning("calling %s :: 検索結果が10,000件を超えています。Web APIの都合上10,000件までしか取得できません。", func_get_list.__name__)
 
         all_objects.extend(content["list"])
 
@@ -201,7 +200,7 @@ class Wrapper:
             kwargs_for_func_get_list["query_params"] = copied_query_params
             content, _ = func_get_list(**kwargs_for_func_get_list)
             all_objects.extend(content["list"])
-            logger.debug("%s %d / %d page", func_get_list.__name__, content["page_no"], content["total_page_no"])
+            logger.debug("calling %s :: %d/%d steps", func_get_list.__name__, content["page_no"], content["total_page_no"])
 
         return all_objects
 
