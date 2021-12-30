@@ -1,6 +1,5 @@
 [pylint]
 disable =
-    logging-fstring-interpolation,
 # ===== May not modify =====
     fixme, # TODO remains
     line-too-long, # [flake8]
