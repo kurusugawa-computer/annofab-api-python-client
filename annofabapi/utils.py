@@ -3,6 +3,7 @@ import datetime
 import json
 import logging
 from functools import wraps
+from json import JSONDecodeError
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -13,6 +14,8 @@ import requests
 from requests.structures import CaseInsensitiveDict
 
 from annofabapi.models import Task, TaskHistory, TaskHistoryShort, TaskPhase
+
+logger = logging.getLogger(__name__)
 
 #########################################
 # Private Method
@@ -57,29 +60,38 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
             d[key] = "***"
         return d
 
-    def mask_password(d: RequestBodyHeader) -> RequestBodyHeader:
-        d = mask_key(d, "password")
-        d = mask_key(d, "old_password")
-        d = mask_key(d, "new_password")
-        return d
-
     if 400 <= response.status_code < 600:
         headers = copy.deepcopy(response.request.headers)
-
-        arg_logger.debug("status_code = %s, response.text = %s", response.status_code, response.text)
-        arg_logger.debug("request.url = %s %s", response.request.method, response.request.url)
-
         # logにAuthorizationを出力しないようにマスクする
         mask_key(headers, "Authorization")
-        arg_logger.debug("request.headers = %s", headers)
 
         # request_bodyのpassword関係をマスクして、logに出力する
-        if response.request.body is None or response.request.body == "":
-            dict_request_body = {}
+        request_body = response.request.body
+        if request_body is not None and request_body != "":
+            try:
+                dict_request_body = json.loads(request_body)
+            except JSONDecodeError:
+                request_body_for_logger = request_body
+            else:
+                request_body_for_logger = _mask_confidential_info(dict_request_body)
         else:
-            dict_request_body = json.loads(response.request.body)
+            request_body_for_logger = request_body
 
-        arg_logger.debug("request.body = %s", mask_password(dict_request_body))
+        arg_logger.warning(
+            "HTTP error occurred :: %s",
+            {
+                "response": {
+                    "status_code": response.status_code,
+                    "text": response.text,
+                },
+                "request": {
+                    "http_method": response.request.method,
+                    "url": response.request.url,
+                    "body": request_body_for_logger,
+                    "headers": headers,
+                },
+            },
+        )
 
 
 def _download(url: str, dest_path: str) -> requests.Response:
@@ -122,6 +134,9 @@ def _mask_confidential_info(data: Any) -> Any:
 
     if not isinstance(data, dict):
         return data
+    elif isinstance(data, bytes):
+        # bytes型のときは値を出力しても意味がないので、bytesであることが分かるようにする
+        return "(bytes)"
 
     MASKED_KEYS = {"password", "old_password", "new_password"}
     diff = MASKED_KEYS - set(data.keys())
@@ -328,6 +343,8 @@ def my_backoff(function):
             jitter=backoff.full_jitter,
             max_time=300,
             giveup=fatal_code,
+            # loggerの名前をbackoffからannofabapiに変更する
+            logger=logger,
         )(function)(*args, **kwargs)
 
     return wrapped

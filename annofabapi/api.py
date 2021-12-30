@@ -50,7 +50,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         self.__account_id: Optional[str] = None
 
-    class __MyToken(AuthBase):
+    class _MyToken(AuthBase):
         """
         requestsモジュールのauthに渡す情報。
         http://docs.python-requests.org/en/master/user/advanced/#custom-authentication
@@ -66,6 +66,26 @@ class AnnofabApi(AbstractAnnofabApi):
     #########################################
     # Private Method
     #########################################
+    @staticmethod
+    def _encode_query_params(query_params: Dict[str, Any]) -> Dict[str, Any]:
+        """query_paramsのvalueがlist or dictのときは、JSON形式の文字列に変換する。
+        `getAnnotationList` webapiで指定できる `query`などのように、2階層のquery_paramsに対応させる。
+
+        Args:
+            query_params (Dict[str,Any]): [description]
+
+        Returns:
+            Dict[str, str]: [description]
+        """
+        new_params = {}
+        if query_params is not None:
+            for key, value in query_params.items():
+                if isinstance(value, (list, dict)):
+                    new_params[key] = json.dumps(value)
+                else:
+                    new_params[key] = value
+        return new_params
+
     def _create_kwargs(
         self,
         params: Optional[Dict[str, Any]] = None,
@@ -75,16 +95,14 @@ class AnnofabApi(AbstractAnnofabApi):
         """
         requestsモジュールのget,...メソッドに渡すkwargsを生成する。
 
-        Args:
-            params: クエリパラメタに設定する情報
-            headers: リクエストヘッダに設定する情報
-
         Returns:
             kwargs情報
 
         """
 
         # query_param
+        # query_paramsのvalueがlist or dictのときは、JSON形式の文字列に変換する。
+        # `getAnnotationList` webapiで指定できる `query`などのように、2階層のquery_paramsに対応させる。
         new_params = {}
         if params is not None:
             for key, value in params.items():
@@ -98,7 +116,7 @@ class AnnofabApi(AbstractAnnofabApi):
             "headers": headers,
         }
         if self.token_dict is not None:
-            kwargs.update({"auth": self.__MyToken(self.token_dict["id_token"])})
+            kwargs.update({"auth": self._MyToken(self.token_dict["id_token"])})
 
         if request_body is not None:
             if isinstance(request_body, (dict, list)):
@@ -141,7 +159,73 @@ class AnnofabApi(AbstractAnnofabApi):
 
         return content
 
-    @my_backoff
+    def _execute_http_request(
+        self,
+        http_method: str,
+        url: str,
+        *,
+        params: Optional[Dict[str, Any]] = None,
+        data: Optional[Any] = None,
+        json: Optional[Any] = None,
+        headers: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ) -> requests.Response:
+        """Session情報を使って、HTTP Requestを投げる。
+        引数は `requests.Session.request <https://docs.python-requests.org/en/latest/api/#requests.Session.request>`_ 関数に加工せずにそのまま渡す。
+
+        Returns:
+            requests.Response: [description]
+
+        Raises:
+            requests.exceptions.HTTPError: http status codeが4XXX,5XXXのとき
+
+        """
+
+        @my_backoff
+        def execute():
+            logger.debug(
+                "Sending a request :: %s",
+                {
+                    "http_method": http_method,
+                    "url": url,
+                    "query_params": params,
+                    "request_body_json": _mask_confidential_info(json),
+                    "request_body_data": _mask_confidential_info(data),
+                    "header_params": headers,
+                },
+            )
+
+            response = self.session.request(
+                method=http_method, url=url, params=params, data=data, headers=headers, json=json
+            )
+            _raise_for_status(response)
+            return response
+
+        # 数回retryしてもリクエストが成功しない場合は、リクエスト情報を出力する。
+        try:
+            response = execute()
+        except requests.exceptions.HTTPError as e:
+            response = e.response
+            logger.error(
+                "HTTP error occurred :: %s",
+                {
+                    "response": {
+                        "status_code": response.status_code,
+                        "text": response.text,
+                    },
+                    "request": {
+                        "http_method": http_method,
+                        "url": url,
+                        "query_params": params,
+                        "request_body_json": _mask_confidential_info(json),
+                        "request_body_data": _mask_confidential_info(data),
+                        "header_params": headers,
+                    },
+                },
+            )
+            raise e
+        return response
+
     def _request_wrapper(
         self,
         http_method: str,
@@ -171,31 +255,14 @@ class AnnofabApi(AbstractAnnofabApi):
             url = f"{self.url_prefix}{url_path}"
 
         kwargs = self._create_kwargs(query_params, header_params, request_body)
-
-        logger.debug(
-            "Sending a request :: %s",
-            {
-                "http_method": http_method,
-                "url": url,
-                "query_params": query_params,
-                "request_body": _mask_confidential_info(request_body),
-                "header_params": header_params,
-            },
-        )
-
-        # HTTP Requestを投げる
-        response = getattr(self.session, http_method.lower())(url, **kwargs)
+        response = self._execute_http_request(http_method.lower(), url, **kwargs)
 
         # Unauthorized Errorならば、ログイン後に再度実行する
         if response.status_code == requests.codes.unauthorized:
             self.login()
-            return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
-
-        _log_error_response(logger, response)
+            response = self._execute_http_request(http_method.lower(), url, **kwargs)
 
         response.encoding = "utf-8"
-        _raise_for_status(response)
-
         content = self._response_to_content(response)
         return content, response
 
@@ -283,16 +350,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         url = f"{self.url_prefix}/login"
 
-        logger.debug(
-            "Sending a request :: %s",
-            {
-                "http_method": "post",
-                "url": url,
-                "request_body": _mask_confidential_info(login_info),
-            },
-        )
-
-        response = self.session.post(url, json=login_info)
+        response = self._execute_http_request("post", url, json=login_info)
 
         _log_error_response(logger, response)
         _raise_for_status(response)
