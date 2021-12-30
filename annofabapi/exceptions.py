@@ -41,7 +41,8 @@ class NotLoggedInError(AnnofabApiException):
         zipfile_path: 指定した場合、「zipファイル内に外部ファイルが存在しなかった」という旨のメッセージを設定する。
 
     """
-    def __init__(self, message: Optional[str]=None):
+
+    def __init__(self, message: Optional[str] = None):
         if message is None:
             message = "You are not logged in."
         super().__init__(message)

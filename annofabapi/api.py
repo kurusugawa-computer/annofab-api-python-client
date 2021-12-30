@@ -6,9 +6,10 @@ from typing import Any, Dict, Optional, Tuple
 import requests
 from requests.auth import AuthBase
 from requests.cookies import RequestsCookieJar
+
 from annofabapi.exceptions import NotLoggedInError
 from annofabapi.generated_api import AbstractAnnofabApi
-from annofabapi.utils import _log_error_response, _raise_for_status, my_backoff
+from annofabapi.utils import _log_error_response, _mask_confidential_info, _raise_for_status, my_backoff
 
 logger = logging.getLogger(__name__)
 
@@ -171,6 +172,17 @@ class AnnofabApi(AbstractAnnofabApi):
 
         kwargs = self._create_kwargs(query_params, header_params, request_body)
 
+        logger.debug(
+            "Sending a request :: %s",
+            {
+                "http_method": http_method,
+                "url": url,
+                "query_params": query_params,
+                "request_body": _mask_confidential_info(request_body),
+                "header_params": header_params,
+            },
+        )
+
         # HTTP Requestを投げる
         response = getattr(self.session, http_method.lower())(url, **kwargs)
 
@@ -219,6 +231,13 @@ class AnnofabApi(AbstractAnnofabApi):
 
         """
         # Sessionオブジェクトに保存されているCookieを利用して、URLにアクセスする
+        logger.debug(
+            "Sending a request :: %s",
+            {
+                "http_method": "get",
+                "url": url,
+            },
+        )
         response = self.session.get(url)
 
         # CloudFrontから403 Errorが発生したときは、別プロジェクトのcookieを渡している可能性があるので、
@@ -233,6 +252,13 @@ class AnnofabApi(AbstractAnnofabApi):
             _, r = self._get_signed_cookie(project_id, query_params=query_params)
             for cookie in r.cookies:
                 self.session.cookies.set_cookie(cookie)
+            logger.debug(
+                "Sending a request :: %s",
+                {
+                    "http_method": "get",
+                    "url": url,
+                },
+            )
             response = self.session.get(url)
 
         _log_error_response(logger, response)
@@ -256,6 +282,16 @@ class AnnofabApi(AbstractAnnofabApi):
         login_info = {"user_id": self.login_user_id, "password": self.login_password}
 
         url = f"{self.url_prefix}/login"
+
+        logger.debug(
+            "Sending a request :: %s",
+            {
+                "http_method": "post",
+                "url": url,
+                "request_body": _mask_confidential_info(login_info),
+            },
+        )
+
         response = self.session.post(url, json=login_info)
 
         _log_error_response(logger, response)

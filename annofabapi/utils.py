@@ -105,6 +105,37 @@ def _download(url: str, dest_path: str) -> requests.Response:
     return response
 
 
+def _mask_confidential_info(data: Any) -> Any:
+    """
+    パスワード関連の情報をマスクする。
+
+    Args:
+        data: マスク対象のデータ
+
+    Returns:
+        マスクされたデータ
+    """
+
+    def mask_key(d, key: str):
+        if key in d:
+            d[key] = "***"
+
+    if not isinstance(data, dict):
+        return data
+
+    MASKED_KEYS = {"password", "old_password", "new_password"}
+    diff = MASKED_KEYS - set(data.keys())
+    if len(diff) == len(MASKED_KEYS):
+        # マスク対象のキーがない
+        return data
+
+    copied_data = copy.deepcopy(data)
+    for key in MASKED_KEYS:
+        mask_key(copied_data, key)
+
+    return copied_data
+
+
 #########################################
 # Public Method
 #########################################

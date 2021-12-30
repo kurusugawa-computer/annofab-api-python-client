@@ -3,6 +3,7 @@ import requests
 
 from annofabapi.models import TaskPhase
 from annofabapi.utils import (
+    _mask_confidential_info,
     get_number_of_rejections,
     get_task_history_index_skipped_acceptance,
     get_task_history_index_skipped_inspection,
@@ -700,3 +701,17 @@ class TestMyBackoff:
         with pytest.raises(requests.exceptions.HTTPError):
             self.httperror_with_400(log)
         assert 1 == len(log)
+
+
+class Test___mask_confidential_info:
+    def test_data_dict(self):
+        actual = _mask_confidential_info({"foo": "1", "password": "x", "new_password": "y", "old_password": "z"})
+        assert actual == {"foo": "1", "password": "***", "new_password": "***", "old_password": "***"}
+
+    def test_data_dict2(self):
+        actual = _mask_confidential_info({"foo": "1"})
+        assert actual == {"foo": "1"}
+
+    def test_data_list(self):
+        actual = _mask_confidential_info([{"foo": "1"}])
+        assert actual == [{"foo": "1"}]
