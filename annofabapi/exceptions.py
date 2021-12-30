@@ -32,6 +32,21 @@ class AnnotationOuterFileNotFoundError(AnnofabApiException):
         super().__init__(message)
 
 
+class NotLoggedInError(AnnofabApiException):
+    """
+    ログインしていない状態で、ログインしていることが前提のwebapiを実行したときのエラー
+
+    Args:
+        outer_file_path: 存在しなかった外部ファイルのパス
+        zipfile_path: 指定した場合、「zipファイル内に外部ファイルが存在しなかった」という旨のメッセージを設定する。
+
+    """
+    def __init__(self, message: Optional[str]=None):
+        if message is None:
+            message = "You are not logged in."
+        super().__init__(message)
+
+
 class CheckSumError(AnnofabApiException):
     """
     アップロードしたデータ（ファイルやバイナリデータ）の整合性が一致していないときのエラー。

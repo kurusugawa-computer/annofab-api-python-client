@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional, Tuple
 import requests
 from requests.auth import AuthBase
 from requests.cookies import RequestsCookieJar
-
+from annofabapi.exceptions import NotLoggedInError
 from annofabapi.generated_api import AbstractAnnofabApi
 from annofabapi.utils import _log_error_response, _raise_for_status, my_backoff
 
@@ -267,7 +267,7 @@ class AnnofabApi(AbstractAnnofabApi):
         logger.debug("Logged in successfully. user_id = %s", self.login_user_id)
         return json_obj, response
 
-    def logout(self) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
+    def logout(self) -> Tuple[Dict[str, Any], requests.Response]:
         """
         ログアウト
         ログインしていないときはNoneを返す。
@@ -275,20 +275,21 @@ class AnnofabApi(AbstractAnnofabApi):
 
 
         Returns:
-            Tuple[Token, requests.Response]. ログインしていないときはNone.
+            Tuple[Token, requests.Response]
 
+        Raises:
+            NotLoggedInError: ログインしてない状態で関数を呼び出したときのエラー
         """
 
         if self.token_dict is None:
-            logger.info("You are not logged in.")
-            return None
+            raise NotLoggedInError
 
         request_body = self.token_dict
         content, response = self._request_wrapper("POST", "/logout", request_body=request_body)
         self.token_dict = None
         return content, response
 
-    def refresh_token(self) -> Optional[Tuple[Dict[str, Any], requests.Response]]:
+    def refresh_token(self) -> Tuple[Dict[str, Any], requests.Response]:
         """
         トークン リフレッシュ
         ログインしていないときはNoneを返す。
@@ -296,12 +297,15 @@ class AnnofabApi(AbstractAnnofabApi):
 
 
         Returns:
-            Tuple[Token, requests.Response]. ログインしていないときはNone.
+            Tuple[Token, requests.Response]
+
+        Raises:
+            NotLoggedInError: ログインしてない状態で関数を呼び出したときのエラー
+
         """
 
         if self.token_dict is None:
-            logger.info("You are not logged in.")
-            return None
+            raise NotLoggedInError
 
         request_body = {"refresh_token": self.token_dict["refresh_token"]}
         content, response = self._request_wrapper("POST", "/refresh-token", request_body=request_body)
