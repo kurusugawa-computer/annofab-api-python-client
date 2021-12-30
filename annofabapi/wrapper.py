@@ -1182,9 +1182,9 @@ class Wrapper:
         """statistics webapi用に、from_date, to_dateを取得する。
 
         Args:
-            project_id (str): プロジェクトID。プロジェクト作成日を取得する際に参照します。
-            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
-            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+            project_id (str): プロジェクトID。
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。
 
         Returns:
             Tuple[datetime.date, datetime.date]: [description]
@@ -1194,6 +1194,14 @@ class Wrapper:
             from_date = project["created_datetime"][0:10]  # "YYYY-MM-DD"の部分を抽出
         if to_date is None:
             to_date = str(datetime.datetime.today().date())
+
+        if from_date is None or to_date is None:
+            dates, _ = self.api.get_statistics_available_dates(project_id)
+            assert len(dates) > 0
+            if from_date is None:
+                from_date = dates[0]["from"]
+            if to_date is None:
+                to_date = dates[-1]["to"]
 
         DATE_FORMAT = "%Y-%m-%d"
         dt_from_date = datetime.datetime.strptime(from_date, DATE_FORMAT).date()
