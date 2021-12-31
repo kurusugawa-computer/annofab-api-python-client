@@ -4,7 +4,6 @@ import json
 import logging
 from functools import wraps
 from json import JSONDecodeError
-from pathlib import Path
 from typing import Any, List, Optional
 
 import backoff
@@ -90,29 +89,6 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
                 },
             },
         )
-
-
-def _download(url: str, dest_path: str) -> requests.Response:
-    """
-    HTTP GETで取得した内容をファイルに保存する（ダウンロードする）
-
-
-    Args:
-        url: ダウンロード対象のURL
-        dest_path: 保存先ファイルのパス
-
-    Returns:
-        URLにアクセスしたときのResponse情報
-
-    """
-    response = requests.get(url)
-    _raise_for_status(response)
-
-    p = Path(dest_path)
-    p.parent.mkdir(parents=True, exist_ok=True)
-    with open(dest_path, "wb") as f:
-        f.write(response.content)
-    return response
 
 
 def _create_request_body_for_logger(data: Any) -> Any:

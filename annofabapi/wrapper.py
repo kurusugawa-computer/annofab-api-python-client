@@ -1005,30 +1005,27 @@ class Wrapper:
     # Public Method : Statistics
     #########################################
     @my_backoff
-    def _request_location_header_url(self, response: requests.Response) -> Optional[Any]:
+    def _get_statistics_content(self, content: Any, response: requests.Response) -> Optional[Any]:
         """
-        Location headerに記載されているURLの中身を返す。
-
-        Args:
+        統計情報webapiのレスポンス情報に格納されているURLにアクセスして、統計情報の中身を取得する。
+        統計情報webapiのレスポンス'url'にアクセスする。
             response:
 
         Returns:
-            Location headerに記載されているURLの中身。
-            レスポンスヘッダにLocationがない場合は、Noneを返す。
-
+            統計情報の中身
         """
-        url = response.headers.get("Location")
+        url = content.get("url")
         if url is None:
-            # プロジェクト作成直後などが該当する
-            logger.warning(f"レスポンスヘッダに'Location'がありません。method={response.request.method}, url={response.request.url}")
+            # プロジェクト作成直後は contentの中身が空になる
+            logger.warning(
+                "レスポンスに'url'がないか、または'url'の値がnullです。 :: %s",
+                {"http_method": response.request.method, "url": response.request.url},
+            )
             return None
 
-        response = self._request_get_wrapper(url)
-        _log_error_response(logger, response)
-
+        response = self.api._execute_http_request(http_method="get", url=url)
         response.encoding = "utf-8"
-        _raise_for_status(response)
-        # Locationヘッダに記載されているURLの中身はJSONであること前提
+        # statistics系のURLLocationヘッダに記載されているURLの中身はJSONであること前提
         return response.json()
 
     def get_task_statistics(self, project_id: str) -> List[Any]:
@@ -1047,8 +1044,7 @@ class Wrapper:
         warnings.warn(
             "annofabapi.Wrapper.get_task_statistics() is deprecated and will be removed.", FutureWarning, stacklevel=2
         )
-        _, response = self.api.get_task_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_task_statistics(project_id))
         if result is not None:
             return result
         else:
@@ -1071,8 +1067,7 @@ class Wrapper:
             FutureWarning,
             stacklevel=2,
         )
-        _, response = self.api.get_account_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_account_statistics(project_id))
         if result is not None:
             return result
         else:
@@ -1095,8 +1090,7 @@ class Wrapper:
             FutureWarning,
             stacklevel=2,
         )
-        _, response = self.api.get_inspection_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_inspection_statistics(project_id))
         if result is not None:
             return result
         else:
@@ -1119,8 +1113,7 @@ class Wrapper:
             FutureWarning,
             stacklevel=2,
         )
-        _, response = self.api.get_task_phase_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_task_phase_statistics(project_id))
         if result is not None:
             return result
         else:
@@ -1136,8 +1129,7 @@ class Wrapper:
         Returns:
 
         """
-        _, response = self.api.get_label_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_label_statistics(project_id))
         if result is not None:
             return result
         else:
@@ -1162,8 +1154,7 @@ class Wrapper:
             FutureWarning,
             stacklevel=2,
         )
-        _, response = self.api.get_worktime_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_worktime_statistics(project_id))
         if result is not None:
             return result
         else:

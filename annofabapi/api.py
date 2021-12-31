@@ -201,6 +201,7 @@ class AnnofabApi(AbstractAnnofabApi):
         _raise_for_status(response)
         return response
 
+    @my_backoff
     def _request_wrapper(
         self,
         http_method: str,
@@ -289,13 +290,6 @@ class AnnofabApi(AbstractAnnofabApi):
 
         """
         # Sessionオブジェクトに保存されているCookieを利用して、URLにアクセスする
-        logger.debug(
-            "Sending a request :: %s",
-            {
-                "http_method": "get",
-                "url": url,
-            },
-        )
         response = self._execute_http_request("get", url)
 
         # CloudFrontから403 Errorが発生したときは、別プロジェクトのcookieを渡している可能性があるので、
