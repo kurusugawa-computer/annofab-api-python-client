@@ -47,7 +47,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
-from annofabapi.utils import _download, _log_error_response, _raise_for_status, allow_404_error, my_backoff, str_now
+from annofabapi.utils import _log_error_response, _raise_for_status, allow_404_error, my_backoff, str_now
 
 logger = logging.getLogger(__name__)
 
@@ -200,9 +200,31 @@ class Wrapper:
             kwargs_for_func_get_list["query_params"] = copied_query_params
             content, _ = func_get_list(**kwargs_for_func_get_list)
             all_objects.extend(content["list"])
-            logger.debug("calling %s :: %d/%d steps", func_get_list.__name__, content["page_no"], content["total_page_no"])
+            logger.debug(
+                "calling %s :: %d/%d steps", func_get_list.__name__, content["page_no"], content["total_page_no"]
+            )
 
         return all_objects
+
+    def _download(self, url: str, dest_path: str) -> requests.Response:
+        """
+        指定したURLからファイルをダウンロードします。
+
+        Args:
+            url: ダウンロード対象のURL
+            dest_path: 保存先ファイルのパス
+
+        Returns:
+            URLにアクセスしたときのResponse情報
+
+        """
+        response = self.api._execute_http_request(http_method="get", url=url)
+
+        p = Path(dest_path)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with open(dest_path, "wb") as f:
+            f.write(response.content)
+        return response
 
     @my_backoff
     def _request_get_wrapper(self, url: str) -> requests.Response:
@@ -241,12 +263,14 @@ class Wrapper:
             ダウンロード元のURL
 
         """
-        query_params = None
-        _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
-        url = response.headers["Location"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=simple_annotation, Last-Modified={response2.headers.get('Last-Modified')}"
+        content, _ = self.api.get_annotation_archive(project_id)
+        url = content["url"]
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "SimpleアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
@@ -269,11 +293,14 @@ class Wrapper:
             FutureWarning,
             stacklevel=2,
         )
-        _, response = self.api.get_archive_full_with_pro_id(project_id)
-        url = response.headers["Location"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=full_annotation, Last-Modified={response2.headers.get('Last-Modified')}"
+        content, _ = self.api.get_archive_full_with_pro_id(project_id)
+        url = content["url"]
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "FullアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
@@ -1606,9 +1633,12 @@ class Wrapper:
         """
         content, _ = self.api.get_project_inputs_url(project_id)
         url = content["url"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=input_data, Last-Modified={response2.headers.get('Last-Modified')}"
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "入力データ全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
@@ -1628,8 +1658,13 @@ class Wrapper:
 
         content, _ = self.api.get_project_tasks_url(project_id)
         url = content["url"]
-        response2 = _download(url, dest_path)
-        logger.debug(f"project_id='{project_id}', type=task, Last-Modified={response2.headers.get('Last-Modified')}")
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "タスク全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
+        )
         return url
 
     def download_project_inspections_url(self, project_id: str, dest_path: str) -> str:
@@ -1648,10 +1683,12 @@ class Wrapper:
 
         content, _ = self.api.get_project_inspections_url(project_id)
         url = content["url"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=inspection_comment,"
-            f"Last-Modified={response2.headers.get('Last-Modified')}"
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "検査コメント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
@@ -1671,10 +1708,12 @@ class Wrapper:
 
         content, _ = self.api.get_project_task_history_events_url(project_id)
         url = content["url"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=task_history_event, "
-            f"Last-Modified={response2.headers.get('Last-Modified')}"
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "タスク履歴イベント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
@@ -1694,9 +1733,12 @@ class Wrapper:
 
         content, _ = self.api.get_project_task_histories_url(project_id)
         url = content["url"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=task_history, Last-Modified={response2.headers.get('Last-Modified')}"
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "タスク履歴全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
