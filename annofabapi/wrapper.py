@@ -2120,8 +2120,7 @@ class Wrapper:
         jobs = self.get_all_project_job(project_id, {"type": job_type.value})
         deleted_jobs = []
         for job in jobs:
-            if job["job_status"] == "succeeded":
-                logger.debug(f"project_id='{project_id}', job_id='{job['job_id']}'のジョブを削除します。")
+            if job["job_status"] == JobStatus.SUCCEEDED.value:
                 self.api.delete_project_job(project_id, job_type=job_type.value, job_id=job["job_id"])
                 deleted_jobs.append(job)
 
@@ -2471,7 +2470,7 @@ class Wrapper:
 
                 dt_new_to_date = dt_from_date + datetime.timedelta(days=diff_days // 2)
                 dt_new_from_date = dt_new_to_date + datetime.timedelta(days=1)
-                logger.debug(
+                logger.info(
                     f"project_id='{project_id}': 取得対象の期間が広すぎるため、データを取得できませんでした。"
                     f"取得対象の期間を{from_date}~{dt_new_to_date.strftime(DATE_FORMAT)}, "
                     f"{dt_new_from_date.strftime(DATE_FORMAT)}~{to_date}に分割して、再度取得します。"
