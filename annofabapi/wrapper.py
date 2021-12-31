@@ -922,8 +922,6 @@ class Wrapper:
             http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
         )
 
-        _log_error_response(logger, res_put)
-        _raise_for_status(res_put)
 
         # アップロードしたファイルが破損していなかをチェックする
         if hasattr(data, "read"):
@@ -2099,8 +2097,6 @@ class Wrapper:
         res_put = self.api._execute_http_request(
             http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
         )
-        _log_error_response(logger, res_put)
-        _raise_for_status(res_put)
         return content["path"]
 
     #########################################
@@ -2240,12 +2236,12 @@ class Wrapper:
                 # 初回のみ
                 job = get_latest_job()
                 if job is None or job["job_status"] != JobStatus.PROGRESS.value:
-                    logger.debug("project_id='%s', job_type='%s' である進行中のジョブは存在しません。", project_id, job_type.value)
+                    logger.info("project_id='%s', job_type='%s' である進行中のジョブは存在しません。", project_id, job_type.value)
                     return None
                 job_id = job["job_id"]
 
             if job is None:
-                logger.debug(
+                logger.info(
                     "project_id='%s', job_id='%s', job_type='%s' のジョブは存在しません。", project_id, job_type.value, job_id
                 )
                 return None
@@ -2253,13 +2249,13 @@ class Wrapper:
             job_access_count += 1
 
             if job["job_status"] == JobStatus.SUCCEEDED.value:
-                logger.debug(
+                logger.info(
                     "project_id='%s', job_id='%s', job_type='%s' のジョブが成功しました。", project_id, job_id, job_type.value
                 )
                 return JobStatus.SUCCEEDED
 
             elif job["job_status"] == JobStatus.FAILED.value:
-                logger.debug(
+                logger.info(
                     "project_id='%s', job_id='%s', job_type='%s' のジョブが失敗しました。", project_id, job_id, job_type.value
                 )
                 return JobStatus.FAILED
@@ -2267,7 +2263,7 @@ class Wrapper:
             else:
                 # 進行中
                 if job_access_count < max_job_access:
-                    logger.debug(
+                    logger.info(
                         "project_id='%s', job_id='%s', job_type='%s' のジョブは進行中です。%d 秒間待ちます。",
                         project_id,
                         job_id,
@@ -2276,7 +2272,7 @@ class Wrapper:
                     )
                     time.sleep(job_access_interval)
                 else:
-                    logger.debug(
+                    logger.info(
                         "project_id='%s', job_id='%s', job_type='%s' のジョブは %.1f 分以上経過しても、終了しませんでした。",
                         project_id,
                         job["job_id"],
