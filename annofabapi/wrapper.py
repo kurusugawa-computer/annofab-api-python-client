@@ -47,7 +47,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
-from annofabapi.utils import _log_error_response, _raise_for_status, allow_404_error, my_backoff, str_now
+from annofabapi.utils import _log_error_response, _raise_for_status, allow_404_error, str_now
 
 logger = logging.getLogger(__name__)
 
@@ -226,28 +226,6 @@ class Wrapper:
             f.write(response.content)
         return response
 
-    @my_backoff
-    def _request_get_wrapper(self, url: str) -> requests.Response:
-        """
-        HTTP GETのリクエスト。
-        リトライするためにメソッドを切り出した。
-        """
-        return self.api.session.get(url)
-
-    @my_backoff
-    def _request_put_wrapper(
-        self,
-        url: str,
-        params: Optional[Dict[str, Any]] = None,
-        data: Optional[Any] = None,
-        headers: Optional[Dict[str, Any]] = None,
-    ) -> requests.Response:
-        """
-        HTTP PUTのリクエスト。
-        リトライするためにメソッドを切り出した
-        """
-        return self.api.session.put(url, params=params, data=data, headers=headers)
-
     #########################################
     # Public Method : Annotation
     #########################################
@@ -387,7 +365,7 @@ class Wrapper:
 
             try:
                 outer_file_url = detail["url"]
-                src_response = self._request_get_wrapper(outer_file_url)
+                src_response = self.api._execute_http_request("get", outer_file_url)
                 s3_path = self.upload_data_to_s3(
                     dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
                 )
@@ -940,8 +918,8 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self._request_put_wrapper(
-            url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
+        res_put = self.api._execute_http_request(
+            http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
         )
 
         _log_error_response(logger, res_put)
@@ -1004,7 +982,6 @@ class Wrapper:
     #########################################
     # Public Method : Statistics
     #########################################
-    @my_backoff
     def _get_statistics_content(self, content: Any, response: requests.Response) -> Optional[Any]:
         """
         統計情報webapiのレスポンス情報に格納されているURLにアクセスして、統計情報の中身を取得する。
@@ -2119,8 +2096,8 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self._request_put_wrapper(
-            url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
+        res_put = self.api._execute_http_request(
+            http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
         )
         _log_error_response(logger, res_put)
         _raise_for_status(res_put)

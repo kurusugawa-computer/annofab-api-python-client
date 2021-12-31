@@ -75,7 +75,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
             kwargs.update({"cookies": self.cookies})
 
             # HTTP Requestを投げる
-            response = getattr(self.api.session, http_method.lower())(url, **kwargs)
+            response = self.api.session.request(method=http_method.lower(), url=url, **kwargs)
 
             # CloudFrontから403 Errorが発生したとき
             if response.status_code == requests.codes.forbidden and response.headers.get("server") == "CloudFront":
