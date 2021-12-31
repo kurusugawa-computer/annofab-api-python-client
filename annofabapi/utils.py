@@ -5,13 +5,12 @@ import logging
 from functools import wraps
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, List, Optional
 
 import backoff
 import dateutil
 import dateutil.tz
 import requests
-from requests.structures import CaseInsensitiveDict
 
 from annofabapi.models import Task, TaskHistory, TaskHistoryShort, TaskPhase
 
@@ -53,12 +52,10 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
         response: Response
 
     """
-    RequestBodyHeader = Union[Dict[str, Any], CaseInsensitiveDict]
 
-    def mask_key(d: RequestBodyHeader, key: str) -> RequestBodyHeader:
+    def mask_key(d, key: str):
         if key in d:
             d[key] = "***"
-        return d
 
     if 400 <= response.status_code < 600:
         headers = copy.deepcopy(response.request.headers)
@@ -67,17 +64,18 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
 
         # request_bodyのpassword関係をマスクして、logに出力する
         request_body = response.request.body
+        request_body_for_logger: Optional[Any]
         if request_body is not None and request_body != "":
             try:
                 dict_request_body = json.loads(request_body)
             except JSONDecodeError:
                 request_body_for_logger = request_body
             else:
-                request_body_for_logger = _mask_confidential_info(dict_request_body)
+                request_body_for_logger = _create_request_body_for_logger(dict_request_body)
         else:
             request_body_for_logger = request_body
 
-        arg_logger.warning(
+        arg_logger.error(
             "HTTP error occurred :: %s",
             {
                 "response": {
@@ -117,15 +115,18 @@ def _download(url: str, dest_path: str) -> requests.Response:
     return response
 
 
-def _mask_confidential_info(data: Any) -> Any:
+def _create_request_body_for_logger(data: Any) -> Any:
     """
-    パスワード関連の情報をマスクする。
+    ログに出力するためのreqest_bodyを生成する。
+     * パスワードやトークンなどの機密情報をマスクする
+     * bytes型の場合は `(bytes)`と記載する。
+
 
     Args:
-        data: マスク対象のデータ
+        data: request_body
 
     Returns:
-        マスクされたデータ
+        ログ出力用のrequest_body
     """
 
     def mask_key(d, key: str):
@@ -138,7 +139,7 @@ def _mask_confidential_info(data: Any) -> Any:
         # bytes型のときは値を出力しても意味がないので、bytesであることが分かるようにする
         return "(bytes)"
 
-    MASKED_KEYS = {"password", "old_password", "new_password"}
+    MASKED_KEYS = {"password", "old_password", "new_password", "id_token", "refresh_token", "access_token"}
     diff = MASKED_KEYS - set(data.keys())
     if len(diff) == len(MASKED_KEYS):
         # マスク対象のキーがない

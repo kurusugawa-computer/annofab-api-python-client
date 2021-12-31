@@ -9,7 +9,7 @@ from requests.cookies import RequestsCookieJar
 
 from annofabapi.exceptions import NotLoggedInError
 from annofabapi.generated_api import AbstractAnnofabApi
-from annofabapi.utils import _log_error_response, _mask_confidential_info, _raise_for_status, my_backoff
+from annofabapi.utils import _create_request_body_for_logger, _log_error_response, _raise_for_status, my_backoff
 
 logger = logging.getLogger(__name__)
 
@@ -159,6 +159,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         return content
 
+    @my_backoff
     def _execute_http_request(
         self,
         http_method: str,
@@ -181,93 +182,24 @@ class AnnofabApi(AbstractAnnofabApi):
 
         """
 
-        @my_backoff
-        def execute():
-            logger.debug(
-                "Sending a request :: %s",
-                {
-                    "http_method": http_method,
-                    "url": url,
-                    "query_params": params,
-                    "request_body_json": _mask_confidential_info(json),
-                    "request_body_data": _mask_confidential_info(data),
-                    "header_params": headers,
-                },
-            )
-
-            response = self.session.request(
-                method=http_method, url=url, params=params, data=data, headers=headers, json=json, **kwargs
-            )
-            _raise_for_status(response)
-            return response
-
-        # 数回retryしてもリクエストが成功しない場合は、リクエスト情報を出力する。
-        try:
-            response = execute()
-        except requests.exceptions.HTTPError as e:
-            response = e.response
-            _log_error_response(logger, response)
-            raise e
-        return response
-
-
-
-    @my_backoff
-    def __request_wrapper2(
-        self,
-        http_method: str,
-        url_path: str,
-        query_params: Optional[dict[str, Any]] = None,
-        header_params: Optional[dict[str, Any]] = None,
-        request_body: Optional[Any] = None,
-    ) -> Any:
-        """
-        HTTP Requestを投げて、Responseを返す。
-        Args:
-            http_method:
-            url_path:
-            query_params:
-            header_params:
-            request_body:
-        Returns:
-            responseの中身。content_typeにより型が変わる。
-            application/jsonならdict型, text/*ならばstr型, それ以外ならばbite型。
-        """
-        url = f"{self.base_url}{url_path}"
-
-        kwargs = self._create_kwargs(query_params, header_params, request_body)
-
-        masked_request_body = copy.deepcopy(request_body)
-        if masked_request_body is not None:
-            _mask_password(masked_request_body)
-        # HTTP Requestを投げる
         logger.debug(
             "Sending a request :: %s",
             {
                 "http_method": http_method,
                 "url": url,
-                "query_params": query_params,
-                "header_params": header_params,
-                "request_body": masked_request_body,
+                "query_params": params,
+                "request_body_json": _create_request_body_for_logger(json),
+                "request_body_data": _create_request_body_for_logger(data),
+                "header_params": headers,
             },
         )
-        response = getattr(self.session, http_method.lower())(url, **kwargs)
 
-        # Unauthorized Errorならば、ログイン後に再度実行する
-        if response.status_code == requests.codes.unauthorized:
-            self.login()
-            return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
-
+        response = self.session.request(
+            method=http_method, url=url, params=params, data=data, headers=headers, json=json, **kwargs
+        )
         _log_error_response(logger, response)
-
-        response.encoding = "utf-8"
         _raise_for_status(response)
-
-        content = self._response_to_content(response)
-        return content
-
-
-
+        return response
 
     def _request_wrapper(
         self,
@@ -298,19 +230,28 @@ class AnnofabApi(AbstractAnnofabApi):
             url = f"{self.url_prefix}{url_path}"
 
         kwargs = self._create_kwargs(query_params, header_params, request_body)
-        if self.token_dict is not None:
-            kwargs.update({"auth": self._MyToken(self.token_dict["id_token"])})
 
-        try:
-            response = self._execute_http_request(http_method.lower(), url, **kwargs)
-        except requests.exceptions.HTTPError as e:
-            # Unauthorized Errorならば、ログイン後に再度実行する
-            if e.response.status_code == requests.codes.unauthorized:
-                self.login()
-                kwargs.update({"auth": self._MyToken(self.token_dict["id_token"])})
-                response = self._execute_http_request(http_method.lower(), url, **kwargs)
-            else:
-                raise e
+        # HTTP Requestを投げる
+        logger.debug(
+            "Sending a request :: %s",
+            {
+                "http_method": http_method.lower(),
+                "url": url,
+                "query_params": query_params,
+                "header_params": header_params,
+                "request_body": _create_request_body_for_logger(request_body) if request_body is not None else None,
+            },
+        )
+        response = self.session.request(method=http_method.lower(), url=url, **kwargs)
+
+        # Unauthorized Errorならば、ログイン後に再度実行する
+        if response.status_code == requests.codes.unauthorized:
+            self.login()
+            return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
+
+        _log_error_response(logger, response)
+
+        _raise_for_status(response)
 
         response.encoding = "utf-8"
         content = self._response_to_content(response)
@@ -355,7 +296,7 @@ class AnnofabApi(AbstractAnnofabApi):
                 "url": url,
             },
         )
-        response = self._execute_http_request("get",url)
+        response = self._execute_http_request("get", url)
 
         # CloudFrontから403 Errorが発生したときは、別プロジェクトのcookieを渡している可能性があるので、
         # Signed Cookieを発行して、再度リクエストを投げる
@@ -369,7 +310,7 @@ class AnnofabApi(AbstractAnnofabApi):
             _, r = self._get_signed_cookie(project_id, query_params=query_params)
             for cookie in r.cookies:
                 self.session.cookies.set_cookie(cookie)
-            response = self._execute_http_request("get",url)
+            response = self._execute_http_request("get", url)
 
         return response
 
