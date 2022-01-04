@@ -1,6 +1,5 @@
 from annofabapi.models import TaskPhase
 from annofabapi.utils import (
-    _create_request_body_for_logger,
     get_number_of_rejections,
     get_task_history_index_skipped_acceptance,
     get_task_history_index_skipped_inspection,
@@ -613,19 +612,3 @@ class TestTaskHistoryUtils2:
         actual = get_task_history_index_skipped_inspection(task_history_list)
         expected = []
         assert all([a == b for a, b in zip(actual, expected)])
-
-
-class Test__create_request_body_for_logger:
-    def test_data_dict(self):
-        actual = _create_request_body_for_logger(
-            {"foo": "1", "password": "x", "new_password": "y", "old_password": "z"}
-        )
-        assert actual == {"foo": "1", "password": "***", "new_password": "***", "old_password": "***"}
-
-    def test_data_dict2(self):
-        actual = _create_request_body_for_logger({"foo": "1"})
-        assert actual == {"foo": "1"}
-
-    def test_data_list(self):
-        actual = _create_request_body_for_logger([{"foo": "1"}])
-        assert actual == [{"foo": "1"}]

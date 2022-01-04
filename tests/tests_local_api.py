@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from annofabapi.api import my_backoff
+from annofabapi.api import _create_request_body_for_logger, my_backoff
 
 
 class TestMyBackoff:
@@ -86,3 +86,19 @@ class TestMyBackoff:
         with pytest.raises(requests.exceptions.HTTPError):
             self.httperror_with_400(log)
         assert 1 == len(log)
+
+
+class Test__create_request_body_for_logger:
+    def test_data_dict(self):
+        actual = _create_request_body_for_logger(
+            {"foo": "1", "password": "x", "new_password": "y", "old_password": "z"}
+        )
+        assert actual == {"foo": "1", "password": "***", "new_password": "***", "old_password": "***"}
+
+    def test_data_dict2(self):
+        actual = _create_request_body_for_logger({"foo": "1"})
+        assert actual == {"foo": "1"}
+
+    def test_data_list(self):
+        actual = _create_request_body_for_logger([{"foo": "1"}])
+        assert actual == [{"foo": "1"}]

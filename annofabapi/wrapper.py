@@ -199,9 +199,7 @@ class Wrapper:
             next_page_no = content["page_no"] + 1
             copied_query_params.update({"page": next_page_no})
             kwargs_for_func_get_list["query_params"] = copied_query_params
-            logger.debug(
-                "calling '%s' :: %d/%d steps", func_get_list.__name__, next_page_no, content["total_page_no"]
-            )
+            logger.debug("calling '%s' :: %d/%d steps", func_get_list.__name__, next_page_no, content["total_page_no"])
             content, _ = func_get_list(**kwargs_for_func_get_list)
             all_objects.extend(content["list"])
 
