@@ -47,7 +47,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
-from annofabapi.utils import _log_error_response, _raise_for_status, allow_404_error, str_now
+from annofabapi.utils import allow_404_error, str_now
 
 logger = logging.getLogger(__name__)
 
@@ -499,7 +499,9 @@ class Wrapper:
         for key, value in attributes.items():
             specs_additional_data = self.__get_additional_data_from_attribute_name(key, label_info)
             if specs_additional_data is None:
-                logger.warning("アノテーション仕様の '%s' ラベルに、attribute_name='%s' である属性が存在しません。", self.__get_label_name_en(label_info), key)
+                logger.warning(
+                    "アノテーション仕様の '%s' ラベルに、attribute_name='%s' である属性が存在しません。", self.__get_label_name_en(label_info), key
+                )
                 continue
 
             additional_data = dict(
@@ -527,7 +529,11 @@ class Wrapper:
             ]:
                 additional_data["choice"] = self._get_choice_id_from_name(value, specs_additional_data["choices"])
             else:
-                logger.warning("additional_data_type='%s'が不正です。 :: additional_data_definition_id='%s'", additional_data_type, specs_additional_data["additional_data_definition_id"])
+                logger.warning(
+                    "additional_data_type='%s'が不正です。 :: additional_data_definition_id='%s'",
+                    additional_data_type,
+                    specs_additional_data["additional_data_definition_id"],
+                )
                 continue
 
             additional_data_list.append(additional_data)
@@ -557,7 +563,7 @@ class Wrapper:
         """
         label_info = self.__get_label_info_from_label_name(detail["label"], annotation_specs_labels)
         if label_info is None:
-            logger.warning("アノテーション仕様に '%s' のラベルが存在しません。 :: project_id='%s'", {detail['label']}, project_id)
+            logger.warning("アノテーション仕様に '%s' のラベルが存在しません。 :: project_id='%s'", {detail["label"]}, project_id)
             return None
 
         additional_data_list: List[AdditionalData] = self.__to_additional_data_list(detail["attributes"], label_info)
@@ -663,7 +669,14 @@ class Wrapper:
 
         details = annotation["details"]
         if len(details) == 0:
-            logger.warning("simple_annotation_json='%s'にアノテーション情報は記載されていなかったので、アノテーションの登録処理をスキップします。 :: project_id='%s', task_id='%s', input_data_id='%s'", simple_annotation_json, project_id, task_id, input_data_id)
+            logger.warning(
+                "simple_annotation_json='%s'にアノテーション情報は記載されていなかったので、アノテーションの登録処理をスキップします。"
+                " :: project_id='%s', task_id='%s', input_data_id='%s'",
+                simple_annotation_json,
+                project_id,
+                task_id,
+                input_data_id,
+            )
             return False
 
         request_details: List[Dict[str, Any]] = []
@@ -679,7 +692,14 @@ class Wrapper:
             if request_detail is not None:
                 request_details.append(request_detail)
         if len(request_details) == 0:
-            logger.warning(f"simple_annotation_json='%s'に、登録できるアノテーションはなかったので、アノテーションの登録処理をスキップします。 :: project_id='%s', task_id='%s', input_data_id='%s'", simple_annotation_json, project_id, task_id, input_data_id)
+            logger.warning(
+                "simple_annotation_json='%s'に、登録できるアノテーションはなかったので、アノテーションの登録処理をスキップします。"
+                " :: project_id='%s', task_id='%s', input_data_id='%s'",
+                simple_annotation_json,
+                project_id,
+                task_id,
+                input_data_id,
+            )
             return False
 
         old_annotation, _ = self.api.get_editor_annotation(project_id, task_id, input_data_id)
@@ -919,7 +939,6 @@ class Wrapper:
         res_put = self.api._execute_http_request(
             http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
         )
-
 
         # アップロードしたファイルが破損していなかをチェックする
         if hasattr(data, "read"):
@@ -2092,7 +2111,7 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self.api._execute_http_request(
+        self.api._execute_http_request(
             http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
         )
         return content["path"]
