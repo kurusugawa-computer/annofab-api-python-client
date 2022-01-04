@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "annofabapi"
-version = "0.52.0"
+version = "0.52.1"
 description = "Python Clinet Library of AnnoFab WebAPI (https://annofab.com/docs/api/)"
 authors = ["yuji38kwmt"]
 license = "MIT"
@@ -41,7 +41,7 @@ more-itertools = "*"
 # format library
 isort = "*"
 autoflake = "*"
-black = {version = "^21.11b0", allow-prereleases = true}
+black = {version = "^21.12b0", allow-prereleases = true}
 
 # lint library
 flake8 = "*"
