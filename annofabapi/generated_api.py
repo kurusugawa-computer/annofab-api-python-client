@@ -62,6 +62,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def confirm_reset_email(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
@@ -88,6 +89,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def confirm_reset_password(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
@@ -114,6 +116,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def confirm_signup(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
@@ -140,6 +143,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def confirm_verify_email(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
@@ -166,6 +170,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_password_reset(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
@@ -192,6 +197,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_reset_email(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
@@ -218,6 +224,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_signup(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
@@ -243,6 +250,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_verify_email(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
@@ -269,6 +277,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -303,6 +312,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_annotation(
@@ -330,6 +340,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation/simple"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_annotation_archive(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -353,6 +364,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/archive/simple"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_annotation_list(
@@ -387,6 +399,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_archive_full_with_pro_id(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -410,6 +423,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/archive/full"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_editor_annotation(
@@ -441,6 +455,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def post_annotation_archive_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -464,6 +479,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/archive/update"
         http_method = "POST"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_annotation(
@@ -495,6 +511,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -530,6 +547,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_annotation_specs_histories(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -553,6 +571,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/annotation-specs-histories"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_annotation_specs(
@@ -582,6 +601,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -618,6 +638,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_comments(
@@ -645,6 +666,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/comments"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -679,6 +701,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def create_temp_path(
@@ -708,6 +731,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "header_params": header_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def delete_input_data(self, project_id: str, input_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -732,6 +756,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/inputs/{input_data_id}"
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_input_data(self, project_id: str, input_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -756,6 +781,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/inputs/{input_data_id}"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_input_data_list(
@@ -792,6 +818,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_input_data(
@@ -822,6 +849,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -858,6 +886,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_inspections(
@@ -885,6 +914,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/inspections"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -914,6 +944,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/instruction-images/{image_id}"
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_instruction(
@@ -943,6 +974,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_instruction_history(
@@ -972,6 +1004,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_instruction_image_url_for_put(
@@ -1002,6 +1035,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "header_params": header_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_instruction_images(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1025,6 +1059,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/instruction-images"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_instruction(
@@ -1054,6 +1089,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -1086,6 +1122,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/jobs/{job_type}/{job_id}"
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_job(
@@ -1118,6 +1155,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project_job(
@@ -1150,6 +1188,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -1181,6 +1220,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_my_account(self, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1203,6 +1243,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/my/account"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_my_member_in_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1226,6 +1267,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/my/projects/{project_id}/member"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_my_organizations(
@@ -1255,6 +1297,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_my_project_members(self, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1277,6 +1320,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/my/project-members"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_my_projects(self, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1309,6 +1353,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_my_account_delete(self, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1331,6 +1376,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/my/account/delete-request"
         http_method = "POST"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_my_account(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1357,6 +1403,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def update_organization(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1383,6 +1430,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -1414,6 +1462,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def delete_organization(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1437,6 +1486,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}"
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1460,6 +1510,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_activity(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1483,6 +1534,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}/activity"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_projects_of_organization(
@@ -1520,6 +1572,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -1552,6 +1605,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}/input_data_set/{input_data_set_id}/inputs/{input_data_id}"
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_input_data_set(
@@ -1578,6 +1632,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}/input_data_set/{input_data_set_id}"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_input_data_set_list(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1601,6 +1656,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}/input_data_set"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_input_data(
@@ -1628,6 +1684,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}/input_data_set/{input_data_set_id}/inputs/{input_data_id}"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_input_data_list(
@@ -1665,6 +1722,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_input_data_set(
@@ -1695,6 +1753,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -1730,6 +1789,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def delete_organization_member(
@@ -1756,6 +1816,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}/members/{user_id}"
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_member(self, organization_name: str, user_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1780,6 +1841,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}/members/{user_id}"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_members(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1803,6 +1865,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}/members"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def invite_organization_member(
@@ -1833,6 +1896,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def update_organization_member_role(
@@ -1863,6 +1927,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -1894,6 +1959,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}/plugins/{plugin_id}"
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_plugin(
@@ -1920,6 +1986,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}/plugins/{plugin_id}"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_plugins(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -1943,6 +2010,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/organizations/{organization_name}/plugins"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_organization_plugin(
@@ -1973,6 +2041,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -2001,6 +2070,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}"
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_of_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2024,6 +2094,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/organization"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2047,6 +2118,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project_inputs_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2070,6 +2142,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/rawdata/inputs"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project_inspections_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2093,6 +2166,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/rawdata/inspections"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project_task_histories_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2116,6 +2190,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/rawdata/task_histories"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project_task_history_events_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2145,6 +2220,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/rawdata/task_history_events"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project_tasks_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2168,6 +2244,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/rawdata/tasks"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_project_copy(
@@ -2197,6 +2274,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def post_project_inputs_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2220,6 +2298,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/rawdata/inputs"
         http_method = "POST"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def post_project_tasks_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2243,6 +2322,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/rawdata/tasks"
         http_method = "POST"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_project(
@@ -2259,7 +2339,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator, ProjectOwner
 
 
-        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。 所属組織が変更された場合バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`move-project`）。
+        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。 所属組織が変更された場合バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`move-project`）。  制限事項として、このAPIでプロジェクト状態を「初期化中」へ変更することはできません。 また、プロジェクト状態が「初期化中」の場合は、所属組織変更をおこなうことはできません。
 
         Args:
             project_id (str):  プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
@@ -2279,6 +2359,7 @@ class AbstractAnnofabApi(abc.ABC):
             "query_params": query_params,
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -2308,6 +2389,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/members/{user_id}"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project_members(
@@ -2337,6 +2419,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_project_member(
@@ -2367,6 +2450,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -2402,6 +2486,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_account_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2431,6 +2516,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/statistics/accounts"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_inspection_daily_statistics(
@@ -2461,6 +2547,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_inspection_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2490,6 +2577,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/statistics/inspections"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_label_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2513,6 +2601,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/statistics/labels"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_markers(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2536,6 +2625,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/statistics/markers"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_phase_daily_statistics(
@@ -2566,6 +2656,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_statistics_available_dates(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2589,6 +2680,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/statistics/dates"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task_daily_statistics(
@@ -2619,6 +2711,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task_phase_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2648,6 +2741,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/statistics/task-phases"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2677,6 +2771,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/statistics/tasks"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_worktime_daily_statistics(
@@ -2707,6 +2802,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_worktime_daily_statistics_by_account(
@@ -2738,6 +2834,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_worktime_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2767,6 +2864,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/statistics/worktimes"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_markers(
@@ -2796,6 +2894,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -2828,6 +2927,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/inputs/{input_data_id}/supplementary-data/{supplementary_data_id}"
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_supplementary_data_list(
@@ -2854,6 +2954,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/inputs/{input_data_id}/supplementary-data"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_supplementary_data(
@@ -2890,6 +2991,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -2924,6 +3026,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def batch_update_tasks(
@@ -2953,6 +3056,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def delete_task(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -2977,6 +3081,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/tasks/{task_id}"
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -3001,6 +3106,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/tasks/{task_id}"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task_histories(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -3025,6 +3131,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/tasks/{task_id}/histories"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_tasks(
@@ -3070,6 +3177,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def initiate_tasks_generation(
@@ -3099,6 +3207,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def operate_task(
@@ -3129,6 +3238,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def patch_tasks_metadata(
@@ -3158,6 +3268,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_task(
@@ -3188,6 +3299,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -3217,6 +3329,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/webhooks/{webhook_id}"
         http_method = "DELETE"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_webhooks(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -3240,6 +3353,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/webhooks"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_webhook(
@@ -3270,6 +3384,7 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def test_webhook(
@@ -3300,4 +3415,5 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
