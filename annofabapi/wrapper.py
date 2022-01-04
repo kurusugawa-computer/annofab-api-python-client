@@ -1407,7 +1407,9 @@ class Wrapper:
     # Public Method : Supplementary
     #########################################
 
-    def get_supplementary_data_list_or_none(self, project_id: str, input_data_id: str) -> Optional[List[Dict[str,Any]]]:
+    def get_supplementary_data_list_or_none(
+        self, project_id: str, input_data_id: str
+    ) -> Optional[List[Dict[str, Any]]]:
         """
         補助情報一覧を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
