@@ -1,0 +1,88 @@
+import pytest
+import requests
+
+from annofabapi.api import my_backoff
+
+
+class TestMyBackoff:
+    @my_backoff
+    def requestexception_connectionerror_then_true(self, log):
+        if len(log) == 2:
+            return True
+
+        if len(log) == 0:
+            e = requests.exceptions.RequestException()
+        elif len(log) == 1:
+            e = ConnectionError()
+        log.append(e)
+        raise e
+
+    def test_assert_retry(self):
+        log = []
+        assert self.requestexception_connectionerror_then_true(log) is True
+        assert 2 == len(log)
+        print(log)
+        assert type(log[0]) == requests.exceptions.RequestException
+        assert type(log[1]) == ConnectionError
+
+    @my_backoff
+    def chunkedencodingerror_requestsconnectionerror_then_true(self, log):
+        if len(log) == 2:
+            return True
+        if len(log) == 0:
+            e = requests.exceptions.ChunkedEncodingError()
+            log.append(e)
+            raise e
+        elif len(log) == 1:
+            e = requests.exceptions.ConnectionError()
+            log.append(e)
+            raise e
+
+    def test_assert_retry2(self):
+        log = []
+        assert self.chunkedencodingerror_requestsconnectionerror_then_true(log) is True
+        assert 2 == len(log)
+        print(log)
+        assert type(log[0]) == requests.exceptions.ChunkedEncodingError
+        assert type(log[1]) == requests.exceptions.ConnectionError
+
+    @my_backoff
+    def httperror_then_true(self, log):
+        if len(log) == 2:
+            return True
+        response = requests.Response()
+        if len(log) == 0:
+            response.status_code = 429
+            e = requests.exceptions.HTTPError(response=response)
+        elif len(log) == 1:
+            response.status_code = 500
+            e = requests.exceptions.HTTPError(response=response)
+        log.append(e)
+        raise e
+
+    def test_assert_retry_with_httperror(self):
+        log = []
+        assert self.httperror_then_true(log) is True
+        assert 2 == len(log)
+        print(log)
+        assert type(log[0]) == requests.exceptions.HTTPError
+        assert log[0].response.status_code == 429
+        assert type(log[1]) == requests.exceptions.HTTPError
+        assert log[1].response.status_code == 500
+
+    @my_backoff
+    def httperror_with_400(self, log):
+        if len(log) == 1:
+            return True
+        response = requests.Response()
+        if len(log) == 0:
+            response.status_code = 400
+            e = requests.exceptions.HTTPError(response=response)
+        log.append(e)
+        raise e
+
+    def test_assert_not_retry(self):
+        log = []
+        with pytest.raises(requests.exceptions.HTTPError):
+            self.httperror_with_400(log)
+        assert 1 == len(log)

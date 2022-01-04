@@ -1,20 +1,74 @@
 import json
 import logging
 import warnings
+from functools import wraps
 from typing import Any, Dict, Optional, Tuple
 
+import backoff
 import requests
 from requests.auth import AuthBase
 from requests.cookies import RequestsCookieJar
 
 from annofabapi.exceptions import NotLoggedInError
 from annofabapi.generated_api import AbstractAnnofabApi
-from annofabapi.utils import _create_request_body_for_logger, _log_error_response, _raise_for_status, my_backoff
+from annofabapi.utils import _create_request_body_for_logger, _log_error_response, _raise_for_status
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_ENDPOINT_URL = "https://annofab.com"
 """AnnoFab WebAPIのデフォルトのエンドポイントURL"""
+
+
+def _should_retry_with_status(status_code: int) -> bool:
+    """HTTP Status Codeからリトライすべきかどうかを返す。"""
+    if status_code == 429:
+        return True
+    elif 500 <= status_code < 600:
+        return True
+    else:
+        return False
+
+
+def my_backoff(function):
+    """
+    HTTP Status Codeが429 or 5XXのときはリトライする. 最大5分間リトライする。
+    """
+
+    @wraps(function)
+    def wrapped(*args, **kwargs):
+        def fatal_code(e):
+            """
+            リトライするかどうか
+            status codeが5xxのとき、またはToo many Requests(429)のときはリトライする。429以外の4XXはリトライしない
+            https://requests.kennethreitz.org/en/master/user/quickstart/#errors-and-exceptions
+
+            Args:
+                e: exception
+
+            Returns:
+                True: give up(リトライしない), False: リトライする
+
+            """
+            if isinstance(e, requests.exceptions.HTTPError):
+                if e.response is None:
+                    return True
+                return not _should_retry_with_status(e.response.status_code)
+
+            else:
+                # リトライする
+                return False
+
+        return backoff.on_exception(
+            backoff.expo,
+            (requests.exceptions.RequestException, ConnectionError),
+            jitter=backoff.full_jitter,
+            max_time=300,
+            giveup=fatal_code,
+            # loggerの名前をbackoffからannofabapiに変更する
+            logger=logger,
+        )(function)(*args, **kwargs)
+
+    return wrapped
 
 
 class AnnofabApi(AbstractAnnofabApi):
@@ -206,9 +260,11 @@ class AnnofabApi(AbstractAnnofabApi):
         self,
         http_method: str,
         url_path: str,
+        *,
         query_params: Optional[Dict[str, Any]] = None,
         header_params: Optional[Dict[str, Any]] = None,
         request_body: Optional[Any] = None,
+        raise_for_status: bool = True,
     ) -> Tuple[Any, requests.Response]:
         """
         HTTP Requestを投げて、Responseを返す。
@@ -219,10 +275,14 @@ class AnnofabApi(AbstractAnnofabApi):
             query_params:
             header_params:
             request_body:
+            raise_for_status: Trueの場合HTTP Status Codeが4XX,5XXのときはHTTPErrorをスローします。Falseの場合はtuple[None, Response]を返します。
 
         Returns:
             Tuple[content, Response]. contentはcontent_typeにより型が変わる。
             application/jsonならDict型, text/*ならばstr型, それ以外ならばbite型。
+
+        Raises:
+            HTTPError: 引数 ``raise_for_status`` がTrueで、HTTP status codeが4xxx,5xxのときにスローします。
 
         """
         if url_path.startswith("/labor-control") or url_path.startswith("/internal/"):
@@ -248,14 +308,23 @@ class AnnofabApi(AbstractAnnofabApi):
         # Unauthorized Errorならば、ログイン後に再度実行する
         if response.status_code == requests.codes.unauthorized:
             self.login()
-            return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
-
-        _log_error_response(logger, response)
-
-        _raise_for_status(response)
+            return self._request_wrapper(
+                http_method,
+                url_path,
+                query_params=query_params,
+                header_params=query_params,
+                request_body=request_body,
+                raise_for_status=raise_for_status,
+            )
 
         response.encoding = "utf-8"
         content = self._response_to_content(response)
+
+        # リトライすべき場合はExceptionを返す
+        if raise_for_status or _should_retry_with_status(response.status_code):
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+
         return content, response
 
     def _get_signed_cookie(

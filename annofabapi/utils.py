@@ -2,11 +2,9 @@ import copy
 import datetime
 import json
 import logging
-from functools import wraps
 from json import JSONDecodeError
 from typing import Any, List, Optional
 
-import backoff
 import dateutil
 import dateutil.tz
 import requests
@@ -282,90 +280,3 @@ def can_put_annotation(task: Task, my_account_id: str) -> bool:
 #########################################
 # Public Method: Decorator
 #########################################
-
-
-def my_backoff(function):
-    """
-    HTTP Status Codeが429 or 5XXのときはリトライする. 最大5分間リトライする。
-    """
-
-    @wraps(function)
-    def wrapped(*args, **kwargs):
-        def fatal_code(e):
-            """
-            リトライするかどうか
-            status codeが5xxのとき、またはToo many Requests(429)のときはリトライする。429以外の4XXはリトライしない
-            https://requests.kennethreitz.org/en/master/user/quickstart/#errors-and-exceptions
-
-            Args:
-                e: exception
-
-            Returns:
-                True: give up(リトライしない), False: リトライする
-
-            """
-            if isinstance(e, requests.exceptions.HTTPError):
-                if e.response is None:
-                    return True
-                code = e.response.status_code
-                return 400 <= code < 500 and code != 429
-
-            else:
-                # リトライする
-                return False
-
-        return backoff.on_exception(
-            backoff.expo,
-            (requests.exceptions.RequestException, ConnectionError),
-            jitter=backoff.full_jitter,
-            max_time=300,
-            giveup=fatal_code,
-            # loggerの名前をbackoffからannofabapiに変更する
-            logger=logger,
-        )(function)(*args, **kwargs)
-
-    return wrapped
-
-
-def ignore_http_error(status_code_list: List[int]):
-    """
-    HTTPErrorが発生したとき、特定のstatus codeを無視して処理するデコレータ。
-
-    Args:
-        status_code_list: 無視するhttp status codeのList
-
-    """
-
-    def decorator(function):
-        @wraps(function)
-        def wrapped(*args, **kwargs):
-            annofabapi_logger_level = logging.getLogger("annofabapi").level
-            backoff_logger_level = logging.getLogger("backoff").level
-
-            try:
-                # 不要なログが出力されないようにする
-                logging.getLogger("annofabapi").setLevel(level=logging.INFO)
-                logging.getLogger("backoff").setLevel(level=logging.CRITICAL)
-
-                return function(*args, **kwargs)
-
-            except requests.exceptions.HTTPError as e:
-                if e.response.status_code in status_code_list:
-                    return None
-                else:
-                    raise e
-            finally:
-                # ロガーの設定を元に戻す
-                logging.getLogger("annofabapi").setLevel(level=annofabapi_logger_level)
-                logging.getLogger("backoff").setLevel(level=backoff_logger_level)
-
-        return wrapped
-
-    return decorator
-
-
-allow_404_error = ignore_http_error(status_code_list=[requests.codes.not_found])
-"""
-Not Found Error(404)を無視して処理するデコレータ。
-リソースの存在確認などに利用する。
-"""

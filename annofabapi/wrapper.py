@@ -47,7 +47,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
-from annofabapi.utils import allow_404_error, str_now
+from annofabapi.utils import _log_error_response, _raise_for_status, str_now
 
 logger = logging.getLogger(__name__)
 
@@ -838,7 +838,6 @@ class Wrapper:
     #########################################
     # Public Method : Input
     #########################################
-    @allow_404_error
     def get_input_data_or_none(self, project_id: str, input_data_id: str) -> Optional[InputData]:
         """
         入力データを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -850,8 +849,14 @@ class Wrapper:
         Returns:
             入力データ
         """
-        input_data, _ = self.api.get_input_data(project_id, input_data_id)
-        return input_data
+        content, response = self.api.get_input_data(project_id, input_data_id, raise_for_status=False)
+
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def get_all_input_data_list(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None
@@ -1517,7 +1522,6 @@ class Wrapper:
     #########################################
     # Public Method : Organization
     #########################################
-    @allow_404_error
     def get_organization_or_none(self, organization_name: str) -> Optional[Organization]:
         """
         組織情報を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -1528,8 +1532,14 @@ class Wrapper:
         Returns:
             組織情報
         """
-        content, _ = self.api.get_organization(organization_name)
-        return content
+        content, response = self.api.get_organization(organization_name, raise_for_status=False)
+
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def get_all_projects_of_organization(
         self, organization_name: str, query_params: Optional[Dict[str, Any]] = None
@@ -1554,7 +1564,6 @@ class Wrapper:
     #########################################
     # Public Method : OrganizationMember
     #########################################
-    @allow_404_error
     def get_organization_member_or_none(self, organization_name: str, user_id: str) -> Optional[OrganizationMember]:
         """
         組織メンバを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -1566,8 +1575,13 @@ class Wrapper:
         Returns:
             組織メンバ
         """
-        content, _ = self.api.get_organization_member(organization_name, user_id)
-        return content
+        content, response = self.api.get_organization_member(organization_name, user_id, raise_for_status=False)
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def get_all_organization_members(self, organization_name: str) -> List[OrganizationMember]:
         """
@@ -1587,7 +1601,6 @@ class Wrapper:
     #########################################
     # Public Method : Project
     #########################################
-    @allow_404_error
     def get_project_or_none(self, project_id: str) -> Optional[Project]:
         """
         プロジェクトを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -1598,8 +1611,13 @@ class Wrapper:
         Returns:
             プロジェクト
         """
-        content, _ = self.api.get_project(project_id)
-        return content
+        content, response = self.api.get_project(project_id, raise_for_status=False)
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def download_project_inputs_url(self, project_id: str, dest_path: str) -> str:
         """
@@ -1728,7 +1746,6 @@ class Wrapper:
     #########################################
     # Public Method : ProjectMember
     #########################################
-    @allow_404_error
     def get_project_member_or_none(self, project_id: str, user_id: str) -> Optional[ProjectMember]:
         """
         プロジェクトメンバを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -1740,8 +1757,13 @@ class Wrapper:
         Returns:
             プロジェクトメンバ
         """
-        content, _ = self.api.get_project_member(project_id, user_id)
-        return content
+        content, response = self.api.get_project_member(project_id, user_id, raise_for_status=False)
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def get_all_project_members(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None
@@ -1787,7 +1809,6 @@ class Wrapper:
         }
         return self.api.initiate_tasks_generation(project_id, request_body=request_body, query_params=query_params)[0]
 
-    @allow_404_error
     def get_task_or_none(self, project_id: str, task_id: str) -> Optional[Task]:
         """
         タスクを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -1799,10 +1820,15 @@ class Wrapper:
         Returns:
             タスク
         """
-        content, _ = self.api.get_task(project_id, task_id)
-        return content
+        content, response = self.api.get_task(project_id, task_id, raise_for_status=False)
 
-    @allow_404_error
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
+
     def get_task_histories_or_none(self, project_id: str, task_id: str) -> Optional[Task]:
         """
         タスク履歴一覧を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -1814,8 +1840,13 @@ class Wrapper:
         Returns:
             タスク履歴一覧
         """
-        content, _ = self.api.get_task_histories(project_id, task_id)
-        return content
+        content, response = self.api.get_task_histories(project_id, task_id, raise_for_status=False)
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def get_all_tasks(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[Task]:
         """

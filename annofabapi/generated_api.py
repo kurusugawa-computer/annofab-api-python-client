@@ -30,6 +30,7 @@ class AbstractAnnofabApi(abc.ABC):
         query_params: Optional[Dict[str, Any]] = None,
         header_params: Optional[Dict[str, Any]] = None,
         request_body: Optional[Any] = None,
+        raise_for_status: bool = True,
     ) -> Tuple[Any, requests.Response]:
         pass
 
