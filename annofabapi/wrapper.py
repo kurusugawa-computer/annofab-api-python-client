@@ -241,8 +241,9 @@ class Wrapper:
             ダウンロード元のURL
 
         """
-        content, _ = self.api.get_annotation_archive(project_id)
-        url = content["url"]
+        # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
+        _, response = self.api.get_annotation_archive(project_id)
+        url = response.headers["Location"]
         response2 = self._download(url, dest_path)
         logger.info(
             "SimpleアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",

@@ -223,10 +223,14 @@ class AnnofabApi(AbstractAnnofabApi):
         data: Optional[Any] = None,
         json: Optional[Any] = None,  # pylint: disable=redefined-outer-name
         headers: Optional[Dict[str, Any]] = None,
+        raise_for_status: bool = True,
         **kwargs,
     ) -> requests.Response:
         """Session情報を使って、HTTP Requestを投げる。
         引数は ``requests.Session.request`` にそのまま渡す。
+
+        Args:
+            raise_for_status: Trueの場合HTTP Status Codeが4XX,5XXのときはHTTPErrorをスローします
 
         Returns:
             requests.Response: [description]
@@ -251,8 +255,12 @@ class AnnofabApi(AbstractAnnofabApi):
         response = self.session.request(
             method=http_method, url=url, params=params, data=data, headers=headers, json=json, **kwargs
         )
-        _log_error_response(logger, response)
-        _raise_for_status(response)
+
+        # リトライすべき場合はExceptionを返す
+        if raise_for_status or _should_retry_with_status(response.status_code):
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+
         return response
 
     @my_backoff
@@ -359,7 +367,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         """
         # Sessionオブジェクトに保存されているCookieを利用して、URLにアクセスする
-        response = self._execute_http_request("get", url)
+        response = self._execute_http_request("get", url, raise_for_status=False)
 
         # CloudFrontから403 Errorが発生したときは、別プロジェクトのcookieを渡している可能性があるので、
         # Signed Cookieを発行して、再度リクエストを投げる
