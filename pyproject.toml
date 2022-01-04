@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "annofabapi"
-version = "0.51.1"
+version = "0.52.0"
 description = "Python Clinet Library of AnnoFab WebAPI (https://annofab.com/docs/api/)"
 authors = ["yuji38kwmt"]
 license = "MIT"
@@ -13,7 +13,6 @@ classifiers = [
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -23,12 +22,11 @@ classifiers = [
 
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
+python = "^3.7"
 requests = "*"
 python-dateutil = "*"
 backoff="*"
 dataclasses-json="*"
-dataclasses = { version = "*", python = "<3.7" }
 
 
 [tool.poetry.dev-dependencies]
