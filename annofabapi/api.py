@@ -429,7 +429,7 @@ class AnnofabApi(AbstractAnnofabApi):
                 http_method,
                 url_path,
                 query_params=query_params,
-                header_params=query_params,
+                header_params=header_params,
                 request_body=request_body,
                 raise_for_status=raise_for_status,
             )

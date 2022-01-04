@@ -202,7 +202,7 @@ class Wrapper:
             content, _ = func_get_list(**kwargs_for_func_get_list)
             all_objects.extend(content["list"])
             logger.debug(
-                "calling %s :: %d/%d steps", func_get_list.__name__, content["page_no"], content["total_page_no"]
+                "calling '%s' :: %d/%d steps", func_get_list.__name__, content["page_no"], content["total_page_no"]
             )
 
         return all_objects
