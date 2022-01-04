@@ -5,9 +5,8 @@ import requests
 from requests.cookies import RequestsCookieJar
 
 import annofabapi.utils
-from annofabapi.api import AnnofabApi
+from annofabapi.api import AnnofabApi, _log_error_response, _raise_for_status
 from annofabapi.generated_api2 import AbstractAnnofabApi2
-from annofabapi.utils import _log_error_response, _raise_for_status
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +74,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
             kwargs.update({"cookies": self.cookies})
 
             # HTTP Requestを投げる
-            response = getattr(self.api.session, http_method.lower())(url, **kwargs)
+            response = self.api.session.request(method=http_method.lower(), url=url, **kwargs)
 
             # CloudFrontから403 Errorが発生したとき
             if response.status_code == requests.codes.forbidden and response.headers.get("server") == "CloudFront":

@@ -67,6 +67,7 @@
             'request_body': request_body,
 {{/hasBodyParam}}
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 {{/operation}}
 {{/operations}}

@@ -67,6 +67,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -102,6 +103,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_members_v2(
@@ -131,6 +133,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -165,6 +168,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_cache_by_name_v2(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -188,6 +192,7 @@ class AbstractAnnofabApi2(abc.ABC):
         url_path = f"/organizations-by-name/{organization_name}/cache"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_cache_v2(self, organization_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -211,6 +216,7 @@ class AbstractAnnofabApi2(abc.ABC):
         url_path = f"/organizations/{organization_id}/cache"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_v2(
@@ -240,6 +246,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project_task_count_v2(
@@ -266,6 +273,7 @@ class AbstractAnnofabApi2(abc.ABC):
         url_path = f"/organizations/{organization_id}/projects/{project_id}/task-counts"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -301,6 +309,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_project_members_v2(
@@ -331,6 +340,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -359,6 +369,7 @@ class AbstractAnnofabApi2(abc.ABC):
         url_path = f"/projects/{project_id}/cache"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -393,6 +404,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_inspection_statistics_v2(
@@ -422,6 +434,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_label_statistics_v2(
@@ -451,6 +464,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task_phase_statistics_v2(
@@ -480,6 +494,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_task_statistics_v2(
@@ -509,6 +524,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_worktime_statistics_v2(
@@ -538,6 +554,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
@@ -572,6 +589,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_user_cache_v2(self, account_id: str, **kwargs) -> Tuple[Any, requests.Response]:
@@ -595,6 +613,7 @@ class AbstractAnnofabApi2(abc.ABC):
         url_path = f"/users/{account_id}/cache"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_user_organizations_v2(
@@ -624,6 +643,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_user_project_members_v2(
@@ -653,6 +673,7 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_user_projects_v2(
@@ -689,4 +710,5 @@ class AbstractAnnofabApi2(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
