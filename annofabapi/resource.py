@@ -32,7 +32,7 @@ class Resource:
         #: AnnofabApi2 Instance
         self.api2 = AnnofabApi2(self.api)
 
-        logger.debug(
+        logger.info(
             "Create annofabapi resource instance :: %s", {"login_user_id": login_user_id, "endpoint_url": endpoint_url}
         )
 

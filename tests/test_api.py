@@ -17,6 +17,7 @@ from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
+from annofabapi.exceptions import NotLoggedInError
 from annofabapi.models import GraphType, ProjectJobType
 from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
@@ -300,9 +301,13 @@ class TestLogin:
 
         assert type(api.logout()[0]) == dict
 
-        assert api.refresh_token() is None, "ログアウト状態では、refresh_tokenメソッドはNoneを返す"
+        # ログアウト状態では、refresh_tokenメソッドはExceptionをスローする
+        with pytest.raises(NotLoggedInError):
+            api.refresh_token()
 
-        assert api.logout() is None, "ログアウト状態では、logoutメソッドはNoneを返す"
+        # ログアウト状態では、logoutメソッドはNoneを返す
+        with pytest.raises(NotLoggedInError):
+            api.logout()
 
 
 class TestMy:
@@ -504,7 +509,7 @@ class TestStatistics:
         assert type(api.put_markers(project_id, request_body=request_body)[0]) == dict
 
     def test_get_statistics_available_dates(self):
-        content, _ = api.s.api.get_statistics_available_dates(project_id)
+        content, _ = api.get_statistics_available_dates(project_id)
         assert type(content) == list
 
 
