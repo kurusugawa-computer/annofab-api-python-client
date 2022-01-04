@@ -529,12 +529,17 @@ class Testsupplementary:
         )
         assert type(content) == dict
 
-        supplementary_data_list = api.get_supplementary_data_list(project_id, self.input_data_id)[0]
+        supplementary_data_list = wrapper.get_supplementary_data_list_or_none(project_id, self.input_data_id)
         assert len([e for e in supplementary_data_list if e["supplementary_data_id"] == supplementary_data_id]) == 1
 
         api.delete_supplementary_data(project_id, self.input_data_id, supplementary_data_id)
         supplementary_data_list = api.get_supplementary_data_list(project_id, self.input_data_id)[0]
         assert len([e for e in supplementary_data_list if e["supplementary_data_id"] == supplementary_data_id]) == 0
+
+    # def test_wrapper_get_supplementary_data_list_or_none(self):
+    #     # 2021/01/04時点では、存在しないinput_data_idを指定すると404 Errorは発生しないので、このテストは実施しない
+    #     supplementary_data_list = wrapper.get_supplementary_data_list_or_none(project_id, "not-exists")
+    #     assert supplementary_data_list is None
 
 
 class TestTask:
