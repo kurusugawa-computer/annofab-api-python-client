@@ -20,6 +20,7 @@ import requests
 from dateutil.relativedelta import relativedelta
 
 from annofabapi import AnnofabApi
+from annofabapi.api import _log_error_response, _raise_for_status
 from annofabapi.exceptions import AnnofabApiException, CheckSumError
 from annofabapi.models import (
     AdditionalData,
@@ -47,7 +48,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
-from annofabapi.utils import _log_error_response, _raise_for_status, str_now
+from annofabapi.utils import str_now
 
 logger = logging.getLogger(__name__)
 

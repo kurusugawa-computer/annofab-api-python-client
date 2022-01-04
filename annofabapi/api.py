@@ -2,6 +2,7 @@ import json
 import logging
 import warnings
 from functools import wraps
+from json import JSONDecodeError
 from typing import Any, Dict, Optional, Tuple
 
 import backoff
@@ -11,12 +12,119 @@ from requests.cookies import RequestsCookieJar
 
 from annofabapi.exceptions import NotLoggedInError
 from annofabapi.generated_api import AbstractAnnofabApi
-from annofabapi.utils import _create_request_body_for_logger, _log_error_response, _raise_for_status
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_ENDPOINT_URL = "https://annofab.com"
 """AnnoFab WebAPIのデフォルトのエンドポイントURL"""
+
+
+def _raise_for_status(response: requests.Response) -> None:
+    """
+    HTTP Status CodeがErrorの場合、``requests.exceptions.HTTPError`` を発生させる。
+    そのとき ``response.text`` もHTTPErrorに加えて、HTTPError発生時にエラーの原因が分かるようにする。
+
+
+    Args:
+        response: Response
+
+    Raises:
+        requests.exceptions.HTTPError:
+
+    """
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        http_error_msg = f"{e.args[0]} , {response.text}"
+        e.args = (http_error_msg,)
+        raise e
+
+
+def _log_error_response(arg_logger: logging.Logger, response: requests.Response) -> None:
+    """
+    HTTP Statusが400以上ならば、loggerにresponse/request情報を出力する
+
+
+    Args:
+        arg_logger: logger
+        response: Response
+
+    """
+
+    def mask_key(d, key: str):
+        if key in d:
+            d[key] = "***"
+
+    if 400 <= response.status_code < 600:
+        headers = copy.deepcopy(response.request.headers)
+        # logにAuthorizationを出力しないようにマスクする
+        mask_key(headers, "Authorization")
+
+        # request_bodyのpassword関係をマスクして、logに出力する
+        request_body = response.request.body
+        request_body_for_logger: Optional[Any]
+        if request_body is not None and request_body != "":
+            try:
+                dict_request_body = json.loads(request_body)
+            except JSONDecodeError:
+                request_body_for_logger = request_body
+            else:
+                request_body_for_logger = _create_request_body_for_logger(dict_request_body)
+        else:
+            request_body_for_logger = request_body
+
+        arg_logger.error(
+            "HTTP error occurred :: %s",
+            {
+                "response": {
+                    "status_code": response.status_code,
+                    "text": response.text,
+                },
+                "request": {
+                    "http_method": response.request.method,
+                    "url": response.request.url,
+                    "body": request_body_for_logger,
+                    "headers": headers,
+                },
+            },
+        )
+
+
+def _create_request_body_for_logger(data: Any) -> Any:
+    """
+    ログに出力するためのreqest_bodyを生成する。
+     * パスワードやトークンなどの機密情報をマスクする
+     * bytes型の場合は `(bytes)`と記載する。
+
+
+    Args:
+        data: request_body
+
+    Returns:
+        ログ出力用のrequest_body
+    """
+
+    def mask_key(d, key: str):
+        if key in d:
+            d[key] = "***"
+
+    if not isinstance(data, dict):
+        return data
+    elif isinstance(data, bytes):
+        # bytes型のときは値を出力しても意味がないので、bytesであることが分かるようにする
+        return "(bytes)"
+
+    MASKED_KEYS = {"password", "old_password", "new_password", "id_token", "refresh_token", "access_token"}
+    diff = MASKED_KEYS - set(data.keys())
+    if len(diff) == len(MASKED_KEYS):
+        # マスク対象のキーがない
+        return data
+
+    copied_data = copy.deepcopy(data)
+    for key in MASKED_KEYS:
+        mask_key(copied_data, key)
+
+    return copied_data
 
 
 def _should_retry_with_status(status_code: int) -> bool:
