@@ -1851,7 +1851,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def get_task_histories_or_none(self, project_id: str, task_id: str) -> Optional[Task]:
+    def get_task_histories_or_none(self, project_id: str, task_id: str) -> Optional[List[Task]]:
         """
         タスク履歴一覧を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
