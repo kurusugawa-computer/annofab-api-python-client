@@ -167,7 +167,7 @@ class AnnofabApi(AbstractAnnofabApi):
         *,
         params: Optional[Dict[str, Any]] = None,
         data: Optional[Any] = None,
-        json: Optional[Any] = None,
+        json: Optional[Any] = None,  # pylint: disable=redefined-outer-name
         headers: Optional[Dict[str, Any]] = None,
         **kwargs,
     ) -> requests.Response:
