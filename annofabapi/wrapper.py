@@ -1406,6 +1406,26 @@ class Wrapper:
     #########################################
     # Public Method : Supplementary
     #########################################
+
+    def get_supplementary_data_list_or_none(self, project_id: str, input_data_id: str) -> Optional[Task]:
+        """
+        補助情報一覧を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            project_id:
+            input_data_id:
+
+        Returns:
+            補助情報一覧
+        """
+        content, response = self.api.get_supplementary_data_list(project_id, input_data_id, raise_for_status=False)
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
+
     def put_supplementary_data_from_file(
         self,
         project_id,
