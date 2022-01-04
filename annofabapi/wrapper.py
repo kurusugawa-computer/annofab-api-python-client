@@ -369,7 +369,6 @@ class Wrapper:
                 s3_path = self.upload_data_to_s3(
                     dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
                 )
-                logger.debug("project_id='%s', %s に外部アノテーションファイルをアップロードしました。", dest_project_id, s3_path)
                 dest_detail["path"] = s3_path
                 dest_detail["url"] = None
                 dest_detail["etag"] = None
@@ -439,7 +438,7 @@ class Wrapper:
         src_annotation_details: List[Dict[str, Any]] = src_annotation["details"]
 
         if len(src_annotation_details) == 0:
-            logger.debug(f"コピー元にアノテーションが１つもないため、アノテーションのコピーをスキップします。:: src='{src}'")
+            logger.warning("コピー元にアノテーションが１つもないため、アノテーションのコピーをスキップします。:: src='{src}'")
             return False
 
         old_dest_annotation, _ = self.api.get_editor_annotation(dest.project_id, dest.task_id, dest.input_data_id)
@@ -500,7 +499,7 @@ class Wrapper:
         for key, value in attributes.items():
             specs_additional_data = self.__get_additional_data_from_attribute_name(key, label_info)
             if specs_additional_data is None:
-                logger.warning(f"アノテーション仕様に attribute_name='{key}' の属性が存在しません。")
+                logger.warning("アノテーション仕様の '%s' ラベルに、attribute_name='%s' である属性が存在しません。", self.__get_label_name_en(label_info), key)
                 continue
 
             additional_data = dict(
@@ -528,7 +527,7 @@ class Wrapper:
             ]:
                 additional_data["choice"] = self._get_choice_id_from_name(value, specs_additional_data["choices"])
             else:
-                logger.warning(f"additional_data_type={additional_data_type}が不正です。")
+                logger.warning("additional_data_type='%s'が不正です。 :: additional_data_definition_id='%s'", additional_data_type, specs_additional_data["additional_data_definition_id"])
                 continue
 
             additional_data_list.append(additional_data)
@@ -558,7 +557,7 @@ class Wrapper:
         """
         label_info = self.__get_label_info_from_label_name(detail["label"], annotation_specs_labels)
         if label_info is None:
-            logger.warning(f"アノテーション仕様に '{detail['label']}' のラベルが存在しません。")
+            logger.warning("アノテーション仕様に '%s' のラベルが存在しません。 :: project_id='%s'", {detail['label']}, project_id)
             return None
 
         additional_data_list: List[AdditionalData] = self.__to_additional_data_list(detail["attributes"], label_info)
@@ -586,7 +585,6 @@ class Wrapper:
                 try:
                     s3_path = self.upload_data_to_s3(project_id, f, content_type="image/png")
                     dest_obj["path"] = s3_path
-                    logger.debug(f"project_id='{project_id}', {outer_file_path} をS3にアップロードしました。")
 
                 except CheckSumError as e:
                     message = (
@@ -665,7 +663,7 @@ class Wrapper:
 
         details = annotation["details"]
         if len(details) == 0:
-            logger.warning(f"simple_annotation_json='{simple_annotation_json}'にアノテーション情報は記載されていなかったので、スキップします。")
+            logger.warning("simple_annotation_json='%s'にアノテーション情報は記載されていなかったので、アノテーションの登録処理をスキップします。 :: project_id='%s', task_id='%s', input_data_id='%s'", simple_annotation_json, project_id, task_id, input_data_id)
             return False
 
         request_details: List[Dict[str, Any]] = []
@@ -681,7 +679,7 @@ class Wrapper:
             if request_detail is not None:
                 request_details.append(request_detail)
         if len(request_details) == 0:
-            logger.warning(f"simple_annotation_json='{simple_annotation_json}'に、登録できるアノテーションはなかったので、スキップします。")
+            logger.warning(f"simple_annotation_json='%s'に、登録できるアノテーションはなかったので、アノテーションの登録処理をスキップします。 :: project_id='%s', task_id='%s', input_data_id='%s'", simple_annotation_json, project_id, task_id, input_data_id)
             return False
 
         old_annotation, _ = self.api.get_editor_annotation(project_id, task_id, input_data_id)

@@ -172,7 +172,7 @@ class AnnofabApi(AbstractAnnofabApi):
         **kwargs,
     ) -> requests.Response:
         """Session情報を使って、HTTP Requestを投げる。
-        引数は `requests.Session.request <https://docs.python-requests.org/en/latest/api/#requests.Session.request>`_ 関数に加工せずにそのまま渡す。
+        引数は ``requests.Session.request`` にそのまま渡す。
 
         Returns:
             requests.Response: [description]
