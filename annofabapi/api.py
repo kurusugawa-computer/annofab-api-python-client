@@ -128,6 +128,35 @@ def _create_request_body_for_logger(data: Any) -> Any:
     return copied_data
 
 
+def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    ログに出力するためのquery_paramsを生成する。
+     * AWS関係のcredential情報をマスクする。
+
+    Args:
+        params: query_params
+
+    Returns:
+        ログ出力用のparams
+    """
+
+    def mask_key(d, key: str):
+        if key in d:
+            d[key] = "***"
+
+    MASKED_KEYS = {"X-Amz-Security-Token", "X-Amz-Credential"}
+    diff = MASKED_KEYS - set(params.keys())
+    if len(diff) == len(MASKED_KEYS):
+        # マスク対象のキーがない
+        return params
+
+    copied_params = copy.deepcopy(params)
+    for key in MASKED_KEYS:
+        mask_key(copied_params, key)
+
+    return copied_params
+
+
 def _should_retry_with_status(status_code: int) -> bool:
     """HTTP Status Codeからリトライすべきかどうかを返す。"""
     if status_code == 429:
@@ -359,7 +388,7 @@ class AnnofabApi(AbstractAnnofabApi):
                 "requests": {
                     "http_method": http_method,
                     "url": url,
-                    "query_params": params,
+                    "query_params": _create_query_params_for_logger(params) if params is not None else None,
                     "request_body_json": _create_request_body_for_logger(json) if json is not None else None,
                     "request_body_data": _create_request_body_for_logger(data) if data is not None else None,
                     "header_params": headers,
