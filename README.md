@@ -57,7 +57,7 @@ cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます
 
 
 # Requirements
-* Python 3.6+ 
+* Python 3.7+ 
 
 # Install
 
