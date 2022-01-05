@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.127.0
+  version: 0.131.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -2007,6 +2007,9 @@ paths:
 
         なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。
         所属組織が変更された場合バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`move-project`）。
+
+        制限事項として、このAPIでプロジェクト状態を「初期化中」へ変更することはできません。
+        また、プロジェクト状態が「初期化中」の場合は、所属組織変更をおこなうことはできません。
       security:
       - OrganizationAdministrator: []
         ProjectOwner: []
@@ -2590,6 +2593,46 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "403":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/statistics/dates:
+    get:
+      tags:
+        - af-statistics
+      summary: プロジェクト統計記録期間取得
+      description: |
+        プロジェクトの統計情報が記録されている日付期間を取得します。
+
+        日付期間とは、from（日付）からto（日付）までの連続する日付を指します。fromとtoの日付は期間に含みます。
+
+        プロジェクトが一度も停止されていない場合、プロジェクト作成日から昨日までの日付期間が一つだけ返ります。
+
+        プロジェクトを停止した場合、プロジェクトの作成日から停止した日までの日付期間が一つだけ返ります。
+
+        プロジェクトを再開した場合、統計情報が記録されない（プロジェクトの停止）期間を除いた日付期間が複数返ります。以降、プロジェクトの停止と再開を繰り返すたびに結果の日付期間が増えていきます。
+      security:
+        - AllProjectMember: []
+      operationId: getStatisticsAvailableDates
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/ArrayOfDateRanges"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/statistics/tasks/daily:
@@ -4559,6 +4602,9 @@ paths:
           in: query
           description: |
             過去のフェーズのアノテーションを取得する場合、タスク履歴IDを指定します。未指定時は最新のアノテーションを取得します。
+
+            過去のアノテーションデータは最後に保存してから30日前のデータまで取得できます。
+            30日より前のデータを取得しようとした場合はアノテーションデータは空リストとなります。
           required: false
           schema:
             $ref: "swagger-api-components.yaml#/components/schemas/TaskHistoryId"
