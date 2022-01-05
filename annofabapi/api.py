@@ -128,6 +128,35 @@ def _create_request_body_for_logger(data: Any) -> Any:
     return copied_data
 
 
+def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    ログに出力するためのquery_paramsを生成する。
+     * AWS関係のcredential情報をマスクする。
+
+    Args:
+        params: query_params
+
+    Returns:
+        ログ出力用のparams
+    """
+
+    def mask_key(d, key: str):
+        if key in d:
+            d[key] = "***"
+
+    MASKED_KEYS = {"X-Amz-Security-Token", "X-Amz-Credential"}
+    diff = MASKED_KEYS - set(params.keys())
+    if len(diff) == len(MASKED_KEYS):
+        # マスク対象のキーがない
+        return params
+
+    copied_params = copy.deepcopy(params)
+    for key in MASKED_KEYS:
+        mask_key(copied_params, key)
+
+    return copied_params
+
+
 def _should_retry_with_status(status_code: int) -> bool:
     """HTTP Status Codeからリトライすべきかどうかを返す。"""
     if status_code == 429:
@@ -348,23 +377,28 @@ class AnnofabApi(AbstractAnnofabApi):
             requests.exceptions.HTTPError: http status codeが4XXX,5XXXのとき
 
         """
-
-        logger.debug(
-            "Sending a request :: %s",
-            {
-                "http_method": http_method,
-                "url": url,
-                "query_params": params,
-                "request_body_json": _create_request_body_for_logger(json),
-                "request_body_data": _create_request_body_for_logger(data),
-                "header_params": headers,
-            },
-        )
-
         response = self.session.request(
             method=http_method, url=url, params=params, data=data, headers=headers, json=json, **kwargs
         )
 
+        # response.requestよりメソッド引数のrequest情報の方が分かりやすいので、メソッド引数のrequest情報を出力する。
+        logger.debug(
+            "Sent a request :: %s",
+            {
+                "requests": {
+                    "http_method": http_method,
+                    "url": url,
+                    "query_params": _create_query_params_for_logger(params) if params is not None else None,
+                    "request_body_json": _create_request_body_for_logger(json) if json is not None else None,
+                    "request_body_data": _create_request_body_for_logger(data) if data is not None else None,
+                    "header_params": headers,
+                },
+                "response": {
+                    "status_code": response.status_code,
+                    "content_length": len(response.content),
+                },
+            },
+        )
         # リトライすべき場合はExceptionを返す
         if raise_for_status or _should_retry_with_status(response.status_code):
             _log_error_response(logger, response)
@@ -408,19 +442,24 @@ class AnnofabApi(AbstractAnnofabApi):
             url = f"{self.url_prefix}{url_path}"
 
         kwargs = self._create_kwargs(query_params, header_params, request_body)
-
-        # HTTP Requestを投げる
+        response = self.session.request(method=http_method.lower(), url=url, **kwargs)
+        # response.requestよりメソッド引数のrequest情報の方が分かりやすいので、メソッド引数のrequest情報を出力する。
         logger.debug(
-            "Sending a request :: %s",
+            "Sent a request :: %s",
             {
-                "http_method": http_method.lower(),
-                "url": url,
-                "query_params": query_params,
-                "header_params": header_params,
-                "request_body": _create_request_body_for_logger(request_body) if request_body is not None else None,
+                "request": {
+                    "http_method": http_method.lower(),
+                    "url": url,
+                    "query_params": query_params,
+                    "header_params": header_params,
+                    "request_body": _create_request_body_for_logger(request_body) if request_body is not None else None,
+                },
+                "response": {
+                    "status_code": response.status_code,
+                    "content_length": len(response.content),
+                },
             },
         )
-        response = self.session.request(method=http_method.lower(), url=url, **kwargs)
 
         # Unauthorized Errorならば、ログイン後に再度実行する
         if response.status_code == requests.codes.unauthorized:
