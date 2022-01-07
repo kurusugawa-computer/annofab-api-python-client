@@ -896,7 +896,7 @@ python-versions = "*"
 
 [[package]]
 name = "types-requests"
-version = "2.26.3"
+version = "2.27.2"
 description = "Typing stubs for requests"
 category = "dev"
 optional = false
@@ -966,7 +966,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "199533f970de9922bc5260f775b437d30564156d16945c3e8262c388148564f1"
+content-hash = "a9c88d23dde660746c38579fedc45aeff850132ca0cd1e57274ab3dade6a846d"
 
 [metadata.files]
 alabaster = [
@@ -1455,8 +1455,8 @@ types-python-dateutil = [
     {file = "types_python_dateutil-2.8.4-py3-none-any.whl", hash = "sha256:82a6160961d7b24418eeb383a5356f262229bd1450e0ccd82ad40f8a67baaafd"},
 ]
 types-requests = [
-    {file = "types-requests-2.26.3.tar.gz", hash = "sha256:d63fa617846dcefff5aa2d59e47ab4ffd806e4bb0567115f7adbb5e438302fe4"},
-    {file = "types_requests-2.26.3-py3-none-any.whl", hash = "sha256:ad18284931c5ddbf050ccdd138f200d18fd56f88aa3567019d8da9b2d4fe0344"},
+    {file = "types-requests-2.27.2.tar.gz", hash = "sha256:c902c5433ad103053011c6ac036317ac6f6a8e8a6926fc470a8d2ef791236da7"},
+    {file = "types_requests-2.27.2-py3-none-any.whl", hash = "sha256:6158f8935981fcf65af13ecffd8493f2ffb491b9327d52fe5b8da963dfbaf583"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.0.1-py3-none-any.whl", hash = "sha256:7f001e5ac290a0c0401508864c7ec868be4e701886d5b573a9528ed3973d9d3b"},
