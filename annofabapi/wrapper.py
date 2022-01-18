@@ -20,6 +20,7 @@ import requests
 from dateutil.relativedelta import relativedelta
 
 from annofabapi import AnnofabApi
+from annofabapi.api import _log_error_response, _raise_for_status
 from annofabapi.exceptions import AnnofabApiException, CheckSumError
 from annofabapi.models import (
     AdditionalData,
@@ -47,7 +48,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
-from annofabapi.utils import _download, _log_error_response, _raise_for_status, allow_404_error, my_backoff, str_now
+from annofabapi.utils import str_now
 
 logger = logging.getLogger(__name__)
 
@@ -171,7 +172,7 @@ class Wrapper:
         """
         get_all_XXX関数の共通処理
 
-        Args:ｃ
+        Args:
             func_get_list: AnnofabApiのget_XXX関数
             limit: 1ページあたりの取得するデータ件数
             **kwargs_for_func_get_list: `func_get_list`に渡す引数。
@@ -189,9 +190,8 @@ class Wrapper:
         kwargs_for_func_get_list["query_params"] = copied_query_params
         content, _ = func_get_list(**kwargs_for_func_get_list)
 
-        logger.debug("%s %d 件 取得します。", func_get_list.__name__, content.get("total_count"))
-        if content.get("over_limit"):
-            logger.warning("検索結果が10,000件を超えてますが、Web APIの都合上10,000件までしか取得できません。")
+        if content["over_limit"]:
+            logger.warning("calling %s :: 検索結果が10,000件を超えています。Web APIの都合上10,000件までしか取得できません。", func_get_list.__name__)
 
         all_objects.extend(content["list"])
 
@@ -199,33 +199,31 @@ class Wrapper:
             next_page_no = content["page_no"] + 1
             copied_query_params.update({"page": next_page_no})
             kwargs_for_func_get_list["query_params"] = copied_query_params
+            logger.debug("calling '%s' :: %d/%d steps", func_get_list.__name__, next_page_no, content["total_page_no"])
             content, _ = func_get_list(**kwargs_for_func_get_list)
             all_objects.extend(content["list"])
-            logger.debug("%s %d / %d page", func_get_list.__name__, content["page_no"], content["total_page_no"])
 
         return all_objects
 
-    @my_backoff
-    def _request_get_wrapper(self, url: str) -> requests.Response:
+    def _download(self, url: str, dest_path: str) -> requests.Response:
         """
-        HTTP GETのリクエスト。
-        リトライするためにメソッドを切り出した。
-        """
-        return self.api.session.get(url)
+        指定したURLからファイルをダウンロードします。
 
-    @my_backoff
-    def _request_put_wrapper(
-        self,
-        url: str,
-        params: Optional[Dict[str, Any]] = None,
-        data: Optional[Any] = None,
-        headers: Optional[Dict[str, Any]] = None,
-    ) -> requests.Response:
+        Args:
+            url: ダウンロード対象のURL
+            dest_path: 保存先ファイルのパス
+
+        Returns:
+            URLにアクセスしたときのResponse情報
+
         """
-        HTTP PUTのリクエスト。
-        リトライするためにメソッドを切り出した
-        """
-        return self.api.session.put(url, params=params, data=data, headers=headers)
+        response = self.api._execute_http_request(http_method="get", url=url)
+
+        p = Path(dest_path)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with open(dest_path, "wb") as f:
+            f.write(response.content)
+        return response
 
     #########################################
     # Public Method : Annotation
@@ -242,12 +240,15 @@ class Wrapper:
             ダウンロード元のURL
 
         """
-        query_params = None
-        _, response = self.api.get_annotation_archive(project_id, query_params=query_params)
+        # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
+        _, response = self.api.get_annotation_archive(project_id)
         url = response.headers["Location"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=simple_annotation, Last-Modified={response2.headers.get('Last-Modified')}"
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "SimpleアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
@@ -270,11 +271,14 @@ class Wrapper:
             FutureWarning,
             stacklevel=2,
         )
-        _, response = self.api.get_archive_full_with_pro_id(project_id)
-        url = response.headers["Location"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=full_annotation, Last-Modified={response2.headers.get('Last-Modified')}"
+        content, _ = self.api.get_archive_full_with_pro_id(project_id)
+        url = content["url"]
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "FullアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
@@ -361,11 +365,10 @@ class Wrapper:
 
             try:
                 outer_file_url = detail["url"]
-                src_response = self._request_get_wrapper(outer_file_url)
+                src_response = self.api._execute_http_request("get", outer_file_url)
                 s3_path = self.upload_data_to_s3(
                     dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
                 )
-                logger.debug("project_id='%s', %s に外部アノテーションファイルをアップロードしました。", dest_project_id, s3_path)
                 dest_detail["path"] = s3_path
                 dest_detail["url"] = None
                 dest_detail["etag"] = None
@@ -437,7 +440,7 @@ class Wrapper:
         src_annotation_details: List[Dict[str, Any]] = src_annotation["details"]
 
         if len(src_annotation_details) == 0:
-            logger.debug(f"コピー元にアノテーションが１つもないため、アノテーションのコピーをスキップします。:: src='{src}'")
+            logger.warning("コピー元にアノテーションが１つもないため、アノテーションのコピーをスキップします。:: src='{src}'")
             return False
 
         old_dest_annotation, _ = self.api.get_editor_annotation(dest.project_id, dest.task_id, dest.input_data_id)
@@ -498,7 +501,9 @@ class Wrapper:
         for key, value in attributes.items():
             specs_additional_data = self.__get_additional_data_from_attribute_name(key, label_info)
             if specs_additional_data is None:
-                logger.warning(f"アノテーション仕様に attribute_name='{key}' の属性が存在しません。")
+                logger.warning(
+                    "アノテーション仕様の '%s' ラベルに、attribute_name='%s' である属性が存在しません。", self.__get_label_name_en(label_info), key
+                )
                 continue
 
             additional_data = dict(
@@ -526,7 +531,11 @@ class Wrapper:
             ]:
                 additional_data["choice"] = self._get_choice_id_from_name(value, specs_additional_data["choices"])
             else:
-                logger.warning(f"additional_data_type={additional_data_type}が不正です。")
+                logger.warning(
+                    "additional_data_type='%s'が不正です。 :: additional_data_definition_id='%s'",
+                    additional_data_type,
+                    specs_additional_data["additional_data_definition_id"],
+                )
                 continue
 
             additional_data_list.append(additional_data)
@@ -556,7 +565,7 @@ class Wrapper:
         """
         label_info = self.__get_label_info_from_label_name(detail["label"], annotation_specs_labels)
         if label_info is None:
-            logger.warning(f"アノテーション仕様に '{detail['label']}' のラベルが存在しません。")
+            logger.warning("アノテーション仕様に '%s' のラベルが存在しません。 :: project_id='%s'", {detail["label"]}, project_id)
             return None
 
         additional_data_list: List[AdditionalData] = self.__to_additional_data_list(detail["attributes"], label_info)
@@ -584,7 +593,6 @@ class Wrapper:
                 try:
                     s3_path = self.upload_data_to_s3(project_id, f, content_type="image/png")
                     dest_obj["path"] = s3_path
-                    logger.debug(f"project_id='{project_id}', {outer_file_path} をS3にアップロードしました。")
 
                 except CheckSumError as e:
                     message = (
@@ -663,7 +671,14 @@ class Wrapper:
 
         details = annotation["details"]
         if len(details) == 0:
-            logger.warning(f"simple_annotation_json='{simple_annotation_json}'にアノテーション情報は記載されていなかったので、スキップします。")
+            logger.warning(
+                "simple_annotation_json='%s'にアノテーション情報は記載されていなかったので、アノテーションの登録処理をスキップします。"
+                " :: project_id='%s', task_id='%s', input_data_id='%s'",
+                simple_annotation_json,
+                project_id,
+                task_id,
+                input_data_id,
+            )
             return False
 
         request_details: List[Dict[str, Any]] = []
@@ -679,7 +694,14 @@ class Wrapper:
             if request_detail is not None:
                 request_details.append(request_detail)
         if len(request_details) == 0:
-            logger.warning(f"simple_annotation_json='{simple_annotation_json}'に、登録できるアノテーションはなかったので、スキップします。")
+            logger.warning(
+                "simple_annotation_json='%s'に、登録できるアノテーションはなかったので、アノテーションの登録処理をスキップします。"
+                " :: project_id='%s', task_id='%s', input_data_id='%s'",
+                simple_annotation_json,
+                project_id,
+                task_id,
+                input_data_id,
+            )
             return False
 
         old_annotation, _ = self.api.get_editor_annotation(project_id, task_id, input_data_id)
@@ -818,7 +840,6 @@ class Wrapper:
     #########################################
     # Public Method : Input
     #########################################
-    @allow_404_error
     def get_input_data_or_none(self, project_id: str, input_data_id: str) -> Optional[InputData]:
         """
         入力データを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -830,8 +851,14 @@ class Wrapper:
         Returns:
             入力データ
         """
-        input_data, _ = self.api.get_input_data(project_id, input_data_id)
-        return input_data
+        content, response = self.api.get_input_data(project_id, input_data_id, raise_for_status=False)
+
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def get_all_input_data_list(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None
@@ -916,12 +943,9 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self._request_put_wrapper(
-            url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
+        res_put = self.api._execute_http_request(
+            http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
         )
-
-        _log_error_response(logger, res_put)
-        _raise_for_status(res_put)
 
         # アップロードしたファイルが破損していなかをチェックする
         if hasattr(data, "read"):
@@ -980,31 +1004,27 @@ class Wrapper:
     #########################################
     # Public Method : Statistics
     #########################################
-    @my_backoff
-    def _request_location_header_url(self, response: requests.Response) -> Optional[Any]:
+    def _get_statistics_content(self, content: Any, response: requests.Response) -> Optional[Any]:
         """
-        Location headerに記載されているURLの中身を返す。
-
-        Args:
+        統計情報webapiのレスポンス情報に格納されているURLにアクセスして、統計情報の中身を取得する。
+        統計情報webapiのレスポンス'url'にアクセスする。
             response:
 
         Returns:
-            Location headerに記載されているURLの中身。
-            レスポンスヘッダにLocationがない場合は、Noneを返す。
-
+            統計情報の中身
         """
-        url = response.headers.get("Location")
+        url = content.get("url")
         if url is None:
-            # プロジェクト作成直後などが該当する
-            logger.warning(f"レスポンスヘッダに'Location'がありません。method={response.request.method}, url={response.request.url}")
+            # プロジェクト作成直後は contentの中身が空になる
+            logger.warning(
+                "レスポンスに'url'がないか、または'url'の値がnullです。 :: %s",
+                {"http_method": response.request.method, "url": response.request.url},
+            )
             return None
 
-        response = self._request_get_wrapper(url)
-        _log_error_response(logger, response)
-
+        response = self.api._execute_http_request(http_method="get", url=url)
         response.encoding = "utf-8"
-        _raise_for_status(response)
-        # Locationヘッダに記載されているURLの中身はJSONであること前提
+        # statistics系のURLLocationヘッダに記載されているURLの中身はJSONであること前提
         return response.json()
 
     def get_task_statistics(self, project_id: str) -> List[Any]:
@@ -1023,8 +1043,7 @@ class Wrapper:
         warnings.warn(
             "annofabapi.Wrapper.get_task_statistics() is deprecated and will be removed.", FutureWarning, stacklevel=2
         )
-        _, response = self.api.get_task_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_task_statistics(project_id))
         if result is not None:
             return result
         else:
@@ -1047,8 +1066,7 @@ class Wrapper:
             FutureWarning,
             stacklevel=2,
         )
-        _, response = self.api.get_account_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_account_statistics(project_id))
         if result is not None:
             return result
         else:
@@ -1071,8 +1089,7 @@ class Wrapper:
             FutureWarning,
             stacklevel=2,
         )
-        _, response = self.api.get_inspection_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_inspection_statistics(project_id))
         if result is not None:
             return result
         else:
@@ -1095,8 +1112,7 @@ class Wrapper:
             FutureWarning,
             stacklevel=2,
         )
-        _, response = self.api.get_task_phase_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_task_phase_statistics(project_id))
         if result is not None:
             return result
         else:
@@ -1112,8 +1128,7 @@ class Wrapper:
         Returns:
 
         """
-        _, response = self.api.get_label_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_label_statistics(project_id))
         if result is not None:
             return result
         else:
@@ -1138,8 +1153,7 @@ class Wrapper:
             FutureWarning,
             stacklevel=2,
         )
-        _, response = self.api.get_worktime_statistics(project_id)
-        result = self._request_location_header_url(response)
+        result = self._get_statistics_content(*self.api.get_worktime_statistics(project_id))
         if result is not None:
             return result
         else:
@@ -1184,9 +1198,9 @@ class Wrapper:
         """statistics webapi用に、from_date, to_dateを取得する。
 
         Args:
-            project_id (str): プロジェクトID。プロジェクト作成日を取得する際に参照します。
-            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。Noneの場合は、プロジェクト作成日を開始日とみなします。
-            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。Noneの場合は、今日の日付を終了日とみなします。
+            project_id (str): プロジェクトID。
+            from_date (Optional[str]): 取得する統計の区間の開始日(YYYY-MM-DD)。
+            to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。
 
         Returns:
             Tuple[datetime.date, datetime.date]: [description]
@@ -1196,6 +1210,14 @@ class Wrapper:
             from_date = project["created_datetime"][0:10]  # "YYYY-MM-DD"の部分を抽出
         if to_date is None:
             to_date = str(datetime.datetime.today().date())
+
+        if from_date is None or to_date is None:
+            dates, _ = self.api.get_statistics_available_dates(project_id)
+            assert len(dates) > 0
+            if from_date is None:
+                from_date = dates[0]["from"]
+            if to_date is None:
+                to_date = dates[-1]["to"]
 
         DATE_FORMAT = "%Y-%m-%d"
         dt_from_date = datetime.datetime.strptime(from_date, DATE_FORMAT).date()
@@ -1386,6 +1408,28 @@ class Wrapper:
     #########################################
     # Public Method : Supplementary
     #########################################
+
+    def get_supplementary_data_list_or_none(
+        self, project_id: str, input_data_id: str
+    ) -> Optional[List[Dict[str, Any]]]:
+        """
+        補助情報一覧を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
+
+        Args:
+            project_id:
+            input_data_id:
+
+        Returns:
+            補助情報一覧
+        """
+        content, response = self.api.get_supplementary_data_list(project_id, input_data_id, raise_for_status=False)
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
+
     def put_supplementary_data_from_file(
         self,
         project_id,
@@ -1502,7 +1546,6 @@ class Wrapper:
     #########################################
     # Public Method : Organization
     #########################################
-    @allow_404_error
     def get_organization_or_none(self, organization_name: str) -> Optional[Organization]:
         """
         組織情報を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -1513,8 +1556,14 @@ class Wrapper:
         Returns:
             組織情報
         """
-        content, _ = self.api.get_organization(organization_name)
-        return content
+        content, response = self.api.get_organization(organization_name, raise_for_status=False)
+
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def get_all_projects_of_organization(
         self, organization_name: str, query_params: Optional[Dict[str, Any]] = None
@@ -1539,7 +1588,6 @@ class Wrapper:
     #########################################
     # Public Method : OrganizationMember
     #########################################
-    @allow_404_error
     def get_organization_member_or_none(self, organization_name: str, user_id: str) -> Optional[OrganizationMember]:
         """
         組織メンバを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -1551,8 +1599,13 @@ class Wrapper:
         Returns:
             組織メンバ
         """
-        content, _ = self.api.get_organization_member(organization_name, user_id)
-        return content
+        content, response = self.api.get_organization_member(organization_name, user_id, raise_for_status=False)
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def get_all_organization_members(self, organization_name: str) -> List[OrganizationMember]:
         """
@@ -1572,7 +1625,6 @@ class Wrapper:
     #########################################
     # Public Method : Project
     #########################################
-    @allow_404_error
     def get_project_or_none(self, project_id: str) -> Optional[Project]:
         """
         プロジェクトを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -1583,8 +1635,13 @@ class Wrapper:
         Returns:
             プロジェクト
         """
-        content, _ = self.api.get_project(project_id)
-        return content
+        content, response = self.api.get_project(project_id, raise_for_status=False)
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def download_project_inputs_url(self, project_id: str, dest_path: str) -> str:
         """
@@ -1601,9 +1658,12 @@ class Wrapper:
         """
         content, _ = self.api.get_project_inputs_url(project_id)
         url = content["url"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=input_data, Last-Modified={response2.headers.get('Last-Modified')}"
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "入力データ全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
@@ -1623,8 +1683,13 @@ class Wrapper:
 
         content, _ = self.api.get_project_tasks_url(project_id)
         url = content["url"]
-        response2 = _download(url, dest_path)
-        logger.debug(f"project_id='{project_id}', type=task, Last-Modified={response2.headers.get('Last-Modified')}")
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "タスク全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
+        )
         return url
 
     def download_project_inspections_url(self, project_id: str, dest_path: str) -> str:
@@ -1643,10 +1708,12 @@ class Wrapper:
 
         content, _ = self.api.get_project_inspections_url(project_id)
         url = content["url"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=inspection_comment,"
-            f"Last-Modified={response2.headers.get('Last-Modified')}"
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "検査コメント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
@@ -1666,10 +1733,12 @@ class Wrapper:
 
         content, _ = self.api.get_project_task_history_events_url(project_id)
         url = content["url"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=task_history_event, "
-            f"Last-Modified={response2.headers.get('Last-Modified')}"
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "タスク履歴イベント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
@@ -1689,16 +1758,18 @@ class Wrapper:
 
         content, _ = self.api.get_project_task_histories_url(project_id)
         url = content["url"]
-        response2 = _download(url, dest_path)
-        logger.debug(
-            f"project_id='{project_id}', type=task_history, Last-Modified={response2.headers.get('Last-Modified')}"
+        response2 = self._download(url, dest_path)
+        logger.info(
+            "タスク履歴全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response2.headers.get("Last-Modified"),
+            dest_path,
         )
         return url
 
     #########################################
     # Public Method : ProjectMember
     #########################################
-    @allow_404_error
     def get_project_member_or_none(self, project_id: str, user_id: str) -> Optional[ProjectMember]:
         """
         プロジェクトメンバを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -1710,8 +1781,13 @@ class Wrapper:
         Returns:
             プロジェクトメンバ
         """
-        content, _ = self.api.get_project_member(project_id, user_id)
-        return content
+        content, response = self.api.get_project_member(project_id, user_id, raise_for_status=False)
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def get_all_project_members(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None
@@ -1757,7 +1833,6 @@ class Wrapper:
         }
         return self.api.initiate_tasks_generation(project_id, request_body=request_body, query_params=query_params)[0]
 
-    @allow_404_error
     def get_task_or_none(self, project_id: str, task_id: str) -> Optional[Task]:
         """
         タスクを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
@@ -1769,11 +1844,16 @@ class Wrapper:
         Returns:
             タスク
         """
-        content, _ = self.api.get_task(project_id, task_id)
-        return content
+        content, response = self.api.get_task(project_id, task_id, raise_for_status=False)
 
-    @allow_404_error
-    def get_task_histories_or_none(self, project_id: str, task_id: str) -> Optional[Task]:
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
+
+    def get_task_histories_or_none(self, project_id: str, task_id: str) -> Optional[List[Task]]:
         """
         タスク履歴一覧を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
@@ -1784,8 +1864,13 @@ class Wrapper:
         Returns:
             タスク履歴一覧
         """
-        content, _ = self.api.get_task_histories(project_id, task_id)
-        return content
+        content, response = self.api.get_task_histories(project_id, task_id, raise_for_status=False)
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
 
     def get_all_tasks(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[Task]:
         """
@@ -2081,11 +2166,9 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self._request_put_wrapper(
-            url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
+        self.api._execute_http_request(
+            http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
         )
-        _log_error_response(logger, res_put)
-        _raise_for_status(res_put)
         return content["path"]
 
     #########################################
@@ -2105,8 +2188,7 @@ class Wrapper:
         jobs = self.get_all_project_job(project_id, {"type": job_type.value})
         deleted_jobs = []
         for job in jobs:
-            if job["job_status"] == "succeeded":
-                logger.debug(f"project_id='{project_id}', job_id='{job['job_id']}'のジョブを削除します。")
+            if job["job_status"] == JobStatus.SUCCEEDED.value:
                 self.api.delete_project_job(project_id, job_type=job_type.value, job_id=job["job_id"])
                 deleted_jobs.append(job)
 
@@ -2226,12 +2308,12 @@ class Wrapper:
                 # 初回のみ
                 job = get_latest_job()
                 if job is None or job["job_status"] != JobStatus.PROGRESS.value:
-                    logger.debug("project_id='%s', job_type='%s' である進行中のジョブは存在しません。", project_id, job_type.value)
+                    logger.info("project_id='%s', job_type='%s' である進行中のジョブは存在しません。", project_id, job_type.value)
                     return None
                 job_id = job["job_id"]
 
             if job is None:
-                logger.debug(
+                logger.info(
                     "project_id='%s', job_id='%s', job_type='%s' のジョブは存在しません。", project_id, job_type.value, job_id
                 )
                 return None
@@ -2239,13 +2321,13 @@ class Wrapper:
             job_access_count += 1
 
             if job["job_status"] == JobStatus.SUCCEEDED.value:
-                logger.debug(
+                logger.info(
                     "project_id='%s', job_id='%s', job_type='%s' のジョブが成功しました。", project_id, job_id, job_type.value
                 )
                 return JobStatus.SUCCEEDED
 
             elif job["job_status"] == JobStatus.FAILED.value:
-                logger.debug(
+                logger.info(
                     "project_id='%s', job_id='%s', job_type='%s' のジョブが失敗しました。", project_id, job_id, job_type.value
                 )
                 return JobStatus.FAILED
@@ -2253,7 +2335,7 @@ class Wrapper:
             else:
                 # 進行中
                 if job_access_count < max_job_access:
-                    logger.debug(
+                    logger.info(
                         "project_id='%s', job_id='%s', job_type='%s' のジョブは進行中です。%d 秒間待ちます。",
                         project_id,
                         job_id,
@@ -2262,7 +2344,7 @@ class Wrapper:
                     )
                     time.sleep(job_access_interval)
                 else:
-                    logger.debug(
+                    logger.info(
                         "project_id='%s', job_id='%s', job_type='%s' のジョブは %.1f 分以上経過しても、終了しませんでした。",
                         project_id,
                         job["job_id"],
@@ -2456,7 +2538,7 @@ class Wrapper:
 
                 dt_new_to_date = dt_from_date + datetime.timedelta(days=diff_days // 2)
                 dt_new_from_date = dt_new_to_date + datetime.timedelta(days=1)
-                logger.debug(
+                logger.info(
                     f"project_id='{project_id}': 取得対象の期間が広すぎるため、データを取得できませんでした。"
                     f"取得対象の期間を{from_date}~{dt_new_to_date.strftime(DATE_FORMAT)}, "
                     f"{dt_new_from_date.strftime(DATE_FORMAT)}~{to_date}に分割して、再度取得します。"

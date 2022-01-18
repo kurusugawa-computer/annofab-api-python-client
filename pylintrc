@@ -1,6 +1,5 @@
 [pylint]
 disable =
-    logging-fstring-interpolation,
 # ===== May not modify =====
     fixme, # TODO remains
     line-too-long, # [flake8]
@@ -38,5 +37,6 @@ disable =
     protected-access,
     f-string-without-interpolation, # f-stringに変数を使わない場合もあるため
     C0330,
+    logging-fstring-interpolation
 
 ignored-argument-names=arg|args|kwargs

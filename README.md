@@ -1,7 +1,7 @@
 # annofab-api-python-client
 [AnnoFab Web API](https://annofab.com/docs/api/) のPythonクライアントライブラリです。
 
-[![Build Status](https://travis-ci.com/kurusugawa-computer/annofab-api-python-client.svg?branch=master)](https://travis-ci.com/kurusugawa-computer/annofab-api-python-client)
+[![Build Status](https://app.travis-ci.com/kurusugawa-computer/annofab-api-python-client.svg?branch=master)](https://app.travis-ci.com/kurusugawa-computer/annofab-api-python-client)
 [![CodeQL](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml)
 [![PyPI version](https://badge.fury.io/py/annofabapi.svg)](https://badge.fury.io/py/annofabapi)
 [![Python Versions](https://img.shields.io/pypi/pyversions/annofabapi.svg)](https://pypi.org/project/annofabapi/)
@@ -26,9 +26,6 @@
  
 # 廃止予定
 
-
-### 2022-01-01 以降
-* Python3.6のサポートを停止し、対応するPythonバージョンを3.7以上にします。
 
 ### 2022-02-01 以降
 * 以下の関数を非推奨にします。WebAPIが将来的に廃止されるためです。
@@ -60,7 +57,7 @@ cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます
 
 
 # Requirements
-* Python 3.6+ 
+* Python 3.7+ 
 
 # Install
 
