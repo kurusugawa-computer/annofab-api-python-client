@@ -30,7 +30,6 @@ class AbstractAnnofabApi(abc.ABC):
         query_params: Optional[Dict[str, Any]] = None,
         header_params: Optional[Dict[str, Any]] = None,
         request_body: Optional[Any] = None,
-        raise_for_status: bool = True,
     ) -> Tuple[Any, requests.Response]:
         pass
 
@@ -1411,6 +1410,7 @@ class AbstractAnnofabApi(abc.ABC):
         """組織名変更
         https://annofab.com/docs/api/#operation/updateOrganization
 
+        .. deprecated:: X
 
         authorizations: OrganizationOwner
 
@@ -1419,13 +1419,18 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             request_body (Any): Request Body
-                put_organization_name_request (PutOrganizationNameRequest):  (required)
+                update_organization_name_request (UpdateOrganizationNameRequest):  (required)
 
         Returns:
             Tuple[Organization, requests.Response]
 
 
         """
+        warnings.warn(
+            "annofabapi.AnnofabApi.update_organization() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         url_path = f"/my/organizations"
         http_method = "PUT"
         keyword_params: Dict[str, Any] = {
@@ -1572,6 +1577,36 @@ class AbstractAnnofabApi(abc.ABC):
         http_method = "GET"
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
+        }
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def put_organization(
+        self, organization_name: str, request_body: Optional[Any] = None, **kwargs
+    ) -> Tuple[Any, requests.Response]:
+        """組織情報更新
+        https://annofab.com/docs/api/#operation/putOrganization
+
+
+        authorizations: OrganizationOwner
+
+
+        同じ name の組織が既に存在する場合は失敗(400)します。
+
+        Args:
+            organization_name (str):  組織名。組織名を変更する場合は現在の組織名と異なる値を指定します。 同じ名前の組織が既に存在する場合は失敗(400)します。  (required)
+            request_body (Any): Request Body
+                put_organization_request (PutOrganizationRequest):  (required)
+
+        Returns:
+            Tuple[Organization, requests.Response]
+
+
+        """
+        url_path = f"/organizations/{organization_name}"
+        http_method = "PUT"
+        keyword_params: Dict[str, Any] = {
+            "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)

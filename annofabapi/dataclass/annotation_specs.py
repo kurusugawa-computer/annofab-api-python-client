@@ -309,7 +309,7 @@ class LabelV1(DataClassJsonMixin):
     """"""
 
     allow_out_of_image_bounds: Optional[bool]
-    """"""
+    """枠内制御がなくなったため値の設定は出来ません。値の取得では、必ず`true`が入ります。[廃止](/docs/releases/deprecation-announcements.html#notice25)までは互換性のため残されています。 """
 
     metadata: Optional[Dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
@@ -347,7 +347,7 @@ class LabelV2(DataClassJsonMixin):
     """"""
 
     allow_out_of_image_bounds: Optional[bool]
-    """"""
+    """枠内制御がなくなったため値の設定は出来ません。値の取得では、必ず`true`が入ります。[廃止](/docs/releases/deprecation-announcements.html#notice25)までは互換性のため残されています。 """
 
     metadata: Optional[Dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """

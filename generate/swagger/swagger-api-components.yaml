@@ -958,7 +958,18 @@ components:
           format: email
         price_plan:
           $ref: "#/components/schemas/PricePlan"
-    PutOrganizationNameRequest:
+    PutOrganizationRequest:
+      type: object
+      required:
+        - organization_name
+        - last_updated_datetime
+      properties:
+        organization_name:
+          $ref: "#/components/schemas/OrganizationName"
+        last_updated_datetime:
+          type: string
+          format: date-time
+    UpdateOrganizationNameRequest:
       type: object
       required:
         - organization_id
@@ -1148,6 +1159,7 @@ components:
       enum:
         - active
         - suspended
+        - initializing
       description: |
         プロジェクトの状態
         * `active` - プロジェクトが進行中
@@ -1650,7 +1662,7 @@ components:
           description: |
             「Webhook」をコピーするかどうかを指定します。
           default: false
-        copy_supplementaly_data:
+        copy_supplementary_data:
           type: boolean
           description: |
             「補助情報」をコピーするかどうかを指定します。
@@ -2550,7 +2562,9 @@ components:
           $ref: "#/components/schemas/AnnotationEditorFeature"
         allow_out_of_image_bounds:
           type: boolean
-          default: false
+          deprecated: true
+          description: |
+            枠内制御がなくなったため値の設定は出来ません。値の取得では、必ず`true`が入ります。[廃止](/docs/releases/deprecation-announcements.html#notice25)までは互換性のため残されています。
         metadata:
           type: object
           description: |
@@ -2638,7 +2652,9 @@ components:
           $ref: "#/components/schemas/AnnotationEditorFeature"
         allow_out_of_image_bounds:
           type: boolean
-          default: false
+          deprecated: true
+          description: |
+            枠内制御がなくなったため値の設定は出来ません。値の取得では、必ず`true`が入ります。[廃止](/docs/releases/deprecation-announcements.html#notice25)までは互換性のため残されています。
         metadata:
           type: object
           description: |
@@ -5135,7 +5151,6 @@ components:
         - $ref: "#/components/schemas/InvalidChoice"
         - $ref: "#/components/schemas/Duplicated"
         - $ref: "#/components/schemas/UnknownAdditionalData"
-        - $ref: "#/components/schemas/OutOfImageBounds"
         - $ref: "#/components/schemas/OverlappedRangeAnnotation"
         - $ref: "#/components/schemas/UnknownLabel"
       discriminator:
@@ -5149,7 +5164,6 @@ components:
           InvalidChoice: "#/components/schemas/InvalidChoice"
           Duplicated: "#/components/schemas/Duplicated"
           UnknownAdditionalData: "#/components/schemas/UnknownAdditionalData"
-          OutOfImageBounds: "#/components/schemas/OutOfImageBounds"
           OverlappedRangeAnnotation: "#/components/schemas/OverlappedRangeAnnotation"
           UnknownLabel: "#/components/schemas/UnknownLabel"
     InvalidAnnotationData:
@@ -5264,18 +5278,6 @@ components:
           type: string
           description: UnknownAdditionalData
           example: "UnknownAdditionalData"
-    OutOfImageBounds:
-      type: object
-      description: 画像範囲外にアノテーションがはみ出しているエラー
-      properties:
-        label_id:
-          type: string
-        annotation_id:
-          type: string
-        _type:
-          type: string
-          description: OutOfImageBounds
-          example: "OutOfImageBounds"
     OverlappedRangeAnnotation:
       type: object
       description: 区間が重複しているアノテーションが存在している場合に発生するエラー
