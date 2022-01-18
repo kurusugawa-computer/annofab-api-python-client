@@ -2375,7 +2375,7 @@ Kyes of Dict
 * annotation_editor_feature: AnnotationEditorFeature
     
 * allow_out_of_image_bounds: bool
-    
+    枠内制御がなくなったため値の設定は出来ません。値の取得では、必ず`true`が入ります。[廃止](/docs/releases/deprecation-announcements.html#notice25)までは互換性のため残されています。 
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
 
@@ -2450,7 +2450,7 @@ Kyes of Dict
 * annotation_editor_feature: AnnotationEditorFeature
     
 * allow_out_of_image_bounds: bool
-    
+    枠内制御がなくなったため値の設定は出来ません。値の取得では、必ず`true`が入ります。[廃止](/docs/releases/deprecation-announcements.html#notice25)までは互換性のため残されています。 
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
 
@@ -2876,21 +2876,6 @@ Kyes of Dict
 
 """
 
-OutOfImageBounds = Dict[str, Any]
-"""
-画像範囲外にアノテーションがはみ出しているエラー
-
-Kyes of Dict
-
-* label_id: str
-    
-* annotation_id: str
-    
-* type: str
-    OutOfImageBounds
-
-"""
-
 OverlappedRangeAnnotation = Dict[str, Any]
 """
 区間が重複しているアノテーションが存在している場合に発生するエラー
@@ -3277,7 +3262,7 @@ Kyes of Dict
     「アノテーション」をコピーするかどうかを指定します。  この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_inputs の値を true とする * copy_tasks の値を true とする 
 * copy_webhooks: bool
     「Webhook」をコピーするかどうかを指定します。 
-* copy_supplementaly_data: bool
+* copy_supplementary_data: bool
     「補助情報」をコピーするかどうかを指定します。  この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_inputs の値を true とする 
 * copy_instructions: bool
     「作業ガイド」をコピーするかどうかを指定します。 
@@ -3483,6 +3468,7 @@ class ProjectStatus(Enum):
 
     ACTIVE = "active"
     SUSPENDED = "suspended"
+    INITIALIZING = "initializing"
 
 
 ProjectSummary = Dict[str, Any]
@@ -3616,21 +3602,6 @@ Kyes of Dict
 
 """
 
-PutOrganizationNameRequest = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* organization_id: str
-    
-* organization_name: str
-    組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* last_updated_datetime: str
-    
-
-"""
-
 PutOrganizationPluginRequest = Dict[str, Any]
 """
 
@@ -3645,6 +3616,19 @@ Kyes of Dict
     
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
+
+"""
+
+PutOrganizationRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* organization_name: str
+    組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* last_updated_datetime: str
+    
 
 """
 
@@ -4520,6 +4504,21 @@ Kyes of Dict
     
 * type: str
     UnknownLinkTarget
+
+"""
+
+UpdateOrganizationNameRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* organization_id: str
+    
+* organization_name: str
+    組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* last_updated_datetime: str
+    
 
 """
 
