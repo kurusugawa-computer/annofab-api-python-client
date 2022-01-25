@@ -1,7 +1,7 @@
 # annofab-api-python-client
 [AnnoFab Web API](https://annofab.com/docs/api/) のPythonクライアントライブラリです。
 
-[![Build Status](https://app.travis-ci.com/kurusugawa-computer/annofab-api-python-client.svg?branch=master)](https://app.travis-ci.com/kurusugawa-computer/annofab-api-python-client)
+[![Build Status](https://app.travis-ci.com/kurusugawa-computer/annofab-api-python-client.svg?branch=main)](https://app.travis-ci.com/kurusugawa-computer/annofab-api-python-client)
 [![CodeQL](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml)
 [![PyPI version](https://badge.fury.io/py/annofabapi.svg)](https://badge.fury.io/py/annofabapi)
 [![Python Versions](https://img.shields.io/pypi/pyversions/annofabapi.svg)](https://pypi.org/project/annofabapi/)
@@ -14,7 +14,7 @@
 * **Reference Documentation:** https://annofab-api-python-client.readthedocs.io/en/latest/
 * **annofab-cli** https://github.com/kurusugawa-computer/annofab-cli
     * 「タスクの一括差し戻し」や、「プロジェクト間の差分表示」など、AnnoFabの画面で実施するには時間がかかる操作を、CLIツールとして提供しています。
-* **開発者用ドキュメント**: [README_for_developer.md](https://github.com/kurusugawa-computer/annofab-api-python-client/blob/master/README_for_developer.md)
+* **開発者用ドキュメント**: [README_for_developer.md](https://github.com/kurusugawa-computer/annofab-api-python-client/blob/main/README_for_developer.md)
 
 
 
