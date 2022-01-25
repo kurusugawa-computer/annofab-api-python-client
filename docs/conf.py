@@ -18,8 +18,8 @@
 # -- Project information -----------------------------------------------------
 
 project = "annofabapi"
-copyright = "2019, yuji38kwmt"
-author = "yuji38kwmt"
+copyright = "2019, Kurusugawa Computer Inc."
+author = "Kurusugawa Computer Inc."
 
 
 # -- General configuration ---------------------------------------------------
