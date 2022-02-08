@@ -61,6 +61,6 @@ html_logo = "img/logo_landscape.png"
 html_context = {
     "github_user": "kurusugawa-computer",
     "github_repo": "annofab-api-python-client",
-    "github_version": "master",
+    "github_version": "main",
     "doc_path": "docs",
 }
