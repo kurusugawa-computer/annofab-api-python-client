@@ -1270,6 +1270,13 @@ components:
                 * 最新版。新機能やUI変更の先行リリース版。
 
             プロジェクト更新時に未指定の場合は `stable` が指定されたものとみなします。
+        use_beginner_navigation:
+          type: boolean
+          default: false
+          description: |
+            true の場合、プロジェクトの画面でナビゲーションUIを表示します（ログインユーザーがプロジェクトオーナーの場合のみ）。
+
+            未指定の場合、 false が指定されたものとして扱います。
     ProjectSummary:
       type: object
       properties:

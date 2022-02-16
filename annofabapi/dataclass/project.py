@@ -81,6 +81,9 @@ class ProjectConfiguration(DataClassJsonMixin):
     editor_version: Optional[str]
     """標準アノテーションエディタのバージョン。  * `stable`     * 安定版。通常はこちらを利用してください。 * `preview`     * 最新版。新機能やUI変更の先行リリース版。  プロジェクト更新時に未指定の場合は `stable` が指定されたものとみなします。 """
 
+    use_beginner_navigation: Optional[bool]
+    """true の場合、プロジェクトの画面でナビゲーションUIを表示します（ログインユーザーがプロジェクトオーナーの場合のみ）。  未指定の場合、 false が指定されたものとして扱います。 """
+
 
 @dataclass
 class Project(DataClassJsonMixin):
