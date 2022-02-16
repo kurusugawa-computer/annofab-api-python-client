@@ -626,68 +626,6 @@ class TestWebhook:
         assert type(api.delete_webhook(project_id, test_webhook_id)[0]) == dict
 
 
-class TestLabor:
-    target_date = "2018-01-01"
-    target_account_id = service.api.account_id
-
-    @classmethod
-    def setup_class(cls):
-        cls.organization_id = api.get_organization_of_project(project_id)[0]["organization_id"]
-
-    def test_wrapper_put_labor_control_actual_worktime_and_wrapper_get_labor_control_worktime(self):
-        put_result = service.wrapper.put_labor_control_actual_worktime(
-            project_id=project_id,
-            organization_id=self.organization_id,
-            account_id=self.target_account_id,
-            date=self.target_date,
-            actual_worktime=3.5,
-            working_description="foo",
-        )
-        labor_list = wrapper.get_labor_control_worktime(
-            project_id=project_id,
-            account_id=self.target_account_id,
-            from_date=self.target_date,
-            to_date=self.target_date,
-        )
-        assert len(labor_list) == 1
-        labor = labor_list[0]
-        assert labor["actual_worktime"] == 3.5
-        assert labor["working_description"] == "foo"
-
-    def test_wrapper_put_labor_control_plan_worktime_and_wrapper_get_labor_control_worktime(self):
-        put_result = service.wrapper.put_labor_control_plan_worktime(
-            project_id=project_id,
-            organization_id=self.organization_id,
-            account_id=self.target_account_id,
-            date=self.target_date,
-            plan_worktime=4.5,
-        )
-        labor_list = wrapper.get_labor_control_worktime(
-            project_id=project_id,
-            account_id=self.target_account_id,
-            from_date=self.target_date,
-            to_date=self.target_date,
-        )
-        assert len(labor_list) == 1
-        labor = labor_list[0]
-        assert labor["plan_worktime"] == 4.5
-
-    def test_wrapper_put_labor_control_availability_and_wrapper_get_labor_control_availability(self):
-        put_result = service.wrapper.put_labor_control_availability(
-            account_id=self.target_account_id, date=self.target_date, availability=6.5
-        )
-        labor_list = wrapper.get_labor_control_availability(
-            account_id=self.target_account_id, from_date=self.target_date, to_date=self.target_date
-        )
-        assert len(labor_list) == 1
-        labor = labor_list[0]
-        assert labor["availability"] == 6.5
-
-    def test_get_labor_control_worktime_raise(self):
-        with pytest.raises(ValueError):
-            wrapper.get_labor_control_worktime(account_id=api.account_id)
-
-
 class TestGetObjOrNone:
     """
     wrapper.get_xxx_or_none メソッドの確認
