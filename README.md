@@ -28,10 +28,6 @@
 
 
 ### 2022-02-01 以降
-* 以下の関数を非推奨にします。WebAPIが将来的に廃止されるためです。
-    * AnnofabApi.get_labor_control
-    * Wrapper.get_labor_control_worktime
-    * Wrapper.get_labor_control_availability
 * 統計関係の関数を非推奨にします。WebAPIが将来的に廃止されるためです。
    * annofabapi.Wrapper
        * get_task_statistics

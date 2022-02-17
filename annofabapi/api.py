@@ -1,7 +1,6 @@
 import copy
 import json
 import logging
-import warnings
 from functools import wraps
 from json import JSONDecodeError
 from typing import Any, Dict, Optional, Tuple
@@ -436,7 +435,7 @@ class AnnofabApi(AbstractAnnofabApi):
             HTTPError: 引数 ``raise_for_status`` がTrueで、HTTP status codeが4xxx,5xxのときにスローします。
 
         """
-        if url_path.startswith("/labor-control") or url_path.startswith("/internal/"):
+        if url_path.startswith("/internal/"):
             url = f"{self.endpoint_url}/api{url_path}"
         else:
             url = f"{self.url_prefix}{url_path}"
@@ -602,69 +601,6 @@ class AnnofabApi(AbstractAnnofabApi):
         content, response = self._request_wrapper("POST", "/refresh-token", request_body=request_body)
         self.token_dict = content
         return content, response
-
-    #########################################
-    # Public Method : 労務関係API (将来的に大きく変更される可能性があります）
-    # 労務管理がりようできる組織は限られています。利用する場合は、AnnoFabにお問い合わせください。
-    #########################################
-    def get_labor_control(self, query_params: Optional[Dict[str, Any]] = None) -> Tuple[Any, requests.Response]:
-        """労務管理関連データを一括で取得します。
-
-        .. deprecated:: 2022-02-01 以降に削除する予定です
-
-        Args:
-            query_params: Query Parameters
-
-        Returns:
-            Tuple[Task, requests.Response]
-
-
-        """
-        warnings.warn(
-            "annofabapi.AnnofabApi.get_labor_control() is deprecated and will be removed.", FutureWarning, stacklevel=2
-        )
-        url_path = "/labor-control"
-        http_method = "GET"
-        keyword_params: Dict[str, Any] = {
-            "query_params": query_params,
-        }
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def put_labor_control(self, request_body: Dict[str, Any]) -> Tuple[Any, requests.Response]:
-        """労務管理関連データを更新します。
-
-
-        Args:
-            request_body: Request Body
-
-        Returns:
-            Tuple[Task, requests.Response]
-
-
-        """
-        url_path = "/labor-control"
-        http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
-            "request_body": request_body,
-        }
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def delete_labor_control(self, data_id: str) -> Tuple[Any, requests.Response]:
-        """労務管理関連データを削除します。
-
-
-        Args:
-            data_id: 削除したい労務管理関連データID。
-
-        Returns:
-            Tuple[Task, None]
-
-
-        """
-        url_path = f"/labor-control/{data_id}"
-        http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
-        return self._request_wrapper(http_method, url_path, **keyword_params)
 
     #########################################
     # Public Method : Other
