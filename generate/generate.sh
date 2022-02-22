@@ -65,7 +65,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=$
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
 cat partial-header/generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
-# job_typeの型がJobTypeだとEnumのため都合が悪いので、型をstrに変換する
+# delete_project_job メソッドのjob_type引数の型がJobTypeだと、他のメソッドと統一感がなくなるので、型をstrに変換する
 sed  -e "s/job_type: ProjectJobType/job_type: str/g"  ../annofabapi/generated_api.py  --in-place
 
 rm -Rf out/openapi_client
