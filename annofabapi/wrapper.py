@@ -1027,97 +1027,6 @@ class Wrapper:
         # statistics系のURLLocationヘッダに記載されているURLの中身はJSONであること前提
         return response.json()
 
-    def get_task_statistics(self, project_id: str) -> List[Any]:
-        """
-        getTaskStatistics APIのLocation headerの中身を返す。
-
-        .. deprecated:: 2022-1-25以降
-
-        Args:
-            project_id:  プロジェクトID
-
-        Returns:
-
-
-        """
-        warnings.warn(
-            "annofabapi.Wrapper.get_task_statistics() is deprecated and will be removed.", FutureWarning, stacklevel=2
-        )
-        result = self._get_statistics_content(*self.api.get_task_statistics(project_id))
-        if result is not None:
-            return result
-        else:
-            return []
-
-    def get_account_statistics(self, project_id: str) -> List[Any]:
-        """
-        getAccountStatistics APIのLocation headerの中身を返す。
-
-        .. deprecated:: 2022-1-25以降
-
-        Args:
-            project_id:
-
-        Returns:
-
-        """
-        warnings.warn(
-            "annofabapi.Wrapper.get_account_statistics() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
-        result = self._get_statistics_content(*self.api.get_account_statistics(project_id))
-        if result is not None:
-            return result
-        else:
-            return []
-
-    def get_inspection_statistics(self, project_id: str) -> List[Any]:
-        """
-        getInspectionStatistics APIのLocation headerの中身を返す。
-
-        .. deprecated:: 2022-1-25以降
-
-        Args:
-            project_id:
-
-        Returns:
-
-        """
-        warnings.warn(
-            "annofabapi.Wrapper.get_inspection_statistics() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
-        result = self._get_statistics_content(*self.api.get_inspection_statistics(project_id))
-        if result is not None:
-            return result
-        else:
-            return []
-
-    def get_task_phase_statistics(self, project_id: str) -> List[Any]:
-        """
-        getTaskPhaseStatistics APIのLocation headerの中身を返す。
-
-        .. deprecated:: 2022-1-25以降
-
-        Args:
-            project_id:
-
-        Returns:
-
-        """
-        warnings.warn(
-            "annofabapi.Wrapper.get_task_phase_statistics() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
-        result = self._get_statistics_content(*self.api.get_task_phase_statistics(project_id))
-        if result is not None:
-            return result
-        else:
-            return []
-
     def get_label_statistics(self, project_id: str) -> List[Any]:
         """
         getLabelStatistics APIのLocation headerの中身を返す。
@@ -1129,31 +1038,6 @@ class Wrapper:
 
         """
         result = self._get_statistics_content(*self.api.get_label_statistics(project_id))
-        if result is not None:
-            return result
-        else:
-            return []
-
-    def get_worktime_statistics(self, project_id: str) -> List[Any]:
-        """
-        タスク作業時間集計取得.
-        Location Headerに記載されたURLのレスポンスをJSON形式で返す。
-
-        .. deprecated:: 2022-1-25以降
-
-        Args:
-            project_id:  プロジェクトID
-
-        Returns:
-            タスク作業時間集計
-
-        """
-        warnings.warn(
-            "annofabapi.Wrapper.get_worktime_statistics() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
-        result = self._get_statistics_content(*self.api.get_worktime_statistics(project_id))
         if result is not None:
             return result
         else:
