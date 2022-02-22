@@ -49,7 +49,7 @@ info:
 
     * 一部のAPIではリクエストボディに `_type` 属性を任意で指定することができます。
     * `_type` 属性を指定する場合は、`_type` 属性で指定された型にデコードします。
-      例えば、`_type` 属性に `ByDirectory` を指定すると `TaskGenerateRuleByDirectory` にデコードされ、`Poliline` を指定すると `InspectionDataPolyline` にデコードされます。
+      例えば、`_type` 属性に `ByDirectory` を指定すると `TaskGenerateRuleByDirectory` にデコードされ、`Polyline` を指定すると `InspectionDataPolyline` にデコードされます。
       リクエストボディが誤っている場合はエラーになります。
     * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
     * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし利便性のため指定は必須ではありません。
@@ -90,7 +90,7 @@ info:
     ## 検索結果の集約を表す AggregationResult
 
     いくつかの検索系 API の検索結果レスポンスは、`AggregationResult` というデータ構造のフィールドを持っています。
-    `AggergationResult` は、検索対象リソースをある観点で集約した結果を表します。
+    `AggregationResult` は、検索対象リソースをある観点で集約した結果を表します。
     このような集約は、「検索結果を属性 XXX の件数別に分類」などするために使われます。
 
     例えば、タスクを検索する API には、以下のような「タスクの現在担当者での集約 `account_id_count`」などの `AggregationResult` がいくつか含まれています。
@@ -115,7 +115,7 @@ info:
 
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
 
-  version: 0.135.0
+  version: 0.136.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -357,198 +357,6 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/tasks:
-    get:
-      tags:
-      - af-statistics-v2
-      summary: タスク集計取得
-      description: |
-        指定したプロジェクトのタスク集計をすべて取得します。
-      security:
-        - SignedCookieKeyPairId: []
-          SignedCookiePolicy: []
-          SignedCookieSignature: []
-      operationId: getTaskStatisticsV2
-      parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
-      responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/ProjectTaskStatisticsHistory"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/accounts:
-    get:
-      tags:
-      - af-statistics-v2
-      summary: ユーザー別タスク集計取得
-      description: |
-        指定したプロジェクトのユーザー別タスク集計をすべて取得します。
-      security:
-        - SignedCookieKeyPairId: []
-          SignedCookiePolicy: []
-          SignedCookieSignature: []
-      operationId: getAccountStatisticsV2
-      parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
-      responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/ProjectAccountStatistics"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/inspections:
-    get:
-      tags:
-      - af-statistics-v2
-      summary: 検査コメント集計取得
-      description: |
-        指定したプロジェクトの検査コメント集計をすべて取得します。
-      security:
-        - SignedCookieKeyPairId: []
-          SignedCookiePolicy: []
-          SignedCookieSignature: []
-      operationId: getInspectionStatisticsV2
-      parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
-      responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/InspectionStatistics"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/task-phases:
-    get:
-      tags:
-      - af-statistics-v2
-      summary: フェーズ別タスク集計取得
-      description: |
-        指定したプロジェクトのフェーズ別タスク集計をすべて取得します。
-      security:
-        - SignedCookieKeyPairId: []
-          SignedCookiePolicy: []
-          SignedCookieSignature: []
-      operationId: getTaskPhaseStatisticsV2
-      parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
-      responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              required: true
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/TaskPhaseStatistics"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/statistics/labels:
     get:
       tags:
@@ -591,54 +399,6 @@ paths:
                 type: array
                 items:
                   $ref: "swagger-api-components.yaml#/components/schemas/LabelStatistics"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /projects/{project_id}/statistics/worktimes:
-    get:
-      tags:
-      - af-statistics-v2
-      summary: タスク作業時間集計取得
-      description: |
-        ヒストグラムは最終日のby_tasks、by_inputsでのみ返却する。
-        アカウント毎の集計のby_tasks、by_inputsには、最終日であってもヒストグラムを返却しない。
-      security:
-        - SignedCookieKeyPairId: []
-          SignedCookiePolicy: []
-          SignedCookieSignature: []
-      operationId: getWorktimeStatisticsV2
-      parameters:
-      - name: project_id
-        in: path
-        description: プロジェクトID
-        required: true
-        schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
-      - name: cache
-        in: query
-        description: |
-          CACHE TIMESTAMP
-        required: false
-        schema:
-          type: string
-          example: "123456789"
-      responses:
-        "200":
-          description: 正常
-          headers:
-            Location:
-              description: 認証済み一時URL
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/WorktimeStatistics"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
