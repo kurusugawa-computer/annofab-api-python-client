@@ -1381,6 +1381,8 @@ class Wrapper:
         """
         検査コメント（返信コメント以外）のstatusを変更する。
 
+        .. deprecated:: 2022-08-23以降に廃止する予定です。検査コメントに関するWebAPIが廃止されるためです。
+
         Args:
             project_id: プロジェクトID
             task_id: タスクID
@@ -1392,6 +1394,11 @@ class Wrapper:
         Returns:
             `batch_update_inspections` メソッドのcontent
         """
+        warnings.warn(
+            "annofabapi.Wrapper.update_status_of_inspections() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
 
         def not_reply_comment(arg_inspection: Inspection) -> bool:
             """返信コメントでないならTrueをかえす"""
