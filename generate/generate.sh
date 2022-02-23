@@ -161,10 +161,7 @@ declare -a model_files=(${MODELS_DIR}/resolution.py ${MODELS_DIR}/input_data.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/input.py  \
  ${model_files[@]} > ../annofabapi/dataclass/input.py
 
-# Inspection
-declare -a model_files=(${MODELS_DIR}/inspection.py)
-cat partial-header/dataclass/common.py partial-header/dataclass/inspection.py  \
- ${model_files[@]} > ../annofabapi/dataclass/inspection.py
+# Inspection Commentは2022-08-23以降に廃止される予定。Deprecationを表すデコレータなどを設定するため、自動生成しない。
 
 # Instruction
 declare -a model_files=(${MODELS_DIR}/instruction.py ${MODELS_DIR}/instruction_history.py ${MODELS_DIR}/instruction_image.py)

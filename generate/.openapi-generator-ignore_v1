@@ -1,1 +1,5 @@
 out/openapi_client/api/af_login_api.py
+
+# InspectionCommentに関するAPIは2022-08-23 以降に廃止されるため、以下のEnumクラスを出力しないようにする。
+# 廃止されるまでは、generate/partial-footer/models_partial_footer.py に、InspectionStatusクラスを定義しておく
+out/openapi_client/models/inspection_status.py
