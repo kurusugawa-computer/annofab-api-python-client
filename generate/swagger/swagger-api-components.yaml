@@ -3285,7 +3285,7 @@ components:
           description: 割当するタスクフェーズ。[詳細はこちら](#section/TaskPhase)
         _type:
           type: string
-          description: TaskPropertry
+          description: TaskProperty
           example: "TaskProperty"
     TaskHistoryShort:
       description: タスクのあるフェーズを誰が担当したかを表します。
@@ -4836,6 +4836,7 @@ components:
             コメントの種別。
 
             * `onhold` - 保留コメントとして扱われます。
+            * `inspection` - 検査コメントとして扱われます。
         phrases:
           type: array
           description: |
@@ -4843,6 +4844,8 @@ components:
 
             * `onhold` の場合
               * 使用しません（空配列）
+            * `inspection` の場合
+              * 参照している定型指摘のIDリスト
           items:
             $ref: "#/components/schemas/PhraseId"
         comment:
@@ -4891,6 +4894,12 @@ components:
 
             * `onhold` の場合
               * 使用しません（値なし）
+            * `inspection` の場合
+              * 検査コメントの座標値や区間。
+                * `InspectionDataPoint`：点で検査コメントを付与したときの座標値
+                * `InspectionDataPolyline`：ポリラインで検査コメントを付与したときの座標値
+                * `InspectionDataTime`：検査コメントを付与した区間（動画プロジェクトの場合）
+                * `InspectionDataCustom`：カスタム
         annotation_id:
           $ref: "#/components/schemas/AnnotationId"
           description: |
@@ -4898,6 +4907,8 @@ components:
 
             * `onhold` の場合
               * 使用しません（値なし）
+            * `inspection` の場合
+              * 検査コメントに紐づくアノテーションのID。アノテーションに紐付けられていない場合（アノテーションの付け忘れに対する指定など）は未指定。[詳細はこちら](#section/AnnotationId)。
         label_id:
           $ref: "#/components/schemas/LabelId"
           description: |
@@ -4905,6 +4916,8 @@ components:
 
             * `onhold` の場合
               * 使用しません（値なし）
+            * `inspection` の場合
+              * `annotation_id` に対応するラベルのID。 `annotation_id` を指定しない場合は未指定。
         status:
           $ref: "#/components/schemas/CommentStatus"
         _type:
@@ -4939,6 +4952,8 @@ components:
 
         * `onhold` の場合
           * `open`（未対応）、`resolved`（対応完了）を指定可能
+        * `inspection` の場合
+          * `open`（未対応）、`resolved`（対応完了）、`closed`（対応不要）を指定可能
     BatchCommentRequestItem:
       oneOf:
         - $ref: "#/components/schemas/BatchCommentRequestItemPut"
