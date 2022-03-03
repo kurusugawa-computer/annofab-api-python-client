@@ -1260,9 +1260,9 @@ Kyes of Dict
 * account_id: str
     
 * comment_type: str
-    コメントの種別。  * `onhold` - 保留コメントとして扱われます。 
+    コメントの種別。  * `onhold` - 保留コメントとして扱われます。 * `inspection` - 検査コメントとして扱われます。 
 * phrases: List[str]
-    `comment_type` の値によって扱いが異なります。  * `onhold` の場合   * 使用しません（空配列） 
+    `comment_type` の値によって扱いが異なります。  * `onhold` の場合   * 使用しません（空配列） * `inspection` の場合   * 参照している定型指摘のIDリスト 
 * comment: str
     コメント本文。 
 * comment_node: CommentNode
@@ -1300,7 +1300,7 @@ Kyes of Dict
 
 class CommentStatus(Enum):
     """
-    `comment_type` の値によってコメントのステータスに格納される値とステータスの意味が変わります。  * `onhold` の場合   * `open`（未対応）、`resolved`（対応完了）を指定可能
+    `comment_type` の値によってコメントのステータスに格納される値とステータスの意味が変わります。  * `onhold` の場合   * `open`（未対応）、`resolved`（対応完了）を指定可能 * `inspection` の場合   * `open`（未対応）、`resolved`（対応完了）、`closed`（対応不要）を指定可能
     """
 
     OPEN = "open"
@@ -4027,7 +4027,7 @@ Kyes of Dict
 * phase: TaskPhase
     
 * type: str
-    TaskPropertry
+    TaskProperty
 * user_id: str
     
 * task_ids: List[str]
@@ -4072,7 +4072,7 @@ Kyes of Dict
 * phase: TaskPhase
     
 * type: str
-    TaskPropertry
+    TaskProperty
 
 """
 
