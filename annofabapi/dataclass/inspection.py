@@ -5,8 +5,8 @@
 annofabapiのmodelをDataClassで定義したクラス
 
 Note:
-    このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照.
-    oneOf, allOfなどは正しく表現できない可能性がある。
+    Inspection Commmentに関するWebAPIは 2022-08-23以降に廃止される予定です。
+    廃止予定日などの情報をdecoratorで設定するため、このファイルは自動生成ではなく手動で生成しています。
 """
 
 import warnings  # pylint: disable=unused-import
@@ -15,15 +15,20 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import DataClassJsonMixin
 
+from annofabapi._utils import deprecated_class
 from annofabapi.models import InspectionStatus, TaskPhase
 
 InspectionData = Dict[str, Any]
 
 
+@deprecated_class(deprecated_date="2022-08-23")
 @dataclass
 class Inspection(DataClassJsonMixin):
     """
     検査コメント
+
+    .. deprecated:: 2022-08-23以降に廃止する予定です。
+
     """
 
     project_id: str

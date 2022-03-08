@@ -27,24 +27,12 @@
 # 廃止予定
 
 
-### 2022-02-01 以降
-* 以下の関数を非推奨にします。WebAPIが将来的に廃止されるためです。
-    * AnnofabApi.get_labor_control
-    * Wrapper.get_labor_control_worktime
-    * Wrapper.get_labor_control_availability
-* 統計関係の関数を非推奨にします。WebAPIが将来的に廃止されるためです。
-   * annofabapi.Wrapper
-       * get_task_statistics
-       * get_account_statistics
-       * get_inspection_statistics
-       * get_task_phase_statistics
-       * get_worktime_statistics
-    * annofabapi.AnnofabApi
-       * get_task_statistics
-       * get_account_statistics
-       * get_inspection_statistics
-       * get_task_phase_statistics
-       * get_worktime_statistics
+### 2022-08-23 以降
+検査コメント関連のWebAPIの廃止に伴い、以下のメソッドやクラスを廃止します。
+* annofabapi.AnnofabApi.batch_update_inspections
+* annofabapi.AnnofabApi.get_inspections
+* annofabapi.Wrapper.update_status_of_inspections
+* annofabapi.dataclasses.inspection
 
 
 # Features

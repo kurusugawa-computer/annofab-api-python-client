@@ -610,7 +610,13 @@ class AbstractAnnofabApi(abc.ABC):
     #########################################
 
     def batch_update_comments(
-        self, project_id: str, task_id: str, input_data_id: str, request_body: Optional[Any] = None, **kwargs
+        self,
+        project_id: str,
+        task_id: str,
+        input_data_id: str,
+        query_params: Optional[Dict[str, Any]] = None,
+        request_body: Optional[Any] = None,
+        **kwargs,
     ) -> Tuple[Any, requests.Response]:
         """コメント一括更新
         https://annofab.com/docs/api/#operation/batchUpdateComments
@@ -619,12 +625,14 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        コメントを一括更新します。 タスクの現在の担当者でない場合、またはタスクの状態が「作業中」でない場合は409エラーになります。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新（作成含む）」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。  既に作成済みのコメントのうち、リクエストボディの配列に含まれないものは更新されません。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。  **このAPIでは検査コメントのデータは更新できません（今後対応予定）。**
+        コメントを一括更新します。 タスクの現在の担当者でない場合、またはタスクの状態が「作業中」でない場合は409エラーになります。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新（作成含む）」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。  既に作成済みのコメントのうち、リクエストボディの配列に含まれないものは更新されません。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
+            query_params (Dict[str, Any]): Query Parameters
+                v (str):  2 を指定した場合、検査コメントのデータも含めたコメントデータを返します。  パラメーターの指定がない、あるいは値が 2 以外の場合は検査コメントを除いたコメントデータを返します。
             request_body (Any): Request Body
                 batch_comment_request_item (List[BatchCommentRequestItem]):  (required)
 
@@ -636,13 +644,14 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/comments"
         http_method = "POST"
         keyword_params: Dict[str, Any] = {
+            "query_params": query_params,
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_comments(
-        self, project_id: str, task_id: str, input_data_id: str, **kwargs
+        self, project_id: str, task_id: str, input_data_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """コメント一括取得
         https://annofab.com/docs/api/#operation/getComments
@@ -651,12 +660,14 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定されたタスクで、指定された入力データにつけられたコメントをすべて取得します。  **このAPIでは検査コメントのデータは取得できません（今後対応予定）。**
+        指定されたタスクで、指定された入力データにつけられたコメントをすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
+            query_params (Dict[str, Any]): Query Parameters
+                v (str):  2 を指定した場合、検査コメントのデータも含めたコメントデータを返します。  パラメーターの指定がない、あるいは値が 2 以外の場合は検査コメントを除いたコメントデータを返します。
 
         Returns:
             Tuple[List[Comment], requests.Response]
@@ -665,7 +676,9 @@ class AbstractAnnofabApi(abc.ABC):
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/comments"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: Dict[str, Any] = {
+            "query_params": query_params,
+        }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
@@ -831,7 +844,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        入力データ（画像プロジェクトなら画像、動画プロジェクトなら動画や時系列データ）を登録します。  ファイルの登録には、[アップロード用一時データ保存先作成API](#operation/createTempPath) を組み合わせて使用します。  ## ZIPでまとめてアップロード  画像プロジェクトの場合、複数の画像ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> アノテーション作業生産性を高めるため、画像は「長辺4096px以内」かつ「4MB以内」になるよう縮小されます。<br> 作成されるアノテーションは、元の解像度でつけた場合相当に自動で復元されます。  動画プロジェクトの場合、複数の動画ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> また、複数のストリーミング形式の動画をアップロードすることもできます。<br> この場合はZIP形式必須で、同一のZIPファイル内にm3u8ファイルとtsファイルを両方含めてください。<br> なお、このm3u8ファイルに記述された相対パスでtsファイルが参照可能である必要があります。  ZIPファイルを登録するとバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ### ディレクトリ例 ```   hoge.zip/     hoge.ts     fuga/       foo.m3u8(hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)       foo1.ts       foo2.ts     piyo1/       piyo2/         bar.ts       bar.m3u8(hoge.ts, piyo1/piyo2/bar.tsを参照) ```  ## 注意事項  * `input_data_path` のスキーマが `https` の場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます * `input_data_path` のスキーマが `s3` かつ入力データがtsファイルの場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます * ZIPでまとめてアップロード時、ZIPファイル内の次の名前のファイルは入力データとして登録されません     * `Thumbs.db`     * `__MACOSX`     * `.DS_Store`     * 上記以外の、ファイル名先頭が `.`（ドット）で始まるファイル * ZIPでまとめてアップロード時、ZIPファイル内の `.`（ドット）から始まるフォルダ以下のファイルは入力データとして登録されません
+        入力データ（画像プロジェクトなら画像、動画プロジェクトなら動画や時系列データ）を登録します。  ファイルの登録には、[アップロード用一時データ保存先作成API](#operation/createTempPath) を組み合わせて使用します。  ## ZIPでまとめてアップロード  画像プロジェクトの場合、複数の画像ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> アノテーション作業生産性を高めるため、画像は「長辺4096px以内」かつ「4MB以内」になるよう縮小されます。<br> 作成されるアノテーションは、元の解像度でつけた場合相当に自動で復元されます。  動画プロジェクトの場合、複数の動画ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> また、複数のストリーミング形式の動画をアップロードすることもできます。<br> この場合はZIP形式必須で、同一のZIPファイル内にm3u8ファイルとtsファイルを両方含めてください。<br> なお、このm3u8ファイルに記述された相対パスでtsファイルが参照可能である必要があります。  ZIPファイルを登録するとバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ### ディレクトリ例 ```   hoge.zip/     hoge.ts     fuga/       foo.m3u8(hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)       foo1.ts       foo2.ts     piyo1/       piyo2/         bar.ts       bar.m3u8(hoge.ts, piyo1/piyo2/bar.tsを参照) ```  ## 注意事項  * `input_data_path` のスキーマが `https` の場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます * `input_data_path` のスキーマが `s3` かつ入力データがtsファイルの場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます * ZIPでまとめてアップロード時、ZIPファイル内の次の名前のファイルは入力データとして登録されません     * `Thumbs.db`     * `__MACOSX`     * `.DS_Store`     * `desktop.ini`     * 上記以外の、ファイル名先頭が `.`（ドット）で始まるファイル * ZIPでまとめてアップロード時、ZIPファイル内の `.`（ドット）から始まるフォルダ以下のファイルは入力データとして登録されません
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -863,6 +876,7 @@ class AbstractAnnofabApi(abc.ABC):
         """検査コメント一括更新
         https://annofab.com/docs/api/#operation/batchUpdateInspections
 
+        .. deprecated:: X
 
         authorizations: AllProjectMember
 
@@ -881,6 +895,11 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
+        warnings.warn(
+            "annofabapi.AnnofabApi.batch_update_inspections() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/inspections"
         http_method = "POST"
         keyword_params: Dict[str, Any] = {
@@ -895,6 +914,7 @@ class AbstractAnnofabApi(abc.ABC):
         """検査コメント一括取得
         https://annofab.com/docs/api/#operation/getInspections
 
+        .. deprecated:: X
 
         authorizations: AllProjectMember
 
@@ -911,6 +931,9 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
+        warnings.warn(
+            "annofabapi.AnnofabApi.get_inspections() is deprecated and will be removed.", FutureWarning, stacklevel=2
+        )
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/inspections"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
@@ -2525,36 +2548,6 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_account_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """ユーザー別タスク集計ファイルへのURL取得
-        https://annofab.com/docs/api/#operation/getAccountStatistics
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        [ユーザー別タスク集計データ](#section/ArrayOfProjectAccountStatistics) を取得するための認証済み一時URLを取得します。
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-
-        Returns:
-            Tuple[TemporaryUrl, requests.Response]
-
-
-        """
-        warnings.warn(
-            "annofabapi.AnnofabApi.get_account_statistics() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
-        url_path = f"/projects/{project_id}/statistics/accounts"
-        http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
-        keyword_params.update(**kwargs)
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
     def get_inspection_daily_statistics(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
@@ -2583,36 +2576,6 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
-        keyword_params.update(**kwargs)
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def get_inspection_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """検査コメント集計ファイルへのURL取得
-        https://annofab.com/docs/api/#operation/getInspectionStatistics
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        [検査コメント集計データ](#section/ArrayOfInspectionStatistics) を取得するための認証済み一時URLを取得します。
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-
-        Returns:
-            Tuple[TemporaryUrl, requests.Response]
-
-
-        """
-        warnings.warn(
-            "annofabapi.AnnofabApi.get_inspection_statistics() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
-        url_path = f"/projects/{project_id}/statistics/inspections"
-        http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
@@ -2750,66 +2713,6 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_task_phase_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """フェーズ別タスク集計ファイルへのURL取得
-        https://annofab.com/docs/api/#operation/getTaskPhaseStatistics
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        [フェーズ別タスク集計データ](#section/ArrayOfTaskPhaseStatistics) を取得するための認証済み一時URLを取得します。
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-
-        Returns:
-            Tuple[TemporaryUrl, requests.Response]
-
-
-        """
-        warnings.warn(
-            "annofabapi.AnnofabApi.get_task_phase_statistics() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
-        url_path = f"/projects/{project_id}/statistics/task-phases"
-        http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
-        keyword_params.update(**kwargs)
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def get_task_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """タスク集計ファイルへのURL取得
-        https://annofab.com/docs/api/#operation/getTaskStatistics
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        [タスク集計データ](#section/ArrayOfProjectTaskStatisticsHistory) を取得するための認証済み一時URLを取得します。
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-
-        Returns:
-            Tuple[TemporaryUrl, requests.Response]
-
-
-        """
-        warnings.warn(
-            "annofabapi.AnnofabApi.get_task_statistics() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
-        url_path = f"/projects/{project_id}/statistics/tasks"
-        http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
-        keyword_params.update(**kwargs)
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
     def get_worktime_daily_statistics(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
@@ -2870,36 +2773,6 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
-        keyword_params.update(**kwargs)
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def get_worktime_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """タスク作業時間集計ファイルへのURL取得
-        https://annofab.com/docs/api/#operation/getWorktimeStatistics
-
-        .. deprecated:: X
-
-        authorizations: AllProjectMember
-
-
-        [タスク作業時間集計データ](#section/ArrayOfWorktimeStatistics) を取得するための認証済み一時URLを取得します。
-
-        Args:
-            project_id (str):  プロジェクトID (required)
-
-        Returns:
-            Tuple[TemporaryUrl, requests.Response]
-
-
-        """
-        warnings.warn(
-            "annofabapi.AnnofabApi.get_worktime_statistics() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
-        url_path = f"/projects/{project_id}/statistics/worktimes"
-        http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
