@@ -14,7 +14,7 @@ import warnings
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import requests
 from dateutil.relativedelta import relativedelta
@@ -205,7 +205,7 @@ class Wrapper:
 
         return all_objects
 
-    def _download(self, url: str, dest_path: str) -> requests.Response:
+    def _download(self, url: str, dest_path: Union[str, Path]) -> requests.Response:
         """
         指定したURLからファイルをダウンロードします。
 
@@ -219,7 +219,7 @@ class Wrapper:
         """
         response = self.api._execute_http_request(http_method="get", url=url)
 
-        p = Path(dest_path)
+        p = dest_path if isinstance(dest_path, Path) else Path(dest_path)
         p.parent.mkdir(parents=True, exist_ok=True)
         with open(dest_path, "wb") as f:
             f.write(response.content)
@@ -228,7 +228,7 @@ class Wrapper:
     #########################################
     # Public Method : Annotation
     #########################################
-    def download_annotation_archive(self, project_id: str, dest_path: str) -> str:
+    def download_annotation_archive(self, project_id: str, dest_path: Union[str, Path]) -> str:
         """
         simpleアノテーションZIPをダウンロードする。
 
@@ -252,7 +252,7 @@ class Wrapper:
         )
         return url
 
-    def download_full_annotation_archive(self, project_id: str, dest_path: str) -> str:
+    def download_full_annotation_archive(self, project_id: str, dest_path: Union[str, Path]) -> str:
         """
         FullアノテーションZIPをダウンロードする。
 
@@ -1534,7 +1534,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def download_project_inputs_url(self, project_id: str, dest_path: str) -> str:
+    def download_project_inputs_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
         """
         プロジェクトの入力データ全件ファイルをダウンロードする。
         ファイルの中身はJSON。
@@ -1558,7 +1558,7 @@ class Wrapper:
         )
         return url
 
-    def download_project_tasks_url(self, project_id: str, dest_path: str) -> str:
+    def download_project_tasks_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
         """
         プロジェクトのタスク全件ファイルをダウンロードする。
         ファイルの中身はJSON。
@@ -1583,10 +1583,12 @@ class Wrapper:
         )
         return url
 
-    def download_project_inspections_url(self, project_id: str, dest_path: str) -> str:
+    def download_project_inspections_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
         """
         プロジェクトの検査コメント全件ファイルをダウンロードする。
         ファイルの中身はJSON。
+
+        .. deprecated:: 2022-08-23以降に廃止する予定です。検査コメントに関するWebAPIが廃止されるためです。
 
         Args:
             project_id: プロジェクトID
@@ -1596,6 +1598,11 @@ class Wrapper:
             ダウンロード元のURL
 
         """
+        warnings.warn(
+            "annofabapi.AnnofabApi.get_project_inspections_url() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
 
         content, _ = self.api.get_project_inspections_url(project_id)
         url = content["url"]
@@ -1608,7 +1615,31 @@ class Wrapper:
         )
         return url
 
-    def download_project_task_history_events_url(self, project_id: str, dest_path: str) -> str:
+    def download_project_comments_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
+        """
+        プロジェクトのコメント全件ファイルをダウンロードする。
+
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先ファイルのパス
+
+        Returns:
+            ダウンロード元のURL
+
+        """
+
+        content, _ = self.api.get_project_comments_url(project_id)
+        url = content["url"]
+        response = self._download(url, dest_path)
+        logger.info(
+            "コメント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            project_id,
+            response.headers.get("Last-Modified"),
+            dest_path,
+        )
+        return url
+
+    def download_project_task_history_events_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
         """
         プロジェクトのタスク履歴イベント全件ファイルをダウンロードする。
         ファイルの中身はJSON。
@@ -1633,7 +1664,7 @@ class Wrapper:
         )
         return url
 
-    def download_project_task_histories_url(self, project_id: str, dest_path: str) -> str:
+    def download_project_task_histories_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
         """
         プロジェクトのタスク履歴全件ファイルをダウンロードする。
         ファイルの中身はJSON。
