@@ -1599,7 +1599,7 @@ class Wrapper:
 
         """
         warnings.warn(
-            "annofabapi.AnnofabApi.get_project_inspections_url() is deprecated and will be removed.",
+            "annofabapi.Wrapper.download_project_inspections_url() is deprecated and will be removed.",
             FutureWarning,
             stacklevel=2,
         )
