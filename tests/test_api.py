@@ -210,15 +210,6 @@ class TestInputData:
         assert type(api.batch_update_inputs(project_id, request_body=request_body)[0]) == list
 
 
-class TestInspection:
-    @classmethod
-    def setup_class(cls):
-        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
-
-    def test_get_inspections(self):
-        assert len(api.get_inspections(project_id, task_id, self.input_data_id)[0]) >= 0
-
-
 class TestInstruction:
     def test_wrapper_get_latest_instruction(self):
         assert type(wrapper.get_latest_instruction(project_id)) == dict
@@ -392,10 +383,8 @@ class TestProject:
             "https://"
         )
 
-    def test_wrapper_download_project_inspections_url(self):
-        assert wrapper.download_project_inspections_url(project_id, f"{out_dir}/inspections.json").startswith(
-            "https://"
-        )
+    def test_wrapper_download_project_comments_url(self):
+        assert wrapper.download_project_comments_url(project_id, f"{out_dir}/comments.json").startswith("https://")
 
 
 class TestProjectMember:

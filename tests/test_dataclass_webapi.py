@@ -15,15 +15,7 @@ from annofabapi.dataclass.organization import Organization, OrganizationActivity
 from annofabapi.dataclass.organization_member import OrganizationMember
 from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
-from annofabapi.dataclass.statistics import (
-    InspectionStatistics,
-    LabelStatistics,
-    Markers,
-    ProjectAccountStatistics,
-    ProjectTaskStatisticsHistory,
-    TaskPhaseStatistics,
-    WorktimeStatistics,
-)
+from annofabapi.dataclass.statistics import LabelStatistics, Markers
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.dataclass.webhook import Webhook
@@ -177,35 +169,10 @@ class TestProjectMember:
 
 
 class TestStatistics:
-    def test_statistics_get_task_statistics(self):
-        stat_list = service.wrapper.get_task_statistics(project_id)
-        stat = ProjectTaskStatisticsHistory.from_dict(stat_list[0])
-        assert type(stat) == ProjectTaskStatisticsHistory
-
-    def test_statistics_get_account_statistics(self):
-        stat_list = service.wrapper.get_account_statistics(project_id)
-        stat = ProjectAccountStatistics.from_dict(stat_list[0])
-        assert type(stat) == ProjectAccountStatistics
-
-    def test_statistics_get_inspection_statistics(self):
-        stat_list = service.wrapper.get_inspection_statistics(project_id)
-        stat = InspectionStatistics.from_dict(stat_list[0])
-        assert type(stat) == InspectionStatistics
-
-    def test_statistics_get_task_phase_statistics(self):
-        stat_list = service.wrapper.get_task_phase_statistics(project_id)
-        stat = TaskPhaseStatistics.from_dict(stat_list[0])
-        assert type(stat) == TaskPhaseStatistics
-
     def test_statistics_get_label_statistics(self):
         stat_list = service.wrapper.get_label_statistics(project_id)
         stat = LabelStatistics.from_dict(stat_list[0])
         assert type(stat) == LabelStatistics
-
-    def test_statistics_get_worktime_statistics(self):
-        stat_list = service.wrapper.get_worktime_statistics(project_id)
-        stat = WorktimeStatistics.from_dict(stat_list[0])
-        assert type(stat) == WorktimeStatistics
 
     def test_markers(self):
         content, _ = service.api.get_markers(project_id)

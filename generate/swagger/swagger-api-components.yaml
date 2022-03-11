@@ -2,19 +2,19 @@ components:
   securitySchemes:
     SignedCookieKeyPairId:
       description: |
-        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
+        認証/認可には、[sign-url](/docs/api/v2/#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
       type: "apiKey"
       in: "cookie"
       name: "CloudFront-Key-Pair-Id"
     SignedCookiePolicy:
       description: |
-        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
+        認証/認可には、[sign-url](/docs/api/v2/#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
       type: "apiKey"
       in: "cookie"
       name: "CloudFront-Policy"
     SignedCookieSignature:
       description: |
-        認証/認可には、[sign-url](#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
+        認証/認可には、[sign-url](/docs/api/v2/#operation/getSignedAccessV2) APIで取得した署名付きCookieを使います。
       type: "apiKey"
       in: "cookie"
       name: "CloudFront-Signature"
@@ -39,7 +39,7 @@ components:
         AnnoFabのユーザーなら誰でも利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
+        IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
       type: "apiKey"
       name: "Authorization"
       in: "header"
@@ -48,7 +48,7 @@ components:
         AnnoFabのシステム管理者のみ利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
+        IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
       type: "apiKey"
       name: "Authorization"
       in: "header"
@@ -57,7 +57,7 @@ components:
         プロジェクトに所属するユーザーなら誰でも利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
+        IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
       type: "apiKey"
       name: "Authorization"
       in: "header"
@@ -66,7 +66,7 @@ components:
         プロジェクトのオーナーまたはプロジェクトのチェッカーのみ利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
+        IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
       type: "apiKey"
       name: "Authorization"
       in: "header"
@@ -75,7 +75,7 @@ components:
         プロジェクトのオーナーまたはプロジェクトのアノテーションユーザーのみ利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
+        IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
       type: "apiKey"
       name: "Authorization"
       in: "header"
@@ -84,7 +84,7 @@ components:
         プロジェクトのオーナー/チェッカー/アノテーションユーザーのいずれかのみ利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
+        IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
       type: "apiKey"
       name: "Authorization"
       in: "header"
@@ -93,7 +93,7 @@ components:
         プロジェクトのオーナーのみ利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
+        IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
       type: "apiKey"
       name: "Authorization"
       in: "header"
@@ -102,7 +102,7 @@ components:
         組織に所属するユーザーなら誰でも利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
+        IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
       type: "apiKey"
       name: "Authorization"
       in: "header"
@@ -111,7 +111,7 @@ components:
         組織のオーナーまたは組織の管理者のみ利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
+        IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
       type: "apiKey"
       name: "Authorization"
       in: "header"
@@ -120,7 +120,7 @@ components:
         組織のオーナーのみ利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
-        IDトークンは [login](#operation/login) または [refreshToken](#operation/refreshToken) API で取得できます。
+        IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
       type: "apiKey"
       name: "Authorization"
       in: "header"
@@ -3144,7 +3144,10 @@ components:
           description: falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
         input_data_count:
           type: integer
-          description: 1つのタスクに割り当てる入力データの個数
+          description: |
+            1つのタスクに割り当てる入力データの個数。
+            画像プロジェクト、およびカスタムプロジェクトでは 1 以上 200 以下の値を指定することができます。
+            動画プロジェクトでは必ず 1 を指定してください。
           example: 10
         input_data_order:
           $ref: "#/components/schemas/InputDataOrder"
@@ -3174,7 +3177,9 @@ components:
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "ByDirectory"
     TaskGenerateRuleByInputDataCsv:
-      description: 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。
+      description: |
+        各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。
+        1つのタスクに対する入力データの個数は最大200です。200を超えるタスクが1つでもある場合にはタスク生成に失敗します。
       type: object
       required:
         - csv_data_path
@@ -3715,6 +3720,7 @@ components:
 
         supplementary_data_number:
           type: integer
+          minimum: 0
           description: 表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
         last_updated_datetime:
           type: string

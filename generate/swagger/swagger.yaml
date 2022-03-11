@@ -301,6 +301,9 @@ tags:
     # Inspection
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/Inspection" />
 
+    # Comment
+    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/Comment" />
+
     # TaskStatus
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/TaskStatus" />
 
@@ -2401,6 +2404,7 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/rawdata/inspections:
     get:
+      deprecated: true
       tags:
       - af-project
       summary: プロジェクトの検査コメント全件URLの取得
@@ -2421,6 +2425,37 @@ paths:
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      responses:
+        "201":
+          $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/rawdata/comments:
+    get:
+      tags:
+        - af-project
+      summary: プロジェクトのコメント全件URLの取得
+      description: |
+        コメント全件ファイルにアクセスするための、認証済み一時URLを取得します。
+        取得したURLは1時間で失効し、アクセスできなくなります。
+
+        ### コメント全件ファイル
+        コメント全件ファイルには、プロジェクトのコメント情報がJSON形式（[Comment](#section/Comment)の配列）で記録されています。
+        このファイルは毎日AM 02:00 JSTに更新されます。
+      security:
+        - ProjectDataUser: []
+      operationId: getProjectCommentsUrl
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       responses:
         "201":
           $ref: "swagger-api-components.yaml#/components/responses/FileRedirectResponse"
@@ -3857,6 +3892,10 @@ paths:
 
         **注意:** `ByDirectory`では、入力データ名がファイルパス形式になっていない入力データはタスクの作成対象になりません。
         例えば、`foo/bar.png` はタスクの作成対象になりますが、ディレクトリを含まない`bar.png` や、最後がディレクトリになっている`foo/bar.png/` は対象になりません。
+
+        **注意:** `ByDirectory`では、一つのディレクトリに200ファイルより多くの入力データがある場合、複数のタスクに分かれます。
+        例えば、`foo/` の中に201ファイルがある場合、fooから２つのタスクが作成されます。１つ目は最初の200ファイルを割り当て、２つ目は最後の１ファイルのタスクに分かれます。
+        分かれたタスクは、 `{上述のタスクIDの付与則}_連番` の形式でタスクIDが付与されます。連番は、対象の入力データ数の桁数まで0埋めされます。
 
         **注意:** 動画プロジェクトの場合、ディレクトリに含まれる動画の入力データは一つに制限してください。
         これが守られない場合、作成されたタスクで動画を再生できない場合があります。

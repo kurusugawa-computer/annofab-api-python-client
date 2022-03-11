@@ -33,6 +33,7 @@
 * annofabapi.AnnofabApi.get_inspections
 * annofabapi.Wrapper.update_status_of_inspections
 * annofabapi.dataclasses.inspection
+* annofabapi.models.InspectionStatus
 
 
 # Features
