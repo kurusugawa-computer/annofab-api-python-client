@@ -816,7 +816,7 @@ class AbstractAnnofabApi(abc.ABC):
                 input_data_name (str):  入力データ名での部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。
                 input_data_path (str):  入力データパスでの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。
                 task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。条件に合致した先頭100件のタスクに使われている入力データを検索します。
-                _from (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
+                from (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
                 to (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
@@ -1766,7 +1766,7 @@ class AbstractAnnofabApi(abc.ABC):
                 input_data_name (str):  入力データ名での部分一致検索で使用。1文字以上あれば使用します。
                 input_data_path (str):  入力データパスでの部分一致検索で使用。1文字以上あれば使用します。
                 task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。条件に合致した先頭100件のタスクに使われている入力データを検索します。
-                _from (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
+                from (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
                 to (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
@@ -2562,7 +2562,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
@@ -2593,7 +2593,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
@@ -2672,7 +2672,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
@@ -2727,7 +2727,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
@@ -2758,7 +2758,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
@@ -2790,7 +2790,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
             account_id (str):  アカウントID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:

@@ -392,7 +392,7 @@ class AbstractAnnofabApi2(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
@@ -423,7 +423,7 @@ class AbstractAnnofabApi2(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
@@ -484,7 +484,7 @@ class AbstractAnnofabApi2(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
@@ -515,7 +515,7 @@ class AbstractAnnofabApi2(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
@@ -547,7 +547,7 @@ class AbstractAnnofabApi2(abc.ABC):
             project_id (str):  プロジェクトID (required)
             account_id (str):  アカウントID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
@@ -578,7 +578,7 @@ class AbstractAnnofabApi2(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                _from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
+                from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:

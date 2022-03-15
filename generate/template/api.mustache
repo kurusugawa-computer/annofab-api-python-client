@@ -30,7 +30,7 @@
 {{#hasQueryParams}}
             query_params (Dict[str, Any]): Query Parameters
 {{#queryParams}}
-                {{paramName}} ({{dataType}}): {{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional){{/optional}}
+                {{baseName}} ({{dataType}}): {{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional){{/optional}}
 {{/queryParams}}
 {{/hasQueryParams}}
 {{#hasHeaderParams}}

@@ -89,7 +89,7 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${
     --input-spec swagger/swagger-models.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
     --template-dir /local/template \
-    --global-property ,models,modelTests=false,modelDocs=false \
+    --global-property models,modelTests=false,modelDocs=false \
     --ignore-file-override=/local/.openapi-generator-ignore_v1
 
 cat partial-header/models_partial_header_v1.py out/openapi_client/models/*.py partial-footer/models_partial_footer.py> ../annofabapi/models.py
