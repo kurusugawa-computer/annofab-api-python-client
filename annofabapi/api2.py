@@ -1,11 +1,19 @@
 import logging
+import time
 from typing import Any, Dict, Optional, Tuple
 
 import requests
 from requests.cookies import RequestsCookieJar
 
 import annofabapi.utils
-from annofabapi.api import AnnofabApi, _log_error_response, _raise_for_status
+from annofabapi.api import (
+    DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE,
+    AnnofabApi,
+    _create_request_body_for_logger,
+    _log_error_response,
+    _raise_for_status,
+    _should_retry_with_status,
+)
 from annofabapi.generated_api2 import AbstractAnnofabApi2
 
 logger = logging.getLogger(__name__)
@@ -39,9 +47,11 @@ class AnnofabApi2(AbstractAnnofabApi2):
         self,
         http_method: str,
         url_path: str,
+        *,
         query_params: Optional[Dict[str, Any]] = None,
         header_params: Optional[Dict[str, Any]] = None,
         request_body: Optional[Any] = None,
+        raise_for_status: bool = True,
     ) -> Tuple[Any, requests.Response]:
         """
         HTTP　Requestを投げて、Responseを返す。
@@ -51,6 +61,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
             query_params:
             header_params:
             request_body:
+            raise_for_status: Trueの場合HTTP Status Codeが4XX,5XXのときはHTTPErrorをスローします。Falseの場合はtuple[None, Response]を返します。
 
         Returns:
             Tuple[content, Response]. contentはcontent_typeにより型が変わる。
@@ -68,7 +79,14 @@ class AnnofabApi2(AbstractAnnofabApi2):
             # Unauthorized Errorならば、ログイン後に再度実行する
             if response.status_code == requests.codes.unauthorized:
                 self.api.login()
-                return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
+                return self._request_wrapper(
+                    http_method,
+                    url_path,
+                    query_params=query_params,
+                    header_params=header_params,
+                    request_body=request_body,
+                    raise_for_status=raise_for_status,
+                )
 
         else:
             kwargs.update({"cookies": self.cookies})
@@ -76,18 +94,82 @@ class AnnofabApi2(AbstractAnnofabApi2):
             # HTTP Requestを投げる
             response = self.api.session.request(method=http_method.lower(), url=url, **kwargs)
 
+            logger.debug(
+                "Sent a request :: %s",
+                {
+                    "request": {
+                        "http_method": http_method.lower(),
+                        "url": url,
+                        "query_params": query_params,
+                        "header_params": header_params,
+                        "request_body": _create_request_body_for_logger(request_body)
+                        if request_body is not None
+                        else None,
+                    },
+                    "response": {
+                        "status_code": response.status_code,
+                        "content_length": len(response.content),
+                    },
+                },
+            )
+
             # CloudFrontから403 Errorが発生したとき
             if response.status_code == requests.codes.forbidden and response.headers.get("server") == "CloudFront":
 
                 self._get_signed_access_v2(url_path)
-                return self._request_wrapper(http_method, url_path, query_params, header_params, request_body)
+                return self._request_wrapper(
+                    http_method,
+                    url_path,
+                    query_params=query_params,
+                    header_params=header_params,
+                    request_body=request_body,
+                    raise_for_status=raise_for_status,
+                )
 
-        _log_error_response(logger, response)
+            elif response.status_code == requests.codes.too_many_requests:
+                retry_after_value = response.headers.get("Retry-After")
+                waiting_time_seconds = (
+                    float(retry_after_value)
+                    if retry_after_value is not None
+                    else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
+                )
+
+                logger.warning(
+                    "HTTPステータスコードが'%s'なので、%s秒待ってからリトライします。 :: %s",
+                    response.status_code,
+                    waiting_time_seconds,
+                    {
+                        "response": {
+                            "status_code": response.status_code,
+                            "text": response.text,
+                            "headers": {"Retry-After": retry_after_value},
+                        },
+                        "request": {
+                            "http_method": http_method.lower(),
+                            "url": url,
+                            "query_params": query_params,
+                        },
+                    },
+                )
+
+                time.sleep(waiting_time_seconds)
+                return self._request_wrapper(
+                    http_method,
+                    url_path,
+                    query_params=query_params,
+                    header_params=header_params,
+                    request_body=request_body,
+                    raise_for_status=raise_for_status,
+                )
 
         response.encoding = "utf-8"
-        _raise_for_status(response)
-
         content = self.api._response_to_content(response)
+
+        # リトライすべき場合はExceptionを返す
+        if raise_for_status or _should_retry_with_status(response.status_code):
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+
         return content, response
 
     def _get_signed_access_v2(self, url_path: str):

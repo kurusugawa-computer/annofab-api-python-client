@@ -1,6 +1,7 @@
 import copy
 import json
 import logging
+import time
 from functools import wraps
 from json import JSONDecodeError
 from typing import Any, Dict, Optional, Tuple
@@ -17,6 +18,9 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_ENDPOINT_URL = "https://annofab.com"
 """AnnoFab WebAPIのデフォルトのエンドポイントURL"""
+
+DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE = 300
+"""HTTP Status Codeが429のときの、デフォルト（Retry-Afterヘッダがないとき）の待ち時間です。"""
 
 
 def _raise_for_status(response: requests.Response) -> None:
@@ -157,13 +161,13 @@ def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def _should_retry_with_status(status_code: int) -> bool:
-    """HTTP Status Codeからリトライすべきかどうかを返す。"""
-    if status_code == 429:
+    """
+    HTTP Status Codeからリトライすべきかどうかを返す。
+    """
+    # 注意：429(Too many requests)の場合は、backoffモジュール外でリトライするため、このメソッドでは判定しない
+    if 500 <= status_code < 600:
         return True
-    elif 500 <= status_code < 600:
-        return True
-    else:
-        return False
+    return False
 
 
 def my_backoff(function):
@@ -363,8 +367,9 @@ class AnnofabApi(AbstractAnnofabApi):
         raise_for_status: bool = True,
         **kwargs,
     ) -> requests.Response:
-        """Session情報を使って、HTTP Requestを投げる。
-        引数は ``requests.Session.request`` にそのまま渡す。
+        """
+        Session情報を使って、HTTP Requestを投げます。AnnoFab WebAPIで取得したAWS S3のURLなどに、アクセスすることを想定しています。
+        引数は ``requests.Session.request`` にそのまま渡します。
 
         Args:
             raise_for_status: Trueの場合HTTP Status Codeが4XX,5XXのときはHTTPErrorをスローします
@@ -398,7 +403,47 @@ class AnnofabApi(AbstractAnnofabApi):
                 },
             },
         )
-        # リトライすべき場合はExceptionを返す
+
+        # リクエスト過多の場合、待ってから再度アクセスする
+        if response.status_code == requests.codes.too_many_requests:
+            retry_after_value = response.headers.get("Retry-After")
+            waiting_time_seconds = (
+                float(retry_after_value)
+                if retry_after_value is not None
+                else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
+            )
+
+            logger.warning(
+                "HTTPステータスコードが'%s'なので、%s秒待ってからリトライします。 :: %s",
+                response.status_code,
+                waiting_time_seconds,
+                {
+                    "response": {
+                        "status_code": response.status_code,
+                        "text": response.text,
+                        "headers": {"Retry-After": retry_after_value},
+                    },
+                    "request": {
+                        "http_method": http_method,
+                        "url": url,
+                        "query_params": _create_query_params_for_logger(params) if params is not None else None,
+                    },
+                },
+            )
+
+            time.sleep(float(waiting_time_seconds))
+            return self._execute_http_request(
+                http_method=http_method,
+                url=url,
+                params=params,
+                data=data,
+                json=json,
+                headers=headers,
+                raise_for_status=raise_for_status,
+                **kwargs,
+            )
+
+        # リトライすべき場合はExceptionをスローする
         if raise_for_status or _should_retry_with_status(response.status_code):
             _log_error_response(logger, response)
             _raise_for_status(response)
@@ -417,14 +462,14 @@ class AnnofabApi(AbstractAnnofabApi):
         raise_for_status: bool = True,
     ) -> Tuple[Any, requests.Response]:
         """
-        HTTP Requestを投げて、Responseを返す。
+        AnnoFab WebAPIにアクセスして、レスポンスの中身とレスポンスを取得します。
 
         Args:
             http_method:
-            url_path:
-            query_params:
-            header_params:
-            request_body:
+            url_path: AnnoFab WebAPIのパス（例：``/my/account``）
+            query_params: クエリパラメタ
+            header_params: リクエストヘッダ
+            request_body: リクエストボディ
             raise_for_status: Trueの場合HTTP Status Codeが4XX,5XXのときはHTTPErrorをスローします。Falseの場合はtuple[None, Response]を返します。
 
         Returns:
@@ -435,6 +480,8 @@ class AnnofabApi(AbstractAnnofabApi):
             HTTPError: 引数 ``raise_for_status`` がTrueで、HTTP status codeが4xxx,5xxのときにスローします。
 
         """
+
+        # TODO 判定条件が不明
         if url_path.startswith("/internal/"):
             url = f"{self.endpoint_url}/api{url_path}"
         else:
@@ -463,6 +510,41 @@ class AnnofabApi(AbstractAnnofabApi):
         # Unauthorized Errorならば、ログイン後に再度実行する
         if response.status_code == requests.codes.unauthorized:
             self.login()
+            return self._request_wrapper(
+                http_method,
+                url_path,
+                query_params=query_params,
+                header_params=header_params,
+                request_body=request_body,
+                raise_for_status=raise_for_status,
+            )
+        elif response.status_code == requests.codes.too_many_requests:
+            retry_after_value = response.headers.get("Retry-After")
+            waiting_time_seconds = (
+                float(retry_after_value)
+                if retry_after_value is not None
+                else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
+            )
+
+            logger.warning(
+                "HTTPステータスコードが'%s'なので、%s秒待ってからリトライします。 :: %s",
+                response.status_code,
+                waiting_time_seconds,
+                {
+                    "response": {
+                        "status_code": response.status_code,
+                        "text": response.text,
+                        "headers": {"Retry-After": retry_after_value},
+                    },
+                    "request": {
+                        "http_method": http_method.lower(),
+                        "url": url,
+                        "query_params": query_params,
+                    },
+                },
+            )
+
+            time.sleep(waiting_time_seconds)
             return self._request_wrapper(
                 http_method,
                 url_path,
