@@ -161,13 +161,13 @@ def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def _should_retry_with_status(status_code: int) -> bool:
-    """HTTP Status Codeからリトライすべきかどうかを返す。"""
-    if status_code == 429:
+    """
+    HTTP Status Codeからリトライすべきかどうかを返す。
+    """
+    # 注意：429(Too many requests)の場合は、backoffモジュール外でリトライするため、このメソッドでは判定しない
+    if 500 <= status_code < 600:
         return True
-    elif 500 <= status_code < 600:
-        return True
-    else:
-        return False
+    return False
 
 
 def my_backoff(function):
@@ -404,7 +404,7 @@ class AnnofabApi(AbstractAnnofabApi):
             },
         )
 
-        # Unauthorized Errorならば、ログイン後に再度実行する
+        # リクエスト過多の場合、待ってから再度アクセスする
         if response.status_code == requests.codes.too_many_requests:
             retry_after_value = response.headers.get("Retry-After")
             waiting_time_seconds = (
