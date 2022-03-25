@@ -29,8 +29,8 @@
 
 ### 2022-08-23 以降
 検査コメント関連のWebAPIの廃止に伴い、以下のメソッドやクラスを廃止します。
-* annofabapi.AnnofabApi.batch_update_inspections
-* annofabapi.AnnofabApi.get_inspections
+* `annofabapi.AnnofabApi.batch_update_inspections`：替わりに`annofabapi.AnnofabApi.batch_update_comments`を使用してください。
+* `annofabapi.AnnofabApi.get_inspections`：替わりに`annofabapi.AnnofabApi.get_comments`を使用してください。
 * annofabapi.Wrapper.update_status_of_inspections
 * annofabapi.dataclasses.inspection
 * annofabapi.models.InspectionStatus
