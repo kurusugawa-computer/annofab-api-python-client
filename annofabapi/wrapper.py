@@ -2247,7 +2247,11 @@ class Wrapper:
 
             elif job["job_status"] == JobStatus.FAILED.value:
                 logger.info(
-                    "project_id='%s', job_id='%s', job_type='%s' のジョブが失敗しました。", project_id, job_id, job_type.value
+                    "project_id='%s', job_id='%s', job_type='%s' のジョブが失敗しました。:: errors='%s'",
+                    project_id,
+                    job_id,
+                    job_type.value,
+                    job["errors"],
                 )
                 return JobStatus.FAILED
 
