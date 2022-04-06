@@ -271,8 +271,9 @@ class Wrapper:
             FutureWarning,
             stacklevel=2,
         )
-        content, _ = self.api.get_archive_full_with_pro_id(project_id)
-        url = content["url"]
+        # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
+        _, response = self.api.get_archive_full_with_pro_id(project_id)
+        url = response.headers["Location"]
         response2 = self._download(url, dest_path)
         logger.info(
             "FullアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
