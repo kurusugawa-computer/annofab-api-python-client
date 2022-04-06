@@ -429,7 +429,7 @@ class AbstractAnnofabApi(abc.ABC):
     def get_editor_annotation(
         self, project_id: str, task_id: str, input_data_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """タスク/入力データのアノテーション一括取得
+        """タスク-入力データのアノテーション一括取得
         https://annofab.com/docs/api/#operation/getEditorAnnotation
 
 
@@ -1123,14 +1123,14 @@ class AbstractAnnofabApi(abc.ABC):
     def delete_project_job(
         self, project_id: str, job_type: str, job_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """バックグラウンドジョブ情報削除
+        """プロジェクトのバックグラウンドジョブ情報削除
         https://annofab.com/docs/api/#operation/deleteProjectJob
 
 
         authorizations: ProjectOwner
 
 
-        バックグラウンドジョブ情報を削除します。  なお、バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
+        プロジェクトのバックグラウンドジョブ情報を削除します。  なお、バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1158,15 +1158,14 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        組織のバックグラウンドジョブの情報を取得します。 取得されるジョブ情報は、作成日付の新しい順にソートされています。  バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
+        組織のバックグラウンドジョブの情報を取得します。  バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
 
         Args:
             organization_name (str):  組織名 (required)
             query_params (Dict[str, Any]): Query Parameters
                 type (str):  取得するジョブの種別。[詳細はこちら](#section/OrganizationJobType)。
-                page (int):  検索結果のうち、取得したいページの番号(1始まり)  現在は未実装のパラメータです。(今後対応予定)
                 limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。
-                exclusive_start_created_datetime (str):  取得するデータの直前の作成日時（ISO 8601 拡張形式）
+                exclusive_start_created_datetime (str):  作成日時が、指定した日付より古いジョブを取得します。
 
         Returns:
             Tuple[OrganizationJobInfoContainer, requests.Response]
@@ -1191,15 +1190,14 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        プロジェクトのバックグラウンドジョブの情報を取得します。 取得されるジョブ情報は、作成日付の新しい順にソートされています。  バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
+        プロジェクトのバックグラウンドジョブの情報を取得します。  バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
                 type (ProjectJobType):  取得するジョブの種別。[詳細はこちら](#section/ProjectJobType)。
-                page (int):  検索結果のうち、取得したいページの番号(1始まり)  現在は未実装のパラメータです。(今後対応予定)
                 limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。
-                exclusive_start_created_datetime (str):  取得するデータの直前の作成日時（ISO 8601 拡張形式）
+                exclusive_start_created_datetime (str):  作成日時が、指定した日付より古いジョブを取得します。
 
         Returns:
             Tuple[ProjectJobInfoContainer, requests.Response]
@@ -1254,7 +1252,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        API リクエストユーザーのアカウント情報を取得します。
+        自分のアカウント情報を取得します。
 
         Args:
 
@@ -1307,7 +1305,6 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             query_params (Dict[str, Any]): Query Parameters
-                page (int):  表示するページ番号  現在は未実装のパラメータです。(今後対応予定)
                 limit (int):  1ページあたりの取得するデータ件数  現在は未実装のパラメータです。(今後対応予定)
 
         Returns:
@@ -1410,7 +1407,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        API リクエストユーザーのアカウント情報を更新します。
+        自分のアカウント情報を更新します。
 
         Args:
             request_body (Any): Request Body
@@ -3247,14 +3244,14 @@ class AbstractAnnofabApi(abc.ABC):
     #########################################
 
     def delete_webhook(self, project_id: str, webhook_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """プロジェクト Webhook 削除
+        """Webhookの削除
         https://annofab.com/docs/api/#operation/deleteWebhook
 
 
         authorizations: ProjectOwner
 
 
-        指定された Webhook を削除
+        Webhookを削除します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -3272,14 +3269,14 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_webhooks(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """プロジェクト Webhook 一括取得
+        """Webhookの一括取得
         https://annofab.com/docs/api/#operation/getWebhooks
 
 
         authorizations: ProjectOwner
 
 
-        指定されたプロジェクトの Webhook をすべて取得します。
+        Webhookをすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -3298,20 +3295,20 @@ class AbstractAnnofabApi(abc.ABC):
     def put_webhook(
         self, project_id: str, webhook_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """プロジェクト Webhook 作成/更新
+        """Webhookの作成/更新
         https://annofab.com/docs/api/#operation/putWebhook
 
 
         authorizations: ProjectOwner
 
 
-        プロジェクトのWebhookを新規作成/更新します。  Webhook で送信される body には、event_type によって以下のプレースホルダーを使用できます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者     * 形式 : アカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip  * project-copy-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{DEST_PROJECT_ID}} :  コピー先プロジェクトID   * {{DEST_PROJECT_TITLE}} : コピー先プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  Webhookが起動されると、ジョブ種別が`invoke-hook`のバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます。
+        Webhookを新規作成/更新します。  Webhookが送信するHTTPリクエストのボディには、以下のプレースホルダーを含めることができます。  * task-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{TASK_ID}} : タスクID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{LAST_ACCOUNT}} : 最終作業者のアカウントID  * annotation-archive-updated   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  * input-data-zip-registered   * {{PROJECT_ID}} :  プロジェクトID   * {{PROJECT_TITLE}} : プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00   * {{ZIP_NAME}} : ZIPファイル名     * 例 : input_data.zip  * project-copy-completed   * {{PROJECT_ID}} :  プロジェクトID   * {{DEST_PROJECT_ID}} :  コピー先プロジェクトID   * {{DEST_PROJECT_TITLE}} : コピー先プロジェクトタイトル   * {{COMPLETE_DATETIME}} : 完了日時     * 例 : 2019-05-08T10:00:00.000+09:00  Webhookが起動されると、ジョブ種別が`invoke-hook`のバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます。
 
         Args:
             project_id (str):  プロジェクトID (required)
             webhook_id (str):  WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
             request_body (Any): Request Body
-                webhook (Webhook):  (required)
+                put_webhook_request (PutWebhookRequest):  (required)
 
         Returns:
             Tuple[Webhook, requests.Response]
@@ -3329,14 +3326,14 @@ class AbstractAnnofabApi(abc.ABC):
     def test_webhook(
         self, project_id: str, webhook_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """プロジェクト Webhook テスト実行
+        """Webhookのテスト実行
         https://annofab.com/docs/api/#operation/testWebhook
 
 
         authorizations: ProjectOwner
 
 
-        得録された登録された URL にテスト用の Webhook を実際に送信します。  送信される Webhook の body に含まれるプレースホルダーは、本 API リクエストで指定されたダミーのプレースホルダーで置き換えられます。
+        Webhookが実際にHTTPリクエストを送信します。  Webhookが送信するHTTPリクエストのボディに含まれるプレースホルダーは、このAPIで指定されたプレースホルダーの値に置き換えられます。
 
         Args:
             project_id (str):  プロジェクトID (required)

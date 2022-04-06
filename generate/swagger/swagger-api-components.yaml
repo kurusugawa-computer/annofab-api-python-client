@@ -305,6 +305,12 @@ components:
       properties:
         messages:
           type: array
+          description: |
+            言語コードとメッセージ（テキスト）のリスト。
+
+            * アノテーションエディタなどでは、AnnoFabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます
+            * [Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます
+            * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます
           items:
             type: object
             required:
@@ -313,10 +319,15 @@ components:
             properties:
               lang:
                 type: string
+                description: 言語コード。`en-US` (英語) または `ja-JP` (日本語) のみサポートしています。
+                example: en-US
               message:
                 type: string
+                description: lang で指定された言語でのメッセージ
         default_lang:
           type: string
+          example: ja-JP
+          description: 希望された言語のメッセージが存在しない場合に、フォールバック先として使われる言語コード
     SignUpRequest:
       type: object
       required:
@@ -521,38 +532,55 @@ components:
         - keylayout
         - authority
         - is_external_account
+        - updated_datetime
       properties:
         account_id:
           $ref: "#/components/schemas/AccountId"
         user_id:
           $ref: "#/components/schemas/UserId"
         username:
-          type: string
+          $ref: "#/components/schemas/Username"
         email:
-          type: string
-          format: email
+          $ref: "#/components/schemas/Email"
         lang:
-          type: string
+          $ref: "#/components/schemas/Lang"
         biography:
           $ref: "#/components/schemas/UserBiography"
         keylayout:
-          type: string
+          $ref: "#/components/schemas/KeyLayout"
         authority:
-          $ref: "#/components/schemas/AccountAuthority"
+          type: string
+          description: システム内部用のプロパティ
         is_external_account:
           type: boolean
           description: |
-            [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合true。
+            [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。
 
-            外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合false。
+            外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合はfalse。
         updated_datetime:
           type: string
           format: date-time
-    AccountAuthority:
+          description: 更新日時
+    Lang:
       type: string
       enum:
-        - user
-        - admin
+        - en-US
+        - ja-JP
+      description: |
+        表示言語
+        * `ja-JP` - 日本語
+        * `en-US` - 英語
+    KeyLayout:
+      type: string
+      enum:
+        - ja-JP
+        - en-US
+        - other
+      description: |
+        キーボードレイアウト
+        * `ja-JP` - 日本語(106/109)配列
+        * `en-US` - 英語(101/104)配列
+        * `other` - その他
     MyAccount:
       allOf:
         - $ref: "#/components/schemas/Account"
@@ -561,9 +589,11 @@ components:
             - errors
           properties:
             reset_requested_email:
+              description: システム内部用のプロパティ
               type: string
               format: email
             errors:
+              description: システム内部用のプロパティ
               type: array
               items:
                 type: string
@@ -578,11 +608,11 @@ components:
         user_id:
           $ref: "#/components/schemas/UserId"
         username:
-          type: string
+          $ref: "#/components/schemas/Username"
         lang:
-          type: string
+          $ref: "#/components/schemas/Lang"
         keylayout:
-          type: string
+          $ref: "#/components/schemas/KeyLayout"
         biography:
           $ref: "#/components/schemas/UserBiography"
         last_updated_datetime:
@@ -997,12 +1027,24 @@ components:
       properties:
         role:
           $ref: "#/components/schemas/OrganizationMemberRole"
+    Email:
+      type: string
+      format: email
+      description: メールアドレス
     AccountId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     UserId:
       type: string
       example: "john_doe"
+      description: |
+        ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+    Username:
+      type: string
+      example: "John Doe"
+      description: ユーザー名
     UserCacheRecord:
       type: object
       properties:
@@ -1032,12 +1074,18 @@ components:
     LabelId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     AdditionalDataDefinitionId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     ChoiceId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     PhraseId:
       type: string
       example: "my_phrase_id"
@@ -1086,6 +1134,8 @@ components:
     JobId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        ジョブID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     WebhookId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -1332,6 +1382,14 @@ components:
         * `desc` - 降順
     ProjectJobInfo:
       type: object
+      required:
+        - project_id
+        - job_type
+        - job_id
+        - job_status
+        - errors
+        - created_datetime
+        - updated_datetime
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -1349,12 +1407,16 @@ components:
           description: ジョブ結果の内部情報
         errors:
           $ref: "#/components/schemas/Errors"
+          description: |
+            `job_status`が`failed`のときに、ジョブの失敗した原因が格納されます。
         created_datetime:
           type: string
           format: date-time
+          description: 作成日時
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
     OrganizationJobInfo:
       type: object
       properties:
@@ -1393,6 +1455,7 @@ components:
         - invoke-hook
         - move-project
       description: |
+        プロジェクトのジョブの種別
         * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。
         * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。
         * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。
@@ -1482,11 +1545,13 @@ components:
         (現在はまだ、この種別に該当するものはありません)
 
     JobStatus:
-        type: string
-        enum:
-          - progress
-          - succeeded
-          - failed
+      type: string
+      enum:
+        - progress
+        - succeeded
+        - failed
+      description: |
+        ジョブのステータス
     PostAnnotationArchiveUpdateResponse:
       type: object
       properties:
@@ -1532,6 +1597,16 @@ components:
           $ref: "#/components/schemas/ProjectJobInfo"
     Webhook:
       type: object
+      required:
+        - project_id
+        - event_type
+        - webhook_id
+        - webhook_status
+        - method
+        - headers
+        - created_datetime
+        - updated_datetime
+        - url
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -1544,30 +1619,86 @@ components:
         method:
           $ref: "#/components/schemas/WebhookHttpMethod"
         headers:
+          description: Webhookが送信するHTTPリクエストのヘッダー
           type: array
           items:
             $ref: "#/components/schemas/WebhookHeader"
         body:
+          description: Webhookが送信するHTTPリクエストのボディ
           type: string
           example: '{"message": "{{PROJECT_ID}} is updated at {{COMPLETE_DATETIME}}"}'
         url:
           type: string
           format: uri
+          description: Webhookの送信先URL
         created_datetime:
           type: string
           format: date-time
+          description: 作成日時
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
+
+    PutWebhookRequest:
+      type: object
+      required:
+        - project_id
+        - event_type
+        - webhook_id
+        - webhook_status
+        - method
+        - headers
+        - url
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        event_type:
+          $ref: "#/components/schemas/WebhookEventType"
+        webhook_id:
+          $ref: "#/components/schemas/WebhookId"
+        webhook_status:
+          $ref: "#/components/schemas/WebhookStatus"
+        method:
+          $ref: "#/components/schemas/WebhookHttpMethod"
+        headers:
+          description: Webhookが送信するHTTPリクエストのヘッダー
+          type: array
+          items:
+            $ref: "#/components/schemas/WebhookHeader"
+        body:
+          description: Webhookが送信するHTTPリクエストのボディ
+          type: string
+          example: '{"message": "{{PROJECT_ID}} is updated at {{COMPLETE_DATETIME}}"}'
+        url:
+          type: string
+          format: uri
+          description: Webhookの送信先URL
+        created_datetime:
+          type: string
+          format: date-time
+          description: 作成日時
+        updated_datetime:
+          type: string
+          format: date-time
+          description: 更新日時
     WebhookHeader:
       type: object
+      required:
+        - name
+        - value
       properties:
         name:
           type: string
+          description: HTTPヘッダーのフィールド名
+          example: Content-Type
         value:
           type: string
+          description: HTTPヘッダーの値
+          example: application/json
     WebhookStatus:
       type: string
+      description: Webhookの状態
       enum:
         - active
         - inactive
@@ -1577,9 +1708,9 @@ components:
         - POST
         - PUT
         - DELETE
-        - PATCH
         - GET
-        - HEAD
+      description: |
+        Webhook通知するHTTPリクエストのメソッド
     WebhookEventType:
       type: string
       enum:
@@ -1588,6 +1719,7 @@ components:
         - input-data-zip-registered
         - project-copy-completed
       description: |
+        Webhookイベントの種類
         * `task-completed` - タスク受入完了
         * `annotation-archive-updated` - アノテーションZIP作成完了
         * `input-data-zip-registered` - 入力データZIP登録完了
@@ -2224,10 +2356,12 @@ components:
         project_id:
           $ref: "#/components/schemas/ProjectId"
         labels:
+          description: ラベル
           type: array
           items:
             $ref: "#/components/schemas/LabelV1"
         inspection_phrases:
+          description: 定型指摘
           type: array
           items:
             $ref: "#/components/schemas/InspectionPhrase"
@@ -2261,18 +2395,22 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/LabelV2"
+          description: ラベル
         additionals:
           type: array
           items:
             $ref: "#/components/schemas/AdditionalDataDefinitionV2"
+          description: 属性
         restrictions:
           type: array
           items:
             $ref: "#/components/schemas/AdditionalDataRestriction"
+          description: 属性の制約
         inspection_phrases:
           type: array
           items:
             $ref: "#/components/schemas/InspectionPhrase"
+          description: 定型指摘
         format_version:
           type: string
           default: "2.1.0"
@@ -2301,12 +2439,15 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/LabelV1"
+          description: ラベル
         inspection_phrases:
           type: array
           items:
             $ref: "#/components/schemas/InspectionPhrase"
+          description: 定型指摘
         comment:
           type: string
+          description: 変更内容のコメント
         auto_marking:
           type: boolean
           default: false
@@ -2342,20 +2483,25 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/LabelV2"
+          description: ラベル
         additionals:
           type: array
           items:
             $ref: "#/components/schemas/AdditionalDataDefinitionV2"
+          description: 属性
         restrictions:
           type: array
           items:
             $ref: "#/components/schemas/AdditionalDataRestriction"
+          description: 属性の制約
         inspection_phrases:
           type: array
           items:
             $ref: "#/components/schemas/InspectionPhrase"
+          description: 定型指摘
         comment:
           type: string
+          description: 変更内容のコメント
         auto_marking:
           type: boolean
           default: false
@@ -2563,6 +2709,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AdditionalDataDefinitionV1"
+          description: 属性
         color:
           $ref: "#/components/schemas/Color"
         annotation_editor_feature:
@@ -2653,6 +2800,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AdditionalDataDefinitionId"
+          description: ラベルに所属する属性のID
         color:
           $ref: "#/components/schemas/Color"
         annotation_editor_feature:
@@ -2733,6 +2881,7 @@ components:
         type:
           $ref: "#/components/schemas/AdditionalDataDefinitionType"
         choices:
+          description: ドロップダウンまたはラジオボタンの選択肢
           type: array
           items:
             type: object
@@ -3729,11 +3878,14 @@ components:
       type: object
       properties:
         placeholders:
-          description: プレースホルダ名と置換する値
+          description: keyがプレースホルダーの名前、valueが置換後の値であるkey-valueペア
           type: object
+          additionalProperties:
+            type: string
           example:
-            SOME_PLACEHOLDER: value
-            SOME_NAME: value2
+            PROJECT_ID: 12345678-abcd-1234-abcd-1234abcd5678
+            PROJECT_TITLE: Test Project
+
     WebhookTestResponse:
       type: object
       properties:
@@ -3830,7 +3982,7 @@ components:
         exact_match_task_id:
           description: |
             タスクIDの検索方法を指定します。
-            trueの場合は完全一致検索、falseの場合は中間一致検索です。
+            trueの場合は完全一致検索、falseの場合は部分一致検索です。
           type: boolean
           default: true
         input_data_id:
@@ -3840,7 +3992,7 @@ components:
         exact_match_input_data_id:
           description: |
             入力データIDの検索方法を指定します。
-            trueの場合は完全一致検索、falseの場合は中間一致検索です。
+            trueの場合は完全一致検索、falseの場合は部分一致検索です。
           type: boolean
           default: true
         label_id:
@@ -4268,7 +4420,7 @@ components:
           type: string
           example: "pedestrian"
           description: |
-            アノテーション仕様のラベル名です。
+            アノテーション仕様で設定したラベル名 (英語) です。
         annotation_id:
           type: string
           example: "acb5359e-be2e-402b-b59a-b5fdbb378ad9"
@@ -4279,7 +4431,12 @@ components:
         attributes:
           type: object
           description: |
-            キーに属性の名前、値に各属性の値が入った辞書構造です。
+            キーと値が以下のようになっている辞書構造です。
+
+            * キー: アノテーション仕様で設定した属性名 (英語)
+            * 値: 各属性の値
+              * 選択肢を定義している場合、その選択肢の表示名 (英語)
+              * それ以外は属性値そのまま (文字列、数値、論理値)
           example:
             maker: "AAA Motors"
             size: 12345
@@ -4838,6 +4995,7 @@ components:
           type: string
           enum:
             - onhold
+            - inspection
           description: |
             コメントの種別。
 
@@ -4999,10 +5157,12 @@ components:
           type: string
           enum:
             - onhold
+            - inspection
           description: |
             コメントの種別。次の値が指定できます。
 
             * `onhold` - 保留コメントとして扱われます。
+            * `inspection` - 検査コメントとして扱われます。
 
             返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。
 
@@ -5500,20 +5660,24 @@ components:
       type: object
       properties:
         list:
+          description: バックグラウンドジョブの一覧。作成日時の降順でソートされています。
           type: array
           items:
             $ref: "#/components/schemas/ProjectJobInfo"
         has_next:
           type: boolean
+          description: さらに古いジョブが存在する場合は`true`です。取得したジョブ一覧の中で`created_datetime`が最も古い値を、クエリパラメータ`exclusive_start_created_datetime`に指定することで、さらに古いジョブを取得することができます。
     OrganizationJobInfoContainer:
       type: object
       properties:
         list:
+          description: バックグラウンドジョブの一覧。作成日時の降順でソートされています。
           type: array
           items:
             $ref: "#/components/schemas/OrganizationJobInfo"
         has_next:
           type: boolean
+          description: さらに古いジョブが存在する場合は`true`です。取得したジョブ一覧の中で`created_datetime`が最も古い値を、クエリパラメータ`exclusive_start_created_datetime`に指定することで、さらに古いジョブを取得することができます。
     MyOrganizationList:
       type: object
       properties:

@@ -22,43 +22,43 @@ from annofabapi.models import WebhookEventType, WebhookHttpMethod, WebhookStatus
 class WebhookHeader(DataClassJsonMixin):
     """ """
 
-    name: Optional[str]
-    """"""
+    name: str
+    """HTTPヘッダーのフィールド名"""
 
-    value: Optional[str]
-    """"""
+    value: str
+    """HTTPヘッダーの値"""
 
 
 @dataclass
 class Webhook(DataClassJsonMixin):
     """ """
 
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    event_type: Optional[WebhookEventType]
+    event_type: WebhookEventType
     """"""
 
-    webhook_id: Optional[str]
+    webhook_id: str
     """WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    webhook_status: Optional[WebhookStatus]
+    webhook_status: WebhookStatus
     """"""
 
-    method: Optional[WebhookHttpMethod]
+    method: WebhookHttpMethod
     """"""
 
-    headers: Optional[List[WebhookHeader]]
-    """"""
+    headers: List[WebhookHeader]
+    """Webhookが送信するHTTPリクエストのヘッダー"""
 
     body: Optional[str]
-    """"""
+    """Webhookが送信するHTTPリクエストのボディ"""
 
-    url: Optional[str]
-    """"""
+    url: str
+    """Webhookの送信先URL"""
 
-    created_datetime: Optional[str]
-    """"""
+    created_datetime: str
+    """作成日時"""
 
-    updated_datetime: Optional[str]
-    """"""
+    updated_datetime: str
+    """更新日時"""

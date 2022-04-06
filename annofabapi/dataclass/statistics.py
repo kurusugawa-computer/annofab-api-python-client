@@ -68,7 +68,7 @@ class ProjectAccountStatistics(DataClassJsonMixin):
     """ """
 
     account_id: str
-    """"""
+    """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     histories: List[ProjectAccountStatisticsHistory]
     """"""
@@ -144,7 +144,7 @@ class LabelStatistics(DataClassJsonMixin):
     """ """
 
     label_id: str
-    """"""
+    """ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     completed: int
     """ラベルごとの受入が完了したアノテーション数"""
@@ -189,7 +189,7 @@ class AccountWorktimeStatistics(DataClassJsonMixin):
     """ """
 
     account_id: str
-    """"""
+    """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     by_tasks: List[WorktimeStatisticsItem]
     """ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）"""

@@ -137,7 +137,7 @@ class AdditionalData(DataClassJsonMixin):
     """ """
 
     additional_data_definition_id: str
-    """"""
+    """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     flag: Optional[bool]
     """`additional_data_definition`の`type`が`flag`のときの属性値。 """
@@ -149,7 +149,7 @@ class AdditionalData(DataClassJsonMixin):
     """`additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 """
 
     choice: Optional[str]
-    """"""
+    """選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
 
 @dataclass
@@ -157,7 +157,7 @@ class FullAnnotationAdditionalData(DataClassJsonMixin):
     """ """
 
     additional_data_definition_id: Optional[str]
-    """"""
+    """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     additional_data_definition_name: Optional[InternationalizationMessage]
     """"""
@@ -177,10 +177,10 @@ class FullAnnotationDetail(DataClassJsonMixin):
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
     user_id: str
-    """"""
+    """ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     label_id: str
-    """"""
+    """ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     label_name: InternationalizationMessage
     """"""
@@ -238,7 +238,7 @@ class SimpleAnnotationDetail(DataClassJsonMixin):
     """ """
 
     label: str
-    """アノテーション仕様のラベル名です。 """
+    """アノテーション仕様で設定したラベル名 (英語) です。 """
 
     annotation_id: str
     """個々のアノテーションにつけられたIDです。 """
@@ -247,7 +247,7 @@ class SimpleAnnotationDetail(DataClassJsonMixin):
     """"""
 
     attributes: Dict[str, Any]
-    """キーに属性の名前、値に各属性の値が入った辞書構造です。 """
+    """キーと値が以下のようになっている辞書構造です。  * キー: アノテーション仕様で設定した属性名 (英語) * 値: 各属性の値   * 選択肢を定義している場合、その選択肢の表示名 (英語)   * それ以外は属性値そのまま (文字列、数値、論理値) """
 
 
 @dataclass
@@ -293,10 +293,10 @@ class SingleAnnotationDetail(DataClassJsonMixin):
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
     account_id: str
-    """"""
+    """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     label_id: str
-    """"""
+    """ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     data_holding_type: AnnotationDataHoldingType
     """"""
@@ -348,10 +348,10 @@ class AnnotationDetail(DataClassJsonMixin):
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 """
 
     account_id: str
-    """"""
+    """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     label_id: str
-    """"""
+    """ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     is_protected: bool
     """`true`の場合、アノテーションをアノテーションエディタ上での削除から保護できます。 外部から取り込んだアノテーションに属性を追加するときなどに指定すると、データの削除を防げます。 """

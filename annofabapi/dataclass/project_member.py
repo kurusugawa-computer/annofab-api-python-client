@@ -26,10 +26,10 @@ class ProjectMember(DataClassJsonMixin):
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     account_id: str
-    """"""
+    """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     user_id: str
-    """"""
+    """ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     username: str
     """"""
