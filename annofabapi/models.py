@@ -181,35 +181,27 @@ Account = Dict[str, Any]
 Kyes of Dict
 
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * username: str
-    
+    ユーザー名
 * email: str
-    
-* lang: str
+    メールアドレス
+* lang: Lang
     
 * biography: str
     人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
-* keylayout: str
+* keylayout: KeyLayout
     
-* authority: AccountAuthority
-    
+* authority: str
+    システム内部用のプロパティ
 * is_external_account: bool
-    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合true。  外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合false。 
+    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。  外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合はfalse。 
 * updated_datetime: str
-    
+    更新日時
 
 """
-
-
-class AccountAuthority(Enum):
-    """ """
-
-    USER = "user"
-    ADMIN = "admin"
-
 
 AccountWorktimeStatistics = Dict[str, Any]
 """
@@ -218,7 +210,7 @@ AccountWorktimeStatistics = Dict[str, Any]
 Kyes of Dict
 
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * by_tasks: List[WorktimeStatisticsItem]
     ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
 * by_inputs: List[WorktimeStatisticsItem]
@@ -248,7 +240,7 @@ AdditionalData = Dict[str, Any]
 Kyes of Dict
 
 * additional_data_definition_id: str
-    
+    属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * flag: bool
     `additional_data_definition`の`type`が`flag`のときの属性値。 
 * integer: int
@@ -256,7 +248,7 @@ Kyes of Dict
 * comment: str
     `additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 
 * choice: str
-    
+    選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 
 """
 
@@ -267,7 +259,7 @@ AdditionalDataChoiceValue = Dict[str, Any]
 Kyes of Dict
 
 * id: str
-    
+    選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * name: InternationalizationMessage
     
 
@@ -305,7 +297,7 @@ AdditionalDataDefinitionV1 = Dict[str, Any]
 Kyes of Dict
 
 * additional_data_definition_id: str
-    
+    属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * read_only: bool
     
 * name: InternationalizationMessage
@@ -317,7 +309,7 @@ Kyes of Dict
 * type: AdditionalDataDefinitionType
     
 * choices: List[AdditionalDataDefinitionV1Choices]
-    
+    ドロップダウンまたはラジオボタンの選択肢
 * regex: str
     
 * label_ids: List[str]
@@ -336,7 +328,7 @@ AdditionalDataDefinitionV1Choices = Dict[str, Any]
 Kyes of Dict
 
 * choice_id: str
-    
+    選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * name: InternationalizationMessage
     
 * keybind: List[Keybind]
@@ -351,7 +343,7 @@ AdditionalDataDefinitionV2 = Dict[str, Any]
 Kyes of Dict
 
 * additional_data_definition_id: str
-    
+    属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * read_only: bool
     
 * name: InternationalizationMessage
@@ -376,7 +368,7 @@ AdditionalDataRestriction = Dict[str, Any]
 Kyes of Dict
 
 * additional_data_definition_id: str
-    
+    属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * condition: AdditionalDataRestrictionCondition
     
 
@@ -643,9 +635,9 @@ Kyes of Dict
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_id: str
-    
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * is_protected: bool
     `true`の場合、アノテーションをアノテーションエディタ上での削除から保護できます。 外部から取り込んだアノテーションに属性を追加するときなどに指定すると、データの削除を防げます。 
 * data_holding_type: AnnotationDataHoldingType
@@ -718,13 +710,13 @@ Kyes of Dict
 * task_id: str
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * exact_match_task_id: bool
-    タスクIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は中間一致検索です。 
+    タスクIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は部分一致検索です。 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * exact_match_input_data_id: bool
-    入力データIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は中間一致検索です。 
+    入力データIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は部分一致検索です。 
 * label_id: str
-    
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * attributes: List[AdditionalData]
     
 * updated_from: str
@@ -743,9 +735,9 @@ Kyes of Dict
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * labels: List[LabelV2]
-    
+    ラベル
 * inspection_phrases: List[InspectionPhrase]
-    
+    定型指摘
 * updated_datetime: str
     アノテーション仕様の最終更新時刻 
 * option: AnnotationSpecsOption
@@ -753,9 +745,9 @@ Kyes of Dict
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
 * additionals: List[AdditionalDataDefinitionV2]
-    
+    属性
 * restrictions: List[AdditionalDataRestriction]
-    
+    属性の制約
 * format_version: str
     
 
@@ -776,7 +768,7 @@ Kyes of Dict
 * url: str
     
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * comment: str
     
 
@@ -809,11 +801,11 @@ AnnotationSpecsRequest = Dict[str, Any]
 Kyes of Dict
 
 * labels: List[LabelV2]
-    
+    ラベル
 * inspection_phrases: List[InspectionPhrase]
-    
+    定型指摘
 * comment: str
-    
+    変更内容のコメント
 * auto_marking: bool
     trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
 * last_updated_datetime: str
@@ -823,9 +815,9 @@ Kyes of Dict
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
 * additionals: List[AdditionalDataDefinitionV2]
-    
+    属性
 * restrictions: List[AdditionalDataRestriction]
-    
+    属性の制約
 * format_version: str
     
 
@@ -838,11 +830,11 @@ AnnotationSpecsRequestV1 = Dict[str, Any]
 Kyes of Dict
 
 * labels: List[LabelV1]
-    
+    ラベル
 * inspection_phrases: List[InspectionPhrase]
-    
+    定型指摘
 * comment: str
-    
+    変更内容のコメント
 * auto_marking: bool
     trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
 * last_updated_datetime: str
@@ -861,15 +853,15 @@ AnnotationSpecsRequestV2 = Dict[str, Any]
 Kyes of Dict
 
 * labels: List[LabelV2]
-    
+    ラベル
 * additionals: List[AdditionalDataDefinitionV2]
-    
+    属性
 * restrictions: List[AdditionalDataRestriction]
-    
+    属性の制約
 * inspection_phrases: List[InspectionPhrase]
-    
+    定型指摘
 * comment: str
-    
+    変更内容のコメント
 * auto_marking: bool
     trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
 * format_version: str
@@ -892,9 +884,9 @@ Kyes of Dict
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * labels: List[LabelV1]
-    
+    ラベル
 * inspection_phrases: List[InspectionPhrase]
-    
+    定型指摘
 * updated_datetime: str
     アノテーション仕様の最終更新時刻 
 * option: AnnotationSpecsOption
@@ -913,13 +905,13 @@ Kyes of Dict
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * labels: List[LabelV2]
-    
+    ラベル
 * additionals: List[AdditionalDataDefinitionV2]
-    
+    属性
 * restrictions: List[AdditionalDataRestriction]
-    
+    属性の制約
 * inspection_phrases: List[InspectionPhrase]
-    
+    定型指摘
 * format_version: str
     
 * updated_datetime: str
@@ -972,7 +964,7 @@ Kyes of Dict
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * label_id: str
-    
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * additional_data_list: List[AdditionalData]
     
 * updated_datetime: str
@@ -1050,9 +1042,9 @@ Kyes of Dict
 * phase_stage: int
     コメントを作成したときのフェーズのステージ。
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * comment_type: str
-    コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 
+    コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。 * `inspection` - 検査コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 
 * phrases: List[str]
     `comment_type` の値によって指定可能な値が異なります。  * `onhold` の場合   * 使用しません（空配列 or 指定なし） 
 * comment: str
@@ -1092,9 +1084,9 @@ Kyes of Dict
 * phase_stage: int
     コメントを作成したときのフェーズのステージ。
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * comment_type: str
-    コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 
+    コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。 * `inspection` - 検査コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 
 * phrases: List[str]
     `comment_type` の値によって指定可能な値が異なります。  * `onhold` の場合   * 使用しません（空配列 or 指定なし） 
 * comment: str
@@ -1216,7 +1208,7 @@ ChangePasswordRequest = Dict[str, Any]
 Kyes of Dict
 
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * old_password: str
     
 * new_password: str
@@ -1258,7 +1250,7 @@ Kyes of Dict
 * phase_stage: int
     コメントを作成したときのフェーズのステージ。
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * comment_type: str
     コメントの種別。  * `onhold` - 保留コメントとして扱われます。 * `inspection` - 検査コメントとして扱われます。 
 * phrases: List[str]
@@ -1287,7 +1279,7 @@ Kyes of Dict
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * label_id: str
-    
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * status: CommentStatus
     
 * type: str
@@ -1337,7 +1329,7 @@ ConfirmResetPasswordRequest = Dict[str, Any]
 Kyes of Dict
 
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * confirmation_code: str
     
 * new_password: str
@@ -1352,9 +1344,9 @@ ConfirmSignUpRequest = Dict[str, Any]
 Kyes of Dict
 
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * password: str
     
 * username: str
@@ -1550,7 +1542,7 @@ FullAnnotationAdditionalData = Dict[str, Any]
 Kyes of Dict
 
 * additional_data_definition_id: str
-    
+    属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * additional_data_definition_name: InternationalizationMessage
     
 * type: AdditionalDataDefinitionType
@@ -1702,9 +1694,9 @@ Kyes of Dict
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_id: str
-    
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_name: InternationalizationMessage
     
 * annotation_type: AnnotationType
@@ -1930,11 +1922,11 @@ Kyes of Dict
 * phase_stage: int
     検査コメントを付与したときのフェーズのステージ
 * commenter_account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * label_id: str
-    
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * data: InspectionData
     
 * parent_inspection_id: str
@@ -2201,9 +2193,9 @@ InternationalizationMessage = Dict[str, Any]
 Kyes of Dict
 
 * messages: List[InternationalizationMessageMessages]
-    
+    言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、AnnoFabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * [Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます 
 * default_lang: str
-    
+    希望された言語のメッセージが存在しない場合に、フォールバック先として使われる言語コード
 
 """
 
@@ -2214,9 +2206,9 @@ InternationalizationMessageMessages = Dict[str, Any]
 Kyes of Dict
 
 * lang: str
-    
+    言語コード。`en-US` (英語) または `ja-JP` (日本語) のみサポートしています。
 * message: str
-    
+    lang で指定された言語でのメッセージ
 
 """
 
@@ -2301,11 +2293,23 @@ Kyes of Dict
 
 
 class JobStatus(Enum):
-    """ """
+    """
+    ジョブのステータス
+    """
 
     PROGRESS = "progress"
     SUCCEEDED = "succeeded"
     FAILED = "failed"
+
+
+class KeyLayout(Enum):
+    """
+    キーボードレイアウト * `ja-JP` - 日本語(106/109)配列 * `en-US` - 英語(101/104)配列 * `other` - その他
+    """
+
+    JA_JP = "ja-JP"
+    EN_US = "en-US"
+    OTHER = "other"
 
 
 Keybind = Dict[str, Any]
@@ -2332,7 +2336,7 @@ LabelStatistics = Dict[str, Any]
 Kyes of Dict
 
 * label_id: str
-    
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * completed: int
     ラベルごとの受入が完了したアノテーション数
 * wip: int
@@ -2347,7 +2351,7 @@ LabelV1 = Dict[str, Any]
 Kyes of Dict
 
 * label_id: str
-    
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_name: InternationalizationMessage
     
 * keybind: List[Keybind]
@@ -2359,7 +2363,7 @@ Kyes of Dict
 * segmentation_metadata: LabelV1SegmentationMetadata
     
 * additional_data_definitions: List[AdditionalDataDefinitionV1]
-    
+    属性
 * color: Color
     
 * annotation_editor_feature: AnnotationEditorFeature
@@ -2422,7 +2426,7 @@ LabelV2 = Dict[str, Any]
 Kyes of Dict
 
 * label_id: str
-    
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_name: InternationalizationMessage
     
 * keybind: List[Keybind]
@@ -2434,7 +2438,7 @@ Kyes of Dict
 * segmentation_metadata: LabelV1SegmentationMetadata
     
 * additional_data_definitions: List[str]
-    
+    ラベルに所属する属性のID
 * color: Color
     
 * annotation_editor_feature: AnnotationEditorFeature
@@ -2446,6 +2450,16 @@ Kyes of Dict
 
 """
 
+
+class Lang(Enum):
+    """
+    表示言語 * `ja-JP` - 日本語 * `en-US` - 英語
+    """
+
+    EN_US = "en-US"
+    JA_JP = "ja-JP"
+
+
 LoginRequest = Dict[str, Any]
 """
 
@@ -2453,7 +2467,7 @@ LoginRequest = Dict[str, Any]
 Kyes of Dict
 
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * password: str
     
 
@@ -2526,7 +2540,7 @@ Kyes of Dict
 * job_type: ProjectJobType
     
 * job_id: str
-    
+    ジョブID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * job_status: JobStatus
     
 * job_execution: __DictStrKeyAnyValue__
@@ -2536,9 +2550,9 @@ Kyes of Dict
 * errors: Errors
     
 * created_datetime: str
-    
+    作成日時
 * updated_datetime: str
-    
+    更新日時
 
 """
 
@@ -2549,29 +2563,29 @@ MyAccount = Dict[str, Any]
 Kyes of Dict
 
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * username: str
-    
+    ユーザー名
 * email: str
-    
-* lang: str
+    メールアドレス
+* lang: Lang
     
 * biography: str
     人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
-* keylayout: str
+* keylayout: KeyLayout
     
-* authority: AccountAuthority
-    
+* authority: str
+    システム内部用のプロパティ
 * is_external_account: bool
-    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合true。  外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合false。 
+    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。  外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合はfalse。 
 * updated_datetime: str
-    
+    更新日時
 * reset_requested_email: str
-    
+    システム内部用のプロパティ
 * errors: List[str]
-    
+    システム内部用のプロパティ
 
 """
 
@@ -2582,9 +2596,9 @@ MyAccountAllOf = Dict[str, Any]
 Kyes of Dict
 
 * reset_requested_email: str
-    
+    システム内部用のプロパティ
 * errors: List[str]
-    
+    システム内部用のプロパティ
 
 """
 
@@ -2715,7 +2729,7 @@ Kyes of Dict
 * job_type: str
     ジョブの同時実行制御のために用いる、ジョブの種別。 (現在はまだ、この種別に該当するものはありません) 
 * job_id: str
-    
+    ジョブID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * job_status: JobStatus
     
 * job_execution: __DictStrKeyAnyValue__
@@ -2738,9 +2752,9 @@ OrganizationJobInfoContainer = Dict[str, Any]
 Kyes of Dict
 
 * list: List[OrganizationJobInfo]
-    
+    バックグラウンドジョブの一覧。作成日時の降順でソートされています。
 * has_next: bool
-    
+    さらに古いジョブが存在する場合は`true`です。取得したジョブ一覧の中で`created_datetime`が最も古い値を、クエリパラメータ`exclusive_start_created_datetime`に指定することで、さらに古いジョブを取得することができます。
 
 """
 
@@ -2753,9 +2767,9 @@ Kyes of Dict
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * username: str
     
 * role: OrganizationMemberRole
@@ -3132,7 +3146,7 @@ ProjectAccountStatistics = Dict[str, Any]
 Kyes of Dict
 
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * histories: List[ProjectAccountStatisticsHistory]
     
 
@@ -3296,7 +3310,7 @@ Kyes of Dict
 * job_type: ProjectJobType
     
 * job_id: str
-    
+    ジョブID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * job_status: JobStatus
     
 * job_execution: __DictStrKeyAnyValue__
@@ -3306,9 +3320,9 @@ Kyes of Dict
 * errors: Errors
     
 * created_datetime: str
-    
+    作成日時
 * updated_datetime: str
-    
+    更新日時
 
 """
 
@@ -3319,16 +3333,16 @@ ProjectJobInfoContainer = Dict[str, Any]
 Kyes of Dict
 
 * list: List[ProjectJobInfo]
-    
+    バックグラウンドジョブの一覧。作成日時の降順でソートされています。
 * has_next: bool
-    
+    さらに古いジョブが存在する場合は`true`です。取得したジョブ一覧の中で`created_datetime`が最も古い値を、クエリパラメータ`exclusive_start_created_datetime`に指定することで、さらに古いジョブを取得することができます。
 
 """
 
 
 class ProjectJobType(Enum):
     """
-    * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。  ## ジョブの同時実行制限  AnnoFab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。  ジョブの同時実行可否はジョブの種別によって異なります。  なお、ジョブを実行するプロジェクトが初期化中 (`project_status = \"initializing\"`) の場合は、どのジョブも実行できません。  ### copy-project 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-tasks` * `delete-project` * `move-project`  ### gen-inputs 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-inputs-list` * `delete-project` * `move-project`  ### gen-tasks 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-annotation` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-annotation 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-annotation` * `delete-project` * `move-project`  ### gen-tasks-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-inputs-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-inputs-list` * `delete-project` * `move-project`  ### delete-project 他のジョブが実行されていない場合**のみ**実行できます。  ### invoke-hook 次のジョブが実行されている場合、このジョブを実行することはできません。  * `delete-project` * `move-project`  ### move-project 他のジョブが実行されていない場合**のみ**実行できます。
+    プロジェクトのジョブの種別 * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。  ## ジョブの同時実行制限  AnnoFab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。  ジョブの同時実行可否はジョブの種別によって異なります。  なお、ジョブを実行するプロジェクトが初期化中 (`project_status = \"initializing\"`) の場合は、どのジョブも実行できません。  ### copy-project 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-tasks` * `delete-project` * `move-project`  ### gen-inputs 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-inputs-list` * `delete-project` * `move-project`  ### gen-tasks 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-annotation` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-annotation 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-annotation` * `delete-project` * `move-project`  ### gen-tasks-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-inputs-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-inputs-list` * `delete-project` * `move-project`  ### delete-project 他のジョブが実行されていない場合**のみ**実行できます。  ### invoke-hook 次のジョブが実行されている場合、このジョブを実行することはできません。  * `delete-project` * `move-project`  ### move-project 他のジョブが実行されていない場合**のみ**実行できます。
     """
 
     COPY_PROJECT = "copy-project"
@@ -3372,9 +3386,9 @@ Kyes of Dict
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * username: str
     
 * member_status: ProjectMemberStatus
@@ -3567,12 +3581,12 @@ PutMyAccountRequest = Dict[str, Any]
 Kyes of Dict
 
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * username: str
+    ユーザー名
+* lang: Lang
     
-* lang: str
-    
-* keylayout: str
+* keylayout: KeyLayout
     
 * biography: str
     人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
@@ -3662,6 +3676,35 @@ Kyes of Dict
 
 """
 
+PutWebhookRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* event_type: WebhookEventType
+    
+* webhook_id: str
+    WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* webhook_status: WebhookStatus
+    
+* method: WebhookHttpMethod
+    
+* headers: List[WebhookHeader]
+    Webhookが送信するHTTPリクエストのヘッダー
+* body: str
+    Webhookが送信するHTTPリクエストのボディ
+* url: str
+    Webhookの送信先URL
+* created_datetime: str
+    作成日時
+* updated_datetime: str
+    更新日時
+
+"""
+
 RefreshTokenRequest = Dict[str, Any]
 """
 
@@ -3734,7 +3777,7 @@ Kyes of Dict
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * label_id: str
-    
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * status: CommentStatus
     
 * type: str
@@ -3789,13 +3832,13 @@ SimpleAnnotationDetail = Dict[str, Any]
 Kyes of Dict
 
 * label: str
-    アノテーション仕様のラベル名です。 
+    アノテーション仕様で設定したラベル名 (英語) です。 
 * annotation_id: str
     個々のアノテーションにつけられたIDです。 
 * data: FullAnnotationData
     
 * attributes: __DictStrKeyAnyValue__
-    キーに属性の名前、値に各属性の値が入った辞書構造です。 
+    キーと値が以下のようになっている辞書構造です。  * キー: アノテーション仕様で設定した属性名 (英語) * 値: 各属性の値   * 選択肢を定義している場合、その選択肢の表示名 (英語)   * それ以外は属性値そのまま (文字列、数値、論理値) 
 
 """
 
@@ -3827,9 +3870,9 @@ Kyes of Dict
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_id: str
-    
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * data_holding_type: AnnotationDataHoldingType
     
 * data: FullAnnotationData
@@ -3979,7 +4022,7 @@ Kyes of Dict
 * input_data_id_list: List[str]
     タスクに含まれる入力データのID
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * histories_by_phase: List[TaskHistoryShort]
     簡易的なタスク履歴（あるフェーズを誰が担当したか）
 * work_time_span: int
@@ -4019,7 +4062,7 @@ Kyes of Dict
 * type: str
     TaskProperty
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_ids: List[str]
     割当するタスクのID
 
@@ -4045,7 +4088,7 @@ TaskAssignRequestTypeSelection = Dict[str, Any]
 Kyes of Dict
 
 * user_id: str
-    
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_ids: List[str]
     割当するタスクのID
 * type: str
@@ -4254,7 +4297,7 @@ Kyes of Dict
 * phase_stage: int
     
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 
 """
 
@@ -4279,7 +4322,7 @@ Kyes of Dict
 * status: TaskStatus
     
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * request: TaskOperation
     
 
@@ -4296,7 +4339,7 @@ Kyes of Dict
 * phase_stage: int
     
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * worked: bool
     そのフェーズでタスクの作業を行ったかどうか（行った場合はtrue）
 
@@ -4349,7 +4392,7 @@ Kyes of Dict
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * force: bool
     タスクの強制操作を行う場合に立てるフラグ。現在、強制操作は強制差戻しのみがサポートされています。 
 
@@ -4582,22 +4625,22 @@ Kyes of Dict
 * method: WebhookHttpMethod
     
 * headers: List[WebhookHeader]
-    
+    Webhookが送信するHTTPリクエストのヘッダー
 * body: str
-    
+    Webhookが送信するHTTPリクエストのボディ
 * url: str
-    
+    Webhookの送信先URL
 * created_datetime: str
-    
+    作成日時
 * updated_datetime: str
-    
+    更新日時
 
 """
 
 
 class WebhookEventType(Enum):
     """
-    * `task-completed` - タスク受入完了 * `annotation-archive-updated` - アノテーションZIP作成完了 * `input-data-zip-registered` - 入力データZIP登録完了 * `project-copy-completed` - プロジェクトコピー完了
+    Webhookイベントの種類 * `task-completed` - タスク受入完了 * `annotation-archive-updated` - アノテーションZIP作成完了 * `input-data-zip-registered` - 入力データZIP登録完了 * `project-copy-completed` - プロジェクトコピー完了
     """
 
     TASK_COMPLETED = "task-completed"
@@ -4613,26 +4656,28 @@ WebhookHeader = Dict[str, Any]
 Kyes of Dict
 
 * name: str
-    
+    HTTPヘッダーのフィールド名
 * value: str
-    
+    HTTPヘッダーの値
 
 """
 
 
 class WebhookHttpMethod(Enum):
-    """ """
+    """
+    Webhook通知するHTTPリクエストのメソッド
+    """
 
     POST = "POST"
     PUT = "PUT"
     DELETE = "DELETE"
-    PATCH = "PATCH"
     GET = "GET"
-    HEAD = "HEAD"
 
 
 class WebhookStatus(Enum):
-    """ """
+    """
+    Webhookの状態
+    """
 
     ACTIVE = "active"
     INACTIVE = "inactive"
@@ -4644,8 +4689,8 @@ WebhookTestRequest = Dict[str, Any]
 
 Kyes of Dict
 
-* placeholders: __DictStrKeyAnyValue__
-    プレースホルダ名と置換する値
+* placeholders: dict(str, str)
+    keyがプレースホルダーの名前、valueが置換後の値であるkey-valueペア
 
 """
 
@@ -4698,7 +4743,7 @@ Kyes of Dict
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * account_id: str
-    
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * data_series: List[WorktimeStatisticsData]
     プロジェクトメンバーの日毎の作業時間統計データ
 

@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.137.0
+  version: 0.140.1
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -791,7 +791,7 @@ paths:
       - af-my
       summary: 自分のアカウント取得
       description: |
-        API リクエストユーザーのアカウント情報を取得します。
+        自分のアカウント情報を取得します。
       security:
       - Everyone: []
       operationId: getMyAccount
@@ -811,7 +811,7 @@ paths:
       - af-my
       summary: 自分のアカウント情報更新
       description: |
-        API リクエストユーザーのアカウント情報を更新します。
+        自分のアカウント情報を更新します。
       security:
       - Everyone: []
       operationId: putMyAccount
@@ -947,17 +947,6 @@ paths:
       - AllOrganizationMember: []
       operationId: getMyOrganizations
       parameters:
-      - name: page
-        in: query
-        description: |
-          表示するページ番号
-
-          現在は未実装のパラメータです。(今後対応予定)
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          default: 1
       - name: limit
         in: query
         description: |
@@ -3082,7 +3071,6 @@ paths:
       summary: 組織のバックグラウンドジョブ情報取得
       description: |
         組織のバックグラウンドジョブの情報を取得します。
-        取得されるジョブ情報は、作成日付の新しい順にソートされています。
 
         バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
       security:
@@ -3101,17 +3089,6 @@ paths:
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/OrganizationJobType"
-      - name: page
-        in: query
-        description: |
-          検索結果のうち、取得したいページの番号(1始まり)
-
-          現在は未実装のパラメータです。(今後対応予定)
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          default: 1
       - name: limit
         in: query
         description: |
@@ -3125,10 +3102,11 @@ paths:
           default: 1
       - name: exclusive_start_created_datetime
         in: query
-        description: 取得するデータの直前の作成日時（ISO 8601 拡張形式）
+        description: 作成日時が、指定した日付より古いジョブを取得します。
         required: false
         schema:
           type: string
+          format: date-time
       responses:
         "200":
           description: 正常
@@ -3151,7 +3129,6 @@ paths:
       summary: プロジェクトのバックグラウンドジョブ情報取得
       description: |
         プロジェクトのバックグラウンドジョブの情報を取得します。
-        取得されるジョブ情報は、作成日付の新しい順にソートされています。
 
         バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
       security:
@@ -3170,17 +3147,6 @@ paths:
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectJobType"
-      - name: page
-        in: query
-        description: |
-          検索結果のうち、取得したいページの番号(1始まり)
-
-          現在は未実装のパラメータです。(今後対応予定)
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          default: 1
       - name: limit
         in: query
         description: |
@@ -3194,10 +3160,11 @@ paths:
           default: 1
       - name: exclusive_start_created_datetime
         in: query
-        description: 取得するデータの直前の作成日時（ISO 8601 拡張形式）
+        description: 作成日時が、指定した日付より古いジョブを取得します。
         required: false
         schema:
           type: string
+          format: date-time
       responses:
         "200":
           description: 正常
@@ -3217,9 +3184,9 @@ paths:
     delete:
       tags:
       - af-job
-      summary: バックグラウンドジョブ情報削除
+      summary: プロジェクトのバックグラウンドジョブ情報削除
       description: |
-        バックグラウンドジョブ情報を削除します。
+        プロジェクトのバックグラウンドジョブ情報を削除します。
 
         なお、バックグラウンドジョブ情報は、完了(失敗含む)から14日経過後に自動で削除されます。
       security:
@@ -3257,9 +3224,9 @@ paths:
     get:
       tags:
       - af-webhook
-      summary: プロジェクト Webhook 一括取得
+      summary: Webhookの一括取得
       description: |
-        指定されたプロジェクトの Webhook をすべて取得します。
+        Webhookをすべて取得します。
       security:
       - ProjectOwner: []
       operationId: getWebhooks
@@ -3289,11 +3256,11 @@ paths:
     put:
       tags:
       - af-webhook
-      summary: プロジェクト Webhook 作成/更新
+      summary: Webhookの作成/更新
       description: |
-        プロジェクトのWebhookを新規作成/更新します。
+        Webhookを新規作成/更新します。
 
-        Webhook で送信される body には、event_type によって以下のプレースホルダーを使用できます。
+        Webhookが送信するHTTPリクエストのボディには、以下のプレースホルダーを含めることができます。
 
         * task-completed
           * {{PROJECT_ID}} :  プロジェクトID
@@ -3301,8 +3268,7 @@ paths:
           * {{PROJECT_TITLE}}	: プロジェクトタイトル
           * {{COMPLETE_DATETIME}}	: 完了日時
             * 例 : 2019-05-08T10:00:00.000+09:00
-          * {{LAST_ACCOUNT}} : 最終作業者
-            * 形式 : アカウントID
+          * {{LAST_ACCOUNT}} : 最終作業者のアカウントID
 
         * annotation-archive-updated
           * {{PROJECT_ID}} :  プロジェクトID
@@ -3348,7 +3314,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "swagger-api-components.yaml#/components/schemas/Webhook"
+              $ref: "swagger-api-components.yaml#/components/schemas/PutWebhookRequest"
       responses:
         "200":
           description: 正常
@@ -3365,9 +3331,9 @@ paths:
     delete:
       tags:
       - af-webhook
-      summary: プロジェクト Webhook 削除
+      summary: Webhookの削除
       description: |
-        指定された Webhook を削除
+        Webhookを削除します。
       security:
       - ProjectOwner: []
       operationId: deleteWebhook
@@ -3401,11 +3367,11 @@ paths:
     post:
       tags:
         - af-webhook
-      summary: プロジェクト Webhook テスト実行
+      summary: Webhookのテスト実行
       description: |
-        得録された登録された URL にテスト用の Webhook を実際に送信します。
+        Webhookが実際にHTTPリクエストを送信します。
 
-        送信される Webhook の body に含まれるプレースホルダーは、本 API リクエストで指定されたダミーのプレースホルダーで置き換えられます。
+        Webhookが送信するHTTPリクエストのボディに含まれるプレースホルダーは、このAPIで指定されたプレースホルダーの値に置き換えられます。
       security:
         - ProjectOwner: []
       operationId: testWebhook
@@ -4516,7 +4482,7 @@ paths:
     get:
       tags:
         - af-annotation
-      summary: タスク/入力データのアノテーション一括取得
+      summary: タスク-入力データのアノテーション一括取得
       description: |
         [putAnnotation](#operation/putAnnotation)が要求する構造のアノテーションを取得します。
         このAPIは、[putAnnotation](#operation/putAnnotation)をより利用しやすくする目的で提供しています。

@@ -49,7 +49,7 @@ class TaskHistory(DataClassJsonMixin):
     """"""
 
     account_id: Optional[str]
-    """"""
+    """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
 
 @dataclass
@@ -65,7 +65,7 @@ class TaskHistoryShort(DataClassJsonMixin):
     """"""
 
     account_id: str
-    """"""
+    """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     worked: Optional[bool]
     """そのフェーズでタスクの作業を行ったかどうか（行った場合はtrue）"""
@@ -94,7 +94,7 @@ class Task(DataClassJsonMixin):
     """タスクに含まれる入力データのID"""
 
     account_id: Optional[str]
-    """"""
+    """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     histories_by_phase: List[TaskHistoryShort]
     """簡易的なタスク履歴（あるフェーズを誰が担当したか）"""
