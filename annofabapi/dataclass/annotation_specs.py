@@ -108,10 +108,10 @@ class InternationalizationMessageMessages(DataClassJsonMixin):
     """ """
 
     lang: str
-    """"""
+    """言語コード。`en-US` (英語) または `ja-JP` (日本語) のみサポートしています。"""
 
     message: str
-    """"""
+    """lang で指定された言語でのメッセージ"""
 
 
 @dataclass
@@ -119,10 +119,10 @@ class InternationalizationMessage(DataClassJsonMixin):
     """ """
 
     messages: List[InternationalizationMessageMessages]
-    """"""
+    """言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、AnnoFabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * [Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます """
 
     default_lang: str
-    """"""
+    """希望された言語のメッセージが存在しない場合に、フォールバック先として使われる言語コード"""
 
 
 @dataclass
@@ -153,7 +153,7 @@ class AnnotationSpecsHistory(DataClassJsonMixin):
     """"""
 
     account_id: Optional[str]
-    """"""
+    """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     comment: Optional[str]
     """"""
@@ -178,7 +178,7 @@ class AdditionalDataDefinitionV1Choices(DataClassJsonMixin):
     """ """
 
     choice_id: str
-    """"""
+    """選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     name: InternationalizationMessage
     """"""
@@ -192,7 +192,7 @@ class AdditionalDataDefinitionV1(DataClassJsonMixin):
     """ """
 
     additional_data_definition_id: str
-    """"""
+    """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     read_only: Optional[bool]
     """"""
@@ -210,7 +210,7 @@ class AdditionalDataDefinitionV1(DataClassJsonMixin):
     """"""
 
     choices: Optional[List[AdditionalDataDefinitionV1Choices]]
-    """"""
+    """ドロップダウンまたはラジオボタンの選択肢"""
 
     regex: Optional[str]
     """"""
@@ -230,7 +230,7 @@ class AdditionalDataDefinitionV2(DataClassJsonMixin):
     """ """
 
     additional_data_definition_id: str
-    """"""
+    """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     read_only: Optional[bool]
     """"""
@@ -282,7 +282,7 @@ class LabelV1(DataClassJsonMixin):
     """ """
 
     label_id: str
-    """"""
+    """ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     label_name: InternationalizationMessage
     """"""
@@ -300,7 +300,7 @@ class LabelV1(DataClassJsonMixin):
     """"""
 
     additional_data_definitions: List[AdditionalDataDefinitionV1]
-    """"""
+    """属性"""
 
     color: Color
     """"""
@@ -320,7 +320,7 @@ class LabelV2(DataClassJsonMixin):
     """ """
 
     label_id: str
-    """"""
+    """ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     label_name: InternationalizationMessage
     """"""
@@ -338,7 +338,7 @@ class LabelV2(DataClassJsonMixin):
     """"""
 
     additional_data_definitions: List[str]
-    """"""
+    """ラベルに所属する属性のID"""
 
     color: Color
     """"""
@@ -358,7 +358,7 @@ class AdditionalDataRestriction(DataClassJsonMixin):
     """ """
 
     additional_data_definition_id: str
-    """"""
+    """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     condition: AdditionalDataRestrictionCondition
     """"""
@@ -372,10 +372,10 @@ class AnnotationSpecsV1(DataClassJsonMixin):
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     labels: List[LabelV1]
-    """"""
+    """ラベル"""
 
     inspection_phrases: List[InspectionPhrase]
-    """"""
+    """定型指摘"""
 
     updated_datetime: Optional[str]
     """アノテーション仕様の最終更新時刻 """
@@ -395,16 +395,16 @@ class AnnotationSpecsV2(DataClassJsonMixin):
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     labels: List[LabelV2]
-    """"""
+    """ラベル"""
 
     additionals: List[AdditionalDataDefinitionV2]
-    """"""
+    """属性"""
 
     restrictions: List[AdditionalDataRestriction]
-    """"""
+    """属性の制約"""
 
     inspection_phrases: List[InspectionPhrase]
-    """"""
+    """定型指摘"""
 
     format_version: str
     """"""

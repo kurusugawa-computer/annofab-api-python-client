@@ -22,16 +22,16 @@ from annofabapi.models import Errors, JobStatus, ProjectJobType
 class ProjectJobInfo(DataClassJsonMixin):
     """ """
 
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    job_type: Optional[ProjectJobType]
+    job_type: ProjectJobType
     """"""
 
-    job_id: Optional[str]
-    """"""
+    job_id: str
+    """ジョブID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    job_status: Optional[JobStatus]
+    job_status: JobStatus
     """"""
 
     job_execution: Optional[Dict[str, Any]]
@@ -40,11 +40,11 @@ class ProjectJobInfo(DataClassJsonMixin):
     job_detail: Optional[Dict[str, Any]]
     """ジョブ結果の内部情報"""
 
-    errors: Optional[Errors]
+    errors: Errors
     """"""
 
-    created_datetime: Optional[str]
-    """"""
+    created_datetime: str
+    """作成日時"""
 
-    updated_datetime: Optional[str]
-    """"""
+    updated_datetime: str
+    """更新日時"""
