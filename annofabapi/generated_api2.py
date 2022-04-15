@@ -693,7 +693,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したユーザーが所属するプロジェクトメンバー情報をすべて取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
+        指定したユーザーが所属する全てのプロジェクトのメンバー情報から、指定したユーザを示す情報を抽出します。 このAPIが返すメンバー情報は、全て指定したユーザのものとなり、その数は指定ユーザが所属しているプロジェクト数となります。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
 
         Args:
             account_id (str):  アカウントID (required)

@@ -22,6 +22,12 @@ from annofabapi.models import SupplementaryDataType
 class SupplementaryData(DataClassJsonMixin):
     """ """
 
+    organization_id: str
+    """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    input_data_set_id: str
+    """入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
@@ -29,25 +35,25 @@ class SupplementaryData(DataClassJsonMixin):
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     supplementary_data_id: str
-    """"""
+    """補助情報ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     supplementary_data_name: str
-    """表示用の名前"""
+    """補助情報の名前"""
 
     supplementary_data_path: str
-    """補助情報の実体が保存されたパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 """
+    """補助情報の実体が存在するパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 """
 
-    url: Optional[str]
-    """このフィールドはAF内部での利用のみを想定しており、依存しないでください。"""
+    url: str
+    """システム内部用のプロパティ"""
 
     etag: Optional[str]
-    """"""
+    """[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 """
 
     supplementary_data_type: SupplementaryDataType
     """"""
 
     supplementary_data_number: int
-    """表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。"""
+    """補助情報の表示順を表す数値。"""
 
-    updated_datetime: Optional[str]
-    """"""
+    updated_datetime: str
+    """更新日時"""
