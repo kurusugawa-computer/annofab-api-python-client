@@ -68,12 +68,14 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
         request_body = response.request.body
         request_body_for_logger: Optional[Any]
         if request_body is not None and request_body != "":
-            try:
-                dict_request_body = json.loads(request_body)
-            except JSONDecodeError:
-                request_body_for_logger = request_body
+            if isinstance(request_body, str):
+                try:
+                    dict_request_body = json.loads(request_body)
+                    request_body_for_logger = _create_request_body_for_logger(dict_request_body)
+                except JSONDecodeError:
+                    request_body_for_logger = request_body
             else:
-                request_body_for_logger = _create_request_body_for_logger(dict_request_body)
+                request_body_for_logger = _create_request_body_for_logger(request_body)
         else:
             request_body_for_logger = request_body
 
@@ -165,6 +167,8 @@ def _should_retry_with_status(status_code: int) -> bool:
     HTTP Status Codeからリトライすべきかどうかを返す。
     """
     # 注意：429(Too many requests)の場合は、backoffモジュール外でリトライするため、このメソッドでは判定しない
+    if status_code == requests.codes.not_implemented:
+        return False
     if 500 <= status_code < 600:
         return True
     return False

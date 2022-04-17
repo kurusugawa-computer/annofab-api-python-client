@@ -2,7 +2,7 @@
 openapi: "3.0.0"
 info:
   description: |
-    [AnnoFab](https://annofab.com) のWeb APIです。
+    [Annofab](https://annofab.com) のWeb APIです。
     キャッシュが有効になって[大幅に高速化された v2 はこちら](/docs/api/v2/) です。
 
     APIベースURL: https://annofab.com/api/v1<br>
@@ -67,11 +67,11 @@ info:
 
     ID/名前 | 一意制約
     ---|---
-    組織名 | AnnoFab内で一意
-    組織ID | AnnoFab内で一意
-    ユーザID | AnnoFab内で一意
-    アカウントID  | AnnoFab内で一意
-    プロジェクトID | AnnoFab内で一意
+    組織名 | Annofab内で一意
+    組織ID | Annofab内で一意
+    ユーザID | Annofab内で一意
+    アカウントID  | Annofab内で一意
+    プロジェクトID | Annofab内で一意
     タスクID（プレフィックス含む） | プロジェクト内で一意
     入力データID | プロジェクト内で一意
     アノテーションID | フレーム内（タスクID、入力データIDの組み合わせ）で一意
@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.140.1
+  version: 0.141.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -146,14 +146,14 @@ tags:
     入力データとは、アノテーションする対象となる画像、動画、CSVなどのファイル全般のことです。
     入力データは、プロジェクトごとに作成されます。
 
-    すべてのAF利用プランで、入力データをAnnoFabにアップロードできます。
-    AnnoFabにアップロードされた入力データは、AnnoFabからアノテーションツール上に配信されます。
+    すべてのAF利用プランで、入力データをAnnofabにアップロードできます。
+    Annofabにアップロードされた入力データは、Annofabからアノテーションツール上に配信されます。
 
-    ビジネスプランでは、入力データをお客様が管理される**プライベートストレージ**に置き、URLだけをAnnoFabに登録できます。
+    ビジネスプランでは、入力データをお客様が管理される**プライベートストレージ**に置き、URLだけをAnnofabに登録できます。
     プライベートストレージには、**httpsサーバーに対応したNAS**または**AWS S3**を利用できます。
-    プライベートストレージに置かれた入力データは、AnnoFabのサーバーを経由せず、直接アノテーションツール上に配信されます。
-    セキュリティ要件のためお客様の入力データを社外（AnnoFab含む）に非公開にしたい場合、プライベートストレージを利用することができます。
-    また場合によっては、AnnoFabから入力データを配信するよりも配信速度が改善する場合があります。
+    プライベートストレージに置かれた入力データは、Annofabのサーバーを経由せず、直接アノテーションツール上に配信されます。
+    セキュリティ要件のためお客様の入力データを社外（Annofab含む）に非公開にしたい場合、プライベートストレージを利用することができます。
+    また場合によっては、Annofabから入力データを配信するよりも配信速度が改善する場合があります。
 
     関連
     * [af-supplementary](#tag/af-supplementary): 入力データを補う補助情報
@@ -193,7 +193,7 @@ tags:
   description: |
     組織で使用するプラグインに対する操作
 
-    **このAPIは AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
+    **このAPIは Annofab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
 - name: af-project
   x-displayName: Project
   description: プロジェクトに対する操作
@@ -206,7 +206,7 @@ tags:
 - name: af-supplementary
   x-displayName: Supplementary
   description: |
-    **補助情報（supprementary data）**に対する操作です。
+    補助情報に対する操作です。
 
     補助情報とは、アノテーションする対象となる[入力データ](#tag/af-input)では*ありません*が、
     アノテーションするときに何らかの手がかりや文脈を与えるデータのことです。
@@ -216,12 +216,11 @@ tags:
     * 前方を撮影した写真に対する、左側面・右側面・後方の写真
     * 写真や動画を撮影した日時、緯度経度、撮影者などのメタデータ（テキスト）
 
-    補助情報は、画像やテキストで、プロジェクトの入力データごとにひも付けられます。
-    補助情報で扱う画像は、入力データと同様にAnnoFabにアップロードする他に、プライベートストレージの画像を利用することもできます。
+    補助情報は入力データに紐付けられています。
 
-    関連
-    * [af-input](#tag/af-input): 補助情報をひもづける入力データ
-    * [af-project](#tag/af-project): 補助情報をひもづけるプロジェクト
+    補助情報は、Annofabにファイルをアップロードして利用します。ビジネスプランでは、プライベートストレージにあるファイルを補助情報として利用することも可能です。
+
+
 - name: af-task
   x-displayName: Task
   description: タスクに対する操作
@@ -231,10 +230,10 @@ tags:
 - name: x-annotation-zip
   x-displayName: Annotation ZIP
   description: |
-    AnnoFabで作成したアノテーションは、元となった入力データ（画像や動画など）に対応する形で1ファイルのJSONとなります。
+    Annofabで作成したアノテーションは、元となった入力データ（画像や動画など）に対応する形で1ファイルのJSONとなります。
     これらのJSONはZIP形式で圧縮され、一括で取得できます。
 
-    AnnoFabから取得できるアノテーションの構造は、現在2種類あります。
+    Annofabから取得できるアノテーションの構造は、現在2種類あります。
 
     1. Simple
       * バウンディングボックスや属性など、いわゆるアノテーションにしぼった軽量な構造。
@@ -406,8 +405,8 @@ components:
       $ref: "swagger-api-components.yaml#/components/securitySchemes/EveryoneQueryParameter"
     Everyone:
       $ref: "swagger-api-components.yaml#/components/securitySchemes/Everyone"
-    AnnoFabAdminOnly:
-      $ref: "swagger-api-components.yaml#/components/securitySchemes/AnnoFabAdminOnly"
+    AnnofabAdminOnly:
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/AnnofabAdminOnly"
     AllProjectMember:
       $ref: "swagger-api-components.yaml#/components/securitySchemes/AllProjectMember"
     ProjectAccepter:
@@ -431,7 +430,7 @@ paths:
       - af-login
       summary: ログイン
       description: |
-        AnnoFab にログインし、その他 API の認証に必要なトークンを取得します。
+        Annofab にログインし、その他 API の認証に必要なトークンを取得します。
 
         トークンは本人認証に使われる機密情報です。なりすましなど悪用のおそれがあるため、他人への提供は推奨されません。
       security:
@@ -521,11 +520,11 @@ paths:
         1. プラグイン: PKCE (RFC 7636) の code_challenge_method=S256 の場合に準ずる形で `code_verifier` `code_challenge`  を生成
         1. プラグイン: `https://annofab.com/project/{project_id}/authorize-plugin?plugin_type={plugin_type}&code_challenge={code_challenge}` へリダイレクト
           - `plugin_type` はカスタムアノテーションエディタの場合は `AnnotationEditor` を、カスタムアノテーション仕様の場合は `AnnotationSpecs` を指定
-        1. AnnoFab: リクエストやユーザー権限の確認後、プラグインの auth_redirect_url に設定されたURLへクエリパラメータ `code` つきでリダイレクト
+        1. Annofab: リクエストやユーザー権限の確認後、プラグインの auth_redirect_url に設定されたURLへクエリパラメータ `code` つきでリダイレクト
         1. プラグイン: 本APIに上記 code および1で生成した code_verifier を渡し、access_token と refresh_token を得る
 
         code付きでカスタムエディタにリダイレクトする際のURLは、タスク一覧等からのリダイレクトに使うURLとは別に設定し、projectIdやtaskIdは含まれません。
-        AnnoFabへリダイレクトする前に `location.href` などを保存しておき、トークン取得後にURL書き換えやリダイレクトを行うことを推奨します。
+        Annofabへリダイレクトする前に `location.href` などを保存しておき、トークン取得後にURL書き換えやリダイレクトを行うことを推奨します。
 
         この手順で取得したaccess_tokenを使って他のAPIをリクエストする際には `Authorization: Bearer <access_token>` としてBearer付きでアクセスしてください。
 
@@ -560,7 +559,7 @@ paths:
       description: |
         アカウントのサインアップの最初のステップとして、アカウントを仮登録します。
 
-        AnnoFab に未登録のメールアドレスであれば、新規アカウントが仮登録状態で作成され、本登録フローのためのメールが送信されます。
+        Annofab に未登録のメールアドレスであれば、新規アカウントが仮登録状態で作成され、本登録フローのためのメールが送信されます。
         このメールには仮パスワードなどが記載されています。
 
         指定したメールアドレスを使うユーザーが仮登録であれば、本登録フローのメールが再送信されます。
@@ -1224,7 +1223,10 @@ paths:
       - af-organization-member
       summary: 組織メンバー一括取得
       description: |
-        脱退したメンバーは含まれません。
+        組織メンバーを一括で取得します。
+
+        ただし、組織から脱退したメンバーは取得できません。
+
       security:
       - AllOrganizationMember: []
       operationId: getOrganizationMembers
@@ -1252,7 +1254,7 @@ paths:
       - af-organization-member
       summary: 組織メンバー取得
       description: |
-        指定したユーザーが指定した組織にどのようなロールで参加しているかを取得します。
+        組織メンバーを取得します。
       security:
       - AllOrganizationMember: []
       operationId: getOrganizationMember
@@ -1265,7 +1267,7 @@ paths:
           type: string
       - name: user_id
         in: path
-        description: ユーザID
+        description: ユーザーID
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/UserId"
@@ -1283,11 +1285,9 @@ paths:
     delete:
       tags:
       - af-organization-member
-      summary: 組織メンバー削除
+      summary: 組織メンバーの削除
       description: |
-        指定したメンバーを指定した組織から削除します。
-
-        組織の管理者が実行する場合、組織のオーナーは削除できません。(権限エラーになります)
+        組織メンバーを削除します。削除された組織メンバの`status`は`inactive`になります。
       security:
       - OrganizationAdministrator: []
       operationId: deleteOrganizationMember
@@ -1300,7 +1300,7 @@ paths:
           type: string
       - name: user_id
         in: path
-        description: ユーザID
+        description: ユーザーID
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/UserId"
@@ -1325,7 +1325,7 @@ paths:
       - af-organization-member
       summary: 組織メンバーのロール更新
       description: |
-        指定された組織メンバーのロールのみを変更します。
+        組織メンバーのロールを変更します。
       security:
       - OrganizationOwner: []
       operationId: updateOrganizationMemberRole
@@ -1338,7 +1338,7 @@ paths:
           type: string
       - name: user_id
         in: path
-        description: ユーザID
+        description: ユーザーID
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/UserId"
@@ -1367,11 +1367,9 @@ paths:
     post:
       tags:
       - af-organization-member
-      summary: 組織への招待送信
+      summary: ユーザーを組織に招待
       description: |
-        指定したユーザーに、組織への招待（メール）を送信します。
-
-        組織の管理者が実行する場合、リクエストボディ内の `role` には `contributor` を指定してください。(それ以外の値を指定した場合エラーとなります)
+        指定したユーザーを組織に招待します。招待されたユーザーにはメールが届きます。メールに記載されたURLにアクセスすることで組織に参加することができます。
       security:
       - OrganizationAdministrator: []
       operationId: inviteOrganizationMember
@@ -1384,7 +1382,7 @@ paths:
           type: string
       - name: user_id
         in: path
-        description: ユーザ名
+        description: ユーザーID
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/UserId"
@@ -1413,11 +1411,10 @@ paths:
     post:
       tags:
       - af-organization-member
-      summary: 組織への招待受諾
+      summary: 組織への招待の受諾
       description: |
         組織への招待を受諾し、組織へのメンバー登録を完了します。
 
-        [組織招待API](#operation/postInviteOrganizationMember)で送信されたメールに記載されているトークンが必要です。
       security:
       - EveryoneRequestBody: []
       operationId: acceptOrganizationInvitation
@@ -1430,7 +1427,7 @@ paths:
           type: string
       - name: user_id
         in: path
-        description: ユーザ名
+        description: ユーザーID
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/UserId"
@@ -1453,7 +1450,7 @@ paths:
       - af-organization
       summary: 組織活動サマリー取得
       description: |
-        組織全体でどれだけ AnnoFab ストレージを使用しているかなどの活動の要約を取得します。
+        組織全体でどれだけ Annofab ストレージを使用しているかなどの活動の要約を取得します。
       security:
       - AllOrganizationMember: []
       operationId: getOrganizationActivity
@@ -1480,11 +1477,11 @@ paths:
   /organizations/{organization_name}/plugins:
     get:
       operationId: getOrganizationPlugins
-      summary: プラグイン一括取得
+      summary: プラグインの一括取得
       description: |
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
+        プラグインを一括で取得します。
 
-        指定した組織のプラグインを一括で取得します。
+        **この API は Annofab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
       tags:
         - af-organization-plugin
       security:
@@ -1512,11 +1509,11 @@ paths:
   /organizations/{organization_name}/plugins/{plugin_id}:
     get:
       operationId: getOrganizationPlugin
-      summary: プラグイン取得
+      summary: プラグインの取得
       description: |
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
+        プラグインを取得します。
 
-        指定した組織のプラグインを取得します。
+        **この API は Annofab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
       tags:
         - af-organization-plugin
       security:
@@ -1549,11 +1546,11 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
     put:
       operationId: putOrganizationPlugin
-      summary: プラグイン更新
+      summary: プラグインの作成/更新
       description: |
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
+        プラグインを作成または更新します。
 
-        指定した組織のプラグインを更新します。
+        **この API は Annofab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
       tags:
         - af-organization-plugin
       security:
@@ -1593,11 +1590,11 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
     delete:
       operationId: deleteOrganizationPlugin
-      summary: プラグイン削除
+      summary: プラグインの削除
       description: |
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
+        プラグインを削除します。
 
-        指定した組織のプラグインを削除します。
+        **この API は Annofab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
       tags:
         - af-organization-plugin
       security:
@@ -3413,9 +3410,7 @@ paths:
       - af-annotation-specs
       summary: アノテーション仕様取得
       description: |
-        指定したプロジェクトのアノテーション仕様を取得します。
-
-        パラメータを指定することで、過去に保存された履歴を取得することもできます。
+        アノテーション仕様を取得します。
       security:
       - AllProjectMember: []
       operationId: getAnnotationSpecs
@@ -3429,19 +3424,22 @@ paths:
       - name: history_id
         in: query
         description: |
-          過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。
+          アノテーション仕様の履歴ID。過去のアノテーション仕様を取得する場合は、[getAnnotationSpecsHistories](#operation/getAnnotationSpecsHistories) APIで取得した `history_id` の値を指定してください。
           未指定時は最新のアノテーション仕様を取得します。
         required: false
         schema:
           type: string
-          example: "123456789"
+          example: "1234567890"
       - name: v
         in: query
         description: |
-          取得するアノテーション仕様のフォーマットバージョンを指定します。
+          取得するアノテーション仕様のフォーマットバージョンを指定します。`v=1`は将来廃止する予定なので、非推奨です。
         required: false
         schema:
           type: string
+          enum:
+            - "1"
+            - "2"
           default: "1"
           example: "2"
       responses:
@@ -3500,7 +3498,7 @@ paths:
       - af-annotation-specs
       summary: アノテーション仕様履歴一括取得
       description: |
-        指定されたプロジェクトのアノテーション仕様のすべての履歴を取得します。
+        アノテーション仕様のすべての更新履歴を取得します。
       security:
       - AllProjectMember: []
       operationId: getAnnotationSpecsHistories
@@ -4235,6 +4233,7 @@ paths:
             * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。
           * リクエストボディのJSONサンプル
             * ```{ status: "not_started", account_id: "現在のフェーズを担当できるアカウントID", last_updated_datetime: "2018-08-14T19:01:51.775+09:00"}```
+          * 注意：この操作では、プロジェクトの一人に割り当てられるタスク数の上限設定を確認しません。そのため、一人の担当者に割り当てられるタスク数の上限設定以上の担当を与えることが出来ます。
         * タスクの担当者を未割当てにしたい場合
           * 制約
             * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。
@@ -4541,7 +4540,7 @@ paths:
       summary: タスク-入力データのアノテーション更新
       description: |
         「過去に誰にも割り当てられていないタスクに含まれる入力データ」に限り、プロジェクトオーナーであればアノテーションを更新できます。
-        この挙動は、[AnnoFab外部で作成されたアノテーションをインポート](/docs/tutorial/tutorial-ex-importing-annotation.html) する目的にも利用できます。
+        この挙動は、[Annofab外部で作成されたアノテーションをインポート](/docs/tutorial/tutorial-ex-importing-annotation.html) する目的にも利用できます。
 
         １度でも誰かに割り当てられたタスクは、タスクの現在の担当者であればアノテーションを更新できます。
         タスクの現在の担当者でない場合、エラーになります。
@@ -5310,7 +5309,7 @@ paths:
       description: |
         入力データを削除します。
 
-        入力データの実体ファイルが AnnoFab のストレージに存在するものであれば、実体ファイルも削除されます。
+        入力データの実体ファイルが Annofab のストレージに存在するものであれば、実体ファイルも削除されます。
         お客様の管理するプライベートストレージに存在するものであれば、実体ファイルは削除されません。
       security:
       - ProjectOwner: []
@@ -5349,7 +5348,7 @@ paths:
       - af-supplementary
       summary: 補助情報一括取得
       description: |
-        指定された入力データにつけられた補助情報をすべて取得します。
+        入力データに紐付けられた補助情報をすべて取得します。
       security:
       - AllProjectMember: []
       operationId: getSupplementaryDataList
@@ -5387,7 +5386,7 @@ paths:
       - af-supplementary
       summary: 補助情報作成/更新
       description: |
-        指定された入力データに補助情報を新規作成または更新します。
+        補助情報を作成または更新します。
       security:
       - ProjectOwner: []
       operationId: putSupplementaryData
@@ -5406,7 +5405,7 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
       - name: supplementary_data_id
         in: path
-        description: 補助情報ID（プロジェクトIDとの2つ組で一意となる値）
+        description: 補助情報ID
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/SupplementaryDataId"
@@ -5434,7 +5433,7 @@ paths:
       - af-supplementary
       summary: 補助情報削除
       description: |
-        指定された補助情報を、実体ファイルとともに削除します。
+        補助情報を削除します。
       security:
       - ProjectOwner: []
       operationId: deleteSupplementaryData
@@ -5453,7 +5452,7 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
       - name: supplementary_data_id
         in: path
-        description: 補助情報ID（プロジェクトIDとの2つ組で一意となる値）
+        description: 補助情報ID
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/SupplementaryDataId"
@@ -5472,7 +5471,7 @@ paths:
       - af-input
       summary: 一時データ保存先取得
       description: |
-        「複数の入力データを圧縮したZIPファイル」や「4MBを超える画像」などをAnnoFabに一時的に保存するための、URLと登録用データパスを発行します。
+        「複数の入力データを圧縮したZIPファイル」や「4MBを超える画像」などをAnnofabに一時的に保存するための、URLと登録用データパスを発行します。
 
         このAPIと他のAPIを以下に示すように使うことで、ZIPファイルなどをAFにアップロードできます。
 
@@ -5509,7 +5508,7 @@ paths:
       responses:
         "200":
           description: |
-            何らかのファイルをAnnoFabに一時的に保存するためのアップロード先URL
+            何らかのファイルをAnnofabに一時的に保存するためのアップロード先URL
           content:
             application/json:
               schema:
@@ -5526,7 +5525,7 @@ paths:
       - af-instruction
       summary: 作業ガイドの取得
       description: |
-        指定された版の作業ガイドのHTMLを取得します。
+        作業ガイドのHTMLを取得します。
       security:
       - AllProjectMember: []
       operationId: getInstruction
@@ -5539,7 +5538,8 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       - name: history_id
         in: query
-        description: 取得する版の履歴ID
+        description: |
+          [getInstructionHistory](#operation/getInstructionHistory) APIで取得した、作業ガイドの履歴ID
         required: true
         schema:
           type: string
@@ -5577,7 +5577,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "swagger-api-components.yaml#/components/schemas/Instruction"
+              $ref: "swagger-api-components.yaml#/components/schemas/PutInstructionRequest"
       responses:
         "200":
           description: 作業ガイドの更新が成功した。
@@ -5595,7 +5595,7 @@ paths:
       - af-instruction
       summary: 作業ガイドの編集履歴の取得
       description: |
-        プロジェクトの作業ガイドの編集履歴を取得します。
+        作業ガイドの編集履歴を取得します。
         取得される編集履歴は日付の新しい順にソートされます。
       security:
       - AllProjectMember: []
@@ -5639,7 +5639,7 @@ paths:
       - af-instruction
       summary: 作業ガイドの画像一覧の取得
       description: |
-        プロジェクトの作業ガイドの画像一覧を取得します。
+        作業ガイドの画像一覧を取得します。
       security:
       - AllProjectMember: []
       operationId: getInstructionImages
@@ -5671,7 +5671,7 @@ paths:
       - af-instruction
       summary: 作業ガイドの画像削除
       description: |
-        プロジェクトの作業ガイドの画像を削除します。
+        作業ガイドの画像を削除します。
       security:
       - ProjectOwner: []
       - ProjectAccepter: []
@@ -5688,8 +5688,7 @@ paths:
         description: 作業ガイド画像ID
         required: true
         schema:
-          type: string
-        example: "ed55914c-9f04-470e-8af2-373c8def3e8b"
+          $ref: "swagger-api-components.yaml#/components/schemas/InstructionImageId"
       responses:
         "200":
           description: 正常
@@ -5709,12 +5708,18 @@ paths:
 
         リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。
 
-
         作業ガイド画像の登録/更新方法は以下の通りです。
-        1. `getInstructionImageUrlForPut` APIを実行して、ファイルアップロード用のURLを取得する。
-          * `curl -X GET -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/instruction-images/{image_id}/put-url'`
+        1. APIを実行して、ファイルアップロード用のURLを取得する。
+
+        ```
+        $ curl -X GET -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/instruction-images/{image_id}/put-url'
+        ```
+
         2. 手順1で取得したファイルアップロード用のURLに対して、登録/更新する作業ガイド画像ファイル(`hoge.jpg`)をPUTする。
-          * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.jpg '{ファイルアップロード用のURL}'`
+
+        ```
+        $ curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.jpg '{ファイルアップロード用のURL}'
+        ```
 
         手順1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。
 
@@ -5741,8 +5746,7 @@ paths:
         description: 作業ガイド画像ID
         required: true
         schema:
-          type: string
-        example: "ed55914c-9f04-470e-8af2-373c8def3e8b"
+          $ref: "swagger-api-components.yaml#/components/schemas/InstructionImageId"
       responses:
         "200":
           description: 正常

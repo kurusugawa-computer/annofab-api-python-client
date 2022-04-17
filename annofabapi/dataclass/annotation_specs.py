@@ -29,16 +29,16 @@ class Keybind(DataClassJsonMixin):
     """ """
 
     code: str
-    """"""
+    """[KeyboardEvent.code](https://developer.mozilla.org/ja/docs/Web/API/KeyboardEvent/code)に相当する値です。 """
 
     shift: bool
-    """"""
+    """Shiftキーを押しているかどうか"""
 
     ctrl: bool
-    """"""
+    """Ctrlキーを押しているかどうか"""
 
     alt: bool
-    """"""
+    """Altキーを押しているかどうか"""
 
 
 @dataclass
@@ -55,52 +55,56 @@ class PositionForMinimumBoundingBoxInsertion(DataClassJsonMixin):
 
 
 @dataclass
-class LabelV1BoundingBoxMetadata(DataClassJsonMixin):
-    """ """
+class BoundingBoxMetadata(DataClassJsonMixin):
+    """
+    ベクター形式のアノテーション（矩形、ポリゴン、ポリライン、点）のメタデータ
+    """
 
     min_width: int
-    """"""
+    """幅の最小値[ピクセル]"""
 
     min_height: int
-    """"""
+    """高さの最小値[ピクセル]"""
 
     min_warn_rule: str
-    """"""
+    """サイズの制約に関する情報 * `none` - 制約なし * `or` - 幅と高さの両方が最小値以上 * `and` - 幅と高さのどちらか一方が最小値以上 """
 
     min_area: Optional[int]
-    """"""
+    """面積の最小値[平方ピクセル]"""
 
     max_vertices: Optional[int]
-    """"""
+    """頂点数の最大値"""
 
     min_vertices: Optional[int]
-    """"""
+    """頂点数の最小値"""
 
     position_for_minimum_bounding_box_insertion: Optional[PositionForMinimumBoundingBoxInsertion]
     """"""
 
     tolerance: Optional[int]
-    """"""
+    """許容誤差[ピクセル]"""
 
     has_direction: Optional[bool]
-    """`annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。 この値が `true` の場合、AnnoFabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。  `annotationType` が `polyline` 以外の場合は必ず `false` となります。 """
+    """`annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。 この値が `true` の場合、Annofabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。  `annotationType` が `polyline` 以外の場合は必ず `false` となります。 """
 
 
 @dataclass
-class LabelV1SegmentationMetadata(DataClassJsonMixin):
-    """ """
+class SegmentationMetadata(DataClassJsonMixin):
+    """
+    塗りつぶしアノテーションのメタデータ
+    """
 
     min_width: int
-    """"""
+    """幅の最小値[ピクセル]"""
 
     min_height: int
-    """"""
+    """高さの最小値[ピクセル]"""
 
     min_warn_rule: str
-    """"""
+    """サイズの制約に関する情報 * `none` - 制約なし * `or` - 幅と高さの両方が最小値以上 * `and` - 幅と高さのどちらか一方が最小値以上 """
 
     tolerance: Optional[int]
-    """"""
+    """許容誤差[ピクセル]"""
 
 
 @dataclass
@@ -119,7 +123,7 @@ class InternationalizationMessage(DataClassJsonMixin):
     """ """
 
     messages: List[InternationalizationMessageMessages]
-    """言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、AnnoFabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * [Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます """
+    """言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、Annofabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * 以下の名前は、[Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます     * ラベル名     * 属性名     * 選択肢名 * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます """
 
     default_lang: str
     """希望された言語のメッセージが存在しない場合に、フォールバック先として使われる言語コード"""
@@ -130,7 +134,7 @@ class InspectionPhrase(DataClassJsonMixin):
     """ """
 
     id: str
-    """"""
+    """定型指摘ID"""
 
     text: InternationalizationMessage
     """"""
@@ -141,27 +145,29 @@ class AnnotationSpecsHistory(DataClassJsonMixin):
     """ """
 
     history_id: str
-    """"""
+    """アノテーション仕様の履歴ID"""
 
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     updated_datetime: str
-    """"""
+    """更新日時"""
 
     url: str
-    """"""
+    """アノテーション仕様が格納されたJSONのURL。URLにアクセスするには認証認可が必要です。"""
 
     account_id: Optional[str]
     """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     comment: Optional[str]
-    """"""
+    """変更内容のコメント"""
 
 
 @dataclass
 class Color(DataClassJsonMixin):
-    """ """
+    """
+    RGBで表現される色情報
+    """
 
     red: int
     """"""
@@ -184,7 +190,7 @@ class AdditionalDataDefinitionV1Choices(DataClassJsonMixin):
     """"""
 
     keybind: Optional[List[Keybind]]
-    """"""
+    """ショートカットキー"""
 
 
 @dataclass
@@ -195,7 +201,7 @@ class AdditionalDataDefinitionV1(DataClassJsonMixin):
     """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     read_only: Optional[bool]
-    """"""
+    """読み込み専用"""
 
     name: Optional[InternationalizationMessage]
     """"""
@@ -204,7 +210,7 @@ class AdditionalDataDefinitionV1(DataClassJsonMixin):
     """"""
 
     keybind: Optional[List[Keybind]]
-    """"""
+    """ショートカットキー"""
 
     type: AdditionalDataDefinitionType
     """"""
@@ -213,7 +219,7 @@ class AdditionalDataDefinitionV1(DataClassJsonMixin):
     """ドロップダウンまたはラジオボタンの選択肢"""
 
     regex: Optional[str]
-    """"""
+    """属性の値が、指定した正規表現に一致している必要があります。"""
 
     label_ids: Optional[List[str]]
     """リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）"""
@@ -233,7 +239,7 @@ class AdditionalDataDefinitionV2(DataClassJsonMixin):
     """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     read_only: Optional[bool]
-    """"""
+    """読み込み専用"""
 
     name: InternationalizationMessage
     """"""
@@ -242,13 +248,13 @@ class AdditionalDataDefinitionV2(DataClassJsonMixin):
     """"""
 
     keybind: Optional[List[Keybind]]
-    """"""
+    """ショートカットキー"""
 
     type: AdditionalDataDefinitionType
     """"""
 
     choices: Optional[List[AdditionalDataDefinitionV1Choices]]
-    """"""
+    """ドロップダウンまたはラジオボタンの選択肢"""
 
     metadata: Optional[Dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
@@ -256,25 +262,27 @@ class AdditionalDataDefinitionV2(DataClassJsonMixin):
 
 @dataclass
 class AnnotationEditorFeature(DataClassJsonMixin):
-    """ """
+    """
+    塗りつぶしの作図機能に関する情報
+    """
 
     append: bool
-    """"""
+    """塗りつぶしの「追記」機能が使えるか否か"""
 
     erase: bool
-    """"""
+    """塗りつぶしの「消しゴム」機能が使えるか否か"""
 
     freehand: bool
-    """"""
+    """塗りつぶしの「フリーハンド」機能が使えるか否か"""
 
     rectangle_fill: bool
-    """"""
+    """塗りつぶしの「矩形」機能が使えるか否か"""
 
     polygon_fill: bool
-    """"""
+    """塗りつぶしの「ポリゴン」機能が使えるか否か"""
 
     fill_near: bool
-    """"""
+    """「近似色塗りつぶし」機能を有効にするかどうか"""
 
 
 @dataclass
@@ -288,15 +296,15 @@ class LabelV1(DataClassJsonMixin):
     """"""
 
     keybind: List[Keybind]
-    """"""
+    """ショートカットキー"""
 
     annotation_type: AnnotationType
     """"""
 
-    bounding_box_metadata: Optional[LabelV1BoundingBoxMetadata]
+    bounding_box_metadata: Optional[BoundingBoxMetadata]
     """"""
 
-    segmentation_metadata: Optional[LabelV1SegmentationMetadata]
+    segmentation_metadata: Optional[SegmentationMetadata]
     """"""
 
     additional_data_definitions: List[AdditionalDataDefinitionV1]
@@ -326,15 +334,15 @@ class LabelV2(DataClassJsonMixin):
     """"""
 
     keybind: List[Keybind]
-    """"""
+    """ショートカットキー"""
 
     annotation_type: AnnotationType
     """"""
 
-    bounding_box_metadata: Optional[LabelV1BoundingBoxMetadata]
+    bounding_box_metadata: Optional[BoundingBoxMetadata]
     """"""
 
-    segmentation_metadata: Optional[LabelV1SegmentationMetadata]
+    segmentation_metadata: Optional[SegmentationMetadata]
     """"""
 
     additional_data_definitions: List[str]
@@ -378,7 +386,7 @@ class AnnotationSpecsV1(DataClassJsonMixin):
     """定型指摘"""
 
     updated_datetime: Optional[str]
-    """アノテーション仕様の最終更新時刻 """
+    """更新日時 """
 
     option: Optional[AnnotationSpecsOption]
     """"""
@@ -407,10 +415,10 @@ class AnnotationSpecsV2(DataClassJsonMixin):
     """定型指摘"""
 
     format_version: str
-    """"""
+    """アノテーション仕様のフォーマットのバージョン"""
 
     updated_datetime: Optional[str]
-    """アノテーション仕様の最終更新時刻 """
+    """更新日時 """
 
     option: Optional[AnnotationSpecsOption]
     """"""

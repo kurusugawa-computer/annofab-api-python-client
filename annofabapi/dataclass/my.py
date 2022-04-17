@@ -70,7 +70,7 @@ class MyAccount(DataClassJsonMixin):
     """"""
 
     biography: Optional[str]
-    """人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 """
+    """人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 """
 
     keylayout: KeyLayout
     """"""
@@ -79,7 +79,7 @@ class MyAccount(DataClassJsonMixin):
     """システム内部用のプロパティ"""
 
     is_external_account: bool
-    """[外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。  外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合はfalse。 """
+    """[外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。  外部アカウント連携していないAnnofabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnofabアカウントの場合はfalse。 """
 
     updated_datetime: str
     """更新日時"""

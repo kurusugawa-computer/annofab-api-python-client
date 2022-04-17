@@ -41,7 +41,7 @@ class ProjectMember(DataClassJsonMixin):
     """"""
 
     biography: Optional[str]
-    """人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 """
+    """人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 """
 
     updated_datetime: Optional[str]
     """"""

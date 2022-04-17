@@ -20,7 +20,7 @@ components:
       name: "CloudFront-Signature"
     EveryoneRequestBody:
       description: |
-        AnnoFabのユーザーなら誰でも利用できます。
+        Annofabのユーザーなら誰でも利用できます。
 
         認証/認可には、リクエストボディに含まれるパスワード、トークン、または何らかの検証コードを用います。
         詳しくは個別のAPIの説明を確認してください。
@@ -28,7 +28,7 @@ components:
       scheme: "requestBody"
     EveryoneQueryParameter:
       description: |
-        AnnoFabのユーザーなら誰でも利用できます。
+        Annofabのユーザーなら誰でも利用できます。
 
         認証/認可には、クエリパラメータに含まれるトークンまたは何らかの検証コードを用います。
         詳しくは個別のAPIの説明を確認してください。
@@ -36,16 +36,16 @@ components:
       scheme: "requestBody"
     Everyone:
       description: |
-        AnnoFabのユーザーなら誰でも利用できます。
+        Annofabのユーザーなら誰でも利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
       type: "apiKey"
       name: "Authorization"
       in: "header"
-    AnnoFabAdminOnly:
+    AnnofabAdminOnly:
       description: |
-        AnnoFabのシステム管理者のみ利用できます。
+        Annofabのシステム管理者のみ利用できます。
 
         認証/認可には、HTTPリクエストの `Authorization` ヘッダーに格納されたIDトークンを用います。
         IDトークンは [login](/docs/api/#operation/login) または [refreshToken](/docs/api/#operation/refreshToken) API で取得できます。
@@ -308,8 +308,11 @@ components:
           description: |
             言語コードとメッセージ（テキスト）のリスト。
 
-            * アノテーションエディタなどでは、AnnoFabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます
-            * [Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます
+            * アノテーションエディタなどでは、Annofabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます
+            * 以下の名前は、[Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます
+                * ラベル名
+                * 属性名
+                * 選択肢名
             * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます
           items:
             type: object
@@ -556,7 +559,7 @@ components:
           description: |
             [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。
 
-            外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合はfalse。
+            外部アカウント連携していないAnnofabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnofabアカウントの場合はfalse。
         updated_datetime:
           type: string
           format: date-time
@@ -624,9 +627,14 @@ components:
         新規作成時は未指定、更新時は必須（更新前の日時）
     AcceptOrganizationInvitationRequest:
       type: object
+      required:
+       - token
       properties:
         token:
           type: string
+          description: |
+            [inviteOrganizationMember](#operation/inviteOrganizationMember) APIで送信された招待メールに記載されているトークンです。
+            メールに記載されているURLの`invitation-token`クエリパラメータの値が、トークンになります。
     OrganizationActivity:
       type: object
       required:
@@ -697,6 +705,8 @@ components:
         - username
         - role
         - status
+        - created_datetime
+        - updated_datetime
       properties:
         organization_id:
           $ref: "#/components/schemas/OrganizationId"
@@ -705,7 +715,7 @@ components:
         user_id:
           $ref: "#/components/schemas/UserId"
         username:
-          type: string
+          $ref: "#/components/schemas/Username"
         role:
           $ref: "#/components/schemas/OrganizationMemberRole"
         status:
@@ -715,15 +725,22 @@ components:
         created_datetime:
           type: string
           format: date-time
+          description: 作成日時
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
     OrganizationMemberRole:
       type: string
       enum:
         - owner
         - administrator
         - contributor
+      description: |
+        組織メンバーのロール。
+        * `owner` - 組織オーナー
+        * `administrator` - 組織管理者
+        * `contributor` - 組織貢献者
     OrganizationMemberStatus:
       type: string
       enum:
@@ -731,6 +748,7 @@ components:
         - waiting_response
         - inactive
       description: |
+        組織メンバーのステータス。
         * `active` - 組織メンバーとして有効で、組織を閲覧したり、権限があれば編集できます。
         * `waiting_response` - 組織に招待され、まだ加入/脱退を返答していません。組織の一部を閲覧のみできます。
         * `inactive` - 脱退したメンバーを表します。組織を閲覧できません。
@@ -762,8 +780,7 @@ components:
     PutOrganizationPluginRequest:
       type: object
       required:
-        - plugin_type
-        - compatible_input_data_types
+        - detail
       properties:
         plugin_name:
           $ref: "#/components/schemas/PluginName"
@@ -899,9 +916,9 @@ components:
         #### カスタムタスク割当APIについて。
 
         * 独自のアルゴリズムで作業者にタスクを割当するAPIです。
-        * AnnoFabから提供されるものではなく、第三者 (ユーザー様) が用意します。
+        * Annofabから提供されるものではなく、第三者 (ユーザー様) が用意します。
         * 作業者がタスク一覧やアノテーションエディタのタスク取得ボタンを押すと、指定したURLに複数の情報 (※1) と共にHTTPリクエスト (POST) が送られます。
-        * カスタムタスク割当APIでは、AnnoFabで提供しているAPI (※2) を使用して作業者にタスクを割当してください。
+        * カスタムタスク割当APIでは、Annofabで提供しているAPI (※2) を使用して作業者にタスクを割当してください。
         * タスクの割当に成功した場合は以下のHTTPレスポンスを返却してください。
           * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`
           * レスポンスボディ: 割当した単一のタスク
@@ -917,7 +934,7 @@ components:
 
         #### Preflightリクエストについて。
 
-        * AnnoFabからカスタムタスク割当APIへCross-OriginなHTTPリクエストを送信するより前に、ブラウザの仕様により「Preflightリクエスト」と呼ばれるHTTPリクエストが送られます。
+        * Annofabからカスタムタスク割当APIへCross-OriginなHTTPリクエストを送信するより前に、ブラウザの仕様により「Preflightリクエスト」と呼ばれるHTTPリクエストが送られます。
         * カスタムタスク割当を利用するためには、カスタムタスク割当APIとは別に「Preflightリクエスト対応API」を用意する必要があります。
         * 以下の要件を満たす「Preflightリクエスト対応API」を用意してください。
           * URL: カスタムタスク割当APIと同じURL
@@ -931,7 +948,7 @@ components:
         ※1 以下の情報が送られます。
 
         * HTTPボディ (JSON形式)
-          * `authorization_token` : タスク割当専用の認証トークン。AnnoFabのAPIを利用する際に使用します。
+          * `authorization_token` : タスク割当専用の認証トークン。AnnofabのAPIを利用する際に使用します。
           * `project_id` : タスクの割当リクエストが行われたプロジェクトのID。
           * `phase` : 作業者が割当を要求したタスクフェーズ。このフェーズのタスクを割当してください。
 
@@ -1024,6 +1041,8 @@ components:
           $ref: "#/components/schemas/LastUpdatedDatetime"
     InviteOrganizationMemberRequest:
       type: object
+      required:
+        - role
       properties:
         role:
           $ref: "#/components/schemas/OrganizationMemberRole"
@@ -1107,6 +1126,8 @@ components:
     SupplementaryDataId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        補助情報ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     TaskHistoryId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -1121,6 +1142,11 @@ components:
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
         検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+    InstructionImageId:
+      type: string
+      example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        作業ガイド画像ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     CommentId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -1149,8 +1175,8 @@ components:
       description: |
         人物紹介、略歴。
 
-        この属性は、AnnoFab外の所属先や肩書などを表すために用います。
-        AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。
+        この属性は、Annofab外の所属先や肩書などを表すために用います。
+        Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。
       minLength: 0
       maxLength: 100
       example: "Annotation Manager, ABC Company"
@@ -1159,7 +1185,7 @@ components:
       example: "1.0.0"
       description: |
         アノテーションフォーマットのバージョンです。
-        アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。
+        アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、Annofabのアノテーション構造のことです。
         したがって、アノテーション仕様を更新しても、このバージョンは変化しません。
 
         バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。
@@ -1256,13 +1282,18 @@ components:
         task_assignment_property:
           $ref: "#/components/schemas/TaskAssignmentProperty"
         max_tasks_per_member:
-          description: 保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
+          description: |
+            保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数の上限。
           type: integer
           default: 10
           minimum: 1
           maximum: 100
         max_tasks_per_member_including_hold:
-          description: 保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は20件として扱う。
+          description: |
+            保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。
+            割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。
+
+            例えばmax_tasks_per_memberが10,max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。
           type: integer
           default: 20
           minimum: 1
@@ -1295,7 +1326,7 @@ components:
           description: |
             AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。
             [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
-          example: "arn:aws:iam::123456789012:role/AnnoFabPrivateStorageAccessor"
+          example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
         plugin_id:
           $ref: "#/components/schemas/PluginId"
           description: |
@@ -1468,7 +1499,7 @@ components:
 
         ## ジョブの同時実行制限
 
-        AnnoFab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。
+        Annofab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。
 
         ジョブの同時実行可否はジョブの種別によって異なります。
 
@@ -2369,7 +2400,7 @@ components:
           type: string
           format: date-time
           description: |
-            アノテーション仕様の最終更新時刻
+            更新日時
         option:
           $ref: "#/components/schemas/AnnotationSpecsOption"
         metadata:
@@ -2414,11 +2445,12 @@ components:
         format_version:
           type: string
           default: "2.1.0"
+          description: アノテーション仕様のフォーマットのバージョン
         updated_datetime:
           type: string
           format: date-time
           description: |
-            アノテーション仕様の最終更新時刻
+            更新日時
         option:
           $ref: "#/components/schemas/AnnotationSpecsOption"
         metadata:
@@ -2512,11 +2544,9 @@ components:
         format_version:
           type: string
           default: "2.1.0"
+          description: アノテーション仕様のフォーマットのバージョン
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
-          description: |
-            更新前アノテーション仕様の時刻( `updated_datetime` )を指定する。
-            新規作成時は未指定。
         option:
           $ref: "#/components/schemas/AnnotationSpecsOption"
         metadata:
@@ -2554,17 +2584,25 @@ components:
       properties:
         history_id:
           type: string
+          description: アノテーション仕様の履歴ID
+          example: "1234567890"
         project_id:
           $ref: "#/components/schemas/ProjectId"
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
         url:
           type: string
+          format: uri
+          description: アノテーション仕様が格納されたJSONのURL。URLにアクセスするには認証認可が必要です。
+          example: https://annofab.com/projects/PROJECT_ID/annotation_specs_histories/HISTORY_ID.json?cache=CACHE
         account_id:
           $ref: "#/components/schemas/AccountId"
+          description: 更新したユーザのアカウントID
         comment:
           type: string
+          description: 変更内容のコメント
     InspectionPhrase:
       type: object
       required:
@@ -2573,8 +2611,10 @@ components:
       properties:
         id:
           type: string
+          description: 定型指摘ID
         text:
           $ref: "#/components/schemas/InternationalizationMessage"
+          description: 定型指摘のメッセージ
     AnnotationType:
       type: string
       enum:
@@ -2588,15 +2628,34 @@ components:
         - range
         - custom
       description: |
-        * `bounding_box` - 矩形を表します。
-        * `segmentation` - ピクセルレベルでの塗りつぶし（ラスター）を表します。
-        * `segmentation_v2` - 塗りつぶしv2を表します。v2はSemantic Segmentationに特化しています。
-        * `polygon` - ポリゴン（閉じた頂点集合）を表します。
-        * `polyline` - ポリライン（開いた頂点集合）を表します。
-        * `point` - 点を表します。
-        * `classification` - 入力データ全体に対するアノテーションを表します。
-        * `range` - 動画の区間を表します。
+        アノテーションの種類
+        * `bounding_box` - 矩形
+        * `segmentation` - 塗りつぶし（インスタンスセグメンテーション用）
+        * `segmentation_v2` - 塗りつぶしv2（セマンティックセグメンテーション用）
+        * `polygon` - ポリゴン（閉じた頂点集合）
+        * `polyline` - ポリライン（開いた頂点集合）
+        * `point` - 点
+        * `classification` - 全体
+        * `range` - 動画の区間
         * `custom` - カスタム
+
+        プロジェクトの種類によって、使用できるアノテーションの種類は決まっています。アノテーションの種類が使用できるかどうかを、以下の表に記載しました。
+         * `○`：使用できる
+         * `×`：使用できない
+
+
+        |アノテーションの種類                 | 画像プロジェクト        | 動画プロジェクト | カスタムプロジェクト |
+        |-----------------|:----------:|:----:|:------:|
+        | bounding_box    | 〇         | ×  | ×    |
+        | segmentation    | 〇         | ×  | ×    |
+        | segmentation_v2 | 〇         | ×  | ×    |
+        | polygon         | 〇         | ×  | ×    |
+        | polyline        | 〇         | ×  | ×    |
+        | point           | 〇         | ×  | ×    |
+        | classification  | 〇         | 〇  | ×    |
+        | range           | ×         | 〇  | ×    |
+        | custom          | ×         | ×  | 〇    |
+
     AdditionalDataDefinitionType:
       type: string
       enum:
@@ -2609,13 +2668,14 @@ components:
         - tracking
         - link
       description: |
+        属性の種類
         * `flag` - 真偽値
         * `integer` - 整数値
         * `text` - 自由記述（1行）
         * `comment` - 自由記述（複数行）
         * `choice` - 選択肢（ラジオボタン式）
         * `select` - 選択肢（ドロップダウン式）
-        * `tracking` - 自由記述 (トラッキングID自動挿入)
+        * `tracking` - トラッキングID
         * `link` - アノテーションリンク
     PositionForMinimumBoundingBoxInsertion:
       type: object
@@ -2634,6 +2694,86 @@ components:
           type: integer
         y:
           type: integer
+    BoundingBoxMetadata:
+      description: ベクター形式のアノテーション（矩形、ポリゴン、ポリライン、点）のメタデータ
+      type: object
+      required:
+        - min_width
+        - min_height
+        - min_warn_rule
+      properties:
+        min_width:
+          type: integer
+          description: 幅の最小値[ピクセル]
+        min_height:
+          type: integer
+          description: 高さの最小値[ピクセル]
+        min_warn_rule:
+          type: string
+          enum:
+            - none
+            - or
+            - and
+          description: |
+            サイズの制約に関する情報
+            * `none` - 制約なし
+            * `or` - 幅と高さの両方が最小値以上
+            * `and` - 幅と高さのどちらか一方が最小値以上
+        min_area:
+          type: integer
+          minimum: 1
+          maximum: 1000000
+          description: 面積の最小値[平方ピクセル]
+        max_vertices:
+          type: integer
+          description: 頂点数の最大値
+        min_vertices:
+          type: integer
+          description: 頂点数の最小値
+        position_for_minimum_bounding_box_insertion:
+          $ref: "#/components/schemas/PositionForMinimumBoundingBoxInsertion"
+        tolerance:
+          type: integer
+          description: 許容誤差[ピクセル]
+        has_direction:
+          type: boolean
+          default: false
+          description: |
+            `annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。
+            この値が `true` の場合、Annofabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。
+
+            `annotationType` が `polyline` 以外の場合は必ず `false` となります。
+
+    SegmentationMetadata:
+      type: object
+      description: 塗りつぶしアノテーションのメタデータ
+      required:
+        - min_width
+        - min_height
+        - min_warn_rule
+      properties:
+        min_width:
+          type: integer
+          description: 幅の最小値[ピクセル]
+        min_height:
+          type: integer
+          description: 高さの最小値[ピクセル]
+        min_warn_rule:
+          type: string
+          enum:
+            - none
+            - or
+            - and
+          description: |
+            サイズの制約に関する情報
+            * `none` - 制約なし
+            * `or` - 幅と高さの両方が最小値以上
+            * `and` - 幅と高さのどちらか一方が最小値以上
+        tolerance:
+          type: integer
+          description: 許容誤差[ピクセル]
+
+
     LabelV1:
       type: object
       required:
@@ -2651,60 +2791,15 @@ components:
           $ref: "#/components/schemas/InternationalizationMessage"
         keybind:
           type: array
+          description: ショートカットキー
           items:
             $ref: "#/components/schemas/Keybind"
         annotation_type:
           $ref: "#/components/schemas/AnnotationType"
         bounding_box_metadata:
-          type: object
-          required:
-            - min_width
-            - min_height
-            - min_warn_rule
-          properties:
-            min_width:
-              type: integer
-            min_height:
-              type: integer
-            min_warn_rule:
-              type: string
-              default: or
-            min_area:
-              type: integer
-              minimum: 1
-              maximum: 1000000
-            max_vertices:
-              type: integer
-            min_vertices:
-              type: integer
-            position_for_minimum_bounding_box_insertion:
-              $ref: "#/components/schemas/PositionForMinimumBoundingBoxInsertion"
-            tolerance:
-              type: integer
-            has_direction:
-              type: boolean
-              default: false
-              description: |
-                `annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。
-                この値が `true` の場合、AnnoFabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。
-
-                `annotationType` が `polyline` 以外の場合は必ず `false` となります。
+          $ref: "#/components/schemas/BoundingBoxMetadata"
         segmentation_metadata:
-          type: object
-          required:
-            - min_width
-            - min_height
-            - min_warn_rule
-          properties:
-            min_width:
-              type: integer
-            min_height:
-              type: integer
-            min_warn_rule:
-              type: string
-              default: or
-            tolerance:
-              type: integer
+          $ref: "#/components/schemas/SegmentationMetadata"
         additional_data_definitions:
           type: array
           items:
@@ -2740,62 +2835,18 @@ components:
           $ref: "#/components/schemas/LabelId"
         label_name:
           $ref: "#/components/schemas/InternationalizationMessage"
+          description: ラベル名
         keybind:
+          description: ショートカットキー
           type: array
           items:
             $ref: "#/components/schemas/Keybind"
         annotation_type:
           $ref: "#/components/schemas/AnnotationType"
         bounding_box_metadata:
-          type: object
-          required:
-            - min_width
-            - min_height
-            - min_warn_rule
-          properties:
-            min_width:
-              type: integer
-            min_height:
-              type: integer
-            min_warn_rule:
-              type: string
-              default: or
-            min_area:
-              type: integer
-              minimum: 1
-              maximum: 1000000
-            max_vertices:
-              type: integer
-            min_vertices:
-              type: integer
-            position_for_minimum_bounding_box_insertion:
-              $ref: "#/components/schemas/PositionForMinimumBoundingBoxInsertion"
-            tolerance:
-              type: integer
-            has_direction:
-              type: boolean
-              default: false
-              description: |
-                `annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。
-                この値が `true` の場合、AnnoFabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。
-
-                `annotationType` が `polyline` 以外の場合は必ず `false` となります。
+          $ref: "#/components/schemas/BoundingBoxMetadata"
         segmentation_metadata:
-          type: object
-          required:
-            - min_width
-            - min_height
-            - min_warn_rule
-          properties:
-            min_width:
-              type: integer
-            min_height:
-              type: integer
-            min_warn_rule:
-              type: string
-              default: or
-            tolerance:
-              type: integer
+          $ref: "#/components/schemas/SegmentationMetadata"
         additional_data_definitions:
           type: array
           items:
@@ -2817,6 +2868,7 @@ components:
           additionalProperties:
             type: string
     Color:
+      description: RGBで表現される色情報
       type: object
       required:
         - red
@@ -2836,6 +2888,8 @@ components:
           minimum: 0
           maximum: 255
     AnnotationEditorFeature:
+      description: |
+        塗りつぶしの作図機能に関する情報
       type: object
       required:
         - append
@@ -2847,16 +2901,22 @@ components:
       properties:
         append:
           type: boolean
+          description: 塗りつぶしの「追記」機能が使えるか否か
         erase:
           type: boolean
+          description: 塗りつぶしの「消しゴム」機能が使えるか否か
         freehand:
           type: boolean
+          description: 塗りつぶしの「フリーハンド」機能が使えるか否か
         rectangle_fill:
           type: boolean
+          description: 塗りつぶしの「矩形」機能が使えるか否か
         polygon_fill:
           type: boolean
+          description: 塗りつぶしの「ポリゴン」機能が使えるか否か
         fill_near:
           type: boolean
+          description: 「近似色塗りつぶし」機能を有効にするかどうか
     AdditionalDataDefinitionV1:
       type: object
       required:
@@ -2869,12 +2929,15 @@ components:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
         read_only:
           type: boolean
+          description: 読み込み専用
           default: false
         name:
           $ref: "#/components/schemas/InternationalizationMessage"
+          description: 属性名
         default:
           $ref: "#/components/schemas/AdditionalDataDefaultType"
         keybind:
+          description: ショートカットキー
           type: array
           items:
             $ref: "#/components/schemas/Keybind"
@@ -2893,12 +2956,15 @@ components:
                 $ref: "#/components/schemas/ChoiceId"
               name:
                 $ref: "#/components/schemas/InternationalizationMessage"
+                description: 選択肢の名前
               keybind:
+                description: ショートカットキー
                 type: array
                 items:
                   $ref: "#/components/schemas/Keybind"
         regex:
           type: string
+          description: 属性の値が、指定した正規表現に一致している必要があります。
         label_ids:
           type: array
           description: リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）
@@ -2924,18 +2990,22 @@ components:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
         read_only:
           type: boolean
+          description: 読み込み専用
           default: false
         name:
           $ref: "#/components/schemas/InternationalizationMessage"
+          description: 属性名
         default:
           $ref: "#/components/schemas/AdditionalDataDefaultType"
         keybind:
+          description: ショートカットキー
           type: array
           items:
             $ref: "#/components/schemas/Keybind"
         type:
           $ref: "#/components/schemas/AdditionalDataDefinitionType"
         choices:
+          description: ドロップダウンまたはラジオボタンの選択肢
           type: array
           items:
             type: object
@@ -2947,8 +3017,10 @@ components:
                 $ref: "#/components/schemas/ChoiceId"
               name:
                 $ref: "#/components/schemas/InternationalizationMessage"
+                description: 選択肢の名前
               keybind:
                 type: array
+                description: ショートカットキー
                 items:
                   $ref: "#/components/schemas/Keybind"
         metadata:
@@ -2968,6 +3040,39 @@ components:
         condition:
           $ref: "#/components/schemas/AdditionalDataRestrictionCondition"
     AdditionalDataRestrictionCondition:
+      description: |
+        属性の制約
+
+          * `AdditionalDataRestrictionConditionCanInput`: 属性値の入力を許可するかどうか
+          * `AdditionalDataRestrictionConditionEquals`: 指定した値に等しい
+          * `AdditionalDataRestrictionConditionNotEquals`: 指定した値に等しくない
+          * `AdditionalDataRestrictionConditionMatches`: 指定した正規表現に一致する
+          * `AdditionalDataRestrictionConditionNotMatches`: 指定した正規表現に一致しない
+          * `AdditionalDataRestrictionConditionHasLabel`: 指定したラベルIDに一致する（アノテーションリンク属性限定）
+          * `AdditionalDataRestrictionConditionImply`: 指定した前提条件を満たすときのみ、制約を満たすかどうか
+
+        以下のJSONは、「属性IDが`attr2`の属性値が`true`ならば、属性IDが`attr1`の属性値は`choice1`である」という制約を表しています。
+
+        ```
+        {
+            "additional_data_definition_id": "attr1",
+            "condition": {
+                "_type": "Imply",
+                "premise": {
+                    "additional_data_definition_id": "attr2",
+                    "condition": {
+                        "_type": "Equals",
+                        "value": "true"
+                    }
+                },
+                "condition": {
+                    "_type": "Equals",
+                    "value": "choice1"
+                }
+            }
+        }
+        ```
+
       oneOf:
         - $ref: "#/components/schemas/AdditionalDataRestrictionConditionCanInput"
         - $ref: "#/components/schemas/AdditionalDataRestrictionConditionEquals"
@@ -3001,8 +3106,8 @@ components:
         enable:
           type: boolean
           description: |
-            false を指定することで、入力を許可しないようにできます。
-            Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。
+            `false`を指定することで、属性値の入力を許可しないようにできます。
+            `AdditionalDataRestrictionConditionImply`との組み合わせで、特定条件下のみ入力を許すといった制限ができます。
     AdditionalDataRestrictionConditionEquals:
       type: object
       required:
@@ -3034,7 +3139,7 @@ components:
           type: string
           description: |
             指定された値と異なることを要求します。
-            value に "" を指定することで、入力を必須とすることができます。
+            `value`に`""`を指定することで、入力を必須とすることができます。
     AdditionalDataRestrictionConditionMatches:
       type: object
       required:
@@ -3049,7 +3154,7 @@ components:
           example: "Matches"
         value:
           type: string
-          description: 指定された正規表現に合致することを要求します。
+          description: 指定された正規表現に一致することを要求します。
     AdditionalDataRestrictionConditionNotMatches:
       type: object
       required:
@@ -3064,7 +3169,7 @@ components:
           example: "NotMatches"
         value:
           type: string
-          description: 指定された正規表現に合致しないことを要求します。
+          description: 指定された正規表現に一致しないことを要求します。
     AdditionalDataRestrictionConditionHasLabel:
       type: object
       required:
@@ -3079,7 +3184,7 @@ components:
           example: "HasLabel"
         labels:
           type: array
-          description: リンク属性において、リンク先として指定可能なラベルIDを制限します。
+          description: アノテーションリンク属性において、アノテーションリンク先として指定可能なラベルIDを制限します。
           items:
             type: string
     AdditionalDataRestrictionConditionImply:
@@ -3098,7 +3203,7 @@ components:
         premise:
           $ref: "#/components/schemas/AdditionalDataRestriction"
           description: |
-            premise で指定された条件を満たすとき、condition で指定された条件を満たすことを要求します。
+            `premise`で指定された条件を満たすとき、`condition`で指定された条件を満たすことを要求します。
         condition:
           $ref: "#/components/schemas/AdditionalDataRestrictionCondition"
     Keybind:
@@ -3111,12 +3216,18 @@ components:
       properties:
         code:
           type: string
+          description: |
+            [KeyboardEvent.code](https://developer.mozilla.org/ja/docs/Web/API/KeyboardEvent/code)に相当する値です。
+          example: "KeyA"
         shift:
           type: boolean
+          description: Shiftキーを押しているかどうか
         ctrl:
           type: boolean
+          description: Ctrlキーを押しているかどうか
         alt:
           type: boolean
+          description: Altキーを押しているかどうか
     Task:
       type: object
       required:
@@ -3597,7 +3708,7 @@ components:
           description: |
             AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。
             [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
-          example: "arn:aws:iam::123456789012:role/AnnoFabPrivateStorageAccessor"
+          example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
         updated_datetime:
           type: string
           format: date-time
@@ -3619,7 +3730,7 @@ components:
           description: |
             AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。
             [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
-          example: "arn:aws:iam::123456789012:role/AnnoFabPrivateStorageAccessor"
+          example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
         last_updated_datetime:
           type: string
           format: date-time
@@ -3710,7 +3821,7 @@ components:
           $ref: "#/components/schemas/Resolution"
           description: |
             入力データの元画像サイズ。
-            AnnoFabにアップロードされる入力データとS3プライベートストレージの場合のみ設定されます。
+            Annofabにアップロードされる入力データとS3プライベートストレージの場合のみ設定されます。
         resized_resolution:
           $ref: "#/components/schemas/Resolution"
           description: |
@@ -3761,7 +3872,7 @@ components:
           type: string
           example: "s3://YOUR-BUCKET/PATH/TO/OBJECT"
           description: |
-            AnnoFabに登録する入力データの実体が保存されたパスです。
+            Annofabに登録する入力データの実体が保存されたパスです。
 
             対応スキーマ：
             * s3
@@ -3779,7 +3890,7 @@ components:
           type: boolean
           description: |
             データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br>
-            このオプションを有効にする場合は、`input_data_path`として、AnnoFabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。
+            このオプションを有効にする場合は、`input_data_path`として、AnnofabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。
         metadata:
           type: object
           description: |
@@ -3789,6 +3900,8 @@ components:
     SupplementaryData:
       type: object
       required:
+        - organization_id
+        - input_data_set_id
         - project_id
         - input_data_id
         - supplementary_data_id
@@ -3796,39 +3909,57 @@ components:
         - supplementary_data_path
         - supplementary_data_type
         - supplementary_data_number
+        - url
+        - updated_datetime
       properties:
+        organization_id:
+          $ref: "#/components/schemas/OrganizationId"
+        input_data_set_id:
+          $ref: "#/components/schemas/InputDataSetId"
         project_id:
           $ref: "#/components/schemas/ProjectId"
+          deprecated: true
+          description: |
+            プロジェクトID。将来的に廃止する予定です。
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
         supplementary_data_id:
           $ref: "#/components/schemas/SupplementaryDataId"
         supplementary_data_name:
           type: string
-          description: 表示用の名前
+          description: 補助情報の名前
         supplementary_data_path:
           type: string
           example: "s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA"
           description: |
-            補助情報の実体が保存されたパスです。
+            補助情報の実体が存在するパスです。
             s3スキーマまたはhttpsスキーマのみサポートしています。
         url:
           type: string
           format: uri
-          deprecated: true
-          description: このフィールドはAF内部での利用のみを想定しており、依存しないでください。
+          description: システム内部用のプロパティ
         etag:
+          description: |
+            [HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。
           type: string
+          example: "\"33a64df551425fcc55e4d42a148795d9f25f89d4\""
         supplementary_data_type:
           $ref: "#/components/schemas/SupplementaryDataType"
         supplementary_data_number:
           type: integer
-          description: 表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
+          description: 補助情報の表示順を表す数値。
+          minimum: 0
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
     SupplementaryDataType:
       type: string
+      description: |
+        補助情報の種類
+        * `image` - 画像
+        * `text` - テキスト
+        * `custom` - カスタム（カスタムプロジェクトでしか利用できません）
       enum:
         - image
         - text
@@ -3843,37 +3974,26 @@ components:
       properties:
         supplementary_data_name:
           type: string
-          description: 表示用の名前
+          description: 補助情報の名前
         supplementary_data_path:
           type: string
           example: "s3://YOUR-BUCKET/PATH/TO/OBJECT"
           description: |
-            AnnoFabに登録する補助情報の実体が保存されたパスです。
+            補助情報の実体が存在するURLです。
+            補助情報の実体をAnnofabにアップロードする場合は、[一時データ保存先取得API](#operation/createTempPath)で取得した`path`を指定してください。
 
-            対応スキーマ：s3, https
+            補助情報の実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。
+            補助情報の実体が、S3プライベートストレージに存在するファイルを補助情報として登録する場合は、[事前に認可の設定](/docs/faq/#m0b240)が必要です。
 
-            * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードしたファイルパスの場合
-                * `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA`
-                * 補助情報作成/更新API成功時、アップロードしたファイルが一時データ保存先からコピーされます。
-                    * APIのレスポンスからアップロードしたファイルのコピー先パス（s3スキーマ）を取得できます。
-            * すでにAFに登録されている補助情報のパスの場合
-                * `s3://ANNOFAB-SUPPLEMENTARY-BUCKET/PATH/TO/INPUT_DATA`
-                * ファイルはコピーされません。
-            * [プライベートストレージ](/docs/faq/#prst9c)のパスの場合
-                * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`
-                * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`
-                    * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。
-                * AFにファイルはコピーされません。
         supplementary_data_type:
           $ref: "#/components/schemas/SupplementaryDataType"
-
         supplementary_data_number:
           type: integer
           minimum: 0
-          description: 表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
+          description: 補助情報の表示順を表す数値。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
         last_updated_datetime:
-          type: string
-          format: date-time
+          $ref: "#/components/schemas/LastUpdatedDatetime"
+
     WebhookTestRequest:
       type: object
       properties:
@@ -5025,7 +5145,7 @@ components:
           description: |
             コメントのソート順を決める日時。
 
-            AnnoFab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。
+            Annofab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。
         created_datetime:
           type: string
           format: date-time
@@ -5193,7 +5313,7 @@ components:
           description: |
             コメントのソート順を決める日時。コメント作成時のみ指定可能です。
 
-            AnnoFab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。
+            Annofab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。
 
             コメント作成時に未指定とした場合は、作成操作オブジェクトの順序に応じてコメント作成日時からずれた時刻が自動設定されます（ソート順を一意とするため）。
 
@@ -5277,6 +5397,9 @@ components:
             この集約のサブ集約です。サブ集約がないときは空の配列になります。
     Instruction:
       type: object
+      required:
+        - html
+        - last_updated_datetime
       properties:
         html:
           type: string
@@ -5285,9 +5408,18 @@ components:
         last_updated_datetime:
           type: string
           format: date-time
-          description: |
-            * [getInstruction](#operation/getInstruction) APIのレスポンスの場合: 最後に作業ガイドを更新した日時。
-            * [putInstruction](#operation/putInstruction) APIのリクエストボディの場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。
+          description: 更新日時
+    PutInstructionRequest:
+      type: object
+      required:
+        - html
+      properties:
+        html:
+          type: string
+          description: 作業ガイドのHTML
+          example: "<p>test</p>"
+        last_updated_datetime:
+          $ref: "#/components/schemas/LastUpdatedDatetime"
     InstructionHistory:
       type: object
       required:
@@ -5300,7 +5432,7 @@ components:
           description: 作業ガイドの履歴ID
         account_id:
           type: string
-          description: 作業ガイドを更新したユーザのアカウントID
+          description: 作業ガイドを更新したユーザーのアカウントID
         updated_datetime:
           type: string
           format: date-time
@@ -5314,8 +5446,7 @@ components:
         - etag
       properties:
         image_id:
-          type: string
-          description: 作業ガイド画像ID
+          $ref: "#/components/schemas/InstructionImageId"
         path:
           type: string
           example: "s3://ANNOFAB-BUCKET/PATH/TO/INSTRUCTION_IMAGE"
@@ -5326,9 +5457,12 @@ components:
           format: uri
           example: https://annofab.com/projects/{project_id}/instruction-images/{image_id}
           description:
-            作業ガイド画像を取得するための内部用URLです。
+            作業ガイド画像を取得するためのシステム内部用のURLです。
         etag:
           type: string
+          description: |
+            [HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。
+          example: "\"33a64df551425fcc55e4d42a148795d9f25f89d4\""
     ValidationError:
       oneOf:
         - $ref: "#/components/schemas/InvalidAnnotationData"
@@ -5732,8 +5866,16 @@ components:
             [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
     OrganizationMemberList:
       type: object
+      required:
+        - list
+        - page_no
+        - total_page_no
+        - total_count
+        - over_limit
+        - aggregations
       properties:
         list:
+          description: 組織メンバの一覧
           type: array
           items:
             $ref: "#/components/schemas/OrganizationMember"
@@ -5757,8 +5899,16 @@ components:
             [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
     OrganizationPluginList:
         type: object
+        required:
+          - list
+          - page_no
+          - total_page_no
+          - total_count
+          - over_limit
+          - aggregations
         properties:
           list:
+            description: プラグイン一覧
             type: array
             items:
               $ref: "#/components/schemas/OrganizationPlugin"
@@ -5771,6 +5921,15 @@ components:
           total_count:
             type: number
             description: 検索結果の総件数。
+          over_limit:
+            type: boolean
+            description: 検索結果が1万件を超えた場合にtrueとなる。
+          aggregations:
+            type: array
+            items:
+              type: object
+            description: |
+              システム内部用のプロパティ。常に空配列です。
     ProjectMemberList:
       type: object
       properties:
@@ -5871,18 +6030,21 @@ components:
       description: |
         属性の初期値です。
 
-        初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。
+        初期値を設定する場合、属性の種類に応じて次の値を指定してください。
+        属性の種類に対して有効でない初期値を指定した場合、その初期値は無視されます。
 
-        * type が flag の場合: 真偽値(`true` or `false`)
-        * type が integer の場合: 整数値
-        * type が text の場合: 文字列
-        * type が comment の場合: 文字列
-        * type が choice の場合: 選択肢(`choices`)の `choice_id`
-        * type が select の場合: 選択肢(`choices`)の `choice_id`
+        |属性の種類（`type`）                 | 指定できる初期値|
+        |-----------------|----------|
+        | flag    | 真偽値(`true` or `false`)|
+        | integer    | 整数値         |
+        | text | 文字列         |
+        | comment         | 文字列|
+        | choice        | 選択肢(`choices`)の `choice_id` |
+        | select           | 選択肢(`choices`)の`choice_id`|
 
-        属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。
+        属性の種類が`tracking`または`link`の場合、初期値を設定できません。
 
-        なお、トラッキングとリンクには初期値を設定できません。
+        初期値を設定しない場合は、nullまたは空文字を指定してください。
     AnnotationSpecs:
       oneOf:
         - $ref: "#/components/schemas/AnnotationSpecsV1"

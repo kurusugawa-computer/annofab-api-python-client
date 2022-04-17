@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   description: |
-    [AnnoFab](https://annofab.com) のWeb API v2です。
+    [Annofab](https://annofab.com) のWeb API v2です。
     v2 はいくつかの主要なAPIでキャッシュが有効になり、日本を含む多くの国からのアクセスが大幅に高速化されます。
     [API v1はこちら](/docs/api/)です。
 
@@ -67,11 +67,11 @@ info:
 
     ID/名前 | 一意制約
     ---|---
-    組織名 | AnnoFab内で一意
-    組織ID | AnnoFab内で一意
-    ユーザID | AnnoFab内で一意
-    アカウントID  | AnnoFab内で一意
-    プロジェクトID | AnnoFab内で一意
+    組織名 | Annofab内で一意
+    組織ID | Annofab内で一意
+    ユーザID | Annofab内で一意
+    アカウントID  | Annofab内で一意
+    プロジェクトID | Annofab内で一意
     タスクID（プレフィックス含む） | プロジェクト内で一意
     入力データID | プロジェクト内で一意
     アノテーションID | フレーム内（タスクID、入力データIDの組み合わせ）で一意
@@ -115,7 +115,7 @@ info:
 
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
 
-  version: 0.140.1
+  version: 0.141.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -174,8 +174,8 @@ components:
       $ref: "swagger-api-components.yaml#/components/securitySchemes/EveryoneQueryParameter"
     Everyone:
       $ref: "swagger-api-components.yaml#/components/securitySchemes/Everyone"
-    AnnoFabAdminOnly:
-      $ref: "swagger-api-components.yaml#/components/securitySchemes/AnnoFabAdminOnly"
+    AnnofabAdminOnly:
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/AnnofabAdminOnly"
     AllProjectMember:
       $ref: "swagger-api-components.yaml#/components/securitySchemes/AllProjectMember"
     ProjectAccepter:
@@ -1059,7 +1059,8 @@ paths:
         - af-users-v2
       summary: 個人のプロジェクトメンバー情報一括取得
       description: |
-        指定したユーザーが所属するプロジェクトメンバー情報をすべて取得します。
+        指定したユーザーが所属する全てのプロジェクトのメンバー情報から、指定したユーザを示す情報を抽出します。
+        このAPIが返すメンバー情報は、全て指定したユーザのものとなり、その数は指定ユーザが所属しているプロジェクト数となります。
 
         本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
       security:

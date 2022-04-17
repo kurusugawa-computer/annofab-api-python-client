@@ -20,11 +20,11 @@ from dataclasses_json import DataClassJsonMixin
 class Instruction(DataClassJsonMixin):
     """ """
 
-    html: Optional[str]
+    html: str
     """作業ガイドのHTML"""
 
-    last_updated_datetime: Optional[str]
-    """* [getInstruction](#operation/getInstruction) APIのレスポンスの場合: 最後に作業ガイドを更新した日時。 * [putInstruction](#operation/putInstruction) APIのリクエストボディの場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。 """
+    last_updated_datetime: str
+    """更新日時"""
 
 
 @dataclass
@@ -35,7 +35,7 @@ class InstructionHistory(DataClassJsonMixin):
     """作業ガイドの履歴ID"""
 
     account_id: str
-    """作業ガイドを更新したユーザのアカウントID"""
+    """作業ガイドを更新したユーザーのアカウントID"""
 
     updated_datetime: str
     """作業ガイドの最終更新日時"""
@@ -46,13 +46,13 @@ class InstructionImage(DataClassJsonMixin):
     """ """
 
     image_id: str
-    """作業ガイド画像ID"""
+    """作業ガイド画像ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     path: str
     """作業ガイド画像の実体が保存されたパスです。 """
 
     url: str
-    """作業ガイド画像を取得するための内部用URLです。"""
+    """作業ガイド画像を取得するためのシステム内部用のURLです。"""
 
     etag: str
-    """"""
+    """[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 """

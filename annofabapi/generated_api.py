@@ -234,7 +234,7 @@ class AbstractAnnofabApi(abc.ABC):
 
 
 
-        アカウントのサインアップの最初のステップとして、アカウントを仮登録します。  AnnoFab に未登録のメールアドレスであれば、新規アカウントが仮登録状態で作成され、本登録フローのためのメールが送信されます。 このメールには仮パスワードなどが記載されています。  指定したメールアドレスを使うユーザーが仮登録であれば、本登録フローのメールが再送信されます。 指定したメールアドレスを使うユーザーが本登録であれば、不正なリクエストとしてエラーを返します（本登録が仮登録に戻ることはありません）。
+        アカウントのサインアップの最初のステップとして、アカウントを仮登録します。  Annofab に未登録のメールアドレスであれば、新規アカウントが仮登録状態で作成され、本登録フローのためのメールが送信されます。 このメールには仮パスワードなどが記載されています。  指定したメールアドレスを使うユーザーが仮登録であれば、本登録フローのメールが再送信されます。 指定したメールアドレスを使うユーザーが本登録であれば、不正なリクエストとしてエラーを返します（本登録が仮登録に戻ることはありません）。
 
         Args:
             request_body (Any): Request Body
@@ -492,7 +492,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        「過去に誰にも割り当てられていないタスクに含まれる入力データ」に限り、プロジェクトオーナーであればアノテーションを更新できます。 この挙動は、[AnnoFab外部で作成されたアノテーションをインポート](/docs/tutorial/tutorial-ex-importing-annotation.html) する目的にも利用できます。  １度でも誰かに割り当てられたタスクは、タスクの現在の担当者であればアノテーションを更新できます。 タスクの現在の担当者でない場合、エラーになります。 この制限は、アノテーション作業中の予期せぬ同時編集を防ぐためです。  `is_protected`（保護） を `true` にすることで、アノテーションをアノテーションエディタ上での削除から保護できます。 属性の変更もさせたくない場合は、アノテーション仕様で特定の属性を読取専用にすることで保護できます。保護は、  * 外部からインポートしたアノテーション * 別プロジェクトからコピーしたアノテーション  などを誤って削除したくないときに便利です。 `is_protected`は、プロジェクトオーナーのみ変更可能です。  なお、本APIでは `is_protected` によらず、更新や削除が可能です。
+        「過去に誰にも割り当てられていないタスクに含まれる入力データ」に限り、プロジェクトオーナーであればアノテーションを更新できます。 この挙動は、[Annofab外部で作成されたアノテーションをインポート](/docs/tutorial/tutorial-ex-importing-annotation.html) する目的にも利用できます。  １度でも誰かに割り当てられたタスクは、タスクの現在の担当者であればアノテーションを更新できます。 タスクの現在の担当者でない場合、エラーになります。 この制限は、アノテーション作業中の予期せぬ同時編集を防ぐためです。  `is_protected`（保護） を `true` にすることで、アノテーションをアノテーションエディタ上での削除から保護できます。 属性の変更もさせたくない場合は、アノテーション仕様で特定の属性を読取専用にすることで保護できます。保護は、  * 外部からインポートしたアノテーション * 別プロジェクトからコピーしたアノテーション  などを誤って削除したくないときに便利です。 `is_protected`は、プロジェクトオーナーのみ変更可能です。  なお、本APIでは `is_protected` によらず、更新や削除が可能です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -529,13 +529,13 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定したプロジェクトのアノテーション仕様を取得します。  パラメータを指定することで、過去に保存された履歴を取得することもできます。
+        アノテーション仕様を取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                history_id (str):  過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。 未指定時は最新のアノテーション仕様を取得します。
-                v (str):  取得するアノテーション仕様のフォーマットバージョンを指定します。
+                history_id (str):  アノテーション仕様の履歴ID。過去のアノテーション仕様を取得する場合は、[getAnnotationSpecsHistories](#operation/getAnnotationSpecsHistories) APIで取得した `history_id` の値を指定してください。 未指定時は最新のアノテーション仕様を取得します。
+                v (str):  取得するアノテーション仕様のフォーマットバージョンを指定します。`v=1`は将来廃止する予定なので、非推奨です。
 
         Returns:
             Tuple[AnnotationSpecs, requests.Response]
@@ -558,7 +558,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定されたプロジェクトのアノテーション仕様のすべての履歴を取得します。
+        アノテーション仕様のすべての更新履歴を取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -727,7 +727,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        「複数の入力データを圧縮したZIPファイル」や「4MBを超える画像」などをAnnoFabに一時的に保存するための、URLと登録用データパスを発行します。  このAPIと他のAPIを以下に示すように使うことで、ZIPファイルなどをAFにアップロードできます。   1. 本APIを実行して、URLを取得する。   * `curl -X POST -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'` 2. 1で取得したURLに、一時保存したいファイルをPUTする。   * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.zip 'https://{発行されたURL}'` 3. 1で取得した登録用データパスを [入力データ登録API](#operation/putInputData)のリクエストボディ `input_data_path` に指定する。   * `curl -X PUT -H 'Content-Type: text/json' -d '{\"input_data_name\":\"{表示名}\", \"input_data_path\":\"{登録用データパス}\" }' 'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}'`  ここで、1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。 ZIPファイルの場合は `application/zip` 、画像ファイルの場合は `image/png` など、適切な Content-Type を指定します。  登録するファイルはどのような内容であれ、アップロードから24時間経過すると削除されます。 したがって、ZIP圧縮した入力データを登録する場合は、URL発行から24時間以内に完了してください。
+        「複数の入力データを圧縮したZIPファイル」や「4MBを超える画像」などをAnnofabに一時的に保存するための、URLと登録用データパスを発行します。  このAPIと他のAPIを以下に示すように使うことで、ZIPファイルなどをAFにアップロードできます。   1. 本APIを実行して、URLを取得する。   * `curl -X POST -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'` 2. 1で取得したURLに、一時保存したいファイルをPUTする。   * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.zip 'https://{発行されたURL}'` 3. 1で取得した登録用データパスを [入力データ登録API](#operation/putInputData)のリクエストボディ `input_data_path` に指定する。   * `curl -X PUT -H 'Content-Type: text/json' -d '{\"input_data_name\":\"{表示名}\", \"input_data_path\":\"{登録用データパス}\" }' 'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}'`  ここで、1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。 ZIPファイルの場合は `application/zip` 、画像ファイルの場合は `image/png` など、適切な Content-Type を指定します。  登録するファイルはどのような内容であれ、アップロードから24時間経過すると削除されます。 したがって、ZIP圧縮した入力データを登録する場合は、URL発行から24時間以内に完了してください。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -755,7 +755,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        入力データを削除します。  入力データの実体ファイルが AnnoFab のストレージに存在するものであれば、実体ファイルも削除されます。 お客様の管理するプライベートストレージに存在するものであれば、実体ファイルは削除されません。
+        入力データを削除します。  入力データの実体ファイルが Annofab のストレージに存在するものであれば、実体ファイルも削除されます。 お客様の管理するプライベートストレージに存在するものであれば、実体ファイルは削除されません。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -953,7 +953,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectAccepter, ProjectOwner
 
 
-        プロジェクトの作業ガイドの画像を削除します。
+        作業ガイドの画像を削除します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -980,12 +980,12 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定された版の作業ガイドのHTMLを取得します。
+        作業ガイドのHTMLを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                history_id (str):  取得する版の履歴ID (required)
+                history_id (str):  [getInstructionHistory](#operation/getInstructionHistory) APIで取得した、作業ガイドの履歴ID  (required)
 
         Returns:
             Tuple[Instruction, requests.Response]
@@ -1010,7 +1010,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        プロジェクトの作業ガイドの編集履歴を取得します。 取得される編集履歴は日付の新しい順にソートされます。
+        作業ガイドの編集履歴を取得します。 取得される編集履歴は日付の新しい順にソートされます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1040,7 +1040,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectAccepter, ProjectOwner
 
 
-        プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。   作業ガイド画像の登録/更新方法は以下の通りです。 1. `getInstructionImageUrlForPut` APIを実行して、ファイルアップロード用のURLを取得する。   * `curl -X GET -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/instruction-images/{image_id}/put-url'` 2. 手順1で取得したファイルアップロード用のURLに対して、登録/更新する作業ガイド画像ファイル(`hoge.jpg`)をPUTする。   * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.jpg '{ファイルアップロード用のURL}'`  手順1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。
+        プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。  作業ガイド画像の登録/更新方法は以下の通りです。 1. APIを実行して、ファイルアップロード用のURLを取得する。  ``` $ curl -X GET -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/instruction-images/{image_id}/put-url' ```  2. 手順1で取得したファイルアップロード用のURLに対して、登録/更新する作業ガイド画像ファイル(`hoge.jpg`)をPUTする。  ``` $ curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.jpg '{ファイルアップロード用のURL}' ```  手順1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1069,7 +1069,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        プロジェクトの作業ガイドの画像一覧を取得します。
+        作業ガイドの画像一覧を取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1100,7 +1100,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                instruction (Instruction):  (required)
+                put_instruction_request (PutInstructionRequest):  (required)
 
         Returns:
             Tuple[InstructionHistory, requests.Response]
@@ -1547,7 +1547,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        組織全体でどれだけ AnnoFab ストレージを使用しているかなどの活動の要約を取得します。
+        組織全体でどれだけ Annofab ストレージを使用しているかなどの活動の要約を取得します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1820,18 +1820,18 @@ class AbstractAnnofabApi(abc.ABC):
     def accept_organization_invitation(
         self, organization_name: str, user_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """組織への招待受諾
+        """組織への招待の受諾
         https://annofab.com/docs/api/#operation/acceptOrganizationInvitation
 
 
         authorizations: EveryoneRequestBody
 
 
-        組織への招待を受諾し、組織へのメンバー登録を完了します。  [組織招待API](#operation/postInviteOrganizationMember)で送信されたメールに記載されているトークンが必要です。
+        組織への招待を受諾し、組織へのメンバー登録を完了します。
 
         Args:
             organization_name (str):  組織名 (required)
-            user_id (str):  ユーザ名 (required)
+            user_id (str):  ユーザーID (required)
             request_body (Any): Request Body
                 accept_organization_invitation_request (AcceptOrganizationInvitationRequest):  (required)
 
@@ -1851,18 +1851,18 @@ class AbstractAnnofabApi(abc.ABC):
     def delete_organization_member(
         self, organization_name: str, user_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """組織メンバー削除
+        """組織メンバーの削除
         https://annofab.com/docs/api/#operation/deleteOrganizationMember
 
 
         authorizations: OrganizationAdministrator
 
 
-        指定したメンバーを指定した組織から削除します。  組織の管理者が実行する場合、組織のオーナーは削除できません。(権限エラーになります)
+        組織メンバーを削除します。削除された組織メンバの`status`は`inactive`になります。
 
         Args:
             organization_name (str):  組織名 (required)
-            user_id (str):  ユーザID (required)
+            user_id (str):  ユーザーID (required)
 
         Returns:
             Tuple[OrganizationMember, requests.Response]
@@ -1883,11 +1883,11 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        指定したユーザーが指定した組織にどのようなロールで参加しているかを取得します。
+        組織メンバーを取得します。
 
         Args:
             organization_name (str):  組織名 (required)
-            user_id (str):  ユーザID (required)
+            user_id (str):  ユーザーID (required)
 
         Returns:
             Tuple[OrganizationMember, requests.Response]
@@ -1908,7 +1908,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        脱退したメンバーは含まれません。
+        組織メンバーを一括で取得します。  ただし、組織から脱退したメンバーは取得できません。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1927,18 +1927,18 @@ class AbstractAnnofabApi(abc.ABC):
     def invite_organization_member(
         self, organization_name: str, user_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """組織への招待送信
+        """ユーザーを組織に招待
         https://annofab.com/docs/api/#operation/inviteOrganizationMember
 
 
         authorizations: OrganizationAdministrator
 
 
-        指定したユーザーに、組織への招待（メール）を送信します。  組織の管理者が実行する場合、リクエストボディ内の `role` には `contributor` を指定してください。(それ以外の値を指定した場合エラーとなります)
+        指定したユーザーを組織に招待します。招待されたユーザーにはメールが届きます。メールに記載されたURLにアクセスすることで組織に参加することができます。
 
         Args:
             organization_name (str):  組織名 (required)
-            user_id (str):  ユーザ名 (required)
+            user_id (str):  ユーザーID (required)
             request_body (Any): Request Body
                 invite_organization_member_request (InviteOrganizationMemberRequest):  (required)
 
@@ -1965,11 +1965,11 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationOwner
 
 
-        指定された組織メンバーのロールのみを変更します。
+        組織メンバーのロールを変更します。
 
         Args:
             organization_name (str):  組織名 (required)
-            user_id (str):  ユーザID (required)
+            user_id (str):  ユーザーID (required)
             request_body (Any): Request Body
                 put_organization_member_role_request (PutOrganizationMemberRoleRequest):  (required)
 
@@ -1994,14 +1994,14 @@ class AbstractAnnofabApi(abc.ABC):
     def delete_organization_plugin(
         self, organization_name: str, plugin_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """プラグイン削除
+        """プラグインの削除
         https://annofab.com/docs/api/#operation/deleteOrganizationPlugin
 
 
         authorizations: OrganizationAdministrator, OrganizationOwner
 
 
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを削除します。
+        プラグインを削除します。  **この API は Annofab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
 
         Args:
             organization_name (str):  組織名 (required)
@@ -2021,14 +2021,14 @@ class AbstractAnnofabApi(abc.ABC):
     def get_organization_plugin(
         self, organization_name: str, plugin_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """プラグイン取得
+        """プラグインの取得
         https://annofab.com/docs/api/#operation/getOrganizationPlugin
 
 
         authorizations: AllOrganizationMember
 
 
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを取得します。
+        プラグインを取得します。  **この API は Annofab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
 
         Args:
             organization_name (str):  組織名 (required)
@@ -2046,14 +2046,14 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_plugins(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """プラグイン一括取得
+        """プラグインの一括取得
         https://annofab.com/docs/api/#operation/getOrganizationPlugins
 
 
         authorizations: AllOrganizationMember
 
 
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを一括で取得します。
+        プラグインを一括で取得します。  **この API は Annofab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
 
         Args:
             organization_name (str):  組織名 (required)
@@ -2072,14 +2072,14 @@ class AbstractAnnofabApi(abc.ABC):
     def put_organization_plugin(
         self, organization_name: str, plugin_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """プラグイン更新
+        """プラグインの作成/更新
         https://annofab.com/docs/api/#operation/putOrganizationPlugin
 
 
         authorizations: OrganizationAdministrator, OrganizationOwner
 
 
-        **この API は AnnoFab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**  指定した組織のプラグインを更新します。
+        プラグインを作成または更新します。  **この API は Annofab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
 
         Args:
             organization_name (str):  組織名 (required)
@@ -2848,12 +2848,12 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        指定された補助情報を、実体ファイルとともに削除します。
+        補助情報を削除します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID (required)
-            supplementary_data_id (str):  補助情報ID（プロジェクトIDとの2つ組で一意となる値） (required)
+            supplementary_data_id (str):  補助情報ID (required)
 
         Returns:
             Tuple[, requests.Response]
@@ -2876,7 +2876,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定された入力データにつけられた補助情報をすべて取得します。
+        入力データに紐付けられた補助情報をすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2908,12 +2908,12 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        指定された入力データに補助情報を新規作成または更新します。
+        補助情報を作成または更新します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             input_data_id (str):  入力データID (required)
-            supplementary_data_id (str):  補助情報ID（プロジェクトIDとの2つ組で一意となる値） (required)
+            supplementary_data_id (str):  補助情報ID (required)
             request_body (Any): Request Body
                 supplementary_data_request (SupplementaryDataRequest):  (required)
 
@@ -3156,7 +3156,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        タスクの状態、もしくはタスクの担当者を変更することができます。  #### ユースケースごとの使い方  * タスクを作業中(working)にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が未着手(not_started)、休憩中(break)、保留(on_hold)のいずれかであるタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"working\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを休憩中にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"break\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを保留(on_hold)にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"on_hold\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを提出(complete)したい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"complete\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの提出を取消し(cancelled)したい場合   * 制約     * タスクを提出したユーザーのみ、この操作を行うことができます。     * タスク提出後に検査/受入(抜取含む)等の作業が一切行われていない場合のみ、この操作を行うことができます。     * 現在の状態が未着手(not_started)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"cancelled\", account_id: \"自身(タスク提出者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを差戻し(rejected)したい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"rejected\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}```   * タスクを強制差戻し(force rejected)したい場合     * 強制差戻しについて       * タスクの状態・フェーズを無視して、フェーズを教師付け(annotation)に、状態を未作業(not started)に変更します。       * タスクの担当者としては、直前の教師付け(annotation)フェーズの担当者を割り当てます。       * この差戻しは差戻しとして扱われず、抜取検査・抜取受入のスキップ判定に影響を及ぼしません。     * 制約       * プロジェクトオーナー(owner)のみ、この操作を行うことができます。       * 現在のタスクの状態、フェーズを問わず、この操作を行うことができます。     * リクエストボディのJSONサンプル       * ```{ status: \"rejected\", account_id: \"自身(プロジェクトオーナー)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\", force: true }``` * タスクの受入完了を取り消したい場合   * 制約     * プロジェクトオーナー(owner)のみ、この操作を行うことができます。     * 現在の状態が完了(completed)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", account_id: \"再度受入を担当させたいアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの担当者を変更したい場合   * 制約     * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", account_id: \"現在のフェーズを担当できるアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの担当者を未割当てにしたい場合   * 制約     * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}```
+        タスクの状態、もしくはタスクの担当者を変更することができます。  #### ユースケースごとの使い方  * タスクを作業中(working)にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が未着手(not_started)、休憩中(break)、保留(on_hold)のいずれかであるタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"working\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを休憩中にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"break\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを保留(on_hold)にしたい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"on_hold\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを提出(complete)したい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"complete\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの提出を取消し(cancelled)したい場合   * 制約     * タスクを提出したユーザーのみ、この操作を行うことができます。     * タスク提出後に検査/受入(抜取含む)等の作業が一切行われていない場合のみ、この操作を行うことができます。     * 現在の状態が未着手(not_started)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"cancelled\", account_id: \"自身(タスク提出者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクを差戻し(rejected)したい場合   * 制約     * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。     * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"rejected\", account_id: \"自身(現在のタスク担当者)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}```   * タスクを強制差戻し(force rejected)したい場合     * 強制差戻しについて       * タスクの状態・フェーズを無視して、フェーズを教師付け(annotation)に、状態を未作業(not started)に変更します。       * タスクの担当者としては、直前の教師付け(annotation)フェーズの担当者を割り当てます。       * この差戻しは差戻しとして扱われず、抜取検査・抜取受入のスキップ判定に影響を及ぼしません。     * 制約       * プロジェクトオーナー(owner)のみ、この操作を行うことができます。       * 現在のタスクの状態、フェーズを問わず、この操作を行うことができます。     * リクエストボディのJSONサンプル       * ```{ status: \"rejected\", account_id: \"自身(プロジェクトオーナー)のアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\", force: true }``` * タスクの受入完了を取り消したい場合   * 制約     * プロジェクトオーナー(owner)のみ、この操作を行うことができます。     * 現在の状態が完了(completed)のタスクに対してのみ、この操作を行うことができます。     * 現在のフェーズが受入(acceptance)のタスクに対してのみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", account_id: \"再度受入を担当させたいアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}``` * タスクの担当者を変更したい場合   * 制約     * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", account_id: \"現在のフェーズを担当できるアカウントID\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}```   * 注意：この操作では、プロジェクトの一人に割り当てられるタスク数の上限設定を確認しません。そのため、一人の担当者に割り当てられるタスク数の上限設定以上の担当を与えることが出来ます。 * タスクの担当者を未割当てにしたい場合   * 制約     * プロジェクトオーナー(owner)、もしくは受入担当者(accepter)のみ、この操作を行うことができます。   * リクエストボディのJSONサンプル     * ```{ status: \"not_started\", last_updated_datetime: \"2018-08-14T19:01:51.775+09:00\"}```
 
         Args:
             project_id (str):  プロジェクトID (required)

@@ -170,7 +170,7 @@ AcceptOrganizationInvitationRequest = Dict[str, Any]
 Kyes of Dict
 
 * token: str
-    
+    [inviteOrganizationMember](#operation/inviteOrganizationMember) APIで送信された招待メールに記載されているトークンです。 メールに記載されているURLの`invitation-token`クエリパラメータの値が、トークンになります。 
 
 """
 
@@ -191,13 +191,13 @@ Kyes of Dict
 * lang: Lang
     
 * biography: str
-    人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
+    人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * keylayout: KeyLayout
     
 * authority: str
     システム内部用のプロパティ
 * is_external_account: bool
-    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。  外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合はfalse。 
+    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。  外部アカウント連携していないAnnofabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnofabアカウントの場合はfalse。 
 * updated_datetime: str
     更新日時
 
@@ -267,7 +267,7 @@ Kyes of Dict
 
 AdditionalDataDefaultType = Dict[str, Any]
 """
-属性の初期値です。  初期値を指定する場合、属性の種類に応じて次の値を指定します。初期値を設定しない場合には空文字を指定します。  * type が flag の場合: 真偽値(`true` or `false`) * type が integer の場合: 整数値 * type が text の場合: 文字列 * type が comment の場合: 文字列 * type が choice の場合: 選択肢(`choices`)の `choice_id` * type が select の場合: 選択肢(`choices`)の `choice_id`  属性の種類に対して有効でない初期値を設定した場合、その設定は無視されます。  なお、トラッキングとリンクには初期値を設定できません。 
+属性の初期値です。  初期値を設定する場合、属性の種類に応じて次の値を指定してください。 属性の種類に対して有効でない初期値を指定した場合、その初期値は無視されます。  |属性の種類（`type`）                 | 指定できる初期値| |-----------------|----------| | flag    | 真偽値(`true` or `false`)| | integer    | 整数値         | | text | 文字列         | | comment         | 文字列| | choice        | 選択肢(`choices`)の `choice_id` | | select           | 選択肢(`choices`)の`choice_id`|  属性の種類が`tracking`または`link`の場合、初期値を設定できません。  初期値を設定しない場合は、nullまたは空文字を指定してください。 
 
 Kyes of Dict
 
@@ -277,7 +277,7 @@ Kyes of Dict
 
 class AdditionalDataDefinitionType(Enum):
     """
-    * `flag` - 真偽値 * `integer` - 整数値 * `text` - 自由記述（1行） * `comment` - 自由記述（複数行） * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - 自由記述 (トラッキングID自動挿入) * `link` - アノテーションリンク
+    属性の種類 * `flag` - 真偽値 * `integer` - 整数値 * `text` - 自由記述（1行） * `comment` - 自由記述（複数行） * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - トラッキングID * `link` - アノテーションリンク
     """
 
     FLAG = "flag"
@@ -299,19 +299,19 @@ Kyes of Dict
 * additional_data_definition_id: str
     属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * read_only: bool
-    
+    読み込み専用
 * name: InternationalizationMessage
     
 * default: AdditionalDataDefaultType
     
 * keybind: List[Keybind]
-    
+    ショートカットキー
 * type: AdditionalDataDefinitionType
     
 * choices: List[AdditionalDataDefinitionV1Choices]
     ドロップダウンまたはラジオボタンの選択肢
 * regex: str
-    
+    属性の値が、指定した正規表現に一致している必要があります。
 * label_ids: List[str]
     リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）
 * required: bool
@@ -332,7 +332,7 @@ Kyes of Dict
 * name: InternationalizationMessage
     
 * keybind: List[Keybind]
-    
+    ショートカットキー
 
 """
 
@@ -345,17 +345,17 @@ Kyes of Dict
 * additional_data_definition_id: str
     属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * read_only: bool
-    
+    読み込み専用
 * name: InternationalizationMessage
     
 * default: AdditionalDataDefaultType
     
 * keybind: List[Keybind]
-    
+    ショートカットキー
 * type: AdditionalDataDefinitionType
     
 * choices: List[AdditionalDataDefinitionV1Choices]
-    
+    ドロップダウンまたはラジオボタンの選択肢
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
 
@@ -376,18 +376,18 @@ Kyes of Dict
 
 AdditionalDataRestrictionCondition = Dict[str, Any]
 """
-
+属性の制約    * `AdditionalDataRestrictionConditionCanInput`: 属性値の入力を許可するかどうか   * `AdditionalDataRestrictionConditionEquals`: 指定した値に等しい   * `AdditionalDataRestrictionConditionNotEquals`: 指定した値に等しくない   * `AdditionalDataRestrictionConditionMatches`: 指定した正規表現に一致する   * `AdditionalDataRestrictionConditionNotMatches`: 指定した正規表現に一致しない   * `AdditionalDataRestrictionConditionHasLabel`: 指定したラベルIDに一致する（アノテーションリンク属性限定）   * `AdditionalDataRestrictionConditionImply`: 指定した前提条件を満たすときのみ、制約を満たすかどうか  以下のJSONは、「属性IDが`attr2`の属性値が`true`ならば、属性IDが`attr1`の属性値は`choice1`である」という制約を表しています。  ``` {     \"additional_data_definition_id\": \"attr1\",     \"condition\": {         \"_type\": \"Imply\",         \"premise\": {             \"additional_data_definition_id\": \"attr2\",             \"condition\": {                 \"_type\": \"Equals\",                 \"value\": \"true\"             }         },         \"condition\": {             \"_type\": \"Equals\",             \"value\": \"choice1\"         }     } } ``` 
 
 Kyes of Dict
 
 * type: str
     `Imply` [詳しくはこちら](#section/API-Convention/API-_type) 
 * enable: bool
-    false を指定することで、入力を許可しないようにできます。 Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
+    `false`を指定することで、属性値の入力を許可しないようにできます。 `AdditionalDataRestrictionConditionImply`との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
 * value: str
-    指定された正規表現に合致しないことを要求します。
+    指定された正規表現に一致しないことを要求します。
 * labels: List[str]
-    リンク属性において、リンク先として指定可能なラベルIDを制限します。
+    アノテーションリンク属性において、アノテーションリンク先として指定可能なラベルIDを制限します。
 * premise: AdditionalDataRestriction
     
 * condition: AdditionalDataRestrictionCondition
@@ -404,7 +404,7 @@ Kyes of Dict
 * type: str
     `CanInput` [詳しくはこちら](#section/API-Convention/API-_type) 
 * enable: bool
-    false を指定することで、入力を許可しないようにできます。 Imply との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
+    `false`を指定することで、属性値の入力を許可しないようにできます。 `AdditionalDataRestrictionConditionImply`との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
 
 """
 
@@ -430,7 +430,7 @@ Kyes of Dict
 * type: str
     `HasLabel` [詳しくはこちら](#section/API-Convention/API-_type) 
 * labels: List[str]
-    リンク属性において、リンク先として指定可能なラベルIDを制限します。
+    アノテーションリンク属性において、アノテーションリンク先として指定可能なラベルIDを制限します。
 
 """
 
@@ -458,7 +458,7 @@ Kyes of Dict
 * type: str
     `Matches` [詳しくはこちら](#section/API-Convention/API-_type) 
 * value: str
-    指定された正規表現に合致することを要求します。
+    指定された正規表現に一致することを要求します。
 
 """
 
@@ -471,7 +471,7 @@ Kyes of Dict
 * type: str
     `NotEquals` [詳しくはこちら](#section/API-Convention/API-_type) 
 * value: str
-    指定された値と異なることを要求します。 value に \"\" を指定することで、入力を必須とすることができます。 
+    指定された値と異なることを要求します。 `value`に`\"\"`を指定することで、入力を必須とすることができます。 
 
 """
 
@@ -484,7 +484,7 @@ Kyes of Dict
 * type: str
     `NotMatches` [詳しくはこちら](#section/API-Convention/API-_type) 
 * value: str
-    指定された正規表現に合致しないことを要求します。
+    指定された正規表現に一致しないことを要求します。
 
 """
 
@@ -661,22 +661,22 @@ Kyes of Dict
 
 AnnotationEditorFeature = Dict[str, Any]
 """
-
+塗りつぶしの作図機能に関する情報 
 
 Kyes of Dict
 
 * append: bool
-    
+    塗りつぶしの「追記」機能が使えるか否か
 * erase: bool
-    
+    塗りつぶしの「消しゴム」機能が使えるか否か
 * freehand: bool
-    
+    塗りつぶしの「フリーハンド」機能が使えるか否か
 * rectangle_fill: bool
-    
+    塗りつぶしの「矩形」機能が使えるか否か
 * polygon_fill: bool
-    
+    塗りつぶしの「ポリゴン」機能が使えるか否か
 * fill_near: bool
-    
+    「近似色塗りつぶし」機能を有効にするかどうか
 
 """
 
@@ -739,7 +739,7 @@ Kyes of Dict
 * inspection_phrases: List[InspectionPhrase]
     定型指摘
 * updated_datetime: str
-    アノテーション仕様の最終更新時刻 
+    更新日時 
 * option: AnnotationSpecsOption
     
 * metadata: dict(str, str)
@@ -749,7 +749,7 @@ Kyes of Dict
 * restrictions: List[AdditionalDataRestriction]
     属性の制約
 * format_version: str
-    
+    アノテーション仕様のフォーマットのバージョン
 
 """
 
@@ -760,17 +760,17 @@ AnnotationSpecsHistory = Dict[str, Any]
 Kyes of Dict
 
 * history_id: str
-    
+    アノテーション仕様の履歴ID
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * updated_datetime: str
-    
+    更新日時
 * url: str
-    
+    アノテーション仕様が格納されたJSONのURL。URLにアクセスするには認証認可が必要です。
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * comment: str
-    
+    変更内容のコメント
 
 """
 
@@ -819,7 +819,7 @@ Kyes of Dict
 * restrictions: List[AdditionalDataRestriction]
     属性の制約
 * format_version: str
-    
+    アノテーション仕様のフォーマットのバージョン
 
 """
 
@@ -865,7 +865,7 @@ Kyes of Dict
 * auto_marking: bool
     trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
 * format_version: str
-    
+    アノテーション仕様のフォーマットのバージョン
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * option: AnnotationSpecsOption
@@ -888,7 +888,7 @@ Kyes of Dict
 * inspection_phrases: List[InspectionPhrase]
     定型指摘
 * updated_datetime: str
-    アノテーション仕様の最終更新時刻 
+    更新日時 
 * option: AnnotationSpecsOption
     
 * metadata: dict(str, str)
@@ -913,9 +913,9 @@ Kyes of Dict
 * inspection_phrases: List[InspectionPhrase]
     定型指摘
 * format_version: str
-    
+    アノテーション仕様のフォーマットのバージョン
 * updated_datetime: str
-    アノテーション仕様の最終更新時刻 
+    更新日時 
 * option: AnnotationSpecsOption
     
 * metadata: dict(str, str)
@@ -926,7 +926,7 @@ Kyes of Dict
 
 class AnnotationType(Enum):
     """
-    * `bounding_box` - 矩形を表します。 * `segmentation` - ピクセルレベルでの塗りつぶし（ラスター）を表します。 * `segmentation_v2` - 塗りつぶしv2を表します。v2はSemantic Segmentationに特化しています。 * `polygon` - ポリゴン（閉じた頂点集合）を表します。 * `polyline` - ポリライン（開いた頂点集合）を表します。 * `point` - 点を表します。 * `classification` - 入力データ全体に対するアノテーションを表します。 * `range` - 動画の区間を表します。 * `custom` - カスタム
+    アノテーションの種類 * `bounding_box` - 矩形 * `segmentation` - 塗りつぶし（インスタンスセグメンテーション用） * `segmentation_v2` - 塗りつぶしv2（セマンティックセグメンテーション用） * `polygon` - ポリゴン（閉じた頂点集合） * `polyline` - ポリライン（開いた頂点集合） * `point` - 点 * `classification` - 全体 * `range` - 動画の区間 * `custom` - カスタム  プロジェクトの種類によって、使用できるアノテーションの種類は決まっています。アノテーションの種類が使用できるかどうかを、以下の表に記載しました。  * `○`：使用できる  * `×`：使用できない   |アノテーションの種類                 | 画像プロジェクト        | 動画プロジェクト | カスタムプロジェクト | |-----------------|:----------:|:----:|:------:| | bounding_box    | 〇         | ×  | ×    | | segmentation    | 〇         | ×  | ×    | | segmentation_v2 | 〇         | ×  | ×    | | polygon         | 〇         | ×  | ×    | | polyline        | 〇         | ×  | ×    | | point           | 〇         | ×  | ×    | | classification  | 〇         | 〇  | ×    | | range           | ×         | 〇  | ×    | | custom          | ×         | ×  | 〇    |
     """
 
     BOUNDING_BOX = "bounding_box"
@@ -1052,7 +1052,7 @@ Kyes of Dict
 * comment_node: CommentNode
     
 * datetime_for_sorting: str
-    コメントのソート順を決める日時。コメント作成時のみ指定可能です。  AnnoFab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。  コメント作成時に未指定とした場合は、作成操作オブジェクトの順序に応じてコメント作成日時からずれた時刻が自動設定されます（ソート順を一意とするため）。  なお、この値は後から更新することはできません（値を指定しても無視されます）。 
+    コメントのソート順を決める日時。コメント作成時のみ指定可能です。  Annofab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。  コメント作成時に未指定とした場合は、作成操作オブジェクトの順序に応じてコメント作成日時からずれた時刻が自動設定されます（ソート順を一意とするため）。  なお、この値は後から更新することはできません（値を指定しても無視されます）。 
 * type: str
     `Delete`  [詳しくはこちら](#section/API-Convention/API-_type) 
 
@@ -1094,7 +1094,7 @@ Kyes of Dict
 * comment_node: CommentNode
     
 * datetime_for_sorting: str
-    コメントのソート順を決める日時。コメント作成時のみ指定可能です。  AnnoFab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。  コメント作成時に未指定とした場合は、作成操作オブジェクトの順序に応じてコメント作成日時からずれた時刻が自動設定されます（ソート順を一意とするため）。  なお、この値は後から更新することはできません（値を指定しても無視されます）。 
+    コメントのソート順を決める日時。コメント作成時のみ指定可能です。  Annofab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。  コメント作成時に未指定とした場合は、作成操作オブジェクトの順序に応じてコメント作成日時からずれた時刻が自動設定されます（ソート順を一意とするため）。  なお、この値は後から更新することはできません（値を指定しても無視されます）。 
 * type: str
     `Put`  [詳しくはこちら](#section/API-Convention/API-_type) 
 
@@ -1201,6 +1201,33 @@ Kyes of Dict
 
 """
 
+BoundingBoxMetadata = Dict[str, Any]
+"""
+ベクター形式のアノテーション（矩形、ポリゴン、ポリライン、点）のメタデータ
+
+Kyes of Dict
+
+* min_width: int
+    幅の最小値[ピクセル]
+* min_height: int
+    高さの最小値[ピクセル]
+* min_warn_rule: str
+    サイズの制約に関する情報 * `none` - 制約なし * `or` - 幅と高さの両方が最小値以上 * `and` - 幅と高さのどちらか一方が最小値以上 
+* min_area: int
+    面積の最小値[平方ピクセル]
+* max_vertices: int
+    頂点数の最大値
+* min_vertices: int
+    頂点数の最小値
+* position_for_minimum_bounding_box_insertion: PositionForMinimumBoundingBoxInsertion
+    
+* tolerance: int
+    許容誤差[ピクセル]
+* has_direction: bool
+    `annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。 この値が `true` の場合、Annofabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。  `annotationType` が `polyline` 以外の場合は必ず `false` となります。 
+
+"""
+
 ChangePasswordRequest = Dict[str, Any]
 """
 
@@ -1218,7 +1245,7 @@ Kyes of Dict
 
 Color = Dict[str, Any]
 """
-
+RGBで表現される色情報
 
 Kyes of Dict
 
@@ -1260,7 +1287,7 @@ Kyes of Dict
 * comment_node: CommentNode
     
 * datetime_for_sorting: str
-    コメントのソート順を決める日時。  AnnoFab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。 
+    コメントのソート順を決める日時。  Annofab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。 
 * created_datetime: str
     コメントの作成日時。
 * updated_datetime: str
@@ -1531,7 +1558,7 @@ Kyes of Dict
 * updated_datetime: str
     
 * annotation_format_version: str
-    アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 
+    アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、Annofabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 
 
 """
 
@@ -1825,11 +1852,11 @@ Kyes of Dict
 * input_data_name: str
     表示用の名前
 * input_data_path: str
-    AnnoFabに登録する入力データの実体が保存されたパスです。  対応スキーマ： * s3 * https  場面別の使い分け： * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA` * [プライベートストレージ](/docs/faq/#prst9c)の場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。 
+    Annofabに登録する入力データの実体が保存されたパスです。  対応スキーマ： * s3 * https  場面別の使い分け： * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA` * [プライベートストレージ](/docs/faq/#prst9c)の場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * sign_required: bool
-    データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br> このオプションを有効にする場合は、`input_data_path`として、AnnoFabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。 
+    データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br> このオプションを有効にする場合は、`input_data_path`として、AnnofabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。 
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。 
 
@@ -2054,7 +2081,7 @@ InspectionPhrase = Dict[str, Any]
 Kyes of Dict
 
 * id: str
-    
+    定型指摘ID
 * text: InternationalizationMessage
     
 
@@ -2137,7 +2164,7 @@ Kyes of Dict
 * html: str
     作業ガイドのHTML
 * last_updated_datetime: str
-    * [getInstruction](#operation/getInstruction) APIのレスポンスの場合: 最後に作業ガイドを更新した日時。 * [putInstruction](#operation/putInstruction) APIのリクエストボディの場合: 最後に作業ガイドを更新した日時を指定する。まだ一度も保存した事がない場合は指定しない。 
+    更新日時
 
 """
 
@@ -2150,7 +2177,7 @@ Kyes of Dict
 * history_id: str
     作業ガイドの履歴ID
 * account_id: str
-    作業ガイドを更新したユーザのアカウントID
+    作業ガイドを更新したユーザーのアカウントID
 * updated_datetime: str
     作業ガイドの最終更新日時
 
@@ -2163,13 +2190,13 @@ InstructionImage = Dict[str, Any]
 Kyes of Dict
 
 * image_id: str
-    作業ガイド画像ID
+    作業ガイド画像ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * path: str
     作業ガイド画像の実体が保存されたパスです。 
 * url: str
-    作業ガイド画像を取得するための内部用URLです。
+    作業ガイド画像を取得するためのシステム内部用のURLです。
 * etag: str
-    
+    [HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 
 
 """
 
@@ -2193,7 +2220,7 @@ InternationalizationMessage = Dict[str, Any]
 Kyes of Dict
 
 * messages: List[InternationalizationMessageMessages]
-    言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、AnnoFabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * [Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます 
+    言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、Annofabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * 以下の名前は、[Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます     * ラベル名     * 属性名     * 選択肢名 * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます 
 * default_lang: str
     希望された言語のメッセージが存在しない場合に、フォールバック先として使われる言語コード
 
@@ -2319,13 +2346,13 @@ Keybind = Dict[str, Any]
 Kyes of Dict
 
 * code: str
-    
+    [KeyboardEvent.code](https://developer.mozilla.org/ja/docs/Web/API/KeyboardEvent/code)に相当する値です。 
 * shift: bool
-    
+    Shiftキーを押しているかどうか
 * ctrl: bool
-    
+    Ctrlキーを押しているかどうか
 * alt: bool
-    
+    Altキーを押しているかどうか
 
 """
 
@@ -2355,12 +2382,12 @@ Kyes of Dict
 * label_name: InternationalizationMessage
     
 * keybind: List[Keybind]
-    
+    ショートカットキー
 * annotation_type: AnnotationType
     
-* bounding_box_metadata: LabelV1BoundingBoxMetadata
+* bounding_box_metadata: BoundingBoxMetadata
     
-* segmentation_metadata: LabelV1SegmentationMetadata
+* segmentation_metadata: SegmentationMetadata
     
 * additional_data_definitions: List[AdditionalDataDefinitionV1]
     属性
@@ -2375,50 +2402,6 @@ Kyes of Dict
 
 """
 
-LabelV1BoundingBoxMetadata = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* min_width: int
-    
-* min_height: int
-    
-* min_warn_rule: str
-    
-* min_area: int
-    
-* max_vertices: int
-    
-* min_vertices: int
-    
-* position_for_minimum_bounding_box_insertion: PositionForMinimumBoundingBoxInsertion
-    
-* tolerance: int
-    
-* has_direction: bool
-    `annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。 この値が `true` の場合、AnnoFabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。  `annotationType` が `polyline` 以外の場合は必ず `false` となります。 
-
-"""
-
-LabelV1SegmentationMetadata = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* min_width: int
-    
-* min_height: int
-    
-* min_warn_rule: str
-    
-* tolerance: int
-    
-
-"""
-
 LabelV2 = Dict[str, Any]
 """
 
@@ -2430,12 +2413,12 @@ Kyes of Dict
 * label_name: InternationalizationMessage
     
 * keybind: List[Keybind]
-    
+    ショートカットキー
 * annotation_type: AnnotationType
     
-* bounding_box_metadata: LabelV1BoundingBoxMetadata
+* bounding_box_metadata: BoundingBoxMetadata
     
-* segmentation_metadata: LabelV1SegmentationMetadata
+* segmentation_metadata: SegmentationMetadata
     
 * additional_data_definitions: List[str]
     ラベルに所属する属性のID
@@ -2573,13 +2556,13 @@ Kyes of Dict
 * lang: Lang
     
 * biography: str
-    人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
+    人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * keylayout: KeyLayout
     
 * authority: str
     システム内部用のプロパティ
 * is_external_account: bool
-    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。  外部アカウント連携していないAnnoFabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnoFabアカウントの場合はfalse。 
+    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。  外部アカウント連携していないAnnofabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnofabアカウントの場合はfalse。 
 * updated_datetime: str
     更新日時
 * reset_requested_email: str
@@ -2771,17 +2754,17 @@ Kyes of Dict
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * username: str
-    
+    ユーザー名
 * role: OrganizationMemberRole
     
 * status: OrganizationMemberStatus
     
 * biography: str
-    人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
+    人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * created_datetime: str
-    
+    作成日時
 * updated_datetime: str
-    
+    更新日時
 
 """
 
@@ -2792,7 +2775,7 @@ OrganizationMemberList = Dict[str, Any]
 Kyes of Dict
 
 * list: List[OrganizationMember]
-    
+    組織メンバの一覧
 * page_no: float
     現在のページ番号です。
 * total_page_no: float
@@ -2808,7 +2791,9 @@ Kyes of Dict
 
 
 class OrganizationMemberRole(Enum):
-    """ """
+    """
+    組織メンバーのロール。 * `owner` - 組織オーナー * `administrator` - 組織管理者 * `contributor` - 組織貢献者
+    """
 
     OWNER = "owner"
     ADMINISTRATOR = "administrator"
@@ -2817,7 +2802,7 @@ class OrganizationMemberRole(Enum):
 
 class OrganizationMemberStatus(Enum):
     """
-    * `active` - 組織メンバーとして有効で、組織を閲覧したり、権限があれば編集できます。 * `waiting_response` - 組織に招待され、まだ加入/脱退を返答していません。組織の一部を閲覧のみできます。 * `inactive` - 脱退したメンバーを表します。組織を閲覧できません。
+    組織メンバーのステータス。 * `active` - 組織メンバーとして有効で、組織を閲覧したり、権限があれば編集できます。 * `waiting_response` - 組織に招待され、まだ加入/脱退を返答していません。組織の一部を閲覧のみできます。 * `inactive` - 脱退したメンバーを表します。組織を閲覧できません。
     """
 
     ACTIVE = "active"
@@ -2855,13 +2840,17 @@ OrganizationPluginList = Dict[str, Any]
 Kyes of Dict
 
 * list: List[OrganizationPlugin]
-    
+    プラグイン一覧
 * page_no: float
     現在のページ番号です。
 * total_page_no: float
     指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトが0件であっても、総ページ数は1となります。
 * total_count: float
     検索結果の総件数。
+* over_limit: bool
+    検索結果が1万件を超えた場合にtrueとなる。
+* aggregations: List[__DictStrKeyAnyValue__]
+    システム内部用のプロパティ。常に空配列です。 
 
 """
 
@@ -2977,7 +2966,7 @@ PluginDetailTaskAssignment = Dict[str, Any]
 Kyes of Dict
 
 * url: str
-    「カスタムタスク割当API」のURLです。 プラグイン種別がカスタムタスク割当の場合のみ有効です。  #### カスタムタスク割当APIについて。  * 独自のアルゴリズムで作業者にタスクを割当するAPIです。 * AnnoFabから提供されるものではなく、第三者 (ユーザー様) が用意します。 * 作業者がタスク一覧やアノテーションエディタのタスク取得ボタンを押すと、指定したURLに複数の情報 (※1) と共にHTTPリクエスト (POST) が送られます。 * カスタムタスク割当APIでは、AnnoFabで提供しているAPI (※2) を使用して作業者にタスクを割当してください。 * タスクの割当に成功した場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: 割当した単一のタスク   * ステータスコード: 200 * 作業者に割当できるタスクがない場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"MISSING_RESOURCE\"}]}`   * ステータスコード: 404 * 作業者の認証トークンの期限が切れている場合があります。その場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"EXPIRED_TOKEN\"}]}`   * ステータスコード: 401  #### Preflightリクエストについて。  * AnnoFabからカスタムタスク割当APIへCross-OriginなHTTPリクエストを送信するより前に、ブラウザの仕様により「Preflightリクエスト」と呼ばれるHTTPリクエストが送られます。 * カスタムタスク割当を利用するためには、カスタムタスク割当APIとは別に「Preflightリクエスト対応API」を用意する必要があります。 * 以下の要件を満たす「Preflightリクエスト対応API」を用意してください。   * URL: カスタムタスク割当APIと同じURL   * HTTPメソッド: OPTIONS   * レスポンスヘッダ:     * `Access-Control-Allow-Origin: https://annofab.com`     * `Access-Control-Allow-Headers: Content-Type`   * レスポンスボディ: 空(から)   * ステータスコード: 200  ※1 以下の情報が送られます。  * HTTPボディ (JSON形式)   * `authorization_token` : タスク割当専用の認証トークン。AnnoFabのAPIを利用する際に使用します。   * `project_id` : タスクの割当リクエストが行われたプロジェクトのID。   * `phase` : 作業者が割当を要求したタスクフェーズ。このフェーズのタスクを割当してください。  ※2 例えば以下のAPIがあります。(詳しい情報はAPIドキュメントを参照してください)  * `getMyAccount` : 作業者のアカウント情報を取得できます。 * `getTasks` : プロジェクトのタスクを取得できます。 * `assignTasks` : 作業者にタスクを割当することができます。 
+    「カスタムタスク割当API」のURLです。 プラグイン種別がカスタムタスク割当の場合のみ有効です。  #### カスタムタスク割当APIについて。  * 独自のアルゴリズムで作業者にタスクを割当するAPIです。 * Annofabから提供されるものではなく、第三者 (ユーザー様) が用意します。 * 作業者がタスク一覧やアノテーションエディタのタスク取得ボタンを押すと、指定したURLに複数の情報 (※1) と共にHTTPリクエスト (POST) が送られます。 * カスタムタスク割当APIでは、Annofabで提供しているAPI (※2) を使用して作業者にタスクを割当してください。 * タスクの割当に成功した場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: 割当した単一のタスク   * ステータスコード: 200 * 作業者に割当できるタスクがない場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"MISSING_RESOURCE\"}]}`   * ステータスコード: 404 * 作業者の認証トークンの期限が切れている場合があります。その場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"EXPIRED_TOKEN\"}]}`   * ステータスコード: 401  #### Preflightリクエストについて。  * Annofabからカスタムタスク割当APIへCross-OriginなHTTPリクエストを送信するより前に、ブラウザの仕様により「Preflightリクエスト」と呼ばれるHTTPリクエストが送られます。 * カスタムタスク割当を利用するためには、カスタムタスク割当APIとは別に「Preflightリクエスト対応API」を用意する必要があります。 * 以下の要件を満たす「Preflightリクエスト対応API」を用意してください。   * URL: カスタムタスク割当APIと同じURL   * HTTPメソッド: OPTIONS   * レスポンスヘッダ:     * `Access-Control-Allow-Origin: https://annofab.com`     * `Access-Control-Allow-Headers: Content-Type`   * レスポンスボディ: 空(から)   * ステータスコード: 200  ※1 以下の情報が送られます。  * HTTPボディ (JSON形式)   * `authorization_token` : タスク割当専用の認証トークン。AnnofabのAPIを利用する際に使用します。   * `project_id` : タスクの割当リクエストが行われたプロジェクトのID。   * `phase` : 作業者が割当を要求したタスクフェーズ。このフェーズのタスクを割当してください。  ※2 例えば以下のAPIがあります。(詳しい情報はAPIドキュメントを参照してください)  * `getMyAccount` : 作業者のアカウント情報を取得できます。 * `getTasks` : プロジェクトのタスクを取得できます。 * `assignTasks` : 作業者にタスクを割当することができます。 
 * type: str
     `TaskAssignment` [詳しくはこちら](#section/API-Convention/API-_type) 
 
@@ -3209,9 +3198,9 @@ Kyes of Dict
 * task_assignment_property: TaskAssignmentProperty
     
 * max_tasks_per_member: int
-    保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。
+    保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数の上限。 
 * max_tasks_per_member_including_hold: int
-    保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は20件として扱う。
+    保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。 割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。  例えばmax_tasks_per_memberが10,max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。 
 * input_data_set_id_list: List[str]
     このフィールドは内部用でまだ何も意味を成しません。今は空配列を指定してください。
 * input_data_max_long_side_length: int
@@ -3342,7 +3331,7 @@ Kyes of Dict
 
 class ProjectJobType(Enum):
     """
-    プロジェクトのジョブの種別 * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。  ## ジョブの同時実行制限  AnnoFab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。  ジョブの同時実行可否はジョブの種別によって異なります。  なお、ジョブを実行するプロジェクトが初期化中 (`project_status = \"initializing\"`) の場合は、どのジョブも実行できません。  ### copy-project 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-tasks` * `delete-project` * `move-project`  ### gen-inputs 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-inputs-list` * `delete-project` * `move-project`  ### gen-tasks 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-annotation` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-annotation 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-annotation` * `delete-project` * `move-project`  ### gen-tasks-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-inputs-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-inputs-list` * `delete-project` * `move-project`  ### delete-project 他のジョブが実行されていない場合**のみ**実行できます。  ### invoke-hook 次のジョブが実行されている場合、このジョブを実行することはできません。  * `delete-project` * `move-project`  ### move-project 他のジョブが実行されていない場合**のみ**実行できます。
+    プロジェクトのジョブの種別 * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。  ## ジョブの同時実行制限  Annofab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。  ジョブの同時実行可否はジョブの種別によって異なります。  なお、ジョブを実行するプロジェクトが初期化中 (`project_status = \"initializing\"`) の場合は、どのジョブも実行できません。  ### copy-project 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-tasks` * `delete-project` * `move-project`  ### gen-inputs 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-inputs-list` * `delete-project` * `move-project`  ### gen-tasks 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-annotation` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-annotation 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-annotation` * `delete-project` * `move-project`  ### gen-tasks-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-inputs-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-inputs-list` * `delete-project` * `move-project`  ### delete-project 他のジョブが実行されていない場合**のみ**実行できます。  ### invoke-hook 次のジョブが実行されている場合、このジョブを実行することはできません。  * `delete-project` * `move-project`  ### move-project 他のジョブが実行されていない場合**のみ**実行できます。
     """
 
     COPY_PROJECT = "copy-project"
@@ -3396,7 +3385,7 @@ Kyes of Dict
 * member_role: ProjectMemberRole
     
 * biography: str
-    人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
+    人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * updated_datetime: str
     
 * created_datetime: str
@@ -3561,6 +3550,19 @@ Kyes of Dict
 
 """
 
+PutInstructionRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* html: str
+    作業ガイドのHTML
+* last_updated_datetime: str
+    新規作成時は未指定、更新時は必須（更新前の日時） 
+
+"""
+
 PutMarkersRequest = Dict[str, Any]
 """
 
@@ -3589,7 +3591,7 @@ Kyes of Dict
 * keylayout: KeyLayout
     
 * biography: str
-    人物紹介、略歴。  この属性は、AnnoFab外の所属先や肩書などを表すために用います。 AnnoFab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
+    人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
@@ -3785,6 +3787,23 @@ Kyes of Dict
 
 """
 
+SegmentationMetadata = Dict[str, Any]
+"""
+塗りつぶしアノテーションのメタデータ
+
+Kyes of Dict
+
+* min_width: int
+    幅の最小値[ピクセル]
+* min_height: int
+    高さの最小値[ピクセル]
+* min_warn_rule: str
+    サイズの制約に関する情報 * `none` - 制約なし * `or` - 幅と高さの両方が最小値以上 * `and` - 幅と高さのどちらか一方が最小値以上 
+* tolerance: int
+    許容誤差[ピクセル]
+
+"""
+
 SignUpRequest = Dict[str, Any]
 """
 
@@ -3803,7 +3822,7 @@ SimpleAnnotation = Dict[str, Any]
 Kyes of Dict
 
 * annotation_format_version: str
-    アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、AnnoFabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 
+    アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、Annofabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
@@ -3896,26 +3915,30 @@ SupplementaryData = Dict[str, Any]
 
 Kyes of Dict
 
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_set_id: str
+    入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * supplementary_data_id: str
-    
+    補助情報ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * supplementary_data_name: str
-    表示用の名前
+    補助情報の名前
 * supplementary_data_path: str
-    補助情報の実体が保存されたパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 
+    補助情報の実体が存在するパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 
 * url: str
-    このフィールドはAF内部での利用のみを想定しており、依存しないでください。
+    システム内部用のプロパティ
 * etag: str
-    
+    [HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 
 * supplementary_data_type: SupplementaryDataType
     
 * supplementary_data_number: int
-    表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
+    補助情報の表示順を表す数値。
 * updated_datetime: str
-    
+    更新日時
 
 """
 
@@ -3926,21 +3949,23 @@ SupplementaryDataRequest = Dict[str, Any]
 Kyes of Dict
 
 * supplementary_data_name: str
-    表示用の名前
+    補助情報の名前
 * supplementary_data_path: str
-    AnnoFabに登録する補助情報の実体が保存されたパスです。  対応スキーマ：s3, https  * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードしたファイルパスの場合     * `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA`     * 補助情報作成/更新API成功時、アップロードしたファイルが一時データ保存先からコピーされます。         * APIのレスポンスからアップロードしたファイルのコピー先パス（s3スキーマ）を取得できます。 * すでにAFに登録されている補助情報のパスの場合     * `s3://ANNOFAB-SUPPLEMENTARY-BUCKET/PATH/TO/INPUT_DATA`     * ファイルはコピーされません。 * [プライベートストレージ](/docs/faq/#prst9c)のパスの場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。     * AFにファイルはコピーされません。 
+    補助情報の実体が存在するURLです。 補助情報の実体をAnnofabにアップロードする場合は、[一時データ保存先取得API](#operation/createTempPath)で取得した`path`を指定してください。  補助情報の実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。 補助情報の実体が、S3プライベートストレージに存在するファイルを補助情報として登録する場合は、[事前に認可の設定](/docs/faq/#m0b240)が必要です。 
 * supplementary_data_type: SupplementaryDataType
     
 * supplementary_data_number: int
-    表示順を表す数値（昇順）。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
+    補助情報の表示順を表す数値。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。
 * last_updated_datetime: str
-    
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
 
 class SupplementaryDataType(Enum):
-    """ """
+    """
+    補助情報の種類 * `image` - 画像 * `text` - テキスト * `custom` - カスタム（カスタムプロジェクトでしか利用できません）
+    """
 
     IMAGE = "image"
     TEXT = "text"
