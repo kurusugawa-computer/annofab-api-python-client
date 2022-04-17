@@ -49,10 +49,10 @@ class ProjectConfiguration(DataClassJsonMixin):
     """"""
 
     max_tasks_per_member: Optional[int]
-    """保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は10件として扱う。"""
+    """保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数の上限。 """
 
     max_tasks_per_member_including_hold: Optional[int]
-    """保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限。未指定の場合は20件として扱う。"""
+    """保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。 割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。  例えばmax_tasks_per_memberが10,max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。 """
 
     input_data_set_id_list: Optional[List[str]]
     """このフィールドは内部用でまだ何も意味を成しません。今は空配列を指定してください。"""
