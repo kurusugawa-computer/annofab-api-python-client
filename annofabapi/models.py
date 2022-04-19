@@ -1835,7 +1835,7 @@ Kyes of Dict
 
 class InputDataOrder(Enum):
     """
-    タスクに割り当てる入力データの順序  * `name_asc` - 入力データ名 昇順（a, b, c, ...）。日付や番号などの連続するデータ名を扱う場合に推奨 * `name_desc` - 入力データ名 降順（z, y, x, ...） * `random` - ランダム
+    タスクに割り当てる入力データの順序  * `name_asc` - 入力データ名の昇順 * `name_desc` - 入力データ名の降順 * `random` - ランダム
     """
 
     NAME_ASC = "name_asc"
@@ -1922,7 +1922,7 @@ Kyes of Dict
 
 class InputDataType(Enum):
     """
-    アノテーションする入力データの種類。プロジェクトの作成時のみ指定可能（未指定の場合は `image`）です。更新時は無視されます。 * `image` - 画像 * `movie` - 動画 * `custom` - カスタム
+    アノテーションする入力データの種類。 * `image` - 画像 * `movie` - 動画 * `custom` - カスタム
     """
 
     IMAGE = "image"
@@ -2452,7 +2452,7 @@ Kyes of Dict
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * password: str
-    
+    パスワード
 
 """
 
@@ -2600,11 +2600,11 @@ Kyes of Dict
 * price_plan: PricePlan
     
 * summary: __DictStrKeyAnyValue__
-    
+    廃止予定のプロパティです。常に中身は空です。 
 * created_datetime: str
-    
+    作成日時
 * updated_datetime: str
-    
+    更新日時
 * my_role: OrganizationMemberRole
     
 * my_status: OrganizationMemberStatus
@@ -2655,17 +2655,17 @@ Kyes of Dict
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * organization_name: str
-    
+    組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * email: str
-    
+    メールアドレス
 * price_plan: PricePlan
     
 * summary: __DictStrKeyAnyValue__
-    
+    廃止予定のプロパティです。常に中身は空です。 
 * created_datetime: str
-    
+    作成日時
 * updated_datetime: str
-    
+    更新日時
 
 """
 
@@ -2678,9 +2678,9 @@ Kyes of Dict
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * created_datetime: str
-    
-* storage_usage_bytes: float
-    
+    作成日時
+* storage_usage_bytes: int
+    Annofabストレージの使用量[バイト]
 
 """
 
@@ -2863,7 +2863,7 @@ Kyes of Dict
 * organization_name: str
     組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * organization_email: str
-    
+    メールアドレス
 * price_plan: PricePlan
     
 
@@ -3093,7 +3093,9 @@ Kyes of Dict
 
 
 class PricePlan(Enum):
-    """ """
+    """
+    料金プラン * `free` - フリープラン * `business` - ビジネスプラン
+    """
 
     FREE = "free"
     BUSINESS = "business"
@@ -3120,9 +3122,9 @@ Kyes of Dict
 * configuration: ProjectConfiguration
     
 * created_datetime: str
-    
+    作成日時
 * updated_datetime: str
-    
+    更新日時
 * summary: ProjectSummary
     
 
@@ -3185,7 +3187,7 @@ Kyes of Dict
 
 ProjectConfiguration = Dict[str, Any]
 """
-
+プロジェクトの設定情報
 
 Kyes of Dict
 
@@ -3200,15 +3202,15 @@ Kyes of Dict
 * max_tasks_per_member: int
     保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数の上限。 
 * max_tasks_per_member_including_hold: int
-    保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。 割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。  例えばmax_tasks_per_memberが10,max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。 
+    保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。 割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。  例えばmax_tasks_per_memberが10、max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。 
 * input_data_set_id_list: List[str]
     このフィールドは内部用でまだ何も意味を成しません。今は空配列を指定してください。
 * input_data_max_long_side_length: int
     入力データ画像の長辺の最大値（未指定時は4096px）。  画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。 アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。  大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。 
 * sampling_inspection_rate: int
-    抜取検査率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
+    抜取検査率[%]。未指定の場合は100%として扱う。
 * sampling_acceptance_rate: int
-    抜取受入率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
+    抜取受入率[%]。未指定の場合は100%として扱う。
 * private_storage_aws_iam_role_arn: str
     AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
 * plugin_id: str
@@ -3220,7 +3222,7 @@ Kyes of Dict
 * editor_version: str
     標準アノテーションエディタのバージョン。  * `stable`     * 安定版。通常はこちらを利用してください。 * `preview`     * 最新版。新機能やUI変更の先行リリース版。  プロジェクト更新時に未指定の場合は `stable` が指定されたものとみなします。 
 * use_beginner_navigation: bool
-    true の場合、プロジェクトの画面でナビゲーションUIを表示します（ログインユーザーがプロジェクトオーナーの場合のみ）。  未指定の場合、 false が指定されたものとして扱います。 
+    true の場合、プロジェクトの画面でナビゲーションUIを表示します（ログインユーザーがプロジェクトオーナーの場合のみ）。 
 
 """
 
@@ -3252,13 +3254,13 @@ Kyes of Dict
 * copy_inputs: bool
     「入力データ」をコピーするかどうかを指定します。 
 * copy_tasks: bool
-    「タスク」をコピーするかどうかを指定します。  この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_inputs の値を true とする 
+    「タスク」をコピーするかどうかを指定します。  この属性の値を`true`にする場合、他の属性の値を必ず次のように指定してください。  * `copy_inputs`の値を`true`とする 
 * copy_annotations: bool
-    「アノテーション」をコピーするかどうかを指定します。  この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_inputs の値を true とする * copy_tasks の値を true とする 
+    「アノテーション」をコピーするかどうかを指定します。  この属性の値を`true`にする場合、他の属性の値を必ず次のように指定してください。  * `copy_inputs`の値を`true`とする * `copy_tasks`の値を`true`とする 
 * copy_webhooks: bool
     「Webhook」をコピーするかどうかを指定します。 
 * copy_supplementary_data: bool
-    「補助情報」をコピーするかどうかを指定します。  この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。  * copy_inputs の値を true とする 
+    「補助情報」をコピーするかどうかを指定します。  この属性の値を`true`にする場合、他の属性の値を必ず次のように指定してください。  * `copy_inputs`の値を`true`とする 
 * copy_instructions: bool
     「作業ガイド」をコピーするかどうかを指定します。 
 
@@ -3468,7 +3470,7 @@ class ProjectStatus(Enum):
 
 ProjectSummary = Dict[str, Any]
 """
-
+プロジェクトのサマリー情報
 
 Kyes of Dict
 
@@ -3636,7 +3638,7 @@ Kyes of Dict
 * organization_name: str
     組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * last_updated_datetime: str
-    
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
@@ -3714,7 +3716,7 @@ RefreshTokenRequest = Dict[str, Any]
 Kyes of Dict
 
 * refresh_token: str
-    
+    リフレッシュトークン。[login](#operation/login) APIで取得します。 
 
 """
 
@@ -4041,7 +4043,7 @@ Kyes of Dict
 * phase: TaskPhase
     
 * phase_stage: int
-    
+    タスクのフェーズのステージ番号
 * status: TaskStatus
     
 * input_data_id_list: List[str]
@@ -4055,11 +4057,11 @@ Kyes of Dict
 * number_of_rejections: int
     このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計  このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。 `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。  例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。 
 * started_datetime: str
-    
+    現在のフェーズが開始された日時
 * updated_datetime: str
-    
+    更新日時
 * sampling: str
-    * `inspection_skipped` - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。 * `inspection_stages_skipped` - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。 * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。 * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す  未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する) 
+    検査抜取検査/抜取受入によって、どのフェーズがスキップされたか  * `inspection_skipped` - 抜取検査の対象外となり、検査フェーズがスキップされた * `inspection_stages_skipped` - 抜取検査の対象外となり、検査フェーズのステージの一部がスキップされた * `acceptance_skipped` - 抜取受入の対象外となり、受入フェーズがスキップされた * `inspection_and_acceptance_skipped` - 抜取検査・抜取受入の対象外となり、検査・受入フェーズがスキップされた  未指定ならば、どのフェーズもスキップされていません。 
 * metadata: __DictStrKeyAnyValue__
     ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 
 
@@ -4078,18 +4080,18 @@ Kyes of Dict
 
 TaskAssignRequestType = Dict[str, Any]
 """
-* `TaskAssignRequestTypeRandom`: タスクフェーズのみを指定してランダムにタスクを自身に割当します。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: 担当者とタスクを明示的に指定してタスクを割当します。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeTaskProperty`: タスクフェーズのみを指定して、タスクプロパティ割当の設定に基づいてタスクを自身に割当します。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。 
+* `TaskAssignRequestTypeRandom`: 自分自身にランダムにタスクを割り当てます。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: メンバーに指定したタスクを割り当てます。ただし、メンバーはプロジェクトオーナーもしくはチェッカーロールを持つ必要があります。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身にに割り当てます。。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。 
 
 Kyes of Dict
 
 * phase: TaskPhase
     
 * type: str
-    TaskProperty
+    `TaskProperty` 
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_ids: List[str]
-    割当するタスクのID
+    割り当てるタスクのID
 
 """
 
@@ -4102,7 +4104,7 @@ Kyes of Dict
 * phase: TaskPhase
     
 * type: str
-    Random
+    `Random` 
 
 """
 
@@ -4115,9 +4117,9 @@ Kyes of Dict
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_ids: List[str]
-    割当するタスクのID
+    割り当てるタスクのID
 * type: str
-    Selection
+    `Selection` 
 
 """
 
@@ -4130,7 +4132,7 @@ Kyes of Dict
 * phase: TaskPhase
     
 * type: str
-    TaskProperty
+    `TaskProperty` 
 
 """
 
@@ -4217,9 +4219,9 @@ Kyes of Dict
 * configuration: ProjectConfiguration
     
 * created_datetime: str
-    
+    作成日時
 * updated_datetime: str
-    
+    更新日時
 * summary: ProjectSummary
     
 * job: ProjectJobInfo
@@ -4231,39 +4233,39 @@ Kyes of Dict
 
 TaskGenerateRule = Dict[str, Any]
 """
-* `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。 * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。 
+タスク生成のルール * `TaskGenerateRuleByCount`: 1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立てて、ディレクトリ単位でタスクを生成します。 * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割り当てを記入したCSVへのS3上のパスを指定してタスクを生成します。 
 
 Kyes of Dict
 
 * task_id_prefix: str
-    生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+    タスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * allow_duplicate_input_data: bool
-    falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
+    `true`のときは、既にタスクに使われている入力データも、新しいタスクに割り当てます。`false`のときは、既にタスクに使われている入力データを除外します。まだタスクに使われていない入力データだけを、新しいタスクに割り当てます。 
 * input_data_count: int
-    1つのタスクに割り当てる入力データの個数。 画像プロジェクト、およびカスタムプロジェクトでは 1 以上 200 以下の値を指定することができます。 動画プロジェクトでは必ず 1 を指定してください。 
+    1つのタスクに割り当てる入力データの個数。 動画プロジェクトでは必ず`1`を指定してください。 
 * input_data_order: InputDataOrder
     
 * type: str
     `ByInputDataCsv` [詳しくはこちら](#section/API-Convention/API-_type) 
 * input_data_name_prefix: str
-    タスク生成対象の入力データ名プレフィックス
+    タスク生成対象の入力データ名のプレフィックス
 * csv_data_path: str
-    各タスクへの入力データへの割当を記入したCSVへのS3上のパス
+    各タスクへの入力データへの割り当てを記入したCSVへのS3上のパス。 
 
 """
 
 TaskGenerateRuleByCount = Dict[str, Any]
 """
-1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
+1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。
 
 Kyes of Dict
 
 * task_id_prefix: str
-    生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+    タスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * allow_duplicate_input_data: bool
-    falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
+    `true`のときは、既にタスクに使われている入力データも、新しいタスクに割り当てます。`false`のときは、既にタスクに使われている入力データを除外します。まだタスクに使われていない入力データだけを、新しいタスクに割り当てます。 
 * input_data_count: int
-    1つのタスクに割り当てる入力データの個数。 画像プロジェクト、およびカスタムプロジェクトでは 1 以上 200 以下の値を指定することができます。 動画プロジェクトでは必ず 1 を指定してください。 
+    1つのタスクに割り当てる入力データの個数。 動画プロジェクトでは必ず`1`を指定してください。 
 * input_data_order: InputDataOrder
     
 * type: str
@@ -4278,9 +4280,9 @@ TaskGenerateRuleByDirectory = Dict[str, Any]
 Kyes of Dict
 
 * task_id_prefix: str
-    生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+    タスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name_prefix: str
-    タスク生成対象の入力データ名プレフィックス
+    タスク生成対象の入力データ名のプレフィックス
 * type: str
     `ByDirectory` [詳しくはこちら](#section/API-Convention/API-_type) 
 
@@ -4293,7 +4295,7 @@ TaskGenerateRuleByInputDataCsv = Dict[str, Any]
 Kyes of Dict
 
 * csv_data_path: str
-    各タスクへの入力データへの割当を記入したCSVへのS3上のパス
+    各タスクへの入力データへの割り当てを記入したCSVへのS3上のパス。 
 * type: str
     `ByInputDataCsv` [詳しくはこちら](#section/API-Convention/API-_type) 
 
@@ -4310,17 +4312,17 @@ Kyes of Dict
 * task_id: str
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_history_id: str
-    
+    タスク履歴ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * started_datetime: str
-    
+    開始日時
 * ended_datetime: str
-    
+    終了日時
 * accumulated_labor_time_milliseconds: str
     累計実作業時間（ISO 8601 duration）
 * phase: TaskPhase
     
 * phase_stage: int
-    
+    タスクのフェーズのステージ番号
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 
@@ -4337,13 +4339,13 @@ Kyes of Dict
 * task_id: str
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_history_id: str
-    
+    タスク履歴ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * created_datetime: str
-    
+    作成日時
 * phase: TaskPhase
     
 * phase_stage: int
-    
+    タスクのフェーズのステージ番号
 * status: TaskStatus
     
 * account_id: str
@@ -4419,14 +4421,14 @@ Kyes of Dict
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * force: bool
-    タスクの強制操作を行う場合に立てるフラグ。現在、強制操作は強制差戻しのみがサポートされています。 
+    タスクの強制操作を行うかどうか。 `status`が`rejected`のときのみ、`true`を指定できます。 
 
 """
 
 
 class TaskPhase(Enum):
     """
-    * `annotation` - 教師付け。 * `inspection` - 中間検査。ワークフローが3フェーズのときのみ。 * `acceptance` - 受入。
+    タスクのフェーズ * `annotation` - 教師付け * `inspection` - 検査 * `acceptance` - 受入
     """
 
     ANNOTATION = "annotation"
@@ -4456,7 +4458,7 @@ TaskRequest = Dict[str, Any]
 Kyes of Dict
 
 * input_data_id_list: List[str]
-    
+    タスクに割り当てる入力データのID
 * metadata: __DictStrKeyAnyValue__
     ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 
 
@@ -4465,7 +4467,7 @@ Kyes of Dict
 
 class TaskStatus(Enum):
     """
-    * `not_started` - 未着手。 * `working` - 作業中。誰かが実際にエディタ上で作業している状態。 * `on_hold` - 保留。作業ルールの確認などで作業できない状態。 * `break` - 休憩中。 * `complete` - 完了。次のフェーズへ進む * `rejected` - 差戻し。修正のため、`annotation`フェーズへ戻る。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。 * `cancelled` - 提出取消し。修正のため、前フェーズへ戻る。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
+    タスクのステータス * `not_started` - 未着手 * `working` - 作業中 * `on_hold` - 保留中 * `break` - 休憩中 * `complete` - 完了 * `rejected` - 差し戻し。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。 * `cancelled` - 提出の取り消し。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
     """
 
     NOT_STARTED = "not_started"
@@ -4505,16 +4507,16 @@ Kyes of Dict
 
 Token = Dict[str, Any]
 """
-
+トークン情報
 
 Kyes of Dict
 
 * id_token: str
-    形式は[JWT](https://jwt.io/)。
+    IDトークン。HTTPリクエストの`Authorization`ヘッダーにIDトークンを指定することで、APIは認証されます。
 * access_token: str
-    形式は[JWT](https://jwt.io/)。
+    アクセストークン
 * refresh_token: str
-    形式は[JWT](https://jwt.io/)。
+    リフレッシュトークン
 
 """
 
