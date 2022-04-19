@@ -44,10 +44,6 @@ wrapper = service.wrapper
 test_wrapper = WrapperForTest(api)
 
 
-class TestAccount:
-    pass
-
-
 class TestAnnotation:
     @classmethod
     def setup_class(cls):

@@ -35,13 +35,13 @@ class MyOrganization(DataClassJsonMixin):
     """"""
 
     summary: Optional[Dict[str, Any]]
-    """"""
+    """廃止予定のプロパティです。常に中身は空です。 """
 
     created_datetime: Optional[str]
-    """"""
+    """作成日時"""
 
     updated_datetime: Optional[str]
-    """"""
+    """更新日時"""
 
     my_role: Optional[OrganizationMemberRole]
     """"""

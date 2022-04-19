@@ -374,29 +374,40 @@ components:
           $ref: "#/components/schemas/UserId"
         password:
           type: string
+          format: password
+          description: パスワード
     LoginResponse:
       type: object
+      required:
+       - token
       properties:
         token:
           $ref: "#/components/schemas/Token"
     Token:
       type: object
+      required:
+       - id_token
+       - access_token
+       - refresh_token
+      description: トークン情報
       properties:
         id_token:
           type: string
-          description: 形式は[JWT](https://jwt.io/)。
+          description: IDトークン。HTTPリクエストの`Authorization`ヘッダーにIDトークンを指定することで、APIは認証されます。
         access_token:
           type: string
-          description: 形式は[JWT](https://jwt.io/)。
+          description: アクセストークン
         refresh_token:
           type: string
-          description: 形式は[JWT](https://jwt.io/)。
+          description: リフレッシュトークン
     RefreshTokenRequest:
       type: object
       required:
         - refresh_token
       properties:
         refresh_token:
+          description: |
+            リフレッシュトークン。[login](#operation/login) APIで取得します。
           type: string
     PluginTokenRequest:
       oneOf:
@@ -647,8 +658,10 @@ components:
         created_datetime:
           type: string
           format: date-time
+          description: 作成日時
         storage_usage_bytes:
-          type: number
+          type: integer
+          description: Annofabストレージの使用量[バイト]
     Organization:
       type: object
       required:
@@ -663,10 +676,9 @@ components:
         organization_id:
           $ref: "#/components/schemas/OrganizationId"
         organization_name:
-          type: string
+          $ref: "#/components/schemas/OrganizationName"
         email:
-          type: string
-          format: email
+          $ref: "#/components/schemas/Email"
         price_plan:
           $ref: "#/components/schemas/PricePlan"
         summary:
@@ -674,9 +686,11 @@ components:
         created_datetime:
           type: string
           format: date-time
+          description: 作成日時
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
     OrganizationCacheRecord:
       type: object
       properties:
@@ -689,6 +703,9 @@ components:
         organization:
           type: string
     OrganizationSummary:
+      description: |
+        廃止予定のプロパティです。常に中身は空です。
+      deprecated: true
       type: object
       properties: {}
     PricePlan:
@@ -696,6 +713,10 @@ components:
       enum:
         - free
         - business
+      description: |
+        料金プラン
+        * `free` - フリープラン
+        * `business` - ビジネスプラン
     OrganizationMember:
       type: object
       required:
@@ -984,9 +1005,11 @@ components:
         created_datetime:
           type: string
           format: date-time
+          description: 作成日時
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
         my_role:
           $ref: "#/components/schemas/OrganizationMemberRole"
         my_status:
@@ -1001,8 +1024,7 @@ components:
         organization_name:
           $ref: "#/components/schemas/OrganizationName"
         organization_email:
-          type: string
-          format: email
+          $ref: "#/components/schemas/Email"
         price_plan:
           $ref: "#/components/schemas/PricePlan"
     PutOrganizationRequest:
@@ -1013,9 +1035,11 @@ components:
       properties:
         organization_name:
           $ref: "#/components/schemas/OrganizationName"
+          description: |
+            組織名。
+            現在の組織名と異なる値を指定してください。同じ名前の組織が既に存在する場合は、400エラーが発生します。
         last_updated_datetime:
-          type: string
-          format: date-time
+          $ref: "#/components/schemas/LastUpdatedDatetime"
     UpdateOrganizationNameRequest:
       type: object
       required:
@@ -1110,7 +1134,7 @@ components:
       example: "my_phrase_id"
     TaskId:
       type: string
-      example: "12345678-abcd-1234-abcd-1234abcd5678"
+      example: "task_001"
       description: |
         タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     InputDataId:
@@ -1131,6 +1155,8 @@ components:
     TaskHistoryId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        タスク履歴ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     AnnotationId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -1225,9 +1251,11 @@ components:
         created_datetime:
           type: string
           format: date-time
+          description: 作成日時
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
         summary:
           $ref: "#/components/schemas/ProjectSummary"
     ProjectStatus:
@@ -1253,7 +1281,7 @@ components:
     InputDataType:
       type: string
       description: |
-        アノテーションする入力データの種類。プロジェクトの作成時のみ指定可能（未指定の場合は `image`）です。更新時は無視されます。
+        アノテーションする入力データの種類。
         * `image` - 画像
         * `movie` - 動画
         * `custom` - カスタム
@@ -1262,6 +1290,7 @@ components:
         - movie
         - custom
     ProjectConfiguration:
+      description: プロジェクトの設定情報
       type: object
       properties:
         number_of_inspections:
@@ -1274,7 +1303,6 @@ components:
           default: 0
           minimum: 0
         assignee_rule_of_resubmitted_task:
-          description: 再提出されたタスクの検査/受入担当者ルール。
           $ref: "#/components/schemas/AssigneeRuleOfResubmittedTask"
           default: no_assignee
         task_assignment_type:
@@ -1293,7 +1321,7 @@ components:
             保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。
             割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。
 
-            例えばmax_tasks_per_memberが10,max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。
+            例えばmax_tasks_per_memberが10、max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。
           type: integer
           default: 20
           minimum: 1
@@ -1313,14 +1341,17 @@ components:
 
             大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。
           type: integer
-          default: 4096
           minimum: 0
         sampling_inspection_rate:
-          description: 抜取検査率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
+          description: 抜取検査率[%]。未指定の場合は100%として扱う。
           type: integer
+          minimum: 0
+          maximum: 100
         sampling_acceptance_rate:
-          description: 抜取受入率。0-100のパーセント値で指定し、未指定の場合は100%として扱う。
+          description: 抜取受入率[%]。未指定の場合は100%として扱う。
           type: integer
+          minimum: 0
+          maximum: 100
         private_storage_aws_iam_role_arn:
           type: string
           description: |
@@ -1357,9 +1388,9 @@ components:
           description: |
             true の場合、プロジェクトの画面でナビゲーションUIを表示します（ログインユーザーがプロジェクトオーナーの場合のみ）。
 
-            未指定の場合、 false が指定されたものとして扱います。
     ProjectSummary:
       type: object
+      description: プロジェクトのサマリー情報
       properties:
         last_tasks_updated_datetime:
           type: string
@@ -1589,6 +1620,8 @@ components:
         job:
           $ref: "#/components/schemas/ProjectJobInfo"
     PostProjectTasksUpdateResponse:
+      required:
+        - job
       type: object
       properties:
         job:
@@ -1602,6 +1635,9 @@ components:
           $ref: "#/components/schemas/Project"
     DeleteProjectResponse:
       type: object
+      required:
+        - job
+        - project
       properties:
         job:
           $ref: "#/components/schemas/ProjectJobInfo"
@@ -1609,6 +1645,9 @@ components:
           $ref: "#/components/schemas/Project"
     PutProjectResponse:
       type: object
+      required:
+        - job
+        - project
       properties:
         job:
           $ref: "#/components/schemas/ProjectJobInfo"
@@ -1773,6 +1812,11 @@ components:
           $ref: "#/components/schemas/ProjectStatus"
         input_data_type:
           $ref: "#/components/schemas/InputDataType"
+          default: image
+          description: |
+            アノテーション対象の入力データの種類。[詳細はこちら](#section/InputDataType)を参照してください。
+            
+            プロジェクトの作成時のみ指定可能です。更新時は無視されます。
         organization_name:
           type: string
           description: |
@@ -1813,19 +1857,19 @@ components:
           description: |
             「タスク」をコピーするかどうかを指定します。
 
-            この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。
+            この属性の値を`true`にする場合、他の属性の値を必ず次のように指定してください。
 
-            * copy_inputs の値を true とする
+            * `copy_inputs`の値を`true`とする
           default: false
         copy_annotations:
           type: boolean
           description: |
             「アノテーション」をコピーするかどうかを指定します。
 
-            この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。
+            この属性の値を`true`にする場合、他の属性の値を必ず次のように指定してください。
 
-            * copy_inputs の値を true とする
-            * copy_tasks の値を true とする
+            * `copy_inputs`の値を`true`とする
+            * `copy_tasks`の値を`true`とする
           default: false
         copy_webhooks:
           type: boolean
@@ -1837,9 +1881,9 @@ components:
           description: |
             「補助情報」をコピーするかどうかを指定します。
 
-            この属性の値を true とする場合、他の属性の値を必ず次のように指定してください。
+            この属性の値を`true`にする場合、他の属性の値を必ず次のように指定してください。
 
-            * copy_inputs の値を true とする
+            * `copy_inputs`の値を`true`とする
           default: false
         copy_instructions:
           type: boolean
@@ -2106,7 +2150,31 @@ components:
           $ref: "#/components/schemas/InspectionStatisticsPhrases"
     PatchTasksMetadataRequest:
       type: object
-      description: タスクIDとメタデータのkey-valueペア(Dictionary)です。
+      description: |
+        タスクIDとメタデータのkey-valueペア(Dictionary)を指定してください。
+
+        メタデータは、メタデータ名と値のkey-valueペア(Dictionary)です。
+
+        keyに指定できる文字種は次の通りです。
+
+        * 半角英数字
+        * `_` (アンダースコア)
+        * `-` (ハイフン)
+
+        valueに指定できる値は次の通りです。
+
+        * 文字列
+        * 数値
+        * 真偽値
+
+        ```
+        (例)
+
+        {
+          "task_1": { "metadata_1": "str", "metadata_2": 100 },
+          "task_2": { "metadata_3": true }
+        }
+        ```
     InspectionStatisticsPhrases:
       type: object
       description: ラベル外指摘の集計結果
@@ -3259,6 +3327,7 @@ components:
             $ref: "#/components/schemas/InputDataId"
         account_id:
           $ref: "#/components/schemas/AccountId"
+          description: 担当者のアカウントID
         histories_by_phase:
           type: array
           description: 簡易的なタスク履歴（あるフェーズを誰が担当したか）
@@ -3280,9 +3349,11 @@ components:
         started_datetime:
           type: string
           format: date-time
+          description: 現在のフェーズが開始された日時
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
         sampling:
           type: string
           enum:
@@ -3291,12 +3362,14 @@ components:
             - acceptance_skipped
             - inspection_and_acceptance_skipped
           description: |
-            * `inspection_skipped` - このタスクが抜取検査の対象外となり、検査フェーズをスキップしたことを表す。
-            * `inspection_stages_skipped` - このタスクが抜取検査の対象外となり、検査フェーズのステージを一部スキップしたことを表す。
-            * `acceptance_skipped` - このタスクが抜取検査の対象外となり、受入フェーズをスキップしたことを表す。
-            * `inspection_and_acceptance_skipped` - このタスクが抜取検査の対象外となり、検査・受入フェーズをスキップしたことを表す
+            検査抜取検査/抜取受入によって、どのフェーズがスキップされたか
 
-            未指定時はこのタスクが抜取検査の対象となったことを表す。(通常のワークフローを通過する)
+            * `inspection_skipped` - 抜取検査の対象外となり、検査フェーズがスキップされた
+            * `inspection_stages_skipped` - 抜取検査の対象外となり、検査フェーズのステージの一部がスキップされた
+            * `acceptance_skipped` - 抜取受入の対象外となり、受入フェーズがスキップされた
+            * `inspection_and_acceptance_skipped` - 抜取検査・抜取受入の対象外となり、検査・受入フェーズがスキップされた
+
+            未指定ならば、どのフェーズもスキップされていません。
         metadata:
           $ref: "#/components/schemas/TaskMetadata"
     TaskPhase:
@@ -3306,10 +3379,12 @@ components:
         - inspection
         - acceptance
       description: |
-        * `annotation` - 教師付け。
-        * `inspection` - 中間検査。ワークフローが3フェーズのときのみ。
-        * `acceptance` - 受入。
+        タスクのフェーズ
+        * `annotation` - 教師付け
+        * `inspection` - 検査
+        * `acceptance` - 受入
     TaskPhaseStage:
+      description: タスクのフェーズのステージ番号
       type: integer
       minimum: 1
     TaskStatus:
@@ -3323,13 +3398,14 @@ components:
         - rejected
         - cancelled
       description: |
-        * `not_started` - 未着手。
-        * `working` - 作業中。誰かが実際にエディタ上で作業している状態。
-        * `on_hold` - 保留。作業ルールの確認などで作業できない状態。
-        * `break` - 休憩中。
-        * `complete` - 完了。次のフェーズへ進む
-        * `rejected` - 差戻し。修正のため、`annotation`フェーズへ戻る。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
-        * `cancelled` - 提出取消し。修正のため、前フェーズへ戻る。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
+        タスクのステータス
+        * `not_started` - 未着手
+        * `working` - 作業中
+        * `on_hold` - 保留中
+        * `break` - 休憩中
+        * `complete` - 完了
+        * `rejected` - 差し戻し。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
+        * `cancelled` - 提出の取り消し。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
     TaskMetadata:
       type: object
       description: |
@@ -3351,10 +3427,10 @@ components:
       type: object
       required:
         - input_data_id_list
-        - metadata
       properties:
         input_data_id_list:
           type: array
+          description: タスクに割り当てる入力データのID
           items:
             $ref: "#/components/schemas/InputDataId"
         metadata:
@@ -3373,9 +3449,10 @@ components:
           description: プロジェクトの最終更新日時（[getProject](#operation/getProject) APIのレスポンス `updated_datetime`）。タスク生成の排他制御に使用。
     TaskGenerateRule:
       description: |
-        * `TaskGenerateRuleByCount`: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
-        * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。
-        * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。
+        タスク生成のルール
+        * `TaskGenerateRuleByCount`: 1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。
+        * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立てて、ディレクトリ単位でタスクを生成します。
+        * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割り当てを記入したCSVへのS3上のパスを指定してタスクを生成します。
       oneOf:
         - $ref: "#/components/schemas/TaskGenerateRuleByCount"
         - $ref: "#/components/schemas/TaskGenerateRuleByDirectory"
@@ -3387,7 +3464,7 @@ components:
           ByDirectory: "#/components/schemas/TaskGenerateRuleByDirectory"
           ByInputDataCsv: "#/components/schemas/TaskGenerateRuleByInputDataCsv"
     TaskGenerateRuleByCount:
-      description: 1つのタスクに割りあてる入力データの個数を指定してタスクを生成します。
+      description: 1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。
       type: object
       required:
         - task_id_prefix
@@ -3398,17 +3475,19 @@ components:
         task_id_prefix:
           type: string
           description: |
-            生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID)
+            タスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID)
         allow_duplicate_input_data:
           type: boolean
-          description: falseのときは、既にタスクに使われている入力データを除外し、まだタスクに使われていない入力データだけを新しいタスクに割り当てます。trueのときは、既にタスクに使われている入力データを除外しません。
+          description: |
+            `true`のときは、既にタスクに使われている入力データも、新しいタスクに割り当てます。`false`のときは、既にタスクに使われている入力データを除外します。まだタスクに使われていない入力データだけを、新しいタスクに割り当てます。
         input_data_count:
           type: integer
           description: |
             1つのタスクに割り当てる入力データの個数。
-            画像プロジェクト、およびカスタムプロジェクトでは 1 以上 200 以下の値を指定することができます。
-            動画プロジェクトでは必ず 1 を指定してください。
+            動画プロジェクトでは必ず`1`を指定してください。
           example: 10
+          minimum: 1
+          maximum: 200
         input_data_order:
           $ref: "#/components/schemas/InputDataOrder"
         _type:
@@ -3426,10 +3505,10 @@ components:
         task_id_prefix:
           type: string
           description: |
-            生成するタスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID)
+            タスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID)
         input_data_name_prefix:
           type: string
-          description: タスク生成対象の入力データ名プレフィックス
+          description: タスク生成対象の入力データ名のプレフィックス
         _type:
           type: string
           description: |
@@ -3446,7 +3525,8 @@ components:
       properties:
         csv_data_path:
           type: string
-          description: 各タスクへの入力データへの割当を記入したCSVへのS3上のパス
+          description: |
+            各タスクへの入力データへの割り当てを記入したCSVへのS3上のパス。
           example: "s3://ANNOFAB-BUCKET/PATH/TO/CSV"
         _type:
           type: string
@@ -3463,8 +3543,8 @@ components:
       description: |
         タスクに割り当てる入力データの順序
 
-        * `name_asc` - 入力データ名 昇順（a, b, c, ...）。日付や番号などの連続するデータ名を扱う場合に推奨
-        * `name_desc` - 入力データ名 降順（z, y, x, ...）
+        * `name_asc` - 入力データ名の昇順
+        * `name_desc` - 入力データ名の降順
         * `random` - ランダム
     TaskOperation:
       type: object
@@ -3487,7 +3567,9 @@ components:
           type: boolean
           default: false
           description: |
-            タスクの強制操作を行う場合に立てるフラグ。現在、強制操作は強制差戻しのみがサポートされています。
+            タスクの強制操作を行うかどうか。
+            `status`が`rejected`のときのみ、`true`を指定できます。
+
     TaskAssignRequest:
       type: object
       required:
@@ -3497,9 +3579,9 @@ components:
           $ref: "#/components/schemas/TaskAssignRequestType"
     TaskAssignRequestType:
       description: |
-        * `TaskAssignRequestTypeRandom`: タスクフェーズのみを指定してランダムにタスクを自身に割当します。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。
-        * `TaskAssignRequestTypeSelection`: 担当者とタスクを明示的に指定してタスクを割当します。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。
-        * `TaskAssignRequestTypeTaskProperty`: タスクフェーズのみを指定して、タスクプロパティ割当の設定に基づいてタスクを自身に割当します。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。
+        * `TaskAssignRequestTypeRandom`: 自分自身にランダムにタスクを割り当てます。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。
+        * `TaskAssignRequestTypeSelection`: メンバーに指定したタスクを割り当てます。ただし、メンバーはプロジェクトオーナーもしくはチェッカーロールを持つ必要があります。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。
+        * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身にに割り当てます。。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。
       oneOf:
         - $ref: "#/components/schemas/TaskAssignRequestTypeRandom"
         - $ref: "#/components/schemas/TaskAssignRequestTypeSelection"
@@ -3517,10 +3599,11 @@ components:
       properties:
         phase:
           $ref: "#/components/schemas/TaskPhase"
-          description: 割当するタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+          description: 割り当てるタスクのフェーズ。[詳細はこちら](#section/TaskPhase)
         _type:
           type: string
-          description: Random
+          description: |
+            `Random`
           example: "Random"
     TaskAssignRequestTypeSelection:
       type: object
@@ -3530,15 +3613,16 @@ components:
       properties:
         user_id:
           $ref: "#/components/schemas/UserId"
-          description: タスクを誰に割当するか
+          description: タスクを割り当てられる担当者のユーザーID
         task_ids:
-          description: 割当するタスクのID
+          description: 割り当てるタスクのID
           type: array
           items:
             $ref: "#/components/schemas/TaskId"
         _type:
           type: string
-          description: Selection
+          description: |
+            `Selection`
           example: "Selection"
     TaskAssignRequestTypeTaskProperty:
       type: object
@@ -3547,10 +3631,11 @@ components:
       properties:
         phase:
           $ref: "#/components/schemas/TaskPhase"
-          description: 割当するタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+          description: 割り当てるタスクのフェーズ。[詳細はこちら](#section/TaskPhase)
         _type:
           type: string
-          description: TaskProperty
+          description: |
+            `TaskProperty`
           example: "TaskProperty"
     TaskHistoryShort:
       description: タスクのあるフェーズを誰が担当したかを表します。
@@ -3592,9 +3677,11 @@ components:
         started_datetime:
           type: string
           format: date-time
+          description: 開始日時
         ended_datetime:
           type: string
           format: date-time
+          description: 終了日時
         accumulated_labor_time_milliseconds:
           type: string
           description: 累計実作業時間（ISO 8601 duration）
@@ -3602,13 +3689,21 @@ components:
         phase:
           $ref: "#/components/schemas/TaskPhase"
         phase_stage:
-          type: integer
-          minimum: 1
+          $ref: "#/components/schemas/TaskPhaseStage"
         account_id:
           $ref: "#/components/schemas/AccountId"
+          description: 担当者のアカウントID
     TaskHistoryEvent:
       description: タスク履歴イベントは、タスクの状態が変化した１時点を表します。作業時間は、複数のこれらイベントを集約して計算するものなので、このオブジェクトには含まれません。
       type: object
+      required:
+        - project_id
+        - task_id
+        - task_history_id
+        - created_datetime
+        - phase
+        - phase_stage
+        - status
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -3619,17 +3714,18 @@ components:
         created_datetime:
           type: string
           format: date-time
+          description: 作成日時
         phase:
           $ref: "#/components/schemas/TaskPhase"
         phase_stage:
-          type: integer
-          default: 1
-          minimum: 1
+          $ref: "#/components/schemas/TaskPhaseStage"
         status:
           $ref: "#/components/schemas/TaskStatus"
         account_id:
           $ref: "#/components/schemas/AccountId"
         request:
+          description: |
+            [operateTask](#operation/createTempPath) APIによってタスク履歴イベントが生成されたときのリクエストボディ
           $ref: "#/components/schemas/TaskOperation"
     TaskInputValidation:
       description: タスクの提出操作に対する入力データID別のバリデーション結果です。
@@ -5840,6 +5936,13 @@ components:
             [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
     ProjectList:
       type: object
+      required:
+        - list
+        - page_no
+        - total_page_no
+        - total_count
+        - over_limit
+        - aggregations
       properties:
         list:
           type: array
@@ -5966,6 +6069,13 @@ components:
           type: boolean
     TaskList:
       type: object
+      required:
+        - list
+        - page_no
+        - total_page_no
+        - total_count
+        - over_limit
+        - aggregations
       properties:
         list:
           type: array
