@@ -205,7 +205,7 @@ def my_backoff(function):
 
         return backoff.on_exception(
             backoff.expo,
-            (requests.exceptions.RequestException, ConnectionError),
+            (requests.exceptions.HTTPError, requests.exceptions.ConnectionError, ConnectionError),
             jitter=backoff.full_jitter,
             max_time=300,
             giveup=fatal_code,
