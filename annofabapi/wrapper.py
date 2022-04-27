@@ -935,7 +935,7 @@ class Wrapper:
             return md5_obj.hexdigest()
 
         # 一時データ保存先を取得
-        content = self.api.create_temp_path(project_id, header_params={"content-type": content_type})[0]
+        content, _ = self.api.create_temp_path(project_id)
 
         url_parse_result = urllib.parse.urlparse(content["url"])
         query_dict = urllib.parse.parse_qs(url_parse_result.query)
@@ -2075,9 +2075,9 @@ class Wrapper:
             一時データ保存先であるS3パス
         """
         # 作業ガイド登録用/更新用のURLを取得
-        content = self.api.get_instruction_image_url_for_put(
-            project_id, image_id, header_params={"content-type": content_type}
-        )[0]
+        content, _ = self.api.get_instruction_image_url_for_put(
+            project_id, image_id
+        )
 
         url_parse_result = urllib.parse.urlparse(content["url"])
         query_dict = urllib.parse.parse_qs(url_parse_result.query)
