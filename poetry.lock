@@ -906,7 +906,7 @@ python-versions = "*"
 
 [[package]]
 name = "types-requests"
-version = "2.27.19"
+version = "2.27.22"
 description = "Typing stubs for requests"
 category = "dev"
 optional = false
@@ -1470,8 +1470,8 @@ types-python-dateutil = [
     {file = "types_python_dateutil-2.8.11-py3-none-any.whl", hash = "sha256:61222fa5518b14601a4e95ad4f17feea4ada904947610560336cf8921a7544a8"},
 ]
 types-requests = [
-    {file = "types-requests-2.27.19.tar.gz", hash = "sha256:795e378117088d1e4bf41a2c01a153b73d6ea40aa9d7c0ac753abde84c0d3a8f"},
-    {file = "types_requests-2.27.19-py3-none-any.whl", hash = "sha256:c6c5384677d98f212516de50c4b2c38ef659b93008fbc5bb4b81726138bc8485"},
+    {file = "types-requests-2.27.22.tar.gz", hash = "sha256:2e81a74d2db1e6d06baa4a9e1896720543739297a23daac0436a34e2fc732574"},
+    {file = "types_requests-2.27.22-py3-none-any.whl", hash = "sha256:58730c31469fb959a21496d97d2e59c06ca6de2ccdfecb583cb924b83cb0811e"},
 ]
 types-urllib3 = [
     {file = "types-urllib3-1.26.13.tar.gz", hash = "sha256:40f8fb5e8cd7d57e8aefdee3fdd5e930aa1a1bb4179cdadd55226cea588af790"},
