@@ -212,11 +212,11 @@ Kyes of Dict
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * by_tasks: List[WorktimeStatisticsItem]
-    ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+    タスクごとに計算した「画像1枚あたりの作業時間平均」の統計（動画プロジェクトの場合は空リスト）
 * by_inputs: List[WorktimeStatisticsItem]
-    ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+    画像1枚あたりの作業時間情報（動画プロジェクトの場合は空リスト）
 * by_minutes: List[WorktimeStatisticsItem]
-    ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
+    動画1分あたりの作業時間情報（画像プロジェクトの場合は空リスト）
 
 """
 
@@ -603,13 +603,13 @@ Kyes of Dict
 * details: List[AnnotationDetail]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
-    新規作成時は未指定、更新時は必須（更新前の日時） 
+    更新日時
 
 """
 
 AnnotationData = Dict[str, Any]
 """
-アノテーションの座標値や区間などのデータ。 `annotation_type` に応じて `string` や `object` の構造が変わります。  API レスポンスに使われる場合は常に `string` 形式です。 [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は `string` に加え、`object` 形式も使用できます。 
+アノテーションの座標値や区間などのデータ。  APIのレスポンスから参照される場合は、`FullAnnotationDataString`形式です。 [putAnnotation](#operation/putAnnotation) APIのリクエストボディは、`FullAnnotationDataString`形式または`FullAnnotationData`形式に対応しています。 
 
 Kyes of Dict
 
@@ -619,7 +619,7 @@ Kyes of Dict
 
 class AnnotationDataHoldingType(Enum):
     """
-    * `inner` - アノテーションのデータ部をJSON内部に保持します。 * `outer` - アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
+    アノテーションのデータがどこに保持されるか * `inner` - アノテーションのデータ部をJSON内部に保持します。 * `outer` - アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
     """
 
     INNER = "inner"
@@ -633,7 +633,7 @@ AnnotationDetail = Dict[str, Any]
 Kyes of Dict
 
 * annotation_id: str
-    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_id: str
@@ -651,11 +651,11 @@ Kyes of Dict
 * url: str
     外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
 * additional_data_list: List[AdditionalData]
-    各要素は、 [アノテーション仕様](#operation/getAnnotationSpecs)で定義された属性（`additional_data_definitions`内）のいずれかの要素と対応づけます。 各要素は、どの属性なのかを表す`additional_data_definition_id`と値が必要です。値は、属性の種類に対応するキーに格納します（下表）。  <table> <tr><th>アノテーション属性の種類<br>（<code>additional_data_definition</code>の<code>type</code>）</th><th>属性の値を格納するキー</th><th>データ型</th></tr> <tr><td><code>text</code>, <code>comment</code> または <code>tracking</code></td><td><code>comment</code></td><td>string</td></tr> <tr><td><code>flag<c/ode></td><td><code>flag</code></td><td>boolean</td></tr> <tr><td><code>integer</code></td><td><code>integer</code></td><td>integer</td></tr> <tr><td><code>choice</code> または <code>select</code></td><td><code>choice</code></td><td>string（選択肢ID）</td></tr> <tr><td><code>link</code></td><td><code>comment</code></td><td>string（アノテーションID）</td></tr> </table> 
+    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * created_datetime: str
-    
+    作成日時
 * updated_datetime: str
-    
+    更新日時
 
 """
 
@@ -703,24 +703,24 @@ Kyes of Dict
 
 AnnotationQuery = Dict[str, Any]
 """
-
+アノテーションの絞り込み条件 
 
 Kyes of Dict
 
 * task_id: str
-    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+    タスクIDで絞り込みます。最大文字列長は300文字です。 
 * exact_match_task_id: bool
-    タスクIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は部分一致検索です。 
+    タスクIDの検索方法を指定します。 `true`の場合は完全一致検索、`false`の場合は部分一致検索です。 
 * input_data_id: str
-    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+    入力データID絞り込みます。最大文字列長は300文字です。 
 * exact_match_input_data_id: bool
-    入力データIDの検索方法を指定します。 trueの場合は完全一致検索、falseの場合は部分一致検索です。 
+    入力データIDの検索方法を指定します。 `true`の場合は完全一致検索、`false`の場合は部分一致検索です。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * attributes: List[AdditionalData]
-    
+    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * updated_from: str
-    開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日（ISO 8601 拡張形式または基本形式）。  `updated_to` より後の日付が指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。 
+    開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日（ISO 8601 拡張形式または基本形式）。  `updated_to` より後の日付が指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。 
 * updated_to: str
     開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、終了日（ISO 8601 拡張形式または基本形式）。  未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。 
 
@@ -962,13 +962,13 @@ Kyes of Dict
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * annotation_id: str
-    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * additional_data_list: List[AdditionalData]
-    
+    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * updated_datetime: str
-    
+    更新日時
 
 """
 
@@ -989,9 +989,9 @@ Kyes of Dict
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * annotation_id: str
-    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * updated_datetime: str
-    
+    更新日時
 
 """
 
@@ -1008,9 +1008,9 @@ Kyes of Dict
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * annotation_id: str
-    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * updated_datetime: str
-    
+    更新日時
 * type: str
     `Delete` [詳しくはこちら](#section/API-Convention/API-_type) 
 
@@ -1304,7 +1304,7 @@ Kyes of Dict
 * data: InspectionData
     
 * annotation_id: str
-    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * status: CommentStatus
@@ -1443,7 +1443,7 @@ Kyes of Dict
 * url: str
     ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。
 * path: str
-    アップロードしたファイルをAFの [入力データ](#tag/af-input) や [補助情報](#tag/af-supplementary) に登録するとき、この`path`を指定します。
+    [putInputData](#operation/putInputData) APIや[putSupplementaryData](#operation/putSupplementaryData) APIのリクエストボディに指定するパスです。 
 
 """
 
@@ -1454,9 +1454,9 @@ DateRange = Dict[str, Any]
 Kyes of Dict
 
 * _from: str
-    区間開始日（ISO 8601 拡張形式）
+    期間の開始日（ISO 8601 拡張形式）
 * to: str
-    区間終了日（ISO 8601 拡張形式）
+    期間の終了日（ISO 8601 拡張形式）
 
 """
 
@@ -1546,17 +1546,17 @@ Kyes of Dict
 * task_phase: TaskPhase
     
 * task_phase_stage: int
-    
+    タスクのフェーズのステージ番号
 * task_status: TaskStatus
     
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
-    
+    入力データ名
 * details: List[FullAnnotationDetail]
-    
+    矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列
 * updated_datetime: str
-    
+    更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。
 * annotation_format_version: str
     アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、Annofabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 
 
@@ -1581,34 +1581,34 @@ Kyes of Dict
 
 FullAnnotationData = Dict[str, Any]
 """
-アノテーションのデータが格納されます。   * `FullAnnotationDataClassification`: 入力データ全体に対するアノテーションデータです。   * `FullAnnotationDataSegmentation`: ピクセルレベルでの塗りつぶし（ラスター）のアノテーションデータです。   * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2ののアノテーションデータです。塗りつぶしv2はSemantic Segmentationに特化しています。   * `FullAnnotationDataBoundingBox`: 矩形のアノテーションデータです。   * `FullAnnotationDataPoints`: ポリゴン（閉じた頂点集合）のアノテーションデータです。   * `FullAnnotationDataSinglePoint`: 点のアノテーションデータです。   * `FullAnnotationDataRange`: 動画区間のアノテーションデータです。 
+アノテーションのデータが格納されます。   * `FullAnnotationDataClassification`: 入力データ全体アノテーション   * `FullAnnotationDataSegmentation`: 塗りつぶしアノテーション   * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2アノテーション   * `FullAnnotationDataBoundingBox`: 矩形アノテーション   * `FullAnnotationDataPoints`: ポリゴンまたはポリラインアノテーション   * `FullAnnotationDataSinglePoint`: 点アノテーション   * `FullAnnotationDataRange`: 動画区間アノテーション   * `FullAnnotationDataUnknown`: カスタムアノテーション 
 
 Kyes of Dict
 
 * type: str
-    Unknown
+    `Unknown` 
 * data_uri: str
-    
+    塗りつぶし画像のパス
 * left_top: Point
     
 * right_bottom: Point
     
 * points: List[Point]
-    
+    頂点の座標値
 * point: Point
     
 * begin: float
-    開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
+    開始時間（ミリ秒）
 * end: float
-    終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。
+    終了時間（ミリ秒）
 * data: str
-    
+    アノテーションデータを文字列で表現した値
 
 """
 
 FullAnnotationDataBoundingBox = Dict[str, Any]
 """
-annotation_type が bounding_boxの場合に、[左上頂点座標, 右下頂点座標]を {\"x\":int, \"y\":int} の形式で記述したもの。
+
 
 Kyes of Dict
 
@@ -1617,7 +1617,7 @@ Kyes of Dict
 * right_bottom: Point
     
 * type: str
-    BoundingBox
+    `BoundingBox` 
 
 """
 
@@ -1628,48 +1628,48 @@ FullAnnotationDataClassification = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    Classification
+    `Classification` 
 
 """
 
 FullAnnotationDataPoints = Dict[str, Any]
 """
-頂点座標 {\"x\":int, \"y\":int} の配列。  * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。 
+
 
 Kyes of Dict
 
 * points: List[Point]
-    
+    頂点の座標値
 * type: str
-    Points
+    `Points` 
 
 """
 
 FullAnnotationDataRange = Dict[str, Any]
 """
-annotation_type が rangeの場合に、[開始時間, 終了時間]を {\"begin\":number, \"end\":number} の形式で記述したもの。開始時間・終了時間の単位は秒で、精度はミリ秒まで。
+
 
 Kyes of Dict
 
 * begin: float
-    開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
+    開始時間（ミリ秒）
 * end: float
-    終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。
+    終了時間（ミリ秒）
 * type: str
-    Range
+    `Range` 
 
 """
 
 FullAnnotationDataSegmentation = Dict[str, Any]
 """
-塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
+
 
 Kyes of Dict
 
 * data_uri: str
-    
+    塗りつぶし画像のパス
 * type: str
-    Segmentation
+    `Segmentation` 
 
 """
 
@@ -1680,35 +1680,35 @@ FullAnnotationDataSegmentationV2 = Dict[str, Any]
 Kyes of Dict
 
 * data_uri: str
-    
+    塗りつぶし画像のパス
 * type: str
-    SegmentationV2
+    `SegmentationV2` 
 
 """
 
 FullAnnotationDataSinglePoint = Dict[str, Any]
 """
-annotation_type が pointの場合。
+
 
 Kyes of Dict
 
 * point: Point
     
 * type: str
-    SinglePoint。
+    `SinglePoint` 
 
 """
 
 FullAnnotationDataUnknown = Dict[str, Any]
 """
-annotation_typeにデータ構造が一致していない場合に、元のdata文字列をそのまま記述したもの。
+
 
 Kyes of Dict
 
 * data: str
-    
+    アノテーションデータを文字列で表現した値
 * type: str
-    Unknown
+    `Unknown` 
 
 """
 
@@ -1719,7 +1719,7 @@ FullAnnotationDetail = Dict[str, Any]
 Kyes of Dict
 
 * annotation_id: str
-    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_id: str
@@ -1732,15 +1732,15 @@ Kyes of Dict
     
 * data: FullAnnotationData
     
-* additional_data_list: List[FullAnnotationAdditionalData]
-    
+* additional_data_list: List[AdditionalData]
+    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 
 """
 
 
 class GraphType(Enum):
     """
-    * `task_progress` - タスク進捗状況 * `cumulative_labor_time_by_task_phase` - タスクフェーズ別累積作業時間 * `number_of_inspections_per_inspection_phrase` - 検査コメント内容別指摘回数 * `number_of_task_rejections_by_member` - メンバー別タスクが差戻された回数 * `labor_time_per_member` - メンバー別作業時間 * `mean_labor_time_per_image` - 画像一枚当たりの作業時間平均 * `mean_labor_time_per_minute_of_movie` - 動画一分当たりの作業時間平均 * `mean_labor_time_per_image_by_member` - メンバー別画像一枚当たりの作業時間平均 * `mean_labor_time_per_minute_of_movie_by_member` - メンバー別動画一分当たりの作業時間平均
+    グラフの種類 * `task_progress` - タスク進捗状況 * `cumulative_labor_time_by_task_phase` - タスクフェーズ別累積作業時間 * `number_of_inspections_per_inspection_phrase` - 検査コメント内容別指摘回数 * `number_of_task_rejections_by_member` - メンバー別タスクが差戻された回数 * `labor_time_per_member` - メンバー別作業時間 * `mean_labor_time_per_image` - 画像一枚当たりの作業時間平均 * `mean_labor_time_per_minute_of_movie` - 動画一分当たりの作業時間平均 * `mean_labor_time_per_image_by_member` - メンバー別画像一枚当たりの作業時間平均 * `mean_labor_time_per_minute_of_movie_by_member` - メンバー別動画一分当たりの作業時間平均
     """
 
     TASK_PROGRESS = "task_progress"
@@ -1790,22 +1790,26 @@ Kyes of Dict
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_set_id: str
+    入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
-    表示用の名前です。
+    入力データ名
 * input_data_path: str
     入力データの実体が保存されたパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 
 * url: str
-    入力データを取得するためのhttpsスキーマのURLです。  このURLはセキュリティのために認証認可が必要となっており、URLだけでは入力データを参照できません。 このURLは内部用であり、常に変更になる可能性があります。そのため、アクセスは保証外となります。 また、このURLのレスポンスは最低1時間キャッシュされます。 キャッシュを無効にしたい場合は、クエリパラメータにアクセス毎にランダムなUUIDなどを付与してください。  設定の不備等でデータが取得できない場合、この属性は設定されません。 
+    システム内部用のプロパティ
 * etag: str
-    
+    [HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 
 * original_input_data_path: str
-    AF外部のストレージから登録された場合、その外部ストレージ中のパス。 それ以外の場合は値なし 
+    システム内部用のプロパティ 
 * updated_datetime: str
-    
+    更新日時
 * sign_required: bool
-    データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。 
+    CloudFrontのSignedCookieを使ったプライベートストレージを利用するかどうか 
 * metadata: dict(str, str)
-    ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。 
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 * system_metadata: SystemMetadata
     
 
@@ -1826,9 +1830,9 @@ Kyes of Dict
 * total_count: float
     検索結果の総件数。
 * over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。
+    検索結果の件数が1万件を超えた場合は`true`になります。
 * aggregations: List[AggregationResult]
-    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
+    システム内部用のプロパティ。 
 
 """
 
@@ -1850,15 +1854,15 @@ InputDataRequest = Dict[str, Any]
 Kyes of Dict
 
 * input_data_name: str
-    表示用の名前
+    入力データ名
 * input_data_path: str
-    Annofabに登録する入力データの実体が保存されたパスです。  対応スキーマ： * s3 * https  場面別の使い分け： * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA` * [プライベートストレージ](/docs/faq/#prst9c)の場合     * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`     * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`         * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。 
+    入力データの実体が存在するURLです。 Annofabにファイルをアップロードして入力データを作成する場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。  入力データの実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。 S3プライベートストレージに存在するファイルを入力データとして登録する場合は、事前に[認可の設定](/docs/faq/#m0b240)が必要です。 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * sign_required: bool
-    データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br> このオプションを有効にする場合は、`input_data_path`として、AnnofabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。 
+    CloudFrontのSignedCookieを使ったプライベートストレージを利用するかどうか。  `true`を指定する場合は，`input_data_path`にAnnofabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。 
 * metadata: dict(str, str)
-    ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。 
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
 
 """
 
@@ -1871,7 +1875,7 @@ Kyes of Dict
 * input_data_set_id: str
     入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_set_name: str
-    表示用の名前です。
+    入力データセットの名前
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_type: InputDataType
@@ -1880,27 +1884,6 @@ Kyes of Dict
     AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
 * updated_datetime: str
     入力データセットの最終更新日時
-
-"""
-
-InputDataSetList = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* list: List[InputDataSet]
-    現在のページ番号に含まれる0件以上の入力データセットです。
-* page_no: float
-    現在のページ番号です。
-* total_page_no: float
-    指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる入力データが0件であっても、総ページ数は1となります。
-* total_count: float
-    検索結果の総件数。
-* over_limit: bool
-    検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
-    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
 
 """
 
@@ -1951,7 +1934,7 @@ Kyes of Dict
 * commenter_account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * annotation_id: str
-    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * data: InspectionData
@@ -2109,7 +2092,7 @@ InspectionStatisticsBreakdown = Dict[str, Any]
 Kyes of Dict
 
 * labels: dict(str, InspectionStatisticsPhrases)
-    ラベルごとの指摘集計結果。キーは`label_id`
+    ラベルに紐付いている検査コメントの集計結果。キーは`label_id`です。
 * no_label: InspectionStatisticsPhrases
     
 
@@ -2117,14 +2100,14 @@ Kyes of Dict
 
 InspectionStatisticsPhrases = Dict[str, Any]
 """
-ラベル外指摘の集計結果
+
 
 Kyes of Dict
 
 * phrases: dict(str, int)
-    定型指摘ごとの合計数。キーは定型指摘ID、値は指摘数
+    定型指摘ごとの検査コメントの個数。キーは定型指摘ID、値は検査コメント数です。
 * no_phrase: int
-    非定型指摘の合計数
+    定型指摘を使っていない検査コメントの個数
 
 """
 
@@ -2476,7 +2459,7 @@ Kyes of Dict
 * marker_id: str
     マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * title: str
-    
+    マーカーのタイトル
 * graph_type: GraphType
     
 * marked_at: str
@@ -2493,9 +2476,9 @@ Kyes of Dict
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * markers: List[Marker]
-    
+    マーカー一覧
 * updated_datetime: str
-    
+    更新日時
 
 """
 
@@ -2775,7 +2758,7 @@ OrganizationMemberList = Dict[str, Any]
 Kyes of Dict
 
 * list: List[OrganizationMember]
-    組織メンバの一覧
+    組織メンバーの一覧
 * page_no: float
     現在のページ番号です。
 * total_page_no: float
@@ -3032,14 +3015,14 @@ Kyes of Dict
 
 Point = Dict[str, Any]
 """
-座標
+点の座標値
 
 Kyes of Dict
 
 * x: int
-    
+    X座標の値[ピクセル]
 * y: int
-    
+    Y座標の値[ピクセル]
 
 """
 
@@ -3381,7 +3364,7 @@ Kyes of Dict
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * username: str
-    
+    ユーザー名
 * member_status: ProjectMemberStatus
     
 * member_role: ProjectMemberRole
@@ -3389,13 +3372,13 @@ Kyes of Dict
 * biography: str
     人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * updated_datetime: str
-    
+    更新日時
 * created_datetime: str
-    
+    作成日時
 * sampling_inspection_rate: int
-    メンバー固有の抜取検査率（0-100のパーセント値）。
+    抜取検査率（パーセント）
 * sampling_acceptance_rate: int
-    メンバー固有の抜取受入率（0-100のパーセント値）。
+    抜取受入率（パーセント）
 
 """
 
@@ -3406,9 +3389,9 @@ ProjectMemberList = Dict[str, Any]
 Kyes of Dict
 
 * list: List[ProjectMember]
-    
+    プロジェクトメンバーの一覧
 * page_no: float
-    現在のページ番号です。
+    現在のページ番号。
 * total_page_no: float
     指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトメンバーが0件であっても、総ページ数は1となります。
 * total_count: float
@@ -3431,9 +3414,9 @@ Kyes of Dict
 * member_role: ProjectMemberRole
     
 * sampling_inspection_rate: int
-    メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。
+    抜取検査率（パーセント）
 * sampling_acceptance_rate: int
-    メンバー固有の抜取受入率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取受入率を指定の値で上書きする。
+    抜取受入率（パーセント）
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
@@ -3441,7 +3424,9 @@ Kyes of Dict
 
 
 class ProjectMemberRole(Enum):
-    """ """
+    """
+    プロジェクトメンバーのロール * `owner` - オーナー * `worker` - アノテーター * `accepter` - チェッカー * `training_data_user` - アノテーションユーザー
+    """
 
     OWNER = "owner"
     WORKER = "worker"
@@ -3451,7 +3436,7 @@ class ProjectMemberRole(Enum):
 
 class ProjectMemberStatus(Enum):
     """
-    * `active` - プロジェクトメンバーとして有効で、プロジェクトを閲覧したり、権限があれば編集できます。 * `inactive` - 脱退したプロジェクトメンバーを表します。プロジェクトを閲覧できません。
+    プロジェクトメンバーの状態 * `active` - プロジェクトメンバーとして有効で、プロジェクトを閲覧したり、権限があれば編集できます。 * `inactive` - 脱退したプロジェクトメンバーを表します。プロジェクトを閲覧できません。
     """
 
     ACTIVE = "active"
@@ -3529,9 +3514,28 @@ ProjectTaskStatisticsHistory = Dict[str, Any]
 Kyes of Dict
 
 * date: str
-    
+    日付
 * tasks: List[ProjectTaskStatistics]
-    
+    タスクのフェーズごと、ステータスごとの情報
+
+"""
+
+PutAnnotationRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* details: List[AnnotationDetail]
+    矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
+* updated_datetime: str
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
@@ -3542,13 +3546,13 @@ PutInputDataSetRequest = Dict[str, Any]
 Kyes of Dict
 
 * input_data_set_name: str
-    表示用の名前です。
+    入力データセットの名前
 * input_data_type: InputDataType
     
 * private_storage_arn: str
     AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
 * last_updated_datetime: str
-    入力データセットの最終更新日時
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
@@ -3572,7 +3576,7 @@ PutMarkersRequest = Dict[str, Any]
 Kyes of Dict
 
 * markers: List[Marker]
-    
+    マーカー一覧
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
@@ -3763,10 +3767,10 @@ Resolution = Dict[str, Any]
 
 Kyes of Dict
 
-* width: float
-    
-* height: float
-    
+* width: int
+    画像の幅[ピクセル]
+* height: int
+    画像の高さ[ピクセル]
 
 """
 
@@ -3779,7 +3783,7 @@ Kyes of Dict
 * data: InspectionData
     
 * annotation_id: str
-    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * status: CommentStatus
@@ -3832,7 +3836,7 @@ Kyes of Dict
 * task_phase: TaskPhase
     
 * task_phase_stage: int
-    
+    タスクのフェーズのステージ番号
 * task_status: TaskStatus
     
 * input_data_id: str
@@ -3889,7 +3893,7 @@ SingleAnnotationDetail = Dict[str, Any]
 Kyes of Dict
 
 * annotation_id: str
-    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br> annotation_type が classification の場合は label_id と同じ値が格納されます。 
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_id: str
@@ -3903,11 +3907,11 @@ Kyes of Dict
 * url: str
     data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
 * additional_data_list: List[AdditionalData]
-    
+    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * created_datetime: str
-    
+    作成日時
 * updated_datetime: str
-    
+    更新日時
 
 """
 
@@ -3953,7 +3957,7 @@ Kyes of Dict
 * supplementary_data_name: str
     補助情報の名前
 * supplementary_data_path: str
-    補助情報の実体が存在するURLです。 補助情報の実体をAnnofabにアップロードする場合は、[一時データ保存先取得API](#operation/createTempPath)で取得した`path`を指定してください。  補助情報の実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。 補助情報の実体が、S3プライベートストレージに存在するファイルを補助情報として登録する場合は、[事前に認可の設定](/docs/faq/#m0b240)が必要です。 
+    補助情報の実体が存在するURLです。 補助情報の実体をAnnofabにアップロードする場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。  補助情報の実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。 補助情報の実体が、S3プライベートストレージに存在するファイルを補助情報として登録する場合は、[事前に認可の設定](/docs/faq/#m0b240)が必要です。 
 * supplementary_data_type: SupplementaryDataType
     
 * supplementary_data_number: int
@@ -3976,7 +3980,7 @@ class SupplementaryDataType(Enum):
 
 SystemMetadata = Dict[str, Any]
 """
-* `SystemMetadataImage`: 画像プロジェクトの場合。画像データ固有のメタデータが保存されます。 * `SystemMetadataMovie`: 動画プロジェクトの場合。動画データ固有のメタデータが保存されます。 * `SystemMetadataCustom`: カスタムプロジェクトの場合。カスタムデータ固有のメタデータが保存されます。  `metadata` プロパティとは違い、ユーザー側では値を編集できない読取専用のプロパティです。 
+Annofabが設定したメタデータです。 `metadata`プロパティとは違い、ユーザー側では値を編集できません。  * `SystemMetadataImage`: 画像プロジェクト用のメタデータ * `SystemMetadataMovie`: 動画プロジェクト用のメタデータ * `SystemMetadataCustom`: カスタムプロジェクト用のメタデータ 
 
 Kyes of Dict
 
@@ -3987,7 +3991,7 @@ Kyes of Dict
 * type: str
     `Custom`
 * input_duration: float
-    入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。 動画の長さが取得できなかった場合は値なし。 
+    動画の長さ[秒]。 動画の長さが取得できなかった場合は、設定されません。 
 
 """
 
@@ -4024,7 +4028,7 @@ SystemMetadataMovie = Dict[str, Any]
 Kyes of Dict
 
 * input_duration: float
-    入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。 動画の長さが取得できなかった場合は値なし。 
+    動画の長さ[秒]。 動画の長さが取得できなかった場合は、設定されません。 
 * type: str
     `Movie`
 
@@ -4445,7 +4449,7 @@ Kyes of Dict
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * date: str
-    
+    日付
 * phases: List[PhaseStatistics]
     タスクのフェーズごとの集計結果
 
@@ -4501,7 +4505,7 @@ TemporaryUrl = Dict[str, Any]
 Kyes of Dict
 
 * url: str
-    このURLは発行から1時間経過すると無効になります。 URLを構成するドメイン、パス、クエリパラメータなどが変更になることがあります。 
+    このURLは発行から1時間経過すると無効になります。 
 
 """
 
@@ -4751,13 +4755,13 @@ Kyes of Dict
 * date: str
     
 * by_tasks: List[WorktimeStatisticsItem]
-    タスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+    タスクごとに計算した「画像1枚あたりの作業時間平均」の統計（動画プロジェクトの場合は空リスト）
 * by_inputs: List[WorktimeStatisticsItem]
     画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
 * by_minutes: List[WorktimeStatisticsItem]
     動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
 * accounts: List[AccountWorktimeStatistics]
-    ユーザごとの作業時間情報
+    ユーザーごとの作業時間情報
 
 """
 
@@ -4796,13 +4800,13 @@ WorktimeStatisticsData = Dict[str, Any]
 Kyes of Dict
 
 * date: str
-    
+    日付
 * grouped_by_input: List[WorktimeStatisticsItem]
-    ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+    ユーザーごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
 * grouped_by_task: List[WorktimeStatisticsItem]
-    ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+    ユーザーごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
 * grouped_by_minute: List[WorktimeStatisticsItem]
-    ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
+    ユーザーごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
 
 """
 
@@ -4815,7 +4819,7 @@ Kyes of Dict
 * phase: TaskPhase
     
 * histogram: List[HistogramItem]
-    
+    ヒストグラム情報
 * average: str
     作業時間の平均（ISO 8601 duration）
 * standard_deviation: str

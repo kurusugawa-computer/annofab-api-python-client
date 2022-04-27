@@ -48,7 +48,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectAccepter
 
 
-        複数のアノテーションを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。  **現時点で、このAPIは複数のアノテーションを修正するためのもので、新しいアノテーションを作成することはできません**。 新しいアノテーションを更新や削除の対象に指定した場合、無視されます。  既に作成済みのアノテーションのうち、リクエストボディの配列に含まれないアノテーションは更新されません。  更新対象のアノテーションのうち、属性配列に含まれない属性は更新されません。  更新対象のアノテーションのラベルを変更する場合、異なるアノテーション種別のラベルに変更することはできません。 また、変更後のラベルに含まれない属性は削除されます。  画像全体のアノテーションは、他のラベルに変更することはできません。  塗りつぶしv2アノテーションは、1ラベル1アノテーションの制約のため、他の塗りつぶしv2ラベルに変更することはできません。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。  受入が完了しているタスクのアノテーション更新を含む場合、オーナー以上の権限が必要になります。
+        複数のアノテーションを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、「更新」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。 これら操作オブジェクトを複数含めることで、1つのリクエストで複数の更新や削除ができます。  APIの制約は以下の通りです。 * アノテーションラベルの以下の変更はできない   * 異なるアノテーションの種類のラベルへの変更   * 「全体」アノテーションラベルの変更   * 「塗りつぶしv2」アノテーションラベルの変更 * 受入完了タスクのアノテーションは、プロジェクトオーナーロールを持つユーザーのみ更新/削除できる。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -71,14 +71,14 @@ class AbstractAnnofabApi(abc.ABC):
     def get_annotation(
         self, project_id: str, task_id: str, input_data_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """タスク-入力データのSimpleアノテーション一括取得
+        """Simpleアノテーションの取得
         https://annofab.com/docs/api/#operation/getAnnotation
 
 
         authorizations: AllProjectMember
 
 
-        指定したタスク - 入力データにつけられたアノテーションを一括で取得します。 Simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。  なお、プロジェクト全体のアノテーションを一括で取得したい場合には、 [getAnnotationArchive](#operation/getAnnotationArchive) APIを使用することもできます。
+        Simpleアノテーションを取得します。  [getAnnotationArchive](#operation/getAnnotationArchive) APIでダウンロードできるSimpleアノテーションZIPの一部を、取得することができます。  **注意:** このAPIでは、塗りつぶし画像をダウンロードするためのURLを取得できません。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -104,7 +104,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーション（Simple版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。 アノテーションZIPを更新中の場合は409エラーになります。  SimpleアノテーションZIPのデータ構造については、 [Simple Annotation ZIP](#section/Simple-Annotation-ZIP) を参照ください。  なお、特定のタスクのSimpleアノテーションを取得したい場合には、 [getAnnotation](#operation/getAnnotation) APIを使用することもできます。
+        SimpleアノテーションZIPをダウンロードするための、認証済み一時URLを取得します。 取得したURLは1時間で失効します。  アノテーションZIPの更新中に、このAPIを実行すると409エラーが発生します。  SimpleアノテーションZIPのデータ構造については、[Simple Annotation ZIP](#section/Simple-Annotation-ZIP)を参照ください。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -130,17 +130,17 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定したタスク-入力データにつけられたアノテーションを一括で取得します。
+        アノテーションを一括で取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
-                aggregate_by_task_and_input (bool):  trueを指定した場合に「タスクIDと入力IDの組」ごとに検索結果を集計するようにする。
-                no_aggregate_label_and_input (bool):  trueを指定した場合、ラベルIDによるアノテーション検索数の集約結果、および属性IDによるアノテーション検索数の集約結果を取得しなくなります。  集約計算は時間がかかる処理であるため、アノテーション件数が多い場合はアノテーション検索が遅くなる場合がありますが、 このパラメーターをtrueに指定することで集約計算をおこなわなくなるため、アノテーション検索が速くなる可能性があります。
+                aggregate_by_task_and_input (bool):  `true`を指定すると、「タスクIDと入力データIDの組」ごとに検索結果を集計します。
+                no_aggregate_label_and_input (bool):  `true`を指定すると、ラベルIDによるアノテーション検索数の集約結果、および属性IDによるアノテーション検索数の集約結果を取得しません。  このパラメーターを`true`に指定することで集約計算は行われなくなるので、アノテーションの検索が速くなる可能性があります。
                 query (str):  絞り込み条件([AnnotationQuery](#section/AnnotationQuery))をJSON形式で表した文字列。
-                sort (str):  ソート順の指定。 使用可能キーはtask_id, input_data_id, detail.annotation_id, detail.account_id, detail.label_id, detail.data_holding_type, detail.created_datetime, detail.updated_datetimeのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。 複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。
+                sort (str):  ソート順の指定。 以下のキーを使用できます。 * `task_id` * `input_data_id` * `detail.annotation_id` * `detail.account_id` * `detail.label_id` * `detail.data_holding_type` * `detail.created_datetime` * `detail.updated_datetime`   キーの先頭に`-`を付けると、降順でソートされます。  `,`でキーを区切ると、複数のキーでソートされます。先頭のキーから順に優先順位が割り振られます。
 
         Returns:
             Tuple[AnnotationList, requests.Response]
@@ -159,11 +159,12 @@ class AbstractAnnofabApi(abc.ABC):
         """FullアノテーションZIP取得
         https://annofab.com/docs/api/#operation/getArchiveFullWithProId
 
+        .. deprecated:: X
 
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーション（Full版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。 アノテーションZIPを更新中の場合は409エラーになります。  FullアノテーションZIPのデータ構造については、 [Full Annotation ZIP](#section/Full-Annotation-ZIP) を参照ください。
+        FullアノテーションZIPをダウンロードするための、認証済み一時URLを取得します。 取得したURLは1時間で失効します。  アノテーションZIPの更新中に、このAPIを実行すると409エラーが発生します。  FullアノテーションZIPのデータ構造については、[Full Annotation ZIP](#section/Full-Annotation-ZIP)を参照ください。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -173,6 +174,11 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
+        warnings.warn(
+            "annofabapi.AnnofabApi.get_archive_full_with_pro_id() is deprecated and will be removed.",
+            FutureWarning,
+            stacklevel=2,
+        )
         url_path = f"/projects/{project_id}/archive/full"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
@@ -182,14 +188,14 @@ class AbstractAnnofabApi(abc.ABC):
     def get_editor_annotation(
         self, project_id: str, task_id: str, input_data_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """タスク-入力データのアノテーション一括取得
+        """アノテーションの取得
         https://annofab.com/docs/api/#operation/getEditorAnnotation
 
 
         authorizations: AllProjectMember
 
 
-        [putAnnotation](#operation/putAnnotation)が要求する構造のアノテーションを取得します。 このAPIは、[putAnnotation](#operation/putAnnotation)をより利用しやすくする目的で提供しています。 機械学習などで利用する成果物としてのアノテーションを取得するには、以下をご利用いただけます。  * [getAnnotation](#operation/getAnnotation): 特定のタスク - 入力データのアノテーション取得 * [getAnnotationArchive](#operation/getAnnotationArchive): プロジェクト全体のアノテーション（ZIP）
+        アノテーションを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -219,7 +225,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        プロジェクト内のアノテーションZIP（Simple版とFull版の両方）の更新を開始します。 ZIPの更新は、データ量に応じて数分〜数十分かかります。  アノテーションZIPは毎日AM 03:00 JSTごろに自動更新されますが、本APIを用いると、自動更新を待たずに更新を要求できます。  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-annotation`）。
+        アノテーションZIPの更新を開始します。 アノテーションZIPの更新は、データ量によっては数十分以上かかる場合もあります。  アノテーションZIPは毎日AM03:00(JST)頃に自動更新されますが、本APIを用いると、自動更新を待たずにアノテーションZIPの更新を要求できます。  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-annotation`）。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -238,21 +244,21 @@ class AbstractAnnofabApi(abc.ABC):
     def put_annotation(
         self, project_id: str, task_id: str, input_data_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """タスク-入力データのアノテーション更新
+        """アノテーション更新
         https://annofab.com/docs/api/#operation/putAnnotation
 
 
         authorizations: AllProjectMember
 
 
-        「過去に誰にも割り当てられていないタスクに含まれる入力データ」に限り、プロジェクトオーナーであればアノテーションを更新できます。 この挙動は、[Annofab外部で作成されたアノテーションをインポート](/docs/tutorial/tutorial-ex-importing-annotation.html) する目的にも利用できます。  １度でも誰かに割り当てられたタスクは、タスクの現在の担当者であればアノテーションを更新できます。 タスクの現在の担当者でない場合、エラーになります。 この制限は、アノテーション作業中の予期せぬ同時編集を防ぐためです。  `is_protected`（保護） を `true` にすることで、アノテーションをアノテーションエディタ上での削除から保護できます。 属性の変更もさせたくない場合は、アノテーション仕様で特定の属性を読取専用にすることで保護できます。保護は、  * 外部からインポートしたアノテーション * 別プロジェクトからコピーしたアノテーション  などを誤って削除したくないときに便利です。 `is_protected`は、プロジェクトオーナーのみ変更可能です。  なお、本APIでは `is_protected` によらず、更新や削除が可能です。
+        アノテーションを更新します。  APIを実行できるユーザーは、以下の通りです。 * 過去に誰にも割り当てられていないタスク：プロジェクトオーナーロールを持つユーザー * 過去に誰かに割り当てられたことがあるタスク：タスクの現在の担当者  ただし、`is_protected`は、プロジェクトオーナーロールを持つユーザーのみ変更可能です。
 
         Args:
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
             request_body (Any): Request Body
-                annotation (Annotation):  (required)
+                put_annotation_request (PutAnnotationRequest):  (required)
 
         Returns:
             Tuple[Annotation, requests.Response]
@@ -443,14 +449,14 @@ class AbstractAnnofabApi(abc.ABC):
     def batch_update_inputs(
         self, project_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """入力データ一括更新
+        """入力データの一括更新
         https://annofab.com/docs/api/#operation/batchUpdateInputs
 
 
         authorizations: ProjectOwner
 
 
-        入力データを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、現在「削除」の1通りのみがあります。 これら操作オブジェクトを複数含めることで、1つのリクエストで複数の削除ができます。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。
+        入力データを一括更新します。  リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。 操作オブジェクトには、現在「削除」しかありません。 これら操作オブジェクトを複数含めることで、1個のリクエストで複数の削除ができます。  複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -470,22 +476,18 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def create_temp_path(
-        self, project_id: str, header_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
-        """一時データ保存先取得
+    def create_temp_path(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+        """アップロード先URLの取得
         https://annofab.com/docs/api/#operation/createTempPath
 
 
         authorizations: AllProjectMember
 
 
-        「複数の入力データを圧縮したZIPファイル」や「4MBを超える画像」などをAnnofabに一時的に保存するための、URLと登録用データパスを発行します。  このAPIと他のAPIを以下に示すように使うことで、ZIPファイルなどをAFにアップロードできます。   1. 本APIを実行して、URLを取得する。   * `curl -X POST -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'` 2. 1で取得したURLに、一時保存したいファイルをPUTする。   * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.zip 'https://{発行されたURL}'` 3. 1で取得した登録用データパスを [入力データ登録API](#operation/putInputData)のリクエストボディ `input_data_path` に指定する。   * `curl -X PUT -H 'Content-Type: text/json' -d '{\"input_data_name\":\"{表示名}\", \"input_data_path\":\"{登録用データパス}\" }' 'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}'`  ここで、1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。 ZIPファイルの場合は `application/zip` 、画像ファイルの場合は `image/png` など、適切な Content-Type を指定します。  登録するファイルはどのような内容であれ、アップロードから24時間経過すると削除されます。 したがって、ZIP圧縮した入力データを登録する場合は、URL発行から24時間以内に完了してください。
+        Annofabにファイルをアップロードするのに必要な情報を取得します。  このAPIは、Annofabにファイルをアップロードして、入力データや補助情報を作成する際に使用します。  Annofabにファイルをアップロードして入力データを作成する手順は、以下の通りです。  1. APIを実行して、ファイルのアップロードに必要な情報を取得する。  ``` $ curl --request POST 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path' {   \"url\": \"https://s3.<REGION>.amazonaws.com/<ANNOFAB-TEMP-BUCKET>/<UUID>/<UUID>?param1=...&param2=...\",    \"path\": \"s3://<ANNOFAB-TEMPORARY-BUCKET-NAME>/<UUID>/<UUID>\" } ```  2. 手順1で取得した`url`に対して、HTTP PUTメソッドで、ファイルをアップロードする。  ``` $ curl --request PUT --header 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.zip 'https://{手順1で取得したurl}' ```  3. 手順1で取得した`path`を、[putInputData](#operation/putInputData) APIのリクエストボディ`input_data_path`に指定して、putInputData APIを実行する。  ``` $ curl --request PUT --header 'Content-Type: text/json' \\  --data '{\"input_data_name\":\"{input_data_name}\", \"input_data_path\":\"{手順1で取得したpath}\" }' \\  'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}' ```  #### 注意事項 * 手順2を実行してから24時間以内に、手順3の操作を完了させてください。手順2でアップロードしたファイルは、24時間経過すると削除されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
-            header_params (Dict[str, Any]): Header Parameters
-                content_type (str):  アップロードしたいファイルの Content-Type を指定します。
 
         Returns:
             Tuple[DataPath, requests.Response]
@@ -494,21 +496,19 @@ class AbstractAnnofabApi(abc.ABC):
         """
         url_path = f"/projects/{project_id}/create-temp-path"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
-            "header_params": header_params,
-        }
+        keyword_params: Dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def delete_input_data(self, project_id: str, input_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """入力データ削除
+        """入力データの削除
         https://annofab.com/docs/api/#operation/deleteInputData
 
 
         authorizations: ProjectOwner
 
 
-        入力データを削除します。  入力データの実体ファイルが Annofab のストレージに存在するものであれば、実体ファイルも削除されます。 お客様の管理するプライベートストレージに存在するものであれば、実体ファイルは削除されません。
+        入力データを削除します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -526,14 +526,14 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_input_data(self, project_id: str, input_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """入力データ取得
+        """入力データの取得
         https://annofab.com/docs/api/#operation/getInputData
 
 
         authorizations: AllProjectMember
 
 
-        指定された入力データを取得します。  この API の返す入力データは入力データ名などの項目を含む JSON であり、実体のファイル（画像や動画など）ではありません。 実体ファイルにアクセスする方法は非公開です（詳細を希望される場合はお問い合わせください）。
+        入力データを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -553,24 +553,24 @@ class AbstractAnnofabApi(abc.ABC):
     def get_input_data_list(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """入力データ一括取得
+        """入力データの一括取得
         https://annofab.com/docs/api/#operation/getInputDataList
 
 
         authorizations: AllProjectMember
 
 
-        指定されたプロジェクトの入力データを検索します。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。
+        入力データを一括で取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                input_data_id (str):  入力データIDでの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。
-                input_data_name (str):  入力データ名での部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。
-                input_data_path (str):  入力データパスでの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。
-                task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。条件に合致した先頭100件のタスクに使われている入力データを検索します。
-                from (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
-                to (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
+                input_data_id (str):  入力データIDでの部分一致検索で使用。大文字小文字は区別しません。
+                input_data_name (str):  入力データ名での部分一致検索で使用。大文字小文字は区別しません。
+                input_data_path (str):  入力データパスでの部分一致検索で使用。
+                task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。大文字小文字は区別しません。条件に合致した先頭100件のタスクに使われている入力データを検索します。
+                from (str):  指定した日時以降に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
+                to (str):  指定した日時以前に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
 
@@ -590,14 +590,14 @@ class AbstractAnnofabApi(abc.ABC):
     def put_input_data(
         self, project_id: str, input_data_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """入力データ更新
+        """入力データの作成/更新
         https://annofab.com/docs/api/#operation/putInputData
 
 
         authorizations: ProjectOwner
 
 
-        入力データ（画像プロジェクトなら画像、動画プロジェクトなら動画や時系列データ）を登録します。  ファイルの登録には、[アップロード用一時データ保存先作成API](#operation/createTempPath) を組み合わせて使用します。  ## ZIPでまとめてアップロード  画像プロジェクトの場合、複数の画像ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> アノテーション作業生産性を高めるため、画像は「長辺4096px以内」かつ「4MB以内」になるよう縮小されます。<br> 作成されるアノテーションは、元の解像度でつけた場合相当に自動で復元されます。  動画プロジェクトの場合、複数の動画ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br> また、複数のストリーミング形式の動画をアップロードすることもできます。<br> この場合はZIP形式必須で、同一のZIPファイル内にm3u8ファイルとtsファイルを両方含めてください。<br> なお、このm3u8ファイルに記述された相対パスでtsファイルが参照可能である必要があります。  ZIPファイルを登録するとバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ### ディレクトリ例 ```   hoge.zip/     hoge.ts     fuga/       foo.m3u8(hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)       foo1.ts       foo2.ts     piyo1/       piyo2/         bar.ts       bar.m3u8(hoge.ts, piyo1/piyo2/bar.tsを参照) ```  ## 注意事項  * `input_data_path` のスキーマが `https` の場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます * `input_data_path` のスキーマが `s3` かつ入力データがtsファイルの場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください     * `input_data_name`  の値が優先されます * ZIPでまとめてアップロード時、ZIPファイル内の次の名前のファイルは入力データとして登録されません     * `Thumbs.db`     * `__MACOSX`     * `.DS_Store`     * `desktop.ini`     * 上記以外の、ファイル名先頭が `.`（ドット）で始まるファイル * ZIPでまとめてアップロード時、ZIPファイル内の `.`（ドット）から始まるフォルダ以下のファイルは入力データとして登録されません
+        入力データを作成または更新します。  Annofabにファイルをアップロードして入力データを作成する場合は、事前に[createTempPath](#operation/createTempPath) APIを実行してください。  ### 画像のリサイズ Annofabにアップロードした画像は、自動的に「長辺4096px以内」になるよう縮小されます。 アノテーションの座標値は、縮小前の画像サイズに対応する値に復元されます。  ### ZIPファイルで入力データをまとめて作成する 複数のファイルをZIPで圧縮してAnnofabにアップロードすると、入力データをまとめて作成できます。  パスパラメータの`input_data_id`、リクエストボディの`input_data_name`には、適当な値を指定してください。  ZIPファイルを入力データとして登録すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ZIPファイルの制限事項は、以下の通りです。 * アップロードできるZIPファイルのサイズは、最大5GBです。 * UTF-8エンコーディングのみ対応しています。 * ZIPファイル内の次の名前のファイルは、入力データとして登録されません。     * `Thumbs.db`     * `__MACOSX`     * `.DS_Store`     * `desktop.ini`     * 上記以外の、ファイル名先頭が `.`（ドット）で始まるファイル * ZIPファイル内の `.`（ドット）から始まるフォルダ以下のファイルは、入力データとして登録されません。  ### ストリーミング形式の動画を入力データとして登録する ストリーミング形式の動画をAnnofabにアップロードして、入力データとして登録できます。  ただし、ZIPで圧縮する必要があります。ZIPファイルには、m3u8ファイルとtsファイルの両方を含めてください。 m3u8ファイルに記述された相対パスでtsファイルは、参照可能である必要があります。  以下に、フォルダ構成のサンプルを記載します。  ```   hoge.zip/   ├── hoge.ts   ├── fuga/   │   ├── foo.m3u8    (hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)   │   ├── foo1.ts   │   ├── foo2.ts   │   └── lib   ├── piyo1/   │   ├── piyo2   │   │   ├── bar.ts   │   ├── bar.m3u8    (hoge.ts, piyo1/piyo2/bar.tsを参照) ```  ### 注意事項 * `input_data_path`のスキーマが`https`の場合、`input_data_name`もしくは`input_data_path`の末尾にファイルの拡張子を含むようにしてください。 Annofabは拡張子からファイル形式を識別します。`input_data_name`と`input_data_path`の両方に拡張子が含まれている場合は、`input_data_name`の拡張子がファイル形式の識別に使われます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -784,7 +784,7 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_instruction_image_url_for_put(
-        self, project_id: str, image_id: str, header_params: Optional[Dict[str, Any]] = None, **kwargs
+        self, project_id: str, image_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """作業ガイドの画像登録・更新用URL取得
         https://annofab.com/docs/api/#operation/getInstructionImageUrlForPut
@@ -793,13 +793,11 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectAccepter, ProjectOwner
 
 
-        プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。  作業ガイド画像の登録/更新方法は以下の通りです。 1. APIを実行して、ファイルアップロード用のURLを取得する。  ``` $ curl -X GET -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/instruction-images/{image_id}/put-url' ```  2. 手順1で取得したファイルアップロード用のURLに対して、登録/更新する作業ガイド画像ファイル(`hoge.jpg`)をPUTする。  ``` $ curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.jpg '{ファイルアップロード用のURL}' ```  手順1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。
+        プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  作業ガイド画像の登録/更新方法は以下の通りです。 1. APIを実行して、ファイルアップロード用のURLを取得する。  ``` $ curl -X GET -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/instruction-images/{image_id}/put-url' ```  2. 手順1で取得したファイルアップロード用のURLに対して、登録/更新する作業ガイド画像ファイル(`hoge.jpg`)をPUTする。  ``` $ curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.jpg '{ファイルアップロード用のURL}' ```
 
         Args:
             project_id (str):  プロジェクトID (required)
             image_id (str):  作業ガイド画像ID (required)
-            header_params (Dict[str, Any]): Header Parameters
-                content_type (str):  登録する画像ファイルの Content-Type を指定します。
 
         Returns:
             Tuple[InstructionImagePath, requests.Response]
@@ -808,9 +806,7 @@ class AbstractAnnofabApi(abc.ABC):
         """
         url_path = f"/projects/{project_id}/instruction-images/{image_id}/put-url"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
-            "header_params": header_params,
-        }
+        keyword_params: Dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
@@ -1028,7 +1024,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        備考: システム管理者が自身が所属しないプロジェクトに対して実行した場合、オーナーであるというダミーのプロジェクトメンバー情報が取得できます。ダミーには更新日は含まれません。
+        自分のプロジェクトメンバー情報を取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1081,7 +1077,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        API リクエストユーザーが所属するすべてのプロジェクトにおける、自身がどのようなメンバー設定で所属しているかをまとめて取得します。
+        自分が所属するプロジェクトのメンバー情報を一括で取得します。
 
         Args:
 
@@ -1392,14 +1388,14 @@ class AbstractAnnofabApi(abc.ABC):
     def delete_organization_input_data(
         self, organization_name: str, input_data_set_id: str, input_data_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """入力データセットの入力データ削除
+        """入力データセット内の入力データの削除
         https://annofab.com/docs/api/#operation/deleteOrganizationInputData
 
 
         authorizations: OrganizationAdministrator, ProjectOwner
 
 
-        指定した組織の[入力データセット](#tag/af-organization-input)内で指定した入力データ情報を削除します。
+        入力データセットに含まれる入力データ情報を削除します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1427,7 +1423,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        指定した組織の[入力データセット](#tag/af-organization-input)の情報を取得します。 組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセットのみが取得できます。
+        入力データセットを取得します。  組織オーナーまたは組織管理者でない場合は、自身が所属するプロジェクトの入力データセットのみが取得できます。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1445,20 +1441,20 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_input_data_set_list(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """入力データセット一括取得
+        """入力データセットの一括取得
         https://annofab.com/docs/api/#operation/getInputDataSetList
 
 
         authorizations: OrganizationAdministrator, OrganizationOwner
 
 
-        指定した組織の[入力データセット](#tag/af-organization-input)を一括で取得します。
+        入力データセットを一括で取得します。
 
         Args:
             organization_name (str):  組織名 (required)
 
         Returns:
-            Tuple[InputDataSetList, requests.Response]
+            Tuple[List[InputDataSet], requests.Response]
 
 
         """
@@ -1471,14 +1467,14 @@ class AbstractAnnofabApi(abc.ABC):
     def get_organization_input_data(
         self, organization_name: str, input_data_set_id: str, input_data_id: str, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """入力データセットの入力データ取得
+        """入力データセット内の入力データの取得
         https://annofab.com/docs/api/#operation/getOrganizationInputData
 
 
         authorizations: AllOrganizationMember
 
 
-        指定した組織の[入力データセット](#tag/af-organization-input)内で指定した入力データ情報を取得します。 組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。
+        入力データセットに含まれる入力データを取得します。  組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1499,14 +1495,14 @@ class AbstractAnnofabApi(abc.ABC):
     def get_organization_input_data_list(
         self, organization_name: str, input_data_set_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """入力データセット内の入力データ一括取得
+        """入力データセット内の入力データの一括取得
         https://annofab.com/docs/api/#operation/getOrganizationInputDataList
 
 
         authorizations: AllOrganizationMember
 
 
-        指定された入力データセットの入力データを検索します。 組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。
+        入力データセットに含まれる入力データを一括で取得します。  組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1516,8 +1512,8 @@ class AbstractAnnofabApi(abc.ABC):
                 input_data_name (str):  入力データ名での部分一致検索で使用。1文字以上あれば使用します。
                 input_data_path (str):  入力データパスでの部分一致検索で使用。1文字以上あれば使用します。
                 task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。条件に合致した先頭100件のタスクに使われている入力データを検索します。
-                from (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
-                to (str):  更新日時での範囲検索で使用（ISO 8601 拡張形式）
+                from (str):  指定した日時以降に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
+                to (str):  指定した日時以前に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
 
@@ -1537,14 +1533,14 @@ class AbstractAnnofabApi(abc.ABC):
     def put_input_data_set(
         self, organization_name: str, input_data_set_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """入力データセット新規作成/更新
+        """入力データセットの作成/更新
         https://annofab.com/docs/api/#operation/putInputDataSet
 
 
         authorizations: OrganizationAdministrator, OrganizationOwner
 
 
-        指定した組織の[入力データセット](#tag/af-organization-input)の情報を新規登録/更新します。
+        入力データセットを作成または更新します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1611,7 +1607,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministrator
 
 
-        組織メンバーを削除します。削除された組織メンバの`status`は`inactive`になります。
+        組織メンバーを削除します。削除された組織メンバーの`status`は`inactive`になります。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -2214,11 +2210,11 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        プロジェクトの特定のメンバーを取得します。
+        プロジェクトメンバーを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
-            user_id (str):  アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。 (required)
+            user_id (str):  ユーザーID (required)
 
         Returns:
             Tuple[ProjectMember, requests.Response]
@@ -2241,7 +2237,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        備考: 組織に加入していないメンバーも取得できることがあります（[プロジェクト更新](#operation/putProject)でプロジェクトの組織移動をおこなった場合）。
+        プロジェクトメンバを一括で取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2271,11 +2267,11 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        プロジェクトにメンバーを新規に追加、または存在するメンバーの設定を変更します。  メンバーとなるユーザーは、作成するプロジェクトをひもづける組織に加入している必要があります。
+        プロジェクトにメンバーを新規に追加、または存在するメンバーの設定を変更します。
 
         Args:
             project_id (str):  プロジェクトID (required)
-            user_id (str):  アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。 (required)
+            user_id (str):  ユーザーID (required)
             request_body (Any): Request Body
                 project_member_request (ProjectMemberRequest):  (required)
 
@@ -2300,14 +2296,14 @@ class AbstractAnnofabApi(abc.ABC):
     def get_account_daily_statistics(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """ユーザー別タスク集計取得
+        """メンバー別作業時間の取得
         https://annofab.com/docs/api/#operation/getAccountDailyStatistics
 
 
         authorizations: AllProjectMember
 
 
-        指定した期間の [ユーザー別タスク集計データ](#section/ArrayOfProjectAccountStatistics) を取得できるAPI。取得期間は最大3か月です。
+        プロジェクトメンバーごとの作業時間やタスクの提出回数を取得します。  * 作業時間 * 教師付フェーズのタスクを提出した回数、または検査/受入フェーズのタスクを合格/差戻にした回数 * 教師付フェーズを担当して提出したタスクが差し戻された回数、または受入フェーズを担当して合格にしたタスクが受入完了状態を取り消された回数  取得期間は最大3か月です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2331,14 +2327,14 @@ class AbstractAnnofabApi(abc.ABC):
     def get_inspection_daily_statistics(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """検査コメント集計取得
+        """ラベル別検査コメント数の取得
         https://annofab.com/docs/api/#operation/getInspectionDailyStatistics
 
 
         authorizations: AllProjectMember
 
 
-        指定した期間の [検査コメント集計データ](#section/ArrayOfInspectionStatistics) を取得できるAPI。取得期間は最大3か月です。
+        ラベルごとの検査コメント数を取得します。  取得期間は最大3か月です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2360,7 +2356,7 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_label_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """ラベル別アノテーション数集計取得
+        """ラベル別アノテーション数の取得
         https://annofab.com/docs/api/#operation/getLabelStatistics
 
 
@@ -2391,7 +2387,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        指定されたプロジェクトの統計グラフマーカーをすべて取得します。
+        統計グラフマーカーをすべて取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2410,14 +2406,14 @@ class AbstractAnnofabApi(abc.ABC):
     def get_phase_daily_statistics(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """フェーズ別タスク集計取得
+        """フェーズ別作業時間の取得
         https://annofab.com/docs/api/#operation/getPhaseDailyStatistics
 
 
         authorizations: AllProjectMember
 
 
-        指定した期間の [フェーズ別タスク集計データ](#section/ArrayOfTaskPhaseStatistics) を取得できるAPI。取得期間は最大3か月です。
+        フェーズごとの累積作業時間を取得します。  取得期間は最大3か月です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2439,14 +2435,14 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_statistics_available_dates(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
-        """プロジェクト統計記録期間取得
+        """統計情報の期間の取得
         https://annofab.com/docs/api/#operation/getStatisticsAvailableDates
 
 
         authorizations: AllProjectMember
 
 
-        プロジェクトの統計情報が記録されている日付期間を取得します。  日付期間とは、from（日付）からto（日付）までの連続する日付を指します。fromとtoの日付は期間に含みます。  プロジェクトが一度も停止されていない場合、プロジェクト作成日から昨日までの日付期間が一つだけ返ります。  プロジェクトを停止した場合、プロジェクトの作成日から停止した日までの日付期間が一つだけ返ります。  プロジェクトを再開した場合、統計情報が記録されない（プロジェクトの停止）期間を除いた日付期間が複数返ります。以降、プロジェクトの停止と再開を繰り返すたびに結果の日付期間が増えていきます。
+        統計情報が存在する期間を取得します。  たとえば、プロジェクトの状態が以下のように変化したとします。  1. 2022/01/01にプロジェクトを作成した。 2. 2022/02/01にプロジェクトの状態を停止中にした。 3. 2022/03/01にプロジェクトの状態を進行中にした。 4. 2022/04/01にプロジェクトの状態を停止中にした。  このAPIを実行すると、以下のJSONが取得されます。  ``` [   {\"from\":\"2022-01-01\", \"to\":\"2022-02-01\"},   {\"from\":\"2022-03-01\", \"to\":\"2022-04-01\"} ] ```  プロジェクトを停止中にすると統計情報は記録されないので、統計情報が存在する期間は複数になります。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2465,14 +2461,14 @@ class AbstractAnnofabApi(abc.ABC):
     def get_task_daily_statistics(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """タスク集計取得
+        """フェーズ別タスク数の取得
         https://annofab.com/docs/api/#operation/getTaskDailyStatistics
 
 
         authorizations: AllProjectMember
 
 
-        指定した期間の [タスク集計データ](#section/ArrayOfProjectTaskStatisticsHistory) を取得できるAPI。取得期間は最大3か月です。
+        タスクのフェーズごと、タスクのステータスごとのタスク数などを取得します。  取得期間は最大3か月です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2496,14 +2492,14 @@ class AbstractAnnofabApi(abc.ABC):
     def get_worktime_daily_statistics(
         self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """プロジェクト単位のフェーズ別タスク集計取得
+        """単位あたり作業時間の取得
         https://annofab.com/docs/api/#operation/getWorktimeDailyStatistics
 
 
         authorizations: AllProjectMember
 
 
-        指定したプロジェクトのタスク作業時間集計データを指定した期間分取得できるAPI。取得期間は最大3か月です。
+        プロジェクトの単位あたり作業時間情報を取得します。  以下の作業時間情報を取得できます。 * タスク1個あたりの作業時間情報 * 画像1枚あたりの作業時間情報（画像プロジェクトのみ） * 動画1分あたりの作業時間情報（動画プロジェクトのみ）          取得期間は最大3か月です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2527,14 +2523,14 @@ class AbstractAnnofabApi(abc.ABC):
     def get_worktime_daily_statistics_by_account(
         self, project_id: str, account_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
-        """プロジェクトメンバー単位のフェーズ別タスク集計取得
+        """メンバーの単位あたり作業時間の取得
         https://annofab.com/docs/api/#operation/getWorktimeDailyStatisticsByAccount
 
 
         authorizations: AllProjectMember
 
 
-        指定したプロジェクトメンバーのタスク作業時間集計データを指定した期間分取得できるAPI。取得期間は最大3か月です。
+        プロジェクトメンバーの単位あたり作業時間情報を取得します。  以下の作業時間情報を取得できます。 * タスク1個あたりの作業時間情報 * 画像1枚あたりの作業時間情報（画像プロジェクトのみ） * 動画1分あたりの作業時間情報（動画プロジェクトのみ）          取得期間は最大3か月です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2566,7 +2562,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        指定されたプロジェクトの統計グラフマーカーを更新します。
+        統計グラフマーカーを更新します。
 
         Args:
             project_id (str):  プロジェクトID (required)

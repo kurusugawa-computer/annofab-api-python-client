@@ -39,11 +39,11 @@ class ProjectTaskStatistics(DataClassJsonMixin):
 class ProjectTaskStatisticsHistory(DataClassJsonMixin):
     """ """
 
-    date: Optional[str]
-    """"""
+    date: str
+    """日付"""
 
-    tasks: Optional[List[ProjectTaskStatistics]]
-    """"""
+    tasks: List[ProjectTaskStatistics]
+    """タスクのフェーズごと、ステータスごとの情報"""
 
 
 @dataclass
@@ -76,15 +76,13 @@ class ProjectAccountStatistics(DataClassJsonMixin):
 
 @dataclass
 class InspectionStatisticsPhrases(DataClassJsonMixin):
-    """
-    ラベル外指摘の集計結果
-    """
+    """ """
 
     phrases: Dict[str, int]
-    """定型指摘ごとの合計数。キーは定型指摘ID、値は指摘数"""
+    """定型指摘ごとの検査コメントの個数。キーは定型指摘ID、値は検査コメント数です。"""
 
     no_phrase: int
-    """非定型指摘の合計数"""
+    """定型指摘を使っていない検査コメントの個数"""
 
 
 @dataclass
@@ -94,7 +92,7 @@ class InspectionStatisticsBreakdown(DataClassJsonMixin):
     """
 
     labels: Dict[str, InspectionStatisticsPhrases]
-    """ラベルごとの指摘集計結果。キーは`label_id`"""
+    """ラベルに紐付いている検査コメントの集計結果。キーは`label_id`です。"""
 
     no_label: InspectionStatisticsPhrases
     """"""
@@ -133,7 +131,7 @@ class TaskPhaseStatistics(DataClassJsonMixin):
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     date: str
-    """"""
+    """日付"""
 
     phases: List[PhaseStatistics]
     """タスクのフェーズごとの集計結果"""
@@ -175,7 +173,7 @@ class WorktimeStatisticsItem(DataClassJsonMixin):
     """"""
 
     histogram: List[HistogramItem]
-    """"""
+    """ヒストグラム情報"""
 
     average: str
     """作業時間の平均（ISO 8601 duration）"""
@@ -192,13 +190,13 @@ class AccountWorktimeStatistics(DataClassJsonMixin):
     """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     by_tasks: List[WorktimeStatisticsItem]
-    """ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）"""
+    """タスクごとに計算した「画像1枚あたりの作業時間平均」の統計（動画プロジェクトの場合は空リスト）"""
 
     by_inputs: List[WorktimeStatisticsItem]
-    """ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）"""
+    """画像1枚あたりの作業時間情報（動画プロジェクトの場合は空リスト）"""
 
     by_minutes: List[WorktimeStatisticsItem]
-    """ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）"""
+    """動画1分あたりの作業時間情報（画像プロジェクトの場合は空リスト）"""
 
 
 @dataclass
@@ -212,7 +210,7 @@ class WorktimeStatistics(DataClassJsonMixin):
     """"""
 
     by_tasks: List[WorktimeStatisticsItem]
-    """タスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）"""
+    """タスクごとに計算した「画像1枚あたりの作業時間平均」の統計（動画プロジェクトの場合は空リスト）"""
 
     by_inputs: List[WorktimeStatisticsItem]
     """画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）"""
@@ -221,7 +219,7 @@ class WorktimeStatistics(DataClassJsonMixin):
     """動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）"""
 
     accounts: List[AccountWorktimeStatistics]
-    """ユーザごとの作業時間情報"""
+    """ユーザーごとの作業時間情報"""
 
 
 @dataclass
@@ -232,7 +230,7 @@ class Marker(DataClassJsonMixin):
     """マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     title: Optional[str]
-    """"""
+    """マーカーのタイトル"""
 
     graph_type: Optional[GraphType]
     """"""
@@ -245,11 +243,11 @@ class Marker(DataClassJsonMixin):
 class Markers(DataClassJsonMixin):
     """ """
 
-    project_id: Optional[str]
+    project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     markers: Optional[List[Marker]]
-    """"""
+    """マーカー一覧"""
 
     updated_datetime: Optional[str]
-    """"""
+    """更新日時"""

@@ -282,15 +282,18 @@ components:
     DateRange:
       type: object
       description: 日付の期間
+      required:
+        - from
+        - to
       properties:
         from:
           type: string
           format: date
-          description: 区間開始日（ISO 8601 拡張形式）
+          description: 期間の開始日（ISO 8601 拡張形式）
         to:
           type: string
           format: date
-          description: 区間終了日（ISO 8601 拡張形式）
+          description: 期間の終了日（ISO 8601 拡張形式）
     Message:
       type: object
       properties:
@@ -1161,8 +1164,9 @@ components:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
-        アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)<br>
-        annotation_type が classification の場合は label_id と同じ値が格納されます。
+        アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+
+        `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。
     InspectionId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -1616,9 +1620,12 @@ components:
         ジョブのステータス
     PostAnnotationArchiveUpdateResponse:
       type: object
+      required:
+        - job
       properties:
         job:
           $ref: "#/components/schemas/ProjectJobInfo"
+          description: 登録されたバックグラウンドジョブ
     PostProjectTasksUpdateResponse:
       required:
         - job
@@ -1815,7 +1822,7 @@ components:
           default: image
           description: |
             アノテーション対象の入力データの種類。[詳細はこちら](#section/InputDataType)を参照してください。
-            
+
             プロジェクトの作成時のみ指定可能です。更新時は無視されます。
         organization_name:
           type: string
@@ -1899,6 +1906,8 @@ components:
         - username
         - member_status
         - member_role
+        - created_datetime
+        - updated_datetime
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -1908,6 +1917,7 @@ components:
           $ref: "#/components/schemas/UserId"
         username:
           type: string
+          $ref: "#/components/schemas/Username"
         member_status:
           $ref: "#/components/schemas/ProjectMemberStatus"
         member_role:
@@ -1917,21 +1927,28 @@ components:
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
         created_datetime:
           type: string
           format: date-time
+          description: 作成日時
         sampling_inspection_rate:
-          description: メンバー固有の抜取検査率（0-100のパーセント値）。
+          description: 抜取検査率（パーセント）
           type: integer
+          minimum: 0
+          maximum: 100
         sampling_acceptance_rate:
-          description: メンバー固有の抜取受入率（0-100のパーセント値）。
+          description: 抜取受入率（パーセント）
           type: integer
+          minimum: 0
+          maximum: 100
     ProjectMemberStatus:
       type: string
       enum:
         - active
         - inactive
       description: |
+        プロジェクトメンバーの状態
         * `active` - プロジェクトメンバーとして有効で、プロジェクトを閲覧したり、権限があれば編集できます。
         * `inactive` - 脱退したプロジェクトメンバーを表します。プロジェクトを閲覧できません。
     ProjectMemberRole:
@@ -1941,28 +1958,46 @@ components:
         - worker
         - accepter
         - training_data_user
+      description: |
+        プロジェクトメンバーのロール
+        * `owner` - オーナー
+        * `worker` - アノテーター
+        * `accepter` - チェッカー
+        * `training_data_user` - アノテーションユーザー
     ProjectMemberRequest:
       type: object
+      required:
+        - member_status
+        - member_role
       properties:
         member_status:
           $ref: "#/components/schemas/ProjectMemberStatus"
         member_role:
           $ref: "#/components/schemas/ProjectMemberRole"
         sampling_inspection_rate:
-          description: メンバー固有の抜取検査率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取検査率を指定の値で上書きする。
+          description: 抜取検査率（パーセント）
           type: integer
+          minimum: 0
+          maximum: 100
         sampling_acceptance_rate:
-          description: メンバー固有の抜取受入率。0-100のパーセント値で指定する。値が指定された場合、プロジェクトの抜取受入率を指定の値で上書きする。
+          description: 抜取受入率（パーセント）
           type: integer
+          minimum: 0
+          maximum: 100
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
     ProjectTaskStatisticsHistory:
       type: object
+      required:
+        - date
+        - tasks
       properties:
         date:
           type: string
           format: date
+          description: 日付
         tasks:
+          description: タスクのフェーズごと、ステータスごとの情報
           type: array
           items:
             $ref: "#/components/schemas/ProjectTaskStatistics"
@@ -2141,13 +2176,14 @@ components:
         - no_label
       properties:
         labels:
-          description: ラベルごとの指摘集計結果。キーは`label_id`
+          description: ラベルに紐付いている検査コメントの集計結果。キーは`label_id`です。
           type: object
           additionalProperties: {
             $ref: "#/components/schemas/InspectionStatisticsPhrases"
           }
         no_label:
           $ref: "#/components/schemas/InspectionStatisticsPhrases"
+          description: ラベルに紐付いていない検査コメントの集計結果
     PatchTasksMetadataRequest:
       type: object
       description: |
@@ -2177,19 +2213,18 @@ components:
         ```
     InspectionStatisticsPhrases:
       type: object
-      description: ラベル外指摘の集計結果
       required:
         - phrases
         - no_phrase
       properties:
         phrases:
-          description: 定型指摘ごとの合計数。キーは定型指摘ID、値は指摘数
+          description: 定型指摘ごとの検査コメントの個数。キーは定型指摘ID、値は検査コメント数です。
           type: object
           additionalProperties: {
             type: integer
           }
         no_phrase:
-          description: 非定型指摘の合計数
+          description: 定型指摘を使っていない検査コメントの個数
           type: integer
     TaskPhaseStatistics:
       type: object
@@ -2203,6 +2238,7 @@ components:
         date:
           type: string
           format: date
+          description: 日付
         phases:
           description: タスクのフェーズごとの集計結果
           type: array
@@ -2254,7 +2290,7 @@ components:
           format: date
         by_tasks:
           type: array
-          description: タスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+          description: タスクごとに計算した「画像1枚あたりの作業時間平均」の統計（動画プロジェクトの場合は空リスト）
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
         by_inputs:
@@ -2269,7 +2305,7 @@ components:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
         accounts:
           type: array
-          description: ユーザごとの作業時間情報
+          description: ユーザーごとの作業時間情報
           items:
             $ref: "#/components/schemas/AccountWorktimeStatistics"
     WorktimeStatisticsByAccount:
@@ -2312,18 +2348,19 @@ components:
         date:
           type: string
           format: date
+          description: 日付
         grouped_by_input:
-          description: ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+          description: ユーザーごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
           type: array
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
         grouped_by_task:
-          description: ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+          description: ユーザーごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
           type: array
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
         grouped_by_minute:
-          description: ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
+          description: ユーザーごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
           type: array
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
@@ -2338,6 +2375,7 @@ components:
         phase:
           $ref: "#/components/schemas/TaskPhase"
         histogram:
+          description: ヒストグラム情報
           type: array
           items:
             $ref: "#/components/schemas/HistogramItem"
@@ -2373,17 +2411,17 @@ components:
         account_id:
           $ref: "#/components/schemas/AccountId"
         by_tasks:
-          description: ユーザごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+          description: タスクごとに計算した「画像1枚あたりの作業時間平均」の統計（動画プロジェクトの場合は空リスト）
           type: array
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
         by_inputs:
-          description: ユーザごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
+          description: 画像1枚あたりの作業時間情報（動画プロジェクトの場合は空リスト）
           type: array
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
         by_minutes:
-          description: ユーザごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
+          description: 動画1分あたりの作業時間情報（画像プロジェクトの場合は空リスト）
           type: array
           items:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
@@ -2394,25 +2432,31 @@ components:
           $ref: "#/components/schemas/MarkerId"
         title:
           type: string
+          description: マーカーのタイトル
         graph_type:
-          description: マーカーの配置先グラフ
+          description: |
+            マーカーを配置するグラフ。[詳細はこちら](#section/GraphType)
           $ref: "#/components/schemas/GraphType"
         marked_at:
           description: グラフ上のマーカー位置(x軸)
           type: string
-          format: date
+          format: date-time
     Markers:
       type: object
+      required:
+        - project_id
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
         markers:
+          description: マーカー一覧
           type: array
           items:
             $ref: "#/components/schemas/Marker"
         updated_datetime:
           type: string
           format: date
+          description: 更新日時
     GraphType:
       type: string
       enum:
@@ -2426,6 +2470,7 @@ components:
         - mean_labor_time_per_image_by_member
         - mean_labor_time_per_minute_of_movie_by_member
       description: |
+        グラフの種類
         * `task_progress` - タスク進捗状況
         * `cumulative_labor_time_by_task_phase` - タスクフェーズ別累積作業時間
         * `number_of_inspections_per_inspection_phrase` - 検査コメント内容別指摘回数
@@ -2439,6 +2484,7 @@ components:
       type: object
       properties:
         markers:
+          description: マーカー一覧
           type: array
           items:
             $ref: "#/components/schemas/Marker"
@@ -2667,7 +2713,7 @@ components:
           example: https://annofab.com/projects/PROJECT_ID/annotation_specs_histories/HISTORY_ID.json?cache=CACHE
         account_id:
           $ref: "#/components/schemas/AccountId"
-          description: 更新したユーザのアカウントID
+          description: 更新したユーザーのアカウントID
         comment:
           type: string
           description: 変更内容のコメント
@@ -3789,12 +3835,13 @@ components:
         - input_data_set_name
         - organization_id
         - input_data_type
+        - updated_datetime
       properties:
         input_data_set_id:
           $ref: "#/components/schemas/InputDataSetId"
         input_data_set_name:
           type: string
-          description: 表示用の名前です。
+          description: 入力データセットの名前
         organization_id:
           $ref: "#/components/schemas/OrganizationId"
         input_data_type:
@@ -3818,7 +3865,7 @@ components:
       properties:
         input_data_set_name:
           type: string
-          description: 表示用の名前です。
+          description: 入力データセットの名前
         input_data_type:
           $ref: "#/components/schemas/InputDataType"
         private_storage_arn:
@@ -3828,27 +3875,36 @@ components:
             [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
           example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
         last_updated_datetime:
-          type: string
-          format: date-time
-          description: 入力データセットの最終更新日時
+          $ref: "#/components/schemas/LastUpdatedDatetime"
     InputData:
       description: 入力データの情報を表すデータ構造です。
       type: object
       required:
         - input_data_id
         - project_id
+        - organization_id
+        - input_data_set_id
         - input_data_name
         - input_data_path
         - updated_datetime
+        - sign_required
+        - metadata
+        - system_metadata
       properties:
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
         project_id:
           deprecated: true
           $ref: "#/components/schemas/ProjectId"
+          description: |
+            プロジェクトID。将来的に廃止する予定です。
+        organization_id:
+          $ref: "#/components/schemas/OrganizationId"
+        input_data_set_id:
+          $ref: "#/components/schemas/InputDataSetId"
         input_data_name:
           type: string
-          description: 表示用の名前です。
+          description: 入力データ名
         input_data_path:
           type: string
           example: "s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA"
@@ -3857,34 +3913,29 @@ components:
             s3スキーマまたはhttpsスキーマのみサポートしています。
         url:
           type: string
-          description: |
-            入力データを取得するためのhttpsスキーマのURLです。
-
-            このURLはセキュリティのために認証認可が必要となっており、URLだけでは入力データを参照できません。
-            このURLは内部用であり、常に変更になる可能性があります。そのため、アクセスは保証外となります。
-            また、このURLのレスポンスは最低1時間キャッシュされます。
-            キャッシュを無効にしたい場合は、クエリパラメータにアクセス毎にランダムなUUIDなどを付与してください。
-
-            設定の不備等でデータが取得できない場合、この属性は設定されません。
+          description: システム内部用のプロパティ
         etag:
+          description: |
+            [HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。
           type: string
+          example: "\"33a64df551425fcc55e4d42a148795d9f25f89d4\""
         original_input_data_path:
           type: string
           example: "s3://YOUR-BUCKET/PATH/TO/INPUT_DATA"
           description: |
-            AF外部のストレージから登録された場合、その外部ストレージ中のパス。
-            それ以外の場合は値なし
+            システム内部用のプロパティ
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
         sign_required:
           type: boolean
           description: |
-            データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。
+            CloudFrontのSignedCookieを使ったプライベートストレージを利用するかどうか
         metadata:
           type: object
           description: |
-            ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。
+            ユーザーが自由に登録できるkey-value型のメタデータです。
           additionalProperties:
             type: string
         system_metadata:
@@ -3901,11 +3952,13 @@ components:
           Movie: "#/components/schemas/SystemMetadataMovie"
           Custom: "#/components/schemas/SystemMetadataCustom"
       description: |
-        * `SystemMetadataImage`: 画像プロジェクトの場合。画像データ固有のメタデータが保存されます。
-        * `SystemMetadataMovie`: 動画プロジェクトの場合。動画データ固有のメタデータが保存されます。
-        * `SystemMetadataCustom`: カスタムプロジェクトの場合。カスタムデータ固有のメタデータが保存されます。
+        Annofabが設定したメタデータです。
+        `metadata`プロパティとは違い、ユーザー側では値を編集できません。
 
-        `metadata` プロパティとは違い、ユーザー側では値を編集できない読取専用のプロパティです。
+        * `SystemMetadataImage`: 画像プロジェクト用のメタデータ
+        * `SystemMetadataMovie`: 動画プロジェクト用のメタデータ
+        * `SystemMetadataCustom`: カスタムプロジェクト用のメタデータ
+
     SystemMetadataImage:
       type: object
       required:
@@ -3916,13 +3969,14 @@ components:
         original_resolution:
           $ref: "#/components/schemas/Resolution"
           description: |
-            入力データの元画像サイズ。
+            画像サイズ。
             Annofabにアップロードされる入力データとS3プライベートストレージの場合のみ設定されます。
+            ただし、プライベートストレージにアクセスできなかった場合は、設定されません。
         resized_resolution:
           $ref: "#/components/schemas/Resolution"
           description: |
-            入力データのリサイズ後サイズ。
-            入力データ登録時に画像がリサイズされた場合のみ設定される。
+            リサイズ後の画像サイズ。
+            入力データ登録時に画像がリサイズされた場合のみ設定されます。
         _type:
           type: string
           description: "`Image`"
@@ -3937,8 +3991,8 @@ components:
         input_duration:
           type: number
           description: |
-            入力データが動画の場合、動画の長さ（秒）。小数点以下はミリ秒以下を表します。
-            動画の長さが取得できなかった場合は値なし。
+            動画の長さ[秒]。
+            動画の長さが取得できなかった場合は、設定されません。
         _type:
           type: string
           description: "`Movie`"
@@ -3963,34 +4017,28 @@ components:
       properties:
         input_data_name:
           type: string
-          description: 表示用の名前
+          description: 入力データ名
         input_data_path:
           type: string
           example: "s3://YOUR-BUCKET/PATH/TO/OBJECT"
           description: |
-            Annofabに登録する入力データの実体が保存されたパスです。
+            入力データの実体が存在するURLです。
+            Annofabにファイルをアップロードして入力データを作成する場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。
 
-            対応スキーマ：
-            * s3
-            * https
-
-            場面別の使い分け：
-            * [一時データ保存先取得API](#operation/createTempPath)を使ってAFにアップロードした場合: `s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA`
-            * [プライベートストレージ](/docs/faq/#prst9c)の場合
-                * `https://YOUR-DOMAIN/PATH/TO/INPUT_DATA`
-                * `s3://YOUR-BUCKET-FOR-PRIVATE-STORAGE/PATH/TO/INPUT_DATA`
-                    * S3プライベートストレージのパスを登録する場合、[事前に認可の設定が必要](/docs/faq/#m0b240)です。
+            入力データの実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。
+            S3プライベートストレージに存在するファイルを入力データとして登録する場合は、事前に[認可の設定](/docs/faq/#m0b240)が必要です。
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
         sign_required:
           type: boolean
           description: |
-            データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。<br>
-            このオプションを有効にする場合は、`input_data_path`として、AnnofabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。
+            CloudFrontのSignedCookieを使ったプライベートストレージを利用するかどうか。
+
+            `true`を指定する場合は，`input_data_path`にAnnofabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。
         metadata:
           type: object
           description: |
-            ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。
+            ユーザーが自由に登録できるkey-value型のメタデータです。
           additionalProperties:
             type: string
     SupplementaryData:
@@ -4076,7 +4124,7 @@ components:
           example: "s3://YOUR-BUCKET/PATH/TO/OBJECT"
           description: |
             補助情報の実体が存在するURLです。
-            補助情報の実体をAnnofabにアップロードする場合は、[一時データ保存先取得API](#operation/createTempPath)で取得した`path`を指定してください。
+            補助情報の実体をAnnofabにアップロードする場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。
 
             補助情報の実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。
             補助情報の実体が、S3プライベートストレージに存在するファイルを補助情報として登録する場合は、[事前に認可の設定](/docs/faq/#m0b240)が必要です。
@@ -4162,6 +4210,9 @@ components:
           example: "Delete"
     DataPath:
       type: object
+      required:
+        - url
+        - path
       properties:
         url:
           type: string
@@ -4171,7 +4222,8 @@ components:
         path:
           type: string
           example: s3://<ANNOFAB-TEMPORARY-BUCKET-NAME>/<UUID>/<UUID>
-          description: アップロードしたファイルをAFの [入力データ](#tag/af-input) や [補助情報](#tag/af-supplementary) に登録するとき、この`path`を指定します。
+          description: |
+            [putInputData](#operation/putInputData) APIや[putSupplementaryData](#operation/putSupplementaryData) APIのリクエストボディに指定するパスです。
     InstructionImagePath:
       type: object
       required:
@@ -4189,39 +4241,39 @@ components:
           example: https://annofab.com/projects/{project_id}/instruction-images/{image_id}
           description: 作業ガイド画像のURL
     AnnotationQuery:
+      description: |
+        アノテーションの絞り込み条件
       type: object
       properties:
         task_id:
           description: |
-            最大文字列長300文字。
-          $ref: "#/components/schemas/TaskId"
+            タスクIDで絞り込みます。最大文字列長は300文字です。
+          type: string
         exact_match_task_id:
           description: |
             タスクIDの検索方法を指定します。
-            trueの場合は完全一致検索、falseの場合は部分一致検索です。
+            `true`の場合は完全一致検索、`false`の場合は部分一致検索です。
           type: boolean
           default: true
         input_data_id:
           description: |
-            最大文字列長300文字。
-          $ref: "#/components/schemas/InputDataId"
+            入力データID絞り込みます。最大文字列長は300文字です。
+          type: string
         exact_match_input_data_id:
           description: |
             入力データIDの検索方法を指定します。
-            trueの場合は完全一致検索、falseの場合は部分一致検索です。
+            `true`の場合は完全一致検索、`false`の場合は部分一致検索です。
           type: boolean
           default: true
         label_id:
           $ref: "#/components/schemas/LabelId"
         attributes:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalData"
+          $ref: "#/components/schemas/AdditionalDataList"
         updated_from:
           description: |
             開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日（ISO 8601 拡張形式または基本形式）。
 
-            `updated_to` より後の日付が指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。
+            `updated_to` より後の日付が指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。
           type: string
           format: date
         updated_to:
@@ -4251,13 +4303,39 @@ components:
           items:
             $ref: "#/components/schemas/AnnotationDetail"
         updated_datetime:
+          type: string
+          format: date-time
+          description: 更新日時
+    PutAnnotationRequest:
+      type: object
+      required:
+        - project_id
+        - task_id
+        - input_data_id
+        - details
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        task_id:
+          $ref: "#/components/schemas/TaskId"
+        input_data_id:
+          $ref: "#/components/schemas/InputDataId"
+        details:
+          type: array
+          description: 矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
+          items:
+            $ref: "#/components/schemas/AnnotationDetail"
+        updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
+          description: |
+            新規作成時は未指定です。更新時は[getEditorAnnotation](#operation/getEditorAnnotation) APIで取得した`updated_datetime`を指定してください。
     AnnotationDataHoldingType:
       type: string
       enum:
         - inner
         - outer
       description:  |
+        アノテーションのデータがどこに保持されるか
         * `inner` - アノテーションのデータ部をJSON内部に保持します。
         * `outer` - アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
     AnnotationDetail:
@@ -4274,7 +4352,7 @@ components:
           $ref: "#/components/schemas/AnnotationId"
         account_id:
           $ref: "#/components/schemas/AccountId"
-          description: アノテーションを作成したユーザのアカウントID。
+          description: アノテーションを作成したユーザーのアカウントID
         label_id:
           $ref: "#/components/schemas/LabelId"
           description: ラベルID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。
@@ -4311,27 +4389,37 @@ components:
           format: uri
           description: 外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
         additional_data_list:
-          type: array
-          description: |
-            各要素は、 [アノテーション仕様](#operation/getAnnotationSpecs)で定義された属性（`additional_data_definitions`内）のいずれかの要素と対応づけます。
-            各要素は、どの属性なのかを表す`additional_data_definition_id`と値が必要です。値は、属性の種類に対応するキーに格納します（下表）。
-
-            <table>
-            <tr><th>アノテーション属性の種類<br>（<code>additional_data_definition</code>の<code>type</code>）</th><th>属性の値を格納するキー</th><th>データ型</th></tr>
-            <tr><td><code>text</code>, <code>comment</code> または <code>tracking</code></td><td><code>comment</code></td><td>string</td></tr>
-            <tr><td><code>flag<c/ode></td><td><code>flag</code></td><td>boolean</td></tr>
-            <tr><td><code>integer</code></td><td><code>integer</code></td><td>integer</td></tr>
-            <tr><td><code>choice</code> または <code>select</code></td><td><code>choice</code></td><td>string（選択肢ID）</td></tr>
-            <tr><td><code>link</code></td><td><code>comment</code></td><td>string（アノテーションID）</td></tr>
-            </table>
-          items:
-            $ref: "#/components/schemas/AdditionalData"
+          $ref: "#/components/schemas/AdditionalDataList"
         created_datetime:
           type: string
           format: date-time
+          description: 作成日時
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
+    AdditionalDataList:
+      # itemsで参照しているスキーマのdescriptionは、redocに表示されないので、ここに詳細を書く
+      description: |
+        属性情報。
+
+        アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。
+
+        | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    |
+        |------------|-------------------------|----------------------|
+        | ON/OFF | flag       | flag                                          |
+        | 整数 | integer    | integer                                       |
+        | 自由記述（1行）| text       | comment                                       |
+        | 自由記述（複数行）| comment    | comment                                       |
+        | トラッキングID  | tracking | comment                                       |
+        | アノテーションリンク    | link   | comment                                       |
+        | 排他選択（ラジオボタン）  |choice   | choice                                        |
+        | 排他選択（ドロップダウン） | select    | choice                                        |
+
+      type: array
+      items:
+        $ref: "#/components/schemas/AdditionalData"
+
     AdditionalData:
       type: object
       required:
@@ -4499,9 +4587,7 @@ components:
         task_phase:
           $ref: "#/components/schemas/TaskPhase"
         task_phase_stage:
-          type: integer
-          default: 1
-          minimum: 1
+          $ref: "#/components/schemas/TaskPhaseStage"
         task_status:
           $ref: "#/components/schemas/TaskStatus"
         input_data_id:
@@ -4539,13 +4625,13 @@ components:
           $ref: "#/components/schemas/AnnotationId"
         label_id:
           $ref: "#/components/schemas/LabelId"
+          description: 変更後のラベルID
         additional_data_list:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalData"
+          $ref: "#/components/schemas/AdditionalDataList"
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
     BatchAnnotationRequestItemPut:
       type: object
       description: アノテーション更新
@@ -4580,6 +4666,7 @@ components:
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
         _type:
           type: string
           description: |
@@ -4615,15 +4702,15 @@ components:
           format: uri
           description: data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
         additional_data_list:
-          type: array
-          items:
-            $ref: "#/components/schemas/AdditionalData"
+          $ref: "#/components/schemas/AdditionalDataList"
         created_datetime:
           type: string
           format: date-time
+          description: 作成日時
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
     SimpleAnnotationDetail:
       type: object
       required:
@@ -4676,22 +4763,23 @@ components:
         task_phase:
           $ref: "#/components/schemas/TaskPhase"
         task_phase_stage:
-          type: integer
-          default: 1
-          minimum: 1
+          $ref: "#/components/schemas/TaskPhaseStage"
         task_status:
           $ref: "#/components/schemas/TaskStatus"
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
         input_data_name:
           type: string
+          description: 入力データ名
         details:
+          description: 矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列
           type: array
           items:
             $ref: "#/components/schemas/FullAnnotationDetail"
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。
         annotation_format_version:
           $ref: "#/components/schemas/AnnotationFormatVersion"
     FullAnnotationDetail:
@@ -4721,16 +4809,13 @@ components:
         data:
           $ref: "#/components/schemas/FullAnnotationData"
         additional_data_list:
-          type: array
-          items:
-            $ref: "#/components/schemas/FullAnnotationAdditionalData"
+          $ref: "#/components/schemas/AdditionalDataList"
     AnnotationData:
       description: |
         アノテーションの座標値や区間などのデータ。
-        `annotation_type` に応じて `string` や `object` の構造が変わります。
 
-        API レスポンスに使われる場合は常に `string` 形式です。
-        [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は `string` に加え、`object` 形式も使用できます。
+        APIのレスポンスから参照される場合は、`FullAnnotationDataString`形式です。
+        [putAnnotation](#operation/putAnnotation) APIのリクエストボディは、`FullAnnotationDataString`形式または`FullAnnotationData`形式に対応しています。
       oneOf:
         - $ref: "#/components/schemas/FullAnnotationDataString"
         - $ref: "#/components/schemas/FullAnnotationData"
@@ -4774,13 +4859,14 @@ components:
           Unknown: "#/components/schemas/FullAnnotationDataUnknown"
       description: |
         アノテーションのデータが格納されます。
-          * `FullAnnotationDataClassification`: 入力データ全体に対するアノテーションデータです。
-          * `FullAnnotationDataSegmentation`: ピクセルレベルでの塗りつぶし（ラスター）のアノテーションデータです。
-          * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2ののアノテーションデータです。塗りつぶしv2はSemantic Segmentationに特化しています。
-          * `FullAnnotationDataBoundingBox`: 矩形のアノテーションデータです。
-          * `FullAnnotationDataPoints`: ポリゴン（閉じた頂点集合）のアノテーションデータです。
-          * `FullAnnotationDataSinglePoint`: 点のアノテーションデータです。
-          * `FullAnnotationDataRange`: 動画区間のアノテーションデータです。
+          * `FullAnnotationDataClassification`: 入力データ全体アノテーション
+          * `FullAnnotationDataSegmentation`: 塗りつぶしアノテーション
+          * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2アノテーション
+          * `FullAnnotationDataBoundingBox`: 矩形アノテーション
+          * `FullAnnotationDataPoints`: ポリゴンまたはポリラインアノテーション
+          * `FullAnnotationDataSinglePoint`: 点アノテーション
+          * `FullAnnotationDataRange`: 動画区間アノテーション
+          * `FullAnnotationDataUnknown`: カスタムアノテーション
     FullAnnotationDataClassification:
       type: object
       nullable: true
@@ -4789,10 +4875,10 @@ components:
       properties:
         _type:
           type: string
-          description: Classification
+          description: |
+            `Classification`
           example: "Classification"
     FullAnnotationDataSegmentation:
-      description: 塗っていないところは rgba(0,0,0,0)、塗ったところは rgba(255,255,255,1) の PNGデータをBase64エンコードしたもの。
       type: object
       nullable: true
       required:
@@ -4801,9 +4887,11 @@ components:
       properties:
         data_uri:
           type: string
+          description: 塗りつぶし画像のパス
         _type:
           type: string
-          description: Segmentation
+          description: |
+            `Segmentation`
           example: "Segmentation"
     FullAnnotationDataSegmentationV2:
       type: object
@@ -4814,12 +4902,13 @@ components:
       properties:
         data_uri:
           type: string
+          description: 塗りつぶし画像のパス
         _type:
           type: string
-          description: SegmentationV2
+          description: |
+            `SegmentationV2`
           example: "SegmentationV2"
     FullAnnotationDataBoundingBox:
-      description: annotation_type が bounding_boxの場合に、[左上頂点座標, 右下頂点座標]を {"x":int, "y":int} の形式で記述したもの。
       type: object
       required:
         - left_top
@@ -4828,32 +4917,32 @@ components:
       properties:
         left_top:
           $ref: "#/components/schemas/Point"
+          description: 左上の頂点の座標値
         right_bottom:
           $ref: "#/components/schemas/Point"
+          description: 右下の頂点の座標値
         _type:
           type: string
-          description: BoundingBox
+          description: |
+            `BoundingBox`
           example: "BoundingBox"
     FullAnnotationDataPoints:
-      description: |
-        頂点座標 {"x":int, "y":int} の配列。
-
-        * annotation_type が polygon/polyline の場合: ポリゴン/ポリラインを構成する頂点の配列。
       type: object
       required:
         - points
         - _type
       properties:
         points:
+          description: 頂点の座標値
           type: array
           items:
             $ref: "#/components/schemas/Point"
         _type:
           type: string
-          description: Points
+          description: |
+            `Points`
           example: "Points"
     FullAnnotationDataSinglePoint:
-      description: annotation_type が pointの場合。
       type: object
       required:
         - point
@@ -4863,10 +4952,10 @@ components:
           $ref: "#/components/schemas/Point"
         _type:
           type: string
-          description: SinglePoint。
+          description: |
+            `SinglePoint`
           example: "SinglePoint"
     FullAnnotationDataRange:
-      description: annotation_type が rangeの場合に、[開始時間, 終了時間]を {"begin":number, "end":number} の形式で記述したもの。開始時間・終了時間の単位は秒で、精度はミリ秒まで。
       type: object
       required:
         - begin
@@ -4875,16 +4964,16 @@ components:
       properties:
         begin:
           type: number
-          description: 開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
+          description: 開始時間（ミリ秒）
         end:
           type: number
-          description: 終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。
+          description: 終了時間（ミリ秒）
         _type:
           type: string
-          description: Range
+          description: |
+            `Range`
           example: "Range"
     FullAnnotationDataUnknown:
-      description: annotation_typeにデータ構造が一致していない場合に、元のdata文字列をそのまま記述したもの。
       type: object
       required:
         - data
@@ -4892,12 +4981,14 @@ components:
       properties:
         data:
           type: string
+          description: アノテーションデータを文字列で表現した値
         _type:
           type: string
-          description: Unknown
+          description: |
+            `Unknown`
           example: "Unknown"
     Point:
-      description: 座標
+      description: 点の座標値
       type: object
       required:
         - x
@@ -4905,8 +4996,10 @@ components:
       properties:
         x:
           type: integer
+          description: X座標の値[ピクセル]
         y:
           type: integer
+          description: Y座標の値[ピクセル]
     FullAnnotationAdditionalData:
       type: object
       properties:
@@ -4991,7 +5084,7 @@ components:
           minimum: 1
         commenter_account_id:
           $ref: "#/components/schemas/AccountId"
-          description: 検査コメントを付与したユーザのアカウントID
+          description: 検査コメントを付与したユーザーのアカウントID
         annotation_id:
           $ref: "#/components/schemas/AnnotationId"
           description: |
@@ -5149,9 +5242,11 @@ components:
         - height
       properties:
         width:
-          type: number
+          type: integer
+          description: 画像の幅[ピクセル]
         height:
-          type: number
+          type: integer
+          description: 画像の高さ[ピクセル]
     InspectionStatus:
       type: string
       enum:
@@ -5206,7 +5301,7 @@ components:
           minimum: 1
         account_id:
           $ref: "#/components/schemas/AccountId"
-          description: コメントを作成したユーザのアカウントID。
+          description: コメントを作成したユーザーのアカウントID。
         comment_type:
           type: string
           enum:
@@ -5368,7 +5463,7 @@ components:
         account_id:
           $ref: "#/components/schemas/AccountId"
           description:
-            コメントを作成したユーザのアカウントID。
+            コメントを作成したユーザーのアカウントID。
         comment_type:
           type: string
           enum:
@@ -5800,11 +5895,12 @@ components:
       type: string
       description: |
         このURLは発行から1時間経過すると無効になります。
-        URLを構成するドメイン、パス、クエリパラメータなどが変更になることがあります。
       example: "https://.."
     TemporaryUrl:
       type: object
       description: 認証済み一時URL
+      required:
+        - url
       properties:
         url:
           $ref: "#/components/schemas/TemporaryUrlString"
@@ -5836,6 +5932,13 @@ components:
             [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
     InputDataList:
       type: object
+      required:
+        - list
+        - page_no
+        - total_page_no
+        - total_count
+        - over_limit
+        - aggregations
       properties:
         list:
           type: array
@@ -5853,39 +5956,13 @@ components:
           description: 検索結果の総件数。
         over_limit:
           type: boolean
-          description: 検索結果が1万件を超えた場合にtrueとなる。
+          description: 検索結果の件数が1万件を超えた場合は`true`になります。
         aggregations:
           type: array
           items:
             $ref: "#/components/schemas/AggregationResult"
           description: |
-            [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
-    InputDataSetList:
-      type: object
-      properties:
-        list:
-          type: array
-          items:
-            $ref: "#/components/schemas/InputDataSet"
-          description: 現在のページ番号に含まれる0件以上の入力データセットです。
-        page_no:
-          type: number
-          description: 現在のページ番号です。
-        total_page_no:
-          type: number
-          description: 指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまる入力データが0件であっても、総ページ数は1となります。
-        total_count:
-          type: number
-          description: 検索結果の総件数。
-        over_limit:
-          type: boolean
-          description: 検索結果が1万件を超えた場合にtrueとなる。
-        aggregations:
-          type: array
-          items:
-            $ref: "#/components/schemas/AggregationResult"
-          description: |
-            [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
+            システム内部用のプロパティ。
     ProjectJobInfoContainer:
       type: object
       properties:
@@ -5978,7 +6055,7 @@ components:
         - aggregations
       properties:
         list:
-          description: 組織メンバの一覧
+          description: 組織メンバーの一覧
           type: array
           items:
             $ref: "#/components/schemas/OrganizationMember"
@@ -6035,14 +6112,22 @@ components:
               システム内部用のプロパティ。常に空配列です。
     ProjectMemberList:
       type: object
+      required:
+        - list
+        - page_no
+        - total_page_no
+        - total_count
+        - over_limit
+        - aggregations
       properties:
         list:
+          description: プロジェクトメンバーの一覧
           type: array
           items:
             $ref: "#/components/schemas/ProjectMember"
         page_no:
           type: number
-          description: 現在のページ番号です。
+          description: 現在のページ番号。
         total_page_no:
           type: number
           description: 指定された条件にあてはまる検索結果の総ページ数。検索条件に当てはまるプロジェクトメンバーが0件であっても、総ページ数は1となります。
