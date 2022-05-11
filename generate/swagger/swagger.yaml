@@ -9,20 +9,20 @@ info:
     例） /projects というAPIを使う場合、 https://annofab.com/api/v1/projects をリクエストします。
 
 
-    ■APIの変更ポリシー<br>
+    ■APIの変更ポリシー
+
     **現在、APIは開発途上版です。予告なく互換性のない変更がある可能性をご了承ください。**
     ご要望の実現、あるいは、セキュリティやパフォーマンスの改善などを実現するにあたり、互換性のない変更が必要になる場合があります。
     その場合、開発途上版では開発リソースを改善に集中するため、古いバージョンを共存させずに互換性のない変更を行う場合があります。
 
-    ■機能の要望や不具合報告 <br>
+
+    ■機能の要望や不具合報告
+
     「こんな機能が欲しい」というご要望や、「APIが予期せぬ動作をする」といった不具合報告などは、[こちらのお問い合わせフォーム](https://docs.google.com/forms/d/e/1FAIpQLSePryikS_wo_H11pxL2ewUe2d0ud0jxZlBQwH2rVVfcifKyQw/viewform)からご連絡ください。
 
-    # API Client
-
-    APIクライアントも提供しています。
-
-    * https://github.com/kurusugawa-computer/annofab-cli
-    * https://github.com/kurusugawa-computer/annofab-api-python-client
+    # SDKとツール
+    * [annofab-api-python-client](https://github.com/kurusugawa-computer/annofab-api-python-client)：AnnofabのPython SDKです。
+    * [annofab-cli](https://github.com/kurusugawa-computer/annofab-cli)：AnnofabのCLIです。
 
     # API Convention
 
@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.143.0
+  version: 0.144.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -648,25 +648,12 @@ paths:
     get:
       tags:
       - af-my
-      summary: 所属組織一括取得
+      summary: 所属組織の一括取得
       description: |
-        API リクエストユーザーが所属するすべての組織における、自身がどのようなメンバー設定で所属しているかをまとめて取得します。
+        自分が所属している組織を一括で取得します。
       security:
       - AllOrganizationMember: []
       operationId: getMyOrganizations
-      parameters:
-      - name: limit
-        in: query
-        description: |
-          1ページあたりの取得するデータ件数
-
-          現在は未実装のパラメータです。(今後対応予定)
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          default: 30
-          maximum: 200
       responses:
         "200":
           description: 正常
@@ -682,9 +669,11 @@ paths:
       deprecated: true
       tags:
       - af-my
-      summary: 組織名変更
+      summary: 組織名の変更
       description: |
-        同じ name の組織が既に存在する場合は失敗(400)します。
+        組織名を変更します。
+        
+        2022/04/19以降に廃止する予定です。
       security:
       - OrganizationOwner: []
       operationId: updateOrganization
@@ -880,10 +869,11 @@ paths:
       - name: title
         in: query
         description: |
-          プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。大文字小文字は区別しません。
+          プロジェクトタイトルでの部分一致検索。大文字小文字は区別しません。
         required: false
         schema:
           type: string
+          minLength: 1
       - name: status
         in: query
         description: |
@@ -1159,7 +1149,7 @@ paths:
       - af-organization
       summary: 組織の活動状況の取得
       description: |
-        AnnoFabストレージの使用量など、組織の活動状況を取得します。
+        Annofabストレージの使用量など、組織の活動状況を取得します。
       security:
       - AllOrganizationMember: []
       operationId: getOrganizationActivity
@@ -1474,28 +1464,32 @@ paths:
           description: 入力データセットID
         - name: input_data_id
           in: query
-          description: 入力データIDでの部分一致検索で使用。1文字以上あれば使用します。
+          description: 入力データIDでの部分一致検索で使用。
           required: false
           schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
+            type: string
+            minLength: 1
         - name: input_data_name
           in: query
-          description: 入力データ名での部分一致検索で使用。1文字以上あれば使用します。
+          description: 入力データ名での部分一致検索で使用。
           required: false
           schema:
             type: string
+            minLength: 1
         - name: input_data_path
           in: query
-          description: 入力データパスでの部分一致検索で使用。1文字以上あれば使用します。
+          description: 入力データパスでの部分一致検索で使用。
           required: false
           schema:
             type: string
+            minLength: 1
         - name: task_id
           in: query
-          description: 入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。条件に合致した先頭100件のタスクに使われている入力データを検索します。
+          description: 入力データが紐づくタスクIDの部分一致検索で使用。条件に合致した先頭100件のタスクに使われている入力データを検索します。
           required: false
           schema:
             type: string
+            minLength: 1
         - name: from
           in: query
           description: 指定した日時以降に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
@@ -1630,9 +1624,9 @@ paths:
     get:
       tags:
       - af-my
-      summary: 所属プロジェクト一括取得
+      summary: 所属プロジェクトの一括取得
       description: |
-        自身が所属するプロジェクトを一括で取得します。
+        自分が所属しているプロジェクトを一括で取得します。
       security:
       - Everyone: []
       operationId: getMyProjects
@@ -1659,21 +1653,22 @@ paths:
       - name: organization_id
         in: query
         description: |
-          指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。
+          指定した組織に属するプロジェクトに絞り込む。
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/OrganizationId"
       - name: title
         in: query
         description: |
-          プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。
+          プロジェクトタイトルでの部分一致検索。大文字小文字は区別しません。
         required: false
         schema:
           type: string
+          minLength: 1
       - name: status
         in: query
         description: |
-          指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。
+          指定した状態のプロジェクトで絞り込む。
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectStatus"
@@ -3318,16 +3313,19 @@ paths:
           default: 30
       - name: task_id
         in: query
-        description: タスクIDでの部分一致検索で使用。最大文字列長300文字。1文字以上あれば使用します。大文字小文字は区別しません
+        description: タスクIDでの部分一致検索で使用。大文字小文字は区別しません
         required: false
         schema:
           type: string
+          minLength: 1
+          maxLength: 300
       - name: input_data_ids
         in: query
-        description: 指定された入力データIDを使用しているタスクを絞り込みます。カンマ区切りで複数の入力データIDを指定可能です。1文字以上あれば使用します。大文字小文字は区別しません
+        description: 指定された入力データIDを使用しているタスクを絞り込みます。カンマ区切りで複数の入力データIDを指定可能です。大文字小文字は区別しません
         required: false
         schema:
           type: string
+          minLength: 1
       - name: phase
         in: query
         description: 絞り込み条件となるフェーズ名

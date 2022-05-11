@@ -296,10 +296,15 @@ components:
           description: 期間の終了日（ISO 8601 拡張形式）
     Message:
       type: object
+      required:
+        - message
       properties:
         message:
           type: string
-          description: 多言語対応
+          description: メッセージ
+        message_id:
+          type: string
+          description: システム内部用のプロパティ
     InternationalizationMessage:
       type: object
       required:
@@ -1051,12 +1056,11 @@ components:
         - last_updated_datetime
       properties:
         organization_id:
-          type: string
+          $ref: "#/components/schemas/OrganizationId"
         organization_name:
           $ref: "#/components/schemas/OrganizationName"
         last_updated_datetime:
-          type: string
-          format: date-time
+          $ref: "#/components/schemas/LastUpdatedDatetime"
     PutOrganizationMemberRoleRequest:
       type: object
       required:
@@ -1428,7 +1432,8 @@ components:
         name:
           type: string
           description: |
-            タスクの割当優先度を決定するためのタスクプロパティ。<br>
+            タスクの割当優先度を決定するためのタスクプロパティ。
+
             指定できるプロパティは次のいずれかです。
 
             * `task_id`
@@ -2186,6 +2191,8 @@ components:
           description: ラベルに紐付いていない検査コメントの集計結果
     PatchTasksMetadataRequest:
       type: object
+      additionalProperties:
+        $ref: "#/components/schemas/TaskMetadata"
       description: |
         タスクIDとメタデータのkey-valueペア(Dictionary)を指定してください。
 
@@ -3454,6 +3461,7 @@ components:
         * `cancelled` - 提出の取り消し。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
     TaskMetadata:
       type: object
+      additionalProperties: true
       description: |
         ユーザーが自由に登録できるkey-value型のメタデータです。
         keyにはメタデータ名、valueには値を指定してください。
@@ -3543,7 +3551,7 @@ components:
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "ByCount"
     TaskGenerateRuleByDirectory:
-      description: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。<br>
+      description: 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。
       type: object
       required:
         - task_id_prefix
@@ -3627,7 +3635,7 @@ components:
       description: |
         * `TaskAssignRequestTypeRandom`: 自分自身にランダムにタスクを割り当てます。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。
         * `TaskAssignRequestTypeSelection`: メンバーに指定したタスクを割り当てます。ただし、メンバーはプロジェクトオーナーもしくはチェッカーロールを持つ必要があります。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。
-        * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身にに割り当てます。。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。
+        * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身にに割り当てます。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。
       oneOf:
         - $ref: "#/components/schemas/TaskAssignRequestTypeRandom"
         - $ref: "#/components/schemas/TaskAssignRequestTypeSelection"
@@ -4247,8 +4255,9 @@ components:
       properties:
         task_id:
           description: |
-            タスクIDで絞り込みます。最大文字列長は300文字です。
+            タスクIDで絞り込みます。
           type: string
+          maxLength: 300
         exact_match_task_id:
           description: |
             タスクIDの検索方法を指定します。
@@ -4257,8 +4266,9 @@ components:
           default: true
         input_data_id:
           description: |
-            入力データID絞り込みます。最大文字列長は300文字です。
+            入力データID絞り込みます。
           type: string
+          maxLength: 300
         exact_match_input_data_id:
           description: |
             入力データIDの検索方法を指定します。
@@ -4445,6 +4455,8 @@ components:
           description: |
             `additional_data_definition`の`type`が`choice` または `select `のときの属性値（選択肢ID）。
     AdditionalDataValue:
+      description: |
+        属性値
       oneOf:
         - $ref: "#/components/schemas/AdditionalDataValueFlag"
         - $ref: "#/components/schemas/AdditionalDataValueInteger"
@@ -4469,7 +4481,8 @@ components:
       properties:
         _type:
           type: string
-          description: Flag
+          description: |
+            `Flag`
           example: "Flag"
         value:
           type: boolean
@@ -4481,7 +4494,8 @@ components:
       properties:
         _type:
           type: string
-          description: Integer
+          description: |
+            `Integer`
           example: "Integer"
         value:
           type: integer
@@ -4493,7 +4507,8 @@ components:
       properties:
         _type:
           type: string
-          description: Comment
+          description: |
+            `Comment`
           example: "Comment"
         value:
           type: string
@@ -4505,7 +4520,8 @@ components:
       properties:
         _type:
           type: string
-          description: Choice
+          description: |
+            `Choice`
           example: "Choice"
         value:
           $ref: "#/components/schemas/AdditionalDataChoiceValue"
@@ -4565,6 +4581,7 @@ components:
         updated_datetime:
           type: string
           format: date-time
+          description: 更新日時
     SimpleAnnotation:
       type: object
       required:
@@ -4674,6 +4691,8 @@ components:
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Delete"
     SingleAnnotationDetail:
+      description: |
+        アノテーション情報
       type: object
       required:
         - annotation_id
@@ -4753,6 +4772,7 @@ components:
         - task_phase_stage
         - task_status
         - input_data_id
+        - input_data_name
         - details
         - annotation_format_version
       properties:
@@ -4802,6 +4822,7 @@ components:
           $ref: "#/components/schemas/LabelId"
         label_name:
           $ref: "#/components/schemas/InternationalizationMessage"
+          description: ラベル名
         annotation_type:
           $ref: "#/components/schemas/AnnotationType"
         data_holding_type:
@@ -4809,7 +4830,7 @@ components:
         data:
           $ref: "#/components/schemas/FullAnnotationData"
         additional_data_list:
-          $ref: "#/components/schemas/AdditionalDataList"
+          $ref: "#/components/schemas/FullAnnotationAdditionalDataList"
     AnnotationData:
       description: |
         アノテーションの座標値や区間などのデータ。
@@ -5000,15 +5021,29 @@ components:
         y:
           type: integer
           description: Y座標の値[ピクセル]
+    FullAnnotationAdditionalDataList:
+      # itemsで参照しているスキーマのdescriptionは、redocに表示されないので、Listのスキーマを作りました。
+      description: |
+        属性情報。
+      type: array
+      items:
+        $ref: "#/components/schemas/FullAnnotationAdditionalData"
     FullAnnotationAdditionalData:
+      description: |
+        属性情報
       type: object
+      required:
+        - additional_data_definition_id
+        - additional_data_definition_name
+        - type
+        - value
       properties:
         additional_data_definition_id:
           $ref: "#/components/schemas/AdditionalDataDefinitionId"
           description: 属性ID
         additional_data_definition_name:
           $ref: "#/components/schemas/InternationalizationMessage"
-          description: 属性表示名
+          description: 属性名
         type:
           $ref: "#/components/schemas/AdditionalDataDefinitionType"
         value:
@@ -5906,6 +5941,13 @@ components:
           $ref: "#/components/schemas/TemporaryUrlString"
     AnnotationList:
       type: object
+      required:
+        - list
+        - page_no
+        - total_page_no
+        - total_count
+        - over_limit
+        - aggregations
       properties:
         list:
           type: array
@@ -5965,6 +6007,9 @@ components:
             システム内部用のプロパティ。
     ProjectJobInfoContainer:
       type: object
+      required:
+        - list
+        - has_next
       properties:
         list:
           description: バックグラウンドジョブの一覧。作成日時の降順でソートされています。
@@ -5976,6 +6021,9 @@ components:
           description: さらに古いジョブが存在する場合は`true`です。取得したジョブ一覧の中で`created_datetime`が最も古い値を、クエリパラメータ`exclusive_start_created_datetime`に指定することで、さらに古いジョブを取得することができます。
     OrganizationJobInfoContainer:
       type: object
+      required:
+        - list
+        - has_next
       properties:
         list:
           description: バックグラウンドジョブの一覧。作成日時の降順でソートされています。
@@ -5987,6 +6035,13 @@ components:
           description: さらに古いジョブが存在する場合は`true`です。取得したジョブ一覧の中で`created_datetime`が最も古い値を、クエリパラメータ`exclusive_start_created_datetime`に指定することで、さらに古いジョブを取得することができます。
     MyOrganizationList:
       type: object
+      required:
+        - list
+        - page_no
+        - total_page_no
+        - total_count
+        - over_limit
+        - aggregations
       properties:
         list:
           type: array
@@ -6010,7 +6065,7 @@ components:
           items:
             $ref: "#/components/schemas/AggregationResult"
           description: |
-            [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
+            システム内部用のプロパティ。
     ProjectList:
       type: object
       required:
@@ -6043,7 +6098,7 @@ components:
           items:
             $ref: "#/components/schemas/AggregationResult"
           description: |
-            [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
+            システム内部用のプロパティ
     OrganizationMemberList:
       type: object
       required:
@@ -6076,7 +6131,7 @@ components:
           items:
             $ref: "#/components/schemas/AggregationResult"
           description: |
-            [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
+            システム内部用のプロパティ
     OrganizationPluginList:
         type: object
         required:
@@ -6109,7 +6164,7 @@ components:
             items:
               type: object
             description: |
-              システム内部用のプロパティ。常に空配列です。
+              システム内部用のプロパティ。
     ProjectMemberList:
       type: object
       required:
@@ -6142,9 +6197,12 @@ components:
           items:
             $ref: "#/components/schemas/AggregationResult"
           description: |
-            [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
+            システム内部用のプロパティ
     ProjectContainer:
       type: object
+      required:
+        - list
+        - hast_next
       properties:
         list:
           type: array
