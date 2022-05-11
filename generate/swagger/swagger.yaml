@@ -9,20 +9,20 @@ info:
     例） /projects というAPIを使う場合、 https://annofab.com/api/v1/projects をリクエストします。
 
 
-    ■APIの変更ポリシー<br>
+    ■APIの変更ポリシー
+
     **現在、APIは開発途上版です。予告なく互換性のない変更がある可能性をご了承ください。**
     ご要望の実現、あるいは、セキュリティやパフォーマンスの改善などを実現するにあたり、互換性のない変更が必要になる場合があります。
     その場合、開発途上版では開発リソースを改善に集中するため、古いバージョンを共存させずに互換性のない変更を行う場合があります。
 
-    ■機能の要望や不具合報告 <br>
+
+    ■機能の要望や不具合報告
+
     「こんな機能が欲しい」というご要望や、「APIが予期せぬ動作をする」といった不具合報告などは、[こちらのお問い合わせフォーム](https://docs.google.com/forms/d/e/1FAIpQLSePryikS_wo_H11pxL2ewUe2d0ud0jxZlBQwH2rVVfcifKyQw/viewform)からご連絡ください。
 
-    # API Client
-
-    APIクライアントも提供しています。
-
-    * https://github.com/kurusugawa-computer/annofab-cli
-    * https://github.com/kurusugawa-computer/annofab-api-python-client
+    # SDKとツール
+    * [annofab-api-python-client](https://github.com/kurusugawa-computer/annofab-api-python-client)：AnnofabのPython SDKです。
+    * [annofab-cli](https://github.com/kurusugawa-computer/annofab-cli)：AnnofabのCLIです。
 
     # API Convention
 
@@ -69,7 +69,7 @@ info:
     ---|---
     組織名 | Annofab内で一意
     組織ID | Annofab内で一意
-    ユーザID | Annofab内で一意
+    ユーザーID | Annofab内で一意
     アカウントID  | Annofab内で一意
     プロジェクトID | Annofab内で一意
     タスクID（プレフィックス含む） | プロジェクト内で一意
@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.142.0
+  version: 0.144.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -138,22 +138,10 @@ tags:
 - name: af-input
   x-displayName: Input
   description: |
-    **入力データ（input data）**に対する操作です。
+    入力データに対する操作
 
-    入力データとは、アノテーションする対象となる画像、動画、CSVなどのファイル全般のことです。
-    入力データは、プロジェクトごとに作成されます。
+    入力データは、Annofabにファイルをアップロードして利用します。ビジネスプランでは、プライベートストレージにあるファイルを入力データとして利用することも可能です。
 
-    すべてのAF利用プランで、入力データをAnnofabにアップロードできます。
-    Annofabにアップロードされた入力データは、Annofabからアノテーションツール上に配信されます。
-
-    ビジネスプランでは、入力データをお客様が管理される**プライベートストレージ**に置き、URLだけをAnnofabに登録できます。
-    プライベートストレージには、**httpsサーバーに対応したNAS**または**AWS S3**を利用できます。
-    プライベートストレージに置かれた入力データは、Annofabのサーバーを経由せず、直接アノテーションツール上に配信されます。
-    セキュリティ要件のためお客様の入力データを社外（Annofab含む）に非公開にしたい場合、プライベートストレージを利用することができます。
-    また場合によっては、Annofabから入力データを配信するよりも配信速度が改善する場合があります。
-
-    関連
-    * [af-supplementary](#tag/af-supplementary): 入力データを補う補助情報
 - name: af-inspection
   x-displayName: Inspection
   description: 検査コメントに対する操作
@@ -199,7 +187,7 @@ tags:
   description: プロジェクトメンバーに対する操作
 - name: af-statistics
   x-displayName: Statistics
-  description: 集計に関する操作
+  description: 統計に関する操作
 - name: af-supplementary
   x-displayName: Supplementary
   description: |
@@ -230,56 +218,40 @@ tags:
     Annofabで作成したアノテーションは、元となった入力データ（画像や動画など）に対応する形で1ファイルのJSONとなります。
     これらのJSONはZIP形式で圧縮され、一括で取得できます。
 
-    Annofabから取得できるアノテーションの構造は、現在2種類あります。
-
-    1. Simple
-      * バウンディングボックスや属性など、いわゆるアノテーションにしぼった軽量な構造。
-      * いかなるプロジェクトでも取得できます。
-      * 推奨版です。
-      * アノテーションZIPおよびアノテーション構造の詳細は、 [Simple Annotation ZIP](#section/Simple-Annotation-ZIP) を参照ください。
-    2. Full
-      * バウンディングボックスや属性に加え、アノテーションを作成したタスクに関する構造が含まれる重厚長大な構造。
-      * Businessプラン組織のプロジェクトでのみ取得できます。
-      * 非推奨版です。長期的には廃止予定なので、新規の使用は控え、Simpleへ移行してください。
-      * アノテーションZIPおよびアノテーション構造の詳細は、 [Full Annotation ZIP](#section/Full-Annotation-ZIP) を参照ください。
-
-    アノテーションは、各プロジェクトのトップページでダウンロードできます。また、次のAPIを利用して取得することもできます。
-
-    * Simple版アノテーションZIP取得API: [getAnnotationArchive](#operation/getAnnotationArchive)
-    * Full版アノテーションZIP取得API: [getArchiveFullWithProId](#operation/getArchiveFullWithProId)
-
-    なお、アノテーションZIPは毎日AM 03:00 JSTごろに自動更新されます。
+    アノテーションZIPには、SimpleアノテーションとFullアノテーションの2種類があります。ただし、Fullアノテーションは非推奨です。
 
     ## Simple Annotation ZIP
-    ### ファイル名
-    `af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip`
+    [getAnnotationArchive](#operation/getAnnotationArchive) APIで取得できます。
 
     ### ZIPファイル内の構造
-    * / (ZIPファイルのルートディレクトリ)
-      * {タスクID}/
-        * {入力データID}.json
-          * アノテーションJSONデータ (詳細は次節を参照)
-        * {入力データID}/ (塗りつぶしアノテーション時のみ)
-          * {アノテーションデータID} (塗りつぶしのPNG画像)
+
+    ```
+    SimpleアノテーションZIP/
+    ├── {タスクID}/
+    │   ├── {入力データID}.json              アノテーションのデータ
+    │   ├── {入力データID}/
+    │   │   ├── {アノテーションデータID}    塗りつぶしのPNG画像
+    ```
 
     ### アノテーションJSONデータの構造
-    Simple版アノテーションZIPに含まれるアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/SimpleAnnotation" />
 
     ## Full Annotation ZIP
-    ### ファイル名
-    `af-annotation-{プロジェクトID}-{更新日時: yyyyMMdd-hhmmss}.zip`
+    Fullアノテーションに含まれるアノテーションJSONは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。
+    [getArchiveFullWithProId](#operation/getArchiveFullWithProId) APIで取得できます。
+
+    **Fullアノテーションは非推奨です。**
 
     ### ZIPファイル内の構造
-    * / (ZIPファイルのルートディレクトリ)
-      * {タスクID}/
-        * {入力データID}.json
-          * アノテーションJSONデータ (詳細は次節を参照)
-        * {入力データID}/ (塗りつぶしアノテーション時のみ)
-          * {アノテーションデータID} (塗りつぶしのPNG画像)
+    ```
+    FullアノテーションZIP/
+    ├── {タスクID}/
+    │   ├── {入力データID}.json              アノテーションのデータ
+    │   ├── {入力データID}/
+    │   │   ├── {アノテーションデータID}    塗りつぶしのPNG画像
+    ```
 
     ### アノテーションJSONデータの構造
-    Full版アノテーションZIPに含まれるアノテーションJSONは、画像やアノテーションやアノテーション作成者など管理用の詳細情報が付随しています。
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/FullAnnotation" />
 
 - name: x-data-types
@@ -321,38 +293,12 @@ tags:
     # OrganizationJobType
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/OrganizationJobType" />
 
+    # GraphType
+    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/GraphType" />
+
     # AnnotationQuery
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/AnnotationQuery" />
 
-    # ArrayOfProjectTaskStatisticsHistory
-
-    日付ごと、タスクフェーズごと、タスクステータスごとに以下の項目を集計したデータです。
-    * タスク数
-    * 累計作業時間
-
-    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfProjectTaskStatisticsHistory" />
-
-    # ArrayOfProjectAccountStatistics
-
-    ユーザごと、日ごとに以下の項目を集計したデータです。
-    * 教師付フェーズのタスクを提出した回数、または検査/受入フェーズのタスクを合格/差戻にした回数
-    * 教師付フェーズを担当して提出したタスクが差し戻された回数、または受入フェーズを担当して合格にしたタスクが受入完了状態を取り消された回数
-    * 作業時間
-
-    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfProjectAccountStatistics" />
-
-    # ArrayOfInspectionStatistics
-
-    ラベルごと、定型指摘ごとに検査コメント数を集計したデータです。
-
-    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfInspectionStatistics" />
-
-    # ArrayOfTaskPhaseStatistics
-
-    日ごと、フェーズごとに以下の項目を集計したデータです。
-    * 累積作業時間
-
-    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfTaskPhaseStatistics" />
 
     # ArrayOfLabelStatistics
 
@@ -362,14 +308,6 @@ tags:
 
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfLabelStatistics" />
 
-    # ArrayOfWorktimeStatistics
-
-    単位当たり（タスク1個、画像1個、動画1分）の作業時間情報を集計したデータです。
-
-    ヒストグラムは、最終日の `by_tasks`、`by_inputs` のみ格納されます。
-    アカウント毎の集計の `by_tasks`、`by_inputs` には、最終日であってもヒストグラムは格納されません。
-
-    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfWorktimeStatistics" />
 x-tagGroups:
   - name: API
     tags:
@@ -657,7 +595,7 @@ paths:
       - af-my
       summary: 自分のプロジェクトメンバー情報一括取得
       description: |
-        API リクエストユーザーが所属するすべてのプロジェクトにおける、自身がどのようなメンバー設定で所属しているかをまとめて取得します。
+        自分が所属するプロジェクトのメンバー情報を一括で取得します。
       security:
       - Everyone: []
       operationId: getMyProjectMembers
@@ -710,25 +648,12 @@ paths:
     get:
       tags:
       - af-my
-      summary: 所属組織一括取得
+      summary: 所属組織の一括取得
       description: |
-        API リクエストユーザーが所属するすべての組織における、自身がどのようなメンバー設定で所属しているかをまとめて取得します。
+        自分が所属している組織を一括で取得します。
       security:
       - AllOrganizationMember: []
       operationId: getMyOrganizations
-      parameters:
-      - name: limit
-        in: query
-        description: |
-          1ページあたりの取得するデータ件数
-
-          現在は未実装のパラメータです。(今後対応予定)
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          default: 30
-          maximum: 200
       responses:
         "200":
           description: 正常
@@ -744,9 +669,11 @@ paths:
       deprecated: true
       tags:
       - af-my
-      summary: 組織名変更
+      summary: 組織名の変更
       description: |
-        同じ name の組織が既に存在する場合は失敗(400)します。
+        組織名を変更します。
+        
+        2022/04/19以降に廃止する予定です。
       security:
       - OrganizationOwner: []
       operationId: updateOrganization
@@ -856,7 +783,7 @@ paths:
         組織内のプロジェクトが1件も存在しない場合のみ削除できます。
         組織を削除したい場合は全てのプロジェクトを削除してください。
 
-        
+
         **削除された組織は元に戻せません。ご注意ください。**
       security:
         - OrganizationOwner: []
@@ -942,10 +869,11 @@ paths:
       - name: title
         in: query
         description: |
-          プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。大文字小文字は区別しません。
+          プロジェクトタイトルでの部分一致検索。大文字小文字は区別しません。
         required: false
         schema:
           type: string
+          minLength: 1
       - name: status
         in: query
         description: |
@@ -1058,7 +986,7 @@ paths:
       - af-organization-member
       summary: 組織メンバーの削除
       description: |
-        組織メンバーを削除します。削除された組織メンバの`status`は`inactive`になります。
+        組織メンバーを削除します。削除された組織メンバーの`status`は`inactive`になります。
       security:
       - OrganizationAdministrator: []
       operationId: deleteOrganizationMember
@@ -1221,7 +1149,7 @@ paths:
       - af-organization
       summary: 組織の活動状況の取得
       description: |
-        AnnoFabストレージの使用量など、組織の活動状況を取得します。
+        Annofabストレージの使用量など、組織の活動状況を取得します。
       security:
       - AllOrganizationMember: []
       operationId: getOrganizationActivity
@@ -1400,9 +1328,9 @@ paths:
   /organizations/{organization_name}/input_data_set:
     get:
       operationId: getInputDataSetList
-      summary: 入力データセット一括取得
+      summary: 入力データセットの一括取得
       description: |
-        指定した組織の[入力データセット](#tag/af-organization-input)を一括で取得します。
+        入力データセットを一括で取得します。
       tags:
         - af-organization-input
       security:
@@ -1421,7 +1349,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/InputDataSetList"
+                type: array
+                items:
+                  $ref: "swagger-api-components.yaml#/components/schemas/InputDataSet"
         "400":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
@@ -1433,8 +1363,9 @@ paths:
       operationId: getInputDataSet
       summary: 入力データセット情報取得
       description: |
-        指定した組織の[入力データセット](#tag/af-organization-input)の情報を取得します。
-        組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセットのみが取得できます。
+        入力データセットを取得します。
+
+        組織オーナーまたは組織管理者でない場合は、自身が所属するプロジェクトの入力データセットのみが取得できます。
       tags:
         - af-organization-input
       security:
@@ -1467,9 +1398,9 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
     put:
       operationId: putInputDataSet
-      summary: 入力データセット新規作成/更新
+      summary: 入力データセットの作成/更新
       description: |
-        指定した組織の[入力データセット](#tag/af-organization-input)の情報を新規登録/更新します。
+        入力データセットを作成または更新します。
       tags:
         - af-organization-input
       security:
@@ -1510,12 +1441,11 @@ paths:
     get:
       tags:
         - af-organization-input
-      summary: 入力データセット内の入力データ一括取得
+      summary: 入力データセット内の入力データの一括取得
       description: |
-        指定された入力データセットの入力データを検索します。
-        組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。
+        入力データセットに含まれる入力データを一括で取得します。
 
-        パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。
+        組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。
       security:
         - AllOrganizationMember: []
       operationId: getOrganizationInputDataList
@@ -1534,38 +1464,42 @@ paths:
           description: 入力データセットID
         - name: input_data_id
           in: query
-          description: 入力データIDでの部分一致検索で使用。1文字以上あれば使用します。
+          description: 入力データIDでの部分一致検索で使用。
           required: false
           schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
+            type: string
+            minLength: 1
         - name: input_data_name
           in: query
-          description: 入力データ名での部分一致検索で使用。1文字以上あれば使用します。
+          description: 入力データ名での部分一致検索で使用。
           required: false
           schema:
             type: string
+            minLength: 1
         - name: input_data_path
           in: query
-          description: 入力データパスでの部分一致検索で使用。1文字以上あれば使用します。
+          description: 入力データパスでの部分一致検索で使用。
           required: false
           schema:
             type: string
+            minLength: 1
         - name: task_id
           in: query
-          description: 入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。条件に合致した先頭100件のタスクに使われている入力データを検索します。
+          description: 入力データが紐づくタスクIDの部分一致検索で使用。条件に合致した先頭100件のタスクに使われている入力データを検索します。
           required: false
           schema:
             type: string
+            minLength: 1
         - name: from
           in: query
-          description: 更新日時での範囲検索で使用（ISO 8601 拡張形式）
+          description: 指定した日時以降に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
           required: false
           schema:
             type: string
             format: date-time
         - name: to
           in: query
-          description: 更新日時での範囲検索で使用（ISO 8601 拡張形式）
+          description: 指定した日時以前に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
           required: false
           schema:
             type: string
@@ -1604,9 +1538,10 @@ paths:
     get:
       tags:
         - af-organization-input
-      summary: 入力データセットの入力データ取得
+      summary: 入力データセット内の入力データの取得
       description: |
-        指定した組織の[入力データセット](#tag/af-organization-input)内で指定した入力データ情報を取得します。
+        入力データセットに含まれる入力データを取得します。
+
         組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。
       security:
         - AllOrganizationMember: []
@@ -1646,9 +1581,9 @@ paths:
     delete:
       tags:
         - af-organization-input
-      summary: 入力データセットの入力データ削除
+      summary: 入力データセット内の入力データの削除
       description: |
-        指定した組織の[入力データセット](#tag/af-organization-input)内で指定した入力データ情報を削除します。
+        入力データセットに含まれる入力データ情報を削除します。
       security:
         - OrganizationAdministrator: []
         - ProjectOwner: []
@@ -1689,9 +1624,9 @@ paths:
     get:
       tags:
       - af-my
-      summary: 所属プロジェクト一括取得
+      summary: 所属プロジェクトの一括取得
       description: |
-        自身が所属するプロジェクトを一括で取得します。
+        自分が所属しているプロジェクトを一括で取得します。
       security:
       - Everyone: []
       operationId: getMyProjects
@@ -1718,21 +1653,22 @@ paths:
       - name: organization_id
         in: query
         description: |
-          指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。
+          指定した組織に属するプロジェクトに絞り込む。
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/OrganizationId"
       - name: title
         in: query
         description: |
-          プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。
+          プロジェクトタイトルでの部分一致検索。大文字小文字は区別しません。
         required: false
         schema:
           type: string
+          minLength: 1
       - name: status
         in: query
         description: |
-          指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。
+          指定した状態のプロジェクトで絞り込む。
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectStatus"
@@ -2055,7 +1991,7 @@ paths:
       description: |
         入力データ全件ファイルの更新を開始します。
         ファイルの更新には、データ量に応じて数分～数十分程度かかります。
-        
+
         本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs-list`）。
 
         入力データ全件ファイルについては、[getProjectInputsUrl](#operation/getProjectInputsUrl) APIを参照ください。
@@ -2173,7 +2109,7 @@ paths:
 
         検査コメント全件ファイルには、すべての検査コメントが記載されたファイルです。
         JSON構造は、[Inspection](#section/Inspection)の配列です。
-        
+
         毎日AM02:00(JST)頃に更新されます。
       security:
       - ProjectDataUser: []
@@ -2205,7 +2141,7 @@ paths:
 
         コメント全件ファイルは、すべてのコメントが記載されたJSONファイルです。
         JSON構造は、[Comment](#section/Comment)の配列です。
-        
+
         毎日AM02:00(JST)頃に更新されます。
       security:
         - ProjectDataUser: []
@@ -2236,10 +2172,10 @@ paths:
         タスク履歴イベント全件ファイルにアクセスするための、認証済み一時URLを取得します。
         取得したURLは1時間で失効し、アクセスできなくなります。
 
-        
+
         タスク履歴イベント全件ファイルは、すべてのタスク履歴イベント情報が記載されたJSONファイルです。
         JSON構造は、[TaskHistoryEvent](#section/TaskHistoryEvent)の配列です。
-        
+
         毎日AM02:00(JST)頃に更新されます。
       security:
       - ProjectDataUser: []
@@ -2269,9 +2205,9 @@ paths:
         タスク履歴全件ファイルにアクセスするための、認証済み一時URLを取得します。
         取得したURLは1時間で失効し、アクセスできなくなります。
 
-        
+
         タスク履歴イベント全件ファイルは、すべてのタスク履歴情報が記載されたJSONファイルです。JSON構造は、キーがタスクID、値が[TaskHistory](#section/TaskHistory)の配列となるマップです。
-        
+
         毎日AM02:00(JST)頃に更新されます。
       security:
         - ProjectDataUser: []
@@ -2298,7 +2234,7 @@ paths:
       - af-my
       summary: 自分のプロジェクトメンバー取得
       description: |
-        備考: システム管理者が自身が所属しないプロジェクトに対して実行した場合、オーナーであるというダミーのプロジェクトメンバー情報が取得できます。ダミーには更新日は含まれません。
+        自分のプロジェクトメンバー情報を取得します。
       security:
       - AllProjectMember: []
       operationId: getMyMemberInProject
@@ -2328,7 +2264,7 @@ paths:
       - af-project-member
       summary: プロジェクトメンバー一括取得
       description: |
-        備考: 組織に加入していないメンバーも取得できることがあります（[プロジェクト更新](#operation/putProject)でプロジェクトの組織移動をおこなった場合）。
+        プロジェクトメンバを一括で取得します。
       security:
       - AllProjectMember: []
       operationId: getProjectMembers
@@ -2363,7 +2299,7 @@ paths:
       - af-project-member
       summary: プロジェクトメンバー取得
       description: |
-        プロジェクトの特定のメンバーを取得します。
+        プロジェクトメンバーを取得します。
       security:
       - AllProjectMember: []
       operationId: getProjectMember
@@ -2376,7 +2312,7 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       - name: user_id
         in: path
-        description: アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。
+        description: ユーザーID
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/UserId"
@@ -2399,8 +2335,6 @@ paths:
       summary: プロジェクトメンバー追加/更新
       description: |
         プロジェクトにメンバーを新規に追加、または存在するメンバーの設定を変更します。
-
-        メンバーとなるユーザーは、作成するプロジェクトをひもづける組織に加入している必要があります。
       security:
       - ProjectOwner: []
       operationId: putProjectMember
@@ -2413,7 +2347,7 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       - name: user_id
         in: path
-        description: アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。
+        description: ユーザーID
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/UserId"
@@ -2442,17 +2376,29 @@ paths:
     get:
       tags:
         - af-statistics
-      summary: プロジェクト統計記録期間取得
+      summary: 統計情報の期間の取得
       description: |
-        プロジェクトの統計情報が記録されている日付期間を取得します。
+        統計情報が存在する期間を取得します。
 
-        日付期間とは、from（日付）からto（日付）までの連続する日付を指します。fromとtoの日付は期間に含みます。
+        たとえば、プロジェクトの状態が以下のように変化したとします。
 
-        プロジェクトが一度も停止されていない場合、プロジェクト作成日から昨日までの日付期間が一つだけ返ります。
+        1. 2022/01/01にプロジェクトを作成した。
+        2. 2022/02/01にプロジェクトの状態を停止中にした。
+        3. 2022/03/01にプロジェクトの状態を進行中にした。
+        4. 2022/04/01にプロジェクトの状態を停止中にした。
 
-        プロジェクトを停止した場合、プロジェクトの作成日から停止した日までの日付期間が一つだけ返ります。
+        このAPIを実行すると、以下のJSONが取得されます。
 
-        プロジェクトを再開した場合、統計情報が記録されない（プロジェクトの停止）期間を除いた日付期間が複数返ります。以降、プロジェクトの停止と再開を繰り返すたびに結果の日付期間が増えていきます。
+        ```
+        [
+          {"from":"2022-01-01", "to":"2022-02-01"},
+          {"from":"2022-03-01", "to":"2022-04-01"}
+        ]
+        ```
+
+        プロジェクトを停止中にすると統計情報は記録されないので、統計情報が存在する期間は複数になります。
+
+
       security:
         - AllProjectMember: []
       operationId: getStatisticsAvailableDates
@@ -2482,9 +2428,12 @@ paths:
     get:
       tags:
       - af-statistics
-      summary: タスク集計取得
+      summary: フェーズ別タスク数の取得
       description: |
-        指定した期間の [タスク集計データ](#section/ArrayOfProjectTaskStatisticsHistory) を取得できるAPI。取得期間は最大3か月です。
+        タスクのフェーズごと、タスクのステータスごとのタスク数などを取得します。
+
+        取得期間は最大3か月です。
+
       security:
       - AllProjectMember: []
       operationId: getTaskDailyStatistics
@@ -2526,9 +2475,16 @@ paths:
     get:
       tags:
         - af-statistics
-      summary: ユーザー別タスク集計取得
+      summary: メンバー別作業時間の取得
       description: |
-        指定した期間の [ユーザー別タスク集計データ](#section/ArrayOfProjectAccountStatistics) を取得できるAPI。取得期間は最大3か月です。
+        プロジェクトメンバーごとの作業時間やタスクの提出回数を取得します。
+
+        * 作業時間
+        * 教師付フェーズのタスクを提出した回数、または検査/受入フェーズのタスクを合格/差戻にした回数
+        * 教師付フェーズを担当して提出したタスクが差し戻された回数、または受入フェーズを担当して合格にしたタスクが受入完了状態を取り消された回数
+
+        取得期間は最大3か月です。
+
       security:
         - AllProjectMember: [ ]
       operationId: getAccountDailyStatistics
@@ -2570,9 +2526,11 @@ paths:
     get:
       tags:
       - af-statistics
-      summary: 検査コメント集計取得
+      summary: ラベル別検査コメント数の取得
       description: |
-        指定した期間の [検査コメント集計データ](#section/ArrayOfInspectionStatistics) を取得できるAPI。取得期間は最大3か月です。
+        ラベルごとの検査コメント数を取得します。
+
+        取得期間は最大3か月です。
       security:
       - AllProjectMember: [ ]
       operationId: getInspectionDailyStatistics
@@ -2614,9 +2572,11 @@ paths:
     get:
       tags:
       - af-statistics
-      summary: フェーズ別タスク集計取得
+      summary: フェーズ別作業時間の取得
       description: |
-        指定した期間の [フェーズ別タスク集計データ](#section/ArrayOfTaskPhaseStatistics) を取得できるAPI。取得期間は最大3か月です。
+        フェーズごとの累積作業時間を取得します。
+
+        取得期間は最大3か月です。
       security:
       - AllProjectMember: [ ]
       operationId: getPhaseDailyStatistics
@@ -2658,7 +2618,7 @@ paths:
     get:
       tags:
       - af-statistics
-      summary: ラベル別アノテーション数集計取得
+      summary: ラベル別アノテーション数の取得
       description: |
         [ラベル別アノテーション数集計データ](#section/ArrayOfLabelStatistics) を取得するための認証済み一時URLを取得します。
       security:
@@ -2684,9 +2644,16 @@ paths:
     get:
       tags:
         - af-statistics
-      summary: プロジェクト単位のフェーズ別タスク集計取得
+      summary: 単位あたり作業時間の取得
       description: |
-        指定したプロジェクトのタスク作業時間集計データを指定した期間分取得できるAPI。取得期間は最大3か月です。
+        プロジェクトの単位あたり作業時間情報を取得します。
+        
+        以下の作業時間情報を取得できます。
+        * タスク1個あたりの作業時間情報
+        * 画像1枚あたりの作業時間情報（画像プロジェクトのみ）
+        * 動画1分あたりの作業時間情報（動画プロジェクトのみ）
+                
+        取得期間は最大3か月です。
       security:
         - AllProjectMember: [ ]
       operationId: getWorktimeDailyStatistics
@@ -2728,9 +2695,16 @@ paths:
     get:
       tags:
         - af-statistics
-      summary: プロジェクトメンバー単位のフェーズ別タスク集計取得
+      summary: メンバーの単位あたり作業時間の取得
       description: |
-        指定したプロジェクトメンバーのタスク作業時間集計データを指定した期間分取得できるAPI。取得期間は最大3か月です。
+        プロジェクトメンバーの単位あたり作業時間情報を取得します。
+        
+        以下の作業時間情報を取得できます。
+        * タスク1個あたりの作業時間情報
+        * 画像1枚あたりの作業時間情報（画像プロジェクトのみ）
+        * 動画1分あたりの作業時間情報（動画プロジェクトのみ）
+                
+        取得期間は最大3か月です。
       security:
         - AllProjectMember: [ ]
       operationId: getWorktimeDailyStatisticsByAccount
@@ -2780,7 +2754,7 @@ paths:
       - af-statistics
       summary: 統計グラフマーカー一括取得
       description: |
-        指定されたプロジェクトの統計グラフマーカーをすべて取得します。
+        統計グラフマーカーをすべて取得します。
       security:
       - AllProjectMember: []
       operationId: getMarkers
@@ -2807,7 +2781,7 @@ paths:
       - af-statistics
       summary: 統計グラフマーカー更新
       description: |
-        指定されたプロジェクトの統計グラフマーカーを更新します。
+        統計グラフマーカーを更新します。
       security:
       - ProjectOwner: []
       operationId: putMarkers
@@ -3309,7 +3283,7 @@ paths:
       summary: タスクの一括取得
       description: |
         タスクを一括で取得します。
-        
+
       security:
       - AllProjectMember: []
       operationId: getTasks
@@ -3339,16 +3313,19 @@ paths:
           default: 30
       - name: task_id
         in: query
-        description: タスクIDでの部分一致検索で使用。最大文字列長300文字。1文字以上あれば使用します。大文字小文字は区別しません
+        description: タスクIDでの部分一致検索で使用。大文字小文字は区別しません
         required: false
         schema:
           type: string
+          minLength: 1
+          maxLength: 300
       - name: input_data_ids
         in: query
-        description: 指定された入力データIDを使用しているタスクを絞り込みます。カンマ区切りで複数の入力データIDを指定可能です。1文字以上あれば使用します。大文字小文字は区別しません
+        description: 指定された入力データIDを使用しているタスクを絞り込みます。カンマ区切りで複数の入力データIDを指定可能です。大文字小文字は区別しません
         required: false
         schema:
           type: string
+          minLength: 1
       - name: phase
         in: query
         description: 絞り込み条件となるフェーズ名
@@ -3998,9 +3975,9 @@ paths:
         ```
 
         タスクに担当者を割り当てない場合は、`account_id`を未指定にしてください。
-        
+
         このAPIは、メンバー1人に割り当てられるタスク数の上限を無視して、担当者を変更できます。
-        
+
         APIの制約は以下の通りです。
         * API実行者は、プロジェクトオーナーまたはチェッカーロールを持つ
 
@@ -4093,7 +4070,7 @@ paths:
       - af-annotation
       summary: アノテーション一括取得
       description:
-        指定したタスク-入力データにつけられたアノテーションを一括で取得します。
+        アノテーションを一括で取得します。
       security:
       - AllProjectMember: []
       operationId: getAnnotationList
@@ -4123,7 +4100,8 @@ paths:
           default: 30
       - name: aggregate_by_task_and_input
         in: query
-        description: trueを指定した場合に「タスクIDと入力IDの組」ごとに検索結果を集計するようにする。
+        description: |
+          `true`を指定すると、「タスクIDと入力データIDの組」ごとに検索結果を集計します。
         required: false
         schema:
           type: boolean
@@ -4131,10 +4109,9 @@ paths:
       - name: no_aggregate_label_and_input
         in: query
         description: |
-          trueを指定した場合、ラベルIDによるアノテーション検索数の集約結果、および属性IDによるアノテーション検索数の集約結果を取得しなくなります。
+          `true`を指定すると、ラベルIDによるアノテーション検索数の集約結果、および属性IDによるアノテーション検索数の集約結果を取得しません。
 
-          集約計算は時間がかかる処理であるため、アノテーション件数が多い場合はアノテーション検索が遅くなる場合がありますが、
-          このパラメーターをtrueに指定することで集約計算をおこなわなくなるため、アノテーション検索が速くなる可能性があります。
+          このパラメーターを`true`に指定することで集約計算は行われなくなるので、アノテーションの検索が速くなる可能性があります。
         required: false
         schema:
           type: boolean
@@ -4151,8 +4128,20 @@ paths:
         in: query
         description: |
           ソート順の指定。
-          使用可能キーはtask_id, input_data_id, detail.annotation_id, detail.account_id, detail.label_id, detail.data_holding_type, detail.created_datetime, detail.updated_datetimeのいずれかです。降順指定時は先頭に-(ハイフン)を付与します。
-          複数指定時は,(カンマ)区切りで列挙します。複数キーを列挙した場合は、先頭から優先順位を割り振られます。
+          以下のキーを使用できます。
+          * `task_id`
+          * `input_data_id`
+          * `detail.annotation_id`
+          * `detail.account_id`
+          * `detail.label_id`
+          * `detail.data_holding_type`
+          * `detail.created_datetime`
+          * `detail.updated_datetime`
+          
+          
+          キーの先頭に`-`を付けると、降順でソートされます。
+
+          `,`でキーを区切ると、複数のキーでソートされます。先頭のキーから順に優先順位が割り振られます。          
         required: false
         example: task_id,input_data_id,detail.annotation_id,-detail.updated_datetime
         schema:
@@ -4179,25 +4168,17 @@ paths:
 
         リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。
         操作オブジェクトには、「更新」と「削除」の2通りがあり、それぞれJSONオブジェクト構造が異なります。
-        これら操作オブジェクトを複数含めることで、1リクエストで複数の更新や削除ができます。
+        これら操作オブジェクトを複数含めることで、1つのリクエストで複数の更新や削除ができます。
 
-        **現時点で、このAPIは複数のアノテーションを修正するためのもので、新しいアノテーションを作成することはできません**。
-        新しいアノテーションを更新や削除の対象に指定した場合、無視されます。
-
-        既に作成済みのアノテーションのうち、リクエストボディの配列に含まれないアノテーションは更新されません。
-
-        更新対象のアノテーションのうち、属性配列に含まれない属性は更新されません。
-
-        更新対象のアノテーションのラベルを変更する場合、異なるアノテーション種別のラベルに変更することはできません。
-        また、変更後のラベルに含まれない属性は削除されます。
-
-        画像全体のアノテーションは、他のラベルに変更することはできません。
-
-        塗りつぶしv2アノテーションは、1ラベル1アノテーションの制約のため、他の塗りつぶしv2ラベルに変更することはできません。
-
+        APIの制約は以下の通りです。
+        * アノテーションラベルの以下の変更はできない
+          * 異なるアノテーションの種類のラベルへの変更
+          * 「全体」アノテーションラベルの変更
+          * 「塗りつぶしv2」アノテーションラベルの変更
+        * 受入完了タスクのアノテーションは、プロジェクトオーナーロールを持つユーザーのみ更新/削除できる。
+        
         複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。
 
-        受入が完了しているタスクのアノテーション更新を含む場合、オーナー以上の権限が必要になります。
       security:
       - ProjectAccepter: []
       operationId: batchUpdateAnnotations
@@ -4218,7 +4199,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/BatchAnnotationRequestItem"
       responses:
         "200":
-          description: 正常
+          description: |
+            正常。レスポンスには、更新されたアノテーションが含まれます。
           content:
             application/json:
               schema:
@@ -4246,14 +4228,9 @@ paths:
     get:
       tags:
         - af-annotation
-      summary: タスク-入力データのアノテーション一括取得
+      summary: アノテーションの取得
       description: |
-        [putAnnotation](#operation/putAnnotation)が要求する構造のアノテーションを取得します。
-        このAPIは、[putAnnotation](#operation/putAnnotation)をより利用しやすくする目的で提供しています。
-        機械学習などで利用する成果物としてのアノテーションを取得するには、以下をご利用いただけます。
-
-        * [getAnnotation](#operation/getAnnotation): 特定のタスク - 入力データのアノテーション取得
-        * [getAnnotationArchive](#operation/getAnnotationArchive): プロジェクト全体のアノテーション（ZIP）
+        アノテーションを取得します。
       security:
         - AllProjectMember: []
       operationId: getEditorAnnotation
@@ -4302,25 +4279,15 @@ paths:
     put:
       tags:
       - af-annotation
-      summary: タスク-入力データのアノテーション更新
+      summary: アノテーション更新
       description: |
-        「過去に誰にも割り当てられていないタスクに含まれる入力データ」に限り、プロジェクトオーナーであればアノテーションを更新できます。
-        この挙動は、[Annofab外部で作成されたアノテーションをインポート](/docs/tutorial/tutorial-ex-importing-annotation.html) する目的にも利用できます。
+        アノテーションを更新します。
 
-        １度でも誰かに割り当てられたタスクは、タスクの現在の担当者であればアノテーションを更新できます。
-        タスクの現在の担当者でない場合、エラーになります。
-        この制限は、アノテーション作業中の予期せぬ同時編集を防ぐためです。
+        APIを実行できるユーザーは、以下の通りです。
+        * 過去に誰にも割り当てられていないタスク：プロジェクトオーナーロールを持つユーザー
+        * 過去に誰かに割り当てられたことがあるタスク：タスクの現在の担当者
 
-        `is_protected`（保護） を `true` にすることで、アノテーションをアノテーションエディタ上での削除から保護できます。
-        属性の変更もさせたくない場合は、アノテーション仕様で特定の属性を読取専用にすることで保護できます。保護は、
-
-        * 外部からインポートしたアノテーション
-        * 別プロジェクトからコピーしたアノテーション
-
-        などを誤って削除したくないときに便利です。
-        `is_protected`は、プロジェクトオーナーのみ変更可能です。
-
-        なお、本APIでは `is_protected` によらず、更新や削除が可能です。
+        ただし、`is_protected`は、プロジェクトオーナーロールを持つユーザーのみ変更可能です。
       security:
       - AllProjectMember: []
       operationId: putAnnotation
@@ -4348,7 +4315,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "swagger-api-components.yaml#/components/schemas/Annotation"
+              $ref: "swagger-api-components.yaml#/components/schemas/PutAnnotationRequest"
       responses:
         "200":
           description: 正常
@@ -4377,12 +4344,14 @@ paths:
     get:
       tags:
       - af-annotation
-      summary: タスク-入力データのSimpleアノテーション一括取得
+      summary: Simpleアノテーションの取得
       description: |
-        指定したタスク - 入力データにつけられたアノテーションを一括で取得します。
-        Simple版のアノテーションJSONは、機械学習の一般的な利用で扱いやすい構造になっています。
+        Simpleアノテーションを取得します。
 
-        なお、プロジェクト全体のアノテーションを一括で取得したい場合には、 [getAnnotationArchive](#operation/getAnnotationArchive) APIを使用することもできます。
+        [getAnnotationArchive](#operation/getAnnotationArchive) APIでダウンロードできるSimpleアノテーションZIPの一部を、取得することができます。
+        
+        **注意:** このAPIでは、塗りつぶし画像をダウンロードするためのURLを取得できません。
+
       security:
       - AllProjectMember: []
       operationId: getAnnotation
@@ -4424,14 +4393,16 @@ paths:
       - af-annotation
       summary: FullアノテーションZIP取得
       description: |
-        プロジェクト内のアノテーション（Full版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。
-        取得したURLは1時間で失効し、アクセスできなくなります。
-        アノテーションZIPを更新中の場合は409エラーになります。
+        FullアノテーションZIPをダウンロードするための、認証済み一時URLを取得します。
+        取得したURLは1時間で失効します。
 
-        FullアノテーションZIPのデータ構造については、 [Full Annotation ZIP](#section/Full-Annotation-ZIP) を参照ください。
+        アノテーションZIPの更新中に、このAPIを実行すると409エラーが発生します。
+
+        FullアノテーションZIPのデータ構造については、[Full Annotation ZIP](#section/Full-Annotation-ZIP)を参照ください。
       security:
       - ProjectDataUser: []
-      operationId: getArchiveFullWithProId #getFullAnnotationArchiveByProjectId
+      operationId: getArchiveFullWithProId
+      deprecated: true
       parameters:
       - name: project_id
         in: path
@@ -4460,13 +4431,13 @@ paths:
       - af-annotation
       summary: SimpleアノテーションZIP取得
       description: |
-        プロジェクト内のアノテーション（Simple版）がまとめられたZIPを取得するための、認証済み一時URLを取得します。
-        取得したURLは1時間で失効し、アクセスできなくなります。
-        アノテーションZIPを更新中の場合は409エラーになります。
+        SimpleアノテーションZIPをダウンロードするための、認証済み一時URLを取得します。
+        取得したURLは1時間で失効します。
 
-        SimpleアノテーションZIPのデータ構造については、 [Simple Annotation ZIP](#section/Simple-Annotation-ZIP) を参照ください。
+        アノテーションZIPの更新中に、このAPIを実行すると409エラーが発生します。
 
-        なお、特定のタスクのSimpleアノテーションを取得したい場合には、 [getAnnotation](#operation/getAnnotation) APIを使用することもできます。
+        SimpleアノテーションZIPのデータ構造については、[Simple Annotation ZIP](#section/Simple-Annotation-ZIP)を参照ください。
+
       security:
       - ProjectDataUser: []
       operationId: getAnnotationArchive
@@ -4498,10 +4469,10 @@ paths:
       - af-annotation
       summary: アノテーションZIP更新開始
       description: |
-        プロジェクト内のアノテーションZIP（Simple版とFull版の両方）の更新を開始します。
-        ZIPの更新は、データ量に応じて数分〜数十分かかります。
+        アノテーションZIPの更新を開始します。
+        アノテーションZIPの更新は、データ量によっては数十分以上かかる場合もあります。
 
-        アノテーションZIPは毎日AM 03:00 JSTごろに自動更新されますが、本APIを用いると、自動更新を待たずに更新を要求できます。
+        アノテーションZIPは毎日AM03:00(JST)頃に自動更新されますが、本APIを用いると、自動更新を待たずにアノテーションZIPの更新を要求できます。
 
         本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-annotation`）。
 
@@ -4522,8 +4493,6 @@ paths:
             application/json:
               schema:
                 $ref: "swagger-api-components.yaml#/components/schemas/PostAnnotationArchiveUpdateResponse"
-        "400":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "409":
@@ -4786,11 +4755,10 @@ paths:
     get:
       tags:
       - af-input
-      summary: 入力データ一括取得
+      summary: 入力データの一括取得
       description: |
-        指定されたプロジェクトの入力データを検索します。
+        入力データを一括で取得します。
 
-        パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。
       security:
       - AllProjectMember: []
       operationId: getInputDataList
@@ -4803,38 +4771,46 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       - name: input_data_id
         in: query
-        description: 入力データIDでの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。
+        description: 入力データIDでの部分一致検索で使用。大文字小文字は区別しません。
         required: false
         schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
+          type: string
+          minLength: 1
+          maxLength: 300
       - name: input_data_name
         in: query
-        description: 入力データ名での部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。
+        description: 入力データ名での部分一致検索で使用。大文字小文字は区別しません。
         required: false
         schema:
           type: string
+          minLength: 1
+          maxLength: 300
       - name: input_data_path
         in: query
-        description: 入力データパスでの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。
+        description: 入力データパスでの部分一致検索で使用。
         required: false
         schema:
           type: string
+          minLength: 1
+          maxLength: 300
       - name: task_id
         in: query
-        description: 入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。最大文字列長300文字。大文字小文字は区別しません。条件に合致した先頭100件のタスクに使われている入力データを検索します。
+        description: 入力データが紐づくタスクIDの部分一致検索で使用。大文字小文字は区別しません。条件に合致した先頭100件のタスクに使われている入力データを検索します。
         required: false
         schema:
           type: string
+          minLength: 1
+          maxLength: 300
       - name: from
         in: query
-        description: 更新日時での範囲検索で使用（ISO 8601 拡張形式）
+        description: 指定した日時以降に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
         required: false
         schema:
           type: string
           format: date-time
       - name: to
         in: query
-        description: 更新日時での範囲検索で使用（ISO 8601 拡張形式）
+        description: 指定した日時以前に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
         required: false
         schema:
           type: string
@@ -4858,7 +4834,7 @@ paths:
           default: 30
       responses:
         "200":
-          description: 指定された条件にあてはまる入力データを返します。条件にあてはまる入力データが多数に及ぶことがあるので、すべての結果を得るにはページングしてください。
+          description: 正常
           content:
             application/json:
               schema:
@@ -4872,13 +4848,13 @@ paths:
     post:
       tags:
       - af-input
-      summary: 入力データ一括更新
+      summary: 入力データの一括更新
       description: |
         入力データを一括更新します。
 
         リクエストボディは、1個以上の「操作」オブジェクトを含むJSON配列になります。
-        操作オブジェクトには、現在「削除」の1通りのみがあります。
-        これら操作オブジェクトを複数含めることで、1つのリクエストで複数の削除ができます。
+        操作オブジェクトには、現在「削除」しかありません。
+        これら操作オブジェクトを複数含めることで、1個のリクエストで複数の削除ができます。
 
         複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。
       security:
@@ -4901,7 +4877,7 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/BatchInputDataRequestItem"
       responses:
         "200":
-          description: 正常
+          description: 正常。レスポンスには、更新された入力データが含まれます。
           content:
             application/json:
               schema:
@@ -4929,12 +4905,10 @@ paths:
     get:
       tags:
       - af-input
-      summary: 入力データ取得
+      summary: 入力データの取得
       description: |
-        指定された入力データを取得します。
+        入力データを取得します。
 
-        この API の返す入力データは入力データ名などの項目を含む JSON であり、実体のファイル（画像や動画など）ではありません。
-        実体ファイルにアクセスする方法は非公開です（詳細を希望される場合はお問い合わせください）。
       security:
       - AllProjectMember: []
       operationId: getInputData
@@ -4968,53 +4942,59 @@ paths:
       tags:
       - af-input
       summary: |
-        入力データ更新
+        入力データの作成/更新
       description: |
-        入力データ（画像プロジェクトなら画像、動画プロジェクトなら動画や時系列データ）を登録します。
+        入力データを作成または更新します。
 
-        ファイルの登録には、[アップロード用一時データ保存先作成API](#operation/createTempPath) を組み合わせて使用します。
+        Annofabにファイルをアップロードして入力データを作成する場合は、事前に[createTempPath](#operation/createTempPath) APIを実行してください。
 
-        ## ZIPでまとめてアップロード
+        ### 画像のリサイズ
+        Annofabにアップロードした画像は、自動的に「長辺4096px以内」になるよう縮小されます。
+        アノテーションの座標値は、縮小前の画像サイズに対応する値に復元されます。
 
-        画像プロジェクトの場合、複数の画像ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br>
-        アノテーション作業生産性を高めるため、画像は「長辺4096px以内」かつ「4MB以内」になるよう縮小されます。<br>
-        作成されるアノテーションは、元の解像度でつけた場合相当に自動で復元されます。
+        ### ZIPファイルで入力データをまとめて作成する
+        複数のファイルをZIPで圧縮してAnnofabにアップロードすると、入力データをまとめて作成できます。
 
-        動画プロジェクトの場合、複数の動画ファイルをZIPでまとめてアップロードできます。ZIPは最大5GB、UTF-8エンコーディングのみ対応しています。<br>
-        また、複数のストリーミング形式の動画をアップロードすることもできます。<br>
-        この場合はZIP形式必須で、同一のZIPファイル内にm3u8ファイルとtsファイルを両方含めてください。<br>
-        なお、このm3u8ファイルに記述された相対パスでtsファイルが参照可能である必要があります。
+        パスパラメータの`input_data_id`、リクエストボディの`input_data_name`には、適当な値を指定してください。
+        
+        ZIPファイルを入力データとして登録すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。
 
-        ZIPファイルを登録するとバックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。
-
-        ### ディレクトリ例
-        ```
-          hoge.zip/
-            hoge.ts
-            fuga/
-              foo.m3u8(hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)
-              foo1.ts
-              foo2.ts
-            piyo1/
-              piyo2/
-                bar.ts
-              bar.m3u8(hoge.ts, piyo1/piyo2/bar.tsを参照)
-        ```
-
-        ## 注意事項
-
-        * `input_data_path` のスキーマが `https` の場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください
-            * `input_data_name`  の値が優先されます
-        * `input_data_path` のスキーマが `s3` かつ入力データがtsファイルの場合、 `input_data_name` もしくは `input_data_path` の末尾にファイルの拡張子を含むようにしてください
-            * `input_data_name`  の値が優先されます
-        * ZIPでまとめてアップロード時、ZIPファイル内の次の名前のファイルは入力データとして登録されません
+        ZIPファイルの制限事項は、以下の通りです。
+        * アップロードできるZIPファイルのサイズは、最大5GBです。
+        * UTF-8エンコーディングのみ対応しています。
+        * ZIPファイル内の次の名前のファイルは、入力データとして登録されません。
             * `Thumbs.db`
             * `__MACOSX`
             * `.DS_Store`
             * `desktop.ini`
             * 上記以外の、ファイル名先頭が `.`（ドット）で始まるファイル
-        * ZIPでまとめてアップロード時、ZIPファイル内の `.`（ドット）から始まるフォルダ以下のファイルは入力データとして登録されません
+        * ZIPファイル内の `.`（ドット）から始まるフォルダ以下のファイルは、入力データとして登録されません。
 
+        ### ストリーミング形式の動画を入力データとして登録する
+        ストリーミング形式の動画をAnnofabにアップロードして、入力データとして登録できます。
+        
+        ただし、ZIPで圧縮する必要があります。ZIPファイルには、m3u8ファイルとtsファイルの両方を含めてください。
+        m3u8ファイルに記述された相対パスでtsファイルは、参照可能である必要があります。
+
+        以下に、フォルダ構成のサンプルを記載します。
+
+        ```
+          hoge.zip/
+          ├── hoge.ts
+          ├── fuga/
+          │   ├── foo.m3u8    (hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)
+          │   ├── foo1.ts
+          │   ├── foo2.ts
+          │   └── lib
+          ├── piyo1/
+          │   ├── piyo2
+          │   │   ├── bar.ts
+          │   ├── bar.m3u8    (hoge.ts, piyo1/piyo2/bar.tsを参照)
+        ```
+
+        ### 注意事項
+        * `input_data_path`のスキーマが`https`の場合、`input_data_name`もしくは`input_data_path`の末尾にファイルの拡張子を含むようにしてください。
+        Annofabは拡張子からファイル形式を識別します。`input_data_name`と`input_data_path`の両方に拡張子が含まれている場合は、`input_data_name`の拡張子がファイル形式の識別に使われます。
       security:
       - ProjectOwner: []
       operationId: putInputData
@@ -5070,12 +5050,10 @@ paths:
     delete:
       tags:
       - af-input
-      summary: 入力データ削除
+      summary: 入力データの削除
       description: |
         入力データを削除します。
 
-        入力データの実体ファイルが Annofab のストレージに存在するものであれば、実体ファイルも削除されます。
-        お客様の管理するプライベートストレージに存在するものであれば、実体ファイルは削除されません。
       security:
       - ProjectOwner: []
       operationId: deleteInputData
@@ -5234,36 +5212,45 @@ paths:
     post:
       tags:
       - af-input
-      summary: 一時データ保存先取得
+      summary: アップロード先URLの取得
       description: |
-        「複数の入力データを圧縮したZIPファイル」や「4MBを超える画像」などをAnnofabに一時的に保存するための、URLと登録用データパスを発行します。
+        Annofabにファイルをアップロードするのに必要な情報を取得します。
+        
+        このAPIは、Annofabにファイルをアップロードして、入力データや補助情報を作成する際に使用します。
+        
+        Annofabにファイルをアップロードして入力データを作成する手順は、以下の通りです。
+        
+        1. APIを実行して、ファイルのアップロードに必要な情報を取得する。
 
-        このAPIと他のAPIを以下に示すように使うことで、ZIPファイルなどをAFにアップロードできます。
+        ```
+        $ curl --request POST 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'
+        {
+          "url": "https://s3.<REGION>.amazonaws.com/<ANNOFAB-TEMP-BUCKET>/<UUID>/<UUID>?param1=...&param2=...", 
+          "path": "s3://<ANNOFAB-TEMPORARY-BUCKET-NAME>/<UUID>/<UUID>"
+        }
+        ```
 
+        2. 手順1で取得した`url`に対して、HTTP PUTメソッドで、ファイルをアップロードする。
 
-        1. 本APIを実行して、URLを取得する。
-          * `curl -X POST -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'`
-        2. 1で取得したURLに、一時保存したいファイルをPUTする。
-          * `curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.zip 'https://{発行されたURL}'`
-        3. 1で取得した登録用データパスを [入力データ登録API](#operation/putInputData)のリクエストボディ `input_data_path` に指定する。
-          * `curl -X PUT -H 'Content-Type: text/json' -d '{"input_data_name":"{表示名}", "input_data_path":"{登録用データパス}" }' 'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}'`
+        ```
+        $ curl --request PUT --header 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.zip 'https://{手順1で取得したurl}'
+        ```
 
-        ここで、1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。
-        ZIPファイルの場合は `application/zip` 、画像ファイルの場合は `image/png` など、適切な Content-Type を指定します。
+        3. 手順1で取得した`path`を、[putInputData](#operation/putInputData) APIのリクエストボディ`input_data_path`に指定して、putInputData APIを実行する。
 
-        登録するファイルはどのような内容であれ、アップロードから24時間経過すると削除されます。
-        したがって、ZIP圧縮した入力データを登録する場合は、URL発行から24時間以内に完了してください。
+        ```
+        $ curl --request PUT --header 'Content-Type: text/json' \
+         --data '{"input_data_name":"{input_data_name}", "input_data_path":"{手順1で取得したpath}" }' \
+         'https://annofab.com/api/v1/projects/{project_id}/inputs/{input_data_id}'
+        ```
+
+        #### 注意事項
+        * 手順2を実行してから24時間以内に、手順3の操作を完了させてください。手順2でアップロードしたファイルは、24時間経過すると削除されます。
+
       security:
       - AllProjectMember: []
       operationId: createTempPath
       parameters:
-      - in: header
-        name: Content-Type
-        schema:
-          type: string
-        example: "application/zip"
-        description: |
-          アップロードしたいファイルの Content-Type を指定します。
       - name: project_id
         in: path
         description: プロジェクトID
@@ -5273,7 +5260,7 @@ paths:
       responses:
         "200":
           description: |
-            何らかのファイルをAnnofabに一時的に保存するためのアップロード先URL
+            正常
           content:
             application/json:
               schema:
@@ -5471,8 +5458,6 @@ paths:
       description: |
         プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。
 
-        リクエストヘッダには、登録する画像に応じた適切な Content-Type を指定してください。
-
         作業ガイド画像の登録/更新方法は以下の通りです。
         1. APIを実行して、ファイルアップロード用のURLを取得する。
 
@@ -5486,20 +5471,12 @@ paths:
         $ curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.jpg '{ファイルアップロード用のURL}'
         ```
 
-        手順1と2で `CONTENT_TYPE_HERE` は必ず一致しなければいけません。
 
       security:
       - ProjectOwner: []
       - ProjectAccepter: []
       operationId: getInstructionImageUrlForPut
       parameters:
-      - in: header
-        name: Content-Type
-        schema:
-          type: string
-        example: "image/png"
-        description: |
-          登録する画像ファイルの Content-Type を指定します。
       - name: project_id
         in: path
         description: プロジェクトID

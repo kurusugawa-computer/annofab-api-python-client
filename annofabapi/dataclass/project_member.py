@@ -32,7 +32,7 @@ class ProjectMember(DataClassJsonMixin):
     """ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     username: str
-    """"""
+    """ユーザー名"""
 
     member_status: ProjectMemberStatus
     """"""
@@ -43,14 +43,14 @@ class ProjectMember(DataClassJsonMixin):
     biography: Optional[str]
     """人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 """
 
-    updated_datetime: Optional[str]
-    """"""
+    updated_datetime: str
+    """更新日時"""
 
-    created_datetime: Optional[str]
-    """"""
+    created_datetime: str
+    """作成日時"""
 
     sampling_inspection_rate: Optional[int]
-    """メンバー固有の抜取検査率（0-100のパーセント値）。"""
+    """抜取検査率（パーセント）"""
 
     sampling_acceptance_rate: Optional[int]
-    """メンバー固有の抜取受入率（0-100のパーセント値）。"""
+    """抜取受入率（パーセント）"""

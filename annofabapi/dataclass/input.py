@@ -22,11 +22,11 @@ SystemMetadata = Dict[str, Any]
 class Resolution(DataClassJsonMixin):
     """ """
 
-    width: float
-    """"""
+    width: int
+    """画像の幅[ピクセル]"""
 
-    height: float
-    """"""
+    height: int
+    """画像の高さ[ピクセル]"""
 
 
 @dataclass
@@ -41,29 +41,35 @@ class InputData(DataClassJsonMixin):
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
+    organization_id: str
+    """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    input_data_set_id: str
+    """入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
     input_data_name: str
-    """表示用の名前です。"""
+    """入力データ名"""
 
     input_data_path: str
     """入力データの実体が保存されたパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 """
 
     url: Optional[str]
-    """入力データを取得するためのhttpsスキーマのURLです。  このURLはセキュリティのために認証認可が必要となっており、URLだけでは入力データを参照できません。 このURLは内部用であり、常に変更になる可能性があります。そのため、アクセスは保証外となります。 また、このURLのレスポンスは最低1時間キャッシュされます。 キャッシュを無効にしたい場合は、クエリパラメータにアクセス毎にランダムなUUIDなどを付与してください。  設定の不備等でデータが取得できない場合、この属性は設定されません。 """
+    """システム内部用のプロパティ"""
 
     etag: Optional[str]
-    """"""
+    """[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 """
 
     original_input_data_path: Optional[str]
-    """AF外部のストレージから登録された場合、その外部ストレージ中のパス。 それ以外の場合は値なし """
+    """システム内部用のプロパティ """
 
     updated_datetime: str
-    """"""
+    """更新日時"""
 
-    sign_required: Optional[bool]
-    """データがSigned Cookieによるクロスオリジン配信に対応しているか否かです。 """
+    sign_required: bool
+    """CloudFrontのSignedCookieを使ったプライベートストレージを利用するかどうか """
 
-    metadata: Optional[Dict[str, str]]
-    """ユーザーが自由に登録できるkey-value型のメタデータです。主にカスタムエディタで使われることを想定しています。 """
+    metadata: Dict[str, str]
+    """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
-    system_metadata: Optional[SystemMetadata]
+    system_metadata: SystemMetadata
     """"""

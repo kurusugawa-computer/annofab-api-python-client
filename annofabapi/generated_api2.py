@@ -89,7 +89,7 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Args:
             organization_id (str):  組織ID (required)
-            user_id (str):  ユーザID (required)
+            user_id (str):  ユーザーID (required)
             query_params (Dict[str, Any]): Query Parameters
                 cache (str):  CACHE TIMESTAMP
 
@@ -295,7 +295,7 @@ class AbstractAnnofabApi2(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            user_id (str):  アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。 (required)
+            user_id (str):  アカウントのユーザーID. RESTクライアントユーザーが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。 (required)
             query_params (Dict[str, Any]): Query Parameters
                 cache (str):  CACHE TIMESTAMP
 
@@ -693,7 +693,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
 
 
-        指定したユーザーが所属する全てのプロジェクトのメンバー情報から、指定したユーザを示す情報を抽出します。 このAPIが返すメンバー情報は、全て指定したユーザのものとなり、その数は指定ユーザが所属しているプロジェクト数となります。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
+        指定したユーザーが所属する全てのプロジェクトのメンバー情報から、指定したユーザーを示す情報を抽出します。 このAPIが返すメンバー情報は、全て指定したユーザーのものとなり、その数は指定ユーザーが所属しているプロジェクト数となります。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
 
         Args:
             account_id (str):  アカウントID (required)
