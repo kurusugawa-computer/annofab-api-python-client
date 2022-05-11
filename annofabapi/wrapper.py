@@ -1807,7 +1807,9 @@ class Wrapper:
         """
         return self._get_all_objects(self.api.get_tasks, limit=200, project_id=project_id, query_params=query_params)
 
-    def change_task_status_to_working(self, project_id: str, task_id: str) -> Task:
+    def change_task_status_to_working(
+        self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None
+    ) -> Task:
         """
         タスクのステータスを「作業中」に変更します。
 
@@ -1818,20 +1820,25 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             task_id: タスクID
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
         """
-        task, _ = self.api.get_task(project_id, task_id)
+        if last_updated_datetime is None:
+            task, _ = self.api.get_task(project_id, task_id)
+            last_updated_datetime = task["updated_datetime"]
         request_body = {
             "status": TaskStatus.WORKING.value,
             "account_id": self.api.account_id,
-            "last_updated_datetime": task["updated_datetime"],
+            "last_updated_datetime": last_updated_datetime,
         }
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def change_task_status_to_break(self, project_id: str, task_id: str) -> Task:
+    def change_task_status_to_break(
+        self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None
+    ) -> Task:
         """
         タスクのステータスを「休憩中」に変更します。
 
@@ -1842,20 +1849,26 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             task_id: タスクID
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
         """
-        task, _ = self.api.get_task(project_id, task_id)
+        if last_updated_datetime is None:
+            task, _ = self.api.get_task(project_id, task_id)
+            last_updated_datetime = task["updated_datetime"]
+
         request_body = {
             "status": TaskStatus.BREAK.value,
             "account_id": self.api.account_id,
-            "last_updated_datetime": task["updated_datetime"],
+            "last_updated_datetime": last_updated_datetime,
         }
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def change_task_status_to_on_hold(self, project_id: str, task_id: str) -> Task:
+    def change_task_status_to_on_hold(
+        self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None
+    ) -> Task:
         """
         タスクのステータスを「保留」に変更します。
 
@@ -1866,20 +1879,24 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             task_id: タスクID
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
         """
-        task, _ = self.api.get_task(project_id, task_id)
+        if last_updated_datetime is None:
+            task, _ = self.api.get_task(project_id, task_id)
+            last_updated_datetime = task["updated_datetime"]
+
         request_body = {
             "status": TaskStatus.ON_HOLD.value,
             "account_id": self.api.account_id,
-            "last_updated_datetime": task["updated_datetime"],
+            "last_updated_datetime": last_updated_datetime,
         }
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def complete_task(self, project_id: str, task_id: str) -> Task:
+    def complete_task(self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None) -> Task:
         """
         今のフェーズを完了させ、 次のフェーズに遷移させます。
         教師付フェーズのときはタスクを提出します。
@@ -1893,20 +1910,26 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             task_id: タスクID
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
         """
-        task, _ = self.api.get_task(project_id, task_id)
+        if last_updated_datetime is None:
+            task, _ = self.api.get_task(project_id, task_id)
+            last_updated_datetime = task["updated_datetime"]
+
         request_body = {
             "status": TaskStatus.COMPLETE.value,
             "account_id": self.api.account_id,
-            "last_updated_datetime": task["updated_datetime"],
+            "last_updated_datetime": last_updated_datetime,
         }
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def cancel_submitted_task(self, project_id: str, task_id: str) -> Task:
+    def cancel_submitted_task(
+        self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None
+    ) -> Task:
         """
         タスクの提出を取り消します。
         「提出されたタスク」とは以下の状態になっています。
@@ -1922,20 +1945,31 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             task_id: タスクID
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
         """
-        task, _ = self.api.get_task(project_id, task_id)
+        if last_updated_datetime is None:
+            task, _ = self.api.get_task(project_id, task_id)
+            last_updated_datetime = task["updated_datetime"]
+
         request_body = {
             "status": TaskStatus.CANCELLED.value,
             "account_id": self.api.account_id,
-            "last_updated_datetime": task["updated_datetime"],
+            "last_updated_datetime": last_updated_datetime,
         }
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def cancel_completed_task(self, project_id: str, task_id: str, operator_account_id: Optional[str] = None) -> Task:
+    def cancel_completed_task(
+        self,
+        project_id: str,
+        task_id: str,
+        operator_account_id: Optional[str],
+        *,
+        last_updated_datetime: Optional[str] = None,
+    ) -> Task:
         """
         タスクの受入完了状態を取り消す。
 
@@ -1943,23 +1977,30 @@ class Wrapper:
             project_id: プロジェクトID
             task_id: タスクID
             operator_account_id: 受入完了状態を取り消した後の担当者のaccount_id
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
         """
-
-        task, _ = self.api.get_task(project_id, task_id)
+        if last_updated_datetime is None:
+            task, _ = self.api.get_task(project_id, task_id)
+            last_updated_datetime = task["updated_datetime"]
 
         request_body = {
             "status": TaskStatus.NOT_STARTED.value,
             "account_id": operator_account_id,
-            "last_updated_datetime": task["updated_datetime"],
+            "last_updated_datetime": last_updated_datetime,
         }
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
     def change_task_operator(
-        self, project_id: str, task_id: str, operator_account_id: Optional[str] = None
+        self,
+        project_id: str,
+        task_id: str,
+        operator_account_id: Optional[str],
+        *,
+        last_updated_datetime: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         タスクの担当者を変更します。
@@ -1971,53 +2012,56 @@ class Wrapper:
             project_id: プロジェクトID
             task_id: タスクID
             operator_account_id: 新しい担当者のaccount_id。Noneの場合は、担当者を「未割り当て」にします。
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
 
         """
-        task, _ = self.api.get_task(project_id, task_id)
+        if last_updated_datetime is None:
+            task, _ = self.api.get_task(project_id, task_id)
+            last_updated_datetime = task["updated_datetime"]
 
         request_body = {
             "status": TaskStatus.NOT_STARTED.value,
             "account_id": operator_account_id,
-            "last_updated_datetime": task["updated_datetime"],
+            "last_updated_datetime": last_updated_datetime,
         }
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def reject_task(self, project_id: str, task_id: str, force: bool = False) -> Dict[str, Any]:
+    def reject_task(
+        self, project_id: str, task_id: str, *, force: bool = False, last_updated_datetime: Optional[str] = None
+    ) -> Dict[str, Any]:
         """
         タスクを差し戻します。
-        * 通常の差し戻しの場合、タスクの担当者は未割り当てになります。
-        * 強制差し戻しの場合、タスクの担当者は直前の教師付フェーズの担当者になります。
 
         Notes:
-            * 通常の差し戻しの場合
+            * 通常の差し戻しの場合(force=False)
                 * 現在タスクを担当しているユーザーのみ、この操作を行うことができます。
                 * 現在の状態が作業中(working)のタスクに対してのみ、この操作を行うことができます。
-                * 現在のフェーズが検査(inspection)、もしくは受入(acceptance)のタスクに対してのみ、この操作を行うことができます。
-            * 強制差し戻しの場合
+            * 強制差し戻しの場合(force=True)
                 * タスクの状態・フェーズを無視して、フェーズを教師付け(annotation)に、状態を未作業(not started)に変更します。
-                * タスクの担当者としては、直前の教師付け(annotation)フェーズの担当者を割り当てます。
                 * この差戻しは、抜取検査・抜取受入のスキップ判定に影響を及ぼしません。
 
         Args:
             project_id: プロジェクトID
             task_id: タスクID
             force: Trueなら強制差し戻し、Falseなら通常の差し戻しを実施する
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
 
         """
-
-        task, _ = self.api.get_task(project_id, task_id)
+        if last_updated_datetime is None:
+            task, _ = self.api.get_task(project_id, task_id)
+            last_updated_datetime = task["updated_datetime"]
 
         request_body = {
             "status": TaskStatus.REJECTED.value,
             "account_id": self.api.account_id,
-            "last_updated_datetime": task["updated_datetime"],
+            "last_updated_datetime": last_updated_datetime,
             "force": force,
         }
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
