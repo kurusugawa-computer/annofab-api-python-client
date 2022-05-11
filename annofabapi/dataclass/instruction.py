@@ -16,43 +16,83 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 from dataclasses_json import DataClassJsonMixin
 
 
+
+
 @dataclass
 class Instruction(DataClassJsonMixin):
-    """ """
-
+    """
+    
+    """
     html: str
     """作業ガイドのHTML"""
+
+
 
     last_updated_datetime: str
     """更新日時"""
 
 
+
+
+
+
+
+
+
+
 @dataclass
 class InstructionHistory(DataClassJsonMixin):
-    """ """
-
+    """
+    
+    """
     history_id: str
     """作業ガイドの履歴ID"""
 
+
+
     account_id: str
     """作業ガイドを更新したユーザーのアカウントID"""
+
+
 
     updated_datetime: str
     """作業ガイドの最終更新日時"""
 
 
+
+
+
+
+
+
+
+
 @dataclass
 class InstructionImage(DataClassJsonMixin):
-    """ """
-
+    """
+    
+    """
     image_id: str
     """作業ガイド画像ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+
 
     path: str
     """作業ガイド画像の実体が保存されたパスです。 """
 
+
+
     url: str
     """作業ガイド画像を取得するためのシステム内部用のURLです。"""
 
+
+
     etag: str
     """[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 """
+
+
+
+
+
+
+

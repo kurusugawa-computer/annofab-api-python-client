@@ -15,36 +15,61 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import DataClassJsonMixin
 
-from annofabapi.models import Errors, JobStatus, ProjectJobType
+from annofabapi._utils import deprecated_class
+from annofabapi.models import JobStatus, ProjectJobType, Errors
 
 
 @dataclass
 class ProjectJobInfo(DataClassJsonMixin):
-    """ """
-
+    """
+    
+    """
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+
 
     job_type: ProjectJobType
     """"""
 
+
+
     job_id: str
     """ジョブID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+
 
     job_status: JobStatus
     """"""
 
-    job_execution: Optional[Dict[str, Any]]
+
+
+    job_execution: Optional[__DictStrKeyAnyValue__]
     """ジョブの内部情報"""
 
-    job_detail: Optional[Dict[str, Any]]
+
+
+    job_detail: Optional[__DictStrKeyAnyValue__]
     """ジョブ結果の内部情報"""
+
+
 
     errors: Errors
     """"""
 
+
+
     created_datetime: str
     """作成日時"""
 
+
+
     updated_datetime: str
     """更新日時"""
+
+
+
+
+
+
+

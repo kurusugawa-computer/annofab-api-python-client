@@ -15,50 +15,88 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import DataClassJsonMixin
 
-from annofabapi.models import WebhookEventType, WebhookHttpMethod, WebhookStatus
+from annofabapi.models import WebhookEventType, WebhookStatus, WebhookHttpMethod
+
 
 
 @dataclass
 class WebhookHeader(DataClassJsonMixin):
-    """ """
-
+    """
+    
+    """
     name: str
     """HTTPヘッダーのフィールド名"""
+
+
 
     value: str
     """HTTPヘッダーの値"""
 
 
+
+
+
+
+
+
+
+
 @dataclass
 class Webhook(DataClassJsonMixin):
-    """ """
-
+    """
+    
+    """
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+
 
     event_type: WebhookEventType
     """"""
 
+
+
     webhook_id: str
     """WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+
 
     webhook_status: WebhookStatus
     """"""
 
+
+
     method: WebhookHttpMethod
     """"""
+
+
 
     headers: List[WebhookHeader]
     """Webhookが送信するHTTPリクエストのヘッダー"""
 
+
+
     body: Optional[str]
     """Webhookが送信するHTTPリクエストのボディ"""
+
+
 
     url: str
     """Webhookの送信先URL"""
 
+
+
     created_datetime: str
     """作成日時"""
 
+
+
     updated_datetime: str
     """更新日時"""
+
+
+
+
+
+
+

@@ -15,7 +15,7 @@ from enum import Enum
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
 
 from annofabapi._utils import deprecated_class  # pylint: disable=unused-import
-
+from annofabapi._utils import deprecated_class  # pylint: disable=unused-import
 ### 手動の部分
 
 AccountId = NewType("AccountId", str)
@@ -274,10 +274,9 @@ Kyes of Dict
 
 """
 
-
 class AdditionalDataDefinitionType(Enum):
     """
-    属性の種類 * `flag` - 真偽値 * `integer` - 整数値 * `text` - 自由記述（1行） * `comment` - 自由記述（複数行） * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - トラッキングID * `link` - アノテーションリンク
+    属性の種類 * `flag` - 真偽値 * `integer` - 整数値 * `text` - 自由記述（1行） * `comment` - 自由記述（複数行） * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - トラッキングID * `link` - アノテーションリンク 
     """
 
     FLAG = "flag"
@@ -616,10 +615,9 @@ Kyes of Dict
 
 """
 
-
 class AnnotationDataHoldingType(Enum):
     """
-    アノテーションのデータがどこに保持されるか * `inner` - アノテーションのデータ部をJSON内部に保持します。 * `outer` - アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
+    アノテーションのデータがどこに保持されるか * `inner` - アノテーションのデータ部をJSON内部に保持します。 * `outer` - アノテーションのデータ部を外部ファイルの形式（画像など）で保持します 
     """
 
     INNER = "inner"
@@ -923,10 +921,9 @@ Kyes of Dict
 
 """
 
-
 class AnnotationType(Enum):
     """
-    アノテーションの種類 * `bounding_box` - 矩形 * `segmentation` - 塗りつぶし（インスタンスセグメンテーション用） * `segmentation_v2` - 塗りつぶしv2（セマンティックセグメンテーション用） * `polygon` - ポリゴン（閉じた頂点集合） * `polyline` - ポリライン（開いた頂点集合） * `point` - 点 * `classification` - 全体 * `range` - 動画の区間 * `custom` - カスタム  プロジェクトの種類によって、使用できるアノテーションの種類は決まっています。アノテーションの種類が使用できるかどうかを、以下の表に記載しました。  * `○`：使用できる  * `×`：使用できない   |アノテーションの種類                 | 画像プロジェクト        | 動画プロジェクト | カスタムプロジェクト | |-----------------|:----------:|:----:|:------:| | bounding_box    | 〇         | ×  | ×    | | segmentation    | 〇         | ×  | ×    | | segmentation_v2 | 〇         | ×  | ×    | | polygon         | 〇         | ×  | ×    | | polyline        | 〇         | ×  | ×    | | point           | 〇         | ×  | ×    | | classification  | 〇         | 〇  | ×    | | range           | ×         | 〇  | ×    | | custom          | ×         | ×  | 〇    |
+    アノテーションの種類 * `bounding_box` - 矩形 * `segmentation` - 塗りつぶし（インスタンスセグメンテーション用） * `segmentation_v2` - 塗りつぶしv2（セマンティックセグメンテーション用） * `polygon` - ポリゴン（閉じた頂点集合） * `polyline` - ポリライン（開いた頂点集合） * `point` - 点 * `classification` - 全体 * `range` - 動画の区間 * `custom` - カスタム  プロジェクトの種類によって、使用できるアノテーションの種類は決まっています。アノテーションの種類が使用できるかどうかを、以下の表に記載しました。  * `○`：使用できる  * `×`：使用できない   |アノテーションの種類                 | 画像プロジェクト        | 動画プロジェクト | カスタムプロジェクト | |-----------------|:----------:|:----:|:------:| | bounding_box    | 〇         | ×  | ×    | | segmentation    | 〇         | ×  | ×    | | segmentation_v2 | 〇         | ×  | ×    | | polygon         | 〇         | ×  | ×    | | polyline        | 〇         | ×  | ×    | | point           | 〇         | ×  | ×    | | classification  | 〇         | 〇  | ×    | | range           | ×         | 〇  | ×    | | custom          | ×         | ×  | 〇    | 
     """
 
     BOUNDING_BOX = "bounding_box"
@@ -942,7 +939,7 @@ class AnnotationType(Enum):
 
 class AssigneeRuleOfResubmittedTask(Enum):
     """
-    再提出されたタスクの検査/受入担当者の割当方法 * `no_assignee` - 以前の担当者で固定せず、未割当てにします。 * `fixed` - 以前の担当者が再度担当します。以前の担当者がいない(1回目の検査/受入)場合は未割当てになります。
+    再提出されたタスクの検査/受入担当者の割当方法 * `no_assignee` - 以前の担当者で固定せず、未割当てにします。 * `fixed` - 以前の担当者が再度担当します。以前の担当者がいない(1回目の検査/受入)場合は未割当てになります。 
     """
 
     NO_ASSIGNEE = "no_assignee"
@@ -1316,10 +1313,9 @@ Kyes of Dict
 
 """
 
-
 class CommentStatus(Enum):
     """
-    `comment_type` の値によってコメントのステータスに格納される値とステータスの意味が変わります。  * `onhold` の場合   * `open`（未対応）、`resolved`（対応完了）を指定可能 * `inspection` の場合   * `open`（未対応）、`resolved`（対応完了）、`closed`（対応不要）を指定可能
+    `comment_type` の値によってコメントのステータスに格納される値とステータスの意味が変わります。  * `onhold` の場合   * `open`（未対応）、`resolved`（対応完了）を指定可能 * `inspection` の場合   * `open`（未対応）、`resolved`（対応完了）、`closed`（対応不要）を指定可能 
     """
 
     OPEN = "open"
@@ -1737,10 +1733,9 @@ Kyes of Dict
 
 """
 
-
 class GraphType(Enum):
     """
-    グラフの種類 * `task_progress` - タスク進捗状況 * `cumulative_labor_time_by_task_phase` - タスクフェーズ別累積作業時間 * `number_of_inspections_per_inspection_phrase` - 検査コメント内容別指摘回数 * `number_of_task_rejections_by_member` - メンバー別タスクが差戻された回数 * `labor_time_per_member` - メンバー別作業時間 * `mean_labor_time_per_image` - 画像一枚当たりの作業時間平均 * `mean_labor_time_per_minute_of_movie` - 動画一分当たりの作業時間平均 * `mean_labor_time_per_image_by_member` - メンバー別画像一枚当たりの作業時間平均 * `mean_labor_time_per_minute_of_movie_by_member` - メンバー別動画一分当たりの作業時間平均
+    グラフの種類 * `task_progress` - タスク進捗状況 * `cumulative_labor_time_by_task_phase` - タスクフェーズ別累積作業時間 * `number_of_inspections_per_inspection_phrase` - 検査コメント内容別指摘回数 * `number_of_task_rejections_by_member` - メンバー別タスクが差戻された回数 * `labor_time_per_member` - メンバー別作業時間 * `mean_labor_time_per_image` - 画像一枚当たりの作業時間平均 * `mean_labor_time_per_minute_of_movie` - 動画一分当たりの作業時間平均 * `mean_labor_time_per_image_by_member` - メンバー別画像一枚当たりの作業時間平均 * `mean_labor_time_per_minute_of_movie_by_member` - メンバー別動画一分当たりの作業時間平均 
     """
 
     TASK_PROGRESS = "task_progress"
@@ -1836,10 +1831,9 @@ Kyes of Dict
 
 """
 
-
 class InputDataOrder(Enum):
     """
-    タスクに割り当てる入力データの順序  * `name_asc` - 入力データ名の昇順 * `name_desc` - 入力データ名の降順 * `random` - ランダム
+    タスクに割り当てる入力データの順序  * `name_asc` - 入力データ名の昇順 * `name_desc` - 入力データ名の降順 * `random` - ランダム 
     """
 
     NAME_ASC = "name_asc"
@@ -1902,10 +1896,9 @@ Kyes of Dict
 
 """
 
-
 class InputDataType(Enum):
     """
-    アノテーションする入力データの種類。 * `image` - 画像 * `movie` - 動画 * `custom` - カスタム
+    アノテーションする入力データの種類。 * `image` - 画像 * `movie` - 動画 * `custom` - カスタム 
     """
 
     IMAGE = "image"
@@ -2111,10 +2104,9 @@ Kyes of Dict
 
 """
 
-
 class InspectionSummary(Enum):
     """
-    - `no_inspection` - 入力データに検査コメントが付けられていない。 - `no_comment_inspection` - 入力データに空の検査コメントが付けられている。 - `new_reply_to_unprocessed` - 現在進行中の検査・受入フェーズで未処理の検査コメントに対して新たに返信が付けられている。 - `new_unprocessed_inspection` - 現在進行中の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。 - `unprocessed` - 過去の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。 - `complete` - 入力データにつけられた検査コメントで未処理のものがない。
+    - `no_inspection` - 入力データに検査コメントが付けられていない。 - `no_comment_inspection` - 入力データに空の検査コメントが付けられている。 - `new_reply_to_unprocessed` - 現在進行中の検査・受入フェーズで未処理の検査コメントに対して新たに返信が付けられている。 - `new_unprocessed_inspection` - 現在進行中の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。 - `unprocessed` - 過去の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。 - `complete` - 入力データにつけられた検査コメントで未処理のものがない。 
     """
 
     NO_INSPECTION = "no_inspection"
@@ -2301,10 +2293,9 @@ Kyes of Dict
 
 """
 
-
 class JobStatus(Enum):
     """
-    ジョブのステータス
+    ジョブのステータス 
     """
 
     PROGRESS = "progress"
@@ -2314,7 +2305,7 @@ class JobStatus(Enum):
 
 class KeyLayout(Enum):
     """
-    キーボードレイアウト * `ja-JP` - 日本語(106/109)配列 * `en-US` - 英語(101/104)配列 * `other` - その他
+    キーボードレイアウト * `ja-JP` - 日本語(106/109)配列 * `en-US` - 英語(101/104)配列 * `other` - その他 
     """
 
     JA_JP = "ja-JP"
@@ -2416,10 +2407,9 @@ Kyes of Dict
 
 """
 
-
 class Lang(Enum):
     """
-    表示言語 * `ja-JP` - 日本語 * `en-US` - 英語
+    表示言語 * `ja-JP` - 日本語 * `en-US` - 英語 
     """
 
     EN_US = "en-US"
@@ -2776,10 +2766,9 @@ Kyes of Dict
 
 """
 
-
 class OrganizationMemberRole(Enum):
     """
-    組織メンバーのロール。 * `owner` - 組織オーナー * `administrator` - 組織管理者 * `contributor` - 組織貢献者
+    組織メンバーのロール。 * `owner` - 組織オーナー * `administrator` - 組織管理者 * `contributor` - 組織貢献者 
     """
 
     OWNER = "owner"
@@ -2789,7 +2778,7 @@ class OrganizationMemberRole(Enum):
 
 class OrganizationMemberStatus(Enum):
     """
-    組織メンバーのステータス。 * `active` - 組織メンバーとして有効で、組織を閲覧したり、権限があれば編集できます。 * `waiting_response` - 組織に招待され、まだ加入/脱退を返答していません。組織の一部を閲覧のみできます。 * `inactive` - 脱退したメンバーを表します。組織を閲覧できません。
+    組織メンバーのステータス。 * `active` - 組織メンバーとして有効で、組織を閲覧したり、権限があれば編集できます。 * `waiting_response` - 組織に招待され、まだ加入/脱退を返答していません。組織の一部を閲覧のみできます。 * `inactive` - 脱退したメンバーを表します。組織を閲覧できません。 
     """
 
     ACTIVE = "active"
@@ -3080,10 +3069,9 @@ Kyes of Dict
 
 """
 
-
 class PricePlan(Enum):
     """
-    料金プラン * `free` - フリープラン * `business` - ビジネスプラン
+    料金プラン * `free` - フリープラン * `business` - ビジネスプラン 
     """
 
     FREE = "free"
@@ -3319,10 +3307,9 @@ Kyes of Dict
 
 """
 
-
 class ProjectJobType(Enum):
     """
-    プロジェクトのジョブの種別 * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。  ## ジョブの同時実行制限  Annofab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。  ジョブの同時実行可否はジョブの種別によって異なります。  なお、ジョブを実行するプロジェクトが初期化中 (`project_status = \"initializing\"`) の場合は、どのジョブも実行できません。  ### copy-project 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-tasks` * `delete-project` * `move-project`  ### gen-inputs 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-inputs-list` * `delete-project` * `move-project`  ### gen-tasks 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-annotation` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-annotation 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-annotation` * `delete-project` * `move-project`  ### gen-tasks-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-inputs-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-inputs-list` * `delete-project` * `move-project`  ### delete-project 他のジョブが実行されていない場合**のみ**実行できます。  ### invoke-hook 次のジョブが実行されている場合、このジョブを実行することはできません。  * `delete-project` * `move-project`  ### move-project 他のジョブが実行されていない場合**のみ**実行できます。
+    プロジェクトのジョブの種別 * `copy-project` - プロジェクトのコピー。[initiateProjectCopy](#operation/initiateProjectCopy) APIを実行したときに登録されるジョブ。 * `gen-inputs` - zipファイルから入力データの作成。[putInputData](#operation/putInputData) APIを実行して、zipファイルから入力データを作成したときに登録されるジョブ。 * `gen-tasks` - タスクの一括作成。[initiateTasksGeneration](#operation/initiateTasksGeneration) APIを実行したときに登録されるジョブ。 * `gen-annotation` - アノテーションZIPの更新。[postAnnotationArchiveUpdate](#operation/postAnnotationArchiveUpdate) APIを実行したときに登録されるジョブ。 * `gen-tasks-list` - タスク全件ファイルの更新。[postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを実行したときに登録されるジョブ。 * `gen-inputs-list` - 入力データ情報全件ファイルの更新。[postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを実行したときに登録されるジョブ。 * `delete-project` - プロジェクトの削除。[deleteProject](#operation/deleteProject) APIを実行したときに登録されるジョブ。 * `invoke-hook` - Webhookの起動。 * `move-project` - プロジェクトの組織移動。[putProject](#operation/putProject) API で組織を変更したときに登録されるジョブ。  ## ジョブの同時実行制限  Annofab上に登録されているデータの整合性を保つため、プロジェクト内で特定のジョブが実行中の間は他のジョブが実行できないよう制限をかけています。  ジョブの同時実行可否はジョブの種別によって異なります。  なお、ジョブを実行するプロジェクトが初期化中 (`project_status = \"initializing\"`) の場合は、どのジョブも実行できません。  ### copy-project 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-tasks` * `delete-project` * `move-project`  ### gen-inputs 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-inputs-list` * `delete-project` * `move-project`  ### gen-tasks 次のジョブが実行されている場合、このジョブを実行することはできません。  * `copy-project` * `gen-inputs` * `gen-tasks` * `gen-annotation` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-annotation 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-annotation` * `delete-project` * `move-project`  ### gen-tasks-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-tasks` * `gen-tasks-list` * `delete-project` * `move-project`  ### gen-inputs-list 次のジョブが実行されている場合、このジョブを実行することはできません。  * `gen-inputs` * `gen-inputs-list` * `delete-project` * `move-project`  ### delete-project 他のジョブが実行されていない場合**のみ**実行できます。  ### invoke-hook 次のジョブが実行されている場合、このジョブを実行することはできません。  * `delete-project` * `move-project`  ### move-project 他のジョブが実行されていない場合**のみ**実行できます。 
     """
 
     COPY_PROJECT = "copy-project"
@@ -3428,10 +3415,9 @@ Kyes of Dict
 
 """
 
-
 class ProjectMemberRole(Enum):
     """
-    プロジェクトメンバーのロール * `owner` - オーナー * `worker` - アノテーター * `accepter` - チェッカー * `training_data_user` - アノテーションユーザー
+    プロジェクトメンバーのロール * `owner` - オーナー * `worker` - アノテーター * `accepter` - チェッカー * `training_data_user` - アノテーションユーザー 
     """
 
     OWNER = "owner"
@@ -3442,7 +3428,7 @@ class ProjectMemberRole(Enum):
 
 class ProjectMemberStatus(Enum):
     """
-    プロジェクトメンバーの状態 * `active` - プロジェクトメンバーとして有効で、プロジェクトを閲覧したり、権限があれば編集できます。 * `inactive` - 脱退したプロジェクトメンバーを表します。プロジェクトを閲覧できません。
+    プロジェクトメンバーの状態 * `active` - プロジェクトメンバーとして有効で、プロジェクトを閲覧したり、権限があれば編集できます。 * `inactive` - 脱退したプロジェクトメンバーを表します。プロジェクトを閲覧できません。 
     """
 
     ACTIVE = "active"
@@ -3451,7 +3437,7 @@ class ProjectMemberStatus(Enum):
 
 class ProjectStatus(Enum):
     """
-    プロジェクトの状態 * `active` - プロジェクトが進行中 * `suspended` - プロジェクトが停止中 * `initializing` - プロジェクトが初期化中
+    プロジェクトの状態 * `active` - プロジェクトが進行中 * `suspended` - プロジェクトが停止中 * `initializing` - プロジェクトが初期化中 
     """
 
     ACTIVE = "active"
@@ -3973,10 +3959,9 @@ Kyes of Dict
 
 """
 
-
 class SupplementaryDataType(Enum):
     """
-    補助情報の種類 * `image` - 画像 * `text` - テキスト * `custom` - カスタム（カスタムプロジェクトでしか利用できません）
+    補助情報の種類 * `image` - 画像 * `text` - テキスト * `custom` - カスタム（カスタムプロジェクトでしか利用できません） 
     """
 
     IMAGE = "image"
@@ -4146,10 +4131,9 @@ Kyes of Dict
 
 """
 
-
 class TaskAssignmentOrder(Enum):
     """
-    タスクの割当優先度を決定するための並び順。  * `asc` -  昇順 * `desc` - 降順
+    タスクの割当優先度を決定するための並び順。  * `asc` -  昇順 * `desc` - 降順 
     """
 
     ASC = "asc"
@@ -4169,10 +4153,9 @@ Kyes of Dict
 
 """
 
-
 class TaskAssignmentType(Enum):
     """
-    プロジェクトで使用するタスクの割当方式。  * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。 * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。 * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。 * `task_property` - タスクのプロパティ(タスクID/更新日時/メタデータ)と並び順(昇順/降順)を設定して、その順番通りにタスクを割当する方式です。順番が同じタスクが複数ある場合は、その中からランダムに1つのタスクを割当します。プロパティと並び順は`TaskAssignmentProperty` から設定します。 * `custom` - タスク割当アルゴリズム (API) を独自に定義してタスクを割当する方式です。
+    プロジェクトで使用するタスクの割当方式。  * `random` -  タスクフェーズのみを指定してランダムにタスクを自身に割当する方式です。 * `selection` - 担当者とタスクを明示的に指定してタスクを割当する方式です。プロジェクトオーナーもしくはチェッカーのみ、自身以外のプロジェクトメンバーを担当者に指定できます。 * `random_and_selection` - ランダム割当と選択割当の両機能を使用する方式です。 * `task_property` - タスクのプロパティ(タスクID/更新日時/メタデータ)と並び順(昇順/降順)を設定して、その順番通りにタスクを割当する方式です。順番が同じタスクが複数ある場合は、その中からランダムに1つのタスクを割当します。プロパティと並び順は`TaskAssignmentProperty` から設定します。 * `custom` - タスク割当アルゴリズム (API) を独自に定義してタスクを割当する方式です。 
     """
 
     RANDOM = "random"
@@ -4435,10 +4418,9 @@ Kyes of Dict
 
 """
 
-
 class TaskPhase(Enum):
     """
-    タスクのフェーズ * `annotation` - 教師付け * `inspection` - 検査 * `acceptance` - 受入
+    タスクのフェーズ * `annotation` - 教師付け * `inspection` - 検査 * `acceptance` - 受入 
     """
 
     ANNOTATION = "annotation"
@@ -4474,10 +4456,9 @@ Kyes of Dict
 
 """
 
-
 class TaskStatus(Enum):
     """
-    タスクのステータス * `not_started` - 未着手 * `working` - 作業中 * `on_hold` - 保留中 * `break` - 休憩中 * `complete` - 完了 * `rejected` - 差し戻し。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。 * `cancelled` - 提出の取り消し。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
+    タスクのステータス * `not_started` - 未着手 * `working` - 作業中 * `on_hold` - 保留中 * `break` - 休憩中 * `complete` - 完了 * `rejected` - 差し戻し。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。 * `cancelled` - 提出の取り消し。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。 
     """
 
     NOT_STARTED = "not_started"
@@ -4674,10 +4655,9 @@ Kyes of Dict
 
 """
 
-
 class WebhookEventType(Enum):
     """
-    Webhookイベントの種類 * `task-completed` - タスク受入完了 * `annotation-archive-updated` - アノテーションZIP作成完了 * `input-data-zip-registered` - 入力データZIP登録完了 * `project-copy-completed` - プロジェクトコピー完了
+    Webhookイベントの種類 * `task-completed` - タスク受入完了 * `annotation-archive-updated` - アノテーションZIP作成完了 * `input-data-zip-registered` - 入力データZIP登録完了 * `project-copy-completed` - プロジェクトコピー完了 
     """
 
     TASK_COMPLETED = "task-completed"
@@ -4699,10 +4679,9 @@ Kyes of Dict
 
 """
 
-
 class WebhookHttpMethod(Enum):
     """
-    Webhook通知するHTTPリクエストのメソッド
+    Webhook通知するHTTPリクエストのメソッド 
     """
 
     POST = "POST"
@@ -4832,7 +4811,6 @@ Kyes of Dict
     作業時間の標準偏差（ISO 8601 duration）
 
 """
-
 
 @deprecated_class(deprecated_date="2022-08-23")
 class InspectionStatus(Enum):
