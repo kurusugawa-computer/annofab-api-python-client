@@ -1961,7 +1961,7 @@ class Wrapper:
         self,
         project_id: str,
         task_id: str,
-        operator_account_id: Optional[str] = None,
+        operator_account_id: Optional[str],
         *,
         last_updated_datetime: Optional[str] = None,
     ) -> Task:
