@@ -144,18 +144,20 @@ class AdditionalData(DataClassJsonMixin):
 
 @dataclass
 class FullAnnotationAdditionalData(DataClassJsonMixin):
-    """ """
+    """
+    属性情報
+    """
 
-    additional_data_definition_id: Optional[str]
+    additional_data_definition_id: str
     """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    additional_data_definition_name: Optional[InternationalizationMessage]
+    additional_data_definition_name: InternationalizationMessage
     """"""
 
-    type: Optional[AdditionalDataDefinitionType]
+    type: AdditionalDataDefinitionType
     """"""
 
-    value: Optional[AdditionalDataValue]
+    value: AdditionalDataValue
     """"""
 
 
@@ -184,8 +186,8 @@ class FullAnnotationDetail(DataClassJsonMixin):
     data: FullAnnotationData
     """"""
 
-    additional_data_list: List[AdditionalData]
-    """属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | """
+    additional_data_list: List[FullAnnotationAdditionalData]
+    """属性情報。 """
 
 
 @dataclass
@@ -210,7 +212,7 @@ class FullAnnotation(DataClassJsonMixin):
     input_data_id: str
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    input_data_name: Optional[str]
+    input_data_name: str
     """入力データ名"""
 
     details: List[FullAnnotationDetail]
@@ -277,7 +279,9 @@ class SimpleAnnotation(DataClassJsonMixin):
 
 @dataclass
 class SingleAnnotationDetail(DataClassJsonMixin):
-    """ """
+    """
+    アノテーション情報
+    """
 
     annotation_id: str
     """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 """
@@ -327,7 +331,7 @@ class SingleAnnotation(DataClassJsonMixin):
     """"""
 
     updated_datetime: str
-    """"""
+    """更新日時"""
 
 
 @dataclass

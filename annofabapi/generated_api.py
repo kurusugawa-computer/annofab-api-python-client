@@ -1040,21 +1040,17 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_my_organizations(
-        self, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
-        """所属組織一括取得
+    def get_my_organizations(self, **kwargs) -> Tuple[Any, requests.Response]:
+        """所属組織の一括取得
         https://annofab.com/docs/api/#operation/getMyOrganizations
 
 
         authorizations: AllOrganizationMember
 
 
-        API リクエストユーザーが所属するすべての組織における、自身がどのようなメンバー設定で所属しているかをまとめて取得します。
+        自分が所属している組織を一括で取得します。
 
         Args:
-            query_params (Dict[str, Any]): Query Parameters
-                limit (int):  1ページあたりの取得するデータ件数  現在は未実装のパラメータです。(今後対応予定)
 
         Returns:
             Tuple[MyOrganizationList, requests.Response]
@@ -1063,9 +1059,7 @@ class AbstractAnnofabApi(abc.ABC):
         """
         url_path = f"/my/organizations"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
-            "query_params": query_params,
-        }
+        keyword_params: Dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
@@ -1093,22 +1087,22 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_my_projects(self, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
-        """所属プロジェクト一括取得
+        """所属プロジェクトの一括取得
         https://annofab.com/docs/api/#operation/getMyProjects
 
 
         authorizations: Everyone
 
 
-        自身が所属するプロジェクトを一括で取得します。
+        自分が所属しているプロジェクトを一括で取得します。
 
         Args:
             query_params (Dict[str, Any]): Query Parameters
                 page (int):  表示するページ番号
                 limit (int):  1ページあたりの取得するデータ件数
-                organization_id (str):  指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。
-                title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。
-                status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。
+                organization_id (str):  指定した組織に属するプロジェクトに絞り込む。
+                title (str):  プロジェクトタイトルでの部分一致検索。大文字小文字は区別しません。
+                status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。
                 input_data_type (InputDataType):  入力データの種類でプロジェクトを絞り込みます。[詳細はこちら](#section/InputDataType)を参照してください。
                 sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。
 
@@ -1176,7 +1170,7 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def update_organization(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
-        """組織名変更
+        """組織名の変更
         https://annofab.com/docs/api/#operation/updateOrganization
 
         .. deprecated:: X
@@ -1184,7 +1178,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationOwner
 
 
-        同じ name の組織が既に存在する場合は失敗(400)します。
+        組織名を変更します。  2022/04/19以降に廃止する予定です。
 
         Args:
             request_body (Any): Request Body
@@ -1296,7 +1290,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        AnnoFabストレージの使用量など、組織の活動状況を取得します。
+        Annofabストレージの使用量など、組織の活動状況を取得します。
 
         Args:
             organization_name (str):  組織名 (required)
@@ -1331,7 +1325,7 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  1ページあたりの取得するデータ件数
                 account_id (str):  指定したアカウントIDをメンバーに持つプロジェクトで絞り込む。
                 except_account_id (str):  指定したアカウントIDをメンバーに持たないプロジェクトで絞り込む。
-                title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。大文字小文字は区別しません。
+                title (str):  プロジェクトタイトルでの部分一致検索。大文字小文字は区別しません。
                 status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。
                 plugin_id (str):  指定したプラグインIDを使用しているプロジェクトで絞り込む。
                 input_data_type (InputDataType):  入力データの種類でプロジェクトを絞り込みます。[詳細はこちら](#section/InputDataType)を参照してください。
@@ -1508,10 +1502,10 @@ class AbstractAnnofabApi(abc.ABC):
             organization_name (str):  組織名 (required)
             input_data_set_id (str):  入力データセットID (required)
             query_params (Dict[str, Any]): Query Parameters
-                input_data_id (str):  入力データIDでの部分一致検索で使用。1文字以上あれば使用します。
-                input_data_name (str):  入力データ名での部分一致検索で使用。1文字以上あれば使用します。
-                input_data_path (str):  入力データパスでの部分一致検索で使用。1文字以上あれば使用します。
-                task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。1文字以上あれば使用します。条件に合致した先頭100件のタスクに使われている入力データを検索します。
+                input_data_id (str):  入力データIDでの部分一致検索で使用。
+                input_data_name (str):  入力データ名での部分一致検索で使用。
+                input_data_path (str):  入力データパスでの部分一致検索で使用。
+                task_id (str):  入力データが紐づくタスクIDの部分一致検索で使用。条件に合致した先頭100件のタスクに使われている入力データを検索します。
                 from (str):  指定した日時以降に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
                 to (str):  指定した日時以前に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
@@ -2836,8 +2830,8 @@ class AbstractAnnofabApi(abc.ABC):
             query_params (Dict[str, Any]): Query Parameters
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
-                task_id (str):  タスクIDでの部分一致検索で使用。最大文字列長300文字。1文字以上あれば使用します。大文字小文字は区別しません
-                input_data_ids (str):  指定された入力データIDを使用しているタスクを絞り込みます。カンマ区切りで複数の入力データIDを指定可能です。1文字以上あれば使用します。大文字小文字は区別しません
+                task_id (str):  タスクIDでの部分一致検索で使用。大文字小文字は区別しません
+                input_data_ids (str):  指定された入力データIDを使用しているタスクを絞り込みます。カンマ区切りで複数の入力データIDを指定可能です。大文字小文字は区別しません
                 phase (TaskPhase):  絞り込み条件となるフェーズ名
                 phase_stage (int):  絞り込み条件となるステージ
                 status (TaskStatus):  絞り込み条件となる状態名
@@ -2941,7 +2935,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                body (__DictStrKeyAnyValue__):  (required)
+                request_body (dict(str, dict)):  (required)
 
         Returns:
             Tuple[Message, requests.Response]

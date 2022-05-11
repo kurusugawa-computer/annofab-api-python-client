@@ -490,7 +490,7 @@ Kyes of Dict
 
 AdditionalDataValue = Dict[str, Any]
 """
-
+属性値 
 
 Kyes of Dict
 
@@ -508,7 +508,7 @@ AdditionalDataValueChoice = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    Choice
+    `Choice` 
 * value: AdditionalDataChoiceValue
     
 
@@ -521,7 +521,7 @@ AdditionalDataValueComment = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    Comment
+    `Comment` 
 * value: str
     自由記述
 
@@ -534,7 +534,7 @@ AdditionalDataValueFlag = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    Flag
+    `Flag` 
 * value: bool
     フラグのON(true)またはOFF(false)
 
@@ -547,7 +547,7 @@ AdditionalDataValueInteger = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    Integer
+    `Integer` 
 * value: int
     整数値
 
@@ -708,11 +708,11 @@ AnnotationQuery = Dict[str, Any]
 Kyes of Dict
 
 * task_id: str
-    タスクIDで絞り込みます。最大文字列長は300文字です。 
+    タスクIDで絞り込みます。 
 * exact_match_task_id: bool
     タスクIDの検索方法を指定します。 `true`の場合は完全一致検索、`false`の場合は部分一致検索です。 
 * input_data_id: str
-    入力データID絞り込みます。最大文字列長は300文字です。 
+    入力データID絞り込みます。 
 * exact_match_input_data_id: bool
     入力データIDの検索方法を指定します。 `true`の場合は完全一致検索、`false`の場合は部分一致検索です。 
 * label_id: str
@@ -1564,7 +1564,7 @@ Kyes of Dict
 
 FullAnnotationAdditionalData = Dict[str, Any]
 """
-
+属性情報 
 
 Kyes of Dict
 
@@ -1732,8 +1732,8 @@ Kyes of Dict
     
 * data: FullAnnotationData
     
-* additional_data_list: List[AdditionalData]
-    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
+* additional_data_list: List[FullAnnotationAdditionalData]
+    属性情報。 
 
 """
 
@@ -2489,7 +2489,9 @@ Message = Dict[str, Any]
 Kyes of Dict
 
 * message: str
-    多言語対応
+    メッセージ
+* message_id: str
+    システム内部用のプロパティ
 
 """
 
@@ -2500,7 +2502,9 @@ MessageOrJobInfo = Dict[str, Any]
 Kyes of Dict
 
 * message: str
-    多言語対応
+    メッセージ
+* message_id: str
+    システム内部用のプロパティ
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * job_type: ProjectJobType
@@ -2612,7 +2616,7 @@ Kyes of Dict
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
-    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
+    システム内部用のプロパティ。 
 
 """
 
@@ -2768,7 +2772,7 @@ Kyes of Dict
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
-    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
+    システム内部用のプロパティ 
 
 """
 
@@ -2833,7 +2837,7 @@ Kyes of Dict
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[__DictStrKeyAnyValue__]
-    システム内部用のプロパティ。常に空配列です。 
+    システム内部用のプロパティ。 
 
 """
 
@@ -3057,7 +3061,9 @@ PostAnnotationArchiveUpdateResponseWrapper = Dict[str, Any]
 Kyes of Dict
 
 * message: str
-    多言語対応
+    メッセージ
+* message_id: str
+    システム内部用のプロパティ
 * job: ProjectJobInfo
     
 
@@ -3347,7 +3353,7 @@ Kyes of Dict
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
-    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
+    システム内部用のプロパティ 
 
 """
 
@@ -3399,7 +3405,7 @@ Kyes of Dict
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
 * aggregations: List[AggregationResult]
-    [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
+    システム内部用のプロパティ 
 
 """
 
@@ -3882,13 +3888,13 @@ Kyes of Dict
 * detail: SingleAnnotationDetail
     
 * updated_datetime: str
-    
+    更新日時
 
 """
 
 SingleAnnotationDetail = Dict[str, Any]
 """
-
+アノテーション情報 
 
 Kyes of Dict
 
@@ -4066,7 +4072,7 @@ Kyes of Dict
     更新日時
 * sampling: str
     検査抜取検査/抜取受入によって、どのフェーズがスキップされたか  * `inspection_skipped` - 抜取検査の対象外となり、検査フェーズがスキップされた * `inspection_stages_skipped` - 抜取検査の対象外となり、検査フェーズのステージの一部がスキップされた * `acceptance_skipped` - 抜取受入の対象外となり、受入フェーズがスキップされた * `inspection_and_acceptance_skipped` - 抜取検査・抜取受入の対象外となり、検査・受入フェーズがスキップされた  未指定ならば、どのフェーズもスキップされていません。 
-* metadata: __DictStrKeyAnyValue__
+* metadata: dict(str, __DictStrKeyAnyValue__)
     ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 
 
 """
@@ -4084,7 +4090,7 @@ Kyes of Dict
 
 TaskAssignRequestType = Dict[str, Any]
 """
-* `TaskAssignRequestTypeRandom`: 自分自身にランダムにタスクを割り当てます。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: メンバーに指定したタスクを割り当てます。ただし、メンバーはプロジェクトオーナーもしくはチェッカーロールを持つ必要があります。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身にに割り当てます。。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。 
+* `TaskAssignRequestTypeRandom`: 自分自身にランダムにタスクを割り当てます。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: メンバーに指定したタスクを割り当てます。ただし、メンバーはプロジェクトオーナーもしくはチェッカーロールを持つ必要があります。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身にに割り当てます。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。 
 
 Kyes of Dict
 
@@ -4157,7 +4163,7 @@ TaskAssignmentProperty = Dict[str, Any]
 Kyes of Dict
 
 * name: str
-    タスクの割当優先度を決定するためのタスクプロパティ。<br> 指定できるプロパティは次のいずれかです。  * `task_id` * `updated_datetime` * `metadata` (`metadata.{メタデータ名}` の形式で指定してください) 
+    タスクの割当優先度を決定するためのタスクプロパティ。  指定できるプロパティは次のいずれかです。  * `task_id` * `updated_datetime` * `metadata` (`metadata.{メタデータ名}` の形式で指定してください) 
 * order: TaskAssignmentOrder
     
 
@@ -4279,7 +4285,7 @@ Kyes of Dict
 
 TaskGenerateRuleByDirectory = Dict[str, Any]
 """
-入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。<br>
+入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。
 
 Kyes of Dict
 
@@ -4463,7 +4469,7 @@ Kyes of Dict
 
 * input_data_id_list: List[str]
     タスクに割り当てる入力データのID
-* metadata: __DictStrKeyAnyValue__
+* metadata: dict(str, __DictStrKeyAnyValue__)
     ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 
 
 """
@@ -4580,11 +4586,11 @@ UpdateOrganizationNameRequest = Dict[str, Any]
 Kyes of Dict
 
 * organization_id: str
-    
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * organization_name: str
     組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * last_updated_datetime: str
-    
+    新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
