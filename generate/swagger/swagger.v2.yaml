@@ -69,7 +69,7 @@ info:
     ---|---
     組織名 | Annofab内で一意
     組織ID | Annofab内で一意
-    ユーザID | Annofab内で一意
+    ユーザーID | Annofab内で一意
     アカウントID  | Annofab内で一意
     プロジェクトID | Annofab内で一意
     タスクID（プレフィックス含む） | プロジェクト内で一意
@@ -115,7 +115,7 @@ info:
 
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
 
-  version: 0.142.0
+  version: 0.144.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -330,7 +330,7 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       - name: user_id
         in: path
-        description: アカウントのユーザID. RESTクライアントユーザが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。
+        description: アカウントのユーザーID. RESTクライアントユーザーが指定しやすいように、Cognitoのaccount_idではなくuser_idとしている。
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/UserId"
@@ -958,7 +958,7 @@ paths:
             $ref: "swagger-api-components.yaml#/components/schemas/OrganizationId"
         - name: user_id
           in: path
-          description: ユーザID
+          description: ユーザーID
           required: true
           schema:
             $ref: "swagger-api-components.yaml#/components/schemas/UserId"
@@ -1059,8 +1059,8 @@ paths:
         - af-users-v2
       summary: 個人のプロジェクトメンバー情報一括取得
       description: |
-        指定したユーザーが所属する全てのプロジェクトのメンバー情報から、指定したユーザを示す情報を抽出します。
-        このAPIが返すメンバー情報は、全て指定したユーザのものとなり、その数は指定ユーザが所属しているプロジェクト数となります。
+        指定したユーザーが所属する全てのプロジェクトのメンバー情報から、指定したユーザーを示す情報を抽出します。
+        このAPIが返すメンバー情報は、全て指定したユーザーのものとなり、その数は指定ユーザーが所属しているプロジェクト数となります。
 
         本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
       security:
