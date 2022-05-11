@@ -1820,6 +1820,7 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             task_id: タスクID
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
@@ -1848,6 +1849,7 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             task_id: タスクID
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
@@ -1877,6 +1879,7 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             task_id: タスクID
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
@@ -1907,6 +1910,7 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             task_id: タスクID
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
@@ -1941,6 +1945,7 @@ class Wrapper:
         Args:
             project_id: プロジェクトID
             task_id: タスクID
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
@@ -1972,6 +1977,7 @@ class Wrapper:
             project_id: プロジェクトID
             task_id: タスクID
             operator_account_id: 受入完了状態を取り消した後の担当者のaccount_id
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
@@ -2006,6 +2012,7 @@ class Wrapper:
             project_id: プロジェクトID
             task_id: タスクID
             operator_account_id: 新しい担当者のaccount_id。Noneの場合は、担当者を「未割り当て」にします。
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
@@ -2024,7 +2031,7 @@ class Wrapper:
         return updated_task
 
     def reject_task(
-        self, project_id: str, task_id: str, force: bool = False, *, last_updated_datetime: Optional[str] = None
+        self, project_id: str, task_id: str, *, force: bool = False, last_updated_datetime: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         タスクを差し戻します。
@@ -2041,6 +2048,7 @@ class Wrapper:
             project_id: プロジェクトID
             task_id: タスクID
             force: Trueなら強制差し戻し、Falseなら通常の差し戻しを実施する
+            last_updated_datetime: `operate_task` APIのリクエストボディに渡すタスクの最終更新日時。Noneなら`get_task`APIを実行して、タスクの最終更新日時を取得します。
 
         Returns:
             変更後のタスク
