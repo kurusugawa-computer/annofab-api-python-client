@@ -229,8 +229,8 @@ cat partial-header/dataclass/common.py partial-header/dataclass/webhook.py  \
 
 # `dict(str, int)` を `Dict[str, int]`のように置換する
 sed -E -e "s/dict\((.*)\)/Dict\[\1\]/g"  ../annofabapi/dataclass/*.py  --in-place
-# Task.metadataなどでは、`__StrKeyAnyValue__`を`Dict[str, Any]`に置換すると正しい型にならないので、無理やり正しい型に置換する
- ed -e  "s/Dict\[str, __strKeyAnyValue__\]/Dict[str, Any]/g" ../annofabapi/dataclass/*.py  --in-place 
+# Task.metadataなどでは、`__DictStrKeyAnyValue__`を`Dict[str, Any]`に置換すると正しい型にならないので、無理やり正しい型に置換する
+ ed -e  "s/Dict\[str, __DictStrKeyAnyValue__\]/Dict[str, Any]/g" ../annofabapi/dataclass/*.py  --in-place 
 # `__DictStrKeyAnyValue__`を`Dict[str, Any]`に置換する
 sed  -e "s/__DictStrKeyAnyValue__/Dict[str,Any]/g"  ../annofabapi/dataclass/*.py  --in-place
 
