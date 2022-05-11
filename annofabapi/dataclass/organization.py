@@ -18,75 +18,41 @@ from dataclasses_json import DataClassJsonMixin
 from annofabapi.models import PricePlan
 
 
-
 @dataclass
 class OrganizationActivity(DataClassJsonMixin):
-    """
-    
-    """
+    """ """
+
     organization_id: str
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-
-
     created_datetime: str
     """作成日時"""
-
-
 
     storage_usage_bytes: int
     """Annofabストレージの使用量[バイト]"""
 
 
-
-
-
-
-
-
-
-
 @dataclass
 class Organization(DataClassJsonMixin):
-    """
-    
-    """
+    """ """
+
     organization_id: str
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
-
-
 
     organization_name: str
     """組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-
-
     email: str
     """メールアドレス"""
-
-
 
     price_plan: PricePlan
     """"""
 
-
-
-    summary: __DictStrKeyAnyValue__
+    summary: Dict[str, Any]
     """廃止予定のプロパティです。常に中身は空です。 """
-
-
 
     created_datetime: str
     """作成日時"""
 
-
-
     updated_datetime: str
     """更新日時"""
-
-
-
-
-
-
-
