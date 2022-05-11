@@ -1433,7 +1433,9 @@ class Wrapper:
         Returns:
             すべての所属一覧
         """
-        return self._get_all_objects(self.api.get_my_organizations, limit=200)
+        # クエリパラメータを指定できないので、そのままAPIを実行する
+        content, _ = self.api.get_my_organizations()
+        return content["list"]
 
     #########################################
     # Public Method : Organization
