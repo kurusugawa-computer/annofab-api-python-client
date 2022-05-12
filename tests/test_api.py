@@ -666,6 +666,14 @@ class TestGetObjOrNone:
 
         assert wrapper.get_task_histories_or_none("not-exists", task_id) is None
 
+    def test_get_task_histories_or_none(self):
+        actual = wrapper.get_editor_annotation_or_none(project_id, task_id, self.input_data_id)
+        assert actual["task_id"] == task_id
+        assert actual["input_data_id"] == self.input_data_id
+
+        assert wrapper.get_editor_annotation_or_none(project_id, task_id, "not-exists") is None
+        assert wrapper.get_editor_annotation_or_none(project_id, "not-exists", "not-exists") is None
+
 
 class TestProtectedMethod:
     @classmethod
