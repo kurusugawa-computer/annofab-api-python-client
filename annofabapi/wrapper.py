@@ -228,6 +228,32 @@ class Wrapper:
     #########################################
     # Public Method : Annotation
     #########################################
+    def get_editor_annotation_or_none(
+        self, project_id: str, task_id: str, input_data_id: str, *, query_params: Optional[Dict[str, Any]] = None
+    ) -> Optional[Dict[str, Any]]:
+        """
+        アノテーションを取得する。
+        存在しない場合(HTTP 404 Error)はNoneを返します。
+
+        Args:
+            project_id: プロジェクトID
+            task_id: タスクID
+            input_data_id: 入力データID
+
+        Returns:
+            アノテーション
+        """
+        content, response = self.api.get_editor_annotation(
+            project_id, task_id, input_data_id, query_params=query_params, raise_for_status=False
+        )
+
+        if response.status_code == requests.codes.not_found:
+            return None
+        else:
+            _log_error_response(logger, response)
+            _raise_for_status(response)
+            return content
+
     def download_annotation_archive(self, project_id: str, dest_path: Union[str, Path]) -> str:
         """
         simpleアノテーションZIPをダウンロードする。
