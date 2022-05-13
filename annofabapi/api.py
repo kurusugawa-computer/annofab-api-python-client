@@ -447,7 +447,7 @@ class AnnofabApi(AbstractAnnofabApi):
                 **kwargs,
             )
 
-        # リトライすべき場合はExceptionをスローする
+        # リトライが必要な場合は、backoffがリトライできるようにするため、Exceptionをスローする
         if raise_for_status or _should_retry_with_status(response.status_code):
             _log_error_response(logger, response)
             _raise_for_status(response)
