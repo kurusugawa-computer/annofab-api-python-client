@@ -204,17 +204,19 @@ class Wrapper:
 
         塗りつぶし画像など外部リソースのURLを指定することを想定しています。
 
-        Notes:
-            ``requests.get`` でアクセスすることとの違いは以下の通りです。
-             * ``requests.Session`` 情報を使ってTCPコネクションを再利用しているため、``requests.get`` を使ってダウンロードするよりも、パフォーマンスが向上する可能性があります。
-             * 必要に応じてリトライします
-             * HTTPステータスコードが4XX,5XXならば、HTTPErrorがスローされます
-
         Args:
             url: HTTP GETでアクセスするURL
 
         Returns:
             URLにアクセスしたときの ``requests.Response`` 情報
+
+        Note:
+            ``requests.get`` でアクセスすることとの違いは以下の通りです。
+
+             * ``requests.Session`` 情報を使ってTCPコネクションを再利用しているため、``requests.get`` を使ってダウンロードするよりも、パフォーマンスが向上する可能性があります。
+             * 必要に応じてリトライします
+             * HTTPステータスコードが4XX,5XXならば、HTTPErrorがスローされます
+
 
         """
         return self.api._execute_http_request(http_method="get", url=url)
@@ -225,11 +227,6 @@ class Wrapper:
 
         ``getAnnotation`` などダウンロード用のURLを指定することを想定しています。
 
-        Notes:
-            ``requests.get`` でアクセスすることとの違いは以下の通りです。
-             * ``requests.Session`` 情報を使ってTCPコネクションを再利用しているため、``requests.get`` を使ってダウンロードするよりも、パフォーマンスが向上する可能性があります。
-             * 必要に応じてリトライします
-             * HTTPステータスコードが4XX,5XXならば、HTTPErrorがスローされます
 
         Args:
             url: ダウンロード対象のURL
@@ -237,6 +234,14 @@ class Wrapper:
 
         Returns:
             URLにアクセスしたときの ``requests.Response`` 情報
+
+        Note:
+            ``requests.get`` でアクセスすることとの違いは以下の通りです。
+
+             * ``requests.Session`` 情報を使ってTCPコネクションを再利用しているため、``requests.get`` を使ってダウンロードするよりも、パフォーマンスが向上する可能性があります。
+             * 必要に応じてリトライします
+             * HTTPステータスコードが4XX,5XXならば、HTTPErrorがスローされます
+
         """
         response = self.api._execute_http_request(http_method="get", url=url)
 
