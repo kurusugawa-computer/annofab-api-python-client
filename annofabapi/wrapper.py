@@ -77,13 +77,6 @@ def _first_true(iterable, default=None, pred=None):
     return next(filter(pred, iterable), default)
 
 
-def _hour_to_millisecond(hour: Optional[float]) -> Optional[int]:
-    return int(hour * 3600_000) if hour is not None else None
-
-
-_ORGANIZATION_ID_FOR_AVAILABILITY = "___plannedWorktime___"
-"""予定稼働時間用の組織ID"""
-
 _JOB_CONCURRENCY_LIMIT = {
     ProjectJobType.COPY_PROJECT: {
         ProjectJobType.GEN_INPUTS,
@@ -205,17 +198,45 @@ class Wrapper:
 
         return all_objects
 
-    def _download(self, url: str, dest_path: Union[str, Path]) -> requests.Response:
+    def execute_http_get(self, url: str) -> requests.Response:
+        """
+        指定したURLに対してHTTP GETを実行します。
+
+        塗りつぶし画像など外部リソースのURLを指定することを想定しています。
+
+        Notes:
+            ``requests.get`` でアクセスすることとの違いは以下の通りです。
+             * ``requests.Session`` 情報を使ってTCPコネクションを再利用しているため、``requests.get`` を使ってダウンロードするよりも、パフォーマンスが向上する可能性があります。
+             * 必要に応じてリトライします
+             * HTTPステータスコードが4XX,5XXならば、HTTPErrorがスローされます
+
+        Args:
+            url: HTTP GETでアクセスするURL
+
+        Returns:
+            URLにアクセスしたときの ``requests.Response`` 情報
+
+        """
+        return self.api._execute_http_request(http_method="get", url=url)
+
+    def download(self, url: str, dest_path: Union[str, Path]) -> requests.Response:
         """
         指定したURLからファイルをダウンロードします。
+
+        ``getAnnotation`` などダウンロード用のURLを指定することを想定しています。
+
+        Notes:
+            ``requests.get`` でアクセスすることとの違いは以下の通りです。
+             * ``requests.Session`` 情報を使ってTCPコネクションを再利用しているため、``requests.get`` を使ってダウンロードするよりも、パフォーマンスが向上する可能性があります。
+             * 必要に応じてリトライします
+             * HTTPステータスコードが4XX,5XXならば、HTTPErrorがスローされます
 
         Args:
             url: ダウンロード対象のURL
             dest_path: 保存先ファイルのパス
 
         Returns:
-            URLにアクセスしたときのResponse情報
-
+            URLにアクセスしたときの ``requests.Response`` 情報
         """
         response = self.api._execute_http_request(http_method="get", url=url)
 
@@ -269,7 +290,7 @@ class Wrapper:
         # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
         _, response = self.api.get_annotation_archive(project_id)
         url = response.headers["Location"]
-        response2 = self._download(url, dest_path)
+        response2 = self.download(url, dest_path)
         logger.info(
             "SimpleアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
             project_id,
@@ -300,7 +321,7 @@ class Wrapper:
         # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
         _, response = self.api.get_archive_full_with_pro_id(project_id)
         url = response.headers["Location"]
-        response2 = self._download(url, dest_path)
+        response2 = self.download(url, dest_path)
         logger.info(
             "FullアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
             project_id,
@@ -1578,7 +1599,7 @@ class Wrapper:
         """
         content, _ = self.api.get_project_inputs_url(project_id)
         url = content["url"]
-        response2 = self._download(url, dest_path)
+        response2 = self.download(url, dest_path)
         logger.info(
             "入力データ全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
             project_id,
@@ -1603,7 +1624,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_tasks_url(project_id)
         url = content["url"]
-        response2 = self._download(url, dest_path)
+        response2 = self.download(url, dest_path)
         logger.info(
             "タスク全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
             project_id,
@@ -1635,7 +1656,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_inspections_url(project_id)
         url = content["url"]
-        response2 = self._download(url, dest_path)
+        response2 = self.download(url, dest_path)
         logger.info(
             "検査コメント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
             project_id,
@@ -1659,7 +1680,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_comments_url(project_id)
         url = content["url"]
-        response = self._download(url, dest_path)
+        response = self.download(url, dest_path)
         logger.info(
             "コメント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
             project_id,
@@ -1684,7 +1705,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_task_history_events_url(project_id)
         url = content["url"]
-        response2 = self._download(url, dest_path)
+        response2 = self.download(url, dest_path)
         logger.info(
             "タスク履歴イベント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
             project_id,
@@ -1709,7 +1730,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_task_histories_url(project_id)
         url = content["url"]
-        response2 = self._download(url, dest_path)
+        response2 = self.download(url, dest_path)
         logger.info(
             "タスク履歴全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
             project_id,
