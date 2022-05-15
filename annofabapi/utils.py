@@ -168,11 +168,17 @@ def get_message_for_i18n(internationalization_message: Dict[str, Any], lang: str
 
     Args:
         internationalization_message: 多言語化されたメッセージ
-        lang: 取得したいメッセージに対応する言語
+        lang: 取得したいメッセージに対応する言語コード。`en-US`または`ja-JP`のみサポートしています。
 
     Returns:
         指定した言語に対応するメッセージ。見つからない場合はNoneを返します。
-    """
 
-    messages = internationalization_message["messages"]
-    return more_itertools.first_true(messages, pred=lambda e: e["lang"] == lang)
+    Raises:
+        ValueError: 引数langに対応するメッセージが見つからない場合
+    """
+    messages: List[str] = internationalization_message["messages"]
+    result = more_itertools.first_true(messages, pred=lambda e: e["lang"] == lang)
+    if result is not None:
+        return result["message"]
+    else:
+        raise ValueError(f"lang='{lang}'であるメッセージは見つかりませんでした。")
