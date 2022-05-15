@@ -175,4 +175,4 @@ def get_message(internationalization_message: Dict[str, Any], lang: str = "en-US
     """
 
     messages = internationalization_message["messages"]
-    return more_itertools.first_true(messages, pred=lambda e: e["lang"] == "en-US")
+    return more_itertools.first_true(messages, pred=lambda e: e["lang"] == lang)

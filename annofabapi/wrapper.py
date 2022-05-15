@@ -811,7 +811,7 @@ class Wrapper:
                         break
 
                     dest_label = more_itertools.first_true(
-                        dest_labels, pred=lambda e, f=dest_label_id: e["label_id"] == f
+                        dest_labels, pred=lambda e: e["label_id"] == dest_label_id  # pylint: disable=cell-var-from-loop
                     )
                     if dest_label is None:
                         dest_label_contains_dest_additional = False
@@ -852,7 +852,8 @@ class Wrapper:
         for src_label in src_annotation_specs["labels"]:
             src_label_name_en = self.__get_label_name_en(src_label)
             dest_label = more_itertools.first_true(
-                dest_labels, pred=lambda e, f=src_label_name_en: self.__get_label_name_en(e) == f
+                dest_labels,
+                pred=lambda e: self.__get_label_name_en(e) == src_label_name_en,  # pylint: disable=cell-var-from-loop
             )
             if dest_label is not None:
                 dict_label_id[src_label["label_id"]] = dest_label["label_id"]
@@ -878,7 +879,9 @@ class Wrapper:
             for src_choice in src_additional["choices"]:
                 src_choice_name_en = self.__get_choice_name_en(src_choice)
                 dest_choice = more_itertools.first_true(
-                    dest_choices, pred=lambda e, f=src_choice_name_en: self.__get_choice_name_en(e) == f
+                    dest_choices,
+                    pred=lambda e: self.__get_choice_name_en(e)
+                    == src_choice_name_en,  # pylint: disable=cell-var-from-loop
                 )
                 if dest_choice is not None:
                     dict_choice_id[
