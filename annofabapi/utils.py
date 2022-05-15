@@ -176,7 +176,7 @@ def get_message_for_i18n(internationalization_message: Dict[str, Any], lang: str
     Raises:
         ValueError: 引数langに対応するメッセージが見つからない場合
     """
-    messages: List[str] = internationalization_message["messages"]
+    messages: List[Dict[str, str]] = internationalization_message["messages"]
     result = more_itertools.first_true(messages, pred=lambda e: e["lang"] == lang)
     if result is not None:
         return result["message"]
