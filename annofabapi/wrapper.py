@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
+import more_itertools
 import requests
 from dateutil.relativedelta import relativedelta
 
@@ -71,10 +72,6 @@ class AnnotationSpecsRelation:
     label_id: Dict[str, str]
     additional_data_definition_id: Dict[str, str]
     choice_id: Dict[ChoiceKey, ChoiceKey]
-
-
-def _first_true(iterable, default=None, pred=None):
-    return next(filter(pred, iterable), default)
 
 
 _JOB_CONCURRENCY_LIMIT = {
@@ -529,7 +526,7 @@ class Wrapper:
         return None
 
     def _get_choice_id_from_name(self, name: str, choices: List[Dict[str, Any]]) -> Optional[str]:
-        choice_info = _first_true(choices, pred=lambda e: self.__get_choice_name_en(e) == name)
+        choice_info = more_itertools.first_true(choices, pred=lambda e: self.__get_choice_name_en(e) == name)
         if choice_info is not None:
             return choice_info["choice_id"]
         else:
@@ -672,7 +669,7 @@ class Wrapper:
         """
 
         def get_additional(additional_data_definition_id: str) -> Optional[Dict[str, Any]]:
-            return _first_true(
+            return more_itertools.first_true(
                 additionals_v2, pred=lambda e: e["additional_data_definition_id"] == additional_data_definition_id
             )
 
@@ -813,7 +810,9 @@ class Wrapper:
                         dest_label_contains_dest_additional = False
                         break
 
-                    dest_label = _first_true(dest_labels, pred=lambda e, f=dest_label_id: e["label_id"] == f)
+                    dest_label = more_itertools.first_true(
+                        dest_labels, pred=lambda e: e["label_id"] == dest_label_id  # pylint: disable=cell-var-from-loop
+                    )
                     if dest_label is None:
                         dest_label_contains_dest_additional = False
                         break
@@ -852,7 +851,10 @@ class Wrapper:
         dict_label_id: Dict[str, str] = {}
         for src_label in src_annotation_specs["labels"]:
             src_label_name_en = self.__get_label_name_en(src_label)
-            dest_label = _first_true(dest_labels, pred=lambda e, f=src_label_name_en: self.__get_label_name_en(e) == f)
+            dest_label = more_itertools.first_true(
+                dest_labels,
+                pred=lambda e: self.__get_label_name_en(e) == src_label_name_en,  # pylint: disable=cell-var-from-loop
+            )
             if dest_label is not None:
                 dict_label_id[src_label["label_id"]] = dest_label["label_id"]
 
@@ -876,8 +878,10 @@ class Wrapper:
             dest_choices = dest_additional["choices"]
             for src_choice in src_additional["choices"]:
                 src_choice_name_en = self.__get_choice_name_en(src_choice)
-                dest_choice = _first_true(
-                    dest_choices, pred=lambda e, f=src_choice_name_en: self.__get_choice_name_en(e) == f
+                dest_choice = more_itertools.first_true(
+                    dest_choices,
+                    pred=lambda e: self.__get_choice_name_en(e)
+                    == src_choice_name_en,  # pylint: disable=cell-var-from-loop
                 )
                 if dest_choice is not None:
                     dict_choice_id[
@@ -2314,7 +2318,7 @@ class Wrapper:
         def get_job_from_job_id(arg_job_id: str) -> Optional[ProjectJobInfo]:
             content, _ = self.api.get_project_job(project_id, query_params={"type": job_type.value})
             job_list = content["list"]
-            return _first_true(job_list, pred=lambda e: e["job_id"] == arg_job_id)
+            return more_itertools.first_true(job_list, pred=lambda e: e["job_id"] == arg_job_id)
 
         job_access_count = 0
         while True:
