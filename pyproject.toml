@@ -28,6 +28,7 @@ requests = "*"
 python-dateutil = "*"
 backoff="*"
 dataclasses-json="*"
+more-itertools = "*"
 
 
 [tool.poetry.dev-dependencies]
