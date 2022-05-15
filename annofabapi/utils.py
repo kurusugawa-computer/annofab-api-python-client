@@ -1,10 +1,10 @@
-import more_itertools
 import datetime
 import logging
-from typing import List, Optional, Dict,Any
+from typing import Any, Dict, List, Optional
 
 import dateutil
 import dateutil.tz
+import more_itertools
 
 from annofabapi.models import Task, TaskHistory, TaskHistoryShort, TaskPhase
 
@@ -162,7 +162,7 @@ def can_put_annotation(task: Task, my_account_id: str) -> bool:
     return len(task["histories_by_phase"]) == 0 or task["account_id"] == my_account_id
 
 
-def get_message(internationalization_message: Dict[str,Any], lang: str = "en-US") -> Optional[str]:
+def get_message(internationalization_message: Dict[str, Any], lang: str = "en-US") -> Optional[str]:
     """
     アノテーション仕様で使われている`InternalizationMessage`クラスの値から、指定された言語のメッセージを取得する。
 
