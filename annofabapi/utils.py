@@ -162,7 +162,7 @@ def can_put_annotation(task: Task, my_account_id: str) -> bool:
     return len(task["histories_by_phase"]) == 0 or task["account_id"] == my_account_id
 
 
-def get_message(internationalization_message: Dict[str, Any], lang: str = "en-US") -> Optional[str]:
+def get_message_for_i18n(internationalization_message: Dict[str, Any], lang: str = "en-US") -> Optional[str]:
     """
     アノテーション仕様で使われている`InternalizationMessage`クラスの値から、指定された言語のメッセージを取得する。
 
