@@ -91,7 +91,7 @@ class CreatingTestProject:
             return
 
         request_body = {
-            "input_data_name": "AnnoFab Logo Image",
+            "input_data_name": "Annofab Logo Image",
             "input_data_path": "https://annofab.com/images/logo.png",
         }
         self.service.wrapper.put_input_data_from_file(

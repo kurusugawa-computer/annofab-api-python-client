@@ -1,5 +1,5 @@
 """
-AnnoFabプロジェクトやタスクに大きく依存したテストコードです。
+Annofabプロジェクトやタスクに大きく依存したテストコードです。
 """
 import configparser
 import os

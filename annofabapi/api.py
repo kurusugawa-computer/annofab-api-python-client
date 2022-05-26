@@ -17,7 +17,7 @@ from annofabapi.generated_api import AbstractAnnofabApi
 logger = logging.getLogger(__name__)
 
 DEFAULT_ENDPOINT_URL = "https://annofab.com"
-"""AnnoFab WebAPIのデフォルトのエンドポイントURL"""
+"""Annofab WebAPIのデフォルトのエンドポイントURL"""
 
 DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE = 300
 """HTTP Status Codeが429のときの、デフォルト（Retry-Afterヘッダがないとき）の待ち時間です。"""
@@ -221,9 +221,9 @@ class AnnofabApi(AbstractAnnofabApi):
     Web APIに対応したメソッドが存在するクラス。
 
     Args:
-        login_user_id: AnnoFabにログインするときのユーザID
-        login_password: AnnoFabにログインするときのパスワード
-        endpoint_url: AnnoFab APIのエンドポイント。
+        login_user_id: AnnofabにログインするときのユーザID
+        login_password: Annofabにログインするときのパスワード
+        endpoint_url: Annofab APIのエンドポイント。
 
     Attributes:
         token_dict: login, refresh_tokenで取得したtoken情報
@@ -372,7 +372,7 @@ class AnnofabApi(AbstractAnnofabApi):
         **kwargs,
     ) -> requests.Response:
         """
-        Session情報を使って、HTTP Requestを投げます。AnnoFab WebAPIで取得したAWS S3のURLなどに、アクセスすることを想定しています。
+        Session情報を使って、HTTP Requestを投げます。Annofab WebAPIで取得したAWS S3のURLなどに、アクセスすることを想定しています。
         引数は ``requests.Session.request`` にそのまま渡します。
 
         Args:
@@ -466,11 +466,11 @@ class AnnofabApi(AbstractAnnofabApi):
         raise_for_status: bool = True,
     ) -> Tuple[Any, requests.Response]:
         """
-        AnnoFab WebAPIにアクセスして、レスポンスの中身とレスポンスを取得します。
+        Annofab WebAPIにアクセスして、レスポンスの中身とレスポンスを取得します。
 
         Args:
             http_method:
-            url_path: AnnoFab WebAPIのパス（例：``/my/account``）
+            url_path: Annofab WebAPIのパス（例：``/my/account``）
             query_params: クエリパラメタ
             header_params: リクエストヘッダ
             request_body: リクエストボディ
@@ -589,7 +589,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
     def _request_get_with_cookie(self, project_id: str, url: str) -> requests.Response:
         """
-        Signed Cookie を使って、AnnoFabのURLにGET requestを投げる。
+        Signed Cookie を使って、AnnofabのURLにGET requestを投げる。
 
         Args:
             project_id: プロジェクトID
@@ -694,7 +694,7 @@ class AnnofabApi(AbstractAnnofabApi):
     @property
     def account_id(self) -> str:
         """
-        AnnoFabにログインするユーザのaccount_id
+        Annofabにログインするユーザのaccount_id
         """
         if self.__account_id is not None:
             return self.__account_id
