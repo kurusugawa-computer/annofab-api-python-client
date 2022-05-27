@@ -124,16 +124,16 @@ statistics系APIは、統計情報が格納されたJSONのファイルパスを
     account_statistics = service.wrapper.get_account_statistics(project_id)
 
 
-AnnoFabにファイルをアップロードするメソッド
+Annofabにファイルをアップロードするメソッド
 ---------------------------------------------
-AnnoFabにファイルをアップロードしてから、入力データや補助情報などを登録するメソッドです。
+Annofabにファイルをアップロードしてから、入力データや補助情報などを登録するメソッドです。
 
 * ``put_input_data_from_file``
 * ``put_supplementary_data_from_file``
 
 .. code-block:: python
 
-    # "sample.png"をAnnoFabにアップロードして、入力データ"input1"を作成する。
+    # "sample.png"をAnnofabにアップロードして、入力データ"input1"を作成する。
     service.wrapper.put_input_data_from_file(project_id, input_data_id="input1",
         file_path="sample.png")
 
@@ -141,11 +141,11 @@ AnnoFabにファイルをアップロードしてから、入力データや補�
     service.wrapper.put_supplementary_data_from_file(project_id, input_data_id="input1",
     supplementary_data_id="supplementary1", file_path="sample.png", request_body={"supplementary_data_number":1})
 
-AnnoFabのS3にアップロードのみ実施する場合は、``upload_file_to_s3`` メソッドを利用してください。
+AnnofabのS3にアップロードのみ実施する場合は、``upload_file_to_s3`` メソッドを利用してください。
 
 .. code-block:: python
 
-    # "sample.png"をAnnoFabにアップロードして、入力データ"input1"を作成する。
+    # "sample.png"をAnnofabにアップロードして、入力データ"input1"を作成する。
     s3_path = service.wrapper.upload_file_to_s3(project_id, file_path="sample.png")
     print(s3_path)
     # 's3://annotationfactory.production.temporary/xxxxxx'

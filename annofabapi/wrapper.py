@@ -700,13 +700,13 @@ class Wrapper:
         annotation_specs_additionals: Optional[List[Dict[str, Any]]] = None,
     ) -> bool:
         """
-        AnnoFabからダウンロードしたアノテーションzip配下のJSONと同じフォーマット（Simple Annotation)の内容から、アノテーションを登録する。
+        Annofabからダウンロードしたアノテーションzip配下のJSONと同じフォーマット（Simple Annotation)の内容から、アノテーションを登録する。
 
         Args:
             project_id:
             task_id:
             input_data_id:
-            simple_annotation_json: AnnoFabからダウンロードしたアノテーションzip配下のJSONのパス
+            simple_annotation_json: Annofabからダウンロードしたアノテーションzip配下のJSONのパス
             annotation_specs_labels: アノテーション仕様のラベル情報。annotation_specs_additionalsが指定されている場合はV2版、指定されない場合はV1版。
             annotation_specs_additionals: アノテーション仕様の属性情報（V2版）
 

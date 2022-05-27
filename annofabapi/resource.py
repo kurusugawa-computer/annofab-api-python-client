@@ -16,9 +16,9 @@ class Resource:
     AnnofabApi, Wrapperのインスタンスを保持するクラス
 
     Args:
-        login_user_id: AnnoFabにログインするときのユーザID
-        login_password: AnnoFabにログインするときのパスワード
-        endpoint_url: AnnoFab APIのエンドポイント。
+        login_user_id: AnnofabにログインするときのユーザID
+        login_password: Annofabにログインするときのパスワード
+        endpoint_url: Annofab APIのエンドポイント。
 
     """
 
@@ -49,9 +49,9 @@ def build(
     環境変数は``ANNOFAB_USER_ID`` , ``ANNOFAB_PASSWORD`` を参照する。
 
     Args:
-        login_user_id: AnnoFabにログインするときのユーザID
-        login_password: AnnoFabにログインするときのパスワード
-        endpoint_url: AnnoFab APIのエンドポイント。
+        login_user_id: AnnofabにログインするときのユーザID
+        login_password: Annofabにログインするときのパスワード
+        endpoint_url: Annofab APIのエンドポイント。
 
     Returns:
         AnnofabApi, Wrapperのインスタンスを保持するインスタンス
@@ -71,7 +71,7 @@ def build(
         except AnnofabApiException:
             pass
 
-        raise AnnofabApiException("環境変数または`.netrc`ファイルにAnnoFab認証情報はありませんでした。")
+        raise AnnofabApiException("環境変数または`.netrc`ファイルにAnnofab認証情報はありませんでした。")
 
     else:
         raise ValueError()
@@ -82,7 +82,7 @@ def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     ``.netrc`` ファイルから、annofabapi.Resourceインスタンスを生成する。
 
     Args:
-        endpoint_url: AnnoFab APIのエンドポイント。
+        endpoint_url: Annofab APIのエンドポイント。
 
     Returns:
         annofabapi.Resourceインスタンス
@@ -112,7 +112,7 @@ def build_from_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     環境変数 ``ANNOFAB_USER_ID`` , ``ANNOFAB_PASSWORD`` から、annofabapi.Resourceインスタンスを生成する。
 
     Args:
-        endpoint_url: AnnoFab APIのエンドポイント。
+        endpoint_url: Annofab APIのエンドポイント。
 
     Returns:
         annofabapi.Resourceインスタンス

@@ -17,12 +17,12 @@ $ make init
 # Test
 
 ## テストの実行方法
-1. AnnoFabの認証情報を、`.netrc`ファイルまたは環境変数に設定する。
+1. Annofabの認証情報を、`.netrc`ファイルまたは環境変数に設定する。
 2. 以下のコマンドを実行して、テスト用のプロジェクトとタスクを作成する。
      * `poetry run python tests/create_test_project.py --organization ${MY_ORGANIZATION}`
 3. `pytest.ini`に、テスト対象の`project_id`と`task_id`を指定する。
     * `task_id`はプロジェクト`project_id`配下であること
-    * **【注意】テストを実行すると、AnnoFabプロジェクトの内容が変更される**
+    * **【注意】テストを実行すると、Annofabプロジェクトの内容が変更される**
 4. `$ make test`コマンドを実行する。
 
 
@@ -115,17 +115,17 @@ ReadTheDocsのビルド結果は https://readthedocs.org/projects/annofab-api-py
 
 
 -----------------
-# AnnoFab WebAPIの更新により、リリースする
+# Annofab WebAPIの更新により、リリースする
 ### 1.ソースコードの生成
 
-annofabapiのいくつかのファイルは、[AnnoFab Web APIのOpenAPI Spec](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
+annofabapiのいくつかのファイルは、[Annofab Web APIのOpenAPI Spec](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
 以下のコマンドを実行すると、ソースコードが生成されます。詳細は[generate/README.md](generate/README.md)を参照してください。
 
 ```
 # `generate/swagger/*.yaml`ファイルから、ソースコードを生成する
 $ generate/generate.sh
 
-# AnnoFab WebAPIのOpenAPI Spec を`generate/swagger/`にダウンロードしてから、ソースコードを生成する
+# Annofab WebAPIのOpenAPI Spec を`generate/swagger/`にダウンロードしてから、ソースコードを生成する
 $ generate/generate.sh --download
 
 $ make format && make lint

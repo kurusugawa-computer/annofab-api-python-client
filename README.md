@@ -1,5 +1,5 @@
 # annofab-api-python-client
-[AnnoFab Web API](https://annofab.com/docs/api/) のPythonクライアントライブラリです。
+[Annofab Web API](https://annofab.com/docs/api/) のPythonクライアントライブラリです。
 
 [![Build Status](https://app.travis-ci.com/kurusugawa-computer/annofab-api-python-client.svg?branch=main)](https://app.travis-ci.com/kurusugawa-computer/annofab-api-python-client)
 [![CodeQL](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml)
@@ -10,10 +10,10 @@
 
 
 
-* **AnnoFab Web API Documentation:** https://annofab.com/docs/api/
+* **Annofab Web API Documentation:** https://annofab.com/docs/api/
 * **Reference Documentation:** https://annofab-api-python-client.readthedocs.io/en/latest/
 * **annofab-cli** https://github.com/kurusugawa-computer/annofab-cli
-    * 「タスクの一括差し戻し」や、「プロジェクト間の差分表示」など、AnnoFabの画面で実施するには時間がかかる操作を、CLIツールとして提供しています。
+    * 「タスクの一括差し戻し」や、「プロジェクト間の差分表示」など、Annofabの画面で実施するには時間がかかる操作を、CLIツールとして提供しています。
 * **開発者用ドキュメント**: [README_for_developer.md](https://github.com/kurusugawa-computer/annofab-api-python-client/blob/main/README_for_developer.md)
 
 
@@ -37,7 +37,7 @@
 
 
 # Features
-cURLやPostmanなどよりも簡単にAnnoFab Web APIにアクセスできます。
+cURLやPostmanなどよりも簡単にAnnofab Web APIにアクセスできます。
 
 * ログインを意識せずに、APIを利用できます。
 * アクセス過多などで失敗した場合は、リトライされます。
@@ -123,7 +123,7 @@ service = build()
 ## `service.api`のサンプルコード
 
 * `service.api`には、Web APIに対応するメソッドが定義されています。
-* メソッド名は、[AnnoFab Web APIのOpenAPI specification](https://annofab.com/docs/api/swagger.yaml)に記載されている`operationId`を、スネークケースに変換したものです。
+* メソッド名は、[Annofab Web APIのOpenAPI specification](https://annofab.com/docs/api/swagger.yaml)に記載されている`operationId`を、スネークケースに変換したものです。
 * 各メソッドの戻り値の型は`Tupple[Content, Response]`です。
 Responseは[requestsモジュールのReponseオブジェクト](https://2.python-requests.org/en/master/api/#requests.Response)です。
 ContentはReponseの中身です。
