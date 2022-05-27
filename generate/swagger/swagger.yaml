@@ -116,8 +116,8 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.144.0
-  title: Annofab Web API
+  version: 0.146.0
+  title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
     href: "https://annofab.com/"
@@ -537,58 +537,6 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /my/account/delete-request:
-    post:
-      tags:
-      - af-my
-      summary: アカウント削除step1（確認）
-      description: |
-        アカウント削除プロセスを開始します。
-
-        本人からの要求かどうかを検証するための確認コードがメールで送付されます。
-      security:
-      - Everyone: []
-      operationId: initiateMyAccountDelete
-      responses:
-        "200":
-          $ref: "swagger-api-components.yaml#/components/responses/SuccessMessage"
-        "400":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /my/account/delete-request/confirm:
-    post:
-      tags:
-      - af-my
-      summary: アカウント削除step2（確定）
-      description: |
-        [受け取った確認コード](#operation/initiateMyAccountDelete)を使い、アカウントを削除します。
-      security:
-      - EveryoneRequestBody: []
-      operationId: confirmMyAccountDelete
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "swagger-api-components.yaml#/components/schemas/ConfirmAccountDeleteRequest"
-      responses:
-        "200":
-          $ref: "swagger-api-components.yaml#/components/responses/SuccessMessage"
-        "400":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "409":
-          description: 自身のみがオーナーのプロジェクト、または組織が1つ以上存在した
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/ErrorStateMismatch"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /my/project-members:
     get:
       tags:
@@ -672,7 +620,7 @@ paths:
       summary: 組織名の変更
       description: |
         組織名を変更します。
-        
+
         2022/04/19以降に廃止する予定です。
       security:
       - OrganizationOwner: []
@@ -2647,12 +2595,12 @@ paths:
       summary: 単位あたり作業時間の取得
       description: |
         プロジェクトの単位あたり作業時間情報を取得します。
-        
+
         以下の作業時間情報を取得できます。
         * タスク1個あたりの作業時間情報
         * 画像1枚あたりの作業時間情報（画像プロジェクトのみ）
         * 動画1分あたりの作業時間情報（動画プロジェクトのみ）
-                
+
         取得期間は最大3か月です。
       security:
         - AllProjectMember: [ ]
@@ -2698,12 +2646,12 @@ paths:
       summary: メンバーの単位あたり作業時間の取得
       description: |
         プロジェクトメンバーの単位あたり作業時間情報を取得します。
-        
+
         以下の作業時間情報を取得できます。
         * タスク1個あたりの作業時間情報
         * 画像1枚あたりの作業時間情報（画像プロジェクトのみ）
         * 動画1分あたりの作業時間情報（動画プロジェクトのみ）
-                
+
         取得期間は最大3か月です。
       security:
         - AllProjectMember: [ ]
@@ -3950,7 +3898,7 @@ paths:
 
         「強制差し戻し」は、通常の「差し戻し」と比較して以下の点が異なります。
         * 現在のタスクのステータスやフェーズに関わらず、タスクを差し戻せる
-        * 差し戻し後のタスクの担当者は、直前の教師付けフェーズの担当者
+        * 検査コメントを付与しなくても、タスクを指し戻せる
         * 抜取検査・抜取受入のスキップ判定に影響を及ぼさない
 
 
@@ -4137,11 +4085,11 @@ paths:
           * `detail.data_holding_type`
           * `detail.created_datetime`
           * `detail.updated_datetime`
-          
-          
+
+
           キーの先頭に`-`を付けると、降順でソートされます。
 
-          `,`でキーを区切ると、複数のキーでソートされます。先頭のキーから順に優先順位が割り振られます。          
+          `,`でキーを区切ると、複数のキーでソートされます。先頭のキーから順に優先順位が割り振られます。
         required: false
         example: task_id,input_data_id,detail.annotation_id,-detail.updated_datetime
         schema:
@@ -4176,7 +4124,7 @@ paths:
           * 「全体」アノテーションラベルの変更
           * 「塗りつぶしv2」アノテーションラベルの変更
         * 受入完了タスクのアノテーションは、プロジェクトオーナーロールを持つユーザーのみ更新/削除できる。
-        
+
         複数の操作のうち、1つでも失敗するとAPIのレスポンス全体としては失敗になります。 成功した部分までは反映されます。
 
       security:
@@ -4349,7 +4297,7 @@ paths:
         Simpleアノテーションを取得します。
 
         [getAnnotationArchive](#operation/getAnnotationArchive) APIでダウンロードできるSimpleアノテーションZIPの一部を、取得することができます。
-        
+
         **注意:** このAPIでは、塗りつぶし画像をダウンロードするためのURLを取得できません。
 
       security:
@@ -4956,7 +4904,7 @@ paths:
         複数のファイルをZIPで圧縮してAnnofabにアップロードすると、入力データをまとめて作成できます。
 
         パスパラメータの`input_data_id`、リクエストボディの`input_data_name`には、適当な値を指定してください。
-        
+
         ZIPファイルを入力データとして登録すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。
 
         ZIPファイルの制限事項は、以下の通りです。
@@ -4972,7 +4920,7 @@ paths:
 
         ### ストリーミング形式の動画を入力データとして登録する
         ストリーミング形式の動画をAnnofabにアップロードして、入力データとして登録できます。
-        
+
         ただし、ZIPで圧縮する必要があります。ZIPファイルには、m3u8ファイルとtsファイルの両方を含めてください。
         m3u8ファイルに記述された相対パスでtsファイルは、参照可能である必要があります。
 
@@ -5215,17 +5163,17 @@ paths:
       summary: アップロード先URLの取得
       description: |
         Annofabにファイルをアップロードするのに必要な情報を取得します。
-        
+
         このAPIは、Annofabにファイルをアップロードして、入力データや補助情報を作成する際に使用します。
-        
+
         Annofabにファイルをアップロードして入力データを作成する手順は、以下の通りです。
-        
+
         1. APIを実行して、ファイルのアップロードに必要な情報を取得する。
 
         ```
         $ curl --request POST 'https://annofab.com/api/v1/projects/{project_id}/create-temp-path'
         {
-          "url": "https://s3.<REGION>.amazonaws.com/<ANNOFAB-TEMP-BUCKET>/<UUID>/<UUID>?param1=...&param2=...", 
+          "url": "https://s3.<REGION>.amazonaws.com/<ANNOFAB-TEMP-BUCKET>/<UUID>/<UUID>?param1=...&param2=...",
           "path": "s3://<ANNOFAB-TEMPORARY-BUCKET-NAME>/<UUID>/<UUID>"
         }
         ```

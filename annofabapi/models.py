@@ -1588,7 +1588,7 @@ Kyes of Dict
 * type: str
     `Unknown` 
 * data_uri: str
-    塗りつぶし画像のパス
+    塗りつぶし画像のパス。 塗りつぶし画像のファイル形式はPNGです。塗りつぶされた部分の色は`rgba(255, 255, 255, 1)`、塗りつぶされていない部分の色は`rgba(0, 0, 0, 0)`です。 
 * left_top: Point
     
 * right_bottom: Point
@@ -1667,7 +1667,7 @@ FullAnnotationDataSegmentation = Dict[str, Any]
 Kyes of Dict
 
 * data_uri: str
-    塗りつぶし画像のパス
+    塗りつぶし画像のパス。 塗りつぶし画像のファイル形式はPNGです。塗りつぶされた部分の色は`rgba(255, 255, 255, 1)`、塗りつぶされていない部分の色は`rgba(0, 0, 0, 0)`です。 
 * type: str
     `Segmentation` 
 
@@ -1680,7 +1680,7 @@ FullAnnotationDataSegmentationV2 = Dict[str, Any]
 Kyes of Dict
 
 * data_uri: str
-    塗りつぶし画像のパス
+    塗りつぶし画像のパス。 塗りつぶし画像のファイル形式はPNGです。塗りつぶされた部分の色は`rgba(255, 255, 255, 1)`、塗りつぶされていない部分の色は`rgba(0, 0, 0, 0)`です。 
 * type: str
     `SegmentationV2` 
 
@@ -3193,7 +3193,7 @@ Kyes of Dict
 * max_tasks_per_member_including_hold: int
     保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。 割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。  例えばmax_tasks_per_memberが10、max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。 
 * input_data_set_id_list: List[str]
-    このフィールドは内部用でまだ何も意味を成しません。今は空配列を指定してください。
+    システム内部用のプロパティ。 [putProject](#operation/putProject) APIでプロジェクトを更新する際は、[getProject](#operation/getProject) APIで取得した値を指定してください。 
 * input_data_max_long_side_length: int
     入力データ画像の長辺の最大値（未指定時は4096px）。  画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。 アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。  大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。 
 * sampling_inspection_rate: int

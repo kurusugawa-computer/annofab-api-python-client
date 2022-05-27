@@ -1335,7 +1335,9 @@ components:
           minimum: 1
           maximum: 100
         input_data_set_id_list:
-          description: このフィールドは内部用でまだ何も意味を成しません。今は空配列を指定してください。
+          description: |
+            システム内部用のプロパティ。
+            [putProject](#operation/putProject) APIでプロジェクトを更新する際は、[getProject](#operation/getProject) APIで取得した値を指定してください。
           type: array
           items:
             $ref: "#/components/schemas/InputDataSetId"
@@ -4908,7 +4910,9 @@ components:
       properties:
         data_uri:
           type: string
-          description: 塗りつぶし画像のパス
+          description: |
+            塗りつぶし画像のパス。
+            塗りつぶし画像のファイル形式はPNGです。塗りつぶされた部分の色は`rgba(255, 255, 255, 1)`、塗りつぶされていない部分の色は`rgba(0, 0, 0, 0)`です。
         _type:
           type: string
           description: |
@@ -4923,7 +4927,9 @@ components:
       properties:
         data_uri:
           type: string
-          description: 塗りつぶし画像のパス
+          description: |
+            塗りつぶし画像のパス。
+            塗りつぶし画像のファイル形式はPNGです。塗りつぶされた部分の色は`rgba(255, 255, 255, 1)`、塗りつぶされていない部分の色は`rgba(0, 0, 0, 0)`です。
         _type:
           type: string
           description: |
