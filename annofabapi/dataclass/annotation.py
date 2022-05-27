@@ -55,7 +55,7 @@ class FullAnnotationDataSegmentation(DataClassJsonMixin):
     """ """
 
     data_uri: str
-    """塗りつぶし画像のパス"""
+    """塗りつぶし画像のパス。 塗りつぶし画像のファイル形式はPNGです。塗りつぶされた部分の色は`rgba(255, 255, 255, 1)`、塗りつぶされていない部分の色は`rgba(0, 0, 0, 0)`です。 """
 
     type: str
     """`Segmentation` """
@@ -66,7 +66,7 @@ class FullAnnotationDataSegmentationV2(DataClassJsonMixin):
     """ """
 
     data_uri: str
-    """塗りつぶし画像のパス"""
+    """塗りつぶし画像のパス。 塗りつぶし画像のファイル形式はPNGです。塗りつぶされた部分の色は`rgba(255, 255, 255, 1)`、塗りつぶされていない部分の色は`rgba(0, 0, 0, 0)`です。 """
 
     type: str
     """`SegmentationV2` """
