@@ -14,7 +14,7 @@
 # `generate/swagger/*.yaml`ファイルから、ソースコードを生成する
 $ generate/generate.sh
 
-# AnnoFab WebAPIのOpenAPI Spec を`generate/swagger/`にダウンロードしてから、ソースコードを生成する
+# Annofab WebAPIのOpenAPI Spec を`generate/swagger/`にダウンロードしてから、ソースコードを生成する
 $ generate/generate.sh --download
 
 ```
@@ -74,7 +74,7 @@ $ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local openapitools/openapi-ge
 
 
 # 設計方針
-AnnoFab WebAPIのOpenAPI Specファイルが多少間違っていても、annofabapiは動くような設計になっています。
+Annofab WebAPIのOpenAPI Specファイルが多少間違っていても、annofabapiは動くような設計になっています。
 
 OpenAPI Specファイルの間違いを許容する部分/許容しない部分は以下の通りです。
 
