@@ -586,11 +586,8 @@ class TestTask:
 
 
 class TestWebhook:
-    def test_get_webhooks(self):
-        webhook_list = api.get_webhooks(project_id)[0]
-        assert type(webhook_list) == list
-
-    def test_put_webhook_and_delete_webhook(self):
+    def test_scenario(self):
+        """put, get, deleteの動作確認"""
         test_webhook_id = str(uuid.uuid4())
         request_body = {
             "project_id": project_id,
@@ -601,14 +598,19 @@ class TestWebhook:
             "headers": [{"name": "Content-Type", "value": "application/json"}],
             "body": "test",
             "url": "https://annofab.com/",
-            "created_datetime": None,
-            "updated_datetime": None,
         }
         print("")
         print(f"put_webhook: webhook_id={test_webhook_id}")
-        assert type(api.put_webhook(project_id, test_webhook_id, request_body=request_body)[0]) == dict
+        # webhookを追加して、削除できていることを確認する
+        api.put_webhook(project_id, test_webhook_id, request_body=request_body)
+        webhook_list, _ = api.get_webhooks(project_id)
+        print(webhook_list)
+        assert first_true(webhook_list, pred=lambda e: e["webhook_id"] == test_webhook_id) is not None
 
-        assert type(api.delete_webhook(project_id, test_webhook_id)[0]) == dict
+        # webhookを削除して、削除できていることを確認する
+        api.delete_webhook(project_id, test_webhook_id)
+        webhook_list, _ = api.get_webhooks(project_id)
+        assert first_true(webhook_list, pred=lambda e: e["webhook_id"] == test_webhook_id) is None
 
 
 class TestGetObjOrNone:
