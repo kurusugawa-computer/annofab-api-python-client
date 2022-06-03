@@ -477,21 +477,24 @@ class TestStatistics:
         assert type(actual) == list
 
     def test_graph_marker(self):
-        print("get_markers")
-        content, _ = api.get_markers(project_id)
-        assert type(content) == dict
+        old_markers, _ = api.get_markers(project_id)
 
+        # 統計マーカの追加
+        test_marker_id = str(uuid.uuid4())
         markers = [
             {
-                "marker_id": str(uuid.uuid4()),
+                "marker_id": test_marker_id,
                 "title": "add in test code",
                 "graph_type": GraphType.TASK_PROGRESS.value,
                 "marked_at": annofabapi.utils.str_now(),
             }
         ]
-        request_body = {"markers": markers, "last_updated_datetime": content["updated_datetime"]}
-        print("put_markers")
-        assert type(api.put_markers(project_id, request_body=request_body)[0]) == dict
+
+        request_body = {"markers": markers, "last_updated_datetime": old_markers["updated_datetime"]}
+        api.put_markers(project_id, request_body=request_body)
+
+        new_markers, _ = api.get_markers(project_id)
+        assert new_markers["markers"] == markers
 
     def test_get_statistics_available_dates(self):
         content, _ = api.get_statistics_available_dates(project_id)
@@ -509,10 +512,9 @@ class Testsupplementary:
 
         print("")
         print(f"wrapper.put_supplementary_data_from_file: supplementary_data_id={supplementary_data_id}")
-        content = wrapper.put_supplementary_data_from_file(
+        wrapper.put_supplementary_data_from_file(
             project_id, self.input_data_id, supplementary_data_id, f"{test_dir}/sample.txt", request_body=request_body
         )
-        assert type(content) == dict
 
         supplementary_data_list = wrapper.get_supplementary_data_list_or_none(project_id, self.input_data_id)
         assert len([e for e in supplementary_data_list if e["supplementary_data_id"] == supplementary_data_id]) == 1
@@ -586,29 +588,40 @@ class TestTask:
 
 
 class TestWebhook:
-    def test_get_webhooks(self):
-        webhook_list = api.get_webhooks(project_id)[0]
-        assert type(webhook_list) == list
-
-    def test_put_webhook_and_delete_webhook(self):
+    def test_scenario(self):
+        """
+        以下のWebAPIの動作を確認する。
+        * put_webhook
+        * get_webhook
+        * delete_webhook
+        * test_webhook
+        """
         test_webhook_id = str(uuid.uuid4())
         request_body = {
             "project_id": project_id,
             "event_type": "annotation-archive-updated",
             "webhook_id": test_webhook_id,
             "webhook_status": "active",
-            "method": "POST",
+            "method": "GET",
             "headers": [{"name": "Content-Type", "value": "application/json"}],
-            "body": "test",
             "url": "https://annofab.com/",
-            "created_datetime": None,
-            "updated_datetime": None,
         }
-        print("")
-        print(f"put_webhook: webhook_id={test_webhook_id}")
-        assert type(api.put_webhook(project_id, test_webhook_id, request_body=request_body)[0]) == dict
+        # webhookを追加して、追加できていることを確認する
+        api.put_webhook(project_id, test_webhook_id, request_body=request_body)
+        webhook_list, _ = api.get_webhooks(project_id)
+        assert first_true(webhook_list, pred=lambda e: e["webhook_id"] == test_webhook_id) is not None
 
-        assert type(api.delete_webhook(project_id, test_webhook_id)[0]) == dict
+        # Webhookのテスト実行
+        test_webhook_response, _ = api.test_webhook(
+            project_id, test_webhook_id, request_body={"placeholders": {"PROJECT_ID": "foo"}}
+        )
+        assert test_webhook_response["result"] == "success"
+        assert test_webhook_response["response_status"] == 200
+
+        # webhookを削除して、削除できていることを確認する
+        api.delete_webhook(project_id, test_webhook_id)
+        webhook_list, _ = api.get_webhooks(project_id)
+        assert first_true(webhook_list, pred=lambda e: e["webhook_id"] == test_webhook_id) is None
 
 
 class TestGetObjOrNone:
