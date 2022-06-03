@@ -1,9 +1,11 @@
 version: ~> 1.0
+dist: focal
 language: python
 python:
   - "3.7"
   - "3.8"
   - "3.9"
+  - "3.10"
 install:
   - pip install poetry
   - travis_retry poetry install
@@ -17,5 +19,3 @@ env:
   - PIP_DEFAULT_TIMEOUT=100
 
 cache: pip
-
-
