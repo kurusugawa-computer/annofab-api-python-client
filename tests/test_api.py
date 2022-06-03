@@ -587,25 +587,32 @@ class TestTask:
 
 class TestWebhook:
     def test_scenario(self):
-        """put, get, deleteの動作確認"""
+        """
+        以下のWebAPIの動作を確認する。
+        * put_webhook
+        * get_webhook
+        * delete_webhook
+        * test_webhook
+        """
         test_webhook_id = str(uuid.uuid4())
         request_body = {
             "project_id": project_id,
             "event_type": "annotation-archive-updated",
             "webhook_id": test_webhook_id,
             "webhook_status": "active",
-            "method": "POST",
+            "method": "GET",
             "headers": [{"name": "Content-Type", "value": "application/json"}],
-            "body": "test",
             "url": "https://annofab.com/",
         }
-        print("")
-        print(f"put_webhook: webhook_id={test_webhook_id}")
-        # webhookを追加して、削除できていることを確認する
+        # webhookを追加して、追加できていることを確認する
         api.put_webhook(project_id, test_webhook_id, request_body=request_body)
         webhook_list, _ = api.get_webhooks(project_id)
-        print(webhook_list)
         assert first_true(webhook_list, pred=lambda e: e["webhook_id"] == test_webhook_id) is not None
+
+        # Webhookのテスト実行
+        test_webhook_response, _ = api.test_webhook(project_id, test_webhook_id, request_body={"placeholders":{"PROJECT_ID":"foo"}})
+        assert test_webhook_response["result"] == "success"
+        assert test_webhook_response["response_status"] == 200
 
         # webhookを削除して、削除できていることを確認する
         api.delete_webhook(project_id, test_webhook_id)
