@@ -75,12 +75,12 @@ class SimpleAnnotationParser(abc.ABC):
         """
 
     def parse(
-        self, convert_deitail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None
+        self, convert_detail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None
     ) -> SimpleAnnotation:
         """JSONファイルをパースする
 
         Args:
-            convert_deitail_data_func: SimpleAnnotationDetailクラスのdataプロパティを変換する関数を指定します。
+            convert_detail_data_func: SimpleAnnotationDetailクラスのdataプロパティを変換する関数を指定します。
                 dictからdataclassに変換する際に使います。
 
         Returns:
@@ -88,9 +88,9 @@ class SimpleAnnotationParser(abc.ABC):
         """
 
         simple_annotation = SimpleAnnotation.from_dict(self.load_json())  # type: ignore
-        if convert_deitail_data_func is not None:
+        if convert_detail_data_func is not None:
             for detail in simple_annotation.details:
-                detail.data = convert_deitail_data_func(detail.data)
+                detail.data = convert_detail_data_func(detail.data)
         return simple_annotation
 
     @abc.abstractmethod
@@ -164,11 +164,11 @@ class FullAnnotationParser(abc.ABC):
         JSONファイルをloadします。
         """
 
-    def parse(self, convert_deitail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None) -> FullAnnotation:
+    def parse(self, convert_detail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None) -> FullAnnotation:
         """JSONファイルをパースする
 
         Args:
-            convert_deitail_data_func: FullAnnotationDetailクラスのdataプロパティを変換する関数を指定します。
+            convert_detail_data_func: FullAnnotationDetailクラスのdataプロパティを変換する関数を指定します。
                 dictからdataclassに変換する際に使います。
 
         Returns:
@@ -176,9 +176,9 @@ class FullAnnotationParser(abc.ABC):
         """
 
         full_annotation = FullAnnotation.from_dict(self.load_json())  # type: ignore
-        if convert_deitail_data_func is not None:
+        if convert_detail_data_func is not None:
             for detail in full_annotation.details:
-                detail.data = convert_deitail_data_func(detail.data)
+                detail.data = convert_detail_data_func(detail.data)
         return full_annotation
 
 
@@ -463,8 +463,8 @@ class SimpleAnnotationDirParserByTask(SimpleAnnotationParserByTask):
             raise ValueError(f"json_file_path '{json_file_path}' は `json_file_path_list` に含まれていません。")
 
 
-def __parse_annotation_dir(annotaion_dir_path: Path, clazz) -> Iterator[Any]:
-    for task_dir in annotaion_dir_path.iterdir():
+def __parse_annotation_dir(annotation_dir_path: Path, clazz) -> Iterator[Any]:
+    for task_dir in annotation_dir_path.iterdir():
         if not task_dir.is_dir():
             continue
 
@@ -479,29 +479,29 @@ def __parse_annotation_dir(annotaion_dir_path: Path, clazz) -> Iterator[Any]:
             yield parser
 
 
-def lazy_parse_simple_annotation_dir(annotaion_dir_path: Path) -> Iterator[SimpleAnnotationParser]:
+def lazy_parse_simple_annotation_dir(annotation_dir_path: Path) -> Iterator[SimpleAnnotationParser]:
     """Simpleアノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     Args:
-        annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
+        annotation_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
 
     Yields:
         annotationの遅延Parseが可能なインスタンス列。
     """
 
-    return __parse_annotation_dir(annotaion_dir_path, SimpleAnnotationDirParser)
+    return __parse_annotation_dir(annotation_dir_path, SimpleAnnotationDirParser)
 
 
-def lazy_parse_full_annotation_dir(annotaion_dir_path: Path) -> Iterator[SimpleAnnotationParser]:
+def lazy_parse_full_annotation_dir(annotation_dir_path: Path) -> Iterator[SimpleAnnotationParser]:
     """Fullアノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     Args:
-        annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
+        annotation_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
 
     Yields:
         annotationの遅延Parseが可能なインスタンス列。
     """
-    return __parse_annotation_dir(annotaion_dir_path, FullAnnotationDirParser)
+    return __parse_annotation_dir(annotation_dir_path, FullAnnotationDirParser)
 
 
 def lazy_parse_simple_annotation_zip_by_task(zip_file_path: Path) -> Iterator[SimpleAnnotationParserByTask]:
@@ -563,18 +563,18 @@ def lazy_parse_simple_annotation_zip_by_task(zip_file_path: Path) -> Iterator[Si
             yield SimpleAnnotationZipParserByTask(zip_file=file, task_id=task_id, json_path_list=json_path_list)
 
 
-def lazy_parse_simple_annotation_dir_by_task(annotaion_dir_path: Path) -> Iterator[SimpleAnnotationParserByTask]:
+def lazy_parse_simple_annotation_dir_by_task(annotation_dir_path: Path) -> Iterator[SimpleAnnotationParserByTask]:
     """
     Simpleアノテーションzipを展開したディレクトリ内を探索し、タスクごとに各annotationをparse可能なオブジェクトの列を返します。
 
     Args:
-        annotaion_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
+        annotation_dir_path: annofabからダウンロードしたsimple annotationのzipファイルを展開したディレクトリ
 
     Yields:
         対象タスク内の、annotationの遅延Parseが可能なインスタンス列
     """
 
-    for task_dir in annotaion_dir_path.iterdir():
+    for task_dir in annotation_dir_path.iterdir():
         if not task_dir.is_dir():
             continue
 

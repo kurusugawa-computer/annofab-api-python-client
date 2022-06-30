@@ -1,5 +1,5 @@
 {
-    "version": "0.1",
+    "version": "0.2",
     "ignorePaths": [
         "**/.git/objects/**",
         ".devcontainer/",
@@ -17,8 +17,11 @@
     "words": [
         "additionals",
         "Annofab",
+        "annofabapi",
         "astimezone",
         "asyncio",
+        "clazz",
+        "csvfile",
         "dateutil",
         "favicon",
         "giveup",
@@ -26,6 +29,10 @@
         "netrc",
         "pydata",
         "pylint",
-        "tzlocal"
+        "relativedelta",
+        "timespec",
+        "tzlocal",
+        "webapi",
+        "worktime"
     ]
 }
