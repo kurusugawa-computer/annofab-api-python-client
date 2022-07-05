@@ -37,9 +37,6 @@ pytest = "*"
 pytest-xdist = "*"
 pytest-cov = "*"
 
-# テストコード用に追加
-more-itertools = "*"
-
 # format library
 isort = "*"
 autoflake = "*"
@@ -58,7 +55,6 @@ pydata-sphinx-theme = "*"
 # type stub package
 types-requests = "*"
 types-python-dateutil = "*"
-types-dataclasses = { version = "*", python = "<3.7" }
 
 ipython = "*"
 # ipythonとjediの組み合わせによるバグを避けるため、バージョン指定
