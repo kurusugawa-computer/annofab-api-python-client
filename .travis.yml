@@ -18,4 +18,4 @@ branches:
 env:
   - PIP_DEFAULT_TIMEOUT=100
 
-cache: pip
+
