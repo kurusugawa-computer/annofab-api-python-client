@@ -597,7 +597,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        入力データを作成または更新します。  Annofabにファイルをアップロードして入力データを作成する場合は、事前に[createTempPath](#operation/createTempPath) APIを実行してください。  ### 画像のリサイズ Annofabにアップロードした画像は、自動的に「長辺4096px以内」になるよう縮小されます。 アノテーションの座標値は、縮小前の画像サイズに対応する値に復元されます。  ### ZIPファイルで入力データをまとめて作成する 複数のファイルをZIPで圧縮してAnnofabにアップロードすると、入力データをまとめて作成できます。  パスパラメータの`input_data_id`、リクエストボディの`input_data_name`には、適当な値を指定してください。  ZIPファイルを入力データとして登録すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ZIPファイルの制限事項は、以下の通りです。 * アップロードできるZIPファイルのサイズは、最大5GBです。 * UTF-8エンコーディングのみ対応しています。 * ZIPファイル内の次の名前のファイルは、入力データとして登録されません。     * `Thumbs.db`     * `__MACOSX`     * `.DS_Store`     * `desktop.ini`     * 上記以外の、ファイル名先頭が `.`（ドット）で始まるファイル * ZIPファイル内の `.`（ドット）から始まるフォルダ以下のファイルは、入力データとして登録されません。  ### ストリーミング形式の動画を入力データとして登録する ストリーミング形式の動画をAnnofabにアップロードして、入力データとして登録できます。  ただし、ZIPで圧縮する必要があります。ZIPファイルには、m3u8ファイルとtsファイルの両方を含めてください。 m3u8ファイルに記述された相対パスでtsファイルは、参照可能である必要があります。  以下に、フォルダ構成のサンプルを記載します。  ```   hoge.zip/   ├── hoge.ts   ├── fuga/   │   ├── foo.m3u8    (hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)   │   ├── foo1.ts   │   ├── foo2.ts   │   └── lib   ├── piyo1/   │   ├── piyo2   │   │   ├── bar.ts   │   ├── bar.m3u8    (hoge.ts, piyo1/piyo2/bar.tsを参照) ```  ### 注意事項 * `input_data_path`のスキーマが`https`の場合、`input_data_name`もしくは`input_data_path`の末尾にファイルの拡張子を含むようにしてください。 Annofabは拡張子からファイル形式を識別します。`input_data_name`と`input_data_path`の両方に拡張子が含まれている場合は、`input_data_name`の拡張子がファイル形式の識別に使われます。
+        入力データを作成または更新します。  Annofabにファイルをアップロードして入力データを作成する場合は、事前に[createTempPath](#operation/createTempPath) APIを実行してください。  ### 画像のリサイズ Annofabにアップロードした画像は、自動的に「長辺4096px以内」になるよう縮小されます。 アノテーションの座標値は、縮小前の画像サイズに対応する値に復元されます。  ### ZIPファイルで入力データをまとめて作成する 複数のファイルをZIPで圧縮してAnnofabにアップロードすると、入力データをまとめて作成できます。 ただし、カスタムプロジェクトではZIPファイルも1個の入力データして扱うため、ZIPファイルを利用して入力データをまとめて作成することはできません。  パスパラメータの`input_data_id`は無視されるため、任意の値を指定してください。 リクエストボディの`input_data_name`には、入力データ名のプレフィックスを指定してください。 たとえば以下のZIPファイルをアップロードして、リクエストボディの`input_data_name`に`bar.zip`を指定すると、入力データ名が`bar.zip/image1.jpg`,`bar.zip/image2.jpg`の2つの入力データが生成されます。  ```   foo.zip/   ├── image1.jpg   ├── image2.jpg ```  ZIPファイルを入力データとして登録すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ZIPファイルの制限事項は、以下の通りです。 * アップロードできるZIPファイルのサイズは、最大5GBです。 * ファイル名の文字コードはUTF-8エンコーディングのみ対応しています。 * ZIPファイル内の次のファイルは、入力データとして登録されません。     * プロジェクトがサポートしていないファイル         * 画像プロジェクトの場合：jpeg, png, gif以外のファイル         * 動画プロジェクトの場合：m3u8, ts, mp4, webm, ogg以外のファイル     * ファイル名が`.`（ドット）から始まるファイル     * フォルダ名が`.`（ドット）から始まるフォルダ以下のファイル  ### ストリーミング形式の動画を入力データとして登録する ストリーミング形式の動画をAnnofabにアップロードして、入力データとして登録できます。  ただし、ZIPで圧縮する必要があります。ZIPファイルには、m3u8ファイルとtsファイルの両方を含めてください。 m3u8ファイルに記述された相対パスでtsファイルは、参照可能である必要があります。  以下に、フォルダ構成のサンプルを記載します。  ```   hoge.zip/   ├── hoge.ts   ├── fuga/   │   ├── foo.m3u8    (hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)   │   ├── foo1.ts   │   ├── foo2.ts   │   └── lib   ├── piyo1/   │   ├── piyo2   │   │   ├── bar.ts   │   ├── bar.m3u8    (hoge.ts, piyo1/piyo2/bar.tsを参照) ```  ### 注意事項 * `input_data_path`のスキーマが`https`の場合、`input_data_name`もしくは`input_data_path`の末尾にファイルの拡張子を含むようにしてください。 Annofabは拡張子からファイル形式を識別します。`input_data_name`と`input_data_path`の両方に拡張子が含まれている場合は、`input_data_name`の拡張子がファイル形式の識別に使われます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1266,14 +1266,14 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllOrganizationMember
 
 
-        指定した組織のプロジェクトを一括で取得します。
+        指定した組織のプロジェクトを一括で取得します。  APIにアクセスしたユーザー（`Authorization`ヘッダーに格納されているIDトークンを発行したユーザー）の組織内ロールによって取得するプロジェクトが変化します * `組織オーナー` - 組織配下のプロジェクトすべて取得可能 * `組織管理者` - 組織配下のプロジェクトすべて取得可能 * `組織貢献者` - 組織配下のプロジェクトのうちアクセスしたユーザーが所属しているプロジェクトのみ取得可能
 
         Args:
             organization_name (str):  組織名 (required)
             query_params (Dict[str, Any]): Query Parameters
                 page (int):  表示するページ番号
                 limit (int):  1ページあたりの取得するデータ件数
-                account_id (str):  指定したアカウントIDをメンバーに持つプロジェクトで絞り込む。
+                account_id (str):  指定したアカウントIDをメンバーに持つプロジェクトで絞り込む。  APIにアクセスしたユーザー（`Authorization`ヘッダーに格納されているIDトークンを発行したユーザー）の組織内ロールが`組織貢献者`の場合、**アクセスしたユーザーと指定したアカウントIDのユーザーがどちらも所属しているプロジェクトのみ**が取得されます。
                 except_account_id (str):  指定したアカウントIDをメンバーに持たないプロジェクトで絞り込む。
                 title (str):  プロジェクトタイトルでの部分一致検索。大文字小文字は区別しません。
                 status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。

@@ -18,7 +18,6 @@ from dataclasses_json import DataClassJsonMixin
 from annofabapi.models import (
     AdditionalDataDefinitionType,
     AnnotationDataHoldingType,
-    AnnotationType,
     InternationalizationMessage,
     TaskPhase,
     TaskStatus,
@@ -177,7 +176,7 @@ class FullAnnotationDetail(DataClassJsonMixin):
     label_name: InternationalizationMessage
     """"""
 
-    annotation_type: AnnotationType
+    annotation_type: str
     """"""
 
     data_holding_type: AnnotationDataHoldingType

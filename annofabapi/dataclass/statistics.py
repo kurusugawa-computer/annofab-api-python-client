@@ -226,16 +226,16 @@ class WorktimeStatistics(DataClassJsonMixin):
 class Marker(DataClassJsonMixin):
     """ """
 
-    marker_id: Optional[str]
+    marker_id: str
     """マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    title: Optional[str]
+    title: str
     """マーカーのタイトル"""
 
-    graph_type: Optional[GraphType]
+    graph_type: GraphType
     """"""
 
-    marked_at: Optional[str]
+    marked_at: str
     """グラフ上のマーカー位置(x軸)"""
 
 
@@ -246,7 +246,7 @@ class Markers(DataClassJsonMixin):
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    markers: Optional[List[Marker]]
+    markers: List[Marker]
     """マーカー一覧"""
 
     updated_datetime: Optional[str]

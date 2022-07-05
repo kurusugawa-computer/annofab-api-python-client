@@ -734,7 +734,7 @@ Kyes of Dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* labels: List[LabelV2]
+* labels: List[LabelV3]
     ラベル
 * inspection_phrases: List[InspectionPhrase]
     定型指摘
@@ -800,7 +800,7 @@ AnnotationSpecsRequest = Dict[str, Any]
 
 Kyes of Dict
 
-* labels: List[LabelV2]
+* labels: List[LabelV3]
     ラベル
 * inspection_phrases: List[InspectionPhrase]
     定型指摘
@@ -875,6 +875,35 @@ Kyes of Dict
 
 """
 
+AnnotationSpecsRequestV3 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* labels: List[LabelV3]
+    ラベル
+* additionals: List[AdditionalDataDefinitionV2]
+    属性
+* restrictions: List[AdditionalDataRestriction]
+    属性の制約
+* inspection_phrases: List[InspectionPhrase]
+    定型指摘
+* comment: str
+    変更内容のコメント
+* auto_marking: bool
+    trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は \"アノテーション仕様の変更\" という文字列が設定されます。 
+* format_version: str
+    アノテーション仕様のフォーマットのバージョン
+* last_updated_datetime: str
+    新規作成時は未指定、更新時は必須（更新前の日時） 
+* option: AnnotationSpecsOption
+    
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
+
+"""
+
 AnnotationSpecsV1 = Dict[str, Any]
 """
 
@@ -923,21 +952,189 @@ Kyes of Dict
 
 """
 
+AnnotationSpecsV3 = Dict[str, Any]
+"""
 
-class AnnotationType(Enum):
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* labels: List[LabelV3]
+    ラベル
+* additionals: List[AdditionalDataDefinitionV2]
+    属性
+* restrictions: List[AdditionalDataRestriction]
+    属性の制約
+* inspection_phrases: List[InspectionPhrase]
+    定型指摘
+* format_version: str
+    アノテーション仕様のフォーマットのバージョン
+* updated_datetime: str
+    更新日時 
+* option: AnnotationSpecsOption
+    
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
+
+"""
+
+AnnotationType = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+
+"""
+
+
+class AnnotationTypeFieldMinWarnRule(Enum):
     """
-    アノテーションの種類 * `bounding_box` - 矩形 * `segmentation` - 塗りつぶし（インスタンスセグメンテーション用） * `segmentation_v2` - 塗りつぶしv2（セマンティックセグメンテーション用） * `polygon` - ポリゴン（閉じた頂点集合） * `polyline` - ポリライン（開いた頂点集合） * `point` - 点 * `classification` - 全体 * `range` - 動画の区間 * `custom` - カスタム  プロジェクトの種類によって、使用できるアノテーションの種類は決まっています。アノテーションの種類が使用できるかどうかを、以下の表に記載しました。  * `○`：使用できる  * `×`：使用できない   |アノテーションの種類                 | 画像プロジェクト        | 動画プロジェクト | カスタムプロジェクト | |-----------------|:----------:|:----:|:------:| | bounding_box    | 〇         | ×  | ×    | | segmentation    | 〇         | ×  | ×    | | segmentation_v2 | 〇         | ×  | ×    | | polygon         | 〇         | ×  | ×    | | polyline        | 〇         | ×  | ×    | | point           | 〇         | ×  | ×    | | classification  | 〇         | 〇  | ×    | | range           | ×         | 〇  | ×    | | custom          | ×         | ×  | 〇    |
+    最小の幅(min_width)と最小の高さ(min_height)がどのような状態になったときにエラーとするかを指定します。  * `and` - min_width、min_heightの両方が最小値未満の場合にエラーとなります。 * `or` - min_width、min_heightのいずれかが最小値未満の場合にエラーとなります。
     """
 
-    BOUNDING_BOX = "bounding_box"
-    SEGMENTATION = "segmentation"
-    SEGMENTATION_V2 = "segmentation_v2"
-    POLYGON = "polygon"
-    POLYLINE = "polyline"
-    POINT = "point"
-    CLASSIFICATION = "classification"
-    RANGE = "range"
-    CUSTOM = "custom"
+    AND = "and"
+    OR = "or"
+
+
+AnnotationTypeFieldValue = Dict[str, Any]
+"""
+ユーザー定義アノテーション種別のフィールドに設定される値です。 アノテーション種別のフィールド定義と対応するフィールド値のみ登録を許可されます。 
+
+Kyes of Dict
+
+* min_warn_rule: AnnotationTypeFieldMinWarnRule
+    
+* min_width: int
+    
+* min_height: int
+    
+* position_for_minimum_bounding_box_insertion: List[int]
+    最小矩形の挿入位置を、要素が2の配列で指定します。 
+* max_pixel: int
+    
+* min: int
+    
+* max: int
+    
+* min_area: int
+    
+* has_direction: bool
+    
+* append: bool
+    
+* erase: bool
+    
+* freehand: bool
+    
+* rectangle_fill: bool
+    
+* polygon_fill: bool
+    
+* fill_near: bool
+    
+
+"""
+
+AnnotationTypeFieldValueAnnotationEditorFeature = Dict[str, Any]
+"""
+作図ツール・作図モード 
+
+Kyes of Dict
+
+* append: bool
+    
+* erase: bool
+    
+* freehand: bool
+    
+* rectangle_fill: bool
+    
+* polygon_fill: bool
+    
+* fill_near: bool
+    
+
+"""
+
+AnnotationTypeFieldValueDisplayLineDirection = Dict[str, Any]
+"""
+線の向き表示/非表示の設定 
+
+Kyes of Dict
+
+* has_direction: bool
+    
+
+"""
+
+AnnotationTypeFieldValueMarginOfErrorTolerance = Dict[str, Any]
+"""
+誤差許容範囲
+
+Kyes of Dict
+
+* max_pixel: int
+    
+
+"""
+
+AnnotationTypeFieldValueMinimumArea2d = Dict[str, Any]
+"""
+最小の面積 
+
+Kyes of Dict
+
+* min_area: int
+    
+
+"""
+
+AnnotationTypeFieldValueMinimumSize = Dict[str, Any]
+"""
+アノテーションの最小サイズに関する設定
+
+Kyes of Dict
+
+* min_warn_rule: AnnotationTypeFieldMinWarnRule
+    
+* min_width: int
+    
+* min_height: int
+    
+
+"""
+
+AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* min_warn_rule: AnnotationTypeFieldMinWarnRule
+    
+* min_width: int
+    
+* min_height: int
+    
+* position_for_minimum_bounding_box_insertion: List[int]
+    最小矩形の挿入位置を、要素が2の配列で指定します。 
+
+"""
+
+AnnotationTypeFieldValueVertexCountMinMax = Dict[str, Any]
+"""
+頂点数の最大・最小 
+
+Kyes of Dict
+
+* min: int
+    
+* max: int
+    
+
+"""
 
 
 class AssigneeRuleOfResubmittedTask(Enum):
@@ -1278,8 +1475,8 @@ Kyes of Dict
     コメントを作成したときのフェーズのステージ。
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* comment_type: str
-    コメントの種別。  * `onhold` - 保留コメントとして扱われます。 * `inspection` - 検査コメントとして扱われます。 
+* comment_type: CommentType
+    
 * phrases: List[str]
     `comment_type` の値によって扱いが異なります。  * `onhold` の場合   * 使用しません（空配列） * `inspection` の場合   * 参照している定型指摘のIDリスト 
 * comment: str
@@ -1325,6 +1522,15 @@ class CommentStatus(Enum):
     OPEN = "open"
     RESOLVED = "resolved"
     CLOSED = "closed"
+
+
+class CommentType(Enum):
+    """
+    コメントの種別。  * `onhold` - 保留コメント * `inspection` - 検査コメント
+    """
+
+    ONHOLD = "onhold"
+    INSPECTION = "inspection"
 
 
 ConfirmAccountDeleteRequest = Dict[str, Any]
@@ -1459,6 +1665,23 @@ Kyes of Dict
     期間の終了日（ISO 8601 拡張形式）
 
 """
+
+
+class DefaultAnnotationType(Enum):
+    """
+    アノテーションの種類 * `bounding_box` - 矩形 * `segmentation` - 塗りつぶし（インスタンスセグメンテーション用） * `segmentation_v2` - 塗りつぶしv2（セマンティックセグメンテーション用） * `polygon` - ポリゴン（閉じた頂点集合） * `polyline` - ポリライン（開いた頂点集合） * `point` - 点 * `classification` - 全体 * `range` - 動画の区間 * `custom` - カスタム  プロジェクトの種類によって、使用できるアノテーションの種類は決まっています。アノテーションの種類が使用できるかどうかを、以下の表に記載しました。  * `○`：使用できる  * `×`：使用できない   |アノテーションの種類                 | 画像プロジェクト        | 動画プロジェクト | カスタムプロジェクト | |-----------------|:----------:|:----:|:------:| | bounding_box    | 〇         | ×  | ×    | | segmentation    | 〇         | ×  | ×    | | segmentation_v2 | 〇         | ×  | ×    | | polygon         | 〇         | ×  | ×    | | polyline        | 〇         | ×  | ×    | | point           | 〇         | ×  | ×    | | classification  | 〇         | 〇  | ×    | | range           | ×         | 〇  | ×    | | custom          | ×         | ×  | 〇    |
+    """
+
+    BOUNDING_BOX = "bounding_box"
+    SEGMENTATION = "segmentation"
+    SEGMENTATION_V2 = "segmentation_v2"
+    POLYGON = "polygon"
+    POLYLINE = "polyline"
+    POINT = "point"
+    CLASSIFICATION = "classification"
+    RANGE = "range"
+    CUSTOM = "custom"
+
 
 DeleteProjectResponse = Dict[str, Any]
 """
@@ -1854,7 +2077,7 @@ InputDataRequest = Dict[str, Any]
 Kyes of Dict
 
 * input_data_name: str
-    入力データ名
+    入力データ名。ZIPファイルをアップロードする際は、入力データ名のプレフィックスを指定してください。
 * input_data_path: str
     入力データの実体が存在するURLです。 Annofabにファイルをアップロードして入力データを作成する場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。  入力データの実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。 S3プライベートストレージに存在するファイルを入力データとして登録する場合は、事前に[認可の設定](/docs/faq/#m0b240)が必要です。 
 * last_updated_datetime: str
@@ -2416,6 +2639,31 @@ Kyes of Dict
 
 """
 
+LabelV3 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* label_id: str
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* label_name: InternationalizationMessage
+    
+* keybind: List[Keybind]
+    ショートカットキー
+* annotation_type: AnnotationType
+    
+* field_values: List[AnnotationTypeFieldValue]
+    
+* additional_data_definitions: List[str]
+    ラベルに所属する属性のID
+* color: Color
+    
+* metadata: dict(str, str)
+    ユーザーが自由に登録できるkey-value型のメタデータです。 
+
+"""
+
 
 class Lang(Enum):
     """
@@ -2813,10 +3061,73 @@ Kyes of Dict
     プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 
 * detail: PluginDetail
     
+* read_only: bool
+    trueの場合、プラグインは読み込み専用であり、更新や削除を行うことはできません。
 * created_datetime: str
     
 * updated_datetime: str
     
+
+"""
+
+OrganizationPluginCompatibility = Dict[str, Any]
+"""
+プラグイン間の互換性を表します。未指定の場合はinput、outputともに`Top`の`OrganizationPluginCompatibilityType`が設定されます。
+
+Kyes of Dict
+
+* input: OrganizationPluginCompatibilityType
+    
+* output: OrganizationPluginCompatibilityType
+    
+
+"""
+
+OrganizationPluginCompatibilityType = Dict[str, Any]
+"""
+プラグインの入力/出力を表す型です。 
+
+Kyes of Dict
+
+* type: str
+    Constant型で、かつidの値が一致している場合に互換性があることを示します。 
+* id: str
+    
+
+"""
+
+OrganizationPluginCompatibilityTypeBottom = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    inputに指定した場合、いずれのプラグインも前段になれないことを示します。 outputに指定した場合、いずれのプラグインも後段になれないことを示します。 
+
+"""
+
+OrganizationPluginCompatibilityTypeConstant = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Constant型で、かつidの値が一致している場合に互換性があることを示します。 
+* id: str
+    
+
+"""
+
+OrganizationPluginCompatibilityTypeTop = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    inputに指定した場合、あらゆるプラグインの後段になれることを示します。 outputに指定した場合、入力がTopであるプラグインだけが後段になれることを示します。 
 
 """
 
@@ -2897,7 +3208,7 @@ Kyes of Dict
 
 PluginDetail = Dict[str, Any]
 """
-* `PluginDetailAnnotationEditor` - カスタムアノテーションエディタ用のプラグインを表します。 * `PluginDetailTaskAssignment` - カスタムタスク割当用のプラグインを表します。 * `PluginDetailAnnotationSpecs` - カスタムアノテーション仕様用のプラグインを表します。 
+* `PluginDetailAnnotationEditor` - カスタムアノテーションエディタ用のプラグインを表します。 * `PluginDetailTaskAssignment` - カスタムタスク割当用のプラグインを表します。 * `PluginDetailAnnotationSpecs` - カスタムアノテーション仕様用のプラグインを表します。 * `PluginDetailExtendedAnnotationSpecs` - カスタムのアノテーション種別を作成するプラグインを表します。 
 
 Kyes of Dict
 
@@ -2908,7 +3219,13 @@ Kyes of Dict
 * compatible_input_data_types: List[InputDataType]
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
-    `AnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) 
+    `ExtendedAnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) 
+* plugin_compatibility: OrganizationPluginCompatibility
+    
+* annotation_types: List[AnnotationType]
+    プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。 同じ種別を重複して設定することはできません。 
+* user_defined_annotation_type_definitions: PluginDetailExtendedAnnotationSpecsUserDefinedAnnotationTypeDefinitions
+    
 
 """
 
@@ -2943,6 +3260,36 @@ Kyes of Dict
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
     `AnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) 
+
+"""
+
+PluginDetailExtendedAnnotationSpecs = Dict[str, Any]
+"""
+カスタムのアノテーション種別を作成するプラグインを表します。 なお、このプラグインが設定されているプロジェクトでは、ここで指定したアノテーション種別以外は使用できなくなります。 
+
+Kyes of Dict
+
+* plugin_compatibility: OrganizationPluginCompatibility
+    
+* annotation_types: List[AnnotationType]
+    プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。 同じ種別を重複して設定することはできません。 
+* user_defined_annotation_type_definitions: PluginDetailExtendedAnnotationSpecsUserDefinedAnnotationTypeDefinitions
+    
+* compatible_input_data_types: List[InputDataType]
+    プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
+* type: str
+    `ExtendedAnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) 
+
+"""
+
+PluginDetailExtendedAnnotationSpecsUserDefinedAnnotationTypeDefinitions = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* annotation_type_definitions: UserDefinedAnnotationTypeDefinition
+    
 
 """
 
@@ -4070,6 +4417,8 @@ Kyes of Dict
     現在のフェーズが開始された日時
 * updated_datetime: str
     更新日時
+* operation_updated_datetime: str
+    タスクのステータスやフェーズ、担当者などが更新されたときの日時
 * sampling: str
     検査抜取検査/抜取受入によって、どのフェーズがスキップされたか  * `inspection_skipped` - 抜取検査の対象外となり、検査フェーズがスキップされた * `inspection_stages_skipped` - 抜取検査の対象外となり、検査フェーズのステージの一部がスキップされた * `acceptance_skipped` - 抜取受入の対象外となり、受入フェーズがスキップされた * `inspection_and_acceptance_skipped` - 抜取検査・抜取受入の対象外となり、検査・受入フェーズがスキップされた  未指定ならば、どのフェーズもスキップされていません。 
 * metadata: dict(str, __DictStrKeyAnyValue__)
@@ -4608,6 +4957,58 @@ Kyes of Dict
     
 * organizations: str
     
+
+"""
+
+UserDefinedAnnotationDataType = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    ユーザー定義アノテーション種別の型を指定します。 指定可能な値と、その意味は下記の通りです。  * `BoundingBox2d` - 2次元の矩形 * `Polygon2d` - 2次元のポリゴン * `Polyline2d` - 2次元のポリライン * `SinglePoint2d` - 2次元の点 * `SemanticSegmentation2d` - 2次元のセマンティックセグメンテーション * `InstanceSegmentation2d` - 2次元のインスタンスセグメンテーション * `Range1d` - 1次元の範囲 * `Classification` - 全体アノテーション  ユーザー定義アノテーション種別の型によって、使用可能なフィールドが決まっています。 ユーザー定義アノテーション種別ごとの、各フィールドの使用可否を下記の表で示します。  |ユーザー定義アノテーション種別の型 | 使用可能なフィールド定義 | |-----------------|:----------:| | BoundingBox2d          | MinimumSize2d, MinimumSize2dWithDefaultInsertPosition, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polygon2d              | MinimumSize2d, MinVertexSize, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polyline2d             | VertexCountMinMax, DisplayLineDirection, MarginOfErrorTolerance | | SinglePoint2d          | MarginOfErrorTolerance | | SemanticSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | InstanceSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | Range1d                | MarginOfErrorTolerance | | Classification         | MarginOfErrorTolerance | 
+
+"""
+
+UserDefinedAnnotationTypeDefinition = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* annotation_type_name: InternationalizationMessage
+    
+* field_definitions: List[UserDefinedAnnotationTypeDefinitionFieldDefinitions]
+    ユーザーが定義するアノテーション種別のフィールド定義です。 フィールドIDをキー、フィールド定義を値とするオブジェクトを設定します。 
+* metadata: dict(str, str)
+    アノテーション種別を設定した際に、ラベルのメタデータとしてデフォルトで設定される値です。 
+* annotation_data_type: UserDefinedAnnotationDataType
+    
+
+"""
+
+UserDefinedAnnotationTypeDefinitionFieldDefinitions = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* field_id: str
+    フィールドID。任意の文字列を設定できます。
+* definition: UserDefinedAnnotationTypeFieldDefinition
+    
+
+"""
+
+UserDefinedAnnotationTypeFieldDefinition = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    ユーザー定義のアノテーション種別に設定可能なフィールドについての定義です。 設定可能な値とその意味は下記の通りです。 * `MinimumSize2d` - 2次元のデータに対する最小サイズ * `MinVertexSize` - 最小の頂点数 * `MinimumSize2dWithDefaultInsertPosition` - 2次元のデータに対する最小サイズ、および最小矩形の挿入位置 * `MarginOfErrorTolerance` - 誤差許容範囲 * `VertexCountMinMax` - 頂点制約 * `MinimumArea2d` - 2次元のデータに対する面積の制約 * `DisplayLineDirection` - 可視化オプション * `AnnotationEditorFeature` - 作図ツール・作図モード 
 
 """
 

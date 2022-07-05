@@ -115,7 +115,7 @@ info:
 
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
 
-  version: 0.146.0
+  version: 0.148.0
   title: AnnoFab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -258,6 +258,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/ProjectCacheRecord"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -307,6 +309,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/ProjectMemberList"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/members/{user_id}:
@@ -353,6 +357,8 @@ paths:
                   $ref: "swagger-api-components.yaml#/components/schemas/ProjectMember"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -399,6 +405,8 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -445,6 +453,8 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -491,6 +501,8 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -537,6 +549,8 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -585,6 +599,8 @@ paths:
                   $ref: "swagger-api-components.yaml#/components/schemas/LabelStatistics"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -631,6 +647,8 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -683,6 +701,8 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -743,6 +763,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/AnnotationSpecs"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -785,6 +807,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/Organization"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -819,6 +843,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/OrganizationCacheRecord"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -861,6 +887,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/Organization"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -895,6 +923,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/OrganizationCacheRecord"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -935,6 +965,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/OrganizationMemberList"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /organizations/{organization_id}/members/{user_id}:
@@ -979,6 +1011,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/OrganizationMember"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /organizations/{organization_id}/projects/{project_id}/task-counts:
@@ -1015,6 +1049,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/ProjectTaskCounts"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -1049,6 +1085,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/UserCacheRecord"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -1092,6 +1130,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/ProjectMember"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -1134,6 +1174,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/MyOrganizationList"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -1231,6 +1273,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/ProjectContainer"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
@@ -1273,6 +1317,8 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/MyAccount"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":

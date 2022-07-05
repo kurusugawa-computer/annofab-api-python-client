@@ -142,7 +142,7 @@ components:
           schema:
             $ref: "#/components/schemas/Message"
     ErrorForbiddenResource:
-      description: 権限エラー
+      description: 権限が不足していて、操作が許可されていない
       content:
         application/json:
           schema:
@@ -160,7 +160,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorUnauthorizedApi"
     ErrorInvalidRequest:
-      description: リクエスト形式が正しくない。必要な属性が足りなかったり、属性が特定の値
+      description: リクエスト形式が正しくない。必要な属性が足りなかったり、属性の値が間違っている
       content:
         application/json:
           schema:
@@ -178,6 +178,12 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorRefreshTokenExpired"
+    ErrorStateMismatch:
+      description: サーバー側や他のリクエストの状態により、このリクエストでは更新できない
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorStateMismatch"
   schemas:
     ArrayOfDateRanges:
       type: array
@@ -800,6 +806,9 @@ components:
           $ref: "#/components/schemas/PluginDescription"
         detail:
           $ref: "#/components/schemas/PluginDetail"
+        read_only:
+          type: boolean
+          description: trueの場合、プラグインは読み込み専用であり、更新や削除を行うことはできません。
         created_datetime:
           type: string
           format: date-time
@@ -841,16 +850,19 @@ components:
         * `PluginDetailAnnotationEditor` - カスタムアノテーションエディタ用のプラグインを表します。
         * `PluginDetailTaskAssignment` - カスタムタスク割当用のプラグインを表します。
         * `PluginDetailAnnotationSpecs` - カスタムアノテーション仕様用のプラグインを表します。
+        * `PluginDetailExtendedAnnotationSpecs` - カスタムのアノテーション種別を作成するプラグインを表します。
       oneOf:
         - $ref: "#/components/schemas/PluginDetailAnnotationEditor"
         - $ref: "#/components/schemas/PluginDetailTaskAssignment"
         - $ref: "#/components/schemas/PluginDetailAnnotationSpecs"
+        - $ref: "#/components/schemas/PluginDetailExtendedAnnotationSpecs"
       discriminator:
         propertyName: "_type"
         mapping:
           AnnotationEditor: "#/components/schemas/PluginDetailAnnotationEditor"
           TaskAssignment: "#/components/schemas/PluginDetailTaskAssignment"
           AnnotationSpecs: "#/components/schemas/PluginDetailAnnotationSpecs"
+          ExtendedAnnotationSpecs: "#/components/schemas/PluginDetailAnnotationSpecs"
     PluginDetailAnnotationEditor:
       type: object
       description: |
@@ -910,6 +922,37 @@ components:
             `AnnotationSpecs`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "AnnotationSpecs"
+    PluginDetailExtendedAnnotationSpecs:
+      type: object
+      description: |
+        カスタムのアノテーション種別を作成するプラグインを表します。
+        なお、このプラグインが設定されているプロジェクトでは、ここで指定したアノテーション種別以外は使用できなくなります。
+      required:
+        - annotation_types
+        - compatible_input_data_types
+      properties:
+        plugin_compatibility:
+          $ref: "#/components/schemas/OrganizationPluginCompatibility"
+        annotation_types:
+          type: array
+          description: |
+            プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。
+            同じ種別を重複して設定することはできません。
+          items:
+            $ref: "#/components/schemas/AnnotationType"
+        user_defined_annotation_type_definitions:
+          type: object
+          properties:
+            annotation_type_definitions:
+              $ref: "#/components/schemas/UserDefinedAnnotationTypeDefinition"
+        compatible_input_data_types:
+          $ref: "#/components/schemas/PluginCompatibleInputDataTypes"
+        _type:
+          type: string
+          description: |
+            `ExtendedAnnotationSpecs`
+            [詳しくはこちら](#section/API-Convention/API-_type)
+          example: "ExtendedAnnotationSpecs"
     PluginCompatibleInputDataTypes:
       type: array
       items:
@@ -918,6 +961,53 @@ components:
       description: |
         プラグインが対応している入力データです。
         プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。
+    OrganizationPluginCompatibility:
+      type: object
+      properties:
+        input:
+          $ref: "#/components/schemas/OrganizationPluginCompatibilityType"
+        output:
+          $ref: "#/components/schemas/OrganizationPluginCompatibilityType"
+      description:
+        プラグイン間の互換性を表します。未指定の場合はinput、outputともに`Top`の`OrganizationPluginCompatibilityType`が設定されます。
+    OrganizationPluginCompatibilityType:
+      oneOf:
+        - $ref: "#/components/schemas/OrganizationPluginCompatibilityTypeTop"
+        - $ref: "#/components/schemas/OrganizationPluginCompatibilityTypeBottom"
+        - $ref: "#/components/schemas/OrganizationPluginCompatibilityTypeConstant"
+      description: |
+        プラグインの入力/出力を表す型です。
+    OrganizationPluginCompatibilityTypeTop:
+      type: object
+      properties:
+        _type:
+          type: string
+          enum:
+            - Top
+          description: |
+            inputに指定した場合、あらゆるプラグインの後段になれることを示します。
+            outputに指定した場合、入力がTopであるプラグインだけが後段になれることを示します。
+    OrganizationPluginCompatibilityTypeBottom:
+      type: object
+      properties:
+        _type:
+          type: string
+          enum:
+            - Bottom
+          description: |
+            inputに指定した場合、いずれのプラグインも前段になれないことを示します。
+            outputに指定した場合、いずれのプラグインも後段になれないことを示します。
+    OrganizationPluginCompatibilityTypeConstant:
+      type: object
+      properties:
+        _type:
+          type: string
+          enum:
+            - Constant
+          description: |
+            Constant型で、かつidの値が一致している場合に互換性があることを示します。
+        id:
+          type: string
     AnnotationEditorUrl:
       type: string
       example: "https://example.com/my/editors?p={projectId}&t={taskId}"
@@ -1640,13 +1730,19 @@ components:
       properties:
         job:
           $ref: "#/components/schemas/ProjectJobInfo"
+          description: 登録されたバックグラウンドジョブ
     ProjectCopyResponse:
       type: object
+      required:
+        - job
+        - dest_project
       properties:
         job:
           $ref: "#/components/schemas/ProjectJobInfo"
+          description: 登録されたバックグラウンドジョブ
         dest_project:
           $ref: "#/components/schemas/Project"
+          description: コピー先のプロジェクトの情報
     DeleteProjectResponse:
       type: object
       required:
@@ -1655,8 +1751,10 @@ components:
       properties:
         job:
           $ref: "#/components/schemas/ProjectJobInfo"
+          description: 登録されたバックグラウンドジョブ
         project:
           $ref: "#/components/schemas/Project"
+          description: プロジェクト情報
     PutProjectResponse:
       type: object
       required:
@@ -1665,20 +1763,30 @@ components:
       properties:
         job:
           $ref: "#/components/schemas/ProjectJobInfo"
+          description: 所属組織を変更したときに登録されたバックグランドジョブ
         project:
           $ref: "#/components/schemas/Project"
+          description: プロジェクト情報
     TaskGenerateResponse:
       type: object
+      required:
+        - job
+        - project
       properties:
         job:
           $ref: "#/components/schemas/ProjectJobInfo"
+          description: 登録されたバックグラウンドジョブ
         project:
           $ref: "#/components/schemas/Project"
+          description: プロジェクト情報
     ProjectInputsUpdateResponse:
       type: object
+      required:
+        - job
       properties:
         job:
           $ref: "#/components/schemas/ProjectJobInfo"
+          description: 登録されたバックグラウンドジョブ
     Webhook:
       type: object
       required:
@@ -2436,6 +2544,11 @@ components:
             $ref: "#/components/schemas/WorktimeStatisticsItem"
     Marker:
       type: object
+      required:
+        - marker_id
+        - title
+        - graph_type
+        - marked_at
       properties:
         marker_id:
           $ref: "#/components/schemas/MarkerId"
@@ -2454,6 +2567,7 @@ components:
       type: object
       required:
         - project_id
+        - markers
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -2582,6 +2696,56 @@ components:
             ユーザーが自由に登録できるkey-value型のメタデータです。
           additionalProperties:
             type: string
+    AnnotationSpecsV3:
+      type: object
+      required:
+        - project_id
+        - labels
+        - additionals
+        - restrictions
+        - inspection_phrases
+        - format_version
+        - metadata
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        labels:
+          type: array
+          items:
+            $ref: "#/components/schemas/LabelV3"
+          description: ラベル
+        additionals:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalDataDefinitionV2"
+          description: 属性
+        restrictions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalDataRestriction"
+          description: 属性の制約
+        inspection_phrases:
+          type: array
+          items:
+            $ref: "#/components/schemas/InspectionPhrase"
+          description: 定型指摘
+        format_version:
+          type: string
+          default: "3.0.0"
+          description: アノテーション仕様のフォーマットのバージョン
+        updated_datetime:
+          type: string
+          format: date-time
+          description: |
+            更新日時
+        option:
+          $ref: "#/components/schemas/AnnotationSpecsOption"
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。
+          additionalProperties:
+            type: string
     AnnotationSpecsRequestV1:
       type: object
       required:
@@ -2678,6 +2842,61 @@ components:
             ユーザーが自由に登録できるkey-value型のメタデータです。
           additionalProperties:
             type: string
+    AnnotationSpecsRequestV3:
+      type: object
+      required:
+        - labels
+        - additionals
+        - restrictions
+        - inspection_phrases
+        - comment
+        - auto_marking
+        - format_version
+      properties:
+        labels:
+          type: array
+          items:
+            $ref: "#/components/schemas/LabelV3"
+          description: ラベル
+        additionals:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalDataDefinitionV2"
+          description: 属性
+        restrictions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalDataRestriction"
+          description: 属性の制約
+        inspection_phrases:
+          type: array
+          items:
+            $ref: "#/components/schemas/InspectionPhrase"
+          description: 定型指摘
+        comment:
+          type: string
+          description: 変更内容のコメント
+        auto_marking:
+          type: boolean
+          default: false
+          description: |
+            trueが指定された場合、各統計グラフにマーカーを自動追加します。
+            マーカーのタイトルには `comment` に指定された文字列が設定されます。
+            `comment` が指定されていなかった場合は "アノテーション仕様の変更" という文字列が設定されます。
+        format_version:
+          type: string
+          default: "3.0.0"
+          description: アノテーション仕様のフォーマットのバージョン
+        last_updated_datetime:
+          $ref: "#/components/schemas/LastUpdatedDatetime"
+        option:
+          $ref: "#/components/schemas/AnnotationSpecsOption"
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。
+          additionalProperties:
+            type: string
     AnnotationSpecsOption:
       oneOf:
         - $ref: "#/components/schemas/AnnotationSpecsMovieOption"
@@ -2739,6 +2958,10 @@ components:
           $ref: "#/components/schemas/InternationalizationMessage"
           description: 定型指摘のメッセージ
     AnnotationType:
+      oneOf:
+        - $ref: "#/components/schemas/DefaultAnnotationType"
+        - $ref: "#/components/schemas/UserDefinedAnnotationType"
+    DefaultAnnotationType:
       type: string
       enum:
         - bounding_box
@@ -2779,6 +3002,107 @@ components:
         | range           | ×         | 〇  | ×    |
         | custom          | ×         | ×  | 〇    |
 
+    UserDefinedAnnotationType:
+      type: string
+      description: |
+        ユーザー定義のアノテーション種別名です。先頭が `user_` から始まる任意の文字列を指定します。
+      example: user_bounding_box
+    UserDefinedAnnotationTypeDefinition:
+      type: object
+      required:
+        - annotation_Type_name
+        - field_definitions
+        - metadata
+        - annotation_data_type
+      properties:
+        annotation_type_name:
+          $ref: "#/components/schemas/InternationalizationMessage"
+        field_definitions:
+          type: array
+          description: |
+            ユーザーが定義するアノテーション種別のフィールド定義です。
+            フィールドIDをキー、フィールド定義を値とするオブジェクトを設定します。
+          items:
+            type: object
+            properties:
+              field_id:
+                type: string
+                description: フィールドID。任意の文字列を設定できます。
+              definition:
+                $ref: "#/components/schemas/UserDefinedAnnotationTypeFieldDefinition"
+        metadata:
+          type: object
+          description: |
+            アノテーション種別を設定した際に、ラベルのメタデータとしてデフォルトで設定される値です。
+          additionalProperties:
+            type: string
+        annotation_data_type:
+          $ref: "#/components/schemas/UserDefinedAnnotationDataType"
+    UserDefinedAnnotationTypeFieldDefinition:
+      type: object
+      properties:
+        _type:
+          type: string
+          description: |
+            ユーザー定義のアノテーション種別に設定可能なフィールドについての定義です。
+            設定可能な値とその意味は下記の通りです。
+            * `MinimumSize2d` - 2次元のデータに対する最小サイズ
+            * `MinVertexSize` - 最小の頂点数
+            * `MinimumSize2dWithDefaultInsertPosition` - 2次元のデータに対する最小サイズ、および最小矩形の挿入位置
+            * `MarginOfErrorTolerance` - 誤差許容範囲
+            * `VertexCountMinMax` - 頂点制約
+            * `MinimumArea2d` - 2次元のデータに対する面積の制約
+            * `DisplayLineDirection` - 可視化オプション
+            * `AnnotationEditorFeature` - 作図ツール・作図モード
+          enum:
+            - MinimumSize2d
+            - MinVertexSize
+            - MinimumSize_2dWithDefaultInsertPosition
+            - MarginOfErrorTolerance
+            - VertexCountMinMax
+            - MinimumArea2d
+            - DisplayLineDirection
+            - AnnotationEditorFeature
+    UserDefinedAnnotationDataType:
+      type: object
+      properties:
+        _type:
+          type: string
+          description: |
+            ユーザー定義アノテーション種別の型を指定します。
+            指定可能な値と、その意味は下記の通りです。
+
+            * `BoundingBox2d` - 2次元の矩形
+            * `Polygon2d` - 2次元のポリゴン
+            * `Polyline2d` - 2次元のポリライン
+            * `SinglePoint2d` - 2次元の点
+            * `SemanticSegmentation2d` - 2次元のセマンティックセグメンテーション
+            * `InstanceSegmentation2d` - 2次元のインスタンスセグメンテーション
+            * `Range1d` - 1次元の範囲
+            * `Classification` - 全体アノテーション
+
+            ユーザー定義アノテーション種別の型によって、使用可能なフィールドが決まっています。
+            ユーザー定義アノテーション種別ごとの、各フィールドの使用可否を下記の表で示します。
+
+            |ユーザー定義アノテーション種別の型 | 使用可能なフィールド定義 |
+            |-----------------|:----------:|
+            | BoundingBox2d          | MinimumSize2d, MinimumSize2dWithDefaultInsertPosition, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance |
+            | Polygon2d              | MinimumSize2d, MinVertexSize, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance |
+            | Polyline2d             | VertexCountMinMax, DisplayLineDirection, MarginOfErrorTolerance |
+            | SinglePoint2d          | MarginOfErrorTolerance |
+            | SemanticSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance |
+            | InstanceSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance |
+            | Range1d                | MarginOfErrorTolerance |
+            | Classification         | MarginOfErrorTolerance |
+          enum:
+            - BoundingBox2d
+            - Polygon2d
+            - Polyline2d
+            - SinglePoint2d
+            - SemanticSegmentation2d
+            - InstanceSegmentation2d
+            - Range1d
+            - Classification
     AdditionalDataDefinitionType:
       type: string
       enum:
@@ -2990,6 +3314,172 @@ components:
             ユーザーが自由に登録できるkey-value型のメタデータです。
           additionalProperties:
             type: string
+    LabelV3:
+      type: object
+      required:
+        - label_id
+        - label_name
+        - keybind
+        - annotation_type
+        - field_values
+        - additional_data_definitions
+        - color
+        - annotation_editor_feature
+      properties:
+        label_id:
+          $ref: "#/components/schemas/LabelId"
+        label_name:
+          $ref: "#/components/schemas/InternationalizationMessage"
+          description: ラベル名
+        keybind:
+          description: ショートカットキー
+          type: array
+          items:
+            $ref: "#/components/schemas/Keybind"
+        annotation_type:
+          $ref: "#/components/schemas/AnnotationType"
+        field_values:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnnotationTypeFieldValue"
+        additional_data_definitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdditionalDataDefinitionId"
+          description: ラベルに所属する属性のID
+        color:
+          $ref: "#/components/schemas/Color"
+        metadata:
+          type: object
+          description: |
+            ユーザーが自由に登録できるkey-value型のメタデータです。
+          additionalProperties:
+            type: string
+    AnnotationTypeFieldValue:
+      description: |
+        ユーザー定義アノテーション種別のフィールドに設定される値です。
+        アノテーション種別のフィールド定義と対応するフィールド値のみ登録を許可されます。
+      oneOf:
+        - $ref: "#/components/schemas/AnnotationTypeFieldValueMinimumSize"
+        - $ref: "#/components/schemas/AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition"
+        - $ref: "#/components/schemas/AnnotationTypeFieldValueMarginOfErrorTolerance"
+        - $ref: "#/components/schemas/AnnotationTypeFieldValueVertexCountMinMax"
+        - $ref: "#/components/schemas/AnnotationTypeFieldValueMinimumArea2d"
+        - $ref: "#/components/schemas/AnnotationTypeFieldValueDisplayLineDirection"
+        - $ref: "#/components/schemas/AnnotationTypeFieldValueAnnotationEditorFeature"
+    AnnotationTypeFieldValueMinimumSize:
+      type: object
+      description: アノテーションの最小サイズに関する設定
+      required:
+        - min_warn_rule
+        - min_width
+        - min_height
+      properties:
+        min_warn_rule:
+          $ref: "#/components/schemas/AnnotationTypeFieldMinWarnRule"
+        min_width:
+          type: integer
+          minimum: 1
+        min_height:
+          type: integer
+          minimum: 1
+    AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition:
+      required:
+        - min_warn_rule
+        - min_width
+        - min_height
+      properties:
+        min_warn_rule:
+          $ref: "#/components/schemas/AnnotationTypeFieldMinWarnRule"
+        min_width:
+          type: integer
+          minimum: 1
+        min_height:
+          type: integer
+          minimum: 1
+        position_for_minimum_bounding_box_insertion:
+          type: array
+          description: |
+            最小矩形の挿入位置を、要素が2の配列で指定します。
+          example: [0, 0]
+          items:
+            type: integer
+    AnnotationTypeFieldMinWarnRule:
+      type: string
+      enum:
+        - and
+        - or
+      description: |
+        最小の幅(min_width)と最小の高さ(min_height)がどのような状態になったときにエラーとするかを指定します。
+
+        * `and` - min_width、min_heightの両方が最小値未満の場合にエラーとなります。
+        * `or` - min_width、min_heightのいずれかが最小値未満の場合にエラーとなります。
+    AnnotationTypeFieldValueMarginOfErrorTolerance:
+      type: object
+      description: 誤差許容範囲
+      required:
+        - max_pixel
+      properties:
+        max_pixel:
+            type: integer
+            minimum: 1
+    AnnotationTypeFieldValueVertexCountMinMax:
+      type: object
+      description: |
+        頂点数の最大・最小
+      required:
+        - min
+        - max
+      properties:
+        min:
+            type: integer
+            minimum: 1
+        max:
+            type: integer
+            minimum: 1
+    AnnotationTypeFieldValueMinimumArea2d:
+      type: object
+      description: |
+        最小の面積
+      required:
+        - min_area
+      properties:
+        min_area:
+            type: integer
+            minimum: 1
+    AnnotationTypeFieldValueDisplayLineDirection:
+      type: object
+      description: |
+        線の向き表示/非表示の設定
+      required:
+        - has_direction
+      properties:
+        has_direction:
+            type: boolean
+    AnnotationTypeFieldValueAnnotationEditorFeature:
+      type: object
+      description: |
+        作図ツール・作図モード
+      required:
+        - append
+        - erase
+        - freehand
+        - rectangle_fill
+        - polygon_fill
+        - fill_near
+      properties:
+        append:
+            type: boolean
+        erase:
+            type: boolean
+        freehand:
+            type: boolean
+        rectangle_fill:
+            type: boolean
+        polygon_fill:
+            type: boolean
+        fill_near:
+            type: boolean
     Color:
       description: RGBで表現される色情報
       type: object
@@ -3364,6 +3854,7 @@ components:
         - number_of_rejections
         - work_time_span
         - updated_datetime
+        - operation_updated_datetime
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -3409,6 +3900,10 @@ components:
           type: string
           format: date-time
           description: 更新日時
+        operation_updated_datetime:
+          type: string
+          format: date-time
+          description: タスクのステータスやフェーズ、担当者などが更新されたときの日時
         sampling:
           type: string
           enum:
@@ -4027,7 +4522,7 @@ components:
       properties:
         input_data_name:
           type: string
-          description: 入力データ名
+          description: 入力データ名。ZIPファイルをアップロードする際は、入力データ名のプレフィックスを指定してください。
         input_data_path:
           type: string
           example: "s3://YOUR-BUCKET/PATH/TO/OBJECT"
@@ -4150,6 +4645,8 @@ components:
 
     WebhookTestRequest:
       type: object
+      required:
+        - placeholders
       properties:
         placeholders:
           description: keyがプレースホルダーの名前、valueが置換後の値であるkey-valueペア
@@ -4162,6 +4659,8 @@ components:
 
     WebhookTestResponse:
       type: object
+      required:
+       - result
       properties:
         result:
           description: |
@@ -5344,15 +5843,7 @@ components:
           $ref: "#/components/schemas/AccountId"
           description: コメントを作成したユーザーのアカウントID。
         comment_type:
-          type: string
-          enum:
-            - onhold
-            - inspection
-          description: |
-            コメントの種別。
-
-            * `onhold` - 保留コメントとして扱われます。
-            * `inspection` - 検査コメントとして扱われます。
+          $ref: "#/components/schemas/CommentType"
         phrases:
           type: array
           description: |
@@ -5470,6 +5961,17 @@ components:
           * `open`（未対応）、`resolved`（対応完了）を指定可能
         * `inspection` の場合
           * `open`（未対応）、`resolved`（対応完了）、`closed`（対応不要）を指定可能
+    CommentType:
+      type: string
+      enum:
+        - onhold
+        - inspection
+      description: |
+        コメントの種別。
+
+        * `onhold` - 保留コメント
+        * `inspection` - 検査コメント
+
     BatchCommentRequestItem:
       oneOf:
         - $ref: "#/components/schemas/BatchCommentRequestItemPut"
@@ -6208,7 +6710,7 @@ components:
       type: object
       required:
         - list
-        - hast_next
+        - has_next
       properties:
         list:
           type: array
@@ -6308,10 +6810,12 @@ components:
       oneOf:
         - $ref: "#/components/schemas/AnnotationSpecsV1"
         - $ref: "#/components/schemas/AnnotationSpecsV2"
+        - $ref: "#/components/schemas/AnnotationSpecsV3"
     AnnotationSpecsRequest:
       oneOf:
         - $ref: "#/components/schemas/AnnotationSpecsRequestV1"
         - $ref: "#/components/schemas/AnnotationSpecsRequestV2"
+        - $ref: "#/components/schemas/AnnotationSpecsRequestV3"
     TaskGenerateResponseWrapper:
       oneOf:
         - $ref: "#/components/schemas/Project"

@@ -1,7 +1,6 @@
 from annofabapi.models import (
     AdditionalDataDefinitionType,
     AnnotationDataHoldingType,
-    AnnotationType,
     InternationalizationMessage,
     TaskPhase,
     TaskStatus,

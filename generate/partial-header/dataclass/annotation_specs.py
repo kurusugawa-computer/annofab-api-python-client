@@ -1,4 +1,4 @@
-from annofabapi.models import AdditionalDataDefinitionType, AnnotationType
+from annofabapi.models import AdditionalDataDefinitionType
 
 AdditionalDataDefaultType = Union[bool, int, str]
 

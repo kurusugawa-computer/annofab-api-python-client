@@ -111,6 +111,9 @@ class Task(DataClassJsonMixin):
     updated_datetime: str
     """更新日時"""
 
+    operation_updated_datetime: str
+    """タスクのステータスやフェーズ、担当者などが更新されたときの日時"""
+
     sampling: Optional[str]
     """検査抜取検査/抜取受入によって、どのフェーズがスキップされたか  * `inspection_skipped` - 抜取検査の対象外となり、検査フェーズがスキップされた * `inspection_stages_skipped` - 抜取検査の対象外となり、検査フェーズのステージの一部がスキップされた * `acceptance_skipped` - 抜取受入の対象外となり、受入フェーズがスキップされた * `inspection_and_acceptance_skipped` - 抜取検査・抜取受入の対象外となり、検査・受入フェーズがスキップされた  未指定ならば、どのフェーズもスキップされていません。 """
 
