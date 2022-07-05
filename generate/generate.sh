@@ -234,6 +234,10 @@ sed -e  "s/Dict\[str, __DictStrKeyAnyValue__\]/Dict[str, Any]/g" ../annofabapi/d
 # `__DictStrKeyAnyValue__`を`Dict[str, Any]`に置換する
 sed  -e "s/__DictStrKeyAnyValue__/Dict[str,Any]/g"  ../annofabapi/dataclass/*.py  --in-place
 
+# AnnotationType型をstr型に置換する. 
+# 理由：生成されたAnnotationTypeはdict型になっているが、実際はAnnotation型はDefaultAnnotationTypeとUserDefinedAnnotationTypeのoneOfで定義されている。
+# 動的な値が入る可能性があるたため、enum型にはできない。したがってstr型に変換する
+sed  -e "s/: AnnotationType/: str/g"  ../annofabapi/dataclass/*.py  --in-place
 
 
 rm -Rf out/openapi_client

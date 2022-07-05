@@ -494,7 +494,9 @@ class TestStatistics:
         api.put_markers(project_id, request_body=request_body)
 
         new_markers, _ = api.get_markers(project_id)
-        assert new_markers["markers"] == markers
+        assert len(new_markers["markers"]) == 1
+        new_marker = new_markers["markers"][0]
+        assert new_marker["marker_id"] == markers[0]["marker_id"]
 
     def test_get_statistics_available_dates(self):
         content, _ = api.get_statistics_available_dates(project_id)
