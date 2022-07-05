@@ -74,9 +74,7 @@ class SimpleAnnotationParser(abc.ABC):
 
         """
 
-    def parse(
-        self, convert_detail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None
-    ) -> SimpleAnnotation:
+    def parse(self, convert_detail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None) -> SimpleAnnotation:
         """JSONファイルをパースする
 
         Args:

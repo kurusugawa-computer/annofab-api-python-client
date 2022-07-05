@@ -15,7 +15,7 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import DataClassJsonMixin
 
-from annofabapi.models import AdditionalDataDefinitionType, AnnotationType
+from annofabapi.models import AdditionalDataDefinitionType
 
 AdditionalDataDefaultType = Union[bool, int, str]
 
@@ -298,7 +298,7 @@ class LabelV1(DataClassJsonMixin):
     keybind: List[Keybind]
     """ショートカットキー"""
 
-    annotation_type: AnnotationType
+    annotation_type: str
     """"""
 
     bounding_box_metadata: Optional[BoundingBoxMetadata]
@@ -336,7 +336,7 @@ class LabelV2(DataClassJsonMixin):
     keybind: List[Keybind]
     """ショートカットキー"""
 
-    annotation_type: AnnotationType
+    annotation_type: str
     """"""
 
     bounding_box_metadata: Optional[BoundingBoxMetadata]
