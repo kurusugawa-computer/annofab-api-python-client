@@ -3,12 +3,12 @@ dist: focal
 language: python
 python:
   - "3.7"
-  - "3.8"
-  - "3.9"
-  - "3.10"
+  # - "3.8"
+  # - "3.9"
+  # - "3.10"
 install:
   # python3.7を有効にするまで記述
-  - pip install "keyring<23.6"
+  - pip install "keyring==23.5.1" "virtualenv==20.14.1"
   - pip install pip poetry --upgrade
   - travis_retry poetry install
 script:
