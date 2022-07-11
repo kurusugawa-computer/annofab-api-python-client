@@ -12,6 +12,8 @@ install:
   - python -m pip install -U pip
   - python -m pip --version
   - find / -name pip -type f 2>/dev/null | xargs -I@ bash -c "@ --version && echo @"
+  - wget https://bootstrap.pypa.io/get-pip.py
+  - python get-pip.py  
   - which pip
   - python -m pip install poetry
   - travis_retry poetry install
