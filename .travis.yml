@@ -7,7 +7,6 @@ python:
   # - "3.9"
   # - "3.10"
 install:
-  - find / -name pip -type f 2>/dev/null | xargs -I@ bash -c "@ --version && echo @"
   - python -m pip --version
   - python -m pip install -U pip
   - python -m pip --version
