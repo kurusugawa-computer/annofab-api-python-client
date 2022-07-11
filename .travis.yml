@@ -7,9 +7,8 @@ python:
   # - "3.9"
   # - "3.10"
 install:
-  # python3.7を有効にするまで記述
-  - pip install "keyring==22.3.0" "importlib-metadata==1.7.0"
-  - pip install pip poetry --upgrade
+  - pip install pip --upgrade
+  - pip install poetry
   - travis_retry poetry install
 script:
    - make lint
