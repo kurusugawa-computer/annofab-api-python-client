@@ -11,7 +11,7 @@ install:
   - python -m pip --version
   - python -m pip install poetry
   - which pip
-  - find / -name pip
+  - find / -name pip | xargs -I@ bash -c "@ --version && echo @"
   - travis_retry poetry install
 script:
    - make lint
