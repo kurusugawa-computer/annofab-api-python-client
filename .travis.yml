@@ -7,11 +7,13 @@ python:
   # - "3.9"
   # - "3.10"
 install:
-  - python -m pip install pip --upgrade 
+  - find / -name pip -type f 2>/dev/null | xargs -I@ bash -c "@ --version && echo @"
   - python -m pip --version
-  - python -m pip install poetry
+  - python -m pip install -U pip
+  - python -m pip --version
+  - find / -name pip -type f 2>/dev/null | xargs -I@ bash -c "@ --version && echo @"
   - which pip
-  - sudo find / -name pip | xargs -I@ bash -c "@ --version && echo @"
+  - python -m pip install poetry
   - travis_retry poetry install
 script:
    - make lint
