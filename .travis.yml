@@ -10,6 +10,8 @@ install:
   - python -m pip install pip --upgrade 
   - python -m pip --version
   - python -m pip install poetry
+  - which pip
+  - find / -name pip
   - travis_retry poetry install
 script:
    - make lint
