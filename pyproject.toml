@@ -37,9 +37,6 @@ pytest = "*"
 pytest-xdist = "*"
 pytest-cov = "*"
 
-# テストコード用に追加
-more-itertools = "*"
-
 # format library
 isort = "*"
 autoflake = "*"
