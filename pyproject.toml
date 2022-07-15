@@ -23,7 +23,7 @@ classifiers = [
 
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 requests = "*"
 python-dateutil = "*"
 backoff="*"
@@ -36,9 +36,6 @@ more-itertools = "*"
 pytest = "*"
 pytest-xdist = "*"
 pytest-cov = "*"
-
-# テストコード用に追加
-more-itertools = "*"
 
 # format library
 isort = "*"
@@ -58,12 +55,9 @@ pydata-sphinx-theme = "*"
 # type stub package
 types-requests = "*"
 types-python-dateutil = "*"
-types-dataclasses = { version = "*", python = "<3.7" }
+types-dataclasses = "*"
 
 ipython = "*"
-# ipythonとjediの組み合わせによるバグを避けるため、バージョン指定
-# https://zenn.dev/hige/articles/282bf79d47378e
-jedi = "<0.18"
 
 [tool.black]
 line-length = 120
