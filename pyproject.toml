@@ -61,9 +61,6 @@ types-python-dateutil = "*"
 types-dataclasses = "*"
 
 ipython = "*"
-# ipythonとjediの組み合わせによるバグを避けるため、バージョン指定
-# https://zenn.dev/hige/articles/282bf79d47378e
-jedi = "<0.18"
 
 [tool.black]
 line-length = 120
