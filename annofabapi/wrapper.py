@@ -294,9 +294,10 @@ class Wrapper:
         url = response.headers["Location"]
         response2 = self.download(url, dest_path)
         logger.info(
-            "SimpleアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            "SimpleアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
             project_id,
             response2.headers.get("Last-Modified"),
+            response2.headers.get("Content-Length"),
             dest_path,
         )
         return url
@@ -325,9 +326,10 @@ class Wrapper:
         url = response.headers["Location"]
         response2 = self.download(url, dest_path)
         logger.info(
-            "FullアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            "FullアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
             project_id,
             response2.headers.get("Last-Modified"),
+            response2.headers.get("Content-Length"),
             dest_path,
         )
         return url
@@ -1610,9 +1612,10 @@ class Wrapper:
         url = content["url"]
         response2 = self.download(url, dest_path)
         logger.info(
-            "入力データ全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            "入力データ全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
             project_id,
             response2.headers.get("Last-Modified"),
+            response2.headers.get("Content-Length"),
             dest_path,
         )
         return url
@@ -1635,9 +1638,10 @@ class Wrapper:
         url = content["url"]
         response2 = self.download(url, dest_path)
         logger.info(
-            "タスク全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            "タスク全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
             project_id,
             response2.headers.get("Last-Modified"),
+            response2.headers.get("Content-Length"),
             dest_path,
         )
         return url
@@ -1667,9 +1671,10 @@ class Wrapper:
         url = content["url"]
         response2 = self.download(url, dest_path)
         logger.info(
-            "検査コメント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            "検査コメント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
             project_id,
             response2.headers.get("Last-Modified"),
+            response2.headers.get("Content-Length"),
             dest_path,
         )
         return url
@@ -1691,9 +1696,10 @@ class Wrapper:
         url = content["url"]
         response = self.download(url, dest_path)
         logger.info(
-            "コメント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            "コメント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
             project_id,
             response.headers.get("Last-Modified"),
+            response.headers.get("Content-Length"),
             dest_path,
         )
         return url
@@ -1716,9 +1722,10 @@ class Wrapper:
         url = content["url"]
         response2 = self.download(url, dest_path)
         logger.info(
-            "タスク履歴イベント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            "タスク履歴イベント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
             project_id,
             response2.headers.get("Last-Modified"),
+            response2.headers.get("Content-Length"),
             dest_path,
         )
         return url
@@ -1741,9 +1748,10 @@ class Wrapper:
         url = content["url"]
         response2 = self.download(url, dest_path)
         logger.info(
-            "タスク履歴全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', file='%s'",
+            "タスク履歴全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
             project_id,
             response2.headers.get("Last-Modified"),
+            response2.headers.get("Content-Length"),
             dest_path,
         )
         return url
