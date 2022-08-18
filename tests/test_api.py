@@ -6,10 +6,13 @@ AnnofabApi, Wrapperのテストコード
 * 基本的にHTTP GETのテストのみ行うこと。PUT/POST/DELETEのテストがあると、間違えて修正してまうおそれあり。
 
 """
+from __future__ import annotations
+
 import configparser
 import datetime
 import os
 import uuid
+from typing import Any
 
 import pytest
 import requests
@@ -45,6 +48,8 @@ test_wrapper = WrapperForTest(api)
 
 
 class TestAnnotation:
+    input_data_id: str
+
     @classmethod
     def setup_class(cls):
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
@@ -121,6 +126,8 @@ class TestAnnotationSpecs:
 
 
 class TestComment:
+    task: dict[str, Any]
+
     @classmethod
     def setup_class(cls):
         task, _ = api.get_task(project_id, task_id)
@@ -178,6 +185,8 @@ class TestComment:
 
 
 class TestInputData:
+    input_data_id: str
+
     @classmethod
     def setup_class(cls):
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
@@ -320,6 +329,8 @@ class TestMy:
 
 
 class TestOrganization:
+    organization_name: str
+
     @classmethod
     def setup_class(cls):
         cls.organization_name = api.get_organization_of_project(project_id)[0]["organization_name"]
@@ -335,6 +346,8 @@ class TestOrganization:
 
 
 class TestOrganizationMember:
+    organization_name: str
+
     @classmethod
     def setup_class(cls):
         cls.organization_name = api.get_organization_of_project(project_id)[0]["organization_name"]
@@ -504,6 +517,8 @@ class TestStatistics:
 
 
 class Testsupplementary:
+    input_data_id: str
+
     @classmethod
     def setup_class(cls):
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
@@ -519,19 +534,17 @@ class Testsupplementary:
         )
 
         supplementary_data_list = wrapper.get_supplementary_data_list_or_none(project_id, self.input_data_id)
+        assert supplementary_data_list is not None
         assert len([e for e in supplementary_data_list if e["supplementary_data_id"] == supplementary_data_id]) == 1
 
         api.delete_supplementary_data(project_id, self.input_data_id, supplementary_data_id)
-        supplementary_data_list = api.get_supplementary_data_list(project_id, self.input_data_id)[0]
-        assert len([e for e in supplementary_data_list if e["supplementary_data_id"] == supplementary_data_id]) == 0
-
-    # def test_wrapper_get_supplementary_data_list_or_none(self):
-    #     # 2021/01/04時点では、存在しないinput_data_idを指定すると404 Errorは発生しないので、このテストは実施しない
-    #     supplementary_data_list = wrapper.get_supplementary_data_list_or_none(project_id, "not-exists")
-    #     assert supplementary_data_list is None
+        supplementary_data_list2 = api.get_supplementary_data_list(project_id, self.input_data_id)[0]
+        assert len([e for e in supplementary_data_list2 if e["supplementary_data_id"] == supplementary_data_id]) == 0
 
 
 class TestTask:
+    input_data_id: str
+
     @classmethod
     def setup_class(cls):
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
@@ -579,8 +592,8 @@ class TestTask:
         print(f"put_task: task_id={task_id}")
         test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]
 
-        request_body = [{"project_id": project_id, "task_id": test_task_id, "_type": "Delete"}]
-        content = api.batch_update_tasks(project_id, request_body=request_body)[0]
+        request_body2 = [{"project_id": project_id, "task_id": test_task_id, "_type": "Delete"}]
+        content = api.batch_update_tasks(project_id, request_body=request_body2)[0]
         assert type(content) == list
 
     def test_patch_tasks_metadata(self):
@@ -631,6 +644,9 @@ class TestGetObjOrNone:
     wrapper.get_xxx_or_none メソッドの確認
     """
 
+    organization_name: str
+    input_data_id: str
+
     @classmethod
     def setup_class(cls):
         cls.organization_name = api.get_organization_of_project(project_id)[0]["organization_name"]
@@ -675,22 +691,22 @@ class TestGetObjOrNone:
         assert wrapper.get_task_or_none("not-exists", task_id) is None
 
     def test_get_task_histories_or_none(self):
-        assert type(wrapper.get_task_histories_or_none(project_id, task_id)) == list
-
-        assert wrapper.get_task_histories_or_none(project_id, "not-exists") is None
-
-        assert wrapper.get_task_histories_or_none("not-exists", task_id) is None
-
-    def test_get_task_histories_or_none(self):
         actual = wrapper.get_editor_annotation_or_none(project_id, task_id, self.input_data_id)
+        assert actual is not None
         assert actual["task_id"] == task_id
         assert actual["input_data_id"] == self.input_data_id
 
         assert wrapper.get_editor_annotation_or_none(project_id, task_id, "not-exists") is None
         assert wrapper.get_editor_annotation_or_none(project_id, "not-exists", "not-exists") is None
 
+    def test_get_supplementary_data_list_or_none(self):
+        supplementary_data_list = wrapper.get_supplementary_data_list_or_none(project_id, "not-exists")
+        assert supplementary_data_list is None
+
 
 class TestProtectedMethod:
+    input_data_id: str
+
     @classmethod
     def setup_class(cls):
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
