@@ -1,3 +1,5 @@
+from __future__ import annotations
+from typing import Any
 import pytest
 
 from annofabapi.models import TaskPhase
@@ -37,7 +39,7 @@ class TestTaskHistoryUtils:
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_acceptance_検査0回_受入スキップ後に受入取消(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "started_datetime": "2020-01-22T09:35:26.13+09:00",
                 "ended_datetime": "2020-01-22T09:35:29.745+09:00",
@@ -61,7 +63,7 @@ class TestTaskHistoryUtils:
                 "phase": "acceptance",
                 "phase_stage": 1,
                 "account_id": self.ACCOUNT_ID,
-            },
+            }
         ]
 
         actual = get_task_history_index_skipped_acceptance(task_history_list)

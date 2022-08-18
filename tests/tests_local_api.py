@@ -10,6 +10,7 @@ class TestMyBackoff:
         if len(log) == 2:
             return True
 
+        e: Exception
         if len(log) == 0:
             e = requests.exceptions.RequestException()
         elif len(log) == 1:
