@@ -39,6 +39,8 @@ test_wrapper = WrapperForTest(service.api)
 
 
 class TestAnnotation:
+    input_data_id: str
+
     @classmethod
     def setup_class(cls):
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
@@ -76,6 +78,8 @@ class TestInput:
 
 
 class TestInspection:
+    input_data_id: str
+
     @classmethod
     def setup_class(cls):
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
@@ -126,6 +130,8 @@ class TestMy:
 
 
 class TestOrganization:
+    organization_name: str
+
     @classmethod
     def setup_class(cls):
         cls.organization_name = service.api.get_organization_of_project(project_id)[0]["organization_name"]
@@ -142,6 +148,8 @@ class TestOrganization:
 
 
 class TestOrganizationMember:
+    organization_name: str
+
     @classmethod
     def setup_class(cls):
         cls.organization_name = service.api.get_organization_of_project(project_id)[0]["organization_name"]
@@ -181,6 +189,8 @@ class TestStatistics:
 
 
 class TestSupplementary:
+    input_data_id: str
+
     @classmethod
     def setup_class(cls):
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)

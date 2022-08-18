@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 import pytest
 
 from annofabapi.models import TaskPhase
@@ -37,7 +41,7 @@ class TestTaskHistoryUtils:
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_acceptance_検査0回_受入スキップ後に受入取消(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "started_datetime": "2020-01-22T09:35:26.13+09:00",
                 "ended_datetime": "2020-01-22T09:35:29.745+09:00",
@@ -69,7 +73,7 @@ class TestTaskHistoryUtils:
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_acceptance_検査0回_教師付で提出取消(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "started_datetime": "2020-01-22T09:36:11.187+09:00",
                 "ended_datetime": "2020-01-22T09:36:14.186+09:00",
@@ -96,11 +100,11 @@ class TestTaskHistoryUtils:
             },
         ]
         actual = get_task_history_index_skipped_acceptance(task_history_list)
-        expected = []
+        expected: list[int] = []
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_acceptance_検査1回_検査で提出取消(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "started_datetime": "2020-01-22T09:39:20.492+09:00",
                 "ended_datetime": "2020-01-22T09:39:24.911+09:00",
@@ -136,11 +140,11 @@ class TestTaskHistoryUtils:
         ]
 
         actual = get_task_history_index_skipped_acceptance(task_history_list)
-        expected = []
+        expected: list[int] = []
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_inspection_検査1回_検査スキップ(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "started_datetime": "2020-01-22T09:58:20.063+09:00",
                 "ended_datetime": "2020-01-22T09:58:23.749+09:00",
@@ -172,7 +176,7 @@ class TestTaskHistoryUtils:
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_inspection_検査1回_教師付で提出取消(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "started_datetime": "2020-01-22T10:00:33.832+09:00",
                 "ended_datetime": "2020-01-22T10:00:37.381+09:00",
@@ -199,11 +203,11 @@ class TestTaskHistoryUtils:
             },
         ]
         actual = get_task_history_index_skipped_inspection(task_history_list)
-        expected = []
+        expected: list[int] = []
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_inspection_検査2回_検査1回目で提出取消(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "started_datetime": "2019-09-04T16:15:51.505+09:00",
                 "ended_datetime": "2019-09-04T16:16:31.597+09:00",
@@ -238,11 +242,11 @@ class TestTaskHistoryUtils:
             },
         ]
         actual = get_task_history_index_skipped_inspection(task_history_list)
-        expected = []
+        expected: list[int] = []
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_number_of_rejections_教師付1回目(self):
-        task_history_short_list = [
+        task_history_short_list: list[dict[str, Any]] = [
             {"account_id": self.ACCOUNT_ID, "phase": "annotation", "phase_stage": 1, "worked": True}
         ]
 
@@ -250,7 +254,7 @@ class TestTaskHistoryUtils:
         assert actual == 0
 
     def test_get_number_of_rejections_受入で1回差戻(self):
-        task_history_short_list = [
+        task_history_short_list: list[dict[str, Any]] = [
             {"account_id": self.ACCOUNT_ID, "phase": "annotation", "phase_stage": 1, "worked": True},
             {"account_id": self.ACCOUNT_ID, "phase": "acceptance", "phase_stage": 1, "worked": True},
             {"account_id": self.ACCOUNT_ID, "phase": "annotation", "phase_stage": 1, "worked": True},
@@ -260,7 +264,7 @@ class TestTaskHistoryUtils:
         assert actual == 1
 
     def test_get_number_of_rejections_検査で1回差戻(self):
-        task_history_short_list = [
+        task_history_short_list: list[dict[str, Any]] = [
             {"account_id": self.ACCOUNT_ID, "phase": "annotation", "phase_stage": 1, "worked": True},
             {"account_id": self.ACCOUNT_ID, "phase": "inspection", "phase_stage": 1, "worked": True},
             {"account_id": self.ACCOUNT_ID, "phase": "annotation", "phase_stage": 1, "worked": True},
@@ -270,7 +274,7 @@ class TestTaskHistoryUtils:
         assert actual == 1
 
     def test_get_number_of_rejections_検査と受入で1回差戻(self):
-        task_history_short_list = [
+        task_history_short_list: list[dict[str, Any]] = [
             {"account_id": self.ACCOUNT_ID, "phase": "annotation", "phase_stage": 1, "worked": True},
             {"account_id": self.ACCOUNT_ID, "phase": "inspection", "phase_stage": 1, "worked": True},
             {"account_id": self.ACCOUNT_ID, "phase": "annotation", "phase_stage": 1, "worked": True},
@@ -295,7 +299,7 @@ class TestTaskHistoryUtils2:
     ACCOUNT_ID = "12345678-abcd-1234-abcd-1234abcd5678"
 
     def test_get_task_history_index_skipped_acceptance_検査0回_受入スキップ(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
                 "task_id": "testt_01",
@@ -336,7 +340,7 @@ class TestTaskHistoryUtils2:
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_acceptance_検査0回_受入スキップ後に受入取消(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
                 "task_id": "testt_01",
@@ -388,7 +392,7 @@ class TestTaskHistoryUtils2:
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_acceptance_検査0回_教師付で提出取消(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
                 "task_id": "testt_27",
@@ -436,11 +440,11 @@ class TestTaskHistoryUtils2:
         ]
 
         actual = get_task_history_index_skipped_acceptance(task_history_list)
-        expected = []
+        expected: list[int] = []
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_acceptance_検査1回_検査で提出取消(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
                 "task_id": "testt_30",
@@ -510,11 +514,11 @@ class TestTaskHistoryUtils2:
         ]
 
         actual = get_task_history_index_skipped_acceptance(task_history_list)
-        expected = []
+        expected: list[int] = []
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_inspection_検査1回_検査スキップ(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
                 "task_id": "testt_16",
@@ -566,7 +570,7 @@ class TestTaskHistoryUtils2:
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_task_history_index_skipped_inspection_検査1回_教師付で提出取消(self):
-        task_history_list = [
+        task_history_list: list[dict[str, Any]] = [
             {
                 "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
                 "task_id": "testt_29",
@@ -613,7 +617,7 @@ class TestTaskHistoryUtils2:
             },
         ]
         actual = get_task_history_index_skipped_inspection(task_history_list)
-        expected = []
+        expected: list[int] = []
         assert all([a == b for a, b in zip(actual, expected)])
 
 

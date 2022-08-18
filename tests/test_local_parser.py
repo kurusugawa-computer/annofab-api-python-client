@@ -208,18 +208,18 @@ class TestFullAnnotation:
 
         assert index == 4
 
-        parser = FullAnnotationDirParser(
+        parser_full = FullAnnotationDirParser(
             Path(f"{test_dir}/full-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
         )
-        assert parser.task_id == "sample_1"
-        assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
+        assert parser_full.task_id == "sample_1"
+        assert parser_full.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
 
-        dict_simple_annotation = parser.load_json()
+        dict_simple_annotation = parser_full.load_json()
         assert type(dict_simple_annotation) == dict
         assert "details" in dict_simple_annotation
 
         with pytest.raises(AnnotationOuterFileNotFoundError):
-            parser.open_outer_file("foo")
+            parser_full.open_outer_file("foo")
 
     def convert_deitail_data(self, dict_data):
         if dict_data["_type"] == "Points":
