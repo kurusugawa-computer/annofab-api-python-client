@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 import pytest
 import requests
 
@@ -6,7 +10,7 @@ from annofabapi.api import _create_request_body_for_logger, my_backoff
 
 class TestMyBackoff:
     @my_backoff
-    def requestexception_connectionerror_then_true(self, log):
+    def requestexception_connectionerror_then_true(self, log: list[Any]):
         if len(log) == 2:
             return True
 
@@ -19,7 +23,7 @@ class TestMyBackoff:
         raise e
 
     def test_assert_retry(self):
-        log = []
+        log: list[Any] = []
         assert self.requestexception_connectionerror_then_true(log) is True
         assert 2 == len(log)
         print(log)
@@ -27,9 +31,11 @@ class TestMyBackoff:
         assert type(log[1]) == ConnectionError
 
     @my_backoff
-    def chunkedencodingerror_requestsconnectionerror_then_true(self, log):
+    def chunkedencodingerror_requestsconnectionerror_then_true(self, log: list[Any]):
         if len(log) == 2:
             return True
+
+        e: Exception
         if len(log) == 0:
             e = requests.exceptions.ChunkedEncodingError()
             log.append(e)
@@ -40,7 +46,7 @@ class TestMyBackoff:
             raise e
 
     def test_assert_retry2(self):
-        log = []
+        log: list[Any] = []
         assert self.chunkedencodingerror_requestsconnectionerror_then_true(log) is True
         assert 2 == len(log)
         print(log)
@@ -48,7 +54,7 @@ class TestMyBackoff:
         assert type(log[1]) == requests.exceptions.ConnectionError
 
     @my_backoff
-    def httperror_then_true(self, log):
+    def httperror_then_true(self, log: list[Any]):
         if len(log) == 2:
             return True
         response = requests.Response()
@@ -62,7 +68,7 @@ class TestMyBackoff:
         raise e
 
     def test_assert_retry_with_httperror(self):
-        log = []
+        log: list[Any] = []
         assert self.httperror_then_true(log) is True
         assert 2 == len(log)
         print(log)
@@ -83,7 +89,7 @@ class TestMyBackoff:
         raise e
 
     def test_assert_not_retry(self):
-        log = []
+        log: list[Any] = []
         with pytest.raises(requests.exceptions.HTTPError):
             self.httperror_with_400(log)
         assert 1 == len(log)
