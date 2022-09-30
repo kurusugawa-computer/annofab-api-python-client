@@ -196,8 +196,8 @@ Kyes of Dict
     
 * authority: str
     システム内部用のプロパティ
-* is_external_account: bool
-    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。  外部アカウント連携していないAnnofabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnofabアカウントの場合はfalse。 
+* account_type: str
+    アカウントの種別 * `annofab` - 通常の手順で登録されたアカウント。後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたアカウントの場合もこちらになります。 * `external` - [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344) * `project_guest` - [issueProjectGuestUserToken](#operation/issueProjectGuestUserToken)によって作成されたされたアカウント 
 * updated_datetime: str
     更新日時
 
@@ -2524,6 +2524,38 @@ Kyes of Dict
 
 """
 
+IssueProjectGuestUserTokenRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    ゲストユーザーがアクセスするプロジェクトのID
+* app_token: str
+    ゲストユーザートークンを要求するアプリケーションに提供されているトークン
+* project_token: str
+    [issueProjectToken](#operation/issueProjectToken)で発行されたトークン文字列
+* role: str
+    ゲストユーザーのプロジェクト上でのロール * `worker` - アノテーター * `accepter` - チェッカー 
+* profile: ProjectGuestUserProfile
+    
+
+"""
+
+IssueProjectTokenRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトトークンの発行対象プロジェクトID
+* description: str
+    発行するトークンについての人間可読な説明
+
+"""
+
 
 class JobStatus(Enum):
     """
@@ -2796,8 +2828,8 @@ Kyes of Dict
     
 * authority: str
     システム内部用のプロパティ
-* is_external_account: bool
-    [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。  外部アカウント連携していないAnnofabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnofabアカウントの場合はfalse。 
+* account_type: str
+    アカウントの種別 * `annofab` - 通常の手順で登録されたアカウント。後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたアカウントの場合もこちらになります。 * `external` - [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344) * `project_guest` - [issueProjectGuestUserToken](#operation/issueProjectGuestUserToken)によって作成されたされたアカウント 
 * updated_datetime: str
     更新日時
 * reset_requested_email: str
@@ -3061,8 +3093,8 @@ Kyes of Dict
     プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 
 * detail: PluginDetail
     
-* read_only: bool
-    trueの場合、プラグインは読み込み専用であり、更新や削除を行うことはできません。
+* is_builtin: bool
+    trueの場合、プラグインはAnnofab組み込みのプラグインであり、更新や削除を行うことはできません。
 * created_datetime: str
     
 * updated_datetime: str
@@ -3360,7 +3392,7 @@ Kyes of Dict
 * access_token: str
     APIアクセスに用いるトークン。 リクエストヘッダにおいて `Authorization: Bearer {access_token}` の形で指定します。 
 * refresh_token: str
-    トークンの更新に用いるトークン。
+    トークンの更新に用いるトークン
 
 """
 
@@ -3611,6 +3643,23 @@ Kyes of Dict
 * job: ProjectJobInfo
     
 * dest_project: Project
+    
+
+"""
+
+ProjectGuestUserProfile = Dict[str, Any]
+"""
+ゲストユーザーのプロフィール情報
+
+Kyes of Dict
+
+* user_id: str
+    ゲストユーザーのIDです。 同じ文字列の場合、同じゲストユーザーとして認識されます。 [値の制約についてはこちら。](#section/API-Convention/APIID)
+* user_name: str
+    ユーザー名
+* lang: str
+    ゲストユーザーのUIの表示言語です
+* key_layout: KeyLayout
     
 
 """
@@ -3873,6 +3922,36 @@ Kyes of Dict
 
 """
 
+ProjectToken = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトトークンの発行対象プロジェクトID
+* token: str
+    プロジェクトトークン文字列。 [issueProjectGuestUserToken](#operation/issueProjectGuestUserToken)への入力となります。
+* info: ProjectTokenInfo
+    
+
+"""
+
+ProjectTokenInfo = Dict[str, Any]
+"""
+プロジェクトトークンについての付加情報
+
+Kyes of Dict
+
+* created_date_time: str
+    トークンの作成日時
+* last_used_date_time: str
+    トークンが最後に利用された日時
+* description: str
+    トークンについての人間可読な説明
+
+"""
+
 PutAnnotationRequest = Dict[str, Any]
 """
 
@@ -4124,6 +4203,19 @@ Kyes of Dict
     画像の幅[ピクセル]
 * height: int
     画像の高さ[ピクセル]
+
+"""
+
+RevokeProjectTokenRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    無効化するトークンが所属しているプロジェクトのID
+* project_token: str
+    [issueProjectToken](#operation/issueProjectToken)で発行されたトークン文字列
 
 """
 
@@ -4439,7 +4531,7 @@ Kyes of Dict
 
 TaskAssignRequestType = Dict[str, Any]
 """
-* `TaskAssignRequestTypeRandom`: 自分自身にランダムにタスクを割り当てます。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: メンバーに指定したタスクを割り当てます。ただし、メンバーはプロジェクトオーナーもしくはチェッカーロールを持つ必要があります。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身にに割り当てます。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。 
+* `TaskAssignRequestTypeRandom`: 自分自身にランダムにタスクを割り当てます。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: メンバーに指定したタスクを割り当てます。ただし、メンバーはプロジェクトオーナーもしくはチェッカーロールを持つ必要があります。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身に割り当てます。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。 
 
 Kyes of Dict
 
@@ -4817,7 +4909,7 @@ TaskRequest = Dict[str, Any]
 Kyes of Dict
 
 * input_data_id_list: List[str]
-    タスクに割り当てる入力データのID
+    タスクに割り当てる入力データのID。タスクに割り当てることができる入力データの個数は最大200です。
 * metadata: dict(str, __DictStrKeyAnyValue__)
     ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 
 

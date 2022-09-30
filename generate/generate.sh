@@ -157,6 +157,12 @@ declare -a model_files=(${MODELS_DIR}/keybind.py \
 cat partial-header/dataclass/common.py partial-header/dataclass/annotation_specs.py  \
  ${model_files[@]} > ../annofabapi/dataclass/annotation_specs.py
 
+# comment
+declare -a model_files=(${MODELS_DIR}/comment.py)
+cat partial-header/dataclass/common.py partial-header/dataclass/comment.py  \
+ ${model_files[@]} > ../annofabapi/dataclass/comment.py
+
+
 # Input
 declare -a model_files=(${MODELS_DIR}/resolution.py ${MODELS_DIR}/input_data.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/input.py  \
