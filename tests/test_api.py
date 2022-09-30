@@ -24,6 +24,7 @@ from annofabapi.exceptions import NotLoggedInError
 from annofabapi.models import GraphType, ProjectJobType
 from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
+from annofabapi.dataclass.comment import Comment
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -164,6 +165,10 @@ class TestComment:
         result, _ = api.batch_update_comments(project_id, task_id, input_data_id, request_body=put_request_body)
 
         comments, _ = api.get_comments(project_id, task_id, input_data_id)
+        
+        # dataclassに変換できることの確認
+        dc_comments = Comment.schema().load(comments, many=True)
+
         assert first_true(comments, pred=lambda e: e["comment_id"] == comment_id) is not None
 
         # コメントの削除
