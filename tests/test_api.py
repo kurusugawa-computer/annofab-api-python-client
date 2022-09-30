@@ -20,28 +20,21 @@ from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
+from annofabapi.dataclass.annotation import Annotation, SimpleAnnotation, SingleAnnotation
+from annofabapi.dataclass.annotation_specs import AnnotationSpecsV2
 from annofabapi.dataclass.comment import Comment
+from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.job import ProjectJobInfo
+from annofabapi.dataclass.organization import Organization
+from annofabapi.dataclass.organization_member import OrganizationMember
+from annofabapi.dataclass.project import Project
+from annofabapi.dataclass.project_member import ProjectMember
+from annofabapi.dataclass.supplementary import SupplementaryData
+from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.exceptions import NotLoggedInError
 from annofabapi.models import GraphType, ProjectJobType
 from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
-
-from annofabapi.dataclass.annotation import Annotation, SimpleAnnotation, SingleAnnotation
-from annofabapi.dataclass.annotation_specs import AnnotationSpecsV1, AnnotationSpecsV2
-from annofabapi.dataclass.input import InputData
-from annofabapi.dataclass.inspection import Inspection
-from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
-from annofabapi.dataclass.job import ProjectJobInfo
-from annofabapi.dataclass.my import MyAccount, MyOrganization
-from annofabapi.dataclass.organization import Organization, OrganizationActivity
-from annofabapi.dataclass.organization_member import OrganizationMember
-from annofabapi.dataclass.project import Project
-from annofabapi.dataclass.project_member import ProjectMember
-from annofabapi.dataclass.statistics import LabelStatistics, Markers
-from annofabapi.dataclass.supplementary import SupplementaryData
-from annofabapi.dataclass.task import Task, TaskHistory
-from annofabapi.dataclass.webhook import Webhook
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -73,13 +66,22 @@ class TestAnnotation:
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
     def test_wrapper_get_all_annotation_list(self):
-        assert len(wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}})) >= 0
+        annotation_list = wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}})
+        assert len(annotation_list) >= 0
+        # dataclass に変換できることの確認
+        SingleAnnotation.schema().load(annotation_list, many=True)
 
     def test_get_annotation(self):
-        assert type(api.get_annotation(project_id, task_id, self.input_data_id)[0]) == dict
+        annotation, _ = api.get_annotation(project_id, task_id, self.input_data_id)
+        assert type(annotation) == dict
+        # dataclassに変換できることの確認
+        SimpleAnnotation.from_dict(annotation)
 
     def test_get_editor_annotation(self):
-        assert type(api.get_editor_annotation(project_id, task_id, self.input_data_id)[0]) == dict
+        editor_annotation, _ = api.get_editor_annotation(project_id, task_id, self.input_data_id)
+        assert type(editor_annotation) == dict
+        # dataclassに変換できることの確認
+        Annotation.from_dict(editor_annotation)
 
     def test_get_annotation_archive(self):
         content, response = api.get_annotation_archive(project_id)
@@ -119,15 +121,11 @@ class TestAnnotation:
 
 class TestAnnotationSpecs:
     def test_get_annotation_specs(self):
-        annotation_spec, _ = api.get_annotation_specs(project_id, query_params={"v":"2"})
+        annotation_spec, _ = api.get_annotation_specs(project_id, query_params={"v": "2"})
         assert type(annotation_spec) == dict
 
         # dataclassに変換できることの確認
         AnnotationSpecsV2.from_dict(annotation_spec)
-
-
-
-
 
     def test_put_annotation_specs(self):
         annotation_spec, _ = api.get_annotation_specs(project_id)
@@ -229,12 +227,6 @@ class TestInputData:
         # dataclassに変換できることの確認
         InputData.from_dict(dict_input_data)
 
-
-
-
-
-
-
     def test_wrapper_put_input_data_from_file_and_delete_input_data(self):
         test_input_data_id = str(uuid.uuid4())
         print("")
@@ -281,7 +273,6 @@ class TestInstruction:
         assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict
 
 
-
 class TestJob:
     @pytest.mark.submitting_job
     def test_scenario(self):
@@ -300,9 +291,7 @@ class TestJob:
         assert first_true(job_list, pred=lambda e: e["job_id"] == job_id) is not None
 
         # ジョブが終了するまで待つ
-        wrapper.wait_until_job_finished(
-            project_id, ProjectJobType.GEN_TASKS_LIST, job_id=job_id
-        )
+        wrapper.wait_until_job_finished(project_id, ProjectJobType.GEN_TASKS_LIST, job_id=job_id)
 
         job_list = wrapper.get_all_project_job(project_id, {"type": job_type})
         job = first_true(job_list, pred=lambda e: e["job_id"] == job_id)
@@ -374,8 +363,6 @@ class TestOrganization:
         assert len(wrapper.get_all_projects_of_organization(self.organization_name)) > 0
 
 
-
-
 class TestOrganizationMember:
     organization_name: str
 
@@ -399,16 +386,12 @@ class TestOrganizationMember:
         api.update_organization_member_role(self.organization_name, api.login_user_id, request_body=request_body)
 
 
-
-
 class TestProject:
     def test_get_project(self):
         dict_project, _ = api.get_project(project_id)
         assert type(dict_project) == dict
         # dataclassに変換できることの確認
         Project.from_dict(dict_project)
-
-
 
     def test_get_organization_of_project(self):
         assert type(api.get_organization_of_project(project_id)[0]) == dict
@@ -446,8 +429,6 @@ class TestProjectMember:
         member_list = wrapper.get_all_project_members(project_id)
         assert len(member_list) > 0
         ProjectMember.schema().load(member_list, many=True)
-
-
 
 
 class TestStatistics:
@@ -590,8 +571,6 @@ class Testsupplementary:
         assert len([e for e in supplementary_data_list2 if e["supplementary_data_id"] == supplementary_data_id]) == 0
 
 
-
-
 class TestTask:
     input_data_id: str
 
@@ -616,7 +595,6 @@ class TestTask:
         # dataclassに変換できることの確認
         task = Task.from_dict(dict_task)
 
-
     def test_put_task_and_delete_task(self):
         test_task_id = str(uuid.uuid4())
         request_body = {"input_data_id_list": [self.input_data_id]}
@@ -637,11 +615,10 @@ class TestTask:
         assert task["status"] == "break"
 
     def test_get_task_histories(self):
-        task_histories, _  = api.get_task_histories(project_id, task_id)
+        task_histories, _ = api.get_task_histories(project_id, task_id)
         assert len(task_histories) > 0
         # dataclassに変換できることの確認
         TaskHistory.schema().load(task_histories, many=True)
-
 
     def test_batch_update_tasks(self):
         test_task_id = str(uuid.uuid4())
