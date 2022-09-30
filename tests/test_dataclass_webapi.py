@@ -77,18 +77,6 @@ class TestInput:
         assert type(input_data) == InputData
 
 
-class TestInspection:
-    input_data_id: str
-
-    @classmethod
-    def setup_class(cls):
-        cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
-
-    def test_inspection(self):
-        inspection_list, _ = service.api.get_inspections(project_id, task_id, self.input_data_id)
-        inspection = Inspection.from_dict(inspection_list[0])
-        assert type(inspection) == Inspection
-
 
 class TestInstruction:
     def test_instruction(self):
