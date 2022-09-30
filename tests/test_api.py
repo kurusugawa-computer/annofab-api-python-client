@@ -87,10 +87,6 @@ class TestAnnotation:
         content, response = api.get_annotation_archive(project_id)
         assert response.headers["Location"].startswith("https://")
 
-    def test_get_archive_full_with_pro_id(self):
-        content, response = api.get_archive_full_with_pro_id(project_id)
-        assert response.headers["Location"].startswith("https://")
-
     def test_wrapper_download_annotation_archive(self):
         wrapper.download_annotation_archive(project_id, f"{out_dir}/simple-annotation.zip")
 
@@ -564,7 +560,7 @@ class Testsupplementary:
         assert len([e for e in supplementary_data_list if e["supplementary_data_id"] == supplementary_data_id]) == 1
 
         # dataclassに変換できることの確認
-        SupplementaryData.sceham().load(supplementary_data_list, many=True)
+        SupplementaryData.schema().load(supplementary_data_list, many=True)
 
         api.delete_supplementary_data(project_id, self.input_data_id, supplementary_data_id)
         supplementary_data_list2 = api.get_supplementary_data_list(project_id, self.input_data_id)[0]
