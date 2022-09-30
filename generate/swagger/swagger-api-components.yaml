@@ -475,7 +475,119 @@ components:
             リクエストヘッダにおいて `Authorization: Bearer {access_token}` の形で指定します。
         refresh_token:
           type: string
-          description: トークンの更新に用いるトークン。
+          description: トークンの更新に用いるトークン
+    IssueProjectTokenRequest:
+      type: object
+      required:
+        - project_id
+        - description
+      properties:
+        project_id:
+          type: string
+          description: プロジェクトトークンの発行対象プロジェクトID
+        description:
+          type: string
+          description: 発行するトークンについての人間可読な説明
+    ProjectToken:
+      type: object
+      required:
+        - project_id
+        - token
+        - info
+      properties:
+        project_id:
+          type: string
+          description: プロジェクトトークンの発行対象プロジェクトID
+        token:
+          type: string
+          description: プロジェクトトークン文字列。 [issueProjectGuestUserToken](#operation/issueProjectGuestUserToken)への入力となります。
+        info:
+          $ref: "#/components/schemas/ProjectTokenInfo"
+    ProjectTokenInfo:
+      type: object
+      description: プロジェクトトークンについての付加情報
+      required:
+        - created_date_time
+        - last_used_date_time
+        - description
+      properties:
+        created_date_time:
+          type: string
+          format: date-time
+          description: トークンの作成日時
+        last_used_date_time:
+          type: string
+          format: date-time
+          description: トークンが最後に利用された日時
+        description:
+          type: string
+          description: トークンについての人間可読な説明
+    RevokeProjectTokenRequest:
+      type: object
+      required:
+        - project_id
+        - project_token
+      properties:
+        project_id:
+          type: string
+          description: 無効化するトークンが所属しているプロジェクトのID
+        project_token:
+          type: string
+          description: "[issueProjectToken](#operation/issueProjectToken)で発行されたトークン文字列"
+    IssueProjectGuestUserTokenRequest:
+      type: object
+      required:
+        - project_id
+        - app_token
+        - project_token
+        - role
+        - profile
+      properties:
+        project_id:
+          type: string
+          description: ゲストユーザーがアクセスするプロジェクトのID
+        app_token:
+          type: string
+          description: ゲストユーザートークンを要求するアプリケーションに提供されているトークン
+        project_token:
+          type: string
+          description: "[issueProjectToken](#operation/issueProjectToken)で発行されたトークン文字列"
+        role:
+          type: string
+          enum:
+            - worker
+            - accepter
+          description: |
+            ゲストユーザーのプロジェクト上でのロール
+            * `worker` - アノテーター
+            * `accepter` - チェッカー
+        profile:
+          $ref: "#/components/schemas/ProjectGuestUserProfile"
+    ProjectGuestUserProfile:
+      description: ゲストユーザーのプロフィール情報
+      type: object
+      required:
+        - user_id
+        - user_name
+        - lang
+        - key_layout
+      properties:
+        user_id:
+          type: string
+          description: ゲストユーザーのIDです。 同じ文字列の場合、同じゲストユーザーとして認識されます。 [値の制約についてはこちら。](#section/API-Convention/APIID)
+        user_name:
+          $ref: "#/components/schemas/Username"
+        lang:
+          type: string
+          enum:
+            - en-US
+            - ja-JP
+          description: ゲストユーザーのUIの表示言語です
+        key_layout:
+          $ref: "#/components/schemas/KeyLayout"
+    ProjectGuestUserTokenResponse:
+      # 全く同じ説明になるので PluginTokenResponse を使っている。 名前を変えてしまうべきか？
+      $ref: "#/components/schemas/PluginTokenResponse"
     ChangePasswordRequest:
       type: object
       required:
@@ -559,7 +671,7 @@ components:
         - lang
         - keylayout
         - authority
-        - is_external_account
+        - account_type
         - updated_datetime
       properties:
         account_id:
@@ -579,12 +691,17 @@ components:
         authority:
           type: string
           description: システム内部用のプロパティ
-        is_external_account:
-          type: boolean
+        account_type:
+          type: string
+          enum:
+            - "annofab"
+            - "external"
+            - "project_guest"
           description: |
-            [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。
-
-            外部アカウント連携していないAnnofabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnofabアカウントの場合はfalse。
+            アカウントの種別
+            * `annofab` - 通常の手順で登録されたアカウント。後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたアカウントの場合もこちらになります。
+            * `external` - [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)
+            * `project_guest` - [issueProjectGuestUserToken](#operation/issueProjectGuestUserToken)によって作成されたされたアカウント
         updated_datetime:
           type: string
           format: date-time
@@ -793,6 +910,7 @@ components:
         - organization_id
         - plugin_id
         - detail
+        - is_builtin
         - created_datetime
         - updated_datetime
       properties:
@@ -806,9 +924,9 @@ components:
           $ref: "#/components/schemas/PluginDescription"
         detail:
           $ref: "#/components/schemas/PluginDetail"
-        read_only:
+        is_builtin:
           type: boolean
-          description: trueの場合、プラグインは読み込み専用であり、更新や削除を行うことはできません。
+          description: trueの場合、プラグインはAnnofab組み込みのプラグインであり、更新や削除を行うことはできません。
         created_datetime:
           type: string
           format: date-time
@@ -862,7 +980,7 @@ components:
           AnnotationEditor: "#/components/schemas/PluginDetailAnnotationEditor"
           TaskAssignment: "#/components/schemas/PluginDetailTaskAssignment"
           AnnotationSpecs: "#/components/schemas/PluginDetailAnnotationSpecs"
-          ExtendedAnnotationSpecs: "#/components/schemas/PluginDetailAnnotationSpecs"
+          ExtendedAnnotationSpecs: "#/components/schemas/PluginDetailExtendedAnnotationSpecs"
     PluginDetailAnnotationEditor:
       type: object
       description: |
@@ -3169,7 +3287,6 @@ components:
         min_area:
           type: integer
           minimum: 1
-          maximum: 1000000
           description: 面積の最小値[平方ピクセル]
         max_vertices:
           type: integer
@@ -3981,7 +4098,7 @@ components:
       properties:
         input_data_id_list:
           type: array
-          description: タスクに割り当てる入力データのID
+          description: タスクに割り当てる入力データのID。タスクに割り当てることができる入力データの個数は最大200です。
           items:
             $ref: "#/components/schemas/InputDataId"
         metadata:
@@ -4132,7 +4249,7 @@ components:
       description: |
         * `TaskAssignRequestTypeRandom`: 自分自身にランダムにタスクを割り当てます。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。
         * `TaskAssignRequestTypeSelection`: メンバーに指定したタスクを割り当てます。ただし、メンバーはプロジェクトオーナーもしくはチェッカーロールを持つ必要があります。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。
-        * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身にに割り当てます。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。
+        * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身に割り当てます。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。
       oneOf:
         - $ref: "#/components/schemas/TaskAssignRequestTypeRandom"
         - $ref: "#/components/schemas/TaskAssignRequestTypeSelection"
@@ -4726,7 +4843,7 @@ components:
         url:
           type: string
           format: uri
-          example: "https://s3.<REGION>.amazonaws.com/<ANNOFAB-TEMP-BUCKET>/<UUID>/<UUID>?param1=...&param2=..."
+          example: "https://s3.REGION.amazonaws.com/ANNOFAB-TEMP-BUCKET/UUID/UUID?param1=...&param2=..."
           description: ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。
         path:
           type: string
@@ -4742,7 +4859,7 @@ components:
         url:
           type: string
           format: uri
-          example: "https://s3.<REGION>.amazonaws.com/<ANNOFAB-TEMP-BUCKET>/<UUID>/<UUID>?param1=...&param2=..."
+          example: "https://s3.REGION.amazonaws.com/ANNOFAB-TEMP-BUCKET/UUID/UUID?param1=...&param2=..."
           description: ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。
         path:
           type: string
@@ -6189,7 +6306,7 @@ components:
         url:
           type: string
           format: uri
-          example: https://annofab.com/projects/{project_id}/instruction-images/{image_id}
+          example: https://annofab.com/projects/PROJECT_ID/instruction-images/IMAGE_ID
           description:
             作業ガイド画像を取得するためのシステム内部用のURLです。
         etag:

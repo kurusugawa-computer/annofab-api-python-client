@@ -17,6 +17,8 @@ from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import KeyLayout, Lang, OrganizationMemberRole, OrganizationMemberStatus, PricePlan
 
+warnings.warn("'annofabapi.dataclass.my'モジュールは2022-12-01以降に廃止する予定です。", FutureWarning, stacklevel=2)
+
 
 @dataclass
 class MyOrganization(DataClassJsonMixin):
@@ -78,8 +80,8 @@ class MyAccount(DataClassJsonMixin):
     authority: str
     """システム内部用のプロパティ"""
 
-    is_external_account: bool
-    """[外部アカウントだけで作成したアカウント](/docs/faq/#v1u344)の場合はtrue。  外部アカウント連携していないAnnofabアカウントや、後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたAnnofabアカウントの場合はfalse。 """
+    account_type: str
+    """アカウントの種別 * `annofab` - 通常の手順で登録されたアカウント。後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたアカウントの場合もこちらになります。 * `external` - [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344) * `project_guest` - [issueProjectGuestUserToken](#operation/issueProjectGuestUserToken)によって作成されたされたアカウント """
 
     updated_datetime: str
     """更新日時"""
