@@ -27,6 +27,22 @@ from annofabapi.models import GraphType, ProjectJobType
 from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
+from annofabapi.dataclass.annotation import Annotation, SimpleAnnotation, SingleAnnotation
+from annofabapi.dataclass.annotation_specs import AnnotationSpecsV1, AnnotationSpecsV2
+from annofabapi.dataclass.input import InputData
+from annofabapi.dataclass.inspection import Inspection
+from annofabapi.dataclass.instruction import Instruction, InstructionHistory, InstructionImage
+from annofabapi.dataclass.job import ProjectJobInfo
+from annofabapi.dataclass.my import MyAccount, MyOrganization
+from annofabapi.dataclass.organization import Organization, OrganizationActivity
+from annofabapi.dataclass.organization_member import OrganizationMember
+from annofabapi.dataclass.project import Project
+from annofabapi.dataclass.project_member import ProjectMember
+from annofabapi.dataclass.statistics import LabelStatistics, Markers
+from annofabapi.dataclass.supplementary import SupplementaryData
+from annofabapi.dataclass.task import Task, TaskHistory
+from annofabapi.dataclass.webhook import Webhook
+
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
@@ -103,8 +119,15 @@ class TestAnnotation:
 
 class TestAnnotationSpecs:
     def test_get_annotation_specs(self):
-        annotation_spec, _ = api.get_annotation_specs(project_id)
+        annotation_spec, _ = api.get_annotation_specs(project_id, query_params={"v":"2"})
         assert type(annotation_spec) == dict
+
+        # dataclassに変換できることの確認
+        AnnotationSpecsV2.from_dict(annotation_spec)
+
+
+
+
 
     def test_put_annotation_specs(self):
         annotation_spec, _ = api.get_annotation_specs(project_id)
@@ -201,8 +224,16 @@ class TestInputData:
         assert type(wrapper.get_all_input_data_list(project_id, {"input_data_name": "foo"})) == list
 
     def test_get_input_data(self):
-        test_input_data = api.get_input_data(project_id, self.input_data_id)[0]
-        assert type(test_input_data) == dict
+        dict_input_data, _ = api.get_input_data(project_id, self.input_data_id)
+        assert type(dict_input_data) == dict
+        # dataclassに変換できることの確認
+        InputData.from_dict(dict_input_data)
+
+
+
+
+
+
 
     def test_wrapper_put_input_data_from_file_and_delete_input_data(self):
         test_input_data_id = str(uuid.uuid4())
@@ -331,13 +362,18 @@ class TestOrganization:
         cls.organization_name = api.get_organization_of_project(project_id)[0]["organization_name"]
 
     def test_get_organization(self):
-        assert type(api.get_organization(self.organization_name)[0]) == dict
+        organization, _ = api.get_organization(self.organization_name)
+        assert type(organization) == dict
+        # dataclassに変換できることの確認
+        Organization.from_dict(organization)
 
     def test_get_organization_activity(self):
         assert type(api.get_organization_activity(self.organization_name)[0]) == dict
 
     def test_wrapper_get_all_projects_of_organization(self):
         assert len(wrapper.get_all_projects_of_organization(self.organization_name)) > 0
+
+
 
 
 class TestOrganizationMember:
@@ -348,7 +384,10 @@ class TestOrganizationMember:
         cls.organization_name = api.get_organization_of_project(project_id)[0]["organization_name"]
 
     def test_wrapper_get_all_organization_members(self):
-        assert len(wrapper.get_all_organization_members(self.organization_name)) > 0
+        member_list = wrapper.get_all_organization_members(self.organization_name)
+        assert len(member_list) > 0
+        # dataclassに変換できることの確認
+        OrganizationMember.schema().load(member_list, many=True)
 
     def test_get_organization_member(self):
         organization_member = api.get_organization_member(self.organization_name, api.login_user_id)[0]
@@ -360,9 +399,16 @@ class TestOrganizationMember:
         api.update_organization_member_role(self.organization_name, api.login_user_id, request_body=request_body)
 
 
+
+
 class TestProject:
     def test_get_project(self):
-        assert type(api.get_project(project_id)[0]) == dict
+        dict_project, _ = api.get_project(project_id)
+        assert type(dict_project) == dict
+        # dataclassに変換できることの確認
+        Project.from_dict(dict_project)
+
+
 
     def test_get_organization_of_project(self):
         assert type(api.get_organization_of_project(project_id)[0]) == dict
@@ -397,7 +443,11 @@ class TestProjectMember:
         assert type(my_member) == dict
 
     def test_wrapper_get_all_project_members(self):
-        assert len(wrapper.get_all_project_members(project_id)) >= 0
+        member_list = wrapper.get_all_project_members(project_id)
+        assert len(member_list) > 0
+        ProjectMember.schema().load(member_list, many=True)
+
+
 
 
 class TestStatistics:
@@ -532,9 +582,14 @@ class Testsupplementary:
         assert supplementary_data_list is not None
         assert len([e for e in supplementary_data_list if e["supplementary_data_id"] == supplementary_data_id]) == 1
 
+        # dataclassに変換できることの確認
+        SupplementaryData.sceham().load(supplementary_data_list, many=True)
+
         api.delete_supplementary_data(project_id, self.input_data_id, supplementary_data_id)
         supplementary_data_list2 = api.get_supplementary_data_list(project_id, self.input_data_id)[0]
         assert len([e for e in supplementary_data_list2 if e["supplementary_data_id"] == supplementary_data_id]) == 0
+
+
 
 
 class TestTask:
@@ -556,7 +611,11 @@ class TestTask:
         assert type(content) == dict
 
     def test_get_task(self):
-        assert type(api.get_task(project_id, task_id)[0]) == dict
+        dict_task, _ = api.get_task(project_id, task_id)
+        assert type(dict_task) == dict
+        # dataclassに変換できることの確認
+        task = Task.from_dict(dict_task)
+
 
     def test_put_task_and_delete_task(self):
         test_task_id = str(uuid.uuid4())
@@ -578,7 +637,11 @@ class TestTask:
         assert task["status"] == "break"
 
     def test_get_task_histories(self):
-        assert len(api.get_task_histories(project_id, task_id)[0]) > 0
+        task_histories, _  = api.get_task_histories(project_id, task_id)
+        assert len(task_histories) > 0
+        # dataclassに変換できることの確認
+        TaskHistory.schema().load(task_histories, many=True)
+
 
     def test_batch_update_tasks(self):
         test_task_id = str(uuid.uuid4())
