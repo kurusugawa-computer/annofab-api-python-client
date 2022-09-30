@@ -78,43 +78,7 @@ class TestInput:
 
 
 
-class TestInstruction:
-    def test_instruction(self):
-        dict_instruction = service.wrapper.get_latest_instruction(project_id)
-        instruction = Instruction.from_dict(dict_instruction)
-        assert type(instruction) == Instruction
 
-    def test_instruction_history(self):
-        instruction_history_list, _ = service.api.get_instruction_history(project_id)
-        instruction_history = InstructionHistory.from_dict(instruction_history_list[0])
-        assert type(instruction_history) == InstructionHistory
-
-    def test_instruction_image(self):
-        instruction_image_list, _ = service.api.get_instruction_images(project_id)
-        instruction_image = InstructionImage.from_dict(instruction_image_list[0])
-        assert type(instruction_image) == InstructionImage
-
-
-class TestJob:
-    def test_job(self):
-        job_list = service.wrapper.get_all_project_job(project_id)
-        if len(job_list) > 0:
-            job = ProjectJobInfo.from_dict(job_list[0])
-            assert type(job) == ProjectJobInfo
-        else:
-            print(f"ジョブが存在しませんでした。")
-
-
-class TestMy:
-    def test_my_organization(self):
-        my_organizations = service.wrapper.get_all_my_organizations()
-        my_organization = MyOrganization.from_dict(my_organizations[0])
-        assert type(my_organization) == MyOrganization
-
-    def test_my_account(self):
-        dict_my_account, _ = service.api.get_my_account()
-        my_account = MyAccount.from_dict(dict_my_account)
-        assert type(my_account) == MyAccount
 
 
 class TestOrganization:
@@ -164,16 +128,6 @@ class TestProjectMember:
         assert type(project_member) == ProjectMember
 
 
-class TestStatistics:
-    def test_statistics_get_label_statistics(self):
-        stat_list = service.wrapper.get_label_statistics(project_id)
-        stat = LabelStatistics.from_dict(stat_list[0])
-        assert type(stat) == LabelStatistics
-
-    def test_markers(self):
-        content, _ = service.api.get_markers(project_id)
-        markers = Markers.from_dict(content)
-        assert type(markers) == Markers
 
 
 class TestSupplementary:
@@ -201,8 +155,3 @@ class TestTask:
         assert type(task_history) == TaskHistory
 
 
-class TestWebhook:
-    def test_webhook(self):
-        webhook_list = service.api.get_webhooks(project_id)[0]
-        webhook = Webhook.from_dict(webhook_list[0])
-        assert type(webhook) == Webhook

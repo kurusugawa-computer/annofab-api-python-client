@@ -20,11 +20,12 @@ from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
+from annofabapi.dataclass.comment import Comment
+from annofabapi.dataclass.job import ProjectJobInfo
 from annofabapi.exceptions import NotLoggedInError
 from annofabapi.models import GraphType, ProjectJobType
 from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
-from annofabapi.dataclass.comment import Comment
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
@@ -165,7 +166,7 @@ class TestComment:
         result, _ = api.batch_update_comments(project_id, task_id, input_data_id, request_body=put_request_body)
 
         comments, _ = api.get_comments(project_id, task_id, input_data_id)
-        
+
         # dataclassに変換できることの確認
         dc_comments = Comment.schema().load(comments, many=True)
 
@@ -249,47 +250,36 @@ class TestInstruction:
         assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict
 
 
+
 class TestJob:
-    def test_wait_for_completion(self):
-        # 実行中のジョブはないので、必ずTrue
-        result = wrapper.wait_for_completion(
-            project_id, ProjectJobType.GEN_TASKS, job_access_interval=1, max_job_access=1
-        )
-        assert result == True
-
-    def test_wait_until_job_finished(self):
-        # 実行中のジョブはないはずので、必ずTrue
-        result = wrapper.wait_until_job_finished(
-            project_id, ProjectJobType.GEN_TASKS, job_access_interval=1, max_job_access=1
-        )
-        assert result is None
-
-    def test_get_all_project_job(self):
-        assert len(wrapper.get_all_project_job(project_id, {"type": ProjectJobType.GEN_INPUTS.value})) >= 0
-
-    def test_delete_all_succeeded_job(self):
-        assert len(wrapper.delete_all_succeeded_job(project_id, ProjectJobType.GEN_TASKS)) >= 0
-
-    def test_job_in_progress(self):
-        assert type(wrapper.job_in_progress(project_id, ProjectJobType.GEN_TASKS)) == bool
-
-    def test_can_execute_job(self):
-        assert type(wrapper.can_execute_job(project_id, ProjectJobType.GEN_TASKS)) == bool
-
-    def test_wait_until_job_is_executable(self):
-        # ただ実行するだけ
-        result = wrapper.wait_until_job_is_executable(project_id, ProjectJobType.GEN_TASKS)
-        type(result) == bool
-
     @pytest.mark.submitting_job
-    def test_delete_project_job(self):
+    def test_scenario(self):
+        # タスク全件ファイルの更新ジョブの登録
         content, _ = api.post_project_tasks_update(project_id)
         job = content["job"]
         job_type = job["job_type"]
         job_id = job["job_id"]
         job_list = wrapper.get_all_project_job(project_id, {"type": job_type})
+
+        assert wrapper.can_execute_job(project_id, ProjectJobType.GEN_TASKS_LIST) == False
+        assert wrapper.job_in_progress(project_id, ProjectJobType.GEN_TASKS_LIST) == True
+
+        # dataclassに変換できることの確認
+        dc_job_list = ProjectJobInfo.schema().load(job_list, many=True)
         assert first_true(job_list, pred=lambda e: e["job_id"] == job_id) is not None
-        api.delete_project_job(project_id, job_type=job["job_type"], job_id=job["job_id"])
+
+        # ジョブが終了するまで待つ
+        wrapper.wait_until_job_finished(
+            project_id, ProjectJobType.GEN_TASKS_LIST, job_id=job_id
+        )
+
+        job_list = wrapper.get_all_project_job(project_id, {"type": job_type})
+        job = first_true(job_list, pred=lambda e: e["job_id"] == job_id)
+        # 問題なければ成功しているはず
+        assert job["job_status"] == "succeeded"
+
+        # ジョブの削除
+        api.delete_project_job(project_id, job_type=job["job_type"], job_id=job_id)
         job_list = wrapper.get_all_project_job(project_id, {"type": job_type})
         assert first_true(job_list, pred=lambda e: e["job_id"] == job_id) is None
 
