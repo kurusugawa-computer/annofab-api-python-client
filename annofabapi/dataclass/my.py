@@ -17,6 +17,8 @@ from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import KeyLayout, Lang, OrganizationMemberRole, OrganizationMemberStatus, PricePlan
 
+warnings.warn("'annofabapi.dataclass.my'モジュールは2022-12-01以降に廃止する予定です。", FutureWarning, stacklevel=2)
+
 
 @dataclass
 class MyOrganization(DataClassJsonMixin):
