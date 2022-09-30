@@ -1717,8 +1717,12 @@ class Wrapper:
             ダウンロード元のURL
 
         """
+        with warnings.catch_warnings():
+            # `get_project_task_history_events_url`関数は非推奨だが、タスク履歴イベントでしか取得できない情報があるため、annofab-cliなどではよく利用する
+            # `get_project_task_history_events_url`関数がいつ廃止さるのかは未定なので、`get_project_task_history_events_url`関数実行時の警告を無視する
+            warnings.simplefilter("ignore", category=FutureWarning)
+            content, _ = self.api.get_project_task_history_events_url(project_id)
 
-        content, _ = self.api.get_project_task_history_events_url(project_id)
         url = content["url"]
         response2 = self.download(url, dest_path)
         logger.info(
