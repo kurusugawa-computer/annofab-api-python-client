@@ -2847,6 +2847,12 @@ components:
           items:
             $ref: "#/components/schemas/InspectionPhrase"
           description: 定型指摘
+        annotation_type_version:
+          type: string
+          description: |
+            アノテーション種別のバージョン。
+
+            拡張仕様プラグインで定義した値が転写されます。プロジェクトに拡張仕様プラグインが設定されていない場合は未指定です。
         format_version:
           type: string
           default: "3.0.0"
@@ -3456,8 +3462,12 @@ components:
         annotation_type:
           $ref: "#/components/schemas/AnnotationType"
         field_values:
-          type: array
-          items:
+          type: object
+          description: |
+            KeyがフィールドIdであるDictionaryです。
+
+            カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#section/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。
+          additionalProperties:
             $ref: "#/components/schemas/AnnotationTypeFieldValue"
         additional_data_definitions:
           type: array
@@ -3484,14 +3494,36 @@ components:
         - $ref: "#/components/schemas/AnnotationTypeFieldValueMinimumArea2d"
         - $ref: "#/components/schemas/AnnotationTypeFieldValueDisplayLineDirection"
         - $ref: "#/components/schemas/AnnotationTypeFieldValueAnnotationEditorFeature"
+        - $ref: "#/components/schemas/AnnotationTypeFieldValueOneIntegerFieldValue"
+        - $ref: "#/components/schemas/AnnotationTypeFieldValueOneStringFieldValue"
+        - $ref: "#/components/schemas/AnnotationTypeFieldValueOneBooleanFieldValue"
+        - $ref: "#/components/schemas/AnnotationTypeFieldValueEmptyFieldValue"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          MinimumSize2d: "#/components/schemas/AnnotationTypeFieldValueMinimumSize"
+          MinimumSize2dWithDefaultInsertPosition: "#/components/schemas/AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition"
+          MarginOfErrorTolerance: "#/components/schemas/AnnotationTypeFieldValueMarginOfErrorTolerance"
+          VertexCountMinMax: "#/components/schemas/AnnotationTypeFieldValueVertexCountMinMax"
+          MinimumArea2d: "#/components/schemas/AnnotationTypeFieldValueMinimumArea2d"
+          DisplayLineDirection: "#/components/schemas/AnnotationTypeFieldValueDisplayLineDirection"
+          AnnotationEditorFeature: "#/components/schemas/AnnotationTypeFieldValueAnnotationEditorFeature"
+          OneIntegerFieldValue: "#/components/schemas/AnnotationTypeFieldValueOneIntegerFieldValue"
+          OneStringFieldValue: "#/components/schemas/AnnotationTypeFieldValueOneStringFieldValue"
+          OneBooleanFieldValue: "#/components/schemas/AnnotationTypeFieldValueOneBooleanFieldValue"
+          EmptyFieldValue: "#/components/schemas/AnnotationTypeFieldValueEmptyFieldValue"
     AnnotationTypeFieldValueMinimumSize:
       type: object
       description: アノテーションの最小サイズに関する設定
       required:
+        - _type
         - min_warn_rule
         - min_width
         - min_height
       properties:
+        _type:
+          type: string
+          enum: ["MinimumSize2d"]
         min_warn_rule:
           $ref: "#/components/schemas/AnnotationTypeFieldMinWarnRule"
         min_width:
@@ -3502,10 +3534,14 @@ components:
           minimum: 1
     AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition:
       required:
+        - _type
         - min_warn_rule
         - min_width
         - min_height
       properties:
+        _type:
+          type: string
+          enum: ["MinimumSize2dWithDefaultInsertPosition"]
         min_warn_rule:
           $ref: "#/components/schemas/AnnotationTypeFieldMinWarnRule"
         min_width:
@@ -3535,8 +3571,12 @@ components:
       type: object
       description: 誤差許容範囲
       required:
+        - _type
         - max_pixel
       properties:
+        _type:
+          type: string
+          enum: ["MarginOfErrorTolerance"]
         max_pixel:
             type: integer
             minimum: 1
@@ -3545,9 +3585,13 @@ components:
       description: |
         頂点数の最大・最小
       required:
+        - _type
         - min
         - max
       properties:
+        _type:
+          type: string
+          enum: ["VertexCountMinMax"]
         min:
             type: integer
             minimum: 1
@@ -3559,8 +3603,12 @@ components:
       description: |
         最小の面積
       required:
+        - _type
         - min_area
       properties:
+        _type:
+          type: string
+          enum: ["MinimumArea2d"]
         min_area:
             type: integer
             minimum: 1
@@ -3569,8 +3617,12 @@ components:
       description: |
         線の向き表示/非表示の設定
       required:
+        - _type
         - has_direction
       properties:
+        _type:
+          type: string
+          enum: ["DisplayLineDirection"]
         has_direction:
             type: boolean
     AnnotationTypeFieldValueAnnotationEditorFeature:
@@ -3578,6 +3630,7 @@ components:
       description: |
         作図ツール・作図モード
       required:
+        - _type
         - append
         - erase
         - freehand
@@ -3585,6 +3638,9 @@ components:
         - polygon_fill
         - fill_near
       properties:
+        _type:
+          type: string
+          enum: ["AnnotationEditorFeature"]
         append:
             type: boolean
         erase:
@@ -3597,6 +3653,51 @@ components:
             type: boolean
         fill_near:
             type: boolean
+    AnnotationTypeFieldValueOneIntegerFieldValue:
+      description: 数値をひとつだけ持つフィールド
+      type: object
+      required:
+        - _type
+        - value
+      properties:
+        _type:
+          type: string
+          enum: ["OneIntegerFieldValue"]
+        value:
+          type: integer
+    AnnotationTypeFieldValueOneStringFieldValue:
+      description: 文字列を一つだけ持つフィールド
+      type: object
+      required:
+        - _type
+        - value
+      properties:
+        _type:
+          type: string
+          enum: ["OneStringFieldValue"]
+        value:
+          type: string
+    AnnotationTypeFieldValueOneBooleanFieldValue:
+      description: 真偽値をひとつだけ持つフィールド
+      type: object
+      required:
+        - _type
+        - value
+      properties:
+        _type:
+          type: string
+          enum: ["OneBooleanFieldValue"]
+        value:
+          type: boolean
+    AnnotationTypeFieldValueEmptyFieldValue:
+      description: 値を持たないフィールド。　アノテーション仕様上に定義が存在すること自体に意味がある場合のフィールド値に利用します。
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["EmptyFieldValue"]
     Color:
       description: RGBで表現される色情報
       type: object
@@ -4896,7 +4997,7 @@ components:
         label_id:
           $ref: "#/components/schemas/LabelId"
         attributes:
-          $ref: "#/components/schemas/AdditionalDataList"
+          $ref: "#/components/schemas/AdditionalDataListV1"
         updated_from:
           description: |
             開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日（ISO 8601 拡張形式または基本形式）。
@@ -4911,7 +5012,15 @@ components:
             未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。
           type: string
           format: date
-    Annotation:
+    AnnotationInput:
+      oneOf:
+        - $ref: "#/components/schemas/AnnotationV1"
+        - $ref: "#/components/schemas/AnnotationV2Input"
+    AnnotationOutput:
+      oneOf:
+        - $ref: "#/components/schemas/AnnotationV1"
+        - $ref: "#/components/schemas/AnnotationV2Output"
+    AnnotationV1:
       type: object
       required:
         - project_id
@@ -4929,11 +5038,69 @@ components:
           type: array
           description: 矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
           items:
-            $ref: "#/components/schemas/AnnotationDetail"
+            $ref: "#/components/schemas/AnnotationDetailV1"
         updated_datetime:
           type: string
           format: date-time
           description: 更新日時
+    AnnotationV2Input:
+      type: object
+      required:
+        - project_id
+        - task_id
+        - input_data_id
+        - details
+        - format_version
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        task_id:
+          $ref: "#/components/schemas/TaskId"
+        input_data_id:
+          $ref: "#/components/schemas/InputDataId"
+        details:
+          type: array
+          description: 矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
+          items:
+            $ref: "#/components/schemas/AnnotationDetailV2Input"
+        updated_datetime:
+          type: string
+          format: date-time
+          description: |
+            対象タスク・対象入力データへの最初の保存時は未指定にしてください。
+            更新の場合はアノテーション取得時のupdated_datetimeをそのまま指定してください。
+        format_version:
+          type: string
+          enum: ["2.0.0"]
+    AnnotationV2Output:
+      type: object
+      required:
+        - project_id
+        - task_id
+        - input_data_id
+        - details
+        - format_version
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        task_id:
+          $ref: "#/components/schemas/TaskId"
+        input_data_id:
+          $ref: "#/components/schemas/InputDataId"
+        details:
+          type: array
+          description: 矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
+          items:
+            $ref: "#/components/schemas/AnnotationDetailV2Output"
+        updated_datetime:
+          type: string
+          format: date-time
+          description: |
+            対象タスク・対象入力データへ一度もアノテーションの保存が行われていない場合、未指定となります。
+            そうで無い場合、対象タスク・対象入力データのアノテーション最終更新時刻です。
+        format_version:
+          type: string
+          enum: ["2.0.0"]
     PutAnnotationRequest:
       type: object
       required:
@@ -4952,7 +5119,7 @@ components:
           type: array
           description: 矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
           items:
-            $ref: "#/components/schemas/AnnotationDetail"
+            $ref: "#/components/schemas/AnnotationDetailV1"
         updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
           description: |
@@ -4966,7 +5133,7 @@ components:
         アノテーションのデータがどこに保持されるか
         * `inner` - アノテーションのデータ部をJSON内部に保持します。
         * `outer` - アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
-    AnnotationDetail:
+    AnnotationDetailV1:
       type: object
       required:
         - annotation_id
@@ -4993,7 +5160,7 @@ components:
         data_holding_type:
           $ref: "#/components/schemas/AnnotationDataHoldingType"
         data:
-          $ref: "#/components/schemas/AnnotationData"
+          $ref: "#/components/schemas/AnnotationDataV1"
         path:
           type: string
           description: |
@@ -5017,7 +5184,7 @@ components:
           format: uri
           description: 外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
         additional_data_list:
-          $ref: "#/components/schemas/AdditionalDataList"
+          $ref: "#/components/schemas/AdditionalDataListV1"
         created_datetime:
           type: string
           format: date-time
@@ -5026,7 +5193,308 @@ components:
           type: string
           format: date-time
           description: 更新日時
-    AdditionalDataList:
+    AnnotationDetailV2Output:
+      oneOf:
+        - $ref: "#/components/schemas/AnnotationDetailV2Get"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          Get: "#/components/schemas/AnnotationDetailV2Get"
+    AnnotationDetailV2Input:
+      description: |
+        - **AnnotationDetailV2Create**
+          - 新規にアノテーションを作成する場合にこの型を利用します。
+        - **AnnotationDetailV2Import**
+          - 過去にAnnofab内外で作成したアノテーションをそのままインポートする場合にこの型を利用します。
+        - **AnnotationDetailV2Update**
+          - 既に存在するアノテーションを更新する場合にこの型を利用します
+      oneOf:
+        - $ref: "#/components/schemas/AnnotationDetailV2Create"
+        - $ref: "#/components/schemas/AnnotationDetailV2Import"
+        - $ref: "#/components/schemas/AnnotationDetailV2Update"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          Create: "#/components/schemas/AnnotationDetailV2Create"
+          Import: "#/components/schemas/AnnotationDetailV2Import"
+          Update: "#/components/schemas/AnnotationDetailV2Update"
+
+    AnnotationDetailV2Get:
+      type: object
+      required:
+        - _type
+        - annotation_id
+        - account_id
+        - label_id
+        - body
+        - additional_data_list
+        - editor_props
+        - created_datetime
+        - updated_datetime
+      properties:
+        _type:
+          type: string
+          enum: ["Get"]
+        annotation_id:
+          $ref: "#/components/schemas/AnnotationId"
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+          description: アノテーションを作成したユーザーのアカウントID
+        label_id:
+          $ref: "#/components/schemas/LabelId"
+          description: ラベルID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。
+        body:
+          $ref: "#/components/schemas/AnnotationDetailContentOutput"
+        additional_data_list:
+          $ref: "#/components/schemas/AdditionalDataListV2"
+        editor_props:
+          $ref: "#/components/schemas/AnnotationPropsForEditor"
+        created_datetime:
+          type: string
+          format: date-time
+          description: 作成日時
+        updated_datetime:
+          type: string
+          format: date-time
+          description: 更新日時
+    AnnotationDetailV2Create:
+      description: "新規にアノテーションを作成する場合にこの型を利用します。"
+      type: object
+      required:
+        - _type
+        - annotation_id
+        - label_id
+        - body
+        - additional_data_list
+        - editor_props
+      properties:
+        _type:
+          type: string
+          enum: ["Create"]
+        annotation_id:
+          $ref: "#/components/schemas/AnnotationId"
+        label_id:
+          $ref: "#/components/schemas/LabelId"
+          description: ラベルID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。
+        body:
+          $ref: "#/components/schemas/AnnotationDetailContentInput"
+        additional_data_list:
+          $ref: "#/components/schemas/AdditionalDataListV2"
+        editor_props:
+          $ref: "#/components/schemas/AnnotationPropsForEditor"
+    AnnotationDetailV2Import:
+      description: "過去にAnnofab内外で作成したアノテーションをそのままインポートする場合にこの型を利用します。"
+      type: object
+      required:
+        - _type
+        - annotation_id
+        - account_id
+        - label_id
+        - body
+        - additional_data_list
+        - editor_props
+        - created_datetime
+        - updated_datetime
+      properties:
+        _type:
+          type: string
+          enum: ["Import"]
+        annotation_id:
+          $ref: "#/components/schemas/AnnotationId"
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+          description: アノテーションを作成したユーザーのアカウントID
+        label_id:
+          $ref: "#/components/schemas/LabelId"
+          description: ラベルID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。
+        body:
+          $ref: "#/components/schemas/AnnotationDetailContentInput"
+        additional_data_list:
+          $ref: "#/components/schemas/AdditionalDataListV2"
+        editor_props:
+          $ref: "#/components/schemas/AnnotationPropsForEditor"
+        created_datetime:
+          type: string
+          format: date-time
+          description: 作成日時
+        updated_datetime:
+          type: string
+          format: date-time
+          description: 更新日時
+    AnnotationDetailV2Update:
+      description: "既に存在するアノテーションを更新する場合にこの型を利用します"
+      type: object
+      required:
+        - _type
+        - annotation_id
+        - label_id
+        - additional_data_list
+        - editor_props
+      properties:
+        _type:
+          type: string
+          enum: ["Update"]
+        annotation_id:
+          $ref: "#/components/schemas/AnnotationId"
+        label_id:
+          $ref: "#/components/schemas/LabelId"
+          description: ラベルID。[アノテーション仕様](#tag/af-annotation-specs)で定義されます。
+        body:
+          description: "既存のアノテーションのデータ本体を更新しない場合未指定にします"
+          nullable: true
+          $ref: "#/components/schemas/AnnotationDetailContentInput"
+        additional_data_list:
+          $ref: "#/components/schemas/AdditionalDataListV2"
+        editor_props:
+          $ref: "#/components/schemas/AnnotationPropsForEditor"
+    AnnotationDetailContentInput:
+      description: |
+        - **AnnotationDetailContentInputInner**
+          - アノテーションのデータ部をJSON内部に保持する場合、この型を利用します
+        - **AnnotationDetailContentInputOuter**
+          - アノテーションのデータ部を外部ファイルの形式（画像など）で保持する場合、この型を利用します
+      oneOf:
+        - $ref: "#/components/schemas/AnnotationDetailContentInputInner"
+        - $ref: "#/components/schemas/AnnotationDetailContentInputOuter"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          Inner: "#/components/schemas/AnnotationDetailContentInputInner"
+          Outer: "#/components/schemas/AnnotationDetailContentInputOuter"
+    AnnotationDetailContentInputInner:
+      description: "アノテーションのデータ部をJSON内部に保持します"
+      type: object
+      required:
+        - _type
+        - data
+      properties:
+        _type:
+          type: string
+          enum: ["Inner"]
+        data:
+          $ref: "#/components/schemas/FullAnnotationData"
+    AnnotationDetailContentInputOuter:
+      description: "アノテーションのデータ部を外部ファイルの形式（画像など）で保持します"
+      type: object
+      required:
+        - _type
+        - path
+      properties:
+        _type:
+          type: string
+          enum: ["Outer"]
+        path:
+          type: string
+          description: "外部ファイルの位置を示す文字列。 [createTempPath](#operation/createTempPath) APIによって取得したpathを指定します。"
+    AnnotationDetailContentOutput:
+      description: |
+        - **AnnotationDetailContentOutputInner**
+          - アノテーションのデータ部をJSON内部に保持している場合、通常はこの型の値となります
+        - **AnnotationDetailContentOutputInnerUnknown**
+          - アノテーションのデータ部をJSON内部に保持しており、且つ、AnnotationDetailV1の形式で保存されていたデータのAnnotationTypeが特定できない場合にこの値となります
+          - 典型的な例では、アノテーションの保存後にアノテーション仕様が書き換わっていた場合が該当します
+        - **AnnotationDetailContentOutputOuter**
+          - アノテーションのデータ部を外部ファイルの形式（画像など）で保持している場合、通常はこの型の値となります
+        - **AnnotationDetailContentOutputOuterUnresolved**
+          - アノテーションのデータ部を外部ファイルの形式（画像など）で保持しており、且つ、Outerのurl / etagを解決しなかった場合（過去のアノテーションを取得した場合等）にこの値となります
+      oneOf:
+        - $ref: "#/components/schemas/AnnotationDetailContentOutputInner"
+        - $ref: "#/components/schemas/AnnotationDetailContentOutputInnerUnknown"
+        - $ref: "#/components/schemas/AnnotationDetailContentOutputOuter"
+        - $ref: "#/components/schemas/AnnotationDetailContentOutputOuterUnresolved"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          Inner: "#/components/schemas/AnnotationDetailContentOutputInner"
+          InnerUnknown: "#/components/schemas/AnnotationDetailContentOutputInnerUnknown"
+          Outer: "#/components/schemas/AnnotationDetailContentOutputOuter"
+          OuterUnresolved: "#/components/schemas/AnnotationDetailContentOutputOuterUnresolved"
+    AnnotationDetailContentOutputInner:
+      description: "アノテーションのデータ部をJSON内部に保持します"
+      type: object
+      required:
+        - _type
+        - data
+      properties:
+        _type:
+          type: string
+          enum: ["Inner"]
+        data:
+          $ref: "#/components/schemas/FullAnnotationData"
+    AnnotationDetailContentOutputInnerUnknown:
+      description: |
+        アノテーションのデータ部をJSON内部に保持します。
+        AnnotationDetailV1の形式で保存されていたデータのAnnotationTypeが特定できない場合にこの値となります。
+        典型的な例では、アノテーションの保存後にアノテーション仕様が書き換わっていた場合が該当します。
+      type: object
+      required:
+        - _type
+        - data
+      properties:
+        _type:
+          type: string
+          enum: ["InnerUnknown"]
+        data:
+          $ref: "#/components/schemas/FullAnnotationDataString"
+    AnnotationDetailContentOutputOuter:
+      description: "アノテーションのデータ部を外部ファイルの形式（画像など）で保持します"
+      type: object
+      required:
+        - _type
+        - url
+        - etag
+      properties:
+        _type:
+          type: string
+          enum: ["Outer"]
+        url:
+          description: "外部ファイルに保存されたアノテーションの認証済み一時URL"
+          type: string
+          format: uri
+        etag:
+          description: "外部ファイルに保存されたアノテーションのETag"
+          type: string
+    AnnotationDetailContentOutputOuterUnresolved:
+      description: |
+        アノテーションのデータ部を外部ファイルの形式（画像など）で保持します。
+        Outerのurl / etagを解決しなかった場合（過去のアノテーションを取得した場合等）にこの値となります。
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["OuterUnresolved"]
+    AnnotationPropsForEditor:
+      description: |
+        アノテーションエディタ用のアノテーション毎のプロパティです。<br />
+        ここに含まれているデータはアノテーション結果に反映されず、エディタが利用するために存在します。
+
+        エディタ用のデータであるため、たとえば`can_delete`や`can_edit_data`が`false`でも、APIによる編集は妨げません。<br />
+        ここで定義されているデータを利用して動作を変えるかどうかは、エディタによって異なります。
+      type: object
+      properties:
+        can_delete:
+          type: boolean
+          description: "アノテーションがエディタ上で削除できるかどうか。 trueの場合削除可能。"
+        can_edit_data:
+          type: boolean
+          description: "アノテーションの本体のデータを編集できるかどうか。 trueの場合編集可能。 2022/09現在、この値を利用しているエディタは存在しません。"
+        can_edit_additional:
+          type: boolean
+          description: "アノテーションの付加情報を編集できるかどうか。  trueの場合編集可能。 2022/09現在、この値を利用しているエディタは存在しません。"
+        description:
+          type: string
+          description: "アノテーションについての人間可読な説明。 2022/09現在、この値を利用しているエディタは存在しません。"
+        tags:
+          type: array
+          items:
+            type: string
+          description: "アノテーションに付与されている機械可読・人間可読なタグの列。  2022/09現在、この値を利用しているエディタは存在しません"
+        etc:
+          description: "上記以外の任意のJson構造"
+
+    AdditionalDataListV1:
       # itemsで参照しているスキーマのdescriptionは、redocに表示されないので、ここに詳細を書く
       description: |
         属性情報。
@@ -5046,9 +5514,12 @@ components:
 
       type: array
       items:
-        $ref: "#/components/schemas/AdditionalData"
-
-    AdditionalData:
+        $ref: "#/components/schemas/AdditionalDataV1"
+    AdditionalDataListV2:
+      type: array
+      items:
+        $ref: "#/components/schemas/AdditionalDataV2"
+    AdditionalDataV1:
       type: object
       required:
         - additional_data_definition_id
@@ -5072,26 +5543,38 @@ components:
           $ref: "#/components/schemas/ChoiceId"
           description: |
             `additional_data_definition`の`type`が`choice` または `select `のときの属性値（選択肢ID）。
-    AdditionalDataValue:
+    AdditionalDataV2:
+      type: object
+      required:
+        - definition_id
+      properties:
+        definition_id:
+          $ref: "#/components/schemas/AdditionalDataDefinitionId"
+          description: 属性ID
+        value:
+          $ref: "#/components/schemas/AdditionalDataValue"
+          nullable: true
+          description: "属性値。 属性が未入力の場合nullになります"
+    FullAnnotationAdditionalDataValue:
       description: |
         属性値
       oneOf:
-        - $ref: "#/components/schemas/AdditionalDataValueFlag"
-        - $ref: "#/components/schemas/AdditionalDataValueInteger"
-        - $ref: "#/components/schemas/AdditionalDataValueComment"
-        - $ref: "#/components/schemas/AdditionalDataValueChoice"
-        - $ref: "#/components/schemas/AdditionalDataValueTracking"
-        - $ref: "#/components/schemas/AdditionalDataValueLink"
+        - $ref: "#/components/schemas/FullAnnotationAdditionalDataValueFlag"
+        - $ref: "#/components/schemas/FullAnnotationAdditionalDataValueInteger"
+        - $ref: "#/components/schemas/FullAnnotationAdditionalDataValueComment"
+        - $ref: "#/components/schemas/FullAnnotationAdditionalDataValueChoice"
+        - $ref: "#/components/schemas/FullAnnotationAdditionalDataValueTracking"
+        - $ref: "#/components/schemas/FullAnnotationAdditionalDataValueLink"
       discriminator:
         propertyName: "_type"
         mapping:
-          Flag: "#/components/schemas/AdditionalDataValueFlag"
-          Integer: "#/components/schemas/AdditionalDataValueInteger"
-          Comment: "#/components/schemas/AdditionalDataValueComment"
-          Choice: "#/components/schemas/AdditionalDataValueChoice"
-          Tracking: "#/components/schemas/AdditionalDataValueTracking"
-          Link: "#/components/schemas/AdditionalDataValueLink"
-    AdditionalDataValueFlag:
+          Flag: "#/components/schemas/FullAnnotationAdditionalDataValueFlag"
+          Integer: "#/components/schemas/FullAnnotationAdditionalDataValueInteger"
+          Comment: "#/components/schemas/FullAnnotationAdditionalDataValueComment"
+          Choice: "#/components/schemas/FullAnnotationAdditionalDataValueChoice"
+          Tracking: "#/components/schemas/FullAnnotationAdditionalDataValueTracking"
+          Link: "#/components/schemas/FullAnnotationAdditionalDataValueLink"
+    FullAnnotationAdditionalDataValueFlag:
       type: object
       required:
         - _type
@@ -5105,7 +5588,7 @@ components:
         value:
           type: boolean
           description: フラグのON(true)またはOFF(false)
-    AdditionalDataValueInteger:
+    FullAnnotationAdditionalDataValueInteger:
       type: object
       required:
         - _type
@@ -5118,7 +5601,7 @@ components:
         value:
           type: integer
           description: 整数値
-    AdditionalDataValueComment:
+    FullAnnotationAdditionalDataValueComment:
       type: object
       required:
         - _type
@@ -5131,7 +5614,7 @@ components:
         value:
           type: string
           description: 自由記述
-    AdditionalDataValueChoice:
+    FullAnnotationAdditionalDataValueChoice:
       type: object
       required:
         - _type
@@ -5143,7 +5626,7 @@ components:
           example: "Choice"
         value:
           $ref: "#/components/schemas/AdditionalDataChoiceValue"
-    AdditionalDataChoiceValue:
+    FullAnnotationAdditionalDataChoiceValue:
       type: object
       required:
         - id
@@ -5155,7 +5638,7 @@ components:
         name:
           $ref: "#/components/schemas/InternationalizationMessage"
           description: 選択された選択肢の表示名
-    AdditionalDataValueTracking:
+    FullAnnotationAdditionalDataValueTracking:
       type: object
       required:
         - _type
@@ -5167,7 +5650,7 @@ components:
         value:
           type: string
           description: トラッキングID
-    AdditionalDataValueLink:
+    FullAnnotationAdditionalDataValueLink:
       type: object
       required:
         - _type
@@ -5179,6 +5662,125 @@ components:
         value:
           type: string
           description: リンク先アノテーションID
+    AdditionalDataValue:
+      description: |
+        属性値
+      oneOf:
+        - $ref: "#/components/schemas/AdditionalDataValueFlag"
+        - $ref: "#/components/schemas/AdditionalDataValueInteger"
+        - $ref: "#/components/schemas/AdditionalDataValueComment"
+        - $ref: "#/components/schemas/AdditionalDataValueText"
+        - $ref: "#/components/schemas/AdditionalDataValueChoice"
+        - $ref: "#/components/schemas/AdditionalDataValueSelect"
+        - $ref: "#/components/schemas/AdditionalDataValueTracking"
+        - $ref: "#/components/schemas/AdditionalDataValueLink"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          Flag: "#/components/schemas/AdditionalDataValueFlag"
+          Integer: "#/components/schemas/AdditionalDataValueInteger"
+          Comment: "#/components/schemas/AdditionalDataValueComment"
+          Text: "#/components/schemas/AdditionalDataValueText"
+          Choice: "#/components/schemas/AdditionalDataValueChoice"
+          Select: "#/components/schemas/AdditionalDataValueSelect"
+          Tracking: "#/components/schemas/AdditionalDataValueTracking"
+          Link: "#/components/schemas/AdditionalDataValueLink"
+    AdditionalDataValueFlag:
+      type: object
+      required:
+        - _type
+        - value
+      properties:
+        _type:
+          type: string
+          enum: ["Flag"]
+        value:
+          type: boolean
+          description: "ON/OFF属性の属性値。 ONの時trueとなります"
+    AdditionalDataValueInteger:
+      type: object
+      required:
+        - _type
+        - value
+      properties:
+        _type:
+          type: string
+          enum: ["Integer"]
+        value:
+          type: integer
+          description: "整数属性の属性値"
+    AdditionalDataValueComment:
+      type: object
+      required:
+        - _type
+        - value
+      properties:
+        _type:
+          type: string
+          enum: ["Comment"]
+        value:
+          type: string
+          description: "自由記述（1行）の属性値"
+    AdditionalDataValueText:
+      type: object
+      required:
+        - _type
+        - value
+      properties:
+        _type:
+          type: string
+          enum: ["Text"]
+        value:
+          type: string
+          description: "自由記述（複数行）の属性値"
+    AdditionalDataValueChoice:
+      type: object
+      required:
+        - _type
+        - choice_id
+      properties:
+        _type:
+          type: string
+          enum: ["Choice"]
+        choice_id:
+          $ref: "#/components/schemas/ChoiceId"
+          description: "排他選択（ラジオボタン）の属性値。 選択している選択肢のIdが格納されます。"
+    AdditionalDataValueSelect:
+      type: object
+      required:
+        - _type
+        - choice_id
+      properties:
+        _type:
+          type: string
+          enum: ["Select"]
+        choice_id:
+          $ref: "#/components/schemas/ChoiceId"
+          description: "排他選択（ドロップダウン）の属性値。 選択している選択肢のIdが格納されます。"
+    AdditionalDataValueTracking:
+      type: object
+      required:
+        - _type
+        - value
+      properties:
+        _type:
+          type: string
+          enum: ["Tracking"]
+        value:
+          type: string
+          description: "トラッキングID属性の属性値"
+    AdditionalDataValueLink:
+      type: object
+      required:
+        - _type
+        - annotation_id
+      properties:
+        _type:
+          type: string
+          enum: ["Link"]
+        annotation_id:
+          $ref: "#/components/schemas/AnnotationId"
+          description: "アノテーションリンク属性の属性値。 リンク先アノテーションのIDが格納されます。"
     SingleAnnotation:
       type: object
       required:
@@ -5262,7 +5864,7 @@ components:
           $ref: "#/components/schemas/LabelId"
           description: 変更後のラベルID
         additional_data_list:
-          $ref: "#/components/schemas/AdditionalDataList"
+          $ref: "#/components/schemas/AdditionalDataListV1"
         updated_datetime:
           type: string
           format: date-time
@@ -5339,7 +5941,7 @@ components:
           format: uri
           description: data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
         additional_data_list:
-          $ref: "#/components/schemas/AdditionalDataList"
+          $ref: "#/components/schemas/AdditionalDataListV1"
         created_datetime:
           type: string
           format: date-time
@@ -5449,7 +6051,7 @@ components:
           $ref: "#/components/schemas/FullAnnotationData"
         additional_data_list:
           $ref: "#/components/schemas/FullAnnotationAdditionalDataList"
-    AnnotationData:
+    AnnotationDataV1:
       description: |
         アノテーションの座標値や区間などのデータ。
 
@@ -5669,7 +6271,7 @@ components:
         type:
           $ref: "#/components/schemas/AdditionalDataDefinitionType"
         value:
-          $ref: "#/components/schemas/AdditionalDataValue"
+          $ref: "#/components/schemas/FullAnnotationAdditionalDataValue"
     BatchInspectionRequestItemPut:
       type: object
       description: 検査コメント更新
@@ -6027,21 +6629,11 @@ components:
         annotation_id:
           $ref: "#/components/schemas/AnnotationId"
           description: |
-            `comment_type` の値によって扱いが異なります。
-
-            * `onhold` の場合
-              * 使用しません（値なし）
-            * `inspection` の場合
-              * 検査コメントに紐づくアノテーションのID。アノテーションに紐付けられていない場合（アノテーションの付け忘れに対する指定など）は未指定。[詳細はこちら](#section/AnnotationId)。
+              コメントに紐づくアノテーションのID。アノテーションに紐付けられていない場合（アノテーションの付け忘れに対する指摘など）は未指定。[詳細はこちら](#section/AnnotationId)。
         label_id:
           $ref: "#/components/schemas/LabelId"
           description: |
-            `comment_type` の値によって扱いが異なります。
-
-            * `onhold` の場合
-              * 使用しません（値なし）
-            * `inspection` の場合
-              * `annotation_id` に対応するラベルのID。 `annotation_id` を指定しない場合は未指定。
+              `annotation_id` に対応するラベルのID。 `annotation_id` を指定しない場合は未指定。
         status:
           $ref: "#/components/schemas/CommentStatus"
         _type:
@@ -6342,6 +6934,11 @@ components:
     InvalidAnnotationData:
       type: object
       description: アノテーションデータ不正エラー
+      required:
+        - _type
+        - label_id
+        - annotation_id
+        - message
       properties:
         label_id:
           type: string
@@ -6356,6 +6953,10 @@ components:
     DuplicatedSegmentationV2:
       type: object
       description: 塗りつぶしv2のラベルに対する1ラベルにつき1アノテーションまでの制約違反エラー
+      required:
+        - _type
+        - label_id
+        - annotation_ids
       properties:
         label_id:
           type: string
@@ -6370,6 +6971,11 @@ components:
     InvalidValue:
       type: object
       description: 値制約に合致しないエラー
+      required:
+        - _type
+        - label_id
+        - annotation_id
+        - additional_data_definition_id
       properties:
         label_id:
           type: string
@@ -6384,6 +6990,11 @@ components:
     UnknownLinkTarget:
       type: object
       description: 指定されたIDに該当するアノテーションが存在しないエラー
+      required:
+        - _type
+        - label_id
+        - annotation_id
+        - additional_data_definition_id
       properties:
         label_id:
           type: string
@@ -6398,6 +7009,11 @@ components:
     InvalidLinkTarget:
       type: object
       description: リンク先アノテーションが許可されているラベルでないエラー
+      required:
+        - _type
+        - label_id
+        - annotation_id
+        - additional_data_definition_id
       properties:
         label_id:
           type: string
@@ -6412,6 +7028,11 @@ components:
     InvalidChoice:
       type: object
       description: 選択肢不正エラー
+      required:
+        - _type
+        - label_id
+        - annotation_id
+        - additional_data_definition_id
       properties:
         label_id:
           type: string
@@ -6426,13 +7047,18 @@ components:
     Duplicated:
       type: object
       description: 値の重複が許可されていない属性の重複エラー
+      required:
+        - _type
+        - label_id
+        - annotation_id
+        - additional_data
       properties:
         label_id:
           type: string
         annotation_id:
           type: string
         additional_data:
-          $ref: "#/components/schemas/AdditionalData"
+          $ref: "#/components/schemas/AdditionalDataV1"
         _type:
           type: string
           description: Duplicated
@@ -6440,6 +7066,11 @@ components:
     UnknownAdditionalData:
       type: object
       description: 何らかの原因で、アノテーション仕様にない属性がついているエラー
+      required:
+        - _type
+        - label_id
+        - annotation_id
+        - additional_data_definition_id
       properties:
         label_id:
           type: string
@@ -6454,6 +7085,10 @@ components:
     OverlappedRangeAnnotation:
       type: object
       description: 区間が重複しているアノテーションが存在している場合に発生するエラー
+      required:
+        - _type
+        - label_id
+        - annotation_id
       properties:
         label_id:
           type: string
@@ -6466,6 +7101,10 @@ components:
     UnknownLabel:
       type: object
       description: 何らかの原因で、アノテーション仕様にないラベルがついているエラー
+      required:
+        - _type
+        - label_id
+        - annotation_id
       properties:
         label_id:
           type: string
@@ -6493,6 +7132,9 @@ components:
     NoCommentInspection:
       type: object
       description: 空の検査コメントがある時のエラー
+      required:
+        - _type
+        - inspection
       properties:
         inspection:
           $ref: "#/components/schemas/Inspection"
@@ -6503,6 +7145,9 @@ components:
     ReplyRequired:
       type: object
       description: 返信が必要な検査コメントが残っている時のエラー
+      required:
+        - _type
+        - inspection
       properties:
         inspection:
           $ref: "#/components/schemas/Inspection"
@@ -6513,6 +7158,9 @@ components:
     ActionRequired:
       type: object
       description: 対応が必要な検査コメントが残っている時のエラー
+      required:
+        - _type
+        - inspection
       properties:
         inspection:
           $ref: "#/components/schemas/Inspection"
@@ -6523,6 +7171,8 @@ components:
     InspectionOrReplyRequired:
       type: object
       description: 新規検査コメントまたは未対応検査コメントへの返信が必要である時のエラー
+      required:
+        - _type
       properties:
         _type:
           type: string
@@ -6531,6 +7181,8 @@ components:
     IllegalState:
       type: object
       description: 作業が開始されていない、担当が割り当たっていない等のエラー
+      required:
+        - _type
       properties:
         _type:
           type: string
@@ -6945,3 +7597,91 @@ components:
       oneOf:
         - $ref: "#/components/schemas/Message"
         - $ref: "#/components/schemas/ProjectJobInfo"
+    YearMonth:
+      type: string
+      description: 対象月。年月のフォーマットは YYYY-MM です。
+      example: "2022-07"
+    EditorUsageTimespan:
+      type: object
+      description: エディタごとの利用時間
+      required:
+        - editor_name
+        - value
+      properties:
+        editor_name:
+          type: string
+          description: |
+            エディタ名です。
+
+            | editor_nameの値 | エディタ名   |
+            |-----------------|--------------|
+            | image_editor    | 画像エディタ |
+            | video_editor    | 動画エディタ |
+            | 3d_editor       | 3Dエディタ   |
+        value:
+          type: number
+          description: エディタ利用時間。単位は時
+    UsageStatus:
+      type: object
+      description: 利用状況
+      required:
+        - organization_id
+        - year_month
+        - aggregation_period_from
+        - aggregation_period_to
+        - editor_usage
+        - storage_usage
+      properties:
+        organization_id:
+          $ref: "#/components/schemas/OrganizationId"
+        year_month:
+          $ref: "#/components/schemas/YearMonth"
+        aggregation_period_from:
+          type: string
+          format: date-time
+          description: 集計期間の開始日時。日時のフォーマットはISO 8601 拡張形式です。
+        aggregation_period_to:
+          type: string
+          format: date-time
+          description: 集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。
+        editor_usage:
+          type: array
+          description: エディタ利用時間のリスト
+          items:
+            $ref: "#/components/schemas/EditorUsageTimespan"
+        storage_usage:
+          type: number
+          description: ストレージ利用量。単位はGB時
+    UsageStatusByDay:
+      type: object
+      description: 日ごとの利用状況
+      required:
+        - organization_id
+        - date
+        - aggregation_period_from
+        - aggregation_period_to
+        - editor_usage
+        - storage_usage
+      properties:
+        organization_id:
+          $ref: "#/components/schemas/OrganizationId"
+        date:
+          type: string
+          format: date
+          description: 対象日。日付のフォーマットはISO 8601 拡張形式です。
+        aggregation_period_from:
+          type: string
+          format: date-time
+          description: 集計期間の開始日時。日時のフォーマットはISO 8601 拡張形式です。
+        aggregation_period_to:
+          type: string
+          format: date-time
+          description: 集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。
+        editor_usage:
+          type: array
+          description: エディタ利用時間のリスト
+          items:
+            $ref: "#/components/schemas/EditorUsageTimespan"
+        storage_usage:
+          type: number
+          description: ストレージ利用量。単位はGB時

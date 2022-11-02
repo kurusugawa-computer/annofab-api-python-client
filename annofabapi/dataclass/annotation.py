@@ -23,9 +23,10 @@ from annofabapi.models import (
     TaskStatus,
 )
 
-AnnotationData = Union[str, Dict[str, Any]]
 FullAnnotationData = Any
 AdditionalDataValue = Dict[str, Any]
+FullAnnotationAdditionalDataValue = Dict[str, Any]
+AnnotationDataV1 = Union[str, Dict[str, Any]]
 
 
 @dataclass
@@ -122,7 +123,7 @@ class FullAnnotationDataRange(DataClassJsonMixin):
 
 
 @dataclass
-class AdditionalData(DataClassJsonMixin):
+class AdditionalDataV1(DataClassJsonMixin):
     """ """
 
     additional_data_definition_id: str
@@ -156,7 +157,7 @@ class FullAnnotationAdditionalData(DataClassJsonMixin):
     type: AdditionalDataDefinitionType
     """"""
 
-    value: AdditionalDataValue
+    value: FullAnnotationAdditionalDataValue
     """"""
 
 
@@ -303,7 +304,7 @@ class SingleAnnotationDetail(DataClassJsonMixin):
     url: Optional[str]
     """data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される"""
 
-    additional_data_list: List[AdditionalData]
+    additional_data_list: List[AdditionalDataV1]
     """属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | """
 
     created_datetime: str
@@ -334,7 +335,7 @@ class SingleAnnotation(DataClassJsonMixin):
 
 
 @dataclass
-class AnnotationDetail(DataClassJsonMixin):
+class AnnotationDetailV1(DataClassJsonMixin):
     """ """
 
     annotation_id: str
@@ -352,7 +353,7 @@ class AnnotationDetail(DataClassJsonMixin):
     data_holding_type: AnnotationDataHoldingType
     """"""
 
-    data: Optional[AnnotationData]
+    data: Optional[AnnotationDataV1]
     """"""
 
     path: Optional[str]
@@ -364,7 +365,7 @@ class AnnotationDetail(DataClassJsonMixin):
     url: Optional[str]
     """外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。"""
 
-    additional_data_list: List[AdditionalData]
+    additional_data_list: List[AdditionalDataV1]
     """属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | """
 
     created_datetime: Optional[str]
@@ -375,7 +376,7 @@ class AnnotationDetail(DataClassJsonMixin):
 
 
 @dataclass
-class Annotation(DataClassJsonMixin):
+class AnnotationV1(DataClassJsonMixin):
     """ """
 
     project_id: str
@@ -387,7 +388,7 @@ class Annotation(DataClassJsonMixin):
     input_data_id: str
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    details: List[AnnotationDetail]
+    details: List[AnnotationDetailV1]
     """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。"""
 
     updated_datetime: Optional[str]
