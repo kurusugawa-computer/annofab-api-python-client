@@ -20,7 +20,7 @@ from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.dataclass.annotation import SimpleAnnotation, SingleAnnotation, AnnotationV1
+from annofabapi.dataclass.annotation import AnnotationV1, SimpleAnnotation, SingleAnnotation
 from annofabapi.dataclass.annotation_specs import AnnotationSpecsV2
 from annofabapi.dataclass.comment import Comment
 from annofabapi.dataclass.input import InputData
