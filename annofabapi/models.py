@@ -233,38 +233,6 @@ Kyes of Dict
 
 """
 
-AdditionalData = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* additional_data_definition_id: str
-    属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* flag: bool
-    `additional_data_definition`の`type`が`flag`のときの属性値。 
-* integer: int
-    `additional_data_definition`の`type`が`integer`のときの属性値。 
-* comment: str
-    `additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 
-* choice: str
-    選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-
-"""
-
-AdditionalDataChoiceValue = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* id: str
-    選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* name: InternationalizationMessage
-    
-
-"""
-
 AdditionalDataDefaultType = Dict[str, Any]
 """
 属性の初期値です。  初期値を設定する場合、属性の種類に応じて次の値を指定してください。 属性の種類に対して有効でない初期値を指定した場合、その初期値は無視されます。  |属性の種類（`type`）                 | 指定できる初期値| |-----------------|----------| | flag    | 真偽値(`true` or `false`)| | integer    | 整数値         | | text | 文字列         | | comment         | 文字列| | choice        | 選択肢(`choices`)の `choice_id` | | select           | 選択肢(`choices`)の`choice_id`|  属性の種類が`tracking`または`link`の場合、初期値を設定できません。  初期値を設定しない場合は、nullまたは空文字を指定してください。 
@@ -488,6 +456,38 @@ Kyes of Dict
 
 """
 
+AdditionalDataV1 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* additional_data_definition_id: str
+    属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* flag: bool
+    `additional_data_definition`の`type`が`flag`のときの属性値。 
+* integer: int
+    `additional_data_definition`の`type`が`integer`のときの属性値。 
+* comment: str
+    `additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 
+* choice: str
+    選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+
+"""
+
+AdditionalDataV2 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* definition_id: str
+    属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* value: AdditionalDataValue
+    
+
+"""
+
 AdditionalDataValue = Dict[str, Any]
 """
 属性値 
@@ -495,9 +495,13 @@ AdditionalDataValue = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    Link
+    
 * value: str
-    リンク先アノテーションID
+    トラッキングID属性の属性値
+* choice_id: str
+    選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 
 """
 
@@ -508,9 +512,9 @@ AdditionalDataValueChoice = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    `Choice` 
-* value: AdditionalDataChoiceValue
     
+* choice_id: str
+    選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 
 """
 
@@ -521,9 +525,9 @@ AdditionalDataValueComment = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    `Comment` 
+    
 * value: str
-    自由記述
+    自由記述（1行）の属性値
 
 """
 
@@ -534,9 +538,9 @@ AdditionalDataValueFlag = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    `Flag` 
+    
 * value: bool
-    フラグのON(true)またはOFF(false)
+    ON/OFF属性の属性値。 ONの時trueとなります
 
 """
 
@@ -547,9 +551,9 @@ AdditionalDataValueInteger = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    `Integer` 
+    
 * value: int
-    整数値
+    整数属性の属性値
 
 """
 
@@ -560,9 +564,35 @@ AdditionalDataValueLink = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    Link
+    
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
+
+"""
+
+AdditionalDataValueSelect = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    
+* choice_id: str
+    選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+
+"""
+
+AdditionalDataValueText = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    
 * value: str
-    リンク先アノテーションID
+    自由記述（複数行）の属性値
 
 """
 
@@ -573,43 +603,15 @@ AdditionalDataValueTracking = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    Tracking
+    
 * value: str
-    トラッキングID
+    トラッキングID属性の属性値
 
 """
 
 AggregationResult = Dict[str, Any]
 """
 
-
-Kyes of Dict
-
-
-"""
-
-Annotation = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* project_id: str
-    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* task_id: str
-    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* input_data_id: str
-    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetail]
-    矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
-* updated_datetime: str
-    更新日時
-
-"""
-
-AnnotationData = Dict[str, Any]
-"""
-アノテーションの座標値や区間などのデータ。  APIのレスポンスから参照される場合は、`FullAnnotationDataString`形式です。 [putAnnotation](#operation/putAnnotation) APIのリクエストボディは、`FullAnnotationDataString`形式または`FullAnnotationData`形式に対応しています。 
 
 Kyes of Dict
 
@@ -626,7 +628,126 @@ class AnnotationDataHoldingType(Enum):
     OUTER = "outer"
 
 
-AnnotationDetail = Dict[str, Any]
+AnnotationDataV1 = Dict[str, Any]
+"""
+アノテーションの座標値や区間などのデータ。  APIのレスポンスから参照される場合は、`FullAnnotationDataString`形式です。 [putAnnotation](#operation/putAnnotation) APIのリクエストボディは、`FullAnnotationDataString`形式または`FullAnnotationData`形式に対応しています。 
+
+Kyes of Dict
+
+
+"""
+
+AnnotationDetailContentInput = Dict[str, Any]
+"""
+- **AnnotationDetailContentInputInner**   - アノテーションのデータ部をJSON内部に保持する場合、この型を利用します - **AnnotationDetailContentInputOuter**   - アノテーションのデータ部を外部ファイルの形式（画像など）で保持する場合、この型を利用します 
+
+Kyes of Dict
+
+* type: str
+    
+* data: FullAnnotationData
+    
+* path: str
+    外部ファイルの位置を示す文字列。 [createTempPath](#operation/createTempPath) APIによって取得したpathを指定します。
+
+"""
+
+AnnotationDetailContentInputInner = Dict[str, Any]
+"""
+アノテーションのデータ部をJSON内部に保持します
+
+Kyes of Dict
+
+* type: str
+    
+* data: FullAnnotationData
+    
+
+"""
+
+AnnotationDetailContentInputOuter = Dict[str, Any]
+"""
+アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
+
+Kyes of Dict
+
+* type: str
+    
+* path: str
+    外部ファイルの位置を示す文字列。 [createTempPath](#operation/createTempPath) APIによって取得したpathを指定します。
+
+"""
+
+AnnotationDetailContentOutput = Dict[str, Any]
+"""
+- **AnnotationDetailContentOutputInner**   - アノテーションのデータ部をJSON内部に保持している場合、通常はこの型の値となります - **AnnotationDetailContentOutputInnerUnknown**   - アノテーションのデータ部をJSON内部に保持しており、且つ、AnnotationDetailV1の形式で保存されていたデータのAnnotationTypeが特定できない場合にこの値となります   - 典型的な例では、アノテーションの保存後にアノテーション仕様が書き換わっていた場合が該当します - **AnnotationDetailContentOutputOuter**   - アノテーションのデータ部を外部ファイルの形式（画像など）で保持している場合、通常はこの型の値となります - **AnnotationDetailContentOutputOuterUnresolved**   - アノテーションのデータ部を外部ファイルの形式（画像など）で保持しており、且つ、Outerのurl / etagを解決しなかった場合（過去のアノテーションを取得した場合等）にこの値となります 
+
+Kyes of Dict
+
+* type: str
+    
+* data: str
+    アノテーション座標値や区間などの文字列表現です。 アノテーション種類（`annotation_type`）とデータ格納形式（`data_holding_type`）に応じて、以下のとおり表現が変わります。  <table> <tr><th>annotation_type</th><th>data_holding_type</th><th>文字列表現</th></tr> <tr><td>bounding_box</td><td>inner</td><td><code>\"左上x,左上y,右下x,右下y\"</code></td></tr> <tr><td>point</td><td>inner</td><td><code>\"x1,y1\"</code></td></tr> <tr><td>polygon / polyline</td><td>inner</td><td><code>\"x1,y1,x2,y2, ... \"</code></td></tr> <tr><td>range </td><td>inner</td><td><code>\"開始時間(ミリ秒),終了時間(ミリ秒) \"</code></td></tr> <tr><td>classification</td><td>inner</td><td><code>null</code></td></tr> <tr><td>segmentation</td><td>outer</td><td><code>null</code></td></tr> <tr><td>segmentation_v2</td><td>outer</td><td><code>null</code></td></tr> </table> 
+* url: str
+    外部ファイルに保存されたアノテーションの認証済み一時URL
+* etag: str
+    外部ファイルに保存されたアノテーションのETag
+
+"""
+
+AnnotationDetailContentOutputInner = Dict[str, Any]
+"""
+アノテーションのデータ部をJSON内部に保持します
+
+Kyes of Dict
+
+* type: str
+    
+* data: FullAnnotationData
+    
+
+"""
+
+AnnotationDetailContentOutputInnerUnknown = Dict[str, Any]
+"""
+アノテーションのデータ部をJSON内部に保持します。 AnnotationDetailV1の形式で保存されていたデータのAnnotationTypeが特定できない場合にこの値となります。 典型的な例では、アノテーションの保存後にアノテーション仕様が書き換わっていた場合が該当します。 
+
+Kyes of Dict
+
+* type: str
+    
+* data: str
+    アノテーション座標値や区間などの文字列表現です。 アノテーション種類（`annotation_type`）とデータ格納形式（`data_holding_type`）に応じて、以下のとおり表現が変わります。  <table> <tr><th>annotation_type</th><th>data_holding_type</th><th>文字列表現</th></tr> <tr><td>bounding_box</td><td>inner</td><td><code>\"左上x,左上y,右下x,右下y\"</code></td></tr> <tr><td>point</td><td>inner</td><td><code>\"x1,y1\"</code></td></tr> <tr><td>polygon / polyline</td><td>inner</td><td><code>\"x1,y1,x2,y2, ... \"</code></td></tr> <tr><td>range </td><td>inner</td><td><code>\"開始時間(ミリ秒),終了時間(ミリ秒) \"</code></td></tr> <tr><td>classification</td><td>inner</td><td><code>null</code></td></tr> <tr><td>segmentation</td><td>outer</td><td><code>null</code></td></tr> <tr><td>segmentation_v2</td><td>outer</td><td><code>null</code></td></tr> </table> 
+
+"""
+
+AnnotationDetailContentOutputOuter = Dict[str, Any]
+"""
+アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
+
+Kyes of Dict
+
+* type: str
+    
+* url: str
+    外部ファイルに保存されたアノテーションの認証済み一時URL
+* etag: str
+    外部ファイルに保存されたアノテーションのETag
+
+"""
+
+AnnotationDetailContentOutputOuterUnresolved = Dict[str, Any]
+"""
+アノテーションのデータ部を外部ファイルの形式（画像など）で保持します。 Outerのurl / etagを解決しなかった場合（過去のアノテーションを取得した場合等）にこの値となります。 
+
+Kyes of Dict
+
+* type: str
+    
+
+"""
+
+AnnotationDetailV1 = Dict[str, Any]
 """
 
 
@@ -642,7 +763,7 @@ Kyes of Dict
     `true`の場合、アノテーションをアノテーションエディタ上での削除から保護できます。 外部から取り込んだアノテーションに属性を追加するときなどに指定すると、データの削除を防げます。 
 * data_holding_type: AnnotationDataHoldingType
     
-* data: AnnotationData
+* data: AnnotationDataV1
     
 * path: str
     外部ファイルに保存されたアノテーションのパス。`data_holding_type`が`inner`の場合は未指定です。 レスポンスの場合は`annotation_id`と同じ値が格納されます。  [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は、[createTempPath](#operation/createTempPath) APIで取得できる一時データ保存先S3パスを格納してください。 更新しない場合は、[getEditorAnnotation](#operation/getEditorAnnotation) APIで取得した`path`をそのまま渡せます。  外部ファイルのフォーマットは下表の通りです。  <table> <tr><th>annotation_type</th><th>形式</th></tr> <tr><td>segmentation / segmentation_v2   </td><td>PNG画像。塗りつぶした部分は<code>rgba(255, 255, 255, 1) </code>、塗りつぶしていない部分は<code>rgba(0, 0, 0, 0) </code>。</td></tr> </table> 
@@ -650,12 +771,144 @@ Kyes of Dict
     外部ファイルに保存されたアノテーションのETag。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
 * url: str
     外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
-* additional_data_list: List[AdditionalData]
+* additional_data_list: List[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * created_datetime: str
     作成日時
 * updated_datetime: str
     更新日時
+
+"""
+
+AnnotationDetailV2Create = Dict[str, Any]
+"""
+新規にアノテーションを作成する場合にこの型を利用します。
+
+Kyes of Dict
+
+* type: str
+    
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
+* label_id: str
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* body: AnnotationDetailContentInput
+    
+* additional_data_list: List[AdditionalDataV2]
+    
+* editor_props: AnnotationPropsForEditor
+    
+
+"""
+
+AnnotationDetailV2Get = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
+* account_id: str
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* label_id: str
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* body: AnnotationDetailContentOutput
+    
+* additional_data_list: List[AdditionalDataV2]
+    
+* editor_props: AnnotationPropsForEditor
+    
+* created_datetime: str
+    作成日時
+* updated_datetime: str
+    更新日時
+
+"""
+
+AnnotationDetailV2Import = Dict[str, Any]
+"""
+過去にAnnofab内外で作成したアノテーションをそのままインポートする場合にこの型を利用します。
+
+Kyes of Dict
+
+* type: str
+    
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
+* account_id: str
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* label_id: str
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* body: AnnotationDetailContentInput
+    
+* additional_data_list: List[AdditionalDataV2]
+    
+* editor_props: AnnotationPropsForEditor
+    
+* created_datetime: str
+    作成日時
+* updated_datetime: str
+    更新日時
+
+"""
+
+AnnotationDetailV2Input = Dict[str, Any]
+"""
+- **AnnotationDetailV2Create**   - 新規にアノテーションを作成する場合にこの型を利用します。 - **AnnotationDetailV2Import**   - 過去にAnnofab内外で作成したアノテーションをそのままインポートする場合にこの型を利用します。 - **AnnotationDetailV2Update**   - 既に存在するアノテーションを更新する場合にこの型を利用します 
+
+Kyes of Dict
+
+* type: str
+    
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
+* label_id: str
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* body: AnnotationDetailContentInput
+    
+* additional_data_list: List[AdditionalDataV2]
+    
+* editor_props: AnnotationPropsForEditor
+    
+* account_id: str
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* created_datetime: str
+    作成日時
+* updated_datetime: str
+    更新日時
+
+"""
+
+AnnotationDetailV2Output = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+
+"""
+
+AnnotationDetailV2Update = Dict[str, Any]
+"""
+既に存在するアノテーションを更新する場合にこの型を利用します
+
+Kyes of Dict
+
+* type: str
+    
+* annotation_id: str
+    アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
+* label_id: str
+    ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* body: AnnotationDetailContentInput
+    
+* additional_data_list: List[AdditionalDataV2]
+    
+* editor_props: AnnotationPropsForEditor
+    
 
 """
 
@@ -680,6 +933,27 @@ Kyes of Dict
 
 """
 
+AnnotationInput = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* details: List[AnnotationDetailV2Input]
+    矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
+* updated_datetime: str
+    対象タスク・対象入力データへの最初の保存時は未指定にしてください。 更新の場合はアノテーション取得時のupdated_datetimeをそのまま指定してください。 
+* format_version: str
+    
+
+"""
+
 AnnotationList = Dict[str, Any]
 """
 
@@ -701,6 +975,48 @@ Kyes of Dict
 
 """
 
+AnnotationOutput = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* details: List[AnnotationDetailV2Output]
+    矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
+* updated_datetime: str
+    対象タスク・対象入力データへ一度もアノテーションの保存が行われていない場合、未指定となります。 そうで無い場合、対象タスク・対象入力データのアノテーション最終更新時刻です。 
+* format_version: str
+    
+
+"""
+
+AnnotationPropsForEditor = Dict[str, Any]
+"""
+アノテーションエディタ用のアノテーション毎のプロパティです。<br /> ここに含まれているデータはアノテーション結果に反映されず、エディタが利用するために存在します。  エディタ用のデータであるため、たとえば`can_delete`や`can_edit_data`が`false`でも、APIによる編集は妨げません。<br /> ここで定義されているデータを利用して動作を変えるかどうかは、エディタによって異なります。 
+
+Kyes of Dict
+
+* can_delete: bool
+    アノテーションがエディタ上で削除できるかどうか。 trueの場合削除可能。
+* can_edit_data: bool
+    アノテーションの本体のデータを編集できるかどうか。 trueの場合編集可能。 2022/09現在、この値を利用しているエディタは存在しません。
+* can_edit_additional: bool
+    アノテーションの付加情報を編集できるかどうか。  trueの場合編集可能。 2022/09現在、この値を利用しているエディタは存在しません。
+* description: str
+    アノテーションについての人間可読な説明。 2022/09現在、この値を利用しているエディタは存在しません。
+* tags: List[str]
+    アノテーションに付与されている機械可読・人間可読なタグの列。  2022/09現在、この値を利用しているエディタは存在しません
+* etc: __DictStrKeyAnyValue__
+    上記以外の任意のJson構造
+
+"""
+
 AnnotationQuery = Dict[str, Any]
 """
 アノテーションの絞り込み条件 
@@ -717,7 +1033,7 @@ Kyes of Dict
     入力データIDの検索方法を指定します。 `true`の場合は完全一致検索、`false`の場合は部分一致検索です。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* attributes: List[AdditionalData]
+* attributes: List[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * updated_from: str
     開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日（ISO 8601 拡張形式または基本形式）。  `updated_to` より後の日付が指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。 
@@ -750,6 +1066,8 @@ Kyes of Dict
     属性の制約
 * format_version: str
     アノテーション仕様のフォーマットのバージョン
+* annotation_type_version: str
+    アノテーション種別のバージョン。  拡張仕様プラグインで定義した値が転写されます。プロジェクトに拡張仕様プラグインが設定されていない場合は未指定です。 
 
 """
 
@@ -968,6 +1286,8 @@ Kyes of Dict
     属性の制約
 * inspection_phrases: List[InspectionPhrase]
     定型指摘
+* annotation_type_version: str
+    アノテーション種別のバージョン。  拡張仕様プラグインで定義した値が転写されます。プロジェクトに拡張仕様プラグインが設定されていない場合は未指定です。 
 * format_version: str
     アノテーション仕様のフォーマットのバージョン
 * updated_datetime: str
@@ -1004,6 +1324,8 @@ AnnotationTypeFieldValue = Dict[str, Any]
 
 Kyes of Dict
 
+* type: str
+    
 * min_warn_rule: AnnotationTypeFieldMinWarnRule
     
 * min_width: int
@@ -1034,6 +1356,8 @@ Kyes of Dict
     
 * fill_near: bool
     
+* value: bool
+    
 
 """
 
@@ -1043,6 +1367,8 @@ AnnotationTypeFieldValueAnnotationEditorFeature = Dict[str, Any]
 
 Kyes of Dict
 
+* type: str
+    
 * append: bool
     
 * erase: bool
@@ -1064,7 +1390,20 @@ AnnotationTypeFieldValueDisplayLineDirection = Dict[str, Any]
 
 Kyes of Dict
 
+* type: str
+    
 * has_direction: bool
+    
+
+"""
+
+AnnotationTypeFieldValueEmptyFieldValue = Dict[str, Any]
+"""
+値を持たないフィールド。　アノテーション仕様上に定義が存在すること自体に意味がある場合のフィールド値に利用します。
+
+Kyes of Dict
+
+* type: str
     
 
 """
@@ -1075,6 +1414,8 @@ AnnotationTypeFieldValueMarginOfErrorTolerance = Dict[str, Any]
 
 Kyes of Dict
 
+* type: str
+    
 * max_pixel: int
     
 
@@ -1086,6 +1427,8 @@ AnnotationTypeFieldValueMinimumArea2d = Dict[str, Any]
 
 Kyes of Dict
 
+* type: str
+    
 * min_area: int
     
 
@@ -1097,6 +1440,8 @@ AnnotationTypeFieldValueMinimumSize = Dict[str, Any]
 
 Kyes of Dict
 
+* type: str
+    
 * min_warn_rule: AnnotationTypeFieldMinWarnRule
     
 * min_width: int
@@ -1112,6 +1457,8 @@ AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition = Dict[str, Any]
 
 Kyes of Dict
 
+* type: str
+    
 * min_warn_rule: AnnotationTypeFieldMinWarnRule
     
 * min_width: int
@@ -1123,15 +1470,117 @@ Kyes of Dict
 
 """
 
+AnnotationTypeFieldValueOneBooleanFieldValue = Dict[str, Any]
+"""
+真偽値をひとつだけ持つフィールド
+
+Kyes of Dict
+
+* type: str
+    
+* value: bool
+    
+
+"""
+
+AnnotationTypeFieldValueOneIntegerFieldValue = Dict[str, Any]
+"""
+数値をひとつだけ持つフィールド
+
+Kyes of Dict
+
+* type: str
+    
+* value: int
+    
+
+"""
+
+AnnotationTypeFieldValueOneStringFieldValue = Dict[str, Any]
+"""
+文字列を一つだけ持つフィールド
+
+Kyes of Dict
+
+* type: str
+    
+* value: str
+    
+
+"""
+
 AnnotationTypeFieldValueVertexCountMinMax = Dict[str, Any]
 """
 頂点数の最大・最小 
 
 Kyes of Dict
 
+* type: str
+    
 * min: int
     
 * max: int
+    
+
+"""
+
+AnnotationV1 = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* details: List[AnnotationDetailV1]
+    矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
+* updated_datetime: str
+    更新日時
+
+"""
+
+AnnotationV2Input = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* details: List[AnnotationDetailV2Input]
+    矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
+* updated_datetime: str
+    対象タスク・対象入力データへの最初の保存時は未指定にしてください。 更新の場合はアノテーション取得時のupdated_datetimeをそのまま指定してください。 
+* format_version: str
+    
+
+"""
+
+AnnotationV2Output = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* details: List[AnnotationDetailV2Output]
+    矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
+* updated_datetime: str
+    対象タスク・対象入力データへ一度もアノテーションの保存が行われていない場合、未指定となります。 そうで無い場合、対象タスク・対象入力データのアノテーション最終更新時刻です。 
+* format_version: str
     
 
 """
@@ -1162,7 +1611,7 @@ Kyes of Dict
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* additional_data_list: List[AdditionalData]
+* additional_data_list: List[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * updated_datetime: str
     更新日時
@@ -1706,7 +2155,7 @@ Kyes of Dict
     
 * annotation_id: str
     
-* additional_data: AdditionalData
+* additional_data: AdditionalDataV1
     
 * type: str
     Duplicated
@@ -1725,6 +2174,19 @@ Kyes of Dict
     
 * type: str
     DuplicatedSegmentationV2
+
+"""
+
+EditorUsageTimespan = Dict[str, Any]
+"""
+エディタごとの利用時間
+
+Kyes of Dict
+
+* editor_name: str
+    エディタ名です。  | editor_nameの値 | エディタ名   | |-----------------|--------------| | image_editor    | 画像エディタ | | video_editor    | 動画エディタ | | 3d_editor       | 3Dエディタ   | 
+* value: float
+    エディタ利用時間。単位は時
 
 """
 
@@ -1797,8 +2259,112 @@ Kyes of Dict
     
 * type: AdditionalDataDefinitionType
     
-* value: AdditionalDataValue
+* value: FullAnnotationAdditionalDataValue
     
+
+"""
+
+FullAnnotationAdditionalDataChoiceValue = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* id: str
+    選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* name: InternationalizationMessage
+    
+
+"""
+
+FullAnnotationAdditionalDataValue = Dict[str, Any]
+"""
+属性値 
+
+Kyes of Dict
+
+* type: str
+    Link
+* value: str
+    リンク先アノテーションID
+
+"""
+
+FullAnnotationAdditionalDataValueChoice = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    `Choice` 
+* value: AdditionalDataChoiceValue
+    
+
+"""
+
+FullAnnotationAdditionalDataValueComment = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    `Comment` 
+* value: str
+    自由記述
+
+"""
+
+FullAnnotationAdditionalDataValueFlag = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    `Flag` 
+* value: bool
+    フラグのON(true)またはOFF(false)
+
+"""
+
+FullAnnotationAdditionalDataValueInteger = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    `Integer` 
+* value: int
+    整数値
+
+"""
+
+FullAnnotationAdditionalDataValueLink = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Link
+* value: str
+    リンク先アノテーションID
+
+"""
+
+FullAnnotationAdditionalDataValueTracking = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* type: str
+    Tracking
+* value: str
+    トラッキングID
 
 """
 
@@ -2685,8 +3251,8 @@ Kyes of Dict
     ショートカットキー
 * annotation_type: AnnotationType
     
-* field_values: List[AnnotationTypeFieldValue]
-    
+* field_values: dict(str, AnnotationTypeFieldValue)
+    KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#section/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 
 * additional_data_definitions: List[str]
     ラベルに所属する属性のID
 * color: Color
@@ -3964,7 +4530,7 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetail]
+* details: List[AnnotationDetailV1]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
@@ -4351,7 +4917,7 @@ Kyes of Dict
     data_holding_typeがouterの場合のみ存在し、データのETagが格納される
 * url: str
     data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
-* additional_data_list: List[AdditionalData]
+* additional_data_list: List[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * created_datetime: str
     作成日時
@@ -5035,6 +5601,48 @@ Kyes of Dict
 
 """
 
+UsageStatus = Dict[str, Any]
+"""
+利用状況
+
+Kyes of Dict
+
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* year_month: str
+    対象月。年月のフォーマットは YYYY-MM です。
+* aggregation_period_from: str
+    集計期間の開始日時。日時のフォーマットはISO 8601 拡張形式です。
+* aggregation_period_to: str
+    集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。
+* editor_usage: List[EditorUsageTimespan]
+    エディタ利用時間のリスト
+* storage_usage: float
+    ストレージ利用量。単位はGB時
+
+"""
+
+UsageStatusByDay = Dict[str, Any]
+"""
+日ごとの利用状況
+
+Kyes of Dict
+
+* organization_id: str
+    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* date: str
+    対象日。日付のフォーマットはISO 8601 拡張形式です。
+* aggregation_period_from: str
+    集計期間の開始日時。日時のフォーマットはISO 8601 拡張形式です。
+* aggregation_period_to: str
+    集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。
+* editor_usage: List[EditorUsageTimespan]
+    エディタ利用時間のリスト
+* storage_usage: float
+    ストレージ利用量。単位はGB時
+
+"""
+
 UserCacheRecord = Dict[str, Any]
 """
 
@@ -5122,7 +5730,7 @@ Kyes of Dict
     
 * additional_data_definition_id: str
     
-* additional_data: AdditionalData
+* additional_data: AdditionalDataV1
     
 
 """

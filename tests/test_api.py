@@ -20,7 +20,7 @@ from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.dataclass.annotation import Annotation, SimpleAnnotation, SingleAnnotation
+from annofabapi.dataclass.annotation import SimpleAnnotation, SingleAnnotation, AnnotationV1
 from annofabapi.dataclass.annotation_specs import AnnotationSpecsV2
 from annofabapi.dataclass.comment import Comment
 from annofabapi.dataclass.input import InputData
@@ -81,7 +81,7 @@ class TestAnnotation:
         editor_annotation, _ = api.get_editor_annotation(project_id, task_id, self.input_data_id)
         assert type(editor_annotation) == dict
         # dataclassに変換できることの確認
-        Annotation.from_dict(editor_annotation)
+        AnnotationV1.from_dict(editor_annotation)
 
     def test_get_annotation_archive(self):
         content, response = api.get_annotation_archive(project_id)

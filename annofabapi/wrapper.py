@@ -24,11 +24,11 @@ from annofabapi import AnnofabApi
 from annofabapi.api import _log_error_response, _raise_for_status
 from annofabapi.exceptions import AnnofabApiException, CheckSumError
 from annofabapi.models import (
-    AdditionalData,
     AdditionalDataDefinitionType,
     AdditionalDataDefinitionV1,
+    AdditionalDataV1,
     AnnotationDataHoldingType,
-    AnnotationDetail,
+    AnnotationDetailV1,
     FullAnnotationData,
     InputData,
     Inspection,
@@ -548,8 +548,8 @@ class Wrapper:
         else:
             return str(uuid.uuid4())
 
-    def __to_additional_data_list(self, attributes: Dict[str, Any], label_info: LabelV1) -> List[AdditionalData]:
-        additional_data_list: List[AdditionalData] = []
+    def __to_additional_data_list(self, attributes: Dict[str, Any], label_info: LabelV1) -> List[AdditionalDataV1]:
+        additional_data_list: List[AdditionalDataV1] = []
         for key, value in attributes.items():
             specs_additional_data = self.__get_additional_data_from_attribute_name(key, label_info)
             if specs_additional_data is None:
@@ -600,7 +600,7 @@ class Wrapper:
         parser: SimpleAnnotationParser,
         detail: SimpleAnnotationDetail,
         annotation_specs_labels: List[LabelV1],
-    ) -> Optional[AnnotationDetail]:
+    ) -> Optional[AnnotationDetailV1]:
         """
         Request Bodyに渡すDataClassに変換する。塗りつぶし画像があれば、それをS3にアップロードする。
 
@@ -620,7 +620,7 @@ class Wrapper:
             logger.warning("アノテーション仕様に '%s' のラベルが存在しません。 :: project_id='%s'", {detail["label"]}, project_id)
             return None
 
-        additional_data_list: List[AdditionalData] = self.__to_additional_data_list(detail["attributes"], label_info)
+        additional_data_list: List[AdditionalDataV1] = self.__to_additional_data_list(detail["attributes"], label_info)
         data_holding_type = self.__get_data_holding_type_from_data(detail["data"])
 
         dest_obj = dict(

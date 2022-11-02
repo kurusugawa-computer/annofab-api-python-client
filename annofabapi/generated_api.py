@@ -203,9 +203,10 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
             query_params (Dict[str, Any]): Query Parameters
                 task_history_id (str):  過去のフェーズのアノテーションを取得する場合、タスク履歴IDを指定します。未指定時は最新のアノテーションを取得します。  過去のアノテーションデータは最後に保存してから30日前のデータまで取得できます。 30日より前のデータを取得しようとした場合はアノテーションデータは空リストとなります。
+                v (str):  レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。 未指定の場合や\"2\"以外が指定された場合は\"1\"が指定されたものとして扱います。
 
         Returns:
-            Tuple[Annotation, requests.Response]
+            Tuple[AnnotationOutput, requests.Response]
 
 
         """
@@ -242,7 +243,13 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_annotation(
-        self, project_id: str, task_id: str, input_data_id: str, request_body: Optional[Any] = None, **kwargs
+        self,
+        project_id: str,
+        task_id: str,
+        input_data_id: str,
+        query_params: Optional[Dict[str, Any]] = None,
+        request_body: Optional[Any] = None,
+        **kwargs,
     ) -> Tuple[Any, requests.Response]:
         """アノテーション更新
         https://annofab.com/docs/api/#operation/putAnnotation
@@ -257,17 +264,20 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
+            query_params (Dict[str, Any]): Query Parameters
+                v (str):  レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。 未指定の場合や\"2\"以外が指定された場合は\"1\"が指定されたものとして扱います。
             request_body (Any): Request Body
-                put_annotation_request (PutAnnotationRequest):  (required)
+                annotation_input (AnnotationInput):  (required)
 
         Returns:
-            Tuple[Annotation, requests.Response]
+            Tuple[AnnotationOutput, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation"
         http_method = "PUT"
         keyword_params: Dict[str, Any] = {
+            "query_params": query_params,
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -352,12 +362,12 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                v (str):  レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。`v=1`は将来廃止する予定なので、非推奨です。
+                v (str):  レスポンスに含まれるアノテーション仕様のフォーマットバージョンを指定します。`v=1`は将来廃止する予定なので、非推奨です。
             request_body (Any): Request Body
                 annotation_specs_request (AnnotationSpecsRequest):  (required)
 
         Returns:
-            Tuple[AnnotationSpecsV2, requests.Response]
+            Tuple[AnnotationSpecs, requests.Response]
 
 
         """
@@ -604,7 +614,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        入力データを作成または更新します。  Annofabにファイルをアップロードして入力データを作成する場合は、事前に[createTempPath](#operation/createTempPath) APIを実行してください。  ### 画像のリサイズ Annofabにアップロードした画像は、自動的に「長辺4096px以内」になるよう縮小されます。 アノテーションの座標値は、縮小前の画像サイズに対応する値に復元されます。  ### ZIPファイルで入力データをまとめて作成する 複数のファイルをZIPで圧縮してAnnofabにアップロードすると、入力データをまとめて作成できます。 ただし、カスタムプロジェクトではZIPファイルも1個の入力データして扱うため、ZIPファイルを利用して入力データをまとめて作成することはできません。  パスパラメータの`input_data_id`は無視されるため、任意の値を指定してください。 リクエストボディの`input_data_name`には、入力データ名のプレフィックスを指定してください。 たとえば以下のZIPファイルをアップロードして、リクエストボディの`input_data_name`に`bar.zip`を指定すると、入力データ名が`bar.zip/image1.jpg`,`bar.zip/image2.jpg`の2つの入力データが生成されます。  ```   foo.zip/   ├── image1.jpg   ├── image2.jpg ```  ZIPファイルを入力データとして登録すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ZIPファイルの制限事項は、以下の通りです。 * アップロードできるZIPファイルのサイズは、最大5GBです。 * ファイル名の文字コードはUTF-8エンコーディングのみ対応しています。 * ZIPファイル内の次のファイルは、入力データとして登録されません。     * プロジェクトがサポートしていないファイル         * 画像プロジェクトの場合：jpeg, png, gif以外のファイル         * 動画プロジェクトの場合：m3u8, ts, mp4, webm, ogg以外のファイル     * ファイル名が`.`（ドット）から始まるファイル     * フォルダ名が`.`（ドット）から始まるフォルダ以下のファイル  ### ストリーミング形式の動画を入力データとして登録する ストリーミング形式の動画をAnnofabにアップロードして、入力データとして登録できます。  ただし、ZIPで圧縮する必要があります。ZIPファイルには、m3u8ファイルとtsファイルの両方を含めてください。 m3u8ファイルに記述された相対パスでtsファイルは、参照可能である必要があります。  以下に、フォルダ構成のサンプルを記載します。  ```   hoge.zip/   ├── hoge.ts   ├── fuga/   │   ├── foo.m3u8    (hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)   │   ├── foo1.ts   │   ├── foo2.ts   │   └── lib   ├── piyo1/   │   ├── piyo2   │   │   ├── bar.ts   │   ├── bar.m3u8    (hoge.ts, piyo1/piyo2/bar.tsを参照) ```  ### 注意事項 * `input_data_path`のスキーマが`https`の場合、`input_data_name`もしくは`input_data_path`の末尾にファイルの拡張子を含むようにしてください。 Annofabは拡張子からファイル形式を識別します。`input_data_name`と`input_data_path`の両方に拡張子が含まれている場合は、`input_data_name`の拡張子がファイル形式の識別に使われます。
+        入力データを作成または更新します。  Annofabにファイルをアップロードして入力データを作成する場合は、事前に[createTempPath](#operation/createTempPath) APIを実行してください。  ### 画像のリサイズ Annofabにアップロードした画像は、自動的に「長辺4096px以内」になるよう縮小されます。 アノテーションの座標値は、縮小前の画像サイズに対応する値に復元されます。  ### ZIPファイルで入力データをまとめて作成する 複数のファイルをZIPで圧縮してAnnofabにアップロードすると、入力データをまとめて作成できます。  パスパラメータの`input_data_id`は無視されるため、任意の値を指定してください。 リクエストボディの`input_data_name`には、入力データ名のプレフィックスを指定してください。  ZIPファイルを入力データとして登録すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-inputs`）。  ZIPファイルでの入力データ登録には以下の制限があります。 * アップロードできるZIPファイルのサイズは、最大5GBです。 * ファイル名の文字コードはUTF-8エンコーディングのみ対応しています。  #### 画像ファイル・動画ファイルから入力データを作成する 画像ファイル・動画ファイルを圧縮したZIPファイルをアップロードすることで、入力データとして登録できます。  なお、ZIPファイルに次のようなファイルが含まれていた場合、該当ファイルは入力データとして登録されません。 * プロジェクトがサポートしていないファイル     * 画像プロジェクトの場合：jpeg, png, gif以外のファイル     * 動画プロジェクトの場合：m3u8, ts, mp4, webm, ogg以外のファイル * ファイル名が`.`（ドット）から始まるファイル * フォルダ名が`.`（ドット）から始まるフォルダ以下のファイル  以下に、画像ファイルを登録する際のサンプルを記載します。  ```   foo.zip/   ├── image1.jpg   ├── image2.jpg ``` このフォルダ構成のZIPファイルをアップロードして、リクエストボディの`input_data_name`に`bar.zip`を指定した場合、入力データ名が`bar.zip/image1.jpg`,`bar.zip/image2.jpg`の2つの入力データが生成されます。  #### ストリーミング形式の動画を入力データとして登録する ストリーミング形式の動画をAnnofabにアップロードして、入力データとして登録できます。  ただし、ZIPで圧縮する必要があります。ZIPファイルには、m3u8ファイルとtsファイルの両方を含めてください。 m3u8ファイルに記述された相対パスでtsファイルは、参照可能である必要があります。  以下に、フォルダ構成のサンプルを記載します。  ```   hoge.zip/   ├── hoge.ts   ├── fuga/   │   ├── foo.m3u8    (hoge.ts, fuga/foo1.ts, fuga/foo2.tsを参照)   │   ├── foo1.ts   │   ├── foo2.ts   │   └── lib   ├── piyo1/   │   ├── piyo2   │   │   ├── bar.ts   │   ├── bar.m3u8    (hoge.ts, piyo1/piyo2/bar.tsを参照) ```  #### 3次元点群の入力データを作成する KITTI形式、およびAnnofab 点群形式（KITTIベース）でのデータ登録に対応しています。 ZIPファイルの形式など、詳細は[Annofabのユーザーマニュアル](https://annofab.readme.io/docs)に記載予定です。  ### 注意事項 * `input_data_path`のスキーマが`https`の場合、`input_data_name`もしくは`input_data_path`の末尾にファイルの拡張子を含むようにしてください。 Annofabは拡張子からファイル形式を識別します。`input_data_name`と`input_data_path`の両方に拡張子が含まれている場合は、`input_data_name`の拡張子がファイル形式の識別に使われます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2826,7 +2836,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        タスク作成ルールに基づいて、タスクを一括で作成します。  タスク作成ルールは、以下の3つです。  * `ByCount`：1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。この作成ルールは、画像を同じ枚数均等にタスクに割り振りたい場合に便利です。 * `ByDirectory`：入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。この作成ルールは、動画などから切り出した画像をディレクトリ別に格納し、その動画（ディレクトリ）の単位でタスクを作りたい場合に便利です。 * `ByInputDataCsv`：入力データを各タスクに割り振ったCSVへのS3パスを指定してタスクを生成できます。この作成ルールは、特定のデータの組み合わせを持ったタスクを作成したい場合に便利です。  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks`）。  **注意:** タスクに割り当てることができる入力データの個数は最大200です。  #### ByDirectory: ディレクトリ単位でのタスク一括生成の使い方 例えば、次のような `input_data_name` の入力データが登録されているとします。  * a.zip/dir1/image1.png * a.zip/dir1/image2.png * a.zip/dir1/subdir/image3.png * a.zip/dir1/subdir/image4.png * a.zip/dir1/subdir/image5.png * b.zip/dir2/subdir1/image6.png * b.zip/dir2/subdir1/image7.png * b.zip/dir2/subdir1/image8.png * b.zip/dir2/subdir2/image9.png * b.zip/dir2/subdir2/image10.png  ここで、`input_data_name_prefix`フィールド に `a.zip` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png  次に、`input_data_name_prefix` に `b.zip/dir2` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 2. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  `input_data_name_prefix` が未指定の時は、全ディレクトリごとにタスクが作成されます。つまり次のように4つのタスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png 3. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 4. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  タスクに割り当てられる「ディレクトリ内の入力データ」の順序は、名前の昇順となります。  **注意:** `ByDirectory`では、入力データ名がファイルパス形式になっていない入力データはタスクの作成対象になりません。 例えば、`foo/bar.png` はタスクの作成対象になりますが、ディレクトリを含まない`bar.png` や、最後がディレクトリになっている`foo/bar.png/` は対象になりません。  **注意:** `ByDirectory`では、一つのディレクトリに200ファイルより多くの入力データがある場合、複数のタスクに分かれます。 例えば、`foo/` の中に201ファイルがある場合、fooから２つのタスクが作成されます。１つ目は最初の200ファイルを割り当て、２つ目は最後の１ファイルのタスクに分かれます。 分かれたタスクは、 `{上述のタスクIDの付与則}_連番` の形式でタスクIDが付与されます。連番は、対象の入力データ数の桁数まで0埋めされます。  **注意:** 動画プロジェクトの場合、ディレクトリに含まれる動画の入力データは1つに制限してください。 これが守られない場合、作成されたタスクで動画を再生できない場合があります。  #### ByInputDataCsv: CSVによるタスク一括生成の使い方 以下のように「タスクID,入力データ名,入力データID」を1行毎に指定したCSVを作成します。  ``` task_1,a001.jpg,ca0cb2f9-fec5-49b4-98df-dc34490f9785 task_1,a002.jpg,5ac1987e-ca7c-42a0-9c19-b5b23a41836b task_1,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_2,b001.jpg,4f2ae4d0-7a38-4f9a-be6f-170ba76aba73 task_2,b002.jpg,45ac5852-f20c-4938-9ee9-cc0274401df7 task_2,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_3,c001.jpg,3260c7a0-4820-424d-a26e-db7e91dbc139 task_3,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee ``` CSVのエンコーディングは UTF-8(BOM付き)、UTF-8(BOMなし)、UTF-16(BOM付きLE) のいずれかのみ対応しています。  リクエストボディの`csv_data_path`には、[createTempPath](#operation/createTempPath) APIで取得したS3パスを指定してください。[createTempPath](#operation/createTempPath) APIで取得したURLに、事前にCSVファイルをアップロードする必要があります。
+        タスク作成ルールに基づいて、タスクを一括で作成します。  タスク作成ルールは、以下の3つです。  * `ByCount`：1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。この作成ルールは、画像を同じ枚数均等にタスクに割り振りたい場合に便利です。 * `ByDirectory`：入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。この作成ルールは、動画などから切り出した画像をディレクトリ別に格納し、その動画（ディレクトリ）の単位でタスクを作りたい場合に便利です。 * `ByInputDataCsv`：入力データを各タスクに割り振ったCSVへのS3パスを指定してタスクを生成できます。この作成ルールは、特定のデータの組み合わせを持ったタスクを作成したい場合に便利です。  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks`）。  **注意:** タスクに割り当てることができる入力データの個数は最大200です。  #### ByDirectory: ディレクトリ単位でのタスク一括生成の使い方 例えば、次のような `input_data_name` の入力データが登録されているとします。  * a.zip/dir1/image1.png * a.zip/dir1/image2.png * a.zip/dir1/subdir/image3.png * a.zip/dir1/subdir/image4.png * a.zip/dir1/subdir/image5.png * b.zip/dir2/subdir1/image6.png * b.zip/dir2/subdir1/image7.png * b.zip/dir2/subdir1/image8.png * b.zip/dir2/subdir2/image9.png * b.zip/dir2/subdir2/image10.png  ここで、`input_data_name_prefix`フィールド に `a.zip` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png  次に、`input_data_name_prefix` に `b.zip/dir2` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 2. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  `input_data_name_prefix` が未指定の時は、全ディレクトリごとにタスクが作成されます。つまり次のように4つのタスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png 3. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 4. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  タスクに割り当てられる「ディレクトリ内の入力データ」の順序は、名前の昇順となります。  **注意:** `ByDirectory`では、入力データ名がファイルパス形式になっていない入力データはタスクの作成対象になりません。 例えば、`foo/bar.png` はタスクの作成対象になりますが、ディレクトリを含まない`bar.png` や、最後がディレクトリになっている`foo/bar.png/` は対象になりません。  **注意:** `ByDirectory`では、入力データ名のディレクトリ部分がタスクIDの一部として利用されます。そのため、入力データ名のディレクトリ部分は、タスクIDとして利用できる文字で構成されている必要があります。[値の制約についてはこちら。](#section/API-Convention/APIID) 入力データ名のディレクトリ部分にタスクIDとして利用できない文字が含まれている場合、タスクの生成は失敗します。  **注意:** `ByDirectory`では、一つのディレクトリに200ファイルより多くの入力データがある場合、複数のタスクに分かれます。 例えば、`foo/` の中に201ファイルがある場合、fooから２つのタスクが作成されます。１つ目は最初の200ファイルを割り当て、２つ目は最後の１ファイルのタスクに分かれます。 分かれたタスクは、 `{上述のタスクIDの付与則}_連番` の形式でタスクIDが付与されます。連番は、対象の入力データ数の桁数まで0埋めされます。  **注意:** 動画プロジェクトの場合、ディレクトリに含まれる動画の入力データは1つに制限してください。 これが守られない場合、作成されたタスクで動画を再生できない場合があります。  #### ByInputDataCsv: CSVによるタスク一括生成の使い方 以下のように「タスクID,入力データ名,入力データID」を1行毎に指定したCSVを作成します。  ``` task_1,a001.jpg,ca0cb2f9-fec5-49b4-98df-dc34490f9785 task_1,a002.jpg,5ac1987e-ca7c-42a0-9c19-b5b23a41836b task_1,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_2,b001.jpg,4f2ae4d0-7a38-4f9a-be6f-170ba76aba73 task_2,b002.jpg,45ac5852-f20c-4938-9ee9-cc0274401df7 task_2,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_3,c001.jpg,3260c7a0-4820-424d-a26e-db7e91dbc139 task_3,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee ``` CSVのエンコーディングは UTF-8(BOM付き)、UTF-8(BOMなし)、UTF-16(BOM付きLE) のいずれかのみ対応しています。  リクエストボディの`csv_data_path`には、[createTempPath](#operation/createTempPath) APIで取得したS3パスを指定してください。[createTempPath](#operation/createTempPath) APIで取得したURLに、事前にCSVファイルをアップロードする必要があります。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2934,6 +2944,96 @@ class AbstractAnnofabApi(abc.ABC):
         http_method = "PUT"
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
+        }
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    #########################################
+    # Public Method : AfUsageStatusApi
+    # NOTE: This method is auto generated by OpenAPI Generator
+    #########################################
+
+    def get_organization_usage_status(
+        self, organization_name: str, year_month: str, **kwargs
+    ) -> Tuple[Any, requests.Response]:
+        """利用状況を取得
+        https://annofab.com/docs/api/#operation/getOrganizationUsageStatus
+
+
+        authorizations: OrganizationAdministrator
+
+
+        指定した月の利用状況を取得します。
+
+        Args:
+            organization_name (str):  組織名 (required)
+            year_month (str):  (required)
+
+        Returns:
+            Tuple[List[UsageStatusByDay], requests.Response]
+
+
+        """
+        url_path = f"/organizations/{organization_name}/usage-status/{year_month}"
+        http_method = "GET"
+        keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def get_organization_usage_status_detail(
+        self, organization_name: str, year_month: str, **kwargs
+    ) -> Tuple[Any, requests.Response]:
+        """利用状況の詳細情報を取得
+        https://annofab.com/docs/api/#operation/getOrganizationUsageStatusDetail
+
+
+        authorizations: OrganizationAdministrator
+
+
+        指定した月の利用状況の詳細情報を取得します。
+
+        Args:
+            organization_name (str):  組織名 (required)
+            year_month (str):  (required)
+
+        Returns:
+            Tuple[, requests.Response]
+
+
+        """
+        url_path = f"/organizations/{organization_name}/usage-status-detail/{year_month}"
+        http_method = "GET"
+        keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def get_organization_usage_status_list(
+        self, organization_name: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
+    ) -> Tuple[Any, requests.Response]:
+        """利用状況の一覧を取得
+        https://annofab.com/docs/api/#operation/getOrganizationUsageStatusList
+
+
+        authorizations: OrganizationAdministrator
+
+
+        利用状況の一覧を取得します。
+
+        Args:
+            organization_name (str):  組織名 (required)
+            query_params (Dict[str, Any]): Query Parameters
+                from (str):  指定した年月以降の利用状況を取得します。省略した場合はtoで指定した年月の1年前です。年月のフォーマットは YYYY-MM です。
+                to (str):  指定した年月以前の利用状況を取得します。省略した場合はJSTでの現在の年月です。年月のフォーマットは YYYY-MM です。
+
+        Returns:
+            Tuple[List[UsageStatus], requests.Response]
+
+
+        """
+        url_path = f"/organizations/{organization_name}/usage-status"
+        http_method = "GET"
+        keyword_params: Dict[str, Any] = {
+            "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
