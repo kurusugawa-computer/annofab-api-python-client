@@ -120,7 +120,7 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/full_annotation_data_points.py \
  ${MODELS_DIR}/full_annotation_data_single_point.py \
  ${MODELS_DIR}/full_annotation_data_range.py \
- ${MODELS_DIR}/additional_data.py \
+ ${MODELS_DIR}/additional_data_v1.py \
  ${MODELS_DIR}/full_annotation_additional_data.py \
  ${MODELS_DIR}/full_annotation_detail.py \
  ${MODELS_DIR}/full_annotation.py \
@@ -128,8 +128,8 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/simple_annotation.py \
  ${MODELS_DIR}/single_annotation_detail.py \
  ${MODELS_DIR}/single_annotation.py \
- ${MODELS_DIR}/annotation_detail.py \
- ${MODELS_DIR}/annotation.py \
+ ${MODELS_DIR}/annotation_detail_v1.py \
+ ${MODELS_DIR}/annotation_v1.py \
 )
 cat partial-header/dataclass/common.py partial-header/dataclass/annotation.py  \
  ${model_files[@]} > ../annofabapi/dataclass/annotation.py
