@@ -57,30 +57,30 @@ OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --output /local/out \
     --type-mappings array=List,DateTime=str,date=str,object=__DictStrKeyAnyValue__"
 
-# # v1 apiを生成
-# docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
-#     --input-spec swagger/swagger.yaml \
-#     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
-#     --template-dir /local/template \
-#     --global-property apis,apiTests=false,apiDocs=false \
-#     --ignore-file-override=/local/.openapi-generator-ignore_v1
+# v1 apiを生成
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
+    --input-spec swagger/swagger.yaml \
+    ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
+    --template-dir /local/template \
+    --global-property apis,apiTests=false,apiDocs=false \
+    --ignore-file-override=/local/.openapi-generator-ignore_v1
 
-# cat partial-header/generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
-# # delete_project_job メソッドのjob_type引数の型がJobTypeだと、他のメソッドと統一感がなくなるので、型をstrに変換する
-# sed  -e "s/job_type: ProjectJobType/job_type: str/g"  ../annofabapi/generated_api.py  --in-place
+cat partial-header/generated_api_partial_header_v1.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api.py
+# delete_project_job メソッドのjob_type引数の型がJobTypeだと、他のメソッドと統一感がなくなるので、型をstrに変換する
+sed  -e "s/job_type: ProjectJobType/job_type: str/g"  ../annofabapi/generated_api.py  --in-place
 
-# rm -Rf out/openapi_client
+rm -Rf out/openapi_client
 
-# # v2 apiを生成
-# docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
-#     --input-spec swagger/swagger.v2.yaml \
-#     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
-#     --template-dir /local/template \
-#     --global-property apis,apiTests=false,apiDocs=false \
-#     --ignore-file-override=/local/.openapi-generator-ignore_v2
+# v2 apiを生成
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
+    --input-spec swagger/swagger.v2.yaml \
+    ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
+    --template-dir /local/template \
+    --global-property apis,apiTests=false,apiDocs=false \
+    --ignore-file-override=/local/.openapi-generator-ignore_v2
 
-# cat partial-header/generated_api_partial_header_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
-# rm -Rf out/openapi_client
+cat partial-header/generated_api_partial_header_v2.py out/openapi_client/api/*_api.py > ../annofabapi/generated_api2.py
+rm -Rf out/openapi_client
 
 
 # modelsを生成
@@ -170,7 +170,6 @@ declare -a model_files=(${MODELS_DIR}/keybind.py \
  ${MODELS_DIR}/additional_data_definition_v1.py \
  ${MODELS_DIR}/additional_data_definition_v2.py \
  ${MODELS_DIR}/annotation_editor_feature.py \
-
  ${MODELS_DIR}/annotation_type_field_value_minimum_size.py \
  ${MODELS_DIR}/annotation_type_field_value_minimum_size2d_with_default_insert_position.py \
  ${MODELS_DIR}/annotation_type_field_value_margin_of_error_tolerance.py \
@@ -182,7 +181,6 @@ declare -a model_files=(${MODELS_DIR}/keybind.py \
  ${MODELS_DIR}/annotation_type_field_value_one_string_field_value.py \
  ${MODELS_DIR}/annotation_type_field_value_one_boolean_field_value.py \
  ${MODELS_DIR}/annotation_type_field_value_empty_field_value.py \
-
  ${MODELS_DIR}/label_v1.py \
  ${MODELS_DIR}/label_v2.py \
  ${MODELS_DIR}/additional_data_restriction.py \
@@ -277,10 +275,6 @@ sed -e  "s/Dict\[str, __DictStrKeyAnyValue__\]/Dict[str, Any]/g" ../annofabapi/d
 # `__DictStrKeyAnyValue__`を`Dict[str, Any]`に置換する
 sed  -e "s/__DictStrKeyAnyValue__/Dict[str,Any]/g"  ../annofabapi/dataclass/*.py  --in-place
 
-# AnnotationType型をstr型に置換する. 
-# 理由：生成されたAnnotationTypeはdict型になっているが、実際はAnnotation型はDefaultAnnotationTypeとUserDefinedAnnotationTypeのoneOfで定義されている。
-# 動的な値が入る可能性があるたため、enum型にはできない。したがってstr型に変換する
-sed  -e "s/: AnnotationType/: str/g"  ../annofabapi/dataclass/*.py  --in-place
 
 
 rm -Rf out/openapi_client
