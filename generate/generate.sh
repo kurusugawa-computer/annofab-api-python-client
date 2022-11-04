@@ -130,6 +130,25 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/single_annotation.py \
  ${MODELS_DIR}/annotation_detail_v1.py \
  ${MODELS_DIR}/annotation_v1.py \
+
+ ${MODELS_DIR}/additional_data_v2.py \
+ ${MODELS_DIR}/annotation_props_for_editor.py \
+ ${MODELS_DIR}/additional_data_value_flag.py \
+ ${MODELS_DIR}/additional_data_value_integer.py \
+ ${MODELS_DIR}/additional_data_value_comment.py \
+ ${MODELS_DIR}/additional_data_value_text.py \
+ ${MODELS_DIR}/additional_data_value_choice.py \
+ ${MODELS_DIR}/additional_data_value_select.py \
+ ${MODELS_DIR}/additional_data_value_tracking.py \
+ ${MODELS_DIR}/additional_data_value_link.py \
+
+ ${MODELS_DIR}/annotation_detail_content_input_inner.py \
+ ${MODELS_DIR}/annotation_detail_content_input_outer.py \
+
+ ${MODELS_DIR}/annotation_detail_v2_create.py \
+ ${MODELS_DIR}/annotation_detail_v2_import.py \
+ ${MODELS_DIR}/annotation_detail_v2_update.py \
+ ${MODELS_DIR}/annotation_v2_input.py \
 )
 cat partial-header/dataclass/common.py partial-header/dataclass/annotation.py  \
  ${model_files[@]} > ../annofabapi/dataclass/annotation.py
