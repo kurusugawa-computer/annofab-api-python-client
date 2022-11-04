@@ -130,6 +130,28 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/single_annotation.py \
  ${MODELS_DIR}/annotation_detail_v1.py \
  ${MODELS_DIR}/annotation_v1.py \
+ ${MODELS_DIR}/additional_data_v2.py \
+ ${MODELS_DIR}/annotation_props_for_editor.py \
+ ${MODELS_DIR}/additional_data_value_flag.py \
+ ${MODELS_DIR}/additional_data_value_integer.py \
+ ${MODELS_DIR}/additional_data_value_comment.py \
+ ${MODELS_DIR}/additional_data_value_text.py \
+ ${MODELS_DIR}/additional_data_value_choice.py \
+ ${MODELS_DIR}/additional_data_value_select.py \
+ ${MODELS_DIR}/additional_data_value_tracking.py \
+ ${MODELS_DIR}/additional_data_value_link.py \
+ ${MODELS_DIR}/annotation_detail_content_input_inner.py \
+ ${MODELS_DIR}/annotation_detail_content_input_outer.py \
+ ${MODELS_DIR}/annotation_detail_v2_create.py \
+ ${MODELS_DIR}/annotation_detail_v2_import.py \
+ ${MODELS_DIR}/annotation_detail_v2_update.py \
+ ${MODELS_DIR}/annotation_v2_input.py \
+ ${MODELS_DIR}/annotation_detail_content_output_inner.py \
+ ${MODELS_DIR}/annotation_detail_content_output_inner_unknown.py \
+ ${MODELS_DIR}/annotation_detail_content_output_outer.py \
+ ${MODELS_DIR}/annotation_detail_content_output_outer_unresolved.py \
+ ${MODELS_DIR}/annotation_detail_v2_get.py \
+ ${MODELS_DIR}/annotation_v2_output.py \
 )
 cat partial-header/dataclass/common.py partial-header/dataclass/annotation.py  \
  ${model_files[@]} > ../annofabapi/dataclass/annotation.py
@@ -148,11 +170,24 @@ declare -a model_files=(${MODELS_DIR}/keybind.py \
  ${MODELS_DIR}/additional_data_definition_v1.py \
  ${MODELS_DIR}/additional_data_definition_v2.py \
  ${MODELS_DIR}/annotation_editor_feature.py \
+ ${MODELS_DIR}/annotation_type_field_value_minimum_size.py \
+ ${MODELS_DIR}/annotation_type_field_value_minimum_size2d_with_default_insert_position.py \
+ ${MODELS_DIR}/annotation_type_field_value_margin_of_error_tolerance.py \
+ ${MODELS_DIR}/annotation_type_field_value_vertex_count_min_max.py \
+ ${MODELS_DIR}/annotation_type_field_value_minimum_area2d.py \
+ ${MODELS_DIR}/annotation_type_field_value_display_line_direction.py \
+ ${MODELS_DIR}/annotation_type_field_value_annotation_editor_feature.py \
+ ${MODELS_DIR}/annotation_type_field_value_one_integer_field_value.py \
+ ${MODELS_DIR}/annotation_type_field_value_one_string_field_value.py \
+ ${MODELS_DIR}/annotation_type_field_value_one_boolean_field_value.py \
+ ${MODELS_DIR}/annotation_type_field_value_empty_field_value.py \
  ${MODELS_DIR}/label_v1.py \
  ${MODELS_DIR}/label_v2.py \
  ${MODELS_DIR}/additional_data_restriction.py \
  ${MODELS_DIR}/annotation_specs_v1.py \
  ${MODELS_DIR}/annotation_specs_v2.py \
+ ${MODELS_DIR}/label_v3.py \
+ ${MODELS_DIR}/annotation_specs_v3.py \
 )
 cat partial-header/dataclass/common.py partial-header/dataclass/annotation_specs.py  \
  ${model_files[@]} > ../annofabapi/dataclass/annotation_specs.py
@@ -240,10 +275,6 @@ sed -e  "s/Dict\[str, __DictStrKeyAnyValue__\]/Dict[str, Any]/g" ../annofabapi/d
 # `__DictStrKeyAnyValue__`を`Dict[str, Any]`に置換する
 sed  -e "s/__DictStrKeyAnyValue__/Dict[str,Any]/g"  ../annofabapi/dataclass/*.py  --in-place
 
-# AnnotationType型をstr型に置換する. 
-# 理由：生成されたAnnotationTypeはdict型になっているが、実際はAnnotation型はDefaultAnnotationTypeとUserDefinedAnnotationTypeのoneOfで定義されている。
-# 動的な値が入る可能性があるたため、enum型にはできない。したがってstr型に変換する
-sed  -e "s/: AnnotationType/: str/g"  ../annofabapi/dataclass/*.py  --in-place
 
 
 rm -Rf out/openapi_client
