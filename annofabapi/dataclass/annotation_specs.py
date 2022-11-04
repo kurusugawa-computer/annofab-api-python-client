@@ -15,13 +15,15 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import DataClassJsonMixin
 
-from annofabapi.models import AdditionalDataDefinitionType
+from annofabapi.models import AdditionalDataDefinitionType, AnnotationTypeFieldMinWarnRule
 
 AdditionalDataDefaultType = Union[bool, int, str]
 
 AdditionalDataRestrictionCondition = Dict[str, Any]
 
 AnnotationSpecsOption = Dict[str, Any]
+AnnotationType = str
+AnnotationTypeFieldValue = Dict[str, Any]
 
 
 @dataclass
@@ -286,6 +288,177 @@ class AnnotationEditorFeature(DataClassJsonMixin):
 
 
 @dataclass
+class AnnotationTypeFieldValueMinimumSize(DataClassJsonMixin):
+    """
+    アノテーションの最小サイズに関する設定
+    """
+
+    type: str
+    """"""
+
+    min_warn_rule: AnnotationTypeFieldMinWarnRule
+    """"""
+
+    min_width: int
+    """"""
+
+    min_height: int
+    """"""
+
+
+@dataclass
+class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(DataClassJsonMixin):
+    """ """
+
+    type: str
+    """"""
+
+    min_warn_rule: AnnotationTypeFieldMinWarnRule
+    """"""
+
+    min_width: int
+    """"""
+
+    min_height: int
+    """"""
+
+    position_for_minimum_bounding_box_insertion: Optional[List[int]]
+    """最小矩形の挿入位置を、要素が2の配列で指定します。 """
+
+
+@dataclass
+class AnnotationTypeFieldValueMarginOfErrorTolerance(DataClassJsonMixin):
+    """
+    誤差許容範囲
+    """
+
+    type: str
+    """"""
+
+    max_pixel: int
+    """"""
+
+
+@dataclass
+class AnnotationTypeFieldValueVertexCountMinMax(DataClassJsonMixin):
+    """
+    頂点数の最大・最小
+    """
+
+    type: str
+    """"""
+
+    min: int
+    """"""
+
+    max: int
+    """"""
+
+
+@dataclass
+class AnnotationTypeFieldValueMinimumArea2d(DataClassJsonMixin):
+    """
+    最小の面積
+    """
+
+    type: str
+    """"""
+
+    min_area: int
+    """"""
+
+
+@dataclass
+class AnnotationTypeFieldValueDisplayLineDirection(DataClassJsonMixin):
+    """
+    線の向き表示/非表示の設定
+    """
+
+    type: str
+    """"""
+
+    has_direction: bool
+    """"""
+
+
+@dataclass
+class AnnotationTypeFieldValueAnnotationEditorFeature(DataClassJsonMixin):
+    """
+    作図ツール・作図モード
+    """
+
+    type: str
+    """"""
+
+    append: bool
+    """"""
+
+    erase: bool
+    """"""
+
+    freehand: bool
+    """"""
+
+    rectangle_fill: bool
+    """"""
+
+    polygon_fill: bool
+    """"""
+
+    fill_near: bool
+    """"""
+
+
+@dataclass
+class AnnotationTypeFieldValueOneIntegerFieldValue(DataClassJsonMixin):
+    """
+    数値をひとつだけ持つフィールド
+    """
+
+    type: str
+    """"""
+
+    value: int
+    """"""
+
+
+@dataclass
+class AnnotationTypeFieldValueOneStringFieldValue(DataClassJsonMixin):
+    """
+    文字列を一つだけ持つフィールド
+    """
+
+    type: str
+    """"""
+
+    value: str
+    """"""
+
+
+@dataclass
+class AnnotationTypeFieldValueOneBooleanFieldValue(DataClassJsonMixin):
+    """
+    真偽値をひとつだけ持つフィールド
+    """
+
+    type: str
+    """"""
+
+    value: bool
+    """"""
+
+
+@dataclass
+class AnnotationTypeFieldValueEmptyFieldValue(DataClassJsonMixin):
+    """
+    値を持たないフィールド。　アノテーション仕様上に定義が存在すること自体に意味がある場合のフィールド値に利用します。
+    """
+
+    type: str
+    """"""
+
+
+@dataclass
 class LabelV1(DataClassJsonMixin):
     """ """
 
@@ -298,7 +471,7 @@ class LabelV1(DataClassJsonMixin):
     keybind: List[Keybind]
     """ショートカットキー"""
 
-    annotation_type: str
+    annotation_type: AnnotationType
     """"""
 
     bounding_box_metadata: Optional[BoundingBoxMetadata]
@@ -336,7 +509,7 @@ class LabelV2(DataClassJsonMixin):
     keybind: List[Keybind]
     """ショートカットキー"""
 
-    annotation_type: str
+    annotation_type: AnnotationType
     """"""
 
     bounding_box_metadata: Optional[BoundingBoxMetadata]
@@ -413,6 +586,70 @@ class AnnotationSpecsV2(DataClassJsonMixin):
 
     inspection_phrases: List[InspectionPhrase]
     """定型指摘"""
+
+    format_version: str
+    """アノテーション仕様のフォーマットのバージョン"""
+
+    updated_datetime: Optional[str]
+    """更新日時 """
+
+    option: Optional[AnnotationSpecsOption]
+    """"""
+
+    metadata: Dict[str, str]
+    """ユーザーが自由に登録できるkey-value型のメタデータです。 """
+
+
+@dataclass
+class LabelV3(DataClassJsonMixin):
+    """ """
+
+    label_id: str
+    """ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    label_name: InternationalizationMessage
+    """"""
+
+    keybind: List[Keybind]
+    """ショートカットキー"""
+
+    annotation_type: AnnotationType
+    """"""
+
+    field_values: Dict[str, AnnotationTypeFieldValue]
+    """KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#section/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 """
+
+    additional_data_definitions: List[str]
+    """ラベルに所属する属性のID"""
+
+    color: Color
+    """"""
+
+    metadata: Optional[Dict[str, str]]
+    """ユーザーが自由に登録できるkey-value型のメタデータです。 """
+
+
+@dataclass
+class AnnotationSpecsV3(DataClassJsonMixin):
+    """ """
+
+    project_id: str
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    labels: List[LabelV3]
+    """ラベル"""
+
+    additionals: List[AdditionalDataDefinitionV2]
+    """属性"""
+
+    restrictions: List[AdditionalDataRestriction]
+    """属性の制約"""
+
+    inspection_phrases: List[InspectionPhrase]
+    """定型指摘"""
+
+    annotation_type_version: Optional[str]
+    """アノテーション種別のバージョン。  拡張仕様プラグインで定義した値が転写されます。プロジェクトに拡張仕様プラグインが設定されていない場合は未指定です。 """
 
     format_version: str
     """アノテーション仕様のフォーマットのバージョン"""

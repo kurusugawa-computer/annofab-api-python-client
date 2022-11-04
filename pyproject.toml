@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "annofabapi"
-version = "0.64.0"
+version = "0.65.0"
 description = "Python Clinet Library of Annofab WebAPI (https://annofab.com/docs/api/)"
 authors = ["yuji38kwmt"]
 license = "MIT"

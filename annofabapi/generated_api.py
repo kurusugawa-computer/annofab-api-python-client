@@ -304,7 +304,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
                 history_id (str):  アノテーション仕様の履歴ID。過去のアノテーション仕様を取得する場合は、[getAnnotationSpecsHistories](#operation/getAnnotationSpecsHistories) APIで取得した `history_id` の値を指定してください。 未指定時は最新のアノテーション仕様を取得します。
-                v (str):  取得するアノテーション仕様のフォーマットバージョンを指定します。`v=1`は将来廃止する予定なので、非推奨です。
+                v (str):  取得するアノテーション仕様のフォーマットバージョンを指定します。`v=1`及び`v=2`は将来廃止する予定なので、非推奨です。
 
         Returns:
             Tuple[AnnotationSpecs, requests.Response]
@@ -362,7 +362,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
-                v (str):  レスポンスに含まれるアノテーション仕様のフォーマットバージョンを指定します。`v=1`は将来廃止する予定なので、非推奨です。
+                v (str):  レスポンスに含まれるアノテーション仕様のフォーマットバージョンを指定します。`v=1`及び`v=2`は将来廃止する予定なので、非推奨です。
             request_body (Any): Request Body
                 annotation_specs_request (AnnotationSpecsRequest):  (required)
 

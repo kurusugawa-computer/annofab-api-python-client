@@ -1,10 +1,6 @@
 """
 AnnofabApi, Wrapperのテストコード
 
-### テストの観点
-【注意】
-* 基本的にHTTP GETのテストのみ行うこと。PUT/POST/DELETEのテストがあると、間違えて修正してまうおそれあり。
-
 """
 from __future__ import annotations
 
@@ -20,8 +16,8 @@ from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.dataclass.annotation import SimpleAnnotation, SingleAnnotation, AnnotationV1
-from annofabapi.dataclass.annotation_specs import AnnotationSpecsV2
+from annofabapi.dataclass.annotation import AnnotationV2Output, SimpleAnnotation, SingleAnnotation
+from annofabapi.dataclass.annotation_specs import AnnotationSpecsV3
 from annofabapi.dataclass.comment import Comment
 from annofabapi.dataclass.input import InputData
 from annofabapi.dataclass.job import ProjectJobInfo
@@ -78,10 +74,10 @@ class TestAnnotation:
         SimpleAnnotation.from_dict(annotation)
 
     def test_get_editor_annotation(self):
-        editor_annotation, _ = api.get_editor_annotation(project_id, task_id, self.input_data_id)
+        editor_annotation, _ = api.get_editor_annotation(project_id, task_id, self.input_data_id, query_params={"v":"2"})
         assert type(editor_annotation) == dict
         # dataclassに変換できることの確認
-        AnnotationV1.from_dict(editor_annotation)
+        AnnotationV2Output.from_dict(editor_annotation)
 
     def test_get_annotation_archive(self):
         content, response = api.get_annotation_archive(project_id)
@@ -117,11 +113,11 @@ class TestAnnotation:
 
 class TestAnnotationSpecs:
     def test_get_annotation_specs(self):
-        annotation_spec, _ = api.get_annotation_specs(project_id, query_params={"v": "2"})
+        annotation_spec, _ = api.get_annotation_specs(project_id, query_params={"v": "3"})
         assert type(annotation_spec) == dict
 
         # dataclassに変換できることの確認
-        AnnotationSpecsV2.from_dict(annotation_spec)
+        AnnotationSpecsV3.from_dict(annotation_spec)
 
     def test_put_annotation_specs(self):
         annotation_spec, _ = api.get_annotation_specs(project_id)
