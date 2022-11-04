@@ -130,7 +130,6 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/single_annotation.py \
  ${MODELS_DIR}/annotation_detail_v1.py \
  ${MODELS_DIR}/annotation_v1.py \
-
  ${MODELS_DIR}/additional_data_v2.py \
  ${MODELS_DIR}/annotation_props_for_editor.py \
  ${MODELS_DIR}/additional_data_value_flag.py \
@@ -141,10 +140,8 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/additional_data_value_select.py \
  ${MODELS_DIR}/additional_data_value_tracking.py \
  ${MODELS_DIR}/additional_data_value_link.py \
-
  ${MODELS_DIR}/annotation_detail_content_input_inner.py \
  ${MODELS_DIR}/annotation_detail_content_input_outer.py \
-
  ${MODELS_DIR}/annotation_detail_v2_create.py \
  ${MODELS_DIR}/annotation_detail_v2_import.py \
  ${MODELS_DIR}/annotation_detail_v2_update.py \
@@ -172,6 +169,8 @@ declare -a model_files=(${MODELS_DIR}/keybind.py \
  ${MODELS_DIR}/additional_data_restriction.py \
  ${MODELS_DIR}/annotation_specs_v1.py \
  ${MODELS_DIR}/annotation_specs_v2.py \
+ ${MODELS_DIR}/label_v3.py \
+ ${MODELS_DIR}/annotation_specs_v3.py \
 )
 cat partial-header/dataclass/common.py partial-header/dataclass/annotation_specs.py  \
  ${model_files[@]} > ../annofabapi/dataclass/annotation_specs.py
