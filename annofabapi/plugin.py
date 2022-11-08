@@ -22,5 +22,8 @@ class ThreeDimensionAnnotationType(Enum):
     """
 
     BOUNDING_BOX = "user_bounding_box"
+    """バウンディングボックス"""
     INSTANCE_SEGMENT = "user_instance_segment"
+    """インスタンスセグメント"""
     SEMANTIC_SEGMENT = "user_semantic_segment"
+    """セマンティックセグメント"""
