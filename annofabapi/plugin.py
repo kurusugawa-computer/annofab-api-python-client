@@ -3,9 +3,22 @@
 from enum import Enum
 
 
-class AnnotationTypePluginId(Enum):
+class EditorPluginId(Enum):
     """
-    アノテーション種類の標準（ビルトイン）プラグインのID
+    アノテーションエディタの標準（ビルトイン）プラグインのID
+    """
+
+    THREE_DIMENSION = "bdc16348-107e-4fbc-af4a-e482bc84a60f"
+    """
+    3次元アノテーションエディタの標準プラグインのID
+    "af-default-annotation-editor-plugin-for-3d-editor"
+    （Annofab本番環境/開発環境でIDは同じ）
+    """
+
+
+class ExtendSpecsPluginId(Enum):
+    """
+    アノテーション仕様の拡張プラグインのID
     """
 
     THREE_DIMENSION = "703ababa-96ac-4920-8afb-d4f2bddac7e3"
