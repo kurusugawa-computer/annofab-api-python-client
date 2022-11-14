@@ -10,6 +10,7 @@ API reference
    resource
    utils
    parser
+   plugin
    models
    dataclass
    exceptions

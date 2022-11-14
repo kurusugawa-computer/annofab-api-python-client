@@ -74,7 +74,9 @@ class TestAnnotation:
         SimpleAnnotation.from_dict(annotation)
 
     def test_get_editor_annotation(self):
-        editor_annotation, _ = api.get_editor_annotation(project_id, task_id, self.input_data_id, query_params={"v":"2"})
+        editor_annotation, _ = api.get_editor_annotation(
+            project_id, task_id, self.input_data_id, query_params={"v": "2"}
+        )
         assert type(editor_annotation) == dict
         # dataclassに変換できることの確認
         AnnotationV2Output.from_dict(editor_annotation)

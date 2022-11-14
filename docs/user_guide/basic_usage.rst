@@ -6,7 +6,7 @@ WebAPIにリクエストを投げる方法
 --------------------------------------------------
 
 ``service.api`` には、Web APIに対応するメソッドが定義されています。
-メソッド名は、AnnoFab Web APIのOpenAPI specificationに記載されている ``operationId`` を、スネークケース"input1","input2"に変換したものです。
+メソッド名は、Annofab Web APIのOpenAPI specificationに記載されている ``operationId`` を、スネークケース"input1","input2"に変換したものです。
 各メソッドの戻り値の型は ``Tupple[Content, Response]`` です。 ``Response`` はrequestsモジュールの ``Reponse`` オブジェクトです。
 ``Content`` は ``Reponse`` の中身です。
 
@@ -120,7 +120,7 @@ annofabapiは、pythonのloggingモジュールを利用してログメッセー
 
     from annofabapi import build
     servcie = build()
-    # DEBUG    : 2020-12-09 21:09:04,728 : resource.py : annofabapi.resource : build_from_netrc : .netrcファイルからAnnoFab認証情報を読み込みました。
+    # DEBUG    : 2020-12-09 21:09:04,728 : resource.py : annofabapi.resource : build_from_netrc : .netrcファイルからAnnofab認証情報を読み込みました。
 
 
 
