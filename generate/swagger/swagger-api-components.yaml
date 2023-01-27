@@ -1060,9 +1060,10 @@ components:
             $ref: "#/components/schemas/AnnotationType"
         user_defined_annotation_type_definitions:
           type: object
-          properties:
-            annotation_type_definitions:
-              $ref: "#/components/schemas/UserDefinedAnnotationTypeDefinition"
+          description: |
+            Keyが[アノテーションの種類(AnnotationType)](#section/AnnotationType)であるDictionaryです。
+          additionalProperties:
+            $ref: "#/components/schemas/UserDefinedAnnotationTypeDefinition"
         compatible_input_data_types:
           $ref: "#/components/schemas/PluginCompatibleInputDataTypes"
         _type:
@@ -1589,6 +1590,10 @@ components:
           $ref: "#/components/schemas/PluginId"
           description: |
             カスタムアノテーション仕様のプラグインID。
+        extended_specs_plugin_id:
+          $ref: "#/components/schemas/PluginId"
+          description: |
+            アノテーション種類を新しく定義できるようにするためのプラグインID。
         editor_version:
           type: string
           description: |
@@ -3007,6 +3012,9 @@ components:
             trueが指定された場合、各統計グラフにマーカーを自動追加します。
             マーカーのタイトルには `comment` に指定された文字列が設定されます。
             `comment` が指定されていなかった場合は "アノテーション仕様の変更" という文字列が設定されます。
+        annotation_type_version:
+          type: string
+          description: アノテーション種別のバージョン。拡張仕様プラグインを利用している場合に、プラグインに設定されている値が転写されます。 プロジェクトに拡張仕様プラグインが設定されていない場合は未指定です。
         format_version:
           type: string
           default: "3.0.0"
@@ -3134,7 +3142,7 @@ components:
     UserDefinedAnnotationTypeDefinition:
       type: object
       required:
-        - annotation_Type_name
+        - annotation_type_name
         - field_definitions
         - metadata
         - annotation_data_type
@@ -3163,30 +3171,189 @@ components:
         annotation_data_type:
           $ref: "#/components/schemas/UserDefinedAnnotationDataType"
     UserDefinedAnnotationTypeFieldDefinition:
+      description: |
+        ユーザー定義のアノテーション種別に設定可能なフィールドについての定義です。
+      oneOf:
+        - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionMinimumSize2d"
+        - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionMinimumSize2dWithDefaultInsertPosition"
+        - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionMarginOfErrorTolerance"
+        - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionVertexCountMinMax"
+        - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionMinimumArea2d"
+        - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionDisplayLineDirection"
+        - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionAnnotationEditorFeature"
+        - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionOneIntegerField"
+        - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionOneStringField"
+        - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionOneBooleanField"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          MinimumSize2d: "#/components/schemas/AnnotationTypeFieldDefinitionMinimumSize2d"
+          MinimumSize2dWithDefaultInsertPosition: "#/components/schemas/AnnotationTypeFieldDefinitionMinimumSize2dWithDefaultInsertPosition"
+          MarginOfErrorTolerance: "#/components/schemas/AnnotationTypeFieldDefinitionMarginOfErrorTolerance"
+          VertexCountMinMax: "#/components/schemas/AnnotationTypeFieldDefinitionVertexCountMinMax"
+          MinimumArea2d: "#/components/schemas/AnnotationTypeFieldDefinitionMinimumArea2d"
+          DisplayLineDirection: "#/components/schemas/AnnotationTypeFieldDefinitionDisplayLineDirection"
+          AnnotationEditorFeature: "#/components/schemas/AnnotationTypeFieldDefinitionAnnotationEditorFeature"
+          OneIntegerField: "#/components/schemas/AnnotationTypeFieldDefinitionOneIntegerField"
+          OneStringField: "#/components/schemas/AnnotationTypeFieldDefinitionOneStringField"
+          OneBooleanField: "#/components/schemas/AnnotationTypeFieldDefinitionOneBooleanField"
+    AnnotationTypeFieldDefinitionMinimumSize2d:
+      description: |
+        アノテーションの最小サイズに関する設定のフィールド定義
       type: object
+      required:
+        - _type
       properties:
         _type:
           type: string
+          enum: ["MinimumSize2d"]
+    AnnotationTypeFieldDefinitionMinimumSize2dWithDefaultInsertPosition:
+      description: |
+        アノテーションの最小サイズに関する設定、および最小矩形の挿入位置のフィールド定義
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["MinimumSize2dWithDefaultInsertPosition"]
+    AnnotationTypeFieldDefinitionMarginOfErrorTolerance:
+      description: |
+        誤差許容範囲のフィールド定義
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["MarginOfErrorTolerance"]
+    AnnotationTypeFieldDefinitionVertexCountMinMax:
+      description: |
+        頂点数の最大・最小のフィールド定義
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["VertexCountMinMax"]
+    AnnotationTypeFieldDefinitionMinimumArea2d:
+      description: |
+        最小の面積のフィールド定義
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["MinimumArea2d"]
+    AnnotationTypeFieldDefinitionDisplayLineDirection:
+      description: |
+        線の向き表示/非表示の設定のフィールド定義
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["DisplayLineDirection"]
+    AnnotationTypeFieldDefinitionAnnotationEditorFeature:
+      description: |
+        作図ツール・作図モードのフィールドの定義
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["AnnotationEditorFeature"]
+    AnnotationTypeFieldDefinitionOneIntegerField:
+      description: |
+        数値の値をひとつだけ持つフィールドの定義
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["OneIntegerField"]
+        title:
+          $ref: "#/components/schemas/InternationalizationMessage"
           description: |
-            ユーザー定義のアノテーション種別に設定可能なフィールドについての定義です。
-            設定可能な値とその意味は下記の通りです。
-            * `MinimumSize2d` - 2次元のデータに対する最小サイズ
-            * `MinVertexSize` - 最小の頂点数
-            * `MinimumSize2dWithDefaultInsertPosition` - 2次元のデータに対する最小サイズ、および最小矩形の挿入位置
-            * `MarginOfErrorTolerance` - 誤差許容範囲
-            * `VertexCountMinMax` - 頂点制約
-            * `MinimumArea2d` - 2次元のデータに対する面積の制約
-            * `DisplayLineDirection` - 可視化オプション
-            * `AnnotationEditorFeature` - 作図ツール・作図モード
-          enum:
-            - MinimumSize2d
-            - MinVertexSize
-            - MinimumSize_2dWithDefaultInsertPosition
-            - MarginOfErrorTolerance
-            - VertexCountMinMax
-            - MinimumArea2d
-            - DisplayLineDirection
-            - AnnotationEditorFeature
+            フィールドのタイトル
+        prefix:
+          type: string
+          description: |
+            フィールドの前に付与する文字列。
+        postfix:
+          type: string
+          description: |
+            フィールドの後に付与する文字列
+        description:
+          $ref: "#/components/schemas/InternationalizationMessage"
+          description: |
+            フィールドについての説明
+        initial_value:
+          type: integer
+          description: |
+            フィールドの初期値
+    AnnotationTypeFieldDefinitionOneStringField:
+      description: |
+        文字列の値をひとつだけ持つフィールドの定義
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["OneStringField"]
+        title:
+          $ref: "#/components/schemas/InternationalizationMessage"
+          description: |
+            フィールドのタイトル
+        prefix:
+          type: string
+          description: |
+            フィールドの前に付与する文字列。
+        postfix:
+          type: string
+          description: |
+            フィールドの後に付与する文字列
+        description:
+          $ref: "#/components/schemas/InternationalizationMessage"
+          description: |
+            フィールドについての説明
+        initial_value:
+          type: string
+          description: |
+            フィールドの初期値
+    AnnotationTypeFieldDefinitionOneBooleanField:
+      description: |
+        真偽値の値をひとつだけ持つフィールドの定義
+      type: object
+      required:
+        - _type
+        - label
+      properties:
+        _type:
+          type: string
+          enum: ["OneBooleanField"]
+        title:
+          $ref: "#/components/schemas/InternationalizationMessage"
+          description: |
+            フィールドのタイトル
+        description:
+          $ref: "#/components/schemas/InternationalizationMessage"
+          description: |
+            フィールドについての説明
+        initial_value:
+          type: boolean
+          description: |
+            フィールドの初期値
+        label:
+          $ref: "#/components/schemas/InternationalizationMessage"
+          description: |
+            チェックボックスのラベルとして表示する文言
     UserDefinedAnnotationDataType:
       type: object
       properties:
@@ -3210,8 +3377,8 @@ components:
 
             |ユーザー定義アノテーション種別の型 | 使用可能なフィールド定義 |
             |-----------------|:----------:|
-            | BoundingBox2d          | MinimumSize2d, MinimumSize2dWithDefaultInsertPosition, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance |
-            | Polygon2d              | MinimumSize2d, MinVertexSize, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance |
+            | BoundingBox2d          | MinimumSize2dWithDefaultInsertPosition, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance |
+            | Polygon2d              | MinimumSize2d, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance |
             | Polyline2d             | VertexCountMinMax, DisplayLineDirection, MarginOfErrorTolerance |
             | SinglePoint2d          | MarginOfErrorTolerance |
             | SemanticSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance |
@@ -3379,11 +3546,6 @@ components:
           $ref: "#/components/schemas/Color"
         annotation_editor_feature:
           $ref: "#/components/schemas/AnnotationEditorFeature"
-        allow_out_of_image_bounds:
-          type: boolean
-          deprecated: true
-          description: |
-            枠内制御がなくなったため値の設定は出来ません。値の取得では、必ず`true`が入ります。[廃止](/docs/releases/deprecation-announcements.html#notice25)までは互換性のため残されています。
         metadata:
           type: object
           description: |
@@ -3426,11 +3588,6 @@ components:
           $ref: "#/components/schemas/Color"
         annotation_editor_feature:
           $ref: "#/components/schemas/AnnotationEditorFeature"
-        allow_out_of_image_bounds:
-          type: boolean
-          deprecated: true
-          description: |
-            枠内制御がなくなったため値の設定は出来ません。値の取得では、必ず`true`が入ります。[廃止](/docs/releases/deprecation-announcements.html#notice25)までは互換性のため残されています。
         metadata:
           type: object
           description: |
@@ -5625,7 +5782,7 @@ components:
             `Choice`
           example: "Choice"
         value:
-          $ref: "#/components/schemas/AdditionalDataChoiceValue"
+          $ref: "#/components/schemas/FullAnnotationAdditionalDataChoiceValue"
     FullAnnotationAdditionalDataChoiceValue:
       type: object
       required:
@@ -5781,7 +5938,26 @@ components:
         annotation_id:
           $ref: "#/components/schemas/AnnotationId"
           description: "アノテーションリンク属性の属性値。 リンク先アノテーションのIDが格納されます。"
+# これを定義して使いたいが、api-js-clientがコンパイルできない（実装も適切でない）コードを生成してしまうのでコメントアウトしている
+#    SingleAnnotationList:
+#      oneOf:
+#        - $ref: "#/components/schemas/SingleAnnotationV1List"
+#        - $ref: "#/components/schemas/SingleAnnotationV2List"
+    SingleAnnotationV1List:
+      description: SingleAnnotationV1の配列です
+      type: array
+      items:
+        $ref: "#/components/schemas/SingleAnnotationV1"
+    SingleAnnotationV2List:
+      description: SingleAnnotationV2の配列です
+      type: array
+      items:
+        $ref: "#/components/schemas/SingleAnnotationV2"
     SingleAnnotation:
+      oneOf:
+        - $ref: "#/components/schemas/SingleAnnotationV1"
+        - $ref: "#/components/schemas/SingleAnnotationV2"
+    SingleAnnotationV1:
       type: object
       required:
         - project_id
@@ -5797,7 +5973,28 @@ components:
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
         detail:
-          $ref: "#/components/schemas/SingleAnnotationDetail"
+          $ref: "#/components/schemas/SingleAnnotationDetailV1"
+        updated_datetime:
+          type: string
+          format: date-time
+          description: 更新日時
+    SingleAnnotationV2:
+      type: object
+      required:
+        - project_id
+        - task_id
+        - input_data_id
+        - detail
+        - updated_datetime
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        task_id:
+          $ref: "#/components/schemas/TaskId"
+        input_data_id:
+          $ref: "#/components/schemas/InputDataId"
+        detail:
+          $ref: "#/components/schemas/SingleAnnotationDetailV2"
         updated_datetime:
           type: string
           format: date-time
@@ -5841,7 +6038,7 @@ components:
           type: string
           format: date-time
           description: 更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。
-    BatchAnnotation:
+    BatchAnnotationV1:
       type: object
       required:
         - project_id
@@ -5868,21 +6065,67 @@ components:
         updated_datetime:
           type: string
           format: date-time
-          description: 更新日時
-    BatchAnnotationRequestItemPut:
+          description: |
+            アノテーション取得時の更新日時。更新時の楽観ロックに利用されます。
+            AnnotationDetailのものではなく、それを格納するAnnotationV2Outputなどが保持する更新時刻であることに注意してください。
+    BatchAnnotationV2:
+      type: object
+      required:
+        - project_id
+        - task_id
+        - input_data_id
+        - annotation_id
+        - label_id
+        - additional_data_list
+        - updated_datetime
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        task_id:
+          $ref: "#/components/schemas/TaskId"
+        input_data_id:
+          $ref: "#/components/schemas/InputDataId"
+        annotation_id:
+          $ref: "#/components/schemas/AnnotationId"
+        label_id:
+          $ref: "#/components/schemas/LabelId"
+          description: 変更後のラベルID
+        additional_data_list:
+          $ref: "#/components/schemas/AdditionalDataListV2"
+        updated_datetime:
+          type: string
+          format: date-time
+          description: |
+            アノテーション取得時の更新日時。更新時の楽観ロックに利用されます。
+            AnnotationDetailのものではなく、それを格納するAnnotationV2Outputなどが保持する更新時刻であることに注意してください。
+    BatchAnnotationRequestItemPutV1:
       type: object
       description: アノテーション更新
       required:
         - data
       properties:
         data:
-          $ref: "#/components/schemas/BatchAnnotation"
+          $ref: "#/components/schemas/BatchAnnotationV1"
         _type:
           type: string
+          enum: ["Put"]
           description: |
-            `Put`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Put"
+    BatchAnnotationRequestItemPutV2:
+      type: object
+      description: アノテーション更新
+      required:
+        - data
+      properties:
+        data:
+          $ref: "#/components/schemas/BatchAnnotationV2"
+        _type:
+          type: string
+          enum: ["PutV2"]
+          description: |
+            [詳しくはこちら](#section/API-Convention/API-_type)
+          example: "PutV2"
     BatchAnnotationRequestItemDelete:
       type: object
       description: アノテーション削除
@@ -5906,11 +6149,11 @@ components:
           description: 更新日時
         _type:
           type: string
+          enum: ["Delete"]
           description: |
-            `Delete`
             [詳しくはこちら](#section/API-Convention/API-_type)
           example: "Delete"
-    SingleAnnotationDetail:
+    SingleAnnotationDetailV1:
       description: |
         アノテーション情報
       type: object
@@ -5942,6 +6185,37 @@ components:
           description: data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
         additional_data_list:
           $ref: "#/components/schemas/AdditionalDataListV1"
+        created_datetime:
+          type: string
+          format: date-time
+          description: 作成日時
+        updated_datetime:
+          type: string
+          format: date-time
+          description: 更新日時
+    SingleAnnotationDetailV2:
+      description: |
+        アノテーション情報
+      type: object
+      required:
+        - annotation_id
+        - account_id
+        - label_id
+        - body
+        - additional_data_list
+        - created_datetime
+        - updated_datetime
+      properties:
+        annotation_id:
+          $ref: "#/components/schemas/AnnotationId"
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+        label_id:
+          $ref: "#/components/schemas/LabelId"
+        body:
+          $ref: "#/components/schemas/AnnotationDetailContentOutput"
+        additional_data_list:
+          $ref: "#/components/schemas/AdditionalDataListV2"
         created_datetime:
           type: string
           format: date-time
@@ -6914,7 +7188,8 @@ components:
         - $ref: "#/components/schemas/UnknownLinkTarget"
         - $ref: "#/components/schemas/InvalidLinkTarget"
         - $ref: "#/components/schemas/InvalidChoice"
-        - $ref: "#/components/schemas/Duplicated"
+        - $ref: "#/components/schemas/DuplicatedV1"
+        - $ref: "#/components/schemas/DuplicatedV2"
         - $ref: "#/components/schemas/UnknownAdditionalData"
         - $ref: "#/components/schemas/OverlappedRangeAnnotation"
         - $ref: "#/components/schemas/UnknownLabel"
@@ -6927,7 +7202,8 @@ components:
           UnknownLinkTarget: "#/components/schemas/UnknownLinkTarget"
           InvalidLinkTarget: "#/components/schemas/InvalidLinkTarget"
           InvalidChoice: "#/components/schemas/InvalidChoice"
-          Duplicated: "#/components/schemas/Duplicated"
+          Duplicated: "#/components/schemas/DuplicatedV1"
+          DuplicatedV2: "#/components/schemas/DuplicatedV2"
           UnknownAdditionalData: "#/components/schemas/UnknownAdditionalData"
           OverlappedRangeAnnotation: "#/components/schemas/OverlappedRangeAnnotation"
           UnknownLabel: "#/components/schemas/UnknownLabel"
@@ -7044,7 +7320,7 @@ components:
           type: string
           description: InvalidChoice
           example: "InvalidChoice"
-    Duplicated:
+    DuplicatedV1:
       type: object
       description: 値の重複が許可されていない属性の重複エラー
       required:
@@ -7061,8 +7337,25 @@ components:
           $ref: "#/components/schemas/AdditionalDataV1"
         _type:
           type: string
-          description: Duplicated
-          example: "Duplicated"
+          enum: ["Duplicated"]
+    DuplicatedV2:
+      type: object
+      description: 値の重複が許可されていない属性の重複エラー
+      required:
+        - _type
+        - label_id
+        - annotation_id
+        - additional_data_definition_id
+      properties:
+        label_id:
+          type: string
+        annotation_id:
+          type: string
+        additional_data_definition_id:
+          type: string
+        _type:
+          type: string
+          enum: ["DuplicatedV2"]
     UnknownAdditionalData:
       type: object
       description: 何らかの原因で、アノテーション仕様にない属性がついているエラー
@@ -7522,12 +7815,14 @@ components:
             [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。
     BatchAnnotationRequestItem:
       oneOf:
-        - $ref: "#/components/schemas/BatchAnnotationRequestItemPut"
+        - $ref: "#/components/schemas/BatchAnnotationRequestItemPutV1"
+        - $ref: "#/components/schemas/BatchAnnotationRequestItemPutV2"
         - $ref: "#/components/schemas/BatchAnnotationRequestItemDelete"
       discriminator:
         propertyName: "_type"
         mapping:
-          Put: "#/components/schemas/BatchAnnotationRequestItemPut"
+          Put: "#/components/schemas/BatchAnnotationRequestItemPutV1"
+          PutV2: "#/components/schemas/BatchAnnotationRequestItemPutV2"
           Delete: "#/components/schemas/BatchAnnotationRequestItemDelete"
     BatchInspectionRequestItem:
       oneOf:
@@ -7685,3 +7980,12 @@ components:
         storage_usage:
           type: number
           description: ストレージ利用量。単位はGB時
+    UsageStatusCsvFileUrl:
+      type: object
+      description: 利用状況詳細のCSVファイルのURL
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          description: CSVファイルのURL

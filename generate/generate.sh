@@ -121,16 +121,18 @@ declare -a model_files=(${MODELS_DIR}/point.py \
  ${MODELS_DIR}/full_annotation_data_single_point.py \
  ${MODELS_DIR}/full_annotation_data_range.py \
  ${MODELS_DIR}/additional_data_v1.py \
+ ${MODELS_DIR}/additional_data_v2.py \
  ${MODELS_DIR}/full_annotation_additional_data.py \
  ${MODELS_DIR}/full_annotation_detail.py \
  ${MODELS_DIR}/full_annotation.py \
  ${MODELS_DIR}/simple_annotation_detail.py \
  ${MODELS_DIR}/simple_annotation.py \
- ${MODELS_DIR}/single_annotation_detail.py \
- ${MODELS_DIR}/single_annotation.py \
+ ${MODELS_DIR}/single_annotation_detail_v1.py \
+ ${MODELS_DIR}/single_annotation_detail_v2.py \
+ ${MODELS_DIR}/single_annotation_v1.py \
+ ${MODELS_DIR}/single_annotation_v2.py \
  ${MODELS_DIR}/annotation_detail_v1.py \
  ${MODELS_DIR}/annotation_v1.py \
- ${MODELS_DIR}/additional_data_v2.py \
  ${MODELS_DIR}/annotation_props_for_editor.py \
  ${MODELS_DIR}/additional_data_value_flag.py \
  ${MODELS_DIR}/additional_data_value_integer.py \
@@ -203,25 +205,13 @@ declare -a model_files=(${MODELS_DIR}/resolution.py ${MODELS_DIR}/input_data.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/input.py  \
  ${model_files[@]} > ../annofabapi/dataclass/input.py
 
-# Inspection Commentは2022-08-23以降に廃止される予定。Deprecationを表すデコレータなどを設定するため、自動生成しない。
-
-# Instruction
-declare -a model_files=(${MODELS_DIR}/instruction.py ${MODELS_DIR}/instruction_history.py ${MODELS_DIR}/instruction_image.py)
-cat partial-header/dataclass/common.py partial-header/dataclass/instruction.py  \
- ${model_files[@]} > ../annofabapi/dataclass/instruction.py
-
 # Job
 declare -a model_files=(${MODELS_DIR}/project_job_info.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/job.py  \
  ${model_files[@]}  > ../annofabapi/dataclass/job.py
 
-# My
-declare -a model_files=(${MODELS_DIR}/my_organization.py ${MODELS_DIR}/my_account.py)
-cat partial-header/dataclass/common.py partial-header/dataclass/my.py  \
- ${model_files[@]} > ../annofabapi/dataclass/my.py
-
 # Organization
-declare -a model_files=(${MODELS_DIR}/organization_activity.py ${MODELS_DIR}/organization.py)
+declare -a model_files=(${MODELS_DIR}/organization.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/organization.py  \
  ${model_files[@]} > ../annofabapi/dataclass/organization.py
 
@@ -240,18 +230,6 @@ declare -a model_files=(${MODELS_DIR}/project_member.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/project_member.py  \
  ${model_files[@]} > ../annofabapi/dataclass/project_member.py
 
-# Statistics
-declare -a model_files=(${MODELS_DIR}/project_task_statistics.py ${MODELS_DIR}/project_task_statistics_history.py \
- ${MODELS_DIR}/project_account_statistics_history.py ${MODELS_DIR}/project_account_statistics.py \
- ${MODELS_DIR}/inspection_statistics_phrases.py ${MODELS_DIR}/inspection_statistics_breakdown.py ${MODELS_DIR}/inspection_statistics.py \
- ${MODELS_DIR}/phase_statistics.py ${MODELS_DIR}/task_phase_statistics.py \
- ${MODELS_DIR}/label_statistics.py  \
- ${MODELS_DIR}/histogram_item.py ${MODELS_DIR}/worktime_statistics_item.py ${MODELS_DIR}/account_worktime_statistics.py ${MODELS_DIR}/worktime_statistics.py  \
- ${MODELS_DIR}/marker.py ${MODELS_DIR}/markers.py
-)
-cat partial-header/dataclass/common.py partial-header/dataclass/statistics.py  \
- ${model_files[@]} > ../annofabapi/dataclass/statistics.py
-
 # Supplementary
 declare -a model_files=(${MODELS_DIR}/supplementary_data.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/supplementary.py  \
@@ -261,12 +239,6 @@ cat partial-header/dataclass/common.py partial-header/dataclass/supplementary.py
 declare -a model_files=(${MODELS_DIR}/task_history.py ${MODELS_DIR}/task_history_short.py ${MODELS_DIR}/task.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/task.py  \
  ${model_files[@]} > ../annofabapi/dataclass/task.py
-
-# Webhook
-declare -a model_files=(${MODELS_DIR}/webhook_header.py ${MODELS_DIR}/webhook.py)
-cat partial-header/dataclass/common.py partial-header/dataclass/webhook.py  \
- ${model_files[@]} > ../annofabapi/dataclass/webhook.py
-
 
 # `dict(str, int)` を `Dict[str, int]`のように置換する
 sed -E -e "s/dict\((.*)\)/Dict\[\1\]/g"  ../annofabapi/dataclass/*.py  --in-place

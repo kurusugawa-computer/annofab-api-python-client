@@ -15,23 +15,7 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: d
 
 from dataclasses_json import DataClassJsonMixin
 
-from annofabapi._utils import deprecated_class
 from annofabapi.models import PricePlan
-
-
-@deprecated_class(deprecated_date="2022-12-01")
-@dataclass
-class OrganizationActivity(DataClassJsonMixin):
-    """ """
-
-    organization_id: str
-    """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
-
-    created_datetime: str
-    """作成日時"""
-
-    storage_usage_bytes: int
-    """Annofabストレージの使用量[バイト]"""
 
 
 @dataclass

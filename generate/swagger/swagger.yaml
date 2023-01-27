@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.158.4
+  version: 0.162.0
   title: Annofab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -309,6 +309,9 @@ tags:
     * 受入が完了していないアノテーション数
 
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/ArrayOfLabelStatistics" />
+
+    # AnnotationType
+    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/AnnotationType" />
 
     # UserDefinedAnnotationTypeDefinition
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/UserDefinedAnnotationTypeDefinition" />
@@ -1756,13 +1759,13 @@ paths:
           description: 組織名
         - name: from
           in: query
-          description: 指定した年月以降の利用状況を取得します。省略した場合はtoで指定した年月の1年前です。年月のフォーマットは YYYY-MM です。
+          description: 指定した年月以降の利用状況を取得します。省略した場合はtoで指定した年月の1年前です。年月のフォーマットは YYYY-MM です。指定年月は閉区間となります。
           required: false
           schema:
             $ref: "swagger-api-components.yaml#/components/schemas/YearMonth"
         - name: to
           in: query
-          description: 指定した年月以前の利用状況を取得します。省略した場合はJSTでの現在の年月です。年月のフォーマットは YYYY-MM です。
+          description: 指定した年月以前の利用状況を取得します。省略した場合はJSTでの現在の年月です。年月のフォーマットは YYYY-MM です。指定年月は閉区間となります。
           required: false
           schema:
             $ref: "swagger-api-components.yaml#/components/schemas/YearMonth"
@@ -1841,8 +1844,12 @@ paths:
           schema:
             $ref: "swagger-api-components.yaml#/components/schemas/YearMonth"
       responses:
-        "302":
-          description: 正常。リダイレクト先から詳細情報のリソースが取得できます。詳細情報はCSVデータとなります。
+        "201":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/UsageStatusCsvFileUrl"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
@@ -3461,7 +3468,7 @@ paths:
             - "2"
             - "3"
           default: "1"
-          example: "2"
+          example: "3"
       responses:
         "200":
           description: 正常
@@ -4446,6 +4453,19 @@ paths:
         example: task_id,input_data_id,detail.annotation_id,-detail.updated_datetime
         schema:
           type: string
+      - name: v
+        in: query
+        description: |
+          レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。
+          未指定の場合や"2"以外が指定された場合は"1"が指定されたものとして扱います。
+        required: false
+        schema:
+          type: string
+          enum:
+            - "1"
+            - "2"
+          default: "1"
+          example: "2"
       responses:
         "200":
           description: 指定された条件にあてはまるアノテーションを返します。条件にあてはまるアノテーションが多数に及ぶことがあるので、すべての結果を得るにはページングしてください。
@@ -4491,6 +4511,19 @@ paths:
         required: true
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: v
+        in: query
+        description: |
+          レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。
+          未指定の場合や"2"以外が指定された場合は"1"が指定されたものとして扱います。
+        required: false
+        schema:
+          type: string
+          enum:
+            - "1"
+            - "2"
+          default: "1"
+          example: "2"
       requestBody:
         required: true
         content:
