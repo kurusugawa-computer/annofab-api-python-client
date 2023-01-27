@@ -16,7 +16,7 @@ from more_itertools import first_true
 
 import annofabapi
 import annofabapi.utils
-from annofabapi.dataclass.annotation import AnnotationV2Output, SimpleAnnotation, SingleAnnotation
+from annofabapi.dataclass.annotation import AnnotationV2Output, SimpleAnnotation, SingleAnnotationV2
 from annofabapi.dataclass.annotation_specs import AnnotationSpecsV3
 from annofabapi.dataclass.comment import Comment
 from annofabapi.dataclass.input import InputData
@@ -62,10 +62,10 @@ class TestAnnotation:
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
     def test_wrapper_get_all_annotation_list(self):
-        annotation_list = wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}})
+        annotation_list = wrapper.get_all_annotation_list(project_id, {"query": {"task_id": task_id}, "v": 2})
         assert len(annotation_list) >= 0
         # dataclass に変換できることの確認
-        SingleAnnotation.schema().load(annotation_list, many=True)
+        SingleAnnotationV2.schema().load(annotation_list, many=True)
 
     def test_get_annotation(self):
         annotation, _ = api.get_annotation(project_id, task_id, self.input_data_id)

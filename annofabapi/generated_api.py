@@ -39,7 +39,11 @@ class AbstractAnnofabApi(abc.ABC):
     #########################################
 
     def batch_update_annotations(
-        self, project_id: str, request_body: Optional[Any] = None, **kwargs
+        self,
+        project_id: str,
+        query_params: Optional[Dict[str, Any]] = None,
+        request_body: Optional[Any] = None,
+        **kwargs,
     ) -> Tuple[Any, requests.Response]:
         """アノテーション一括更新
         https://annofab.com/docs/api/#operation/batchUpdateAnnotations
@@ -52,6 +56,8 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
+            query_params (Dict[str, Any]): Query Parameters
+                v (str):  レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。 未指定の場合や\"2\"以外が指定された場合は\"1\"が指定されたものとして扱います。
             request_body (Any): Request Body
                 batch_annotation_request_item (List[BatchAnnotationRequestItem]):  (required)
 
@@ -63,6 +69,7 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/projects/{project_id}/annotations"
         http_method = "POST"
         keyword_params: Dict[str, Any] = {
+            "query_params": query_params,
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -141,6 +148,7 @@ class AbstractAnnofabApi(abc.ABC):
                 no_aggregate_label_and_input (bool):  `true`を指定すると、ラベルIDによるアノテーション検索数の集約結果、および属性IDによるアノテーション検索数の集約結果を取得しません。  このパラメーターを`true`に指定することで集約計算は行われなくなるので、アノテーションの検索が速くなる可能性があります。
                 query (str):  絞り込み条件([AnnotationQuery](#section/AnnotationQuery))をJSON形式で表した文字列。
                 sort (str):  ソート順の指定。 以下のキーを使用できます。 * `task_id` * `input_data_id` * `detail.annotation_id` * `detail.account_id` * `detail.label_id` * `detail.data_holding_type` * `detail.created_datetime` * `detail.updated_datetime`   キーの先頭に`-`を付けると、降順でソートされます。  `,`でキーを区切ると、複数のキーでソートされます。先頭のキーから順に優先順位が割り振られます。
+                v (str):  レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。 未指定の場合や\"2\"以外が指定された場合は\"1\"が指定されたものとして扱います。
 
         Returns:
             Tuple[AnnotationList, requests.Response]
@@ -2997,7 +3005,7 @@ class AbstractAnnofabApi(abc.ABC):
             year_month (str):  (required)
 
         Returns:
-            Tuple[, requests.Response]
+            Tuple[UsageStatusCsvFileUrl, requests.Response]
 
 
         """
@@ -3022,8 +3030,8 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             organization_name (str):  組織名 (required)
             query_params (Dict[str, Any]): Query Parameters
-                from (str):  指定した年月以降の利用状況を取得します。省略した場合はtoで指定した年月の1年前です。年月のフォーマットは YYYY-MM です。
-                to (str):  指定した年月以前の利用状況を取得します。省略した場合はJSTでの現在の年月です。年月のフォーマットは YYYY-MM です。
+                from (str):  指定した年月以降の利用状況を取得します。省略した場合はtoで指定した年月の1年前です。年月のフォーマットは YYYY-MM です。指定年月は閉区間となります。
+                to (str):  指定した年月以前の利用状況を取得します。省略した場合はJSTでの現在の年月です。年月のフォーマットは YYYY-MM です。指定年月は閉区間となります。
 
         Returns:
             Tuple[List[UsageStatus], requests.Response]
