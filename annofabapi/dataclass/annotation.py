@@ -29,7 +29,10 @@ AdditionalDataValue = Dict[str, Any]
 FullAnnotationAdditionalDataValue = Dict[str, Any]
 AnnotationDetailV2Input = Dict[str, Any]
 AnnotationDetailContentOutput = Dict[str, Any]
+
 AnnotationType = str
+
+
 AnnotationDetailContentInput = Dict[str, Any]
 AnnotationDetailV2Output = Dict[str, Any]
 
@@ -145,6 +148,17 @@ class AdditionalDataV1(DataClassJsonMixin):
 
     choice: Optional[str]
     """選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+
+@dataclass
+class AdditionalDataV2(DataClassJsonMixin):
+    """ """
+
+    definition_id: str
+    """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    value: Optional[AdditionalDataValue]
+    """"""
 
 
 @dataclass
@@ -283,7 +297,7 @@ class SimpleAnnotation(DataClassJsonMixin):
 
 
 @dataclass
-class SingleAnnotationDetail(DataClassJsonMixin):
+class SingleAnnotationDetailV1(DataClassJsonMixin):
     """
     アノテーション情報
     """
@@ -320,6 +334,34 @@ class SingleAnnotationDetail(DataClassJsonMixin):
 
 
 @dataclass
+class SingleAnnotationDetailV2(DataClassJsonMixin):
+    """
+    アノテーション情報
+    """
+
+    annotation_id: str
+    """アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 """
+
+    account_id: str
+    """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    label_id: str
+    """ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    body: AnnotationDetailContentOutput
+    """"""
+
+    additional_data_list: List[AdditionalDataV2]
+    """"""
+
+    created_datetime: str
+    """作成日時"""
+
+    updated_datetime: str
+    """更新日時"""
+
+
+@dataclass
 class SingleAnnotation(DataClassJsonMixin):
     """ """
 
@@ -332,7 +374,7 @@ class SingleAnnotation(DataClassJsonMixin):
     input_data_id: str
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    detail: SingleAnnotationDetail
+    detail: SingleAnnotationDetailV2
     """"""
 
     updated_datetime: str
@@ -398,17 +440,6 @@ class AnnotationV1(DataClassJsonMixin):
 
     updated_datetime: Optional[str]
     """更新日時"""
-
-
-@dataclass
-class AdditionalDataV2(DataClassJsonMixin):
-    """ """
-
-    definition_id: str
-    """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
-
-    value: Optional[AdditionalDataValue]
-    """"""
 
 
 @dataclass
