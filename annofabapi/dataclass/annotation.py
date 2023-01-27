@@ -362,7 +362,27 @@ class SingleAnnotationDetailV2(DataClassJsonMixin):
 
 
 @dataclass
-class SingleAnnotation(DataClassJsonMixin):
+class SingleAnnotationV1(DataClassJsonMixin):
+    """ """
+
+    project_id: str
+    """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    task_id: str
+    """タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    input_data_id: str
+    """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+
+    detail: SingleAnnotationDetailV1
+    """"""
+
+    updated_datetime: str
+    """更新日時"""
+
+
+@dataclass
+class SingleAnnotationV2(DataClassJsonMixin):
     """ """
 
     project_id: str
