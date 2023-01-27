@@ -31,8 +31,6 @@ from annofabapi.models import (
     AnnotationDetailV1,
     FullAnnotationData,
     InputData,
-    Inspection,
-    InspectionStatus,
     Instruction,
     JobStatus,
     LabelV1,
@@ -49,7 +47,6 @@ from annofabapi.models import (
     TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
-from annofabapi.utils import str_now
 
 logger = logging.getLogger(__name__)
 
@@ -1428,58 +1425,6 @@ class Wrapper:
     #########################################
     # Public Method : Inspection
     #########################################
-    def update_status_of_inspections(
-        self,
-        project_id: str,
-        task_id: str,
-        input_data_id: str,
-        filter_inspection: Callable[[Inspection], bool],
-        inspection_status: InspectionStatus,
-        updated_datetime: Optional[str] = None,
-    ) -> List[Inspection]:
-        """
-        検査コメント（返信コメント以外）のstatusを変更する。
-
-        .. deprecated:: 2022-08-23以降に廃止する予定です。検査コメントに関するWebAPIが廃止されるためです。
-
-        Args:
-            project_id: プロジェクトID
-            task_id: タスクID
-            input_data_id: 入力データID
-            filter_inspection: 変更対象の検査コメントを絞り込む条件
-            inspection_status: 検査コメントのstatus
-            updated_datetime: 検査コメントの更新日時。タスクの更新日時以降を指定する必要があります。Noneの場合、現在時刻を指定します。
-
-        Returns:
-            `batch_update_inspections` メソッドのcontent
-        """
-        warnings.warn(
-            "annofabapi.Wrapper.update_status_of_inspections() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
-
-        def not_reply_comment(arg_inspection: Inspection) -> bool:
-            """返信コメントでないならTrueをかえす"""
-            return arg_inspection["parent_inspection_id"] is None
-
-        def search_updated_inspections(arg_inspection: Inspection) -> bool:
-            """変更対象の検査コメントを探す"""
-            return filter_inspection(arg_inspection) and not_reply_comment(arg_inspection)
-
-        inspections, _ = self.api.get_inspections(project_id, task_id, input_data_id)
-
-        target_inspections = [e for e in inspections if search_updated_inspections(e)]
-
-        if updated_datetime is None:
-            updated_datetime = str_now()
-        for inspection in target_inspections:
-            inspection["status"] = inspection_status.value
-            inspection["updated_datetime"] = updated_datetime
-
-        req_inspection = [{"data": e, "_type": "Put"} for e in target_inspections]
-        content = self.api.batch_update_inspections(project_id, task_id, input_data_id, req_inspection)[0]
-        return content
 
     #########################################
     # Public Method : My
