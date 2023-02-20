@@ -40,12 +40,12 @@ pytest-cov = "*"
 # format library
 isort = "*"
 autoflake = "*"
-black = ">=23.1"
+black = "*"
 
 # lint library
 flake8 = "*"
 mypy = "*"
-pylint = ">=2.16"
+pylint = "*"
 
 # document library
 sphinx = "*"
