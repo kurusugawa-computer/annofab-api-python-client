@@ -411,7 +411,6 @@ class Wrapper:
         dest_detail = detail
         dest_detail["account_id"] = account_id
         if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
-
             try:
                 outer_file_url = detail["url"]
                 src_response = self.api._execute_http_request("get", outer_file_url)
