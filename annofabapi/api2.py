@@ -115,7 +115,6 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
             # CloudFrontから403 Errorが発生したとき
             if response.status_code == requests.codes.forbidden and response.headers.get("server") == "CloudFront":
-
                 self._get_signed_access_v2(url_path)
                 return self._request_wrapper(
                     http_method,

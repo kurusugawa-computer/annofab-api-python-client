@@ -411,7 +411,6 @@ class Wrapper:
         dest_detail = detail
         dest_detail["account_id"] = account_id
         if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
-
             try:
                 outer_file_url = detail["url"]
                 src_response = self.api._execute_http_request("get", outer_file_url)
@@ -555,13 +554,13 @@ class Wrapper:
                 )
                 continue
 
-            additional_data = dict(
-                additional_data_definition_id=specs_additional_data["additional_data_definition_id"],
-                flag=None,
-                integer=None,
-                choice=None,
-                comment=None,
-            )
+            additional_data = {
+                "additional_data_definition_id": specs_additional_data["additional_data_definition_id"],
+                "flag": None,
+                "integer": None,
+                "choice": None,
+                "comment": None,
+            }
             additional_data_type = specs_additional_data["type"]
             if additional_data_type == AdditionalDataDefinitionType.FLAG.value:
                 additional_data["flag"] = value
@@ -620,20 +619,20 @@ class Wrapper:
         additional_data_list: List[AdditionalDataV1] = self.__to_additional_data_list(detail["attributes"], label_info)
         data_holding_type = self.__get_data_holding_type_from_data(detail["data"])
 
-        dest_obj = dict(
-            label_id=label_info["label_id"],
-            annotation_id=detail["annotation_id"] if detail.get("annotation_id") is not None else str(uuid.uuid4()),
-            account_id=self.api.account_id,
-            data_holding_type=data_holding_type,
-            data=detail["data"],
-            additional_data_list=additional_data_list,
-            is_protected=False,
-            etag=None,
-            url=None,
-            path=None,
-            created_datetime=None,
-            updated_datetime=None,
-        )
+        dest_obj = {
+            "label_id": label_info["label_id"],
+            "annotation_id": detail["annotation_id"] if detail.get("annotation_id") is not None else str(uuid.uuid4()),
+            "account_id": self.api.account_id,
+            "data_holding_type": data_holding_type,
+            "data": detail["data"],
+            "additional_data_list": additional_data_list,
+            "is_protected": False,
+            "etag": None,
+            "url": None,
+            "path": None,
+            "created_datetime": None,
+            "updated_datetime": None,
+        }
 
         if data_holding_type == AnnotationDataHoldingType.OUTER.value:
             data_uri = detail["data"]["data_uri"]
