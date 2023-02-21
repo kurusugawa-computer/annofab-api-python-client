@@ -43,14 +43,15 @@ autoflake = "*"
 black = ">=23.1"
 
 # lint library
-flake8 = "*"
-mypy = "*"
+flake8 = ">=5"
+mypy = ">=1.0"
 pylint = ">=2.16"
 
 # document library
-sphinx = "*"
+sphinx = "^6"
 docutils = "*"
-pydata-sphinx-theme = "*"
+# https://github.com/pydata/pydata-sphinx-theme/issues/1094 に対応したバージョンを利用したいので、RC版を採用した
+pydata-sphinx-theme = ">=0.13.0rc3"
 
 # type stub package
 types-requests = "*"
