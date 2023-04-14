@@ -1,9 +1,5 @@
 .PHONY: docs lint test format test publish
 
-init:
-	pip install poetry --upgrade
-	poetry install
-
 format:
 	poetry run autoflake  --in-place --remove-all-unused-imports  --ignore-init-module-imports --recursive annofabapi tests
 	poetry run isort annofabapi tests
