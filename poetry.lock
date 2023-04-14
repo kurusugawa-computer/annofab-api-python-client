@@ -1092,27 +1092,29 @@ files = [
 
 [[package]]
 name = "pydata-sphinx-theme"
-version = "0.13.0rc4"
+version = "0.13.3"
 description = "Bootstrap-based Sphinx theme from the PyData community"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pydata_sphinx_theme-0.13.0rc4-py3-none-any.whl", hash = "sha256:b4b902317fcbbc5c583ceb245b62d71e47c7820b06fc2228e355b7045d59be97"},
-    {file = "pydata_sphinx_theme-0.13.0rc4.tar.gz", hash = "sha256:420696725584372aed8f5fe848bfe123cb4ad9790a34287875012811001b447b"},
+    {file = "pydata_sphinx_theme-0.13.3-py3-none-any.whl", hash = "sha256:bf41ca6c1c6216e929e28834e404bfc90e080b51915bbe7563b5e6fda70354f0"},
+    {file = "pydata_sphinx_theme-0.13.3.tar.gz", hash = "sha256:827f16b065c4fd97e847c11c108bf632b7f2ff53a3bca3272f63f3f3ff782ecc"},
 ]
 
 [package.dependencies]
 accessible-pygments = "*"
+Babel = "*"
 beautifulsoup4 = "*"
 docutils = "!=0.17.0"
 packaging = "*"
 pygments = ">=2.7"
 sphinx = ">=4.2"
+typing-extensions = "*"
 
 [package.extras]
 dev = ["nox", "pre-commit", "pydata-sphinx-theme[doc,test]", "pyyaml"]
-doc = ["ablog (>=0.11.0rc2)", "colorama", "ipyleaflet", "jupyter_sphinx", "linkify-it-py", "matplotlib", "myst-nb", "nbsphinx", "numpy", "numpydoc", "pandas", "plotly", "rich", "sphinx-copybutton", "sphinx-design", "sphinx-sitemap", "sphinx-togglebutton", "sphinxcontrib-youtube", "sphinxext-rediraffe", "xarray"]
+doc = ["ablog (>=0.11.0rc2)", "colorama", "ipyleaflet", "jupyter_sphinx", "linkify-it-py", "matplotlib", "myst-nb", "nbsphinx", "numpy", "numpydoc", "pandas", "plotly", "rich", "sphinx-copybutton", "sphinx-design", "sphinx-favicon (>=1.0.1)", "sphinx-sitemap", "sphinx-togglebutton", "sphinxcontrib-youtube", "sphinxext-rediraffe", "xarray"]
 test = ["codecov", "pytest", "pytest-cov", "pytest-regressions"]
 
 [[package]]
@@ -1713,4 +1715,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "f2b2ccf4c4630a4d8adf7c75ddb995dcbc74e430d559111d73df62dd436c1361"
+content-hash = "4c091121f13d40f397b8233c0152af52c1e240269626e42d9d824d6ea8551c25"
