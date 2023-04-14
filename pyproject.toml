@@ -31,34 +31,39 @@ dataclasses-json="*"
 more-itertools = "*"
 
 
-[tool.poetry.dev-dependencies]
-# test library
-pytest = "*"
+[tool.poetry.group.test.dependencies]
+pytest = "^7"
 pytest-xdist = "*"
 pytest-cov = "*"
 
-# format library
+[tool.poetry.group.formatter.dependencies]
 isort = "*"
 autoflake = "*"
-black = ">=23.1"
+black = "^23"
 
-# lint library
-flake8 = ">=5"
-mypy = ">=1.0"
-pylint = ">=2.16"
-
-# document library
-sphinx = "^6"
-docutils = "*"
-# https://github.com/pydata/pydata-sphinx-theme/issues/1094 に対応したバージョンを利用したいので、RC版を採用した
-pydata-sphinx-theme = ">=0.13.0rc3"
+[tool.poetry.group.linter.dependencies]
+flake8 = "^5"
+mypy = "^1"
+pylint = "^2"
 
 # type stub package
 types-requests = "*"
 types-python-dateutil = "*"
 types-dataclasses = "*"
 
+
+[tool.poetry.group.documentation.dependencies]
+sphinx = "^6"
+pydata-sphinx-theme = ">=0.13.3"
+
+
+[tool.poetry.group.dev]
+# 開発するときのみ必要なライブラリ。インストールしなくても開発はできるので、オプショナルにする
+optional = true
+
+[tool.poetry.group.dev.dependencies]
 ipython = "*"
+
 
 [tool.black]
 line-length = 120

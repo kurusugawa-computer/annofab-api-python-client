@@ -9,8 +9,8 @@ python:
 
 install:
   - pip install pip --upgrade
-  - pip install "poetry<1.4"
-  - travis_retry poetry install
+  - pip install "poetry<1.5"
+  - travis_retry poetry install --only main,linter,test
 
 script:
    - make lint
