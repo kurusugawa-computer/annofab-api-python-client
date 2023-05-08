@@ -71,7 +71,7 @@ class ProjectConfiguration(DataClassJsonMixin):
     """抜取受入率[%]。未指定の場合は100%として扱う。"""
 
     private_storage_aws_iam_role_arn: Optional[str]
-    """AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 """
+    """AWS IAMロール。S3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 """
 
     plugin_id: Optional[str]
     """プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) """

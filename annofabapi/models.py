@@ -2721,6 +2721,27 @@ Kyes of Dict
 
 """
 
+GetMyMessagesResponse = Dict[str, Any]
+"""
+自分に届いているユーザー通知の取得結果です。
+
+Kyes of Dict
+
+* values: List[MyNotificationMessage]
+    
+* opened: int
+    開封済みの通知メッセージの数。 over_limitがtrueの場合、メッセージのタイムスタンプが新しい順から10000件のメッセージをもとに集計される 
+* total: int
+    通知メッセージの総数 
+* page: int
+    messagesに含まれる通知メッセージが何ページ目のものか 
+* page_total: int
+    ページ数の総数 
+* over_limit: bool
+    通知メッセージの取得上限を超えているか 
+
+"""
+
 
 class GraphType(Enum):
     """
@@ -2865,7 +2886,7 @@ Kyes of Dict
 * input_data_type: InputDataType
     
 * private_storage_arn: str
-    AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
+    AWS IAMロール。S3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
 * updated_datetime: str
     入力データセットの最終更新日時
 
@@ -3609,6 +3630,27 @@ Kyes of Dict
 
 """
 
+MyNotificationMessage = Dict[str, Any]
+"""
+自分への通知メッセージの情報です。
+
+Kyes of Dict
+
+* message_id: str
+    通知メッセージID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* title: str
+    メッセージ通知のタイトル 
+* body: str
+    メッセージ通知の本文 
+* content_type: str
+    メッセージのコンテンツタイプ。 メッセージを表示する際のマークアップのヒントとして使われることを想定しています。 
+* opened: bool
+    自身がメッセージを開封したか(開封済みの場合true) 
+* timestamp: str
+    最後に通知メッセージ内容を更新した日時。更新がない場合はメッセージ作成日時 
+
+"""
+
 MyOrganization = Dict[str, Any]
 """
 
@@ -3951,8 +3993,6 @@ Kyes of Dict
     組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * organization_email: str
     メールアドレス
-* price_plan: PricePlan
-    
 
 """
 
@@ -4326,7 +4366,7 @@ Kyes of Dict
 * sampling_acceptance_rate: int
     抜取受入率[%]。未指定の場合は100%として扱う。
 * private_storage_aws_iam_role_arn: str
-    AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
+    AWS IAMロール。S3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
 * plugin_id: str
     プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * custom_task_assignment_plugin_id: str
@@ -4730,7 +4770,7 @@ Kyes of Dict
 * input_data_type: InputDataType
     
 * private_storage_arn: str
-    AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
+    AWS IAMロール。S3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
@@ -4780,6 +4820,17 @@ Kyes of Dict
     人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
+
+"""
+
+PutMyNotificationMessageOpenedRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* opened: bool
+    メッセージの開封状態に対するアクション。 trueが指定された場合は開封済みの状態、falseが指定された場合は未開封の状態にします。 
 
 """
 
@@ -5829,21 +5880,6 @@ Kyes of Dict
 
 """
 
-UpdateOrganizationNameRequest = Dict[str, Any]
-"""
-
-
-Kyes of Dict
-
-* organization_id: str
-    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* organization_name: str
-    組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* last_updated_datetime: str
-    新規作成時は未指定、更新時は必須（更新前の日時） 
-
-"""
-
 UsageStatus = Dict[str, Any]
 """
 利用状況
@@ -5921,7 +5957,7 @@ UserDefinedAnnotationDataType = Dict[str, Any]
 Kyes of Dict
 
 * type: str
-    ユーザー定義アノテーション種別の型を指定します。 指定可能な値と、その意味は下記の通りです。  * `BoundingBox2d` - 2次元の矩形 * `Polygon2d` - 2次元のポリゴン * `Polyline2d` - 2次元のポリライン * `SinglePoint2d` - 2次元の点 * `SemanticSegmentation2d` - 2次元のセマンティックセグメンテーション * `InstanceSegmentation2d` - 2次元のインスタンスセグメンテーション * `Range1d` - 1次元の範囲 * `Classification` - 全体アノテーション  ユーザー定義アノテーション種別の型によって、使用可能なフィールドが決まっています。 ユーザー定義アノテーション種別ごとの、各フィールドの使用可否を下記の表で示します。  |ユーザー定義アノテーション種別の型 | 使用可能なフィールド定義 | |-----------------|:----------:| | BoundingBox2d          | MinimumSize2dWithDefaultInsertPosition, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polygon2d              | MinimumSize2d, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polyline2d             | VertexCountMinMax, DisplayLineDirection, MarginOfErrorTolerance | | SinglePoint2d          | MarginOfErrorTolerance | | SemanticSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | InstanceSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | Range1d                | MarginOfErrorTolerance | | Classification         | MarginOfErrorTolerance | 
+    ユーザー定義アノテーション種別の型を指定します。 指定可能な値と、その意味は下記の通りです。  * `BoundingBox2d` - 2次元の矩形 * `Polygon2d` - 2次元のポリゴン * `Polyline2d` - 2次元のポリライン * `SinglePoint2d` - 2次元の点 * `SemanticSegmentation2d` - 2次元のセマンティックセグメンテーション * `InstanceSegmentation2d` - 2次元のインスタンスセグメンテーション * `Range1d` - 1次元の範囲 * `Classification` - 全体アノテーション * `Unknown` - その他のアノテーション種別  下記のフィールド定義は、すべてのアノテーション種別の型に対して使用可能です。 * `OneIntegerField` * `OneStringField` * `OneBooleanField`  その他のフィールド定義は、使用可能なアノテーション種別の型に制限があります。 ユーザー定義アノテーション種別の型ごとの、使用可能なフィールド定義を下記の表で示します。  |ユーザー定義アノテーション種別の型 | 使用可能なフィールド定義 | |-----------------|:----------:| | BoundingBox2d          | MinimumSize2dWithDefaultInsertPosition, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polygon2d              | MinimumSize2d, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polyline2d             | VertexCountMinMax, DisplayLineDirection, MarginOfErrorTolerance | | SinglePoint2d          | MarginOfErrorTolerance | | SemanticSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | InstanceSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | Range1d                | MarginOfErrorTolerance | | Classification         | MarginOfErrorTolerance | | Unknown | - | 
 
 """
 
