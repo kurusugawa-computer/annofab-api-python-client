@@ -1236,14 +1236,11 @@ components:
       required:
         - organization_name
         - organization_email
-        - price_plan
       properties:
         organization_name:
           $ref: "#/components/schemas/OrganizationName"
         organization_email:
           $ref: "#/components/schemas/Email"
-        price_plan:
-          $ref: "#/components/schemas/PricePlan"
     PutOrganizationRequest:
       type: object
       required:
@@ -1255,19 +1252,6 @@ components:
           description: |
             組織名。
             現在の組織名と異なる値を指定してください。同じ名前の組織が既に存在する場合は、400エラーが発生します。
-        last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
-    UpdateOrganizationNameRequest:
-      type: object
-      required:
-        - organization_id
-        - organization_name
-        - last_updated_datetime
-      properties:
-        organization_id:
-          $ref: "#/components/schemas/OrganizationId"
-        organization_name:
-          $ref: "#/components/schemas/OrganizationName"
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
     PutOrganizationMemberRoleRequest:
@@ -1410,6 +1394,11 @@ components:
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
         WebhookID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+    NotificationMessageId:
+      type: string
+      example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        通知メッセージID。[値の制約についてはこちら。](#section/API-Convention/APIID)
     Duration:
       type: string
       example: "PT34H17M36.789S"
@@ -1574,7 +1563,7 @@ components:
         private_storage_aws_iam_role_arn:
           type: string
           description: |
-            AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。
+            AWS IAMロール。S3プライベートストレージの認可で使います。
             [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
           example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
         plugin_id:
@@ -2880,8 +2869,6 @@ components:
       required:
         - labels
         - inspection_phrases
-        - comment
-        - auto_marking
       properties:
         labels:
           type: array
@@ -2923,8 +2910,6 @@ components:
         - additionals
         - restrictions
         - inspection_phrases
-        - comment
-        - auto_marking
         - format_version
       properties:
         labels:
@@ -2978,8 +2963,6 @@ components:
         - additionals
         - restrictions
         - inspection_phrases
-        - comment
-        - auto_marking
         - format_version
       properties:
         labels:
@@ -3156,6 +3139,9 @@ components:
             フィールドIDをキー、フィールド定義を値とするオブジェクトを設定します。
           items:
             type: object
+            required:
+              - field_id
+              - definition
             properties:
               field_id:
                 type: string
@@ -3371,9 +3357,15 @@ components:
             * `InstanceSegmentation2d` - 2次元のインスタンスセグメンテーション
             * `Range1d` - 1次元の範囲
             * `Classification` - 全体アノテーション
+            * `Unknown` - その他のアノテーション種別
 
-            ユーザー定義アノテーション種別の型によって、使用可能なフィールドが決まっています。
-            ユーザー定義アノテーション種別ごとの、各フィールドの使用可否を下記の表で示します。
+            下記のフィールド定義は、すべてのアノテーション種別の型に対して使用可能です。
+            * `OneIntegerField`
+            * `OneStringField`
+            * `OneBooleanField`
+
+            その他のフィールド定義は、使用可能なアノテーション種別の型に制限があります。
+            ユーザー定義アノテーション種別の型ごとの、使用可能なフィールド定義を下記の表で示します。
 
             |ユーザー定義アノテーション種別の型 | 使用可能なフィールド定義 |
             |-----------------|:----------:|
@@ -3385,6 +3377,7 @@ components:
             | InstanceSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance |
             | Range1d                | MarginOfErrorTolerance |
             | Classification         | MarginOfErrorTolerance |
+            | Unknown | - |
           enum:
             - BoundingBox2d
             - Polygon2d
@@ -3394,6 +3387,7 @@ components:
             - InstanceSegmentation2d
             - Range1d
             - Classification
+            - Unknown
     AdditionalDataDefinitionType:
       type: string
       enum:
@@ -4729,7 +4723,7 @@ components:
         private_storage_arn:
           type: string
           description: |
-            AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。
+            AWS IAMロール。S3プライベートストレージの認可で使います。
             [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
           example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
         updated_datetime:
@@ -4751,7 +4745,7 @@ components:
         private_storage_arn:
           type: string
           description: |
-            AWS IAMロール。ビジネスプランでのS3プライベートストレージの認可で使います。
+            AWS IAMロール。S3プライベートストレージの認可で使います。
             [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
           example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
         last_updated_datetime:
@@ -5067,6 +5061,9 @@ components:
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
+          description: |
+            `project_id`は利用されません。<br />
+            常にpathパラメータで指定された`project_id`を利用します。
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
         _type:
@@ -7989,3 +7986,87 @@ components:
         url:
           type: string
           description: CSVファイルのURL
+    GetMyMessagesResponse:
+      type: object
+      description: 自分に届いているユーザー通知の取得結果です。
+      required:
+        - messages
+        - opened
+        - total
+        - page
+        - page_total
+        - over_limit
+      properties:
+        values:
+          type: array
+          items:
+            $ref: "#/components/schemas/MyNotificationMessage"
+        opened:
+          type: integer
+          description: |
+            開封済みの通知メッセージの数。
+            over_limitがtrueの場合、メッセージのタイムスタンプが新しい順から10000件のメッセージをもとに集計される
+        total:
+          type: integer
+          description: |
+            通知メッセージの総数
+        page:
+          type: integer
+          description: |
+            messagesに含まれる通知メッセージが何ページ目のものか
+        page_total:
+          type: integer
+          description: |
+            ページ数の総数
+        over_limit:
+          type: boolean
+          description: |
+            通知メッセージの取得上限を超えているか
+    MyNotificationMessage:
+      type: object
+      description: 自分への通知メッセージの情報です。
+      required:
+        - message_id
+        - title
+        - body
+        - opened
+        - timestamp
+      properties:
+        message_id:
+          $ref: "#/components/schemas/NotificationMessageId"
+        title:
+          $ref: "#/components/schemas/NotificationMessageTitle"
+        body:
+          $ref: "#/components/schemas/NotificationMessageBody"
+        content_type:
+          $ref: "#/components/schemas/NotificationMessageContentType"
+        opened:
+          type: boolean
+          description: |
+            自身がメッセージを開封したか(開封済みの場合true)
+        timestamp:
+          type: string
+          description: |
+            最後に通知メッセージ内容を更新した日時。更新がない場合はメッセージ作成日時
+          format: date-time
+    NotificationMessageTitle:
+      type: string
+      description: |
+        メッセージ通知のタイトル
+    NotificationMessageBody:
+      type: string
+      description: |
+        メッセージ通知の本文
+    NotificationMessageContentType:
+      type: string
+      description: |
+        メッセージのコンテンツタイプ。
+        メッセージを表示する際のマークアップのヒントとして使われることを想定しています。
+    PutMyNotificationMessageOpenedRequest:
+      type: object
+      properties:
+        opened:
+          type: boolean
+          description: |
+            メッセージの開封状態に対するアクション。
+            trueが指定された場合は開封済みの状態、falseが指定された場合は未開封の状態にします。

@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.162.0
+  version: 0.170.0
   title: Annofab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -140,7 +140,8 @@ tags:
   description: |
     入力データに対する操作
 
-    入力データは、Annofabにファイルをアップロードして利用します。ビジネスプランでは、プライベートストレージにあるファイルを入力データとして利用することも可能です。
+    入力データは、Annofabにファイルをアップロードして利用します。
+    プライベートストレージにあるファイルを補助情報として利用することも可能です（ただし[問い合わせ](https://annofab.com/docs/forms/contact-sales.html)が必要です）。
 
 - name: af-inspection
   x-displayName: Inspection
@@ -206,7 +207,8 @@ tags:
 
     補助情報は入力データに紐付けられています。
 
-    補助情報は、Annofabにファイルをアップロードして利用します。ビジネスプランでは、プライベートストレージにあるファイルを補助情報として利用することも可能です。
+    補助情報は、Annofabにファイルをアップロードして利用します。
+    プライベートストレージにあるファイルを補助情報として利用することも可能です（ただし[問い合わせ](https://annofab.com/docs/forms/contact-sales.html)が必要です）。
 
 
 - name: af-task
@@ -692,6 +694,116 @@ paths:
                   $ref: "swagger-api-components.yaml#/components/schemas/ProjectMember"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+  /my/messages:
+    get:
+      tags:
+        - af-my
+      summary: 自分に届いている通知メッセージの一括取得
+      description: |
+        自分に届いている通知メッセージを一括で取得します。
+        自身に届いている通知メッセージが上限(10000件)を超える場合、タイムスタンプが新しい順で上限を超える通知メッセージは取得できません。
+        また、上限を超える場合、開封済みの通知メッセージの数は、取得可能な通知メッセージ中の集計値となります。詳細はレスポンスの項目を参照ください。
+      security:
+        - Everyone: []
+      operationId: getMyNotificationMessages
+      parameters:
+        - name: page
+          in: query
+          description: |
+            表示するページ番号
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: |
+            1ページあたりの取得するデータ件数
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 20
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/GetMyMessagesResponse"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /my/messages/{message_id}:
+    get:
+      tags:
+        - af-my
+      summary: 自分に届いているメッセージの取得
+      description: |
+        自分に届いているメッセージを取得します。
+      security:
+        - Everyone: []
+      operationId: getMyNotificationMessage
+      parameters:
+        - name: message_id
+          in: path
+          description: |
+            通知メッセージID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/NotificationMessageId"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/MyNotificationMessage"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /my/messages/{message_id}/opened:
+    put:
+      tags:
+        - af-my
+      summary: 通知メッセージのステータス更新
+      description: |
+        通知メッセージのステータスを更新します。
+        自分に届いた通知メッセージのみ更新できます。
+      security:
+        - Everyone: []
+      operationId: putMyNotificationMessageOpened
+      parameters:
+        - name: message_id
+          in: path
+          description: |
+            通知メッセージID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/NotificationMessageId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "swagger-api-components.yaml#/components/schemas/PutMyNotificationMessageOpenedRequest"
+      responses:
+        "200":
+          description: 正常
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /organizations:
     post:
       tags:
@@ -699,9 +811,6 @@ paths:
       summary: 組織の作成
       description: |
         組織を作成します。
-
-        リクエストボディの`price_plan`には、`free`のみ指定できます。
-        ビジネスプランの組織を作成する場合は、[セールスチーム](https://annofab.com/docs/forms/contact-sales.html)までお問い合わせください。
 
         既に存在する組織名をリクエストボディに指定すると、400エラーが発生します。
       security:
@@ -745,43 +854,6 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/MyOrganizationList"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-    put:
-      deprecated: true
-      tags:
-      - af-my
-      summary: 組織名の変更
-      description: |
-        組織名を変更します。
-
-        2022/04/19以降に廃止する予定です。
-      security:
-      - OrganizationOwner: []
-      operationId: updateOrganization
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "swagger-api-components.yaml#/components/schemas/UpdateOrganizationNameRequest"
-      responses:
-        "200":
-          description: 変更に成功すると、その組織
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/Organization"
-        "400":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "409":
-          description: 先に更新されているため失敗
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/ErrorAlreadyUpdated"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /organizations/{organization_name}:
@@ -3112,13 +3184,13 @@ paths:
         in: query
         description: |
           1ページあたりの取得するデータ件数。
-          未指定時は1件のみ取得。
+          未指定時は30件取得。
         required: false
         schema:
           type: integer
           minimum: 0
           maximum: 200
-          default: 1
+          default: 30
       - name: exclusive_start_created_datetime
         in: query
         description: 作成日時が、指定した日付より古いジョブを取得します。
@@ -3170,13 +3242,13 @@ paths:
         in: query
         description: |
           1ページあたりの取得するデータ件数。
-          未指定時は1件のみ取得。
+          未指定時は30件取得。
         required: false
         schema:
           type: integer
           minimum: 0
           maximum: 200
-          default: 1
+          default: 30
       - name: exclusive_start_created_datetime
         in: query
         description: 作成日時が、指定した日付より古いジョブを取得します。
@@ -3220,10 +3292,10 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       - name: job_type
         in: path
-        description: ジョブの種別。[詳細はこちら](#section/ProjectJobType)。
+        description: このパラメータは互換性のために残されています。 この値は無視され、動作に影響を与えません。
         required: true
         schema:
-          $ref: "swagger-api-components.yaml#/components/schemas/ProjectJobType"
+          type: string
       - name: job_id
         in: path
         description: ジョブID
