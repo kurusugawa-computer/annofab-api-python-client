@@ -908,7 +908,7 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            job_type (ProjectJobType):  ジョブの種別。[詳細はこちら](#section/ProjectJobType)。 (required)
+            job_type (str):  このパラメータは互換性のために残されています。 この値は無視され、動作に影響を与えません。 (required)
             job_id (str):  ジョブID (required)
 
         Returns:
@@ -938,7 +938,7 @@ class AbstractAnnofabApi(abc.ABC):
             organization_name (str):  組織名 (required)
             query_params (Dict[str, Any]): Query Parameters
                 type (str):  取得するジョブの種別。[詳細はこちら](#section/OrganizationJobType)。
-                limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。
+                limit (int):  1ページあたりの取得するデータ件数。 未指定時は30件取得。
                 exclusive_start_created_datetime (str):  作成日時が、指定した日付より古いジョブを取得します。
 
         Returns:
@@ -970,7 +970,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
             query_params (Dict[str, Any]): Query Parameters
                 type (ProjectJobType):  取得するジョブの種別。[詳細はこちら](#section/ProjectJobType)。
-                limit (int):  1ページあたりの取得するデータ件数。 未指定時は1件のみ取得。
+                limit (int):  1ページあたりの取得するデータ件数。 未指定時は30件取得。
                 exclusive_start_created_datetime (str):  作成日時が、指定した日付より古いジョブを取得します。
 
         Returns:
@@ -1035,6 +1035,60 @@ class AbstractAnnofabApi(abc.ABC):
         url_path = f"/my/projects/{project_id}/member"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def get_my_notification_message(self, message_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+        """自分に届いているメッセージの取得
+        https://annofab.com/docs/api/#operation/getMyNotificationMessage
+
+
+        authorizations: Everyone
+
+
+        自分に届いているメッセージを取得します。
+
+        Args:
+            message_id (str):  通知メッセージID  (required)
+
+        Returns:
+            Tuple[MyNotificationMessage, requests.Response]
+
+
+        """
+        url_path = f"/my/messages/{message_id}"
+        http_method = "GET"
+        keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def get_my_notification_messages(
+        self, query_params: Optional[Dict[str, Any]] = None, **kwargs
+    ) -> Tuple[Any, requests.Response]:
+        """自分に届いている通知メッセージの一括取得
+        https://annofab.com/docs/api/#operation/getMyNotificationMessages
+
+
+        authorizations: Everyone
+
+
+        自分に届いている通知メッセージを一括で取得します。 自身に届いている通知メッセージが上限(10000件)を超える場合、タイムスタンプが新しい順で上限を超える通知メッセージは取得できません。 また、上限を超える場合、開封済みの通知メッセージの数は、取得可能な通知メッセージ中の集計値となります。詳細はレスポンスの項目を参照ください。
+
+        Args:
+            query_params (Dict[str, Any]): Query Parameters
+                page (int):  表示するページ番号
+                limit (int):  1ページあたりの取得するデータ件数
+
+        Returns:
+            Tuple[GetMyMessagesResponse, requests.Response]
+
+
+        """
+        url_path = f"/my/messages"
+        http_method = "GET"
+        keyword_params: Dict[str, Any] = {
+            "query_params": query_params,
+        }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
@@ -1144,32 +1198,29 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def update_organization(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
-        """組織名の変更
-        https://annofab.com/docs/api/#operation/updateOrganization
-
-        .. deprecated:: X
-
-        authorizations: OrganizationOwner
+    def put_my_notification_message_opened(
+        self, message_id: str, request_body: Optional[Any] = None, **kwargs
+    ) -> Tuple[Any, requests.Response]:
+        """通知メッセージのステータス更新
+        https://annofab.com/docs/api/#operation/putMyNotificationMessageOpened
 
 
-        組織名を変更します。  2022/04/19以降に廃止する予定です。
+        authorizations: Everyone
+
+
+        通知メッセージのステータスを更新します。 自分に届いた通知メッセージのみ更新できます。
 
         Args:
+            message_id (str):  通知メッセージID  (required)
             request_body (Any): Request Body
-                update_organization_name_request (UpdateOrganizationNameRequest):  (required)
+                put_my_notification_message_opened_request (PutMyNotificationMessageOpenedRequest):  (required)
 
         Returns:
-            Tuple[Organization, requests.Response]
+            Tuple[, requests.Response]
 
 
         """
-        warnings.warn(
-            "annofabapi.AnnofabApi.update_organization() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
-        url_path = f"/my/organizations"
+        url_path = f"/my/messages/{message_id}/opened"
         http_method = "PUT"
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
@@ -1190,7 +1241,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        組織を作成します。  リクエストボディの`price_plan`には、`free`のみ指定できます。 ビジネスプランの組織を作成する場合は、[セールスチーム](https://annofab.com/docs/forms/contact-sales.html)までお問い合わせください。  既に存在する組織名をリクエストボディに指定すると、400エラーが発生します。
+        組織を作成します。  既に存在する組織名をリクエストボディに指定すると、400エラーが発生します。
 
         Args:
             request_body (Any): Request Body
