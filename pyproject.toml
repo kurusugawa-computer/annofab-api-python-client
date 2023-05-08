@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "annofabapi"
-version = "0.68.0"
+version = "0.0.0"  # `poetry-dynamic-versioning`を使ってGitHubのバージョンタグを取得している。変更不要
 description = "Python Clinet Library of Annofab WebAPI (https://annofab.com/docs/api/)"
 authors = ["yuji38kwmt"]
 license = "MIT"
@@ -79,7 +79,12 @@ ignore_missing_imports = true
 # 型ヒントが付いていない関数もチェックする
 check_untyped_defs = true
 
+[tool.poetry-dynamic-versioning]
+enable = true
+format = "{base}"
+
+
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
 
