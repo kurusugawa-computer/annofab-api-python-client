@@ -3,15 +3,21 @@
 ソースコードの生成、テスト実行、リリース手順などを記載します。
 
 # Requirements
-* Bash
-* Docker (OpenAPI Generatorを実行するのに必要)
-* python 3.6+
+VSCodeのdevcontainerを起動してください。
 
-# Install
-以下のコマンドを実行してください。開発に必要な環境が構築されます。
+# Generate source code
 
-```bash
-$ make init
+annofabapiのいくつかのファイルは、[Annofab Web APIのOpenAPI Spec](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
+以下のコマンドを実行すると、ソースコードが生成されます。
+
+```
+# `generate/swagger/*.yaml`ファイルから、ソースコードを生成する
+$ generate/generate.sh
+
+# Annofab WebAPIのOpenAPI Spec を`generate/swagger/`にダウンロードしてから、ソースコードを生成する
+$ generate/generate.sh --download
+
+$ make format && make lint
 ```
 
 # Test
@@ -56,44 +62,27 @@ $ poetry run pytest --print_log_annofabapi tests
 * 「組織の削除」、「プロジェクトの削除」など間違って操作してしまったときの影響が多いメソッド
 * 「パスワード変更」など使用頻度が少なく、実行や確認がしづらいメソッド
 
+# Release
+GitHubのReleasesからリリースしてください。
+バージョンはSemantic Versioningに従います。
+リリースすると、以下の状態になります。
 
-# Versioning
-annofabapiのバージョンはSemantic Versioning 2.0に従います。
-* メソッドが追加されたときは、マイナーバージョンを上げる。
-* annofabapiのバグ/ドキュメント修正などにより、annofabapiをリリースするときは、パッチバージョンを上げる。
-
-annofabapiのバージョンは以下のファイルで定義しています。
-* `annofabapi/__version__.py`
-* `pyproject.toml`
+* ソース内のバージョン情報（`pyproject.toml`, `__version__.py`）は、https://github.com/mtkennerly/poetry-dynamic-versioning でGitHubのバージョンタグから生成されます。
+* 自動でPyPIに公開されます。
 
 
-# PyPIへのリリース方法
-
-## 事前作業
-
-### PyPIのアカウントを作成
-1. 以下のURLにアクセスして、PyPIのアカウントを作成する。
-https://pypi.org/account/register/
-
-2. 管理者に連絡して、Collaboratorsとして招待してもらう
-https://pypi.org/project/annofabapi/
-
-## リリース方法
-以下のコマンドを実行してください。PyPIのユーザ名とパスワードの入力が求められます。
-
-```
-$ make publish
-```
 
 
-## Document
+# 開発フロー
+* mainブランチを元にしてブランチを作成して、プルリクを作成してください。mainブランチへの直接pushすることはGitHub上で禁止しています。
+
+
+# Document
 ### ドキュメントの作成
 `$ make docs` コマンドを実行すると、`docs/_build/html/`にHTMLファイルが生成されます。
 
-
 ### ドキュメントの修正
 `docs/*.rst`ファイルを修正してください。rstファイルは[Sphinx](https://www.sphinx-doc.org/en/master/)でビルドしています。
-
 
 ### ドキュメントのホスティング
 ドキュメントは、https://readthedocs.org/ にホスティングしています。
@@ -103,47 +92,8 @@ ReadTheDocsに通知するタイミングは、[GitHubのwebhook設定画面](ht
 ドキュメント生成元のブランチは、[ReadTheDocsの管理画面](https://readthedocs.org/dashboard/annofab-api-python-client/advanced/)で設定してください。
 
 ReadTheDocsのビルド結果は https://readthedocs.org/projects/annofab-api-python-client/builds/ で確認できます。
-メンテナンスする場合は、事前に管理者からメンテナスとして招待してもらってください。
+メンテナンスする場合は、事前に管理者から招待してもらってください。
 
-
-
-## 開発フロー
-* masterブランチを元にしてブランチを作成して、プルリクを作成してください。masterブランチへの直接pushすることはGitHub上で禁止しています。
-* リリース時のソースはGitHubのRelease機能、またはPyPIからダウンロードしてください。
-
-
-
-
------------------
-# Annofab WebAPIの更新により、リリースする
-### 1.ソースコードの生成
-
-annofabapiのいくつかのファイルは、[Annofab Web APIのOpenAPI Spec](https://annofab.com/docs/api/swagger.yaml)から自動生成しています。
-以下のコマンドを実行すると、ソースコードが生成されます。詳細は[generate/README.md](generate/README.md)を参照してください。
-
-```
-# `generate/swagger/*.yaml`ファイルから、ソースコードを生成する
-$ generate/generate.sh
-
-# Annofab WebAPIのOpenAPI Spec を`generate/swagger/`にダウンロードしてから、ソースコードを生成する
-$ generate/generate.sh --download
-
-$ make format && make lint
-```
-
-### 2.テストの実施
-「テストの実行方法」を参照
-
-### 3.versionを上げる
-「Versioning」を参照
-
-### 4.プルリクを作ってマージする
-
-### 5.PyPIへパッケージをアップロードする
-「PyPIへのリリース方法」を参照
-
-### 6.GitHubのリリースページに追加
-GitHubのRelease機能を使って、リリース情報を記載します。
 
 
 
