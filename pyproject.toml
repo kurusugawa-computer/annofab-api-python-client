@@ -23,6 +23,14 @@ backoff="*"
 dataclasses-json="*"
 more-itertools = "*"
 
+numpy={version="*", optional=true }
+pillow={version="*", optional=true }
+
+
+[tool.poetry.extras]
+# 塗りつぶし画像を扱うためのオプション
+segmentation = ["numpy", "pillow"]
+
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7"
@@ -71,6 +79,8 @@ skip="annofabapi/__init__.py"
 ignore_missing_imports = true
 # 型ヒントが付いていない関数もチェックする
 check_untyped_defs = true
+
+plugins = ["numpy.typing.mypy_plugin"]
 
 [tool.poetry-dynamic-versioning]
 enable = true

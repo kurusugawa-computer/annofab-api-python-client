@@ -202,6 +202,15 @@ print(simple_annotation)
 
 ```
 
+### 塗りつぶし画像の読み込み
+`annofabapi.segmentation` には、アノテーションZIPに格納されている塗りつぶし画像を扱うための関数が用意されています。
+利用する場合は、以下のコマンドを実行してください。
+
+```
+$ pip install annofabapi[segmentation]
+```
+
+
 
 ## DataClass
 `annofabapi.dataclass`に、データ構造用のクラスがあります。
@@ -216,6 +225,8 @@ print(task.task_id)
 print(task.status)
 
 ```
+
+
 
 
 ## 備考

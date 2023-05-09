@@ -224,9 +224,9 @@ JSONファイルの中身については、https://annofab.com/docs/api/#tag/x-a
 
 
 
-塗りつぶし画像を読み込む
+塗りつぶし画像を開く
 --------------------------------------------------
-``SimpleAnnotationParser.open_outer_file()`` メソッドを実行すると、塗りつぶし画像を読み込みます。
+``SimpleAnnotationParser.open_outer_file()`` メソッドを実行すると、塗りつぶし画像ファイルを開きます。
 
 .. code-block:: python
 
@@ -236,10 +236,9 @@ JSONファイルの中身については、https://annofab.com/docs/api/#tag/x-a
     # 塗りつぶし画像の相対パス
     data_uri = detail.data["data_uri"]
 
-    # 塗りつぶし画像を読み込む
+    # 塗りつぶし画像を開く
     with parser.open_outer_file(data_uri) as f:
         pass
-
 
 
 アノテーションzip内のすべてのJSONを読み込む
@@ -345,4 +344,34 @@ JSONファイルの中身については、https://annofab.com/docs/api/#tag/x-a
     else:
         print("タスクは未完了状態")
 
+
+
+
+
+``annofabapi.segmentation``
+=============================================
+
+``annofabapi.segmentation`` には、アノテーションZIPに格納されている塗りつぶし画像を扱うための関数が用意されています。
+
+このモジュールは ``numpy`` , ``pillow`` に依存しています。
+利用する場合は、以下のコマンドを実行してください。
+
+.. code-block::
+    
+    $ pip install annofabapi[segmentation]
+
+
+``read_binary_image`` 関数は、塗られている部分がTrue、塗られていない部分がFalseである2次元配列(numpy.ndarray)を返します。
+
+
+.. code-block:: python
+
+    from annofabapi.segmentation import read_binary_image
+
+    # 塗りつぶし画像を読み込む
+    with parser.open_outer_file(data_uri) as f:
+        segmentation_data = read_binary_image(f)
+        print(segmentation_data)
+        # array([[ True, False, ....],
+        
 
