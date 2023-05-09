@@ -31,15 +31,19 @@
 		"CONTAINER_WORKSPACE": "${containerWorkspaceFolder}",
 		"LOCAL_WORKSPACE": "${localWorkspaceFolder}"
 	},
-	"postStartCommand": "poetry install",
-	"extensions": [
-		"mosapride.zenkaku",
-		"ms-python.python",
-		"ms-python.vscode-pylance",
-		"streetsidesoftware.code-spell-checker",
-		"bungcip.better-toml",
-		"njpwerner.autodocstring",
-		"dawhite.mustache",
-		"lextudio.restructuredtext"
-	]
+	"postStartCommand": "poetry install --all-extras",
+	"customizations":{
+		"vscode":{
+			"extensions": [
+				"mosapride.zenkaku",
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"streetsidesoftware.code-spell-checker",
+				"bungcip.better-toml",
+				"njpwerner.autodocstring",
+				"dawhite.mustache",
+				"lextudio.restructuredtext"
+			]
+		}
+	}
 }
