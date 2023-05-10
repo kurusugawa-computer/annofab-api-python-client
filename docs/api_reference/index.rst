@@ -11,7 +11,8 @@ API reference
    utils
    parser
    plugin
-   models
    dataclass
    exceptions
+   segmentation
+   models
 
