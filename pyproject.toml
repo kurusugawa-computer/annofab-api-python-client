@@ -54,7 +54,7 @@ types-dataclasses = "*"
 
 
 [tool.poetry.group.documentation.dependencies]
-sphinx = "^6"
+sphinx = ">=6,<8"
 pydata-sphinx-theme = ">=0.13.3"
 
 
