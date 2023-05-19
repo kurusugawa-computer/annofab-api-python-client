@@ -1985,7 +1985,7 @@ class Wrapper:
         """
         タスクの完了状態を取り消します。
         このメソッドを実行すると、タスクの`status`は`not_started`になります。
-        
+
         Notes:
             `phase`が`acceptance`, `status`が`completed`のタスクを想定しています。
             それ以外のタスクに対して実行してもエラーにはならず、`status`が`not_started`になります。
