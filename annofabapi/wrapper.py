@@ -1944,7 +1944,7 @@ class Wrapper:
     ) -> Task:
         """
         タスクの提出を取り消します。
-        「提出されたタスク」とは以下の状態になっています。
+        「提出されたタスク」とは、以下の状態のタスクのことです。
         * 教師付フェーズで「提出」ボタンを押して、検査/受入フェーズへ遷移したタスク
         * 検査フェーズから「合格」ボタンを押して、受入フェーズへ遷移したタスク
 
@@ -1983,7 +1983,12 @@ class Wrapper:
         last_updated_datetime: Optional[str] = None,
     ) -> Task:
         """
-        タスクの受入完了状態を取り消す。
+        タスクの完了状態を取り消します。
+        このメソッドを実行すると、タスクの`status`は`not_started`になります。
+
+        Notes:
+            `phase`が`acceptance`, `status`が`completed`のタスクを想定しています。
+            それ以外のタスクに対して実行してもエラーにはならず、`status`が`not_started`になります。
 
         Args:
             project_id: プロジェクトID
@@ -2047,6 +2052,7 @@ class Wrapper:
     ) -> Dict[str, Any]:
         """
         タスクを差し戻します。
+        このメソッドを実行すると、`phase`は`annotation`になります。
 
         Notes:
             * 通常の差し戻しの場合(force=False)
