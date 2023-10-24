@@ -1072,7 +1072,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: Everyone
 
 
-        自分に届いている通知メッセージを一括で取得します。 自身に届いている通知メッセージが上限(10000件)を超える場合、タイムスタンプが新しい順で上限を超える通知メッセージは取得できません。 また、上限を超える場合、開封済みの通知メッセージの数は、取得可能な通知メッセージ中の集計値となります。詳細はレスポンスの項目を参照ください。
+        自分に届いている通知メッセージを、メッセージの作成日時が新しい順で、一括取得します。 自身に届いている通知メッセージが上限(10000件)を超える場合、上限を超えた分の通知メッセージは取得できません。 また、上限を超える場合、開封済みの通知メッセージの数は、取得可能な通知メッセージ中の集計値となります。詳細はレスポンスの項目を参照ください。
 
         Args:
             query_params (Dict[str, Any]): Query Parameters
@@ -1080,7 +1080,7 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  1ページあたりの取得するデータ件数
 
         Returns:
-            Tuple[GetMyMessagesResponse, requests.Response]
+            Tuple[MyNotificationList, requests.Response]
 
 
         """
@@ -1089,6 +1089,29 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params: Dict[str, Any] = {
             "query_params": query_params,
         }
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def get_my_notification_unread_messages_count(self, **kwargs) -> Tuple[Any, requests.Response]:
+        """自分に届いている通知メッセージの未読件数を取得
+        https://annofab.com/docs/api/#operation/getMyNotificationUnreadMessagesCount
+
+
+        authorizations: Everyone
+
+
+        自分に届いている通知メッセージの未読件数を取得します。
+
+        Args:
+
+        Returns:
+            Tuple[MyNotificationUnreadMessagesCount, requests.Response]
+
+
+        """
+        url_path = f"/my/unread-messages-count"
+        http_method = "GET"
+        keyword_params: Dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
