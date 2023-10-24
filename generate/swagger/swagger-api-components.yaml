@@ -390,13 +390,72 @@ components:
           type: string
           format: password
           description: パスワード
+    PostExchangeCodeLoginResponse:
+      $ref: "#/components/schemas/LoginSucceedResponse"
     LoginResponse:
+      oneOf:
+        - $ref: "#/components/schemas/LoginSucceedResponse"
+        - $ref: "#/components/schemas/LoginNeedChallengeResponse"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          LoginSucceed: "#/components/schemas/LoginSucceedResponse"
+          NeedChallenge: "#/components/schemas/LoginNeedChallengeResponse"
+    LoginSucceedResponse:
       type: object
       required:
        - token
       properties:
         token:
           $ref: "#/components/schemas/Token"
+    LoginNeedChallengeResponse:
+      type: object
+      required:
+       - session
+      properties:
+        session:
+          type: string
+          description: セッション
+    LoginRespondToAuthChallengeRequest:
+      type: object
+      required:
+        - mfa_code
+        - session
+      properties:
+        mfa_code:
+          type: string
+          description: MFAコード。Time-based One-time Password (TOTP) のみ対応している
+        session:
+          type: string
+          description: |
+            [login API](#operation/login)が返したセッション
+    PostMfaSettingRequest:
+      type: object
+      required:
+        - enabled
+      properties:
+        enabled:
+          type: boolean
+          description: MFAをONにするか
+        mfa_code:
+          type: string
+          description: |
+            [initiateMfaSetup](#operation/initiateMfaSetup)が返したシークレットコードを元に生成したTOTP。enabledがtrueの場合に設定する
+        access_token:
+          type: string
+          description: アクセストークン。enabledがtrueの場合に設定する
+    GetMfaSettingResponse:
+      $ref: "#/components/schemas/MfaSetting"
+    PostMfaSettingResponse:
+      $ref: "#/components/schemas/MfaSetting"
+    MfaSetting:
+      type: object
+      required:
+        - enabled
+      properties:
+        enabled:
+          type: boolean
+          description: MFAが有効か (trueの場合に有効)
     Token:
       type: object
       required:
@@ -414,6 +473,29 @@ components:
         refresh_token:
           type: string
           description: リフレッシュトークン
+    InitiateMfaSetupRequest:
+      type: object
+      required:
+        - access_token
+      properties:
+        access_token:
+          description: |
+            アクセストークン。[login](#operation/login) APIで取得します。
+          type: string
+    InitiateMfaSetupResponse:
+      type: object
+      required:
+        - secret_code
+        - qr_code_data
+      properties:
+        secret_code:
+          description: |
+            TOTPアルゴリズムでワンタイムコードを生成するために使用される、一意に生成された共有秘密コードです。
+          type: string
+        qr_code_data:
+          description: |
+            MFAを有効化する際、認証アプリで読み込むQRコードに埋め込むデータです。Google AuthenticatorとIIJ SmartKeyに対応しています。
+          type: string
     RefreshTokenRequest:
       type: object
       required:
@@ -6972,6 +7054,7 @@ components:
         - comment_type
         - comment
         - comment_node
+        - _type
       properties:
         comment_id:
           $ref: "#/components/schemas/CommentId"
@@ -7034,26 +7117,27 @@ components:
             なお、この値は後から更新することはできません（値を指定しても無視されます）。
         _type:
           type: string
+          enum: ["Put"]
           description: |
             `Put`
 
             [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "Put"
     BatchCommentRequestItemDelete:
       type: object
       description: コメント削除
       required:
         - comment_id
+        - _type
       properties:
         comment_id:
           $ref: "#/components/schemas/CommentId"
         _type:
           type: string
+          enum: ["Delete"]
           description: |
             `Delete`
 
             [詳しくはこちら](#section/API-Convention/API-_type)
-          example: "Delete"
     AggregationResult:
       oneOf:
         - $ref: "#/components/schemas/CountResult"
@@ -7986,7 +8070,7 @@ components:
         url:
           type: string
           description: CSVファイルのURL
-    GetMyMessagesResponse:
+    MyNotificationList:
       type: object
       description: 自分に届いているユーザー通知の取得結果です。
       required:
@@ -7997,7 +8081,7 @@ components:
         - page_total
         - over_limit
       properties:
-        values:
+        messages:
           type: array
           items:
             $ref: "#/components/schemas/MyNotificationMessage"
@@ -8031,6 +8115,7 @@ components:
         - body
         - opened
         - timestamp
+        - created_datetime
       properties:
         message_id:
           $ref: "#/components/schemas/NotificationMessageId"
@@ -8048,6 +8133,11 @@ components:
           type: string
           description: |
             最後に通知メッセージ内容を更新した日時。更新がない場合はメッセージ作成日時
+          format: date-time
+        created_datetime:
+          type: string
+          description: |
+            メッセージ作成日時
           format: date-time
     NotificationMessageTitle:
       type: string
@@ -8070,3 +8160,12 @@ components:
           description: |
             メッセージの開封状態に対するアクション。
             trueが指定された場合は開封済みの状態、falseが指定された場合は未開封の状態にします。
+    MyNotificationUnreadMessagesCount:
+      type: object
+      description: 通知メッセージの未読件数
+      required:
+        - unread
+      properties:
+        unread:
+          type: integer
+          description: 通知メッセージの未読件数

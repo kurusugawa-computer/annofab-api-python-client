@@ -2721,27 +2721,6 @@ Kyes of Dict
 
 """
 
-GetMyMessagesResponse = Dict[str, Any]
-"""
-自分に届いているユーザー通知の取得結果です。
-
-Kyes of Dict
-
-* values: List[MyNotificationMessage]
-    
-* opened: int
-    開封済みの通知メッセージの数。 over_limitがtrueの場合、メッセージのタイムスタンプが新しい順から10000件のメッセージをもとに集計される 
-* total: int
-    通知メッセージの総数 
-* page: int
-    messagesに含まれる通知メッセージが何ページ目のものか 
-* page_total: int
-    ページ数の総数 
-* over_limit: bool
-    通知メッセージの取得上限を超えているか 
-
-"""
-
 
 class GraphType(Enum):
     """
@@ -2782,6 +2761,30 @@ Kyes of Dict
 
 * type: str
     IllegalState
+
+"""
+
+InitiateMfaSetupRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* access_token: str
+    アクセストークン。[login](#operation/login) APIで取得します。 
+
+"""
+
+InitiateMfaSetupResponse = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* secret_code: str
+    TOTPアルゴリズムでワンタイムコードを生成するために使用される、一意に生成された共有秘密コードです。 
+* qr_code_data: str
+    MFAを有効化する際、認証アプリで読み込むQRコードに埋め込むデータです。Google AuthenticatorとIIJ SmartKeyに対応しています。 
 
 """
 
@@ -3484,6 +3487,17 @@ class Lang(Enum):
     JA_JP = "ja-JP"
 
 
+LoginNeedChallengeResponse = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* session: str
+    セッション
+
+"""
+
 LoginRequest = Dict[str, Any]
 """
 
@@ -3497,7 +3511,33 @@ Kyes of Dict
 
 """
 
+LoginRespondToAuthChallengeRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* mfa_code: str
+    MFAコード。Time-based One-time Password (TOTP) のみ対応している
+* session: str
+    [login API](#operation/login)が返したセッション 
+
+"""
+
 LoginResponse = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* token: Token
+    
+* session: str
+    セッション
+
+"""
+
+LoginSucceedResponse = Dict[str, Any]
 """
 
 
@@ -3584,6 +3624,17 @@ Kyes of Dict
 
 """
 
+MfaSetting = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* enabled: bool
+    MFAが有効か (trueの場合に有効)
+
+"""
+
 MyAccount = Dict[str, Any]
 """
 
@@ -3630,6 +3681,27 @@ Kyes of Dict
 
 """
 
+MyNotificationList = Dict[str, Any]
+"""
+自分に届いているユーザー通知の取得結果です。
+
+Kyes of Dict
+
+* messages: List[MyNotificationMessage]
+    
+* opened: int
+    開封済みの通知メッセージの数。 over_limitがtrueの場合、メッセージのタイムスタンプが新しい順から10000件のメッセージをもとに集計される 
+* total: int
+    通知メッセージの総数 
+* page: int
+    messagesに含まれる通知メッセージが何ページ目のものか 
+* page_total: int
+    ページ数の総数 
+* over_limit: bool
+    通知メッセージの取得上限を超えているか 
+
+"""
+
 MyNotificationMessage = Dict[str, Any]
 """
 自分への通知メッセージの情報です。
@@ -3648,6 +3720,19 @@ Kyes of Dict
     自身がメッセージを開封したか(開封済みの場合true) 
 * timestamp: str
     最後に通知メッセージ内容を更新した日時。更新がない場合はメッセージ作成日時 
+* created_datetime: str
+    メッセージ作成日時 
+
+"""
+
+MyNotificationUnreadMessagesCount = Dict[str, Any]
+"""
+通知メッセージの未読件数
+
+Kyes of Dict
+
+* unread: int
+    通知メッセージの未読件数
 
 """
 
@@ -4231,6 +4316,21 @@ Kyes of Dict
     システム内部用のプロパティ
 * job: ProjectJobInfo
     
+
+"""
+
+PostMfaSettingRequest = Dict[str, Any]
+"""
+
+
+Kyes of Dict
+
+* enabled: bool
+    MFAをONにするか
+* mfa_code: str
+    [initiateMfaSetup](#operation/initiateMfaSetup)が返したシークレットコードを元に生成したTOTP。enabledがtrueの場合に設定する 
+* access_token: str
+    アクセストークン。enabledがtrueの場合に設定する
 
 """
 
