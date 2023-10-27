@@ -66,3 +66,12 @@ class CheckSumError(AnnofabApiException):
         self.response_etag = response_etag
 
         super().__init__(message)
+
+
+class NotSupportedUserError(Exception):
+    """
+    annofab-api-python-clientでサポートされていないユーザが実行した際のエラー
+    """
+
+    def __init__(self, message: str):
+        super().__init__(message)
