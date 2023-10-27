@@ -47,12 +47,12 @@ info:
 
     ## APIのリクエストボディに指定する _type 属性について
 
-    * 一部のAPIではリクエストボディに `_type` 属性を任意で指定することができます。
+    * 一部のAPIではリクエストボディに `_type` 属性を指定することができます。
     * `_type` 属性を指定する場合は、`_type` 属性で指定された型にデコードします。
       例えば、`_type` 属性に `ByDirectory` を指定すると `TaskGenerateRuleByDirectory` にデコードされ、`Polyline` を指定すると `InspectionDataPolyline` にデコードされます。
       リクエストボディが誤っている場合はエラーになります。
-    * `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
-    * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。しかし、利便性のために一部APIを除き指定は必須ではありません。
+    * 必須でない `_type` 属性を指定しない場合は、リクエストボディで指定された `_type` 以外の属性からデコードすべき型を推論します。適切な型が見つからない場合はエラーになります。
+    * `_type` 属性は「推論が失敗して別の型にデコードされる」ことを防ぐために指定することを推奨します。
 
     ## APIに指定するID/名前の制約
 
@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.170.0
+  version: 0.180.0
   title: Annofab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -427,6 +427,34 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /login-respond-to-auth-challenge:
+    post:
+      tags:
+        - af-login
+      summary: MFAコードによるログイン
+      description: MFAコードによるログインを行います。
+      security:
+        - EveryoneRequestBody: []
+      operationId: loginRespondToAuthChallenge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "swagger-api-components.yaml#/components/schemas/LoginRespondToAuthChallengeRequest"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/LoginSucceedResponse"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /refresh-token:
     post:
       tags:
@@ -700,8 +728,8 @@ paths:
         - af-my
       summary: 自分に届いている通知メッセージの一括取得
       description: |
-        自分に届いている通知メッセージを一括で取得します。
-        自身に届いている通知メッセージが上限(10000件)を超える場合、タイムスタンプが新しい順で上限を超える通知メッセージは取得できません。
+        自分に届いている通知メッセージを、メッセージの作成日時が新しい順で、一括取得します。
+        自身に届いている通知メッセージが上限(10000件)を超える場合、上限を超えた分の通知メッセージは取得できません。
         また、上限を超える場合、開封済みの通知メッセージの数は、取得可能な通知メッセージ中の集計値となります。詳細はレスポンスの項目を参照ください。
       security:
         - Everyone: []
@@ -732,7 +760,30 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/GetMyMessagesResponse"
+                $ref: "swagger-api-components.yaml#/components/schemas/MyNotificationList"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /my/unread-messages-count:
+    get:
+      tags:
+        - af-my
+      summary: 自分に届いている通知メッセージの未読件数を取得
+      description: |
+        自分に届いている通知メッセージの未読件数を取得します。
+      security:
+        - Everyone: []
+      operationId: getMyNotificationUnreadMessagesCount
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/MyNotificationUnreadMessagesCount"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "403":
