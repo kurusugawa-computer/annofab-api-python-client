@@ -11,7 +11,7 @@ import requests
 from requests.auth import AuthBase
 from requests.cookies import RequestsCookieJar
 
-from annofabapi.exceptions import NotLoggedInError, NotSupportedUserError
+from annofabapi.exceptions import MfaEnabledUserExecutionError, NotLoggedInError
 from annofabapi.generated_api import AbstractAnnofabApi
 
 logger = logging.getLogger(__name__)
@@ -638,9 +638,7 @@ class AnnofabApi(AbstractAnnofabApi):
         response = self._execute_http_request("post", url, json=login_info)
         json_obj = response.json()
         if "token" not in json_obj:
-            raise NotSupportedUserError(
-                f"ユーザー(ユーザーID: {self.login_user_id})はMFAが有効です。" "MFAが有効なユーザーは、annofab-api-python-clientを利用できません。"
-            )
+            raise MfaEnabledUserExecutionError(self.login_user_id)
         self.token_dict = json_obj["token"]
 
         logger.debug("Logged in successfully. user_id = %s", self.login_user_id)
