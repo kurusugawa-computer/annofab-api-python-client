@@ -68,10 +68,11 @@ class CheckSumError(AnnofabApiException):
         super().__init__(message)
 
 
-class NotSupportedUserError(Exception):
+class MfaEnabledUserExecutionError(Exception):
     """
-    annofab-api-python-clientでサポートされていないユーザが実行した際のエラー
+    MFAが有効化されたユーザーが実行したことを示すエラー
     """
 
-    def __init__(self, message: str):
+    def __init__(self, user_id: str):
+        message = f"User (User ID: {user_id}) cannot use annofab-api-python-client because MFA is enabled."
         super().__init__(message)
