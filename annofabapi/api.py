@@ -621,7 +621,7 @@ class AnnofabApi(AbstractAnnofabApi):
     # Public Method : Login
     #########################################
     @my_backoff
-    def login(self) -> Tuple[Dict[str, Any], requests.Response]:
+    def login(self, mfa_code: str | None = None) -> Tuple[Dict[str, Any], requests.Response]:
         """
         ログイン
 
@@ -638,8 +638,17 @@ class AnnofabApi(AbstractAnnofabApi):
         response = self._execute_http_request("post", url, json=login_info)
         json_obj = response.json()
         if "token" not in json_obj:
-            raise MfaEnabledUserExecutionError(self.login_user_id)
-        self.token_dict = json_obj["token"]
+            if mfa_code is None:
+                raise MfaEnabledUserExecutionError(self.login_user_id)
+            else:
+                mfa_param = {"user_id": self.login_user_id, "mfa_code": mfa_code, "session": json_obj["session"]}
+                mfa_url = f"{self.url_prefix}/login-respond-to-auth-challenge"
+                mfa_response = self._execute_http_request("post", mfa_url, json=mfa_param)
+                mfa_json_obj = mfa_response.json()
+                token_dict = mfa_json_obj["token"]
+        else:
+            token_dict = json_obj["token"]
+        self.token_dict = token_dict
 
         logger.debug("Logged in successfully. user_id = %s", self.login_user_id)
         return json_obj, response
