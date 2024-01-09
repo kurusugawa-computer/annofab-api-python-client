@@ -672,7 +672,8 @@ class AnnofabApi(AbstractAnnofabApi):
             raise NotLoggedInError
 
         request_body = self.token_dict
-        self._execute_http_request("POST", "/logout", json=request_body)
+        url = f"{self.url_prefix}/logout"
+        self._execute_http_request("POST", url, json=request_body)
         self.token_dict = None
 
     def refresh_token(self) -> None:
@@ -688,14 +689,15 @@ class AnnofabApi(AbstractAnnofabApi):
             return
 
         request_body = {"refresh_token": self.token_dict["refresh_token"]}
-        content, response = self._execute_http_request("POST", "/refresh-token", request_body=request_body)
+        url = f"{self.url_prefix}/refresh-token"
+        response = self._execute_http_request("POST", url, json=request_body)
 
         # Unauthorized Errorならば、login APIを実行して、取得したトークン情報をインスタンスに保持する
         if response.status_code == requests.codes.unauthorized:
             self.login()
             return
 
-        self.token_dict = content
+        self.token_dict = response.json()
 
     #########################################
     # Public Method : Other
