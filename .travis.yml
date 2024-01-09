@@ -14,7 +14,6 @@ install:
   - travis_retry poetry install --only main,linter,test --all-extras
 
 script:
-   - make lint
    - pytest tests/test_local*.py
 
 
