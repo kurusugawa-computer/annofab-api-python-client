@@ -621,11 +621,13 @@ class AnnofabApi(AbstractAnnofabApi):
     # Public Method : Login
     #########################################
     @my_backoff
-    def login(self, mfa_code: str | None = None) -> Tuple[Dict[str, Any], requests.Response]:
+    def login(self, mfa_code: Optional[str] = None) -> Tuple[Dict[str, Any], requests.Response]:
         """
-        ログイン
+        ログインして、トークンをインスタンスに保持します。
+        MFAが有効化されている場合は、loginRespondToAuthChallenge APIを実行してトークンを取得します。
 
-
+        Args:
+            mfa_code: ``loginRespondToAuthChallenge``のレスポンスから取得したMFAコード
 
         Returns:
             Tuple[Token, requests.Response]
@@ -635,23 +637,21 @@ class AnnofabApi(AbstractAnnofabApi):
 
         url = f"{self.url_prefix}/login"
 
-        response = self._execute_http_request("post", url, json=login_info)
-        json_obj = response.json()
+        login_response = self._execute_http_request("post", url, json=login_info)
+        json_obj = login_response.json()
         if "token" not in json_obj:
+            # `login` APIのレスポンスのスキーマがLoginNeedChallengeResponseのとき
             if mfa_code is None:
                 raise MfaEnabledUserExecutionError(self.login_user_id)
-            else:
-                mfa_param = {"user_id": self.login_user_id, "mfa_code": mfa_code, "session": json_obj["session"]}
-                mfa_url = f"{self.url_prefix}/login-respond-to-auth-challenge"
-                mfa_response = self._execute_http_request("post", mfa_url, json=mfa_param)
-                mfa_json_obj = mfa_response.json()
-                token_dict = mfa_json_obj["token"]
+            mfa_json_obj, _ = self._loginRespondToAuthChallenge(mfa_code, json_obj["session"])
+            token_dict = mfa_json_obj["token"]
         else:
+            # `login` APIのレスポンスのスキーマがloginRespondToAuthChallengeのとき
             token_dict = json_obj["token"]
         self.token_dict = token_dict
 
         logger.debug("Logged in successfully. user_id = %s", self.login_user_id)
-        return json_obj, response
+        return json_obj, login_response
 
     def logout(self) -> Tuple[Dict[str, Any], requests.Response]:
         """
@@ -696,6 +696,25 @@ class AnnofabApi(AbstractAnnofabApi):
         request_body = {"refresh_token": self.token_dict["refresh_token"]}
         content, response = self._request_wrapper("POST", "/refresh-token", request_body=request_body)
         self.token_dict = content
+        return content, response
+
+    def _loginRespondToAuthChallenge(self, mfa_code: str, session: str) -> Tuple[Dict[str, Any], requests.Response]:
+        """
+        MFAコードによるログインを行います。
+
+        privateな関数である理由：この関数はloginメソッドとセットで利用する想定で、単体で使用することは想定していないため。
+
+        Args:
+            MFAコード。Time-based One-time Password (TOTP) のみ対応している
+            login APIが返したセッション
+
+        Returns:
+            tuple[0]: トークン情報
+            tuple[1]: requests.Response
+
+        """
+        request_body = {"mfa_code": mfa_code, "session": session}
+        content, response = self._request_wrapper("POST", "/login-respond-to-auth-challenge", request_body=request_body)
         return content, response
 
     #########################################
