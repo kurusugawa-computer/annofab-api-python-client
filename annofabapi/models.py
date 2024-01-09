@@ -6337,6 +6337,9 @@ Kyes of Dict
 """
 
 
+# `@deprecated_class`を指定した理由：
+# InspectionStatusは非推奨のgetInspections APIとbatchUpdateComments APIからしか参照されていない。
+# したがってInspectionStatusも非推奨にしている。
 @deprecated_class(deprecated_date="2022-08-23")
 class InspectionStatus(Enum):
     """

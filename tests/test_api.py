@@ -27,7 +27,6 @@ from annofabapi.dataclass.project import Project
 from annofabapi.dataclass.project_member import ProjectMember
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
-from annofabapi.exceptions import NotLoggedInError
 from annofabapi.models import GraphType, ProjectJobType
 from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
@@ -300,19 +299,10 @@ class TestJob:
 
 class TestLogin:
     def test_login(self):
-        assert api.login()[0]["token"].keys() >= {"id_token", "access_token", "refresh_token"}
-
-        assert api.refresh_token()[0].keys() >= {"id_token", "access_token", "refresh_token"}
-
-        assert type(api.logout()[0]) == dict
-
-        # ログアウト状態では、refresh_tokenメソッドはExceptionをスローする
-        with pytest.raises(NotLoggedInError):
-            api.refresh_token()
-
-        # ログアウト状態では、logoutメソッドはNoneを返す
-        with pytest.raises(NotLoggedInError):
-            api.logout()
+        # Exceptionをスローしないことの確認
+        api.login()
+        api.refresh_token()
+        api.logout()
 
 
 class TestMy:

@@ -1,2 +1,10 @@
+# 自動生成しない理由：
+# ログイン関係のAPIは直接利用すると使いにくいので、APIとは異なる引数にしている（たとえばlogin関数は引数でuser_id,passwordを受け取るのではなく、インスタンスにあるuser_id, passwordを参照するなど）
+# したがって、自動生成しない
 out/openapi_client/api/af_login_api.py
+
+# 自動生成しない理由：
+# InspectionStatusは非推奨のgetInspections APIとbatchUpdateComments APIからしか参照されていない。
+# したがってInspectionStatusも非推奨にしている。
+# `models.py`に非推奨であるデコレータを付与しているので、自動で生成されるとデコレータの部分が消えてしまう。したがって、自動生成しない。
 out/openapi_client/models/inspection_status.py
