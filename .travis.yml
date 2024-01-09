@@ -10,7 +10,7 @@ python:
 
 install:
   - pip install pip --upgrade
-  - pip install "poetry<1.5"
+  - pip install "poetry<1.8"
   - travis_retry poetry install --only main,linter,test --all-extras
 
 script:
