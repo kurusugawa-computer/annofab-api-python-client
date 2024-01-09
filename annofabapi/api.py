@@ -643,7 +643,7 @@ class AnnofabApi(AbstractAnnofabApi):
             if mfa_code is None:
                 raise MfaEnabledUserExecutionError(self.login_user_id)
 
-            mfa_param = {"mfa_code": mfa_code, "session": json_obj["session"]}
+            mfa_param = {"user_id": self.login_user_id, "mfa_code": mfa_code, "session": json_obj["session"]}
             mfa_url = f"{self.url_prefix}/login-respond-to-auth-challenge"
             mfa_response = self._execute_http_request("post", mfa_url, json=mfa_param)
             mfa_json_obj = mfa_response.json()
