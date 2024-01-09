@@ -512,7 +512,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         # Unauthorized Errorならば、ログイン後に再度実行する
         if response.status_code == requests.codes.unauthorized:
-            self.login()
+            self.refresh_token()
             return self._request_wrapper(
                 http_method,
                 url_path,
@@ -621,13 +621,13 @@ class AnnofabApi(AbstractAnnofabApi):
     # Public Method : Login
     #########################################
     @my_backoff
-    def login(self, mfa_code: Optional[str] = None) -> Tuple[Dict[str, Any], requests.Response]:
+    def login(self, mfa_code: Optional[str] = None) -> None:
         """
         ログインして、トークンをインスタンスに保持します。
         MFAが有効化されている場合は、loginRespondToAuthChallenge APIを実行してトークンを取得します。
 
         Args:
-            mfa_code: ``loginRespondToAuthChallenge``のレスポンスから取得したMFAコード
+            mfa_code: ``loginRespondToAuthChallenge``のレスポンスから取得したMFAコード。この引数はexperimentalです。将来削除される可能性があります。
 
         Returns:
             Tuple[Token, requests.Response]
@@ -643,20 +643,22 @@ class AnnofabApi(AbstractAnnofabApi):
             # `login` APIのレスポンスのスキーマがLoginNeedChallengeResponseのとき
             if mfa_code is None:
                 raise MfaEnabledUserExecutionError(self.login_user_id)
-            mfa_json_obj, _ = self._loginRespondToAuthChallenge(mfa_code, json_obj["session"])
+
+            mfa_param = {"mfa_code": mfa_code, "session": json_obj["session"]}
+            mfa_url = f"{self.url_prefix}/login-respond-to-auth-challenge"
+            mfa_response = self._execute_http_request("post", mfa_url, json=mfa_param)
+            mfa_json_obj = mfa_response.json()
             token_dict = mfa_json_obj["token"]
         else:
             # `login` APIのレスポンスのスキーマがloginRespondToAuthChallengeのとき
             token_dict = json_obj["token"]
         self.token_dict = token_dict
-
         logger.debug("Logged in successfully. user_id = %s", self.login_user_id)
-        return json_obj, login_response
 
-    def logout(self) -> Tuple[Dict[str, Any], requests.Response]:
+    def logout(self) -> None:
         """
-        ログアウト
-        ログインしていないときはNoneを返す。
+        ログアウトします。
+        ログアウト後は、インスタンス変数 ``token_dict`` をNoneにします。
 
 
 
@@ -671,51 +673,30 @@ class AnnofabApi(AbstractAnnofabApi):
             raise NotLoggedInError
 
         request_body = self.token_dict
-        content, response = self._request_wrapper("POST", "/logout", request_body=request_body)
+        self._execute_http_request("POST", "/logout", json=request_body)
         self.token_dict = None
-        return content, response
 
-    def refresh_token(self) -> Tuple[Dict[str, Any], requests.Response]:
+    def refresh_token(self) -> None:
         """
-        トークン リフレッシュ
-        ログインしていないときはNoneを返す。
-
-
-
-        Returns:
-            Tuple[Token, requests.Response]
-
-        Raises:
-            NotLoggedInError: ログインしてない状態で関数を呼び出したときのエラー
+        トークンを再発行して、新しいトークン情報をインスタンスに保持します。
+        ログインしていない場合やリフレッシュトークンの有効期限が切れている場合は、login APIを実行して新しいトークン情報をインスタンスに保持します。
 
         """
 
         if self.token_dict is None:
-            raise NotLoggedInError
+            # 一度もログインしていないときは、login APIを実行して、トークン情報をインスタンスに保持する（login関数内でインスタンスに保持している）
+            self.login()
+            return
 
         request_body = {"refresh_token": self.token_dict["refresh_token"]}
-        content, response = self._request_wrapper("POST", "/refresh-token", request_body=request_body)
+        content, response = self._execute_http_request("POST", "/refresh-token", request_body=request_body)
+
+        # Unauthorized Errorならば、login APIを実行して、取得したトークン情報をインスタンスに保持する
+        if response.status_code == requests.codes.unauthorized:
+            self.login()
+            return
+
         self.token_dict = content
-        return content, response
-
-    def _loginRespondToAuthChallenge(self, mfa_code: str, session: str) -> Tuple[Dict[str, Any], requests.Response]:
-        """
-        MFAコードによるログインを行います。
-
-        privateな関数である理由：この関数はloginメソッドとセットで利用する想定で、単体で使用することは想定していないため。
-
-        Args:
-            MFAコード。Time-based One-time Password (TOTP) のみ対応している
-            login APIが返したセッション
-
-        Returns:
-            tuple[0]: トークン情報
-            tuple[1]: requests.Response
-
-        """
-        request_body = {"mfa_code": mfa_code, "session": session}
-        content, response = self._request_wrapper("POST", "/login-respond-to-auth-challenge", request_body=request_body)
-        return content, response
 
     #########################################
     # Public Method : Other
