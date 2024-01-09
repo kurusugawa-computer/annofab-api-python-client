@@ -114,7 +114,7 @@ class InternationalizationMessageMessages(DataClassJsonMixin):
     """ """
 
     lang: str
-    """言語コード。`en-US` (英語) または `ja-JP` (日本語) のみサポートしています。"""
+    """言語コード。`en-US` (英語) 、`ja-JP` (日本語)、 `vi-VN`（ベトナム語）のみサポートしています。"""
 
     message: str
     """lang で指定された言語でのメッセージ"""
