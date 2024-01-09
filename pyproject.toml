@@ -23,7 +23,12 @@ backoff="*"
 dataclasses-json="*"
 more-itertools = "*"
 
-numpy={version="*", optional=true }
+numpy = [
+  {version = ">=1.26", python = ">=3.12", optional=true },
+  {version = "<1.25", python = "=3.8", optional=true },
+  {version="*", optional=true }
+]
+
 pillow={version="*", optional=true }
 
 
