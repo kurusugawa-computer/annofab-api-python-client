@@ -27,8 +27,8 @@ class TestMyBackoff:
         assert self.requestexception_connectionerror_then_true(log) is True
         assert 2 == len(log)
         print(log)
-        assert type(log[0]) == requests.exceptions.RequestException
-        assert type(log[1]) == ConnectionError
+        assert isinstance(type((log[0])), requests.exceptions.RequestException)
+        assert isinstance(type(log[1]), ConnectionError)
 
     @my_backoff
     def chunkedencodingerror_requestsconnectionerror_then_true(self, log: list[Any]):
@@ -50,8 +50,8 @@ class TestMyBackoff:
         assert self.chunkedencodingerror_requestsconnectionerror_then_true(log) is True
         assert 2 == len(log)
         print(log)
-        assert type(log[0]) == requests.exceptions.ChunkedEncodingError
-        assert type(log[1]) == requests.exceptions.ConnectionError
+        assert isinstance(type(log[0]), requests.exceptions.ChunkedEncodingError)
+        assert isinstance(type(log[1]), requests.exceptions.ConnectionError)
 
     @my_backoff
     def httperror_then_true(self, log: list[Any]):
@@ -72,9 +72,9 @@ class TestMyBackoff:
         assert self.httperror_then_true(log) is True
         assert 2 == len(log)
         print(log)
-        assert type(log[0]) == requests.exceptions.HTTPError
+        assert isinstance(type(log[0]), requests.exceptions.HTTPError)
         assert log[0].response.status_code == 429
-        assert type(log[1]) == requests.exceptions.HTTPError
+        assert isinstance(type(log[1]), requests.exceptions.HTTPError)
         assert log[1].response.status_code == 500
 
     @my_backoff

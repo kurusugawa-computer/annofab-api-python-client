@@ -48,9 +48,10 @@ autoflake = "*"
 black = "^23"
 
 [tool.poetry.group.linter.dependencies]
-flake8 = "^5"
-mypy = "^1"
-pylint = "^2"
+# pythonバージョンを指定している理由：lintは開発環境と同じPythonバージョンで実行するため。また古いPythonバージョンにサポートしていないライブラリのバージョンがあるため
+mypy = {version="^1", python = ">=3.10"}
+flake8 = {version="^7", python = ">=3.10"}
+pylint = {version="^3", python = ">=3.10"}
 
 # type stub package
 types-requests = "*"

@@ -17,6 +17,19 @@ script:
    - make lint
    - pytest tests/test_local*.py
 
+
+jobs:
+  include:
+    - python: 3.8
+    - python: 3.9
+    - python: 3.10
+      script:
+        # 開発環境と同じPythonバージョンのみlintを実行する
+        - make lint
+    - python: 3.11
+    - python: 3.12
+
+
 branches:
   only:
   - main
