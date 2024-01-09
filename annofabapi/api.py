@@ -620,7 +620,6 @@ class AnnofabApi(AbstractAnnofabApi):
     #########################################
     # Public Method : Login
     #########################################
-    @my_backoff
     def login(self, mfa_code: Optional[str] = None) -> None:
         """
         ログインして、トークンをインスタンスに保持します。
