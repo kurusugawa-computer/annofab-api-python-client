@@ -78,7 +78,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
             # Unauthorized Errorならば、ログイン後に再度実行する
             if response.status_code == requests.codes.unauthorized:
-                self.api.login()
+                self.api.refresh_token()
                 return self._request_wrapper(
                     http_method,
                     url_path,
