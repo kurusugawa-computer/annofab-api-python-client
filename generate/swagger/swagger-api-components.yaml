@@ -336,7 +336,7 @@ components:
             properties:
               lang:
                 type: string
-                description: 言語コード。`en-US` (英語) または `ja-JP` (日本語) のみサポートしています。
+                description: 言語コード。`en-US` (英語) 、`ja-JP` (日本語)、 `vi-VN`（ベトナム語）のみサポートしています。
                 example: en-US
               message:
                 type: string
@@ -664,6 +664,7 @@ components:
           enum:
             - en-US
             - ja-JP
+            - vi-VN
           description: ゲストユーザーのUIの表示言語です
         key_layout:
           $ref: "#/components/schemas/KeyLayout"
@@ -793,10 +794,12 @@ components:
       enum:
         - en-US
         - ja-JP
+        - vi-VN
       description: |
         表示言語
         * `ja-JP` - 日本語
         * `en-US` - 英語
+        * `vi-VN` - ベトナム語
     KeyLayout:
       type: string
       enum:
