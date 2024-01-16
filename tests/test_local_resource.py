@@ -33,9 +33,17 @@ class TestBuild:
         assert isinstance(build_from_env(), annofabapi.Resource)
 
     def test_build(self):
+        assert isinstance(build(login_user_id="FOO", login_password="BAR"), annofabapi.Resource)
+
+        with pytest.raises(ValueError):
+            build(login_user_id="FOO", login_password=None)
+
+        with pytest.raises(ValueError):
+            build(login_user_id=None, login_password="BAR")
+
         os.environ["ANNOFAB_USER_ID"] = "FOO"
         os.environ["ANNOFAB_PASSWORD"] = "BAR"
-        assert isinstance(build(), annofabapi.Resource)
+        assert isinstance(build(login_user_id=None, login_password=None), annofabapi.Resource)
 
     def test_build_with_endpoint(self):
         user_id = "test_user"
