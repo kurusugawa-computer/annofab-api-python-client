@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 
 from annofabapi import AnnofabApi, AnnofabApi2, Wrapper
 from annofabapi.api import DEFAULT_ENDPOINT_URL
-from annofabapi.exceptions import AnnofabApiException
+from annofabapi.exceptions import CredentialsNotFoundError
 
 logger = logging.getLogger(__name__)
 
@@ -63,11 +63,11 @@ def build(
     elif login_user_id is None and login_password is None:
         try:
             return build_from_env(endpoint_url)
-        except AnnofabApiException:
+        except CredentialsNotFoundError:
             try:
                 return build_from_netrc(endpoint_url)
-            except AnnofabApiException:
-                raise AnnofabApiException("環境変数または`.netrc`ファイルにAnnofab認証情報はありませんでした。")
+            except CredentialsNotFoundError as e:
+                raise CredentialsNotFoundError("環境変数または`.netrc`ファイルにAnnofab認証情報はありませんでした。") from e
     else:
         raise ValueError("引数`login_user_id`か`login_password`のどちらか一方がNoneです。両方Noneでないか、両方Noneである必要があります。")
 
@@ -82,22 +82,25 @@ def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     Returns:
         annofabapi.Resourceインスタンス
 
+    Raises:
+        CredentialsNotFoundError: `.netrc`ファイルにAnnofabの認証情報がなかった
+
     """
     try:
         netrc_hosts = netrc.netrc().hosts
     except FileNotFoundError as e:
-        raise AnnofabApiException(e) from e
+        raise CredentialsNotFoundError("`.netrc`ファイルは見つかりません。") from e
 
     annofab_hostname = (urlparse(endpoint_url)).hostname
 
     if annofab_hostname not in netrc_hosts:
-        raise AnnofabApiException(f"The `.netrc` file does not contain the machine name '{annofab_hostname}'")
+        raise CredentialsNotFoundError(f"The `.netrc` file does not contain the machine name '{annofab_hostname}'")
 
     host = netrc_hosts[annofab_hostname]
     login_user_id = host[0]
     login_password = host[2]
     if login_user_id is None or login_password is None:
-        raise AnnofabApiException("User ID or password in the .netrc file are None.")
+        raise CredentialsNotFoundError("User ID or password in the .netrc file are None.")
 
     return Resource(login_user_id, login_password, endpoint_url=endpoint_url)
 
@@ -112,10 +115,12 @@ def build_from_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     Returns:
         annofabapi.Resourceインスタンス
 
+    Raises:
+        CredentialsNotFoundError: 環境変数にAnnofabの認証情報がなかった
     """
     login_user_id = os.environ.get("ANNOFAB_USER_ID")
     login_password = os.environ.get("ANNOFAB_PASSWORD")
     if login_user_id is None or login_password is None:
-        raise AnnofabApiException("`ANNOFAB_USER_ID` or `ANNOFAB_PASSWORD`  environment variable are empty.")
+        raise CredentialsNotFoundError("`ANNOFAB_USER_ID` or `ANNOFAB_PASSWORD`  environment variable are empty.")
 
     return Resource(login_user_id, login_password, endpoint_url=endpoint_url)

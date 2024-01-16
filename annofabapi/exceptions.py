@@ -13,6 +13,12 @@ class AnnofabApiException(Exception):
     """
 
 
+class CredentialsNotFoundError(AnnofabApiException):
+    """
+    Annofabの認証情報が見つからないときのエラー
+    """
+
+
 class AnnotationOuterFileNotFoundError(AnnofabApiException):
     """
     アノテーション情報の外部ファイル（塗りつぶしの画像ファイルなど）が、存在しない場合のエラー
