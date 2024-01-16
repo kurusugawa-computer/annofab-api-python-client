@@ -64,17 +64,12 @@ def build(
         try:
             return build_from_env(endpoint_url)
         except AnnofabApiException:
-            pass
-
-        try:
-            return build_from_netrc(endpoint_url)
-        except AnnofabApiException:
-            pass
-
-        raise AnnofabApiException("環境変数または`.netrc`ファイルにAnnofab認証情報はありませんでした。")
-
+            try:
+                return build_from_netrc(endpoint_url)
+            except AnnofabApiException:
+                raise AnnofabApiException("環境変数または`.netrc`ファイルにAnnofab認証情報はありませんでした。")
     else:
-        raise ValueError()
+        raise ValueError("引数`login_user_id`か`login_password`のどちらか一方がNoneです。両方Noneでないか、両方Noneである必要があります。")
 
 
 def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
