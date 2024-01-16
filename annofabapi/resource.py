@@ -56,6 +56,9 @@ def build(
     Returns:
         AnnofabApi, Wrapperのインスタンスを保持するインスタンス
 
+    Raises:
+        CredentialsNotFoundError: `.netrc`ファイルまたは環境変数にAnnofabの認証情報がなかった
+
     """
     if login_user_id is not None and login_password is not None:
         return Resource(login_user_id, login_password, endpoint_url=endpoint_url)
