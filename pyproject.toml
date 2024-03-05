@@ -81,6 +81,7 @@ line-length = 150
 [tool.ruff.lint]
 ignore = [
 #    "G004", # `logging-f-string` : loggingでf-stringを使いたいので無視する
+    "FA100", # `future-rewritable-type-annotation` : Python3.8をサポートしている間は無視する。
     "PD002", #すでにpandasで`inplace=True`はいろんなところで使っているため
     "RUF001", # 全角記号など`ambiguous unicode character`も使いたいため
     "RUF002",# 全角記号など`ambiguous unicode character`も使いたいため
