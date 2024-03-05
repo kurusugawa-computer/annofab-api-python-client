@@ -29,7 +29,7 @@
 	},
 	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces,type=bind,consistency=cached",
 	"workspaceFolder": "/workspaces",
-	"postStartCommand": "poetry install",
+	"postStartCommand": "poetry install --all-extras",
 	"customizations": {
 		"vscode": {
 			"extensions": [
