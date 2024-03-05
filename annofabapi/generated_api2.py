@@ -1,5 +1,4 @@
 # ruff: noqa: E501
-# flake8: noqa: W291
 # pylint: disable=too-many-lines,trailing-whitespace
 
 """
@@ -27,7 +26,7 @@ class AbstractAnnofabApi2(abc.ABC):
         url_path: str,
         query_params: Optional[Dict[str, Any]] = None,
         header_params: Optional[Dict[str, Any]] = None,
-        request_body: Optional[Any] = None,  # noqa: ANN401
+        request_body: Optional[Any] = None,
     ) -> Tuple[Any, requests.Response]:
         pass
 

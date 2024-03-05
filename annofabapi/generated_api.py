@@ -1,5 +1,4 @@
-# ruff: noqa: E501, ANN401
-# flake8: noqa: W291
+# ruff: noqa: E501
 # pylint: disable=too-many-lines,trailing-whitespace
 
 """
@@ -38,11 +37,7 @@ class AbstractAnnofabApi(abc.ABC):
     #########################################
 
     def batch_update_annotations(
-        self,
-        project_id: str,
-        query_params: Optional[Dict[str, Any]] = None,
-        request_body: Optional[Any] = None,
-        **kwargs,
+        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """アノテーション一括更新
         https://annofab.com/docs/api/#operation/batchUpdateAnnotations
@@ -177,11 +172,7 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn(
-            "annofabapi.AnnofabApi.get_archive_full_with_pro_id() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
+        warnings.warn("annofabapi.AnnofabApi.get_archive_full_with_pro_id() is deprecated and will be removed.", FutureWarning, stacklevel=2)
         url_path = f"/projects/{project_id}/archive/full"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
@@ -345,11 +336,7 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_annotation_specs(
-        self,
-        project_id: str,
-        query_params: Optional[Dict[str, Any]] = None,
-        request_body: Optional[Any] = None,
-        **kwargs,
+        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """アノテーション仕様更新
         https://annofab.com/docs/api/#operation/putAnnotationSpecs
@@ -660,11 +647,7 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn(
-            "annofabapi.AnnofabApi.batch_update_inspections() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
+        warnings.warn("annofabapi.AnnofabApi.batch_update_inspections() is deprecated and will be removed.", FutureWarning, stacklevel=2)
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/inspections"
         http_method = "POST"
         keyword_params: Dict[str, Any] = {
@@ -1991,11 +1974,7 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn(
-            "annofabapi.AnnofabApi.get_project_inspections_url() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
+        warnings.warn("annofabapi.AnnofabApi.get_project_inspections_url() is deprecated and will be removed.", FutureWarning, stacklevel=2)
         url_path = f"/projects/{project_id}/rawdata/inspections"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
@@ -2045,11 +2024,7 @@ class AbstractAnnofabApi(abc.ABC):
 
 
         """
-        warnings.warn(
-            "annofabapi.AnnofabApi.get_project_task_history_events_url() is deprecated and will be removed.",
-            FutureWarning,
-            stacklevel=2,
-        )
+        warnings.warn("annofabapi.AnnofabApi.get_project_task_history_events_url() is deprecated and will be removed.", FutureWarning, stacklevel=2)
         url_path = f"/projects/{project_id}/rawdata/task_history_events"
         http_method = "GET"
         keyword_params: Dict[str, Any] = {}
@@ -2157,11 +2132,7 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_project(
-        self,
-        project_id: str,
-        query_params: Optional[Dict[str, Any]] = None,
-        request_body: Optional[Any] = None,
-        **kwargs,
+        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """プロジェクト作成/更新
         https://annofab.com/docs/api/#operation/putProject
@@ -2623,12 +2594,7 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_supplementary_data(
-        self,
-        project_id: str,
-        input_data_id: str,
-        supplementary_data_id: str,
-        request_body: Optional[Any] = None,
-        **kwargs,
+        self, project_id: str, input_data_id: str, supplementary_data_id: str, request_body: Optional[Any] = None, **kwargs
     ) -> Tuple[Any, requests.Response]:
         """補助情報作成/更新
         https://annofab.com/docs/api/#operation/putSupplementaryData

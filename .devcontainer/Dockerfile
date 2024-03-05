@@ -28,11 +28,15 @@ RUN set -x \
 
 # Install Ubuntu packages
 RUN set -x \
+    # for docker
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
     # Python3.11をインストールするために、deadsnakes PPAを追加
     && add-apt-repository ppa:deadsnakes/ppa \
     # Install packages
     && apt-get update \
     && apt-get install -y --no-install-recommends \
+        docker-ce-cli \
         # python
         python3.11-dev \
         python3-pip \
@@ -57,6 +61,14 @@ RUN set -x \
     && rm -rf /var/lib/apt/lists/*
 
 
+# docker hack in devcontainer
+RUN set -x \
+    && mkdir -p /usr/local/devcontainer-tool/bin \
+    && curl -fsSL -o /usr/local/devcontainer-tool/bin/docker https://github.com/thamaji/devcontainer-docker/releases/download/v1.0.3/docker \
+    && chmod +x /usr/local/devcontainer-tool/bin/docker
+ENV PATH=/usr/local/devcontainer-tool/bin:${PATH}
+
+
 # Python / pip
 RUN ln -s $(which python3.11) /usr/bin/python
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -75,8 +87,12 @@ RUN set -x \
 
 # Add user / Grant sudo privileges
 RUN useradd -m -s /bin/bash -u 5000 -U vscode \
-    && echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/ALL
+    && echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/ALL \
+    && groupadd --gid 999 docker \
+    && usermod -aG docker vscode
 
 USER vscode
 
 RUN poetry config virtualenvs.in-project true
+
+ENTRYPOINT [ "bash", "/entrypoint.sh" ]

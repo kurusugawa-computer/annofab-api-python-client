@@ -1,4 +1,3 @@
-# ruff: noqa: E501
 # flake8: noqa: W291
 # pylint: disable=too-many-lines,trailing-whitespace
 
@@ -15,13 +14,7 @@ from typing import List, Optional  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
-from annofabapi.models import (
-    AssigneeRuleOfResubmittedTask,
-    InputDataType,
-    ProjectStatus,
-    TaskAssignmentProperty,
-    TaskAssignmentType,
-)
+from annofabapi.models import AssigneeRuleOfResubmittedTask, InputDataType, ProjectStatus, TaskAssignmentProperty, TaskAssignmentType
 
 
 @dataclass

@@ -13,6 +13,7 @@
 	// マウント対象のディレクトリを事前に作成する
 	"initializeCommand": "mkdir -p ${localWorkspaceFolder}/.devcontainer/venv",
 	"mounts": [
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
 		// ホスト側のvenvとコンテナ側のvenvを分類して、ホスト側でpoetryコマンドを利用できるようにする
 		"source=${localWorkspaceFolder}/.devcontainer/venv,target=${containerWorkspaceFolder}/.venv,type=bind"
 	],
