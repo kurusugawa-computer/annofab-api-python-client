@@ -1,4 +1,4 @@
-# flake8: noqa: W291
+# ruff: noqa: E501
 # pylint: disable=too-many-lines,trailing-whitespace
 
 """
@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional, Union  # pylint: disable=unused-im
 
 from dataclasses_json import DataClassJsonMixin
 
+# ruff: noqa: E501
 from annofabapi.models import (
     AdditionalDataDefinitionType,
     AnnotationDataHoldingType,
