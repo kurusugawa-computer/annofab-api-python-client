@@ -2,6 +2,7 @@
 AnnofabApi, Wrapperのテストコード
 
 """
+
 from __future__ import annotations
 
 import configparser
@@ -68,15 +69,13 @@ class TestAnnotation:
 
     def test_get_annotation(self):
         annotation, _ = api.get_annotation(project_id, task_id, self.input_data_id)
-        assert type(annotation) == dict
+        assert type(annotation) == dict  # noqa: E721
         # dataclassに変換できることの確認
         SimpleAnnotation.from_dict(annotation)
 
     def test_get_editor_annotation(self):
-        editor_annotation, _ = api.get_editor_annotation(
-            project_id, task_id, self.input_data_id, query_params={"v": "2"}
-        )
-        assert type(editor_annotation) == dict
+        editor_annotation, _ = api.get_editor_annotation(project_id, task_id, self.input_data_id, query_params={"v": "2"})
+        assert type(editor_annotation) == dict  # noqa: E721
         # dataclassに変換できることの確認
         AnnotationV2Output.from_dict(editor_annotation)
 
@@ -97,7 +96,7 @@ class TestAnnotation:
         src = TaskFrameKey(project_id, task_id, self.input_data_id)
         dest = TaskFrameKey(project_id, task_id, self.input_data_id)
         result = wrapper.copy_annotation(src, dest)
-        assert result == True
+        assert result == True  # noqa: E712
 
     def test_wrapper_put_annotation_for_simple_annotation_json(self):
         input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
@@ -115,7 +114,7 @@ class TestAnnotation:
 class TestAnnotationSpecs:
     def test_get_annotation_specs(self):
         annotation_spec, _ = api.get_annotation_specs(project_id, query_params={"v": "3"})
-        assert type(annotation_spec) == dict
+        assert type(annotation_spec) == dict  # noqa: E721
 
         # dataclassに変換できることの確認
         AnnotationSpecsV3.from_dict(annotation_spec)
@@ -130,11 +129,11 @@ class TestAnnotationSpecs:
             "last_updated_datetime": last_updated_datetime,
         }
         puted_annotation_spec, _ = api.put_annotation_specs(project_id, request_body=request_body)
-        assert type(puted_annotation_spec) == dict
+        assert type(puted_annotation_spec) == dict  # noqa: E721
 
     def test_get_annotation_specs_histories(self):
         annotation_specs_histories = api.get_annotation_specs_histories(project_id)[0]
-        assert type(annotation_specs_histories) == list
+        assert type(annotation_specs_histories) == list  # noqa: E721
 
     def test_get_annotation_specs_relation(self):
         result = wrapper.get_annotation_specs_relation(project_id, project_id)
@@ -182,7 +181,7 @@ class TestComment:
         comments, _ = api.get_comments(project_id, task_id, input_data_id)
 
         # dataclassに変換できることの確認
-        dc_comments = Comment.schema().load(comments, many=True)
+        Comment.schema().load(comments, many=True)
 
         assert first_true(comments, pred=lambda e: e["comment_id"] == comment_id) is not None
 
@@ -212,11 +211,11 @@ class TestInputData:
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
     def test_wrapper_get_input_data_list(self):
-        assert type(wrapper.get_all_input_data_list(project_id, {"input_data_name": "foo"})) == list
+        assert type(wrapper.get_all_input_data_list(project_id, {"input_data_name": "foo"})) == list  # noqa: E721
 
     def test_get_input_data(self):
         dict_input_data, _ = api.get_input_data(project_id, self.input_data_id)
-        assert type(dict_input_data) == dict
+        assert type(dict_input_data) == dict  # noqa: E721
         # dataclassに変換できることの確認
         InputData.from_dict(dict_input_data)
 
@@ -224,8 +223,8 @@ class TestInputData:
         test_input_data_id = str(uuid.uuid4())
         print("")
         print(f"put_input_data: input_data_id={test_input_data_id}")
-        assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f"{test_dir}/lenna.png")) == dict
-        assert type(api.delete_input_data(project_id, test_input_data_id)[0]) == dict
+        assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f"{test_dir}/lenna.png")) == dict  # noqa: E721
+        assert type(api.delete_input_data(project_id, test_input_data_id)[0]) == dict  # noqa: E721
 
     def test_put_input_data_from_file_and_batch_update_inputs(self):
         test_input_data_id = str(uuid.uuid4())
@@ -234,12 +233,12 @@ class TestInputData:
         wrapper.put_input_data_from_file(project_id, test_input_data_id, f"{test_dir}/lenna.png")
 
         request_body = [{"project_id": project_id, "input_data_id": test_input_data_id, "_type": "Delete"}]
-        assert type(api.batch_update_inputs(project_id, request_body=request_body)[0]) == list
+        assert type(api.batch_update_inputs(project_id, request_body=request_body)[0]) == list  # noqa: E721
 
 
 class TestInstruction:
     def test_wrapper_get_latest_instruction(self):
-        assert type(wrapper.get_latest_instruction(project_id)) == dict
+        assert type(wrapper.get_latest_instruction(project_id)) == dict  # noqa: E721
 
     def test_get_instruction_history(self):
         histories = api.get_instruction_history(project_id)[0]
@@ -255,7 +254,7 @@ class TestInstruction:
 
     def test_get_instruction_images(self):
         image_list = api.get_instruction_images(project_id)[0]
-        assert type(image_list) == list
+        assert type(image_list) == list  # noqa: E721
 
     def test_put_instruction(self):
         str_now = datetime.datetime.now().isoformat()
@@ -263,7 +262,7 @@ class TestInstruction:
 
         histories = api.get_instruction_history(project_id)[0]
         put_request_body = {"html": html_data, "last_updated_datetime": histories[0]["updated_datetime"]}
-        assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict
+        assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict  # noqa: E721
 
 
 class TestJob:
@@ -276,11 +275,11 @@ class TestJob:
         job_id = job["job_id"]
         job_list = wrapper.get_all_project_job(project_id, {"type": job_type})
 
-        assert wrapper.can_execute_job(project_id, ProjectJobType.GEN_TASKS_LIST) == False
-        assert wrapper.job_in_progress(project_id, ProjectJobType.GEN_TASKS_LIST) == True
+        assert wrapper.can_execute_job(project_id, ProjectJobType.GEN_TASKS_LIST) == False  # noqa: E712
+        assert wrapper.job_in_progress(project_id, ProjectJobType.GEN_TASKS_LIST) == True  # noqa: E712
 
         # dataclassに変換できることの確認
-        dc_job_list = ProjectJobInfo.schema().load(job_list, many=True)
+        dc_job_list = ProjectJobInfo.schema().load(job_list, many=True)  # noqa: F841
         assert first_true(job_list, pred=lambda e: e["job_id"] == job_id) is not None
 
         # ジョブが終了するまで待つ
@@ -308,7 +307,7 @@ class TestLogin:
 class TestMy:
     def test_get_my_account(self):
         my_account, _ = api.get_my_account()
-        assert type(my_account) == dict
+        assert type(my_account) == dict  # noqa: E721
 
     def test_get_my_project_members(self):
         my_project_members, _ = api.get_my_project_members()
@@ -324,7 +323,7 @@ class TestMy:
 
     def test_get_my_member_in_project(self):
         my_member_in_project, _ = api.get_my_member_in_project(project_id)
-        assert type(my_member_in_project) == dict
+        assert type(my_member_in_project) == dict  # noqa: E721
 
 
 class TestOrganization:
@@ -336,12 +335,12 @@ class TestOrganization:
 
     def test_get_organization(self):
         organization, _ = api.get_organization(self.organization_name)
-        assert type(organization) == dict
+        assert type(organization) == dict  # noqa: E721
         # dataclassに変換できることの確認
         Organization.from_dict(organization)
 
     def test_get_organization_activity(self):
-        assert type(api.get_organization_activity(self.organization_name)[0]) == dict
+        assert type(api.get_organization_activity(self.organization_name)[0]) == dict  # noqa: E721
 
     def test_wrapper_get_all_projects_of_organization(self):
         assert len(wrapper.get_all_projects_of_organization(self.organization_name)) > 0
@@ -362,7 +361,7 @@ class TestOrganizationMember:
 
     def test_get_organization_member(self):
         organization_member = api.get_organization_member(self.organization_name, api.login_user_id)[0]
-        assert type(organization_member) == dict
+        assert type(organization_member) == dict  # noqa: E721
 
     def test_update_organization_member_role(self):
         organization_member = api.get_organization_member(self.organization_name, api.login_user_id)[0]
@@ -373,16 +372,16 @@ class TestOrganizationMember:
 class TestProject:
     def test_get_project(self):
         dict_project, _ = api.get_project(project_id)
-        assert type(dict_project) == dict
+        assert type(dict_project) == dict  # noqa: E721
         # dataclassに変換できることの確認
         Project.from_dict(dict_project)
 
     def test_get_organization_of_project(self):
-        assert type(api.get_organization_of_project(project_id)[0]) == dict
+        assert type(api.get_organization_of_project(project_id)[0]) == dict  # noqa: E721
 
     @pytest.mark.submitting_job
     def test_post_project_tasks_update(self):
-        assert type(api.post_project_tasks_update(project_id)[0]) == dict
+        assert type(api.post_project_tasks_update(project_id)[0]) == dict  # noqa: E721
 
     def test_wrapper_download_project_inputs_url(self):
         assert wrapper.download_project_inputs_url(project_id, f"{out_dir}/inputs.json").startswith("https://")
@@ -391,14 +390,10 @@ class TestProject:
         assert wrapper.download_project_tasks_url(project_id, f"{out_dir}/tasks.json").startswith("https://")
 
     def test_wrapper_download_project_task_history_events_url(self):
-        assert wrapper.download_project_task_history_events_url(
-            project_id, f"{out_dir}/task_history_events.json"
-        ).startswith("https://")
+        assert wrapper.download_project_task_history_events_url(project_id, f"{out_dir}/task_history_events.json").startswith("https://")
 
     def test_wrapper_download_project_task_histories_url(self):
-        assert wrapper.download_project_task_histories_url(project_id, f"{out_dir}/task_histories.json").startswith(
-            "https://"
-        )
+        assert wrapper.download_project_task_histories_url(project_id, f"{out_dir}/task_histories.json").startswith("https://")
 
     def test_wrapper_download_project_comments_url(self):
         assert wrapper.download_project_comments_url(project_id, f"{out_dir}/comments.json").startswith("https://")
@@ -407,7 +402,7 @@ class TestProject:
 class TestProjectMember:
     def test_get_project_member(self):
         my_member = api.get_project_member(project_id, api.login_user_id)[0]
-        assert type(my_member) == dict
+        assert type(my_member) == dict  # noqa: E721
 
     def test_wrapper_get_all_project_members(self):
         member_list = wrapper.get_all_project_members(project_id)
@@ -418,86 +413,82 @@ class TestProjectMember:
 class TestStatistics:
     def test_wrapper_get_account_daily_statistics(self):
         actual = wrapper.get_account_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
         # 最大取得期間の3ヶ月を超えている場合
         actual = wrapper.get_account_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
         # 開始日と終了日を指定しない場合
         actual = wrapper.get_account_daily_statistics(project_id)
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
     def test_wrapper_get_inspection_daily_statistics(self):
         actual = wrapper.get_inspection_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
         # 最大取得期間の3ヶ月を超えている場合
         actual = wrapper.get_inspection_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
         # 開始日と終了日を指定しない場合
         actual = wrapper.get_inspection_daily_statistics(project_id)
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
     def test_wrapper_get_phase_daily_statistics(self):
         actual = wrapper.get_phase_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
         # 最大取得期間の3ヶ月を超えている場合
         actual = wrapper.get_phase_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
         # 開始日と終了日を指定しない場合
         actual = wrapper.get_phase_daily_statistics(project_id)
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
     def test_wrapper_get_task_daily_statistics(self):
         actual = wrapper.get_task_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
         # 最大取得期間の3ヶ月を超えている場合
         actual = wrapper.get_task_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
         # 開始日と終了日を指定しない場合
         actual = wrapper.get_task_daily_statistics(project_id)
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
     def test_wrapper_get_worktime_daily_statistics(self):
         actual = wrapper.get_worktime_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
-        assert type(actual) == dict
+        assert type(actual) == dict  # noqa: E721
 
         # 最大取得期間の3ヶ月を超えている場合
         actual = wrapper.get_worktime_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-07-01")
-        assert type(actual) == dict
+        assert type(actual) == dict  # noqa: E721
 
         # 開始日と終了日を指定しない場合
         actual = wrapper.get_worktime_daily_statistics(project_id)
-        assert type(actual) == dict
+        assert type(actual) == dict  # noqa: E721
 
     def test_wrapper_get_worktime_daily_statistics_by_account(self):
-        actual = wrapper.get_worktime_daily_statistics_by_account(
-            project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-06-30"
-        )
-        assert type(actual) == dict
+        actual = wrapper.get_worktime_daily_statistics_by_account(project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-06-30")
+        assert type(actual) == dict  # noqa: E721
 
         # 最大取得期間の3ヶ月を超えている場合
-        actual = wrapper.get_worktime_daily_statistics_by_account(
-            project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-07-01"
-        )
-        assert type(actual) == dict
+        actual = wrapper.get_worktime_daily_statistics_by_account(project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-07-01")
+        assert type(actual) == dict  # noqa: E721
 
         # 開始日と終了日を指定しない場合
         actual = wrapper.get_worktime_daily_statistics_by_account(
             project_id,
             account_id=api.account_id,
         )
-        assert type(actual) == dict
+        assert type(actual) == dict  # noqa: E721
 
     def test_wrapper_get_label_statistics(self):
         actual = wrapper.get_label_statistics(project_id)
-        assert type(actual) == list
+        assert type(actual) == list  # noqa: E721
 
     def test_graph_marker(self):
         old_markers, _ = api.get_markers(project_id)
@@ -523,7 +514,7 @@ class TestStatistics:
 
     def test_get_statistics_available_dates(self):
         content, _ = api.get_statistics_available_dates(project_id)
-        assert type(content) == list
+        assert type(content) == list  # noqa: E721
 
 
 class Testsupplementary:
@@ -563,7 +554,7 @@ class TestTask:
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
     def test_wraper_get_all_tasks(self):
-        assert type(wrapper.get_all_tasks(project_id, query_params={"task_id": "foo"})) == list
+        assert type(wrapper.get_all_tasks(project_id, query_params={"task_id": "foo"})) == list  # noqa: E721
 
     @pytest.mark.submitting_job
     def test_initiate_tasks_generation_by_csv(self):
@@ -571,13 +562,13 @@ class TestTask:
         test_task_id = str(uuid.uuid4())
         create_csv_for_task(csv_file_path, test_task_id, self.input_data_id)
         content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path)
-        assert type(content) == dict
+        assert type(content) == dict  # noqa: E721
 
     def test_get_task(self):
         dict_task, _ = api.get_task(project_id, task_id)
-        assert type(dict_task) == dict
+        assert type(dict_task) == dict  # noqa: E721
         # dataclassに変換できることの確認
-        task = Task.from_dict(dict_task)
+        task = Task.from_dict(dict_task)  # noqa: F841
 
     def test_put_task_and_delete_task(self):
         test_task_id = str(uuid.uuid4())
@@ -585,14 +576,14 @@ class TestTask:
         print("")
         print(f"put_task: task_id={task_id}")
         test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]
-        assert type(test_task_data) == dict
+        assert type(test_task_data) == dict  # noqa: E721
 
-        assert type(api.delete_task(project_id, test_task_id)[0]) == dict
+        assert type(api.delete_task(project_id, test_task_id)[0]) == dict  # noqa: E721
 
     @pytest.mark.side_effect
     def test_assign_task(self):
         request_body = {"request_type": {"phase": "annotation", "_type": "Random"}}
-        assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == list
+        assert type(api.assign_tasks(project_id, request_body=request_body)[0]) == list  # noqa: E721
 
     def test_operate_task_in_change_task_status_to_break(self):
         task = wrapper.change_task_status_to_break(project_id, task_id)
@@ -609,16 +600,16 @@ class TestTask:
         request_body = {"input_data_id_list": [self.input_data_id]}
         print("")
         print(f"put_task: task_id={task_id}")
-        test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]
+        test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]  # noqa: F841
 
         request_body2 = [{"project_id": project_id, "task_id": test_task_id, "_type": "Delete"}]
         content = api.batch_update_tasks(project_id, request_body=request_body2)[0]
-        assert type(content) == list
+        assert type(content) == list  # noqa: E721
 
     def test_patch_tasks_metadata(self):
         request_body = {task_id: {"alice": "foo", "bob": 1.23, "charlie": False}}
         content, _ = api.patch_tasks_metadata(project_id, request_body)
-        assert type(content) == dict
+        assert type(content) == dict  # noqa: E721
 
 
 class TestWebhook:
@@ -646,9 +637,7 @@ class TestWebhook:
         assert first_true(webhook_list, pred=lambda e: e["webhook_id"] == test_webhook_id) is not None
 
         # Webhookのテスト実行
-        test_webhook_response, _ = api.test_webhook(
-            project_id, test_webhook_id, request_body={"placeholders": {"PROJECT_ID": "foo"}}
-        )
+        test_webhook_response, _ = api.test_webhook(project_id, test_webhook_id, request_body={"placeholders": {"PROJECT_ID": "foo"}})
         assert test_webhook_response["result"] == "success"
         assert test_webhook_response["response_status"] == 200
 
@@ -672,38 +661,38 @@ class TestGetObjOrNone:
         cls.input_data_id = test_wrapper.get_first_input_data_id_in_task(project_id, task_id)
 
     def test_get_input_data_or_none(self):
-        assert type(wrapper.get_input_data_or_none(project_id, self.input_data_id)) == dict
+        assert type(wrapper.get_input_data_or_none(project_id, self.input_data_id)) == dict  # noqa: E721
 
         assert wrapper.get_input_data_or_none(project_id, "not-exists") is None
 
         assert wrapper.get_input_data_or_none("not-exists", self.input_data_id) is None
 
     def test_get_organization_or_none(self):
-        assert type(wrapper.get_organization_or_none(self.organization_name)) == dict
+        assert type(wrapper.get_organization_or_none(self.organization_name)) == dict  # noqa: E721
 
         assert wrapper.get_organization_or_none("not-exists") is None
 
     def test_get_organization_member_or_none(self):
-        assert type(wrapper.get_organization_member_or_none(self.organization_name, api.login_user_id)) == dict
+        assert type(wrapper.get_organization_member_or_none(self.organization_name, api.login_user_id)) == dict  # noqa: E721
 
         assert wrapper.get_organization_member_or_none("not-exists", api.login_user_id) is None
 
         assert wrapper.get_organization_member_or_none(self.organization_name, "not-exists") is None
 
     def test_get_project_or_none(self):
-        assert type(wrapper.get_project_or_none(project_id)) == dict
+        assert type(wrapper.get_project_or_none(project_id)) == dict  # noqa: E721
 
         assert wrapper.get_project_or_none("not-exists") is None
 
     def test_get_project_member_or_none(self):
-        assert type(wrapper.get_project_member_or_none(project_id, api.login_user_id)) == dict
+        assert type(wrapper.get_project_member_or_none(project_id, api.login_user_id)) == dict  # noqa: E721
 
         assert wrapper.get_project_member_or_none(project_id, "not-exists") is None
 
         assert wrapper.get_project_member_or_none("not-exists", api.login_user_id) is None
 
     def test_get_task_or_none(self):
-        assert type(wrapper.get_task_or_none(project_id, task_id)) == dict
+        assert type(wrapper.get_task_or_none(project_id, task_id)) == dict  # noqa: E721
 
         assert wrapper.get_task_or_none(project_id, "not-exists") is None
 
@@ -751,4 +740,4 @@ class TestProtectedMethod:
 class TestProperty:
     def test_account_id(self):
         account_id = api.account_id
-        assert type(account_id) == str and len(account_id) > 0
+        assert type(account_id) == str and len(account_id) > 0  # noqa: E721

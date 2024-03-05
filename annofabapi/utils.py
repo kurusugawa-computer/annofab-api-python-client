@@ -24,7 +24,7 @@ def str_now() -> str:
         ISO 8601 formatの現在日時
 
     """
-    return to_iso8601_extension(datetime.datetime.now())
+    return to_iso8601_extension(datetime.datetime.now(tz=datetime.timezone(datetime.timedelta(hours=9))))
 
 
 def to_iso8601_extension(d: datetime.datetime, tz: Optional[datetime.tzinfo] = None) -> str:

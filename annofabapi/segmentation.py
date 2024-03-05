@@ -3,7 +3,7 @@ import numpy.typing as npt
 from PIL import Image
 
 
-def read_binary_image(fp) -> numpy.ndarray:
+def read_binary_image(fp) -> numpy.ndarray:  # noqa: ANN001
     """
     アノテーションZIP(ディレクトリ)に格納されている塗りつぶし画像を読み込みます。
 
@@ -18,7 +18,7 @@ def read_binary_image(fp) -> numpy.ndarray:
     return numpy.array(image, dtype=bool)
 
 
-def write_binary_image(array: npt.ArrayLike, fp) -> None:
+def write_binary_image(array: npt.ArrayLike, fp) -> None:  # noqa: ANN001
     """
     booleanの2次元配列から、Annofab用の塗りつぶし画像を書き出します。
 

@@ -1,6 +1,7 @@
 """
 Annofabプロジェクトやタスクに大きく依存したテストコードです。
 """
+
 import configparser
 import os
 
@@ -35,9 +36,7 @@ class TestAnnotation:
             project_id=project_id,
             task_id="sample_0",
             input_data_id="0733d1e1-ef85-455e-aec0-ff05c499b711",
-            simple_annotation_json=str(
-                test_dir + "/simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json"
-            ),
+            simple_annotation_json=str(test_dir + "/simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json"),
             annotation_specs_labels=annotation_specs_v1["labels"],
         )
 
@@ -48,9 +47,7 @@ class TestAnnotation:
             project_id=project_id,
             task_id="sample_0",
             input_data_id="0733d1e1-ef85-455e-aec0-ff05c499b711",
-            simple_annotation_json=str(
-                test_dir + "/simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json"
-            ),
+            simple_annotation_json=str(test_dir + "/simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json"),
             annotation_specs_labels=annotation_specs_v2["labels"],
             annotation_specs_additionals=annotation_specs_v2["additionals"],
         )

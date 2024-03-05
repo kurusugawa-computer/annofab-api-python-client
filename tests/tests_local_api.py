@@ -27,7 +27,7 @@ class TestMyBackoff:
         assert self.requestexception_connectionerror_then_true(log) is True
         assert 2 == len(log)
         print(log)
-        assert isinstance(type((log[0])), requests.exceptions.RequestException)
+        assert isinstance(type(log[0]), requests.exceptions.RequestException)
         assert isinstance(type(log[1]), ConnectionError)
 
     @my_backoff
@@ -97,9 +97,7 @@ class TestMyBackoff:
 
 class Test__create_request_body_for_logger:
     def test_data_dict(self):
-        actual = _create_request_body_for_logger(
-            {"foo": "1", "password": "x", "new_password": "y", "old_password": "z"}
-        )
+        actual = _create_request_body_for_logger({"foo": "1", "password": "x", "new_password": "y", "old_password": "z"})
         assert actual == {"foo": "1", "password": "***", "new_password": "***", "old_password": "***"}
 
     def test_data_dict2(self):

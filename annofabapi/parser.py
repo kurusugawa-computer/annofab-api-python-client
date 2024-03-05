@@ -3,7 +3,7 @@ import json
 import os
 import zipfile
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterator, List, Optional
+from typing import Any, Callable, Dict, Iterator, List, Optional, Type, Union
 
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
@@ -32,7 +32,7 @@ class SimpleAnnotationParser(abc.ABC):
 
     """
 
-    def __init__(self, json_file_path: str):
+    def __init__(self, json_file_path: str) -> None:
         p = Path(json_file_path)
         self.__json_file_path = json_file_path
         self.__task_id = p.parent.name
@@ -85,14 +85,14 @@ class SimpleAnnotationParser(abc.ABC):
             SimpleAnnotationインスタンス
         """
 
-        simple_annotation = SimpleAnnotation.from_dict(self.load_json())  # type: ignore
+        simple_annotation = SimpleAnnotation.from_dict(self.load_json())
         if convert_detail_data_func is not None:
             for detail in simple_annotation.details:
                 detail.data = convert_detail_data_func(detail.data)
         return simple_annotation
 
     @abc.abstractmethod
-    def load_json(self) -> Any:
+    def load_json(self) -> Any:  # noqa: ANN401
         """
         JSONファイルをloadします。
         """
@@ -115,7 +115,7 @@ class FullAnnotationParser(abc.ABC):
 
     """
 
-    def __init__(self, json_file_path: str):
+    def __init__(self, json_file_path: str) -> None:
         p = Path(json_file_path)
         self.__json_file_path = json_file_path
         self.__task_id = p.parent.name
@@ -157,7 +157,7 @@ class FullAnnotationParser(abc.ABC):
         """
 
     @abc.abstractmethod
-    def load_json(self) -> Any:
+    def load_json(self) -> Any:  # noqa: ANN401
         """
         JSONファイルをloadします。
         """
@@ -173,7 +173,7 @@ class FullAnnotationParser(abc.ABC):
             FullAnnotationインスタンス
         """
 
-        full_annotation = FullAnnotation.from_dict(self.load_json())  # type: ignore
+        full_annotation = FullAnnotation.from_dict(self.load_json())
         if convert_detail_data_func is not None:
             for detail in full_annotation.details:
                 detail.data = convert_detail_data_func(detail.data)
@@ -198,11 +198,11 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
 
     """
 
-    def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str):
+    def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str) -> None:
         self.__zip_file = zip_file
         super().__init__(json_file_path)
 
-    def load_json(self) -> Any:
+    def load_json(self) -> Any:  # noqa: ANN401
         with self.__zip_file.open(self.json_file_path) as entry:
             return json.load(entry)
 
@@ -212,9 +212,7 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
             return self.__zip_file.open(outer_file_path, mode="r")
         except KeyError as e:
             # mypyの `error: "ZipFile" has no attribute "filename"` という警告を無視する
-            raise AnnotationOuterFileNotFoundError(
-                str(outer_file_path), self.__zip_file.filename
-            ) from e  # type: ignore
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename) from e
 
 
 class SimpleAnnotationDirParser(SimpleAnnotationParser):
@@ -232,10 +230,10 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
 
     """
 
-    def __init__(self, json_file_path: Path):
+    def __init__(self, json_file_path: Path) -> None:
         super().__init__(str(json_file_path))
 
-    def load_json(self) -> Any:
+    def load_json(self) -> Any:  # noqa: ANN401
         with open(self.json_file_path, encoding="utf-8") as f:
             return json.load(f)
 
@@ -265,11 +263,11 @@ class FullAnnotationZipParser(FullAnnotationParser):
 
     """
 
-    def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str):
+    def __init__(self, zip_file: zipfile.ZipFile, json_file_path: str) -> None:
         self.__zip_file = zip_file
         super().__init__(json_file_path)
 
-    def load_json(self) -> Any:
+    def load_json(self) -> Any:  # noqa: ANN401
         with self.__zip_file.open(self.json_file_path) as entry:
             return json.load(entry)
 
@@ -279,9 +277,7 @@ class FullAnnotationZipParser(FullAnnotationParser):
             return self.__zip_file.open(outer_file_path, mode="r")
         except KeyError as e:
             # mypyの `error: "ZipFile" has no attribute "filename"` という警告を無視する
-            raise AnnotationOuterFileNotFoundError(
-                str(outer_file_path), self.__zip_file.filename
-            ) from e  # type: ignore
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename) from e
 
 
 class FullAnnotationDirParser(FullAnnotationParser):
@@ -300,10 +296,10 @@ class FullAnnotationDirParser(FullAnnotationParser):
 
     """
 
-    def __init__(self, json_file_path: Path):
+    def __init__(self, json_file_path: Path) -> None:
         super().__init__(str(json_file_path))
 
-    def load_json(self) -> Any:
+    def load_json(self) -> Any:  # noqa: ANN401
         with open(self.json_file_path, encoding="utf-8") as f:
             return json.load(f)
 
@@ -324,7 +320,7 @@ class SimpleAnnotationParserByTask(abc.ABC):
         task_id: タスクID
     """
 
-    def __init__(self, task_id: str):
+    def __init__(self, task_id: str) -> None:
         self.__task_id = task_id
 
     @property
@@ -395,13 +391,9 @@ class SimpleAnnotationZipParserByTask(SimpleAnnotationParserByTask):
                 return False
             return True
 
-        return [
-            zip_info.filename
-            for zip_info in self.__zip_file.infolist()
-            if _match_task_id_and_contain_input_data_json(zip_info)
-        ]
+        return [zip_info.filename for zip_info in self.__zip_file.infolist() if _match_task_id_and_contain_input_data_json(zip_info)]
 
-    def __init__(self, zip_file: zipfile.ZipFile, task_id: str, json_path_list: Optional[List[str]] = None):
+    def __init__(self, zip_file: zipfile.ZipFile, task_id: str, json_path_list: Optional[List[str]] = None) -> None:
         self.__zip_file = zip_file
         if json_path_list is not None:
             self.__json_path_list = json_path_list
@@ -440,15 +432,13 @@ class SimpleAnnotationDirParserByTask(SimpleAnnotationParserByTask):
 
     """
 
-    def __init__(self, task_dir_path: Path):
+    def __init__(self, task_dir_path: Path) -> None:
         self.__task_dir_path = task_dir_path
         task_id = task_dir_path.name
         super().__init__(task_id)
 
     def lazy_parse(self) -> Iterator[SimpleAnnotationDirParser]:
-        return (
-            SimpleAnnotationDirParser(e) for e in self.__task_dir_path.iterdir() if e.is_file() and e.suffix == ".json"
-        )
+        return (SimpleAnnotationDirParser(e) for e in self.__task_dir_path.iterdir() if e.is_file() and e.suffix == ".json")
 
     @property
     def json_file_path_list(self) -> List[str]:
@@ -461,7 +451,7 @@ class SimpleAnnotationDirParserByTask(SimpleAnnotationParserByTask):
             raise ValueError(f"json_file_path '{json_file_path}' は `json_file_path_list` に含まれていません。")
 
 
-def __parse_annotation_dir(annotation_dir_path: Path, clazz) -> Iterator[Any]:
+def __parse_annotation_dir(annotation_dir_path: Path, clazz: Type[Union[SimpleAnnotationDirParser, FullAnnotationDirParser]]) -> Iterator[Any]:
     for task_dir in annotation_dir_path.iterdir():
         if not task_dir.is_dir():
             continue
@@ -583,8 +573,8 @@ def lazy_parse_simple_annotation_dir_by_task(annotation_dir_path: Path) -> Itera
         yield task_parser
 
 
-def __parse_annotation_zip(zip_file_path: Path, clazz) -> Iterator[Any]:
-    def lazy_parser(zip_file: zipfile.ZipFile, info: zipfile.ZipInfo) -> Optional[Any]:
+def __parse_annotation_zip(zip_file_path: Path, clazz: Type[Union[SimpleAnnotationZipParser, FullAnnotationZipParser]]) -> Iterator[Any]:
+    def lazy_parser(zip_file: zipfile.ZipFile, info: zipfile.ZipInfo) -> Optional[Any]:  # noqa: ANN401
         paths = [p for p in info.filename.split("/") if len(p) != 0]
         if len(paths) != 2:
             return None

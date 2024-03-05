@@ -94,19 +94,13 @@ class CreatingTestProject:
             "input_data_name": "Annofab Logo Image",
             "input_data_path": "https://annofab.com/images/logo.png",
         }
-        self.service.wrapper.put_input_data_from_file(
-            project_id, input_data_id=input_data_id, file_path=image_path, request_body=request_body
-        )
+        self.service.wrapper.put_input_data_from_file(project_id, input_data_id=input_data_id, file_path=image_path, request_body=request_body)
         logger.debug(f"入力データを登録しました。input_data_id={input_data_id}")
         return
 
-    def create_supplementary_data(
-        self, project_id: str, input_data_id: str, supplementary_data_id: str, supplementary_data_path: str
-    ):
+    def create_supplementary_data(self, project_id: str, input_data_id: str, supplementary_data_id: str, supplementary_data_path: str):
         supplementary_data_list, _ = self.service.api.get_supplementary_data_list(project_id, input_data_id)
-        old_supplementary_data = first_true(
-            supplementary_data_list, pred=lambda e: e["supplementary_data_id"] == supplementary_data_id
-        )
+        old_supplementary_data = first_true(supplementary_data_list, pred=lambda e: e["supplementary_data_id"] == supplementary_data_id)
         if old_supplementary_data is not None:
             logger.debug(f"補助情報はすでに存在していたので、登録しません。supplementary_data_id={supplementary_data_id}")
             return
@@ -145,9 +139,7 @@ class CreatingTestProject:
             logger.debug("作業ガイドはすでに登録されているので、登録しません。")
             return
 
-        image_url = self.service.wrapper.upload_instruction_image(
-            project_id, image_id=str(uuid.uuid4()), file_path="tests/data/lenna.png"
-        )
+        image_url = self.service.wrapper.upload_instruction_image(project_id, image_id=str(uuid.uuid4()), file_path="tests/data/lenna.png")
         html_data = f"Test Instruction <img src='{image_url}'>"
         last_updated_datetime = histories[0]["updated_datetime"] if len(histories) > 0 else None
         put_request_body = {"html": html_data, "last_updated_datetime": last_updated_datetime}
@@ -218,9 +210,7 @@ class CreatingTestProject:
             }
         ]
 
-        return self.service.api.batch_update_inspections(
-            project_id, task["task_id"], input_data_id, request_body=req_inspection
-        )[0]
+        return self.service.api.batch_update_inspections(project_id, task["task_id"], input_data_id, request_body=req_inspection)[0]
 
     def create_inspection_comment(self, project_id: str, task_id: str, input_data_id: str):
         """
@@ -237,9 +227,7 @@ class CreatingTestProject:
         task, _ = self.service.api.get_task(project_id, task_id)
         if task["phase"] != TaskPhase.ACCEPTANCE.value:
             # 受け入れフェーズに移行する
-            self.service.wrapper.change_task_operator(
-                project_id, task_id, operator_account_id=self.service.api.account_id
-            )
+            self.service.wrapper.change_task_operator(project_id, task_id, operator_account_id=self.service.api.account_id)
             self.service.wrapper.change_task_status_to_working(project_id, task_id)
             self.service.wrapper.complete_task(project_id, task_id)
 
@@ -292,11 +280,17 @@ class CreatingTestProject:
 
 def parse_args():
     parser = ArgumentParser(
-        description="annofabapiのテスト用プロジェクトを生成します。", formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        description="annofabapiのテスト用プロジェクトを生成します。",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument("-org", "--organization", type=str, required=True, help="プロジェクトを作成する対象の組織を指定してください。")
-    parser.add_argument("--project_title", type=str, default=DEFAULT_PROJECT_TITLE, help="作成するプロジェクトのタイトルを指定してください。")
+    parser.add_argument(
+        "--project_title",
+        type=str,
+        default=DEFAULT_PROJECT_TITLE,
+        help="作成するプロジェクトのタイトルを指定してください。",
+    )
 
     return parser.parse_args()
 

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 from annofabapi.models import (
     AdditionalDataDefinitionType,
     AnnotationDataHoldingType,
