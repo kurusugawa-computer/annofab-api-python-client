@@ -9,9 +9,8 @@ Note:
     oneOf, allOfなどは正しく表現できない可能性がある。
 """
 
-import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
-from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
+from typing import List, Optional  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 

@@ -2,6 +2,7 @@
 AnnofabApi2のテストメソッド
 
 """
+
 import configparser
 import os
 

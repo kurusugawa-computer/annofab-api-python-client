@@ -4,9 +4,7 @@ from functools import wraps
 from typing import Optional
 
 
-def _issue_deprecated_warning_with_class(
-    cls, stacklevel: int, deprecated_date: str, new_class_name: Optional[str] = None
-):
+def _issue_deprecated_warning_with_class(cls, stacklevel: int, deprecated_date: str, new_class_name: Optional[str] = None):
     """非推奨なクラスに対する警告メッセージを出力する。"""
     old_class_name = f"{cls.__module__}.{cls.__name__}"
     message = f"deprecated: '{old_class_name}'は{deprecated_date}以降に廃止します。"
@@ -19,9 +17,7 @@ def _process_class(cls, deprecated_date: str, new_class_name: Optional[str] = No
     def decorator(function):
         @wraps(function)
         def wrapped(*args, **kwargs):
-            _issue_deprecated_warning_with_class(
-                cls, stacklevel=3, deprecated_date=deprecated_date, new_class_name=new_class_name
-            )
+            _issue_deprecated_warning_with_class(cls, stacklevel=3, deprecated_date=deprecated_date, new_class_name=new_class_name)
             return function(*args, **kwargs)
 
         return wrapped
@@ -32,9 +28,7 @@ def _process_class(cls, deprecated_date: str, new_class_name: Optional[str] = No
 
 def _process_enum_class(cls, deprecated_date: str, new_class_name: Optional[str] = None):
     def getattribute(self, name):
-        _issue_deprecated_warning_with_class(
-            cls, stacklevel=4, deprecated_date=deprecated_date, new_class_name=new_class_name
-        )
+        _issue_deprecated_warning_with_class(cls, stacklevel=4, deprecated_date=deprecated_date, new_class_name=new_class_name)
         return super(type(self), self).__getattribute__(name)
 
     cls.__getattribute__ = getattribute

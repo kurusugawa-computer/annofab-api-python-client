@@ -102,9 +102,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
                         "url": url,
                         "query_params": query_params,
                         "header_params": header_params,
-                        "request_body": _create_request_body_for_logger(request_body)
-                        if request_body is not None
-                        else None,
+                        "request_body": _create_request_body_for_logger(request_body) if request_body is not None else None,
                     },
                     "response": {
                         "status_code": response.status_code,
@@ -128,9 +126,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
             elif response.status_code == requests.codes.too_many_requests:
                 retry_after_value = response.headers.get("Retry-After")
                 waiting_time_seconds = (
-                    float(retry_after_value)
-                    if retry_after_value is not None
-                    else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
+                    float(retry_after_value) if retry_after_value is not None else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
                 )
 
                 logger.warning(

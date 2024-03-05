@@ -10,9 +10,8 @@ Note:
     このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
 """
 
-import warnings  # pylint: disable=unused-import
 from enum import Enum
-from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
+from typing import Any, Dict, NewType  # pylint: disable=unused-import
 
 from annofabapi._utils import deprecated_class  # pylint: disable=unused-import
 

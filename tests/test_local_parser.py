@@ -87,13 +87,9 @@ class TestSimpleAnnotationParserByTask:
         assert str(annotation_dir / "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json") in json_file_path_list
         assert str(annotation_dir / "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json") in json_file_path_list
 
-        input_data_parser = task_parser.get_parser(
-            str(annotation_dir / "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
-        )
+        input_data_parser = task_parser.get_parser(str(annotation_dir / "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json"))
         assert input_data_parser.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"
-        assert input_data_parser.json_file_path == str(
-            test_dir / "simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json"
-        )
+        assert input_data_parser.json_file_path == str(test_dir / "simple-annotation/sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
 
     def test_SimpleAnnotationZipParserByTask(self):
         with zipfile.ZipFile(test_dir / "simple-annotation.zip") as zip_file:
@@ -106,7 +102,7 @@ class TestSimpleAnnotationParserByTask:
 
             input_data_parser = task_parser.get_parser("sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
             assert input_data_parser.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"
-            assert input_data_parser.json_file_path == str("sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json")
+            assert input_data_parser.json_file_path == "sample_1/c6e1c2ec-6c7c-41c6-9639-4244c2ed2839.json"
 
 
 class TestSimpleAnnotation:
@@ -208,9 +204,7 @@ class TestFullAnnotation:
 
         assert index == 4
 
-        parser_full = FullAnnotationDirParser(
-            Path(f"{test_dir}/full-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
-        )
+        parser_full = FullAnnotationDirParser(Path(f"{test_dir}/full-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json"))
         assert parser_full.task_id == "sample_1"
         assert parser_full.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
 

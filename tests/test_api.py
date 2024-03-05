@@ -2,6 +2,7 @@
 AnnofabApi, Wrapperのテストコード
 
 """
+
 from __future__ import annotations
 
 import configparser
@@ -73,9 +74,7 @@ class TestAnnotation:
         SimpleAnnotation.from_dict(annotation)
 
     def test_get_editor_annotation(self):
-        editor_annotation, _ = api.get_editor_annotation(
-            project_id, task_id, self.input_data_id, query_params={"v": "2"}
-        )
+        editor_annotation, _ = api.get_editor_annotation(project_id, task_id, self.input_data_id, query_params={"v": "2"})
         assert type(editor_annotation) == dict
         # dataclassに変換できることの確認
         AnnotationV2Output.from_dict(editor_annotation)
@@ -391,14 +390,10 @@ class TestProject:
         assert wrapper.download_project_tasks_url(project_id, f"{out_dir}/tasks.json").startswith("https://")
 
     def test_wrapper_download_project_task_history_events_url(self):
-        assert wrapper.download_project_task_history_events_url(
-            project_id, f"{out_dir}/task_history_events.json"
-        ).startswith("https://")
+        assert wrapper.download_project_task_history_events_url(project_id, f"{out_dir}/task_history_events.json").startswith("https://")
 
     def test_wrapper_download_project_task_histories_url(self):
-        assert wrapper.download_project_task_histories_url(project_id, f"{out_dir}/task_histories.json").startswith(
-            "https://"
-        )
+        assert wrapper.download_project_task_histories_url(project_id, f"{out_dir}/task_histories.json").startswith("https://")
 
     def test_wrapper_download_project_comments_url(self):
         assert wrapper.download_project_comments_url(project_id, f"{out_dir}/comments.json").startswith("https://")
@@ -477,15 +472,11 @@ class TestStatistics:
         assert type(actual) == dict
 
     def test_wrapper_get_worktime_daily_statistics_by_account(self):
-        actual = wrapper.get_worktime_daily_statistics_by_account(
-            project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-06-30"
-        )
+        actual = wrapper.get_worktime_daily_statistics_by_account(project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-06-30")
         assert type(actual) == dict
 
         # 最大取得期間の3ヶ月を超えている場合
-        actual = wrapper.get_worktime_daily_statistics_by_account(
-            project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-07-01"
-        )
+        actual = wrapper.get_worktime_daily_statistics_by_account(project_id, account_id=api.account_id, from_date="2021-04-01", to_date="2021-07-01")
         assert type(actual) == dict
 
         # 開始日と終了日を指定しない場合
@@ -646,9 +637,7 @@ class TestWebhook:
         assert first_true(webhook_list, pred=lambda e: e["webhook_id"] == test_webhook_id) is not None
 
         # Webhookのテスト実行
-        test_webhook_response, _ = api.test_webhook(
-            project_id, test_webhook_id, request_body={"placeholders": {"PROJECT_ID": "foo"}}
-        )
+        test_webhook_response, _ = api.test_webhook(project_id, test_webhook_id, request_body={"placeholders": {"PROJECT_ID": "foo"}})
         assert test_webhook_response["result"] == "success"
         assert test_webhook_response["response_status"] == 200
 

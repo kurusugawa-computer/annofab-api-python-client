@@ -246,9 +246,7 @@ class TestTaskHistoryUtils:
         assert all([a == b for a, b in zip(actual, expected)])
 
     def test_get_number_of_rejections_教師付1回目(self):
-        task_history_short_list: list[dict[str, Any]] = [
-            {"account_id": self.ACCOUNT_ID, "phase": "annotation", "phase_stage": 1, "worked": True}
-        ]
+        task_history_short_list: list[dict[str, Any]] = [{"account_id": self.ACCOUNT_ID, "phase": "annotation", "phase_stage": 1, "worked": True}]
 
         actual = get_number_of_rejections(task_history_short_list, TaskPhase.ACCEPTANCE)
         assert actual == 0

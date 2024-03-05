@@ -32,14 +32,10 @@ class Resource:
         #: AnnofabApi2 Instance
         self.api2 = AnnofabApi2(self.api)
 
-        logger.debug(
-            "Create annofabapi resource instance :: %s", {"login_user_id": login_user_id, "endpoint_url": endpoint_url}
-        )
+        logger.debug("Create annofabapi resource instance :: %s", {"login_user_id": login_user_id, "endpoint_url": endpoint_url})
 
 
-def build(
-    login_user_id: Optional[str] = None, login_password: Optional[str] = None, endpoint_url: str = DEFAULT_ENDPOINT_URL
-) -> Resource:
+def build(login_user_id: Optional[str] = None, login_password: Optional[str] = None, endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     """
     AnnofabApi, Wrapperのインスタンスを保持するインスタンスを生成する。
 

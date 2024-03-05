@@ -384,9 +384,7 @@ class AnnofabApi(AbstractAnnofabApi):
             requests.exceptions.HTTPError: http status codeが4XXX,5XXXのとき
 
         """
-        response = self.session.request(
-            method=http_method, url=url, params=params, data=data, headers=headers, json=json, **kwargs
-        )
+        response = self.session.request(method=http_method, url=url, params=params, data=data, headers=headers, json=json, **kwargs)
 
         # response.requestよりメソッド引数のrequest情報の方が分かりやすいので、メソッド引数のrequest情報を出力する。
         logger.debug(
@@ -410,11 +408,7 @@ class AnnofabApi(AbstractAnnofabApi):
         # リクエスト過多の場合、待ってから再度アクセスする
         if response.status_code == requests.codes.too_many_requests:
             retry_after_value = response.headers.get("Retry-After")
-            waiting_time_seconds = (
-                float(retry_after_value)
-                if retry_after_value is not None
-                else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
-            )
+            waiting_time_seconds = float(retry_after_value) if retry_after_value is not None else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
 
             logger.warning(
                 "HTTPステータスコードが'%s'なので、%s秒待ってからリトライします。 :: %s",
@@ -523,11 +517,7 @@ class AnnofabApi(AbstractAnnofabApi):
             )
         elif response.status_code == requests.codes.too_many_requests:
             retry_after_value = response.headers.get("Retry-After")
-            waiting_time_seconds = (
-                float(retry_after_value)
-                if retry_after_value is not None
-                else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
-            )
+            waiting_time_seconds = float(retry_after_value) if retry_after_value is not None else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
 
             logger.warning(
                 "HTTPステータスコードが'%s'なので、%s秒待ってからリトライします。 :: %s",
@@ -567,9 +557,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         return content, response
 
-    def _get_signed_cookie(
-        self, project_id, query_params: Optional[Dict[str, Any]] = None
-    ) -> Tuple[Dict[str, Any], requests.Response]:
+    def _get_signed_cookie(self, project_id, query_params: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], requests.Response]:
         """
         アノテーション仕様の履歴情報を取得するために、非公開APIにアクセスする。
         変更される可能性あり.

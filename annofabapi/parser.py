@@ -212,9 +212,7 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
             return self.__zip_file.open(outer_file_path, mode="r")
         except KeyError as e:
             # mypyの `error: "ZipFile" has no attribute "filename"` という警告を無視する
-            raise AnnotationOuterFileNotFoundError(
-                str(outer_file_path), self.__zip_file.filename
-            ) from e  # type: ignore
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename) from e  # type: ignore
 
 
 class SimpleAnnotationDirParser(SimpleAnnotationParser):
@@ -279,9 +277,7 @@ class FullAnnotationZipParser(FullAnnotationParser):
             return self.__zip_file.open(outer_file_path, mode="r")
         except KeyError as e:
             # mypyの `error: "ZipFile" has no attribute "filename"` という警告を無視する
-            raise AnnotationOuterFileNotFoundError(
-                str(outer_file_path), self.__zip_file.filename
-            ) from e  # type: ignore
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename) from e  # type: ignore
 
 
 class FullAnnotationDirParser(FullAnnotationParser):
@@ -395,11 +391,7 @@ class SimpleAnnotationZipParserByTask(SimpleAnnotationParserByTask):
                 return False
             return True
 
-        return [
-            zip_info.filename
-            for zip_info in self.__zip_file.infolist()
-            if _match_task_id_and_contain_input_data_json(zip_info)
-        ]
+        return [zip_info.filename for zip_info in self.__zip_file.infolist() if _match_task_id_and_contain_input_data_json(zip_info)]
 
     def __init__(self, zip_file: zipfile.ZipFile, task_id: str, json_path_list: Optional[List[str]] = None):
         self.__zip_file = zip_file
@@ -446,9 +438,7 @@ class SimpleAnnotationDirParserByTask(SimpleAnnotationParserByTask):
         super().__init__(task_id)
 
     def lazy_parse(self) -> Iterator[SimpleAnnotationDirParser]:
-        return (
-            SimpleAnnotationDirParser(e) for e in self.__task_dir_path.iterdir() if e.is_file() and e.suffix == ".json"
-        )
+        return (SimpleAnnotationDirParser(e) for e in self.__task_dir_path.iterdir() if e.is_file() and e.suffix == ".json")
 
     @property
     def json_file_path_list(self) -> List[str]:
