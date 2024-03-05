@@ -85,7 +85,7 @@ class SimpleAnnotationParser(abc.ABC):
             SimpleAnnotationインスタンス
         """
 
-        simple_annotation = SimpleAnnotation.from_dict(self.load_json())  # type: ignore
+        simple_annotation = SimpleAnnotation.from_dict(self.load_json())
         if convert_detail_data_func is not None:
             for detail in simple_annotation.details:
                 detail.data = convert_detail_data_func(detail.data)
@@ -173,7 +173,7 @@ class FullAnnotationParser(abc.ABC):
             FullAnnotationインスタンス
         """
 
-        full_annotation = FullAnnotation.from_dict(self.load_json())  # type: ignore
+        full_annotation = FullAnnotation.from_dict(self.load_json())
         if convert_detail_data_func is not None:
             for detail in full_annotation.details:
                 detail.data = convert_detail_data_func(detail.data)
@@ -212,7 +212,7 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
             return self.__zip_file.open(outer_file_path, mode="r")
         except KeyError as e:
             # mypyの `error: "ZipFile" has no attribute "filename"` という警告を無視する
-            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename) from e  # type: ignore
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename) from e
 
 
 class SimpleAnnotationDirParser(SimpleAnnotationParser):
@@ -277,7 +277,7 @@ class FullAnnotationZipParser(FullAnnotationParser):
             return self.__zip_file.open(outer_file_path, mode="r")
         except KeyError as e:
             # mypyの `error: "ZipFile" has no attribute "filename"` という警告を無視する
-            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename) from e  # type: ignore
+            raise AnnotationOuterFileNotFoundError(str(outer_file_path), self.__zip_file.filename) from e
 
 
 class FullAnnotationDirParser(FullAnnotationParser):
