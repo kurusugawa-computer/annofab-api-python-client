@@ -1318,7 +1318,7 @@ class Wrapper:
 
     def put_supplementary_data_from_file(
         self,
-        project_id:str,
+        project_id: str,
         input_data_id: str,
         supplementary_data_id: str,
         file_path: str,
