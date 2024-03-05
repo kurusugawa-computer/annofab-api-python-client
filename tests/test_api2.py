@@ -30,4 +30,4 @@ test_wrapper = WrapperForTest(service.api)
 
 def test_project():
     content, _ = service.api2.get_project_cache_v2(project_id)
-    assert type(content) == dict
+    assert type(content) == dict  # noqa: E721

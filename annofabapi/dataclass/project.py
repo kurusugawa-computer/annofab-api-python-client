@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # flake8: noqa: W291
 # pylint: disable=too-many-lines,trailing-whitespace
 

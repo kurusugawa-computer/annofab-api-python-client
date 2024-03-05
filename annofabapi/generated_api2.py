@@ -27,7 +27,7 @@ class AbstractAnnofabApi2(abc.ABC):
         url_path: str,
         query_params: Optional[Dict[str, Any]] = None,
         header_params: Optional[Dict[str, Any]] = None,
-        request_body: Optional[Any] = None,
+        request_body: Optional[Any] = None,  # noqa: ANN401
     ) -> Tuple[Any, requests.Response]:
         pass
 

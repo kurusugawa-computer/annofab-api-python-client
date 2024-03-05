@@ -31,7 +31,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
     """
 
-    def __init__(self, api: AnnofabApi):
+    def __init__(self, api: AnnofabApi) -> None:
         self.api = api
         self.url_prefix = f"{api.endpoint_url}/api/v2"
 
@@ -50,7 +50,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
         *,
         query_params: Optional[Dict[str, Any]] = None,
         header_params: Optional[Dict[str, Any]] = None,
-        request_body: Optional[Any] = None,
+        request_body: Optional[Any] = None,  # noqa: ANN401
         raise_for_status: bool = True,
     ) -> Tuple[Any, requests.Response]:
         """

@@ -56,7 +56,7 @@ class TestSimpleAnnotationParser:
             parser = SimpleAnnotationZipParser(zip_file, "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
 
             simple_annotation = parser.parse()
-            assert type(simple_annotation.details[0].data) == dict
+            assert type(simple_annotation.details[0].data) == dict  # noqa: E721
 
             simple_annotation2 = parser.parse(self.convert_deitail_data)
             assert type(simple_annotation2.details[0].data) == FullAnnotationDataPoints
@@ -117,7 +117,7 @@ class TestSimpleAnnotation:
             index += 1
 
             dict_simple_annotation = parser.load_json()
-            assert type(dict_simple_annotation) == dict
+            assert type(dict_simple_annotation) == dict  # noqa: E721
             assert "details" in dict_simple_annotation
 
         assert index == 4
@@ -133,7 +133,7 @@ class TestSimpleAnnotation:
             index += 1
 
             dict_simple_annotation = parser.load_json()
-            assert type(dict_simple_annotation) == dict
+            assert type(dict_simple_annotation) == dict  # noqa: E721
             assert "details" in dict_simple_annotation
 
         assert index == 4
@@ -146,7 +146,7 @@ class TestSimpleAnnotation:
         assert len([e for e in task_parser_list if e.task_id == "sample_1"]) == 1
         assert len([e for e in task_parser_list if e.task_id == "sample_0"]) == 1
 
-        task_parser = [e for e in task_parser_list if e.task_id == "sample_1"][0]
+        task_parser = [e for e in task_parser_list if e.task_id == "sample_1"][0]  # noqa: RUF015
         parser_list = list(task_parser.lazy_parse())
         assert len(parser_list) == 2
         assert len([e for e in parser_list if e.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"]) == 1
@@ -160,7 +160,7 @@ class TestSimpleAnnotation:
         assert len([e for e in task_parser_list if e.task_id == "sample_1"]) == 1
         assert len([e for e in task_parser_list if e.task_id == "sample_0"]) == 1
 
-        task_parser = [e for e in task_parser_list if e.task_id == "sample_1"][0]
+        task_parser = [e for e in task_parser_list if e.task_id == "sample_1"][0]  # noqa: RUF015
         parser_list = list(task_parser.lazy_parse())
         assert len(parser_list) == 2
         assert len([e for e in parser_list if e.input_data_id == "c6e1c2ec-6c7c-41c6-9639-4244c2ed2839"]) == 1
@@ -186,7 +186,7 @@ class TestFullAnnotation:
             assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
 
             dict_simple_annotation = parser.load_json()
-            assert type(dict_simple_annotation) == dict
+            assert type(dict_simple_annotation) == dict  # noqa: E721
             assert "details" in dict_simple_annotation
 
             with pytest.raises(AnnotationOuterFileNotFoundError):
@@ -209,7 +209,7 @@ class TestFullAnnotation:
         assert parser_full.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
 
         dict_simple_annotation = parser_full.load_json()
-        assert type(dict_simple_annotation) == dict
+        assert type(dict_simple_annotation) == dict  # noqa: E721
         assert "details" in dict_simple_annotation
 
         with pytest.raises(AnnotationOuterFileNotFoundError):
@@ -228,7 +228,7 @@ class TestFullAnnotation:
             parser = FullAnnotationZipParser(zip_file, "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
 
             full_annotation = parser.parse()
-            assert type(full_annotation.details[0].data) == dict
+            assert type(full_annotation.details[0].data) == dict  # noqa: E721
 
             full_annotation2 = parser.parse(self.convert_deitail_data)
             assert type(full_annotation2.details[0].data) == FullAnnotationDataPoints
