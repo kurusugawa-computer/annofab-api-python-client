@@ -93,6 +93,8 @@ ignore = [
     "ANN002", # missing-type-args
     "ANN003", # missing-type-kwargs
     "ERA", # : 役立つこともあるが、コメントアウトしていないコードも警告されるので無視する
+    "TD", # flake8-todos
+    "FIX", # flake8-fixme
 
     # いずれ無視しないようにする
     "ANN201", # missing-return-type-public-function:
