@@ -38,7 +38,7 @@ class TestTaskHistoryUtils:
 
         actual = get_task_history_index_skipped_acceptance(task_history_list)
         expected = [1]
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_task_history_index_skipped_acceptance_検査0回_受入スキップ後に受入取消(self):
         task_history_list: list[dict[str, Any]] = [
@@ -70,7 +70,7 @@ class TestTaskHistoryUtils:
 
         actual = get_task_history_index_skipped_acceptance(task_history_list)
         expected = [1]
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_task_history_index_skipped_acceptance_検査0回_教師付で提出取消(self):
         task_history_list: list[dict[str, Any]] = [
@@ -101,7 +101,7 @@ class TestTaskHistoryUtils:
         ]
         actual = get_task_history_index_skipped_acceptance(task_history_list)
         expected: list[int] = []
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_task_history_index_skipped_acceptance_検査1回_検査で提出取消(self):
         task_history_list: list[dict[str, Any]] = [
@@ -141,7 +141,7 @@ class TestTaskHistoryUtils:
 
         actual = get_task_history_index_skipped_acceptance(task_history_list)
         expected: list[int] = []
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_task_history_index_skipped_inspection_検査1回_検査スキップ(self):
         task_history_list: list[dict[str, Any]] = [
@@ -173,7 +173,7 @@ class TestTaskHistoryUtils:
 
         actual = get_task_history_index_skipped_inspection(task_history_list)
         expected = [1]
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_task_history_index_skipped_inspection_検査1回_教師付で提出取消(self):
         task_history_list: list[dict[str, Any]] = [
@@ -204,7 +204,7 @@ class TestTaskHistoryUtils:
         ]
         actual = get_task_history_index_skipped_inspection(task_history_list)
         expected: list[int] = []
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_task_history_index_skipped_inspection_検査2回_検査1回目で提出取消(self):
         task_history_list: list[dict[str, Any]] = [
@@ -243,12 +243,10 @@ class TestTaskHistoryUtils:
         ]
         actual = get_task_history_index_skipped_inspection(task_history_list)
         expected: list[int] = []
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_number_of_rejections_教師付1回目(self):
-        task_history_short_list: list[dict[str, Any]] = [
-            {"account_id": self.ACCOUNT_ID, "phase": "annotation", "phase_stage": 1, "worked": True}
-        ]
+        task_history_short_list: list[dict[str, Any]] = [{"account_id": self.ACCOUNT_ID, "phase": "annotation", "phase_stage": 1, "worked": True}]
 
         actual = get_number_of_rejections(task_history_short_list, TaskPhase.ACCEPTANCE)
         assert actual == 0
@@ -337,7 +335,7 @@ class TestTaskHistoryUtils2:
 
         actual = get_task_history_index_skipped_acceptance(task_history_list)
         expected = [2]
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_task_history_index_skipped_acceptance_検査0回_受入スキップ後に受入取消(self):
         task_history_list: list[dict[str, Any]] = [
@@ -389,7 +387,7 @@ class TestTaskHistoryUtils2:
 
         actual = get_task_history_index_skipped_acceptance(task_history_list)
         expected = [2]
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_task_history_index_skipped_acceptance_検査0回_教師付で提出取消(self):
         task_history_list: list[dict[str, Any]] = [
@@ -441,7 +439,7 @@ class TestTaskHistoryUtils2:
 
         actual = get_task_history_index_skipped_acceptance(task_history_list)
         expected: list[int] = []
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_task_history_index_skipped_acceptance_検査1回_検査で提出取消(self):
         task_history_list: list[dict[str, Any]] = [
@@ -515,7 +513,7 @@ class TestTaskHistoryUtils2:
 
         actual = get_task_history_index_skipped_acceptance(task_history_list)
         expected: list[int] = []
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_task_history_index_skipped_inspection_検査1回_検査スキップ(self):
         task_history_list: list[dict[str, Any]] = [
@@ -567,7 +565,7 @@ class TestTaskHistoryUtils2:
 
         actual = get_task_history_index_skipped_inspection(task_history_list)
         expected = [2]
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
     def test_get_task_history_index_skipped_inspection_検査1回_教師付で提出取消(self):
         task_history_list: list[dict[str, Any]] = [
@@ -618,7 +616,7 @@ class TestTaskHistoryUtils2:
         ]
         actual = get_task_history_index_skipped_inspection(task_history_list)
         expected: list[int] = []
-        assert all([a == b for a, b in zip(actual, expected)])
+        assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
 
 
 def test_get_message_for_i18n():

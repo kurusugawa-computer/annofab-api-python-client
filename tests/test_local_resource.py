@@ -1,6 +1,7 @@
 """
 resource.pyのテストコード
 """
+
 import os
 
 import pytest

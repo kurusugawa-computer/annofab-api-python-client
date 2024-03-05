@@ -1,4 +1,4 @@
-# flake8: noqa: W291
+# ruff: noqa: E501, W293, W291
 # pylint: disable=too-many-lines,trailing-whitespace
 
 """
@@ -23,7 +23,7 @@ AccountId = NewType("AccountId", str)
 
 Example:
     ``12345678-abcd-1234-abcd-1234abcd5678``
-    
+
 """
 
 UserId = NewType("UserId", str)

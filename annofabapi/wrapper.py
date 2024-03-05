@@ -129,7 +129,7 @@ class Wrapper:
 
     """
 
-    def __init__(self, api: AnnofabApi):
+    def __init__(self, api: AnnofabApi) -> None:
         self.api = api
 
     #########################################
@@ -151,7 +151,10 @@ class Wrapper:
         if content_type is not None:
             return content_type
 
-        logger.info("ファイルパス '%s' からMIME Typeを推測できませんでした。MIME Typeは `application/octet-stream' とみなします。", file_path)
+        logger.info(
+            "ファイルパス '%s' からMIME Typeを推測できませんでした。MIME Typeは `application/octet-stream' とみなします。",
+            file_path,
+        )
         return "application/octet-stream"
 
     @staticmethod
@@ -178,7 +181,10 @@ class Wrapper:
         content, _ = func_get_list(**kwargs_for_func_get_list)
 
         if content["over_limit"]:
-            logger.warning("calling %s :: 検索結果が10,000件を超えています。Web APIの都合上10,000件までしか取得できません。", func_get_list.__name__)
+            logger.warning(
+                "calling %s :: 検索結果が10,000件を超えています。Web APIの都合上10,000件までしか取得できません。",
+                func_get_list.__name__,
+            )
 
         all_objects.extend(content["list"])
 
@@ -212,7 +218,7 @@ class Wrapper:
              * HTTPステータスコードが4XX,5XXならば、HTTPErrorがスローされます
 
 
-        """
+        """  # noqa: E501
         return self.api._execute_http_request(http_method="get", url=url)
 
     def download(self, url: str, dest_path: Union[str, Path]) -> requests.Response:
@@ -236,7 +242,7 @@ class Wrapper:
              * 必要に応じてリトライします
              * HTTPステータスコードが4XX,5XXならば、HTTPErrorがスローされます
 
-        """
+        """  # noqa: E501
         response = self.api._execute_http_request(http_method="get", url=url)
 
         p = dest_path if isinstance(dest_path, Path) else Path(dest_path)
@@ -263,9 +269,7 @@ class Wrapper:
         Returns:
             アノテーション
         """
-        content, response = self.api.get_editor_annotation(
-            project_id, task_id, input_data_id, query_params=query_params, raise_for_status=False
-        )
+        content, response = self.api.get_editor_annotation(project_id, task_id, input_data_id, query_params=query_params, raise_for_status=False)
 
         if response.status_code == requests.codes.not_found:
             return None
@@ -331,9 +335,7 @@ class Wrapper:
         )
         return url
 
-    def get_all_annotation_list(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None
-    ) -> List[Dict[str, Any]]:
+    def get_all_annotation_list(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         すべてのアノテーション情報を取得する。
 
@@ -344,14 +346,10 @@ class Wrapper:
         Returns:l
             すべてのアノテーション一覧
         """
-        return self._get_all_objects(
-            self.api.get_annotation_list, limit=200, project_id=project_id, query_params=query_params
-        )
+        return self._get_all_objects(self.api.get_annotation_list, limit=200, project_id=project_id, query_params=query_params)
 
     @staticmethod
-    def __replace_annotation_specs_id(
-        detail: Dict[str, Any], annotation_specs_relation: AnnotationSpecsRelation
-    ) -> Optional[Dict[str, Any]]:
+    def __replace_annotation_specs_id(detail: Dict[str, Any], annotation_specs_relation: AnnotationSpecsRelation) -> Optional[Dict[str, Any]]:
         """
         アノテーション仕様関係のIDを、新しいIDに置換する。
 
@@ -373,17 +371,13 @@ class Wrapper:
         new_additional_data_list = []
         for additional_data in additional_data_list:
             additional_data_definition_id = additional_data["additional_data_definition_id"]
-            new_additional_data_definition_id = annotation_specs_relation.additional_data_definition_id.get(
-                additional_data_definition_id
-            )
+            new_additional_data_definition_id = annotation_specs_relation.additional_data_definition_id.get(additional_data_definition_id)
             if new_additional_data_definition_id is None:
                 continue
             additional_data["additional_data_definition_id"] = new_additional_data_definition_id
 
             if additional_data["choice"] is not None:
-                new_choice = annotation_specs_relation.choice_id.get(
-                    ChoiceKey(additional_data_definition_id, additional_data["choice"])
-                )
+                new_choice = annotation_specs_relation.choice_id.get(ChoiceKey(additional_data_definition_id, additional_data["choice"]))
                 additional_data["choice"] = new_choice.choice_id if new_choice is not None else None
 
             new_additional_data_list.append(additional_data)
@@ -407,16 +401,14 @@ class Wrapper:
         Raises:
             CheckSumError: アップロードした外部アノテーションファイルのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagに一致しない
 
-        """
+        """  # noqa: E501
         dest_detail = detail
         dest_detail["account_id"] = account_id
         if detail["data_holding_type"] == AnnotationDataHoldingType.OUTER.value:
             try:
                 outer_file_url = detail["url"]
                 src_response = self.api._execute_http_request("get", outer_file_url)
-                s3_path = self.upload_data_to_s3(
-                    dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"]
-                )
+                s3_path = self.upload_data_to_s3(dest_project_id, data=src_response.content, content_type=src_response.headers["Content-Type"])
                 dest_detail["path"] = s3_path
                 dest_detail["url"] = None
                 dest_detail["etag"] = None
@@ -424,11 +416,9 @@ class Wrapper:
             except CheckSumError as e:
                 message = (
                     f"外部アノテーションファイル {outer_file_url} のレスポンスのMD5ハッシュ値('{e.uploaded_data_hash}')が、"
-                    f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                    f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"  # noqa: E501
                 )
-                raise CheckSumError(
-                    message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
-                ) from e
+                raise CheckSumError(message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag) from e
 
         return dest_detail
 
@@ -450,7 +440,7 @@ class Wrapper:
                 tmp_detail = self.__replace_annotation_specs_id(src_detail, annotation_specs_relation)
                 if tmp_detail is None:
                     continue
-                src_detail = tmp_detail
+                src_detail = tmp_detail  # noqa: PLW2901
 
             dest_detail = self.__to_dest_annotation_detail(project_id, src_detail, account_id=account_id)
             dest_details.append(dest_detail)
@@ -506,17 +496,13 @@ class Wrapper:
         self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
         return True
 
-    def __get_label_info_from_label_name(
-        self, label_name: str, annotation_specs_labels: List[LabelV1]
-    ) -> Optional[LabelV1]:
+    def __get_label_info_from_label_name(self, label_name: str, annotation_specs_labels: List[LabelV1]) -> Optional[LabelV1]:
         for label in annotation_specs_labels:
             if self.__get_label_name_en(label) == label_name:
                 return label
         return None
 
-    def __get_additional_data_from_attribute_name(
-        self, attribute_name: str, label_info: LabelV1
-    ) -> Optional[AdditionalDataDefinitionV1]:
+    def __get_additional_data_from_attribute_name(self, attribute_name: str, label_info: LabelV1) -> Optional[AdditionalDataDefinitionV1]:
         for additional_data in label_info["additional_data_definitions"]:
             if self.__get_additional_data_definition_name_en(additional_data) == attribute_name:
                 return additional_data
@@ -550,7 +536,9 @@ class Wrapper:
             specs_additional_data = self.__get_additional_data_from_attribute_name(key, label_info)
             if specs_additional_data is None:
                 logger.warning(
-                    "アノテーション仕様の '%s' ラベルに、attribute_name='%s' である属性が存在しません。", self.__get_label_name_en(label_info), key
+                    "アノテーション仕様の '%s' ラベルに、attribute_name='%s' である属性が存在しません。",
+                    self.__get_label_name_en(label_info),
+                    key,
                 )
                 continue
 
@@ -645,17 +633,13 @@ class Wrapper:
                 except CheckSumError as e:
                     message = (
                         f"アップロードした外部アノテーションファイル'{outer_file_path}'のMD5ハッシュ値('{e.uploaded_data_hash}')が、"
-                        f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                        f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"  # noqa: E501
                     )
-                    raise CheckSumError(
-                        message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
-                    ) from e
+                    raise CheckSumError(message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag) from e
 
         return dest_obj
 
-    def __convert_annotation_specs_labels_v2_to_v1(
-        self, labels_v2: List[Dict[str, Any]], additionals_v2: List[Dict[str, Any]]
-    ) -> List[LabelV1]:
+    def __convert_annotation_specs_labels_v2_to_v1(self, labels_v2: List[Dict[str, Any]], additionals_v2: List[Dict[str, Any]]) -> List[LabelV1]:
         """アノテーション仕様のV2版からV1版に変換する。V1版の方が扱いやすいので。
 
         Args:
@@ -667,11 +651,9 @@ class Wrapper:
         """
 
         def get_additional(additional_data_definition_id: str) -> Optional[Dict[str, Any]]:
-            return more_itertools.first_true(
-                additionals_v2, pred=lambda e: e["additional_data_definition_id"] == additional_data_definition_id
-            )
+            return more_itertools.first_true(additionals_v2, pred=lambda e: e["additional_data_definition_id"] == additional_data_definition_id)
 
-        def to_label_v1(label_v2) -> LabelV1:
+        def to_label_v1(label_v2: Dict[str, Any]) -> LabelV1:
             additional_data_definition_id_list = label_v2["additional_data_definitions"]
             new_additional_data_definitions = []
             for additional_data_definition_id in additional_data_definition_id_list:
@@ -736,9 +718,7 @@ class Wrapper:
             else annotation_specs_labels
         )
         for detail in details:
-            request_detail = self.__to_annotation_detail_for_request(
-                project_id, parser, detail, annotation_specs_labels_v1
-            )
+            request_detail = self.__to_annotation_detail_for_request(project_id, parser, detail, annotation_specs_labels_v1)
             if request_detail is not None:
                 request_details.append(request_detail)
         if len(request_details) == 0:
@@ -773,19 +753,19 @@ class Wrapper:
     def __get_label_name_en(label: Dict[str, Any]) -> str:
         """label情報から英語名を取得する"""
         label_name_messages = label["label_name"]["messages"]
-        return [e["message"] for e in label_name_messages if e["lang"] == "en-US"][0]
+        return next(e["message"] for e in label_name_messages if e["lang"] == "en-US")
 
     @staticmethod
     def __get_additional_data_definition_name_en(additional_data_definition: Dict[str, Any]) -> str:
         """additional_data_definitionから英語名を取得する"""
         messages = additional_data_definition["name"]["messages"]
-        return [e["message"] for e in messages if e["lang"] == "en-US"][0]
+        return next(e["message"] for e in messages if e["lang"] == "en-US")
 
     @staticmethod
     def __get_choice_name_en(choice: Dict[str, Any]) -> str:
         """choiceから英語名を取得する"""
         messages = choice["name"]["messages"]
-        return [e["message"] for e in messages if e["lang"] == "en-US"][0]
+        return next(e["message"] for e in messages if e["lang"] == "en-US")
 
     def __get_dest_additional(
         self,
@@ -809,15 +789,13 @@ class Wrapper:
                         break
 
                     dest_label = more_itertools.first_true(
-                        dest_labels, pred=lambda e: e["label_id"] == dest_label_id  # pylint: disable=cell-var-from-loop
+                        dest_labels,
+                        pred=lambda e: e["label_id"] == dest_label_id,  # pylint: disable=cell-var-from-loop  # noqa: B023
                     )
                     if dest_label is None:
                         dest_label_contains_dest_additional = False
                         break
-                    if (
-                        dest_additional["additional_data_definition_id"]
-                        not in dest_label["additional_data_definitions"]
-                    ):
+                    if dest_additional["additional_data_definition_id"] not in dest_label["additional_data_definitions"]:
                         dest_label_contains_dest_additional = False
                         break
 
@@ -851,7 +829,7 @@ class Wrapper:
             src_label_name_en = self.__get_label_name_en(src_label)
             dest_label = more_itertools.first_true(
                 dest_labels,
-                pred=lambda e: self.__get_label_name_en(e) == src_label_name_en,  # pylint: disable=cell-var-from-loop
+                pred=lambda e: self.__get_label_name_en(e) == src_label_name_en,  # pylint: disable=cell-var-from-loop  # noqa: B023
             )
             if dest_label is not None:
                 dict_label_id[src_label["label_id"]] = dest_label["label_id"]
@@ -869,22 +847,19 @@ class Wrapper:
             if dest_additional is None:
                 continue
 
-            dict_additional_data_definition_id[src_additional["additional_data_definition_id"]] = dest_additional[
-                "additional_data_definition_id"
-            ]
+            dict_additional_data_definition_id[src_additional["additional_data_definition_id"]] = dest_additional["additional_data_definition_id"]
 
             dest_choices = dest_additional["choices"]
             for src_choice in src_additional["choices"]:
                 src_choice_name_en = self.__get_choice_name_en(src_choice)
                 dest_choice = more_itertools.first_true(
                     dest_choices,
-                    pred=lambda e: self.__get_choice_name_en(e)
-                    == src_choice_name_en,  # pylint: disable=cell-var-from-loop
+                    pred=lambda e: self.__get_choice_name_en(e) == src_choice_name_en,  # pylint: disable=cell-var-from-loop  # noqa: B023
                 )
                 if dest_choice is not None:
-                    dict_choice_id[
-                        ChoiceKey(src_additional["additional_data_definition_id"], src_choice["choice_id"])
-                    ] = ChoiceKey(dest_additional["additional_data_definition_id"], dest_choice["choice_id"])
+                    dict_choice_id[ChoiceKey(src_additional["additional_data_definition_id"], src_choice["choice_id"])] = ChoiceKey(
+                        dest_additional["additional_data_definition_id"], dest_choice["choice_id"]
+                    )
 
         return AnnotationSpecsRelation(
             label_id=dict_label_id,
@@ -915,9 +890,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def get_all_input_data_list(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None
-    ) -> List[InputData]:
+    def get_all_input_data_list(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[InputData]:
         """
         すべての入力データを取得する。
 
@@ -928,9 +901,7 @@ class Wrapper:
         Returns:
             入力データ一覧
         """
-        return self._get_all_objects(
-            self.api.get_input_data_list, limit=200, project_id=project_id, query_params=query_params
-        )
+        return self._get_all_objects(self.api.get_input_data_list, limit=200, project_id=project_id, query_params=query_params)
 
     def upload_file_to_s3(self, project_id: str, file_path: str, content_type: Optional[str] = None) -> str:
         """
@@ -957,13 +928,11 @@ class Wrapper:
             except CheckSumError as e:
                 message = (
                     f"アップロードしたファイル'{file_path}'のMD5ハッシュ値('{e.uploaded_data_hash}')が、"
-                    f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                    f"AWS S3にアップロードしたときのレスポンスのETag('{e.response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"  # noqa: E501
                 )
-                raise CheckSumError(
-                    message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag
-                ) from e
+                raise CheckSumError(message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag) from e
 
-    def upload_data_to_s3(self, project_id: str, data: Any, content_type: str) -> str:
+    def upload_data_to_s3(self, project_id: str, data: Any, content_type: str) -> str:  # noqa: ANN401
         """
         createTempPath APIを使ってアップロード用のURLとS3パスを取得して、"data" をアップロードする。
 
@@ -977,9 +946,9 @@ class Wrapper:
 
         Raises:
             CheckSumError: アップロードしたデータのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
-        """
+        """  # noqa: E501
 
-        def get_md5_value_from_file(fp):
+        def get_md5_value_from_file(fp):  # noqa: ANN001
             md5_obj = hashlib.md5()
             while True:
                 chunk = fp.read(2048 * md5_obj.block_size)
@@ -998,9 +967,7 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        res_put = self.api._execute_http_request(
-            http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
-        )
+        res_put = self.api._execute_http_request(http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type})
 
         # アップロードしたファイルが破損していなかをチェックする
         if hasattr(data, "read"):
@@ -1016,7 +983,7 @@ class Wrapper:
         if f'"{uploaded_data_hash}"' != response_etag:
             message = (
                 f"アップロードしたデータのMD5ハッシュ値('{uploaded_data_hash}')が、"
-                f"AWS S3にアップロードしたときのレスポンスのETag('{response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"
+                f"AWS S3にアップロードしたときのレスポンスのETag('{response_etag}')に一致しませんでした。アップロード時にデータが破損した可能性があります。"  # noqa: E501
             )
             raise CheckSumError(message=message, uploaded_data_hash=uploaded_data_hash, response_etag=response_etag)
 
@@ -1059,7 +1026,7 @@ class Wrapper:
     #########################################
     # Public Method : Statistics
     #########################################
-    def _get_statistics_content(self, content: Any, response: requests.Response) -> Optional[Any]:
+    def _get_statistics_content(self, content: Any, response: requests.Response) -> Optional[Any]:  # noqa: ANN401
         """
         統計情報webapiのレスポンス情報に格納されているURLにアクセスして、統計情報の中身を取得する。
         統計情報webapiのレスポンス'url'にアクセスする。
@@ -1148,7 +1115,7 @@ class Wrapper:
             project, _ = self.api.get_project(project_id)
             from_date = project["created_datetime"][0:10]  # "YYYY-MM-DD"の部分を抽出
         if to_date is None:
-            to_date = str(datetime.datetime.today().date())
+            to_date = str(datetime.datetime.now(tz=datetime.timezone(datetime.timedelta(hours=9))).date())
 
         if from_date is None or to_date is None:
             dates, _ = self.api.get_statistics_available_dates(project_id)
@@ -1159,8 +1126,8 @@ class Wrapper:
                 to_date = dates[-1]["to"]
 
         DATE_FORMAT = "%Y-%m-%d"
-        dt_from_date = datetime.datetime.strptime(from_date, DATE_FORMAT).date()
-        dt_to_date = datetime.datetime.strptime(to_date, DATE_FORMAT).date()
+        dt_from_date = datetime.datetime.strptime(from_date, DATE_FORMAT).date()  # noqa: DTZ007
+        dt_to_date = datetime.datetime.strptime(to_date, DATE_FORMAT).date()  # noqa: DTZ007
         return dt_from_date, dt_to_date
 
     def get_account_daily_statistics(
@@ -1177,7 +1144,7 @@ class Wrapper:
             ユーザ別タスク集計データ
         """
 
-        def decorator(f, project_id: str):
+        def decorator(f, project_id: str):  # noqa: ANN001
             @functools.wraps(f)
             def wrapper(*args, **kwargs):
                 content, _ = f(project_id, *args, **kwargs)
@@ -1185,9 +1152,7 @@ class Wrapper:
 
             return wrapper
 
-        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
-            project_id, from_date=from_date, to_date=to_date
-        )
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(project_id, from_date=from_date, to_date=to_date)
         func = decorator(self.api.get_account_daily_statistics, project_id)
         result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
@@ -1213,7 +1178,7 @@ class Wrapper:
 
         """
 
-        def decorator(f, project_id: str):
+        def decorator(f, project_id: str):  # noqa: ANN001
             @functools.wraps(f)
             def wrapper(*args, **kwargs):
                 content, _ = f(project_id, *args, **kwargs)
@@ -1221,15 +1186,11 @@ class Wrapper:
 
             return wrapper
 
-        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
-            project_id, from_date=from_date, to_date=to_date
-        )
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(project_id, from_date=from_date, to_date=to_date)
         func = decorator(self.api.get_inspection_daily_statistics, project_id)
         return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
-    def get_phase_daily_statistics(
-        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    def get_phase_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> List[Dict[str, Any]]:
         """指定した期間の フェーズ別タスク集計データ を取得します。
 
         Args:
@@ -1242,7 +1203,7 @@ class Wrapper:
 
         """
 
-        def decorator(f, project_id: str):
+        def decorator(f, project_id: str):  # noqa: ANN001
             @functools.wraps(f)
             def wrapper(*args, **kwargs):
                 content, _ = f(project_id, *args, **kwargs)
@@ -1250,15 +1211,11 @@ class Wrapper:
 
             return wrapper
 
-        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
-            project_id, from_date=from_date, to_date=to_date
-        )
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(project_id, from_date=from_date, to_date=to_date)
         func = decorator(self.api.get_phase_daily_statistics, project_id)
         return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
-    def get_task_daily_statistics(
-        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    def get_task_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> List[Dict[str, Any]]:
         """指定した期間の タスク集計データ を取得します。
 
         Args:
@@ -1271,7 +1228,7 @@ class Wrapper:
 
         """
 
-        def decorator(f, project_id: str):
+        def decorator(f, project_id: str):  # noqa: ANN001
             @functools.wraps(f)
             def wrapper(*args, **kwargs):
                 content, _ = f(project_id, *args, **kwargs)
@@ -1279,15 +1236,11 @@ class Wrapper:
 
             return wrapper
 
-        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
-            project_id, from_date=from_date, to_date=to_date
-        )
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(project_id, from_date=from_date, to_date=to_date)
         func = decorator(self.api.get_task_daily_statistics, project_id)
         return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
-    def get_worktime_daily_statistics(
-        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
-    ) -> Dict[str, Any]:
+    def get_worktime_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Dict[str, Any]:
         """プロジェクト全体のタスク作業時間集計データを取得します。
 
         Args:
@@ -1299,7 +1252,7 @@ class Wrapper:
             プロジェクト全体のタスク作業時間集計データ
         """
 
-        def decorator(f, project_id: str):
+        def decorator(f, project_id: str):  # noqa: ANN001
             @functools.wraps(f)
             def wrapper(*args, **kwargs):
                 content, _ = f(project_id, *args, **kwargs)
@@ -1307,9 +1260,7 @@ class Wrapper:
 
             return wrapper
 
-        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
-            project_id, from_date=from_date, to_date=to_date
-        )
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(project_id, from_date=from_date, to_date=to_date)
         func = decorator(self.api.get_worktime_daily_statistics, project_id)
         result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
         return {"project_id": project_id, "data_series": result}
@@ -1329,7 +1280,7 @@ class Wrapper:
             プロジェクトメンバーのタスク作業時間集計データ
         """
 
-        def decorator(f, project_id: str, account_id: str):
+        def decorator(f, project_id: str, account_id: str):  # noqa: ANN001
             @functools.wraps(f)
             def wrapper(*args, **kwargs):
                 content, _ = f(project_id, account_id, *args, **kwargs)
@@ -1337,9 +1288,7 @@ class Wrapper:
 
             return wrapper
 
-        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(
-            project_id, from_date=from_date, to_date=to_date
-        )
+        dt_from_date, dt_to_date = self._get_from_and_to_date_for_statistics_webapi(project_id, from_date=from_date, to_date=to_date)
         func = decorator(self.api.get_worktime_daily_statistics_by_account, project_id, account_id)
         result = self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
         return {"project_id": project_id, "account_id": account_id, "data_series": result}
@@ -1348,9 +1297,7 @@ class Wrapper:
     # Public Method : Supplementary
     #########################################
 
-    def get_supplementary_data_list_or_none(
-        self, project_id: str, input_data_id: str
-    ) -> Optional[List[Dict[str, Any]]]:
+    def get_supplementary_data_list_or_none(self, project_id: str, input_data_id: str) -> Optional[List[Dict[str, Any]]]:
         """
         補助情報一覧を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
@@ -1371,7 +1318,7 @@ class Wrapper:
 
     def put_supplementary_data_from_file(
         self,
-        project_id,
+        project_id: str,
         input_data_id: str,
         supplementary_data_id: str,
         file_path: str,
@@ -1417,9 +1364,7 @@ class Wrapper:
                 raise AnnofabApiException(f"File type not supported. Content-Type={new_content_type}")
             copied_request_body["supplementary_data_type"] = supplementary_data_type
 
-        return self.api.put_supplementary_data(
-            project_id, input_data_id, supplementary_data_id, request_body=copied_request_body
-        )[0]
+        return self.api.put_supplementary_data(project_id, input_data_id, supplementary_data_id, request_body=copied_request_body)[0]
 
     #########################################
     # Public Method : Inspection
@@ -1461,9 +1406,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def get_all_projects_of_organization(
-        self, organization_name: str, query_params: Optional[Dict[str, Any]] = None
-    ) -> List[Project]:
+    def get_all_projects_of_organization(self, organization_name: str, query_params: Optional[Dict[str, Any]] = None) -> List[Project]:
         """
         組織配下のすべてのプロジェクト一覧を取得する
 
@@ -1662,7 +1605,7 @@ class Wrapper:
 
         """
         with warnings.catch_warnings():
-            # `get_project_task_history_events_url`関数は非推奨だが、タスク履歴イベントでしか取得できない情報があるため、annofab-cliなどではよく利用する
+            # `get_project_task_history_events_url`関数は非推奨だが、タスク履歴イベントでしか取得できない情報があるため、annofab-cliなどではよく利用する  # noqa: E501
             # `get_project_task_history_events_url`関数がいつ廃止さるのかは未定なので、`get_project_task_history_events_url`関数実行時の警告を無視する
             warnings.simplefilter("ignore", category=FutureWarning)
             content, _ = self.api.get_project_task_history_events_url(project_id)
@@ -1726,9 +1669,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def get_all_project_members(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None
-    ) -> List[ProjectMember]:
+    def get_all_project_members(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[ProjectMember]:
         """
         すべてのプロジェクトメンバを取得する.
 
@@ -1819,9 +1760,7 @@ class Wrapper:
         """
         return self._get_all_objects(self.api.get_tasks, limit=200, project_id=project_id, query_params=query_params)
 
-    def change_task_status_to_working(
-        self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None
-    ) -> Task:
+    def change_task_status_to_working(self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None) -> Task:
         """
         タスクのステータスを「作業中」に変更します。
 
@@ -1836,7 +1775,7 @@ class Wrapper:
 
         Returns:
             変更後のタスク
-        """
+        """  # noqa: E501
         if last_updated_datetime is None:
             task, _ = self.api.get_task(project_id, task_id)
             last_updated_datetime = task["updated_datetime"]
@@ -1848,9 +1787,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def change_task_status_to_break(
-        self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None
-    ) -> Task:
+    def change_task_status_to_break(self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None) -> Task:
         """
         タスクのステータスを「休憩中」に変更します。
 
@@ -1865,7 +1802,7 @@ class Wrapper:
 
         Returns:
             変更後のタスク
-        """
+        """  # noqa: E501
         if last_updated_datetime is None:
             task, _ = self.api.get_task(project_id, task_id)
             last_updated_datetime = task["updated_datetime"]
@@ -1878,9 +1815,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def change_task_status_to_on_hold(
-        self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None
-    ) -> Task:
+    def change_task_status_to_on_hold(self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None) -> Task:
         """
         タスクのステータスを「保留」に変更します。
 
@@ -1895,7 +1830,7 @@ class Wrapper:
 
         Returns:
             変更後のタスク
-        """
+        """  # noqa: E501
         if last_updated_datetime is None:
             task, _ = self.api.get_task(project_id, task_id)
             last_updated_datetime = task["updated_datetime"]
@@ -1926,7 +1861,7 @@ class Wrapper:
 
         Returns:
             変更後のタスク
-        """
+        """  # noqa: E501
         if last_updated_datetime is None:
             task, _ = self.api.get_task(project_id, task_id)
             last_updated_datetime = task["updated_datetime"]
@@ -1939,9 +1874,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def cancel_submitted_task(
-        self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None
-    ) -> Task:
+    def cancel_submitted_task(self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None) -> Task:
         """
         タスクの提出を取り消します。
         「提出されたタスク」とは、以下の状態のタスクのことです。
@@ -1961,7 +1894,7 @@ class Wrapper:
 
         Returns:
             変更後のタスク
-        """
+        """  # noqa: E501
         if last_updated_datetime is None:
             task, _ = self.api.get_task(project_id, task_id)
             last_updated_datetime = task["updated_datetime"]
@@ -1998,7 +1931,7 @@ class Wrapper:
 
         Returns:
             変更後のタスク
-        """
+        """  # noqa: E501
         if last_updated_datetime is None:
             task, _ = self.api.get_task(project_id, task_id)
             last_updated_datetime = task["updated_datetime"]
@@ -2034,7 +1967,7 @@ class Wrapper:
         Returns:
             変更後のタスク
 
-        """
+        """  # noqa: E501
         if last_updated_datetime is None:
             task, _ = self.api.get_task(project_id, task_id)
             last_updated_datetime = task["updated_datetime"]
@@ -2047,9 +1980,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def reject_task(
-        self, project_id: str, task_id: str, *, force: bool = False, last_updated_datetime: Optional[str] = None
-    ) -> Dict[str, Any]:
+    def reject_task(self, project_id: str, task_id: str, *, force: bool = False, last_updated_datetime: Optional[str] = None) -> Dict[str, Any]:
         """
         タスクを差し戻します。
         このメソッドを実行すると、`phase`は`annotation`になります。
@@ -2071,7 +2002,7 @@ class Wrapper:
         Returns:
             変更後のタスク
 
-        """
+        """  # noqa: E501
         if last_updated_datetime is None:
             task, _ = self.api.get_task(project_id, task_id)
             last_updated_datetime = task["updated_datetime"]
@@ -2105,9 +2036,7 @@ class Wrapper:
         latest_history_id = histories[0]["history_id"]
         return self.api.get_instruction(project_id, {"history_id": latest_history_id})[0]
 
-    def upload_instruction_image(
-        self, project_id: str, image_id: str, file_path: str, content_type: Optional[str] = None
-    ) -> str:
+    def upload_instruction_image(self, project_id: str, image_id: str, file_path: str, content_type: Optional[str] = None) -> str:
         """
         作業ガイドの画像をアップロードする。
 
@@ -2125,7 +2054,7 @@ class Wrapper:
         with open(file_path, "rb") as f:
             return self.upload_data_as_instruction_image(project_id, image_id, data=f, content_type=new_content_type)
 
-    def upload_data_as_instruction_image(self, project_id: str, image_id: str, data: Any, content_type: str) -> str:
+    def upload_data_as_instruction_image(self, project_id: str, image_id: str, data: Any, content_type: str) -> str:  # noqa: ANN401
         """
         data を作業ガイドの画像としてアップロードする。
 
@@ -2148,9 +2077,7 @@ class Wrapper:
         s3_url = content["url"].split("?")[0]
 
         # アップロード
-        self.api._execute_http_request(
-            http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
-        )
+        self.api._execute_http_request(http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type})
         return content["path"]
 
     #########################################
@@ -2176,9 +2103,7 @@ class Wrapper:
 
         return deleted_jobs
 
-    def get_all_project_job(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None
-    ) -> List[ProjectJobInfo]:
+    def get_all_project_job(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[ProjectJobInfo]:
         """
         すべてのバックグランドジョブを取得する。
 
@@ -2239,9 +2164,7 @@ class Wrapper:
             Falseならば、ジョブが失敗 or ``max_job_access`` 回アクセスしても、ジョブが完了しなかった。
 
         """
-        job_status = self.wait_until_job_finished(
-            project_id, job_type, job_access_interval=job_access_interval, max_job_access=max_job_access
-        )
+        job_status = self.wait_until_job_finished(project_id, job_type, job_access_interval=job_access_interval, max_job_access=max_job_access)
         if job_status is None:
             # 実行中のジョブが存在しない
             return True
@@ -2292,13 +2215,20 @@ class Wrapper:
                 # 初回のみ
                 job = get_latest_job()
                 if job is None or job["job_status"] != JobStatus.PROGRESS.value:
-                    logger.info("project_id='%s', job_type='%s' である進行中のジョブは存在しません。", project_id, job_type.value)
+                    logger.info(
+                        "project_id='%s', job_type='%s' である進行中のジョブは存在しません。",
+                        project_id,
+                        job_type.value,
+                    )
                     return None
                 job_id = job["job_id"]
 
             if job is None:
                 logger.info(
-                    "project_id='%s', job_id='%s', job_type='%s' のジョブは存在しません。", project_id, job_type.value, job_id
+                    "project_id='%s', job_id='%s', job_type='%s' のジョブは存在しません。",
+                    project_id,
+                    job_type.value,
+                    job_id,
                 )
                 return None
 
@@ -2306,7 +2236,10 @@ class Wrapper:
 
             if job["job_status"] == JobStatus.SUCCEEDED.value:
                 logger.info(
-                    "project_id='%s', job_id='%s', job_type='%s' のジョブが成功しました。", project_id, job_id, job_type.value
+                    "project_id='%s', job_id='%s', job_type='%s' のジョブが成功しました。",
+                    project_id,
+                    job_id,
+                    job_type.value,
                 )
                 return JobStatus.SUCCEEDED
 
@@ -2354,9 +2287,7 @@ class Wrapper:
         max_job_access: int,
     ) -> Optional[JobStatus]:
         loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(
-            None, self.wait_until_job_finished, project_id, job_type, job_id, job_access_interval, max_job_access
-        )
+        return await loop.run_in_executor(None, self.wait_until_job_finished, project_id, job_type, job_id, job_access_interval, max_job_access)
 
     def can_execute_job(self, project_id: str, job_type: ProjectJobType) -> bool:
         """

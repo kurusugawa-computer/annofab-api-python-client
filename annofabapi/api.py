@@ -55,7 +55,7 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
 
     """
 
-    def mask_key(d, key: str):
+    def mask_key(d, key: str):  # noqa: ANN001
         if key in d:
             d[key] = "***"
 
@@ -96,7 +96,7 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
         )
 
 
-def _create_request_body_for_logger(data: Any) -> Any:
+def _create_request_body_for_logger(data: Any) -> Any:  # noqa: ANN401
     """
     ログに出力するためのreqest_bodyを生成する。
      * パスワードやトークンなどの機密情報をマスクする
@@ -110,7 +110,7 @@ def _create_request_body_for_logger(data: Any) -> Any:
         ログ出力用のrequest_body
     """
 
-    def mask_key(d, key: str):
+    def mask_key(d, key: str):  # noqa: ANN001
         if key in d:
             d[key] = "***"
 
@@ -145,7 +145,7 @@ def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
         ログ出力用のparams
     """
 
-    def mask_key(d, key: str):
+    def mask_key(d, key: str):  # noqa: ANN001
         if key in d:
             d[key] = "***"
 
@@ -174,14 +174,14 @@ def _should_retry_with_status(status_code: int) -> bool:
     return False
 
 
-def my_backoff(function):
+def my_backoff(function):  # noqa: ANN001
     """
     HTTP Status Codeが429 or 5XXのときはリトライする. 最大5分間リトライする。
     """
 
     @wraps(function)
     def wrapped(*args, **kwargs):
-        def fatal_code(e):
+        def fatal_code(e):  # noqa: ANN001
             """
             リトライするかどうか
             status codeが5xxのとき、またはToo many Requests(429)のときはリトライする。429以外の4XXはリトライしない
@@ -230,7 +230,7 @@ class AnnofabApi(AbstractAnnofabApi):
         cookies: Signed Cookie情報
     """
 
-    def __init__(self, login_user_id: str, login_password: str, endpoint_url: str = DEFAULT_ENDPOINT_URL):
+    def __init__(self, login_user_id: str, login_password: str, endpoint_url: str = DEFAULT_ENDPOINT_URL) -> None:
         if not login_user_id or not login_password:
             raise ValueError("login_user_id or login_password is empty.")
 
@@ -254,10 +254,10 @@ class AnnofabApi(AbstractAnnofabApi):
         http://docs.python-requests.org/en/master/user/advanced/#custom-authentication
         """
 
-        def __init__(self, id_token: str):
+        def __init__(self, id_token: str) -> None:
             self.id_token = id_token
 
-        def __call__(self, req):
+        def __call__(self, req):  # noqa: ANN001, ANN204
             req.headers["Authorization"] = self.id_token
             return req
 
@@ -288,7 +288,7 @@ class AnnofabApi(AbstractAnnofabApi):
         self,
         params: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, Any]] = None,
-        request_body: Optional[Any] = None,
+        request_body: Optional[Any] = None,  # noqa: ANN401
     ) -> Dict[str, Any]:
         """
         requestsモジュールのget,...メソッドに渡すkwargsを生成する。
@@ -329,7 +329,7 @@ class AnnofabApi(AbstractAnnofabApi):
         return kwargs
 
     @staticmethod
-    def _response_to_content(response: requests.Response) -> Any:
+    def _response_to_content(response: requests.Response) -> Any:  # noqa: ANN401
         """
         Responseのcontentを、Content-Typeに対応した型に変換する。
 
@@ -364,8 +364,8 @@ class AnnofabApi(AbstractAnnofabApi):
         url: str,
         *,
         params: Optional[Dict[str, Any]] = None,
-        data: Optional[Any] = None,
-        json: Optional[Any] = None,  # pylint: disable=redefined-outer-name
+        data: Optional[Any] = None,  # noqa: ANN401
+        json: Optional[Any] = None,  # pylint: disable=redefined-outer-name  # noqa: ANN401
         headers: Optional[Dict[str, Any]] = None,
         raise_for_status: bool = True,
         **kwargs,
@@ -384,9 +384,7 @@ class AnnofabApi(AbstractAnnofabApi):
             requests.exceptions.HTTPError: http status codeが4XXX,5XXXのとき
 
         """
-        response = self.session.request(
-            method=http_method, url=url, params=params, data=data, headers=headers, json=json, **kwargs
-        )
+        response = self.session.request(method=http_method, url=url, params=params, data=data, headers=headers, json=json, **kwargs)
 
         # response.requestよりメソッド引数のrequest情報の方が分かりやすいので、メソッド引数のrequest情報を出力する。
         logger.debug(
@@ -410,11 +408,7 @@ class AnnofabApi(AbstractAnnofabApi):
         # リクエスト過多の場合、待ってから再度アクセスする
         if response.status_code == requests.codes.too_many_requests:
             retry_after_value = response.headers.get("Retry-After")
-            waiting_time_seconds = (
-                float(retry_after_value)
-                if retry_after_value is not None
-                else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
-            )
+            waiting_time_seconds = float(retry_after_value) if retry_after_value is not None else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
 
             logger.warning(
                 "HTTPステータスコードが'%s'なので、%s秒待ってからリトライします。 :: %s",
@@ -461,7 +455,7 @@ class AnnofabApi(AbstractAnnofabApi):
         *,
         query_params: Optional[Dict[str, Any]] = None,
         header_params: Optional[Dict[str, Any]] = None,
-        request_body: Optional[Any] = None,
+        request_body: Optional[Any] = None,  # noqa: ANN401
         raise_for_status: bool = True,
     ) -> Tuple[Any, requests.Response]:
         """
@@ -523,11 +517,7 @@ class AnnofabApi(AbstractAnnofabApi):
             )
         elif response.status_code == requests.codes.too_many_requests:
             retry_after_value = response.headers.get("Retry-After")
-            waiting_time_seconds = (
-                float(retry_after_value)
-                if retry_after_value is not None
-                else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
-            )
+            waiting_time_seconds = float(retry_after_value) if retry_after_value is not None else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
 
             logger.warning(
                 "HTTPステータスコードが'%s'なので、%s秒待ってからリトライします。 :: %s",
@@ -567,9 +557,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         return content, response
 
-    def _get_signed_cookie(
-        self, project_id, query_params: Optional[Dict[str, Any]] = None
-    ) -> Tuple[Dict[str, Any], requests.Response]:
+    def _get_signed_cookie(self, project_id, query_params: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], requests.Response]:  # noqa: ANN001
         """
         アノテーション仕様の履歴情報を取得するために、非公開APIにアクセスする。
         変更される可能性あり.

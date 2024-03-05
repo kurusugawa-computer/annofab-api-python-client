@@ -29,11 +29,11 @@ class AnnotationOuterFileNotFoundError(AnnofabApiException):
 
     """
 
-    def __init__(self, outer_file_path: str, zipfile_path: Optional[str] = None):
+    def __init__(self, outer_file_path: str, zipfile_path: Optional[str] = None) -> None:
         if zipfile_path is None:
             message = f"No such file or directory: '{outer_file_path}'"
         else:
-            message = f"There is no item named '{str(outer_file_path)}' in the archive '{zipfile_path}'"
+            message = f"There is no item named '{outer_file_path!s}' in the archive '{zipfile_path}'"
 
         super().__init__(message)
 
@@ -48,7 +48,7 @@ class NotLoggedInError(AnnofabApiException):
 
     """
 
-    def __init__(self, message: Optional[str] = None):
+    def __init__(self, message: Optional[str] = None) -> None:
         if message is None:
             message = "You are not logged in."
         super().__init__(message)
@@ -67,7 +67,7 @@ class CheckSumError(AnnofabApiException):
         response_etag: アップロードしたときのレスポンスヘッダ'ETag'の値
     """
 
-    def __init__(self, message: str, uploaded_data_hash: str, response_etag: str):
+    def __init__(self, message: str, uploaded_data_hash: str, response_etag: str) -> None:
         self.uploaded_data_hash = uploaded_data_hash
         self.response_etag = response_etag
 
@@ -79,6 +79,6 @@ class MfaEnabledUserExecutionError(Exception):
     MFAが有効化されたユーザーが実行したことを示すエラー
     """
 
-    def __init__(self, user_id: str):
+    def __init__(self, user_id: str) -> None:
         message = f"User (User ID: {user_id}) cannot use annofab-api-python-client because MFA is enabled."
         super().__init__(message)

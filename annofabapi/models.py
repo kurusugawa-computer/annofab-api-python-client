@@ -1,4 +1,4 @@
-# flake8: noqa: W291
+# ruff: noqa: E501, W293, W291
 # pylint: disable=too-many-lines,trailing-whitespace
 
 """
@@ -10,9 +10,8 @@ Note:
     このファイルはopenapi-generatorで自動生成される。詳細は generate/README.mdを参照
 """
 
-import warnings  # pylint: disable=unused-import
 from enum import Enum
-from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
+from typing import Any, Dict, NewType  # pylint: disable=unused-import
 
 from annofabapi._utils import deprecated_class  # pylint: disable=unused-import
 
@@ -23,7 +22,7 @@ AccountId = NewType("AccountId", str)
 
 Example:
     ``12345678-abcd-1234-abcd-1234abcd5678``
-    
+
 """
 
 UserId = NewType("UserId", str)
