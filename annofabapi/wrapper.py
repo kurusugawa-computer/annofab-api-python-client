@@ -233,7 +233,7 @@ class Wrapper:
 
         """
 
-        def to_megabyte_string(value: Optional[str]) -> str:
+        def to_megabyte_string(value: Optional[Union[str, int]]) -> str:
             if value is None:
                 return "None"
             megabyte_value = int(value) / (1024 * 1024)
@@ -244,7 +244,10 @@ class Wrapper:
             content_length = response.headers.get("Content-Length")
             last_modified = response.headers.get("Last-Modified")
 
-            logger.debug("%s :: ダウンロードします。 :: Content-Length='%s', Last-Modified='%s'", logger_prefix, content_length, last_modified)
+            # `Last-Modified`をログに出力する理由：
+            # ダウンロード対象のファイルがいつ更新されたかが分かるようにするため。
+            # ダウンロード対象の全件ファイルは原則AM03:00頃に更新されるが、更新に遅れが生じることがある。
+            logger.info("%s :: ダウンロードします。 :: Content-Length='%s', Last-Modified='%s'", logger_prefix, content_length, last_modified)
 
             p.parent.mkdir(parents=True, exist_ok=True)
             with open(dest_path, "wb") as f:
@@ -259,7 +262,7 @@ class Wrapper:
                     )
                     f.write(chunk)
 
-            logger.debug("%s :: ダウンロードが完了しました。 :: file='%s'", logger_prefix, dest_path)
+            logger.info("%s :: ダウンロードが完了しました。 :: file='%s'", logger_prefix, dest_path)
 
     #########################################
     # Public Method : Annotation
