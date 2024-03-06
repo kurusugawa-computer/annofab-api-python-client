@@ -367,6 +367,7 @@ class AnnofabApi(AbstractAnnofabApi):
         data: Optional[Any] = None,  # noqa: ANN401
         json: Optional[Any] = None,  # pylint: disable=redefined-outer-name  # noqa: ANN401
         headers: Optional[Dict[str, Any]] = None,
+        stream: bool = False,
         raise_for_status: bool = True,
         **kwargs,
     ) -> requests.Response:
@@ -384,8 +385,7 @@ class AnnofabApi(AbstractAnnofabApi):
             requests.exceptions.HTTPError: http status codeが4XXX,5XXXのとき
 
         """
-        response = self.session.request(method=http_method, url=url, params=params, data=data, headers=headers, json=json, **kwargs)
-
+        response = self.session.request(method=http_method, url=url, params=params, data=data, headers=headers, json=json, stream=stream, **kwargs)
         # response.requestよりメソッド引数のrequest情報の方が分かりやすいので、メソッド引数のrequest情報を出力する。
         logger.debug(
             "Sent a request :: %s",
@@ -398,13 +398,9 @@ class AnnofabApi(AbstractAnnofabApi):
                     "request_body_data": _create_request_body_for_logger(data) if data is not None else None,
                     "header_params": headers,
                 },
-                "response": {
-                    "status_code": response.status_code,
-                    "content_length": len(response.content),
-                },
+                "response": {"status_code": response.status_code, "headers": {"Content-Length": response.headers.get("Content-Length")}},
             },
         )
-
         # リクエスト過多の場合、待ってから再度アクセスする
         if response.status_code == requests.codes.too_many_requests:
             retry_after_value = response.headers.get("Retry-After")
@@ -435,11 +431,11 @@ class AnnofabApi(AbstractAnnofabApi):
                 params=params,
                 data=data,
                 json=json,
+                stream=stream,
                 headers=headers,
                 raise_for_status=raise_for_status,
                 **kwargs,
             )
-
         # リトライが必要な場合は、backoffがリトライできるようにするため、Exceptionをスローする
         if raise_for_status or _should_retry_with_status(response.status_code):
             _log_error_response(logger, response)
@@ -497,10 +493,7 @@ class AnnofabApi(AbstractAnnofabApi):
                     "header_params": header_params,
                     "request_body": _create_request_body_for_logger(request_body) if request_body is not None else None,
                 },
-                "response": {
-                    "status_code": response.status_code,
-                    "content_length": len(response.content),
-                },
+                "response": {"status_code": response.status_code, "headers": {"Content-Length": response.headers.get("Content-Length")}},
             },
         )
 
