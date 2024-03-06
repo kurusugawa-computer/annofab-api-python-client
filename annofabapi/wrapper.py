@@ -221,35 +221,45 @@ class Wrapper:
         """  # noqa: E501
         return self.api._execute_http_request(http_method="get", url=url)
 
-    def download(self, url: str, dest_path: Union[str, Path]) -> requests.Response:
+    def download(self, url: str, dest_path: Union[str, Path], *, chunk_size: int = 1024 * 1024 * 100, logger_prefix: str = "") -> None:
         """
         指定したURLからファイルをダウンロードします。
-
-        ``getAnnotation`` などダウンロード用のURLを指定することを想定しています。
-
 
         Args:
             url: ダウンロード対象のURL
             dest_path: 保存先ファイルのパス
+            chunk_size: メモリに読み込むバイト数
+            logger_prefix: ログメッセージのプレフィックス
 
-        Returns:
-            URLにアクセスしたときの ``requests.Response`` 情報
+        """
 
-        Note:
-            ``requests.get`` でアクセスすることとの違いは以下の通りです。
-
-             * ``requests.Session`` 情報を使ってTCPコネクションを再利用しているため、``requests.get`` を使ってダウンロードするよりも、パフォーマンスが向上する可能性があります。
-             * 必要に応じてリトライします
-             * HTTPステータスコードが4XX,5XXならば、HTTPErrorがスローされます
-
-        """  # noqa: E501
-        response = self.api._execute_http_request(http_method="get", url=url)
+        def to_megabyte_string(value: Optional[str]) -> str:
+            if value is None:
+                return "None"
+            megabyte_value = int(value) / (1024 * 1024)
+            return f"{megabyte_value:.3f}"
 
         p = dest_path if isinstance(dest_path, Path) else Path(dest_path)
-        p.parent.mkdir(parents=True, exist_ok=True)
-        with open(dest_path, "wb") as f:
-            f.write(response.content)
-        return response
+        with self.api._execute_http_request(http_method="get", url=url, stream=True) as response:
+            content_length = response.headers.get("Content-Length")
+            last_modified = response.headers.get("Last-Modified")
+
+            logger.debug("%s :: ダウンロードします。 :: Content-Length='%s', Last-Modified='%s'", logger_prefix, content_length, last_modified)
+
+            p.parent.mkdir(parents=True, exist_ok=True)
+            with open(dest_path, "wb") as f:
+                sum_chunk_size = 0
+                for chunk in response.iter_content(chunk_size=chunk_size):
+                    sum_chunk_size += len(chunk)
+                    logger.debug(
+                        "%s :: ダウンロード中です。 :: %s / %s MBをダウンロードしました。",
+                        logger_prefix,
+                        to_megabyte_string(sum_chunk_size),
+                        to_megabyte_string(content_length),
+                    )
+                    f.write(chunk)
+
+            logger.debug("%s :: ダウンロードが完了しました。 :: file='%s'", logger_prefix, dest_path)
 
     #########################################
     # Public Method : Annotation
@@ -293,14 +303,7 @@ class Wrapper:
         # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
         _, response = self.api.get_annotation_archive(project_id)
         url = response.headers["Location"]
-        response2 = self.download(url, dest_path)
-        logger.info(
-            "SimpleアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
-            project_id,
-            response2.headers.get("Last-Modified"),
-            response2.headers.get("Content-Length"),
-            dest_path,
-        )
+        self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='SimpleアノテーションZIP'")
         return url
 
     def download_full_annotation_archive(self, project_id: str, dest_path: Union[str, Path]) -> str:
@@ -325,14 +328,7 @@ class Wrapper:
         # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
         _, response = self.api.get_archive_full_with_pro_id(project_id)
         url = response.headers["Location"]
-        response2 = self.download(url, dest_path)
-        logger.info(
-            "FullアノテーションZIPファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
-            project_id,
-            response2.headers.get("Last-Modified"),
-            response2.headers.get("Content-Length"),
-            dest_path,
-        )
+        self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='FullアノテーションZIP'")
         return url
 
     def get_all_annotation_list(self, project_id: str, query_params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
@@ -1497,14 +1493,7 @@ class Wrapper:
         """
         content, _ = self.api.get_project_inputs_url(project_id)
         url = content["url"]
-        response2 = self.download(url, dest_path)
-        logger.info(
-            "入力データ全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
-            project_id,
-            response2.headers.get("Last-Modified"),
-            response2.headers.get("Content-Length"),
-            dest_path,
-        )
+        self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='入力データ全件ファイル'")
         return url
 
     def download_project_tasks_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
@@ -1523,14 +1512,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_tasks_url(project_id)
         url = content["url"]
-        response2 = self.download(url, dest_path)
-        logger.info(
-            "タスク全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
-            project_id,
-            response2.headers.get("Last-Modified"),
-            response2.headers.get("Content-Length"),
-            dest_path,
-        )
+        self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='タスク全件ファイル'")
         return url
 
     def download_project_inspections_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
@@ -1556,14 +1538,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_inspections_url(project_id)
         url = content["url"]
-        response2 = self.download(url, dest_path)
-        logger.info(
-            "検査コメント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
-            project_id,
-            response2.headers.get("Last-Modified"),
-            response2.headers.get("Content-Length"),
-            dest_path,
-        )
+        self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='検査コメント全件ファイル'")
         return url
 
     def download_project_comments_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
@@ -1581,14 +1556,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_comments_url(project_id)
         url = content["url"]
-        response = self.download(url, dest_path)
-        logger.info(
-            "コメント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
-            project_id,
-            response.headers.get("Last-Modified"),
-            response.headers.get("Content-Length"),
-            dest_path,
-        )
+        self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='コメント全件ファイル'")
         return url
 
     def download_project_task_history_events_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
@@ -1611,14 +1579,7 @@ class Wrapper:
             content, _ = self.api.get_project_task_history_events_url(project_id)
 
         url = content["url"]
-        response2 = self.download(url, dest_path)
-        logger.info(
-            "タスク履歴イベント全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
-            project_id,
-            response2.headers.get("Last-Modified"),
-            response2.headers.get("Content-Length"),
-            dest_path,
-        )
+        self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='タスク履歴イベント全件ファイル'")
         return url
 
     def download_project_task_histories_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
@@ -1637,14 +1598,7 @@ class Wrapper:
 
         content, _ = self.api.get_project_task_histories_url(project_id)
         url = content["url"]
-        response2 = self.download(url, dest_path)
-        logger.info(
-            "タスク履歴全件ファイルをダウンロードしました。 :: project_id='%s', Last-Modified='%s', Content-Length='%s', file='%s'",
-            project_id,
-            response2.headers.get("Last-Modified"),
-            response2.headers.get("Content-Length"),
-            dest_path,
-        )
+        self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='タスク履歴全件ファイル'")
         return url
 
     #########################################
