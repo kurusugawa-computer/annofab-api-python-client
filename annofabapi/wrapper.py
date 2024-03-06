@@ -221,7 +221,7 @@ class Wrapper:
         """  # noqa: E501
         return self.api._execute_http_request(http_method="get", url=url)
 
-    def download(self, url: str, dest_path: Union[str, Path], *, chunk_size: int = 1024 * 1024 * 100, logger_prefix: str = "") -> None:
+    def download(self, url: str, dest_path: Union[str, Path], *, chunk_size: int = 1024 * 1024 * 500, logger_prefix: str = "") -> None:
         """
         指定したURLからファイルをダウンロードします。
 
