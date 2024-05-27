@@ -130,6 +130,18 @@ select = [
 ]
 
 
+[tool.ruff.lint.per-file-ignores]
+# テストコードはチェックを緩和する
+"tests/**.py" = [
+    "PGH",  # pygrep-hooks
+    "DTZ",  # flake8-datetimez
+    "ANN",  # flake8-annotations
+    "E501",  # line-too-long
+    "RUF100",  # unused-noqa
+    "G004", # logging-f-string
+]
+
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
