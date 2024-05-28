@@ -240,7 +240,7 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
     def open_outer_file(self, data_uri: str):  # noqa: ANN201
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
-            return open(outer_file_path, mode="rb")  # pylint: disable=consider-using-with
+            return open(outer_file_path, mode="rb")  # noqa: SIM115, pylint: disable=consider-using-with
         except FileNotFoundError as e:
             raise AnnotationOuterFileNotFoundError(str(outer_file_path)) from e
 
@@ -306,7 +306,7 @@ class FullAnnotationDirParser(FullAnnotationParser):
     def open_outer_file(self, data_uri: str):  # noqa: ANN201
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
-            return open(outer_file_path, mode="rb")  # pylint: disable=consider-using-with
+            return open(outer_file_path, mode="rb")  # noqa: SIM115, pylint: disable=consider-using-with
         except FileNotFoundError as e:
             raise AnnotationOuterFileNotFoundError(str(outer_file_path)) from e
 
@@ -460,7 +460,7 @@ def __parse_annotation_dir(annotation_dir_path: Path, clazz: Type[Union[SimpleAn
             if not input_data_file.is_file():
                 continue
 
-            if not input_data_file.suffix == ".json":
+            if input_data_file.suffix != ".json":
                 continue
 
             parser = clazz(input_data_file)

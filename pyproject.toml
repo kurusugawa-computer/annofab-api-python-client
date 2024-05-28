@@ -110,8 +110,7 @@ ignore = [
     "EM",#flake8-errmsg
     "EXE", # flake8-executable
     "ICN", # flake8-import-conventions
-    "RET",#flake8-return
-    "SIM",#flake8-simplify
+    "RET", #flake8-return
     "TCH", # flake8-type-checking
     "PTH", #pathlibを使わないコードが多いので、除外する
     "ISC", #flake8-implicit-str-concat
@@ -133,6 +132,7 @@ select = [
     "E501",  # line-too-long
     "RUF100",  # unused-noqa
     "G004", # logging-f-string
+    "SIM", #flake8-simplify
 ]
 
 
