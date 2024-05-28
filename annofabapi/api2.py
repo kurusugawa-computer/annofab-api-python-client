@@ -167,7 +167,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
         return content, response
 
-    def _get_signed_access_v2(self, url_path: str):
+    def _get_signed_access_v2(self, url_path: str):  # noqa: ANN202
         query_params = {"url": f"/api/v2{url_path}"}
         self.get_signed_access_v2(query_params)
 

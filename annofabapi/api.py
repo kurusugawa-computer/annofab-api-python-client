@@ -55,7 +55,7 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
 
     """
 
-    def mask_key(d, key: str):  # noqa: ANN001
+    def mask_key(d, key: str):  # noqa: ANN001, ANN202
         if key in d:
             d[key] = "***"
 
@@ -110,7 +110,7 @@ def _create_request_body_for_logger(data: Any) -> Any:  # noqa: ANN401
         ログ出力用のrequest_body
     """
 
-    def mask_key(d, key: str):  # noqa: ANN001
+    def mask_key(d, key: str):  # noqa: ANN001, ANN202
         if key in d:
             d[key] = "***"
 
@@ -145,7 +145,7 @@ def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
         ログ出力用のparams
     """
 
-    def mask_key(d, key: str):  # noqa: ANN001
+    def mask_key(d, key: str):  # noqa: ANN001, ANN202
         if key in d:
             d[key] = "***"
 
@@ -180,8 +180,8 @@ def my_backoff(function) -> Callable:  # noqa: ANN001
     """
 
     @wraps(function)
-    def wrapped(*args, **kwargs):
-        def fatal_code(e):  # noqa: ANN001
+    def wrapped(*args, **kwargs):  # noqa: ANN202
+        def fatal_code(e):  # noqa: ANN001, ANN202
             """
             リトライするかどうか
             status codeが5xxのとき、またはToo many Requests(429)のときはリトライする。429以外の4XXはリトライしない
