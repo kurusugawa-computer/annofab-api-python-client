@@ -2,6 +2,7 @@ import copy
 import json
 import logging
 import time
+from collections.abc import Collection
 from functools import wraps
 from json import JSONDecodeError
 from typing import Any, Callable, Dict, Optional, Tuple
@@ -21,6 +22,34 @@ DEFAULT_ENDPOINT_URL = "https://annofab.com"
 
 DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE = 300
 """HTTP Status Codeが429のときの、デフォルト（Retry-Afterヘッダがないとき）の待ち時間です。"""
+
+
+def _mask_senritive_value_for_dict(data: Dict[str, Any], keys: Collection[str]) -> Dict[str, Any]:
+    """
+    dictに含まれているセンシティブな情報を"***"でマスクします。
+
+    Args:
+        data: マスク対象のdict
+        keys: マスク対象の複数のkey
+
+    Returns:
+        センシティブな情報がマスクされたdict。
+        1つ以上の値をマスクした場合は、複製されたdictが返ります。
+        1つもマスクしていない場合は、引数`data`そのものが返ります。
+
+    """
+    MASKED_VALUE = "***"
+    diff_keys = set(keys) - set(data.keys())
+    if len(diff_keys) == len(keys):
+        # マスク対象のキーがない
+        return data
+
+    copied_data = copy.deepcopy(data)
+    for key in keys:
+        if key in copied_data:
+            copied_data[key] = MASKED_VALUE
+
+    return copied_data
 
 
 def _raise_for_status(response: requests.Response) -> None:
@@ -55,29 +84,35 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
 
     """
 
-    def mask_key(d, key: str):  # noqa: ANN001, ANN202
-        if key in d:
-            d[key] = "***"
+    def mask_str_rquest_body(str_request_body: str) -> Any:  # noqa: ANN401
+        """
+        文字列型であるrequest_bodyがJSON形式だとみなして、センシティブな情報をマスクします。
+        """
+        try:
+            # JSON文字列だとみなして、Pythonオブジェクトへの変換を試みる
+            json_request_body = json.loads(str_request_body)
+        except JSONDecodeError:
+            return str_request_body
+
+        return _create_request_body_for_logger(json_request_body)
 
     if 400 <= response.status_code < 600:
-        headers = copy.deepcopy(response.request.headers)
         # logにAuthorizationを出力しないようにマスクする
-        mask_key(headers, "Authorization")
+        headers_for_logger = _mask_senritive_value_for_dict(dict(response.request.headers), {"Authorization"})
+
 
         # request_bodyのpassword関係をマスクして、logに出力する
-        request_body = response.request.body
-        request_body_for_logger: Optional[Any]
-        if request_body is not None and request_body != "":
-            if isinstance(request_body, str):
-                try:
-                    dict_request_body = json.loads(request_body)
-                    request_body_for_logger = _create_request_body_for_logger(dict_request_body)
-                except JSONDecodeError:
-                    request_body_for_logger = request_body
-            else:
-                request_body_for_logger = _create_request_body_for_logger(request_body)
-        else:
-            request_body_for_logger = request_body
+        request_body_for_logger: Optional[Any] = None
+        if isinstance(response.request.body, bytes):
+            try:
+                # 文字列への変換を試みる
+                str_request_body = response.request.body.decode()
+                request_body_for_logger = mask_str_rquest_body(str_request_body)
+            except UnicodeError:
+                request_body_for_logger = response.request.body
+
+        elif isinstance(response.request.body, str):
+            request_body_for_logger = mask_str_rquest_body(response.request.body)
 
         arg_logger.error(
             "HTTP error occurred :: %s",
@@ -90,7 +125,7 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
                     "http_method": response.request.method,
                     "url": response.request.url,
                     "body": request_body_for_logger,
-                    "headers": headers,
+                    "headers": headers_for_logger,
                 },
             },
         )
