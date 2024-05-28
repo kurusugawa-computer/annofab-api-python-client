@@ -2210,7 +2210,7 @@ class Wrapper:
                 )
                 return JobStatus.FAILED
 
-            else:
+            else:  # noqa: PLR5501
                 # 進行中
                 if job_access_count < max_job_access:
                     logger.info(
