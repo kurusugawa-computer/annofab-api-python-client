@@ -27,8 +27,9 @@ def _read_mfa_code_from_stdin() -> str:
     """標準入力からMFAコードを読み込みます。"""
     inputted_mfa_code = ""
     while inputted_mfa_code == "":
-        inputted_mfa_code = input("Enter MFA Code: ")
+        inputted_mfa_code = input("Enter Annofab MFA Code: ")
     return inputted_mfa_code
+
 
 def _mask_senritive_value_for_dict(data: Dict[str, Any], keys: Collection[str]) -> Dict[str, Any]:
     """
@@ -619,8 +620,16 @@ class AnnofabApi(AbstractAnnofabApi):
     #########################################
     def _login_respond_to_auth_challenge(self, mfa_code: str, session: str) -> Dict[str, Any]:
         """
+        MFAコードによるログインを実行します。
+
+        ``self.input_mfa_code_via_stdin`` が ``True`` AND ``mfa_code`` が正しくない場合は、標準入力から再度MFAコードの入力を求めます。
+
+        Args:
+            mfa_code: MFAコード
+            session: `login` APIのレスポンスに格納されている`session`
+
         Raises:
-            InvalidMfaCodeError
+            InvalidMfaCodeError: ``self.input_mfa_code_via_stdin`` が ``False`` AND ``mfa_code`` が正しくない場合
         """
         request_body = {"user_id": self.login_user_id, "mfa_code": mfa_code, "session": session}
         url = f"{self.url_prefix}/login-respond-to-auth-challenge"
@@ -628,9 +637,10 @@ class AnnofabApi(AbstractAnnofabApi):
         response = self._execute_http_request("post", url, json=request_body, raise_for_status=False)
 
         json_obj = response.json()
+        # MFAコードが間違っているかどうかの判定が、メッセージでしかできなかったので、暫定的にメッセージで判定する
         if response.status_code == requests.codes.bad_request and json_obj["errors"][0]["message"] == "検証コードが間違っています":
             if self.input_mfa_code_via_stdin:
-                logger.warning("???")
+                logger.info("入力したMFAコードが間違っていました。")
                 new_mfa_code = _read_mfa_code_from_stdin()
                 return self._login_respond_to_auth_challenge(new_mfa_code, session)
             else:
@@ -645,6 +655,9 @@ class AnnofabApi(AbstractAnnofabApi):
         ログインして、トークンをインスタンスに保持します。
         MFAが有効化されている場合は、loginRespondToAuthChallenge APIを実行してトークンを取得します。
 
+        ``self.input_mfa_code_via_stdin == True`` の場合は、標準入力からMFAコードの入力を求めます。
+
+
         Args:
             mfa_code: ``loginRespondToAuthChallenge``のレスポンスから取得したMFAコード。この引数はexperimentalです。将来削除される可能性があります。
 
@@ -652,8 +665,8 @@ class AnnofabApi(AbstractAnnofabApi):
             Tuple[Token, requests.Response]
 
         Raises:
-            InvalidMfaCodeError
-            MfaEnabledUserExecutionError
+            InvalidMfaCodeError: ``self.input_mfa_code_via_stdin`` が ``False`` AND ``mfa_code`` が正しくない場合
+            MfaEnabledUserExecutionError: ``self.input_mfa_code_via_stdin`` が ``False`` AND ``mfa_code`` が未指定の場合
         """
         login_info = {"user_id": self.login_user_id, "password": self.login_password}
 
