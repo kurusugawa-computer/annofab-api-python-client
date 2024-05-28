@@ -148,7 +148,7 @@ def _create_request_body_for_logger(data: Any) -> Any:  # noqa: ANN401
         # bytes型のときは値を出力しても意味がないので、bytesであることが分かるようにする
         return "(bytes)"
 
-    return _mask_senritive_value_for_dict(data, keys={"password", "old_password", "new_password", "id_token", "refresh_token", "access_token"})
+    return _mask_senritive_value_for_dict(data, keys={"password", "old_password", "new_password", "id_token", "refresh_token", "access_token", "session"})
 
 
 def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
