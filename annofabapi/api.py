@@ -4,7 +4,7 @@ import logging
 import time
 from functools import wraps
 from json import JSONDecodeError
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import backoff
 import requests
@@ -174,7 +174,7 @@ def _should_retry_with_status(status_code: int) -> bool:
     return False
 
 
-def my_backoff(function):  # noqa: ANN001
+def my_backoff(function) -> Callable:  # noqa: ANN001
     """
     HTTP Status Codeが429 or 5XXのときはリトライする. 最大5分間リトライする。
     """
