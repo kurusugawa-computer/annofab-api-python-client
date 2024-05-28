@@ -100,7 +100,6 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
         # logにAuthorizationを出力しないようにマスクする
         headers_for_logger = _mask_senritive_value_for_dict(dict(response.request.headers), {"Authorization"})
 
-
         # request_bodyのpassword関係をマスクして、logに出力する
         request_body_for_logger: Optional[Any] = None
         if isinstance(response.request.body, bytes):
@@ -144,28 +143,13 @@ def _create_request_body_for_logger(data: Any) -> Any:  # noqa: ANN401
     Returns:
         ログ出力用のrequest_body
     """
-
-    def mask_key(d, key: str):  # noqa: ANN001, ANN202
-        if key in d:
-            d[key] = "***"
-
     if not isinstance(data, dict):
         return data
     elif isinstance(data, bytes):
         # bytes型のときは値を出力しても意味がないので、bytesであることが分かるようにする
         return "(bytes)"
 
-    MASKED_KEYS = {"password", "old_password", "new_password", "id_token", "refresh_token", "access_token"}
-    diff = MASKED_KEYS - set(data.keys())
-    if len(diff) == len(MASKED_KEYS):
-        # マスク対象のキーがない
-        return data
-
-    copied_data = copy.deepcopy(data)
-    for key in MASKED_KEYS:
-        mask_key(copied_data, key)
-
-    return copied_data
+    return _mask_senritive_value_for_dict(data, keys={"password", "old_password", "new_password", "id_token", "refresh_token", "access_token"})
 
 
 def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
@@ -179,22 +163,7 @@ def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         ログ出力用のparams
     """
-
-    def mask_key(d, key: str):  # noqa: ANN001, ANN202
-        if key in d:
-            d[key] = "***"
-
-    MASKED_KEYS = {"X-Amz-Security-Token", "X-Amz-Credential"}
-    diff = MASKED_KEYS - set(params.keys())
-    if len(diff) == len(MASKED_KEYS):
-        # マスク対象のキーがない
-        return params
-
-    copied_params = copy.deepcopy(params)
-    for key in MASKED_KEYS:
-        mask_key(copied_params, key)
-
-    return copied_params
+    return _mask_senritive_value_for_dict(params, keys={"X-Amz-Security-Token", "X-Amz-Credential"})
 
 
 def _should_retry_with_status(status_code: int) -> bool:
