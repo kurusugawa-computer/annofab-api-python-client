@@ -73,17 +73,17 @@ def build(
 
     elif login_user_id is None and login_password is None:
         try:
-            return build_from_env(endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
+            return build_from_env(endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
         except CredentialsNotFoundError:
             try:
-                return build_from_netrc(endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
+                return build_from_netrc(endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
             except CredentialsNotFoundError as e:
                 raise CredentialsNotFoundError("環境変数または`.netrc`ファイルにAnnofab認証情報はありませんでした。") from e
     else:
         raise ValueError("引数`login_user_id`か`login_password`のどちらか一方がNoneです。両方Noneでないか、両方Noneである必要があります。")
 
 
-def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> Resource:
+def build_from_netrc(*, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> Resource:
     """
     ``.netrc`` ファイルから、annofabapi.Resourceインスタンスを生成する。
 
@@ -117,7 +117,7 @@ def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_vi
     return Resource(login_user_id, login_password, endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
 
 
-def build_from_env(endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> Resource:
+def build_from_env(*, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> Resource:
     """
     環境変数 ``ANNOFAB_USER_ID`` , ``ANNOFAB_PASSWORD`` から、annofabapi.Resourceインスタンスを生成する。
 

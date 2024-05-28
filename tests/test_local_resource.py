@@ -49,7 +49,7 @@ class TestBuild:
     def test_build_with_endpoint(self):
         user_id = "test_user"
         password = "password"
-        resource = build(user_id, password, "https://localhost:8080")
+        resource = build(user_id, password, endpoint_url="https://localhost:8080")
         assert resource.api.url_prefix == "https://localhost:8080/api/v1"
         assert resource.api2.url_prefix == "https://localhost:8080/api/v2"
         assert resource.api.login_user_id == user_id
