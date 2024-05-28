@@ -947,7 +947,7 @@ class Wrapper:
             CheckSumError: アップロードしたデータのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
         """  # noqa: E501
 
-        def get_md5_value_from_file(fp):  # noqa: ANN001
+        def get_md5_value_from_file(fp):  # noqa: ANN001, ANN202
             md5_obj = hashlib.md5()
             while True:
                 chunk = fp.read(2048 * md5_obj.block_size)
@@ -1143,9 +1143,9 @@ class Wrapper:
             ユーザ別タスク集計データ
         """
 
-        def decorator(f, project_id: str):  # noqa: ANN001
+        def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):
+            def wrapper(*args, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1177,9 +1177,9 @@ class Wrapper:
 
         """
 
-        def decorator(f, project_id: str):  # noqa: ANN001
+        def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):
+            def wrapper(*args, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1202,9 +1202,9 @@ class Wrapper:
 
         """
 
-        def decorator(f, project_id: str):  # noqa: ANN001
+        def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):
+            def wrapper(*args, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1227,9 +1227,9 @@ class Wrapper:
 
         """
 
-        def decorator(f, project_id: str):  # noqa: ANN001
+        def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):
+            def wrapper(*args, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1251,9 +1251,9 @@ class Wrapper:
             プロジェクト全体のタスク作業時間集計データ
         """
 
-        def decorator(f, project_id: str):  # noqa: ANN001
+        def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):
+            def wrapper(*args, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content["data_series"]
 
@@ -1279,9 +1279,9 @@ class Wrapper:
             プロジェクトメンバーのタスク作業時間集計データ
         """
 
-        def decorator(f, project_id: str, account_id: str):  # noqa: ANN001
+        def decorator(f, project_id: str, account_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):
+            def wrapper(*args, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, account_id, *args, **kwargs)
                 return content["data_series"]
 
@@ -2210,7 +2210,7 @@ class Wrapper:
                 )
                 return JobStatus.FAILED
 
-            else:
+            else:  # noqa: PLR5501
                 # 進行中
                 if job_access_count < max_job_access:
                     logger.info(

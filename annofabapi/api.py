@@ -4,7 +4,7 @@ import logging
 import time
 from functools import wraps
 from json import JSONDecodeError
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import backoff
 import requests
@@ -55,7 +55,7 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
 
     """
 
-    def mask_key(d, key: str):  # noqa: ANN001
+    def mask_key(d, key: str):  # noqa: ANN001, ANN202
         if key in d:
             d[key] = "***"
 
@@ -110,7 +110,7 @@ def _create_request_body_for_logger(data: Any) -> Any:  # noqa: ANN401
         ログ出力用のrequest_body
     """
 
-    def mask_key(d, key: str):  # noqa: ANN001
+    def mask_key(d, key: str):  # noqa: ANN001, ANN202
         if key in d:
             d[key] = "***"
 
@@ -145,7 +145,7 @@ def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
         ログ出力用のparams
     """
 
-    def mask_key(d, key: str):  # noqa: ANN001
+    def mask_key(d, key: str):  # noqa: ANN001, ANN202
         if key in d:
             d[key] = "***"
 
@@ -174,14 +174,14 @@ def _should_retry_with_status(status_code: int) -> bool:
     return False
 
 
-def my_backoff(function):  # noqa: ANN001
+def my_backoff(function) -> Callable:  # noqa: ANN001
     """
     HTTP Status Codeが429 or 5XXのときはリトライする. 最大5分間リトライする。
     """
 
     @wraps(function)
-    def wrapped(*args, **kwargs):
-        def fatal_code(e):  # noqa: ANN001
+    def wrapped(*args, **kwargs):  # noqa: ANN202
+        def fatal_code(e):  # noqa: ANN001, ANN202
             """
             リトライするかどうか
             status codeが5xxのとき、またはToo many Requests(429)のときはリトライする。429以外の4XXはリトライしない
@@ -475,7 +475,7 @@ class AnnofabApi(AbstractAnnofabApi):
         """
 
         # TODO 判定条件が不明
-        if url_path.startswith("/internal/"):
+        if url_path.startswith("/internal/"):  # noqa: SIM108
             url = f"{self.endpoint_url}/api{url_path}"
         else:
             url = f"{self.url_prefix}{url_path}"

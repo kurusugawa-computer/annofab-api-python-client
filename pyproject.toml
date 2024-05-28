@@ -43,7 +43,7 @@ pytest-cov = "*"
 
 [tool.poetry.group.linter.dependencies]
 # pythonバージョンを指定している理由：lintは開発環境と同じPythonバージョンで実行するため。また古いPythonバージョンにサポートしていないライブラリのバージョンがあるため
-ruff = {version="^0.3", python = ">=3.11"}
+ruff = {version="^0.4", python = ">=3.11"}
 mypy = {version="^1", python = ">=3.11"}
 pylint = {version="^3", python = ">=3.11"}
 
@@ -81,7 +81,6 @@ exclude = ["annofabapi/__init__.py"]
 
 [tool.ruff.lint]
 ignore = [
-#    "G004", # `logging-f-string` : loggingでf-stringを使いたいので無視する
     "FA100", # `future-rewritable-type-annotation` : Python3.8をサポートしている間は無視する。
     "PD002", #すでにpandasで`inplace=True`はいろんなところで使っているため
     "RUF001", # 全角記号など`ambiguous unicode character`も使いたいため
@@ -97,11 +96,6 @@ ignore = [
     "TD", # flake8-todos
     "FIX", # flake8-fixme
 
-    # いずれ無視しないようにする
-    "ANN201", # missing-return-type-public-function:
-    "ANN202", # missing-return-type-private-function:
-    "PLR",  # pylint Refactor
-
     # 以下のルールはコードに合っていないので無効化した
     "RSE", # flake8-raise
     "D", # pydocstyle, Docstringを中途半端にしか書いていないので、除外する
@@ -116,8 +110,7 @@ ignore = [
     "EM",#flake8-errmsg
     "EXE", # flake8-executable
     "ICN", # flake8-import-conventions
-    "RET",#flake8-return
-    "SIM",#flake8-simplify
+    "RET", #flake8-return
     "TCH", # flake8-type-checking
     "PTH", #pathlibを使わないコードが多いので、除外する
     "ISC", #flake8-implicit-str-concat
@@ -127,6 +120,19 @@ ignore = [
 
 select = [
     "ALL"
+]
+
+
+[tool.ruff.lint.per-file-ignores]
+# テストコードはチェックを緩和する
+"tests/**.py" = [
+    "PGH",  # pygrep-hooks
+    "DTZ",  # flake8-datetimez
+    "ANN",  # flake8-annotations
+    "E501",  # line-too-long
+    "RUF100",  # unused-noqa
+    "G004", # logging-f-string
+    "SIM", #flake8-simplify
 ]
 
 
