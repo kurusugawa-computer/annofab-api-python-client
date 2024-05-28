@@ -58,7 +58,7 @@ class SimpleAnnotationParser(abc.ABC):
         return self.__input_data_id
 
     @abc.abstractmethod
-    def open_outer_file(self, data_uri: str):
+    def open_outer_file(self, data_uri: str):  # noqa: ANN201
         """
         外部ファイル（塗りつぶし画像など）を開き、対応するファイルオブジェクトを返す。
         JSONファイルと同階層にある、"JSONファイルの拡張子を除いた名前"のディレクトリ配下を探します。
@@ -141,7 +141,7 @@ class FullAnnotationParser(abc.ABC):
         return self.__input_data_id
 
     @abc.abstractmethod
-    def open_outer_file(self, data_uri: str):
+    def open_outer_file(self, data_uri: str):  # noqa: ANN201
         """
         外部ファイル（塗りつぶし画像など）を開き、対応するファイルオブジェクトを返す。
         JSONファイルと同階層にある、"JSONファイルの拡張子を除いた名前"のディレクトリ配下を探します。
@@ -206,7 +206,7 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
         with self.__zip_file.open(self.json_file_path) as entry:
             return json.load(entry)
 
-    def open_outer_file(self, data_uri: str):
+    def open_outer_file(self, data_uri: str):  # noqa: ANN201
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
             return self.__zip_file.open(outer_file_path, mode="r")
@@ -237,7 +237,7 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
         with open(self.json_file_path, encoding="utf-8") as f:
             return json.load(f)
 
-    def open_outer_file(self, data_uri: str):
+    def open_outer_file(self, data_uri: str):  # noqa: ANN201
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
             return open(outer_file_path, mode="rb")  # pylint: disable=consider-using-with
@@ -271,7 +271,7 @@ class FullAnnotationZipParser(FullAnnotationParser):
         with self.__zip_file.open(self.json_file_path) as entry:
             return json.load(entry)
 
-    def open_outer_file(self, data_uri: str):
+    def open_outer_file(self, data_uri: str):  # noqa: ANN201
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
             return self.__zip_file.open(outer_file_path, mode="r")
@@ -303,7 +303,7 @@ class FullAnnotationDirParser(FullAnnotationParser):
         with open(self.json_file_path, encoding="utf-8") as f:
             return json.load(f)
 
-    def open_outer_file(self, data_uri: str):
+    def open_outer_file(self, data_uri: str):  # noqa: ANN201
         outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
         try:
             return open(outer_file_path, mode="rb")  # pylint: disable=consider-using-with
