@@ -23,6 +23,13 @@ DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE = 300
 """HTTP Status Codeが429のときの、デフォルト（Retry-Afterヘッダがないとき）の待ち時間です。"""
 
 
+def _read_mfa_code_from_stdin() -> str:
+    """標準入力からMFAコードを読み込みます。"""
+    inputted_mfa_code = ""
+    while inputted_mfa_code == "":
+        inputted_mfa_code = input("Enter MFA Code: ")
+    return inputted_mfa_code
+
 def _mask_senritive_value_for_dict(data: Dict[str, Any], keys: Collection[str]) -> Dict[str, Any]:
     """
     dictに含まれているセンシティブな情報を"***"でマスクします。
@@ -148,7 +155,9 @@ def _create_request_body_for_logger(data: Any) -> Any:  # noqa: ANN401
         # bytes型のときは値を出力しても意味がないので、bytesであることが分かるようにする
         return "(bytes)"
 
-    return _mask_senritive_value_for_dict(data, keys={"password", "old_password", "new_password", "id_token", "refresh_token", "access_token", "session"})
+    return _mask_senritive_value_for_dict(
+        data, keys={"password", "old_password", "new_password", "id_token", "refresh_token", "access_token", "session"}
+    )
 
 
 def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
@@ -227,19 +236,23 @@ class AnnofabApi(AbstractAnnofabApi):
         login_user_id: AnnofabにログインするときのユーザID
         login_password: Annofabにログインするときのパスワード
         endpoint_url: Annofab APIのエンドポイント。
+        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
 
     Attributes:
         token_dict: login, refresh_tokenで取得したtoken情報
         cookies: Signed Cookie情報
     """
 
-    def __init__(self, login_user_id: str, login_password: str, endpoint_url: str = DEFAULT_ENDPOINT_URL) -> None:
+    def __init__(
+        self, login_user_id: str, login_password: str, *, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False
+    ) -> None:
         if not login_user_id or not login_password:
             raise ValueError("login_user_id or login_password is empty.")
 
         self.login_user_id = login_user_id
         self.login_password = login_password
         self.endpoint_url = endpoint_url
+        self.input_mfa_code_via_stdin = input_mfa_code_via_stdin
         self.url_prefix = f"{endpoint_url}/api/v1"
         self.session = requests.Session()
 
@@ -604,6 +617,29 @@ class AnnofabApi(AbstractAnnofabApi):
     #########################################
     # Public Method : Login
     #########################################
+    def _login_respond_to_auth_challenge(self, mfa_code: str, session: str) -> Dict[str, Any]:
+        """
+        Raises:
+            InvalidMfaCodeError
+        """
+        request_body = {"user_id": self.login_user_id, "mfa_code": mfa_code, "session": session}
+        url = f"{self.url_prefix}/login-respond-to-auth-challenge"
+
+        response = self._execute_http_request("post", url, json=request_body, raise_for_status=False)
+
+        json_obj = response.json()
+        if response.status_code == requests.codes.bad_request and json_obj["errors"][0]["message"] == "検証コードが間違っています":
+            if self.input_mfa_code_via_stdin:
+                logger.warning("???")
+                new_mfa_code = _read_mfa_code_from_stdin()
+                return self._login_respond_to_auth_challenge(new_mfa_code, session)
+            else:
+                raise InvalidMfaCodeError
+
+        _log_error_response(logger, response)
+        _raise_for_status(response)
+        return response.json()
+
     def login(self, mfa_code: Optional[str] = None) -> None:
         """
         ログインして、トークンをインスタンスに保持します。
@@ -624,26 +660,21 @@ class AnnofabApi(AbstractAnnofabApi):
         url = f"{self.url_prefix}/login"
 
         login_response = self._execute_http_request("post", url, json=login_info)
-        json_obj = login_response.json()
-        if "token" not in json_obj:
+        login_json_obj = login_response.json()
+        if "token" not in login_json_obj:
             # `login` APIのレスポンスのスキーマがLoginNeedChallengeResponseのとき
             if mfa_code is None:
-                raise MfaEnabledUserExecutionError(self.login_user_id)
+                if self.input_mfa_code_via_stdin:
+                    mfa_code = _read_mfa_code_from_stdin()
+                else:
+                    raise MfaEnabledUserExecutionError(self.login_user_id)
 
-            mfa_request_body = {"user_id": self.login_user_id, "mfa_code": mfa_code, "session": json_obj["session"]}
-            mfa_url = f"{self.url_prefix}/login-respond-to-auth-challenge"
-            mfa_response = self._execute_http_request("post", mfa_url, json=mfa_request_body, raise_for_status=False)
-
-            mfa_json_obj = mfa_response.json()
-            if mfa_response.status_code == requests.codes.bad_request and mfa_json_obj["errors"][0]["message"] == "検証コードが間違っています":
-                raise InvalidMfaCodeError
-
-            _log_error_response(logger, mfa_response)
-            _raise_for_status(mfa_response)
+            mfa_json_obj = self._login_respond_to_auth_challenge(mfa_code, login_json_obj["session"])
             token_dict = mfa_json_obj["token"]
         else:
             # `login` APIのレスポンスのスキーマがloginRespondToAuthChallengeのとき
-            token_dict = json_obj["token"]
+            token_dict = login_json_obj["token"]
+
         self.token_dict = token_dict
         logger.debug("Logged in successfully. user_id = %s", self.login_user_id)
 
