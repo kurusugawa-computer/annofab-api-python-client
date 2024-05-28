@@ -2,10 +2,9 @@ import copy
 import json
 import logging
 import time
-from collections.abc import Collection
 from functools import wraps
 from json import JSONDecodeError
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any, Callable, Collection, Dict, Optional, Tuple
 
 import backoff
 import requests
