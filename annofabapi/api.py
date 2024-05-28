@@ -11,7 +11,7 @@ import requests
 from requests.auth import AuthBase
 from requests.cookies import RequestsCookieJar
 
-from annofabapi.exceptions import MfaEnabledUserExecutionError, NotLoggedInError
+from annofabapi.exceptions import InvalidMfaCodeError, MfaEnabledUserExecutionError, NotLoggedInError
 from annofabapi.generated_api import AbstractAnnofabApi
 
 logger = logging.getLogger(__name__)
@@ -615,6 +615,9 @@ class AnnofabApi(AbstractAnnofabApi):
         Returns:
             Tuple[Token, requests.Response]
 
+        Raises:
+            InvalidMfaCodeError
+            MfaEnabledUserExecutionError
         """
         login_info = {"user_id": self.login_user_id, "password": self.login_password}
 
@@ -627,10 +630,16 @@ class AnnofabApi(AbstractAnnofabApi):
             if mfa_code is None:
                 raise MfaEnabledUserExecutionError(self.login_user_id)
 
-            mfa_param = {"user_id": self.login_user_id, "mfa_code": mfa_code, "session": json_obj["session"]}
+            mfa_request_body = {"user_id": self.login_user_id, "mfa_code": mfa_code, "session": json_obj["session"]}
             mfa_url = f"{self.url_prefix}/login-respond-to-auth-challenge"
-            mfa_response = self._execute_http_request("post", mfa_url, json=mfa_param)
+            mfa_response = self._execute_http_request("post", mfa_url, json=mfa_request_body, raise_for_status=False)
+
             mfa_json_obj = mfa_response.json()
+            if mfa_response.status_code == requests.codes.bad_request and mfa_json_obj["errors"][0]["message"] == "検証コードが間違っています":
+                raise InvalidMfaCodeError
+
+            _log_error_response(logger, mfa_response)
+            _raise_for_status(mfa_response)
             token_dict = mfa_json_obj["token"]
         else:
             # `login` APIのレスポンスのスキーマがloginRespondToAuthChallengeのとき
