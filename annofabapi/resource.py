@@ -19,12 +19,17 @@ class Resource:
         login_user_id: AnnofabにログインするときのユーザID
         login_password: Annofabにログインするときのパスワード
         endpoint_url: Annofab APIのエンドポイント。
+        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
 
     """
 
-    def __init__(self, login_user_id: str, login_password: str, endpoint_url: str = DEFAULT_ENDPOINT_URL) -> None:
+    def __init__(
+        self, login_user_id: str, login_password: str, *, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False
+    ) -> None:
         #: AnnofabApi Instance
-        self.api = AnnofabApi(login_user_id=login_user_id, login_password=login_password, endpoint_url=endpoint_url)
+        self.api = AnnofabApi(
+            login_user_id=login_user_id, login_password=login_password, endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin
+        )
 
         #: Wrapper Instance
         self.wrapper = Wrapper(self.api)
@@ -35,7 +40,13 @@ class Resource:
         logger.debug("Create annofabapi resource instance :: %s", {"login_user_id": login_user_id, "endpoint_url": endpoint_url})
 
 
-def build(login_user_id: Optional[str] = None, login_password: Optional[str] = None, endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
+def build(
+    login_user_id: Optional[str] = None,
+    login_password: Optional[str] = None,
+    *,
+    endpoint_url: str = DEFAULT_ENDPOINT_URL,
+    input_mfa_code_via_stdin: bool = False,
+) -> Resource:
     """
     AnnofabApi, Wrapperのインスタンスを保持するインスタンスを生成する。
 
@@ -48,6 +59,7 @@ def build(login_user_id: Optional[str] = None, login_password: Optional[str] = N
         login_user_id: AnnofabにログインするときのユーザID
         login_password: Annofabにログインするときのパスワード
         endpoint_url: Annofab APIのエンドポイント。
+        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
 
     Returns:
         AnnofabApi, Wrapperのインスタンスを保持するインスタンス
@@ -57,26 +69,27 @@ def build(login_user_id: Optional[str] = None, login_password: Optional[str] = N
 
     """
     if login_user_id is not None and login_password is not None:
-        return Resource(login_user_id, login_password, endpoint_url=endpoint_url)
+        return Resource(login_user_id, login_password, endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
 
     elif login_user_id is None and login_password is None:
         try:
-            return build_from_env(endpoint_url)
+            return build_from_env(endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
         except CredentialsNotFoundError:
             try:
-                return build_from_netrc(endpoint_url)
+                return build_from_netrc(endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
             except CredentialsNotFoundError as e:
                 raise CredentialsNotFoundError("環境変数または`.netrc`ファイルにAnnofab認証情報はありませんでした。") from e
     else:
         raise ValueError("引数`login_user_id`か`login_password`のどちらか一方がNoneです。両方Noneでないか、両方Noneである必要があります。")
 
 
-def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
+def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> Resource:
     """
     ``.netrc`` ファイルから、annofabapi.Resourceインスタンスを生成する。
 
     Args:
         endpoint_url: Annofab APIのエンドポイント。
+        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
 
     Returns:
         annofabapi.Resourceインスタンス
@@ -101,15 +114,16 @@ def build_from_netrc(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     if login_user_id is None or login_password is None:
         raise CredentialsNotFoundError("User ID or password in the .netrc file are None.")
 
-    return Resource(login_user_id, login_password, endpoint_url=endpoint_url)
+    return Resource(login_user_id, login_password, endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
 
 
-def build_from_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
+def build_from_env(endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> Resource:
     """
     環境変数 ``ANNOFAB_USER_ID`` , ``ANNOFAB_PASSWORD`` から、annofabapi.Resourceインスタンスを生成する。
 
     Args:
         endpoint_url: Annofab APIのエンドポイント。
+        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
 
     Returns:
         annofabapi.Resourceインスタンス
@@ -122,4 +136,4 @@ def build_from_env(endpoint_url: str = DEFAULT_ENDPOINT_URL) -> Resource:
     if login_user_id is None or login_password is None:
         raise CredentialsNotFoundError("`ANNOFAB_USER_ID` or `ANNOFAB_PASSWORD`  environment variable are empty.")
 
-    return Resource(login_user_id, login_password, endpoint_url=endpoint_url)
+    return Resource(login_user_id, login_password, endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
