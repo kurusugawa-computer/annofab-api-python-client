@@ -82,3 +82,12 @@ class MfaEnabledUserExecutionError(Exception):
     def __init__(self, user_id: str) -> None:
         message = f"User (User ID: {user_id}) cannot use annofab-api-python-client because MFA is enabled."
         super().__init__(message)
+
+
+class InvalidMfaCodeError(AnnofabApiException):
+    """
+    MFAコードが間違っている場合のエラー
+    """
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
