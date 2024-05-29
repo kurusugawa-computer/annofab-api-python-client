@@ -157,7 +157,7 @@ def _create_request_body_for_logger(data: Any) -> Any:  # noqa: ANN401
         return "(bytes)"
 
     return _mask_senritive_value_for_dict(
-        data, keys={"password", "old_password", "new_password", "id_token", "refresh_token", "access_token", "session"}
+        data, keys={"password", "old_password", "new_password", "id_token", "refresh_token", "access_token", "session", "mfa_code"}
     )
 
 
