@@ -2193,6 +2193,8 @@ Kyes of Dict
     
 * new_password: str
     
+* is_reset_mfa: bool
+    MFA設定をリセットするか。trueの場合にリセットする。
 
 """
 
@@ -2804,7 +2806,7 @@ Kyes of Dict
 * input_data_name: str
     入力データ名
 * input_data_path: str
-    入力データの実体が保存されたパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 
+    入力データの実体が保存されたURLです。 URLスキームが s3 もしくは https であるもののみをサポートしています。 
 * url: str
     システム内部用のプロパティ
 * etag: str
@@ -2863,7 +2865,7 @@ Kyes of Dict
 * input_data_name: str
     入力データ名。ZIPファイルをアップロードする際は、入力データ名のプレフィックスを指定してください。
 * input_data_path: str
-    入力データの実体が存在するURLです。 Annofabにファイルをアップロードして入力データを作成する場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。  入力データの実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。 S3プライベートストレージに存在するファイルを入力データとして登録する場合は、事前に[認可の設定](/docs/faq/#m0b240)が必要です。 
+    入力データの実体が存在するURLです。 Annofabにファイルをアップロードして入力データを作成する場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。  入力データの実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、スキームが s3 または https であるURLを指定してください。 S3プライベートストレージに存在するファイルを入力データとして登録する場合は、事前に[認可の設定](/docs/faq/#m0b240)が必要です。 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 * sign_required: bool
@@ -3517,6 +3519,8 @@ LoginRespondToAuthChallengeRequest = Dict[str, Any]
 
 Kyes of Dict
 
+* user_id: str
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * mfa_code: str
     MFAコード。Time-based One-time Password (TOTP) のみ対応している
 * session: str
@@ -3632,6 +3636,8 @@ Kyes of Dict
 
 * enabled: bool
     MFAが有効か (trueの場合に有効)
+* is_updatable: bool
+    MFA設定を更新可能か (falseの場合、MFA設定の更新不可)。「Sign in with Google」でログインしたユーザーがAPIを実行した場合falseとなる。 
 
 """
 
@@ -5339,7 +5345,7 @@ Kyes of Dict
 * supplementary_data_name: str
     補助情報の名前
 * supplementary_data_path: str
-    補助情報の実体が存在するパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 
+    補助情報の実体が存在するURLです。 URLスキームが s3 もしくは https であるもののみをサポートしています。 
 * url: str
     システム内部用のプロパティ
 * etag: str
@@ -5362,7 +5368,7 @@ Kyes of Dict
 * supplementary_data_name: str
     補助情報の名前
 * supplementary_data_path: str
-    補助情報の実体が存在するURLです。 補助情報の実体をAnnofabにアップロードする場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。  補助情報の実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。 補助情報の実体が、S3プライベートストレージに存在するファイルを補助情報として登録する場合は、[事前に認可の設定](/docs/faq/#m0b240)が必要です。 
+    補助情報の実体が存在するURLです。 補助情報の実体をAnnofabにアップロードする場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。  補助情報の実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、スキームが s3 または https であるURLを指定してください。 補助情報の実体が、S3プライベートストレージに存在するファイルを補助情報として登録する場合は、[事前に認可の設定](/docs/faq/#m0b240)が必要です。 
 * supplementary_data_type: SupplementaryDataType
     
 * supplementary_data_number: int
