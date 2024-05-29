@@ -638,13 +638,18 @@ class AnnofabApi(AbstractAnnofabApi):
 
         json_obj = response.json()
         # MFAコードが間違っているかどうかの判定が、メッセージでしかできなかったので、暫定的にメッセージで判定する
-        if response.status_code == requests.codes.bad_request and json_obj["errors"][0]["message"] == "検証コードが間違っています":
-            if self.input_mfa_code_via_stdin:
-                logger.info("入力したMFAコードが間違っていました。")
-                new_mfa_code = _read_mfa_code_from_stdin()
-                return self._login_respond_to_auth_challenge(new_mfa_code, session)
-            else:
-                raise InvalidMfaCodeError
+        if response.status_code == requests.codes.bad_request:
+            assert len(json_obj["errors"]) > 0
+            error_message = json_obj["errors"][0]["message"]
+            if error_message in {"検証コードが間違っています", "検証コードの期限が切れています"}:
+                # 分かりやすいメッセージにするため「検証コード」を「MFAコード」に置き換える
+                new_error_message = error_message.replace("検証コード", "MFAコード")
+                if self.input_mfa_code_via_stdin:
+                    logger.info(new_error_message)
+                    new_mfa_code = _read_mfa_code_from_stdin()
+                    return self._login_respond_to_auth_challenge(new_mfa_code, session)
+                else:
+                    raise InvalidMfaCodeError(new_error_message)
 
         _log_error_response(logger, response)
         _raise_for_status(response)

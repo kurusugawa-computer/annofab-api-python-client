@@ -88,3 +88,6 @@ class InvalidMfaCodeError(AnnofabApiException):
     """
     MFAコードが間違っている場合のエラー
     """
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
