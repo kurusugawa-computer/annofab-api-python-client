@@ -50,7 +50,7 @@ class InputData(DataClassJsonMixin):
     """入力データ名"""
 
     input_data_path: str
-    """入力データの実体が保存されたパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 """
+    """入力データの実体が保存されたURLです。 URLスキームが s3 もしくは https であるもののみをサポートしています。 """
 
     url: Optional[str]
     """システム内部用のプロパティ"""

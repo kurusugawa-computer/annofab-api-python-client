@@ -116,7 +116,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.183.0
+  version: 0.187.2
   title: Annofab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -5502,7 +5502,7 @@ paths:
         ZIPファイルの形式など、詳細は[Annofabのユーザーマニュアル](https://annofab.readme.io/docs)に記載予定です。
 
         ### 注意事項
-        * `input_data_path`のスキーマが`https`の場合、`input_data_name`もしくは`input_data_path`の末尾にファイルの拡張子を含むようにしてください。
+        * `input_data_path`のURLスキームが`https`の場合、`input_data_name`もしくは`input_data_path`の末尾にファイルの拡張子を含むようにしてください。
         Annofabは拡張子からファイル形式を識別します。`input_data_name`と`input_data_path`の両方に拡張子が含まれている場合は、`input_data_name`の拡張子がファイル形式の識別に使われます。
       security:
       - ProjectOwner: []
