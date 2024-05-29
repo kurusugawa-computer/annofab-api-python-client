@@ -419,9 +419,12 @@ components:
     LoginRespondToAuthChallengeRequest:
       type: object
       required:
+        - user_id
         - mfa_code
         - session
       properties:
+        user_id:
+          $ref: "#/components/schemas/UserId"
         mfa_code:
           type: string
           description: MFAコード。Time-based One-time Password (TOTP) のみ対応している
@@ -452,10 +455,15 @@ components:
       type: object
       required:
         - enabled
+        - is_updatable
       properties:
         enabled:
           type: boolean
           description: MFAが有効か (trueの場合に有効)
+        is_updatable:
+          type: boolean
+          description: |
+            MFA設定を更新可能か (falseの場合、MFA設定の更新不可)。「Sign in with Google」でログインしたユーザーがAPIを実行した場合falseとなる。
     Token:
       type: object
       required:
@@ -705,6 +713,10 @@ components:
           type: string
         new_password:
           type: string
+        is_reset_mfa:
+          type: boolean
+          default: false
+          description: MFA設定をリセットするか。trueの場合にリセットする。
     ResetEmailRequest:
       type: object
       required:
@@ -4868,8 +4880,8 @@ components:
           type: string
           example: "s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA"
           description: |
-            入力データの実体が保存されたパスです。
-            s3スキーマまたはhttpsスキーマのみサポートしています。
+            入力データの実体が保存されたURLです。
+            URLスキームが s3 もしくは https であるもののみをサポートしています。
         url:
           type: string
           description: システム内部用のプロパティ
@@ -4984,7 +4996,7 @@ components:
             入力データの実体が存在するURLです。
             Annofabにファイルをアップロードして入力データを作成する場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。
 
-            入力データの実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。
+            入力データの実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、スキームが s3 または https であるURLを指定してください。
             S3プライベートストレージに存在するファイルを入力データとして登録する場合は、事前に[認可の設定](/docs/faq/#m0b240)が必要です。
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
@@ -5035,8 +5047,8 @@ components:
           type: string
           example: "s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA"
           description: |
-            補助情報の実体が存在するパスです。
-            s3スキーマまたはhttpsスキーマのみサポートしています。
+            補助情報の実体が存在するURLです。
+            URLスキームが s3 もしくは https であるもののみをサポートしています。
         url:
           type: string
           format: uri
@@ -5085,7 +5097,7 @@ components:
             補助情報の実体が存在するURLです。
             補助情報の実体をAnnofabにアップロードする場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。
 
-            補助情報の実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、S3スキーマまたはHTTPSスキーマのURLを指定してください。
+            補助情報の実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、スキームが s3 または https であるURLを指定してください。
             補助情報の実体が、S3プライベートストレージに存在するファイルを補助情報として登録する場合は、[事前に認可の設定](/docs/faq/#m0b240)が必要です。
 
         supplementary_data_type:

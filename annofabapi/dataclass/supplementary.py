@@ -40,7 +40,7 @@ class SupplementaryData(DataClassJsonMixin):
     """補助情報の名前"""
 
     supplementary_data_path: str
-    """補助情報の実体が存在するパスです。 s3スキーマまたはhttpsスキーマのみサポートしています。 """
+    """補助情報の実体が存在するURLです。 URLスキームが s3 もしくは https であるもののみをサポートしています。 """
 
     url: str
     """システム内部用のプロパティ"""
