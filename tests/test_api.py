@@ -16,7 +16,6 @@ import requests
 from more_itertools import first_true
 
 import annofabapi
-import annofabapi.util
 from annofabapi.dataclass.annotation import AnnotationV2Output, SimpleAnnotation, SingleAnnotationV2
 from annofabapi.dataclass.annotation_specs import AnnotationSpecsV3
 from annofabapi.dataclass.comment import Comment

@@ -7,7 +7,6 @@ import pytest
 
 import annofabapi
 import annofabapi.parser
-import annofabapi.utils
 from annofabapi.dataclass.annotation import FullAnnotation, FullAnnotationDataPoints, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
 from annofabapi.parser import (

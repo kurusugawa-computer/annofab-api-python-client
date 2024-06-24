@@ -6,7 +6,6 @@ import configparser
 import os
 
 import annofabapi
-import annofabapi.utils
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")

@@ -7,7 +7,6 @@ import configparser
 import os
 
 import annofabapi
-import annofabapi.utils
 from tests.utils_for_test import WrapperForTest
 
 # プロジェクトトップに移動する
