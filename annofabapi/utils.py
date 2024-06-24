@@ -161,24 +161,3 @@ def can_put_annotation(task: Task, my_account_id: str) -> bool:
     # ログインユーザはプロジェクトオーナであること前提
     return len(task["histories_by_phase"]) == 0 or task["account_id"] == my_account_id
 
-
-def get_message_for_i18n(internationalization_message: Dict[str, Any], lang: str = "en-US") -> str:
-    """
-    アノテーション仕様で使われている`InternalizationMessage`クラスの値から、指定された言語のメッセージを取得する。
-
-    Args:
-        internationalization_message: 多言語化されたメッセージ
-        lang: 取得したいメッセージに対応する言語コード。`en-US`または`ja-JP`のみサポートしています。
-
-    Returns:
-        指定した言語に対応するメッセージ。
-
-    Raises:
-        ValueError: 引数langに対応するメッセージが見つからない場合
-    """
-    messages: List[Dict[str, str]] = internationalization_message["messages"]
-    result = more_itertools.first_true(messages, pred=lambda e: e["lang"] == lang)
-    if result is not None:
-        return result["message"]
-    else:
-        raise ValueError(f"lang='{lang}'であるメッセージは見つかりませんでした。")
