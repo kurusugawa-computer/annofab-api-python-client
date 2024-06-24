@@ -16,7 +16,7 @@ import requests
 from more_itertools import first_true
 
 import annofabapi
-import annofabapi.utils
+import annofabapi.util
 from annofabapi.dataclass.annotation import AnnotationV2Output, SimpleAnnotation, SingleAnnotationV2
 from annofabapi.dataclass.annotation_specs import AnnotationSpecsV3
 from annofabapi.dataclass.comment import Comment
@@ -125,7 +125,7 @@ class TestAnnotationSpecs:
         request_body = {
             "labels": annotation_spec["labels"],
             "inspection_phrases": annotation_spec["inspection_phrases"],
-            "comment": f"{annofabapi.utils.str_now()} に更新しました。",
+            "comment": f"{annofabapi.util.str_now()} に更新しました。",
             "last_updated_datetime": last_updated_datetime,
         }
         puted_annotation_spec, _ = api.put_annotation_specs(project_id, request_body=request_body)
@@ -171,7 +171,7 @@ class TestComment:
                     "status": "open",
                     "_type": "Root",
                 },
-                "datetime_for_sorting": annofabapi.utils.str_now(),
+                "datetime_for_sorting": annofabapi.util.str_now(),
                 "_type": "Put",
             }
         ]
@@ -500,7 +500,7 @@ class TestStatistics:
                 "marker_id": test_marker_id,
                 "title": "add in test code",
                 "graph_type": GraphType.TASK_PROGRESS.value,
-                "marked_at": annofabapi.utils.str_now(),
+                "marked_at": annofabapi.util.str_now(),
             }
         ]
 

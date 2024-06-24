@@ -2,11 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-import pytest
-
 from annofabapi.models import TaskPhase
 from annofabapi.utils import (
-    get_message_for_i18n,
     get_number_of_rejections,
     get_task_history_index_skipped_acceptance,
     get_task_history_index_skipped_inspection,
@@ -617,20 +614,3 @@ class TestTaskHistoryUtils2:
         actual = get_task_history_index_skipped_inspection(task_history_list)
         expected: list[int] = []
         assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
-
-
-def test_get_message_for_i18n():
-    i18n_message = {
-        "messages": [{"lang": "ja-JP", "message": "自動車"}, {"lang": "en-US", "message": "car"}],
-        "default_lang": "ja-JP",
-    }
-    assert get_message_for_i18n(i18n_message) == "car"
-    assert get_message_for_i18n(i18n_message, lang="ja-JP") == "自動車"
-
-    i18n_message2 = {
-        "messages": [{"lang": "ja-JP", "message": "自動車"}],
-        "default_lang": "ja-JP",
-    }
-
-    with pytest.raises(ValueError):
-        get_message_for_i18n(i18n_message2, lang="en-US")

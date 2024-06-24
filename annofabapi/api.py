@@ -492,7 +492,7 @@ class AnnofabApi(AbstractAnnofabApi):
         """
 
         # TODO 判定条件が不明
-        if url_path.startswith("/internal/"):  # noqa: SIM108
+        if url_path.startswith("/internal/"):
             url = f"{self.endpoint_url}/api{url_path}"
         else:
             url = f"{self.url_prefix}{url_path}"

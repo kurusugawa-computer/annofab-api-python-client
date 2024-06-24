@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from annofabapi.utils.annotation_specs import Lang, get_english_message, get_message_with_lang
+from annofabapi.util.annotation_specs import Lang, get_english_message, get_message_with_lang
 
 # プロジェクトトップに移動する
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")

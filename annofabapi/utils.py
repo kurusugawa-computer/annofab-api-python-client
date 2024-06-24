@@ -1,10 +1,9 @@
 import datetime
 import logging
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 import dateutil
 import dateutil.tz
-import more_itertools
 
 from annofabapi.models import Task, TaskHistory, TaskHistoryShort, TaskPhase
 
@@ -160,4 +159,3 @@ def can_put_annotation(task: Task, my_account_id: str) -> bool:
     """
     # ログインユーザはプロジェクトオーナであること前提
     return len(task["histories_by_phase"]) == 0 or task["account_id"] == my_account_id
-

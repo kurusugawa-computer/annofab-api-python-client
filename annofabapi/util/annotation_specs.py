@@ -38,7 +38,7 @@ STR_LANG = Literal["en-US", "ja-JP", "vi-VN"]
 """
 
 
-def get_message_with_lang(internationalization_message: dict[str, Any], lang: Union[Lang, STR_LANG]) -> Optional[str]:
+def get_message_with_lang(internationalization_message: dict[str, Any], lang: Union[Lang, STR_LANG]) -> Optional[str]:  # noqa: UP007
     """
     `InternalizationMessage`クラスの値から、指定した ``lang`` に対応するメッセージを取得します。
 
