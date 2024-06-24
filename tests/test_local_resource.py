@@ -9,9 +9,6 @@ import pytest
 import annofabapi.exceptions
 from annofabapi.resource import build, build_from_env
 
-# プロジェクトトップに移動する
-os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
-
 
 class TestBuild:
     # def test_build_from_netrc(self):

@@ -95,6 +95,7 @@ ignore = [
     "ERA", # : 役立つこともあるが、コメントアウトしていないコードも警告されるので無視する
     "TD", # flake8-todos
     "FIX", # flake8-fixme
+    "SIM108", # if-else-block-instead-of-if-exp, 三項演算子が読みにくい場合もあるので無視する
 
     # 以下のルールはコードに合っていないので無効化した
     "RSE", # flake8-raise

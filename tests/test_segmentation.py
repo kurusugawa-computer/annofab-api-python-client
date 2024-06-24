@@ -1,4 +1,3 @@
-import os
 import shutil
 import uuid
 from pathlib import Path
@@ -7,9 +6,6 @@ import numpy
 from PIL import Image
 
 from annofabapi.segmentation import read_binary_image, write_binary_image
-
-# プロジェクトトップに移動する
-os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 
 data_dir = Path("./tests/data/segmentation")
 out_dir = Path("./tests/out/segmentation")
