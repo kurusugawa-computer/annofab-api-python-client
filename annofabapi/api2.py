@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional, Tuple
 import requests
 from requests.cookies import RequestsCookieJar
 
-import annofabapi.utils
+import annofabapi
 from annofabapi.api import (
     DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE,
     AnnofabApi,

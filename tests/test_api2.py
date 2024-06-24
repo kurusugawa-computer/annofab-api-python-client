@@ -4,14 +4,10 @@ AnnofabApi2のテストメソッド
 """
 
 import configparser
-import os
 
 import annofabapi
-import annofabapi.utils
 from tests.utils_for_test import WrapperForTest
 
-# プロジェクトトップに移動する
-os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
 project_id = inifile["annofab"]["project_id"]

@@ -1,5 +1,4 @@
 import configparser
-import os
 import zipfile
 from pathlib import Path
 
@@ -7,7 +6,6 @@ import pytest
 
 import annofabapi
 import annofabapi.parser
-import annofabapi.utils
 from annofabapi.dataclass.annotation import FullAnnotation, FullAnnotationDataPoints, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
 from annofabapi.parser import (
@@ -19,8 +17,6 @@ from annofabapi.parser import (
     SimpleAnnotationZipParserByTask,
 )
 
-# プロジェクトトップに移動する
-os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
 

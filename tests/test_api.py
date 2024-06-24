@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import configparser
 import datetime
-import os
 import uuid
 from typing import Any
 
@@ -16,7 +15,6 @@ import requests
 from more_itertools import first_true
 
 import annofabapi
-import annofabapi.utils
 from annofabapi.dataclass.annotation import AnnotationV2Output, SimpleAnnotation, SingleAnnotationV2
 from annofabapi.dataclass.annotation_specs import AnnotationSpecsV3
 from annofabapi.dataclass.comment import Comment
@@ -32,8 +30,6 @@ from annofabapi.models import GraphType, ProjectJobType
 from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
-# プロジェクトトップに移動する
-os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
 
