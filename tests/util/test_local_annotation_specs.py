@@ -1,13 +1,10 @@
 import configparser
-import os
 from pathlib import Path
 
 import pytest
 
 from annofabapi.util.annotation_specs import Lang, get_english_message, get_message_with_lang
 
-# プロジェクトトップに移動する
-os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
 

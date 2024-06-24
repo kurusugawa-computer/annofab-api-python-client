@@ -1,5 +1,4 @@
 import configparser
-import os
 import zipfile
 from pathlib import Path
 
@@ -18,8 +17,6 @@ from annofabapi.parser import (
     SimpleAnnotationZipParserByTask,
 )
 
-# プロジェクトトップに移動する
-os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
 

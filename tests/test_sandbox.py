@@ -3,12 +3,9 @@ Annofabプロジェクトやタスクに大きく依存したテストコード�
 """
 
 import configparser
-import os
 
 import annofabapi
 
-# プロジェクトトップに移動する
-os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
 
