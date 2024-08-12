@@ -134,6 +134,7 @@ select = [
     "RUF100",  # unused-noqa
     "G004", # logging-f-string
     "SIM", #flake8-simplify
+    "PLC2401", # non-ascii-name, メソッド名に日本語を利用するため
 ]
 
 
