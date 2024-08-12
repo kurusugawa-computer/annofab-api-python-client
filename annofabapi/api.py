@@ -182,7 +182,7 @@ def _should_retry_with_status(status_code: int) -> bool:
     # 注意：429(Too many requests)の場合は、backoffモジュール外でリトライするため、このメソッドでは判定しない
     if status_code == requests.codes.not_implemented:
         return False
-    if 500 <= status_code < 600:
+    if 500 <= status_code < 600:  # noqa: SIM103
         return True
     return False
 

@@ -387,7 +387,7 @@ class SimpleAnnotationZipParserByTask(SimpleAnnotationParserByTask):
                 return False
             if paths[0] != task_id:
                 return False
-            if not paths[1].endswith(".json"):
+            if not paths[1].endswith(".json"):  # noqa: SIM103
                 return False
             return True
 
@@ -516,7 +516,7 @@ def lazy_parse_simple_annotation_zip_by_task(zip_file_path: Path) -> Iterator[Si
         paths = [p for p in zip_info.filename.split("/") if len(p) != 0]
         if len(paths) != 2:
             return False
-        if not paths[1].endswith(".json"):
+        if not paths[1].endswith(".json"):  # noqa: SIM103
             return False
         return True
 

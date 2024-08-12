@@ -52,10 +52,10 @@ class TestSimpleAnnotationParser:
             parser = SimpleAnnotationZipParser(zip_file, "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
 
             simple_annotation = parser.parse()
-            assert type(simple_annotation.details[0].data) == dict  # noqa: E721
+            assert type(simple_annotation.details[0].data) is dict  # noqa: E721
 
             simple_annotation2 = parser.parse(self.convert_deitail_data)
-            assert type(simple_annotation2.details[0].data) == FullAnnotationDataPoints
+            assert type(simple_annotation2.details[0].data) is FullAnnotationDataPoints
 
     def test_SimpleAnnotationDirParser(self):
         dir_path = Path(test_dir / "simple-annotation")
@@ -109,11 +109,11 @@ class TestSimpleAnnotation:
         index = 0
         for parser in iter_parser:
             simple_annotation = parser.parse()
-            assert type(simple_annotation) == SimpleAnnotation
+            assert type(simple_annotation) is SimpleAnnotation
             index += 1
 
             dict_simple_annotation = parser.load_json()
-            assert type(dict_simple_annotation) == dict  # noqa: E721
+            assert type(dict_simple_annotation) is dict  # noqa: E721
             assert "details" in dict_simple_annotation
 
         assert index == 4
@@ -125,11 +125,11 @@ class TestSimpleAnnotation:
         index = 0
         for parser in iter_parser:
             simple_annotation = parser.parse()
-            assert type(simple_annotation) == SimpleAnnotation
+            assert type(simple_annotation) is SimpleAnnotation
             index += 1
 
             dict_simple_annotation = parser.load_json()
-            assert type(dict_simple_annotation) == dict  # noqa: E721
+            assert type(dict_simple_annotation) is dict
             assert "details" in dict_simple_annotation
 
         assert index == 4
@@ -171,7 +171,7 @@ class TestFullAnnotation:
         index = 0
         for parser in iter_parser:
             full_annotation = parser.parse()
-            assert type(full_annotation) == FullAnnotation
+            assert type(full_annotation) is FullAnnotation
             index += 1
 
         assert index == 4
@@ -182,7 +182,7 @@ class TestFullAnnotation:
             assert parser.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
 
             dict_simple_annotation = parser.load_json()
-            assert type(dict_simple_annotation) == dict  # noqa: E721
+            assert type(dict_simple_annotation) is dict  # noqa: E721
             assert "details" in dict_simple_annotation
 
             with pytest.raises(AnnotationOuterFileNotFoundError):
@@ -195,7 +195,7 @@ class TestFullAnnotation:
         index = 0
         for parser in iter_parser:
             full_annotation = parser.parse()
-            assert type(full_annotation) == FullAnnotation
+            assert type(full_annotation) is FullAnnotation
             index += 1
 
         assert index == 4
@@ -205,7 +205,7 @@ class TestFullAnnotation:
         assert parser_full.input_data_id == "c86205d1-bdd4-4110-ae46-194e661d622b"
 
         dict_simple_annotation = parser_full.load_json()
-        assert type(dict_simple_annotation) == dict  # noqa: E721
+        assert type(dict_simple_annotation) is dict  # noqa: E721
         assert "details" in dict_simple_annotation
 
         with pytest.raises(AnnotationOuterFileNotFoundError):
@@ -224,7 +224,7 @@ class TestFullAnnotation:
             parser = FullAnnotationZipParser(zip_file, "sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json")
 
             full_annotation = parser.parse()
-            assert type(full_annotation.details[0].data) == dict  # noqa: E721
+            assert type(full_annotation.details[0].data) is dict
 
             full_annotation2 = parser.parse(self.convert_deitail_data)
-            assert type(full_annotation2.details[0].data) == FullAnnotationDataPoints
+            assert type(full_annotation2.details[0].data) is FullAnnotationDataPoints
