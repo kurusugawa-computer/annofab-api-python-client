@@ -1,5 +1,4 @@
 # pylint: disable=too-many-lines
-import asyncio
 import copy
 import datetime
 import functools
@@ -2083,14 +2082,15 @@ class Wrapper:
 
     def job_in_progress(self, project_id: str, job_type: ProjectJobType) -> bool:
         """
-        ジョブが進行中かどうか
+        ジョブが進行中状態かどうか
 
         Args:
             project_id: プロジェクトID
             job_type: ジョブ種別
 
         Returns:
-            ジョブが進行中かどうか
+            ジョブが進行中状態ならば ``True`` を返します。それ以外の状態の場合は ``False`` を返します。
+            また、``job_type`` であるジョブが存在しない場合は ``False`` を返します。
 
         """
         job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
@@ -2141,10 +2141,10 @@ class Wrapper:
 
         Args:
             project_id: プロジェクトID
-            job_type: 取得するジョブ種別
+            job_type: ジョブ種別
+            job_id: ジョブID。Noneの場合は、現在進行中のジョブが終了するまで待つ。
             job_access_interval: ジョブにアクセスする間隔[sec]
             max_job_access: ジョブに最大何回アクセスするか
-            job_id: ジョブID。Noneの場合は、現在進行中のジョブが終了するまで待つ。
 
         Returns:
             指定した時間（アクセス頻度と回数）待った後のジョブのステータスを返す。
@@ -2231,48 +2231,24 @@ class Wrapper:
                     )
                     return JobStatus.PROGRESS
 
-    async def _job_in_progress_async(self, project_id: str, job_type: ProjectJobType) -> bool:
-        loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(None, self.job_in_progress, project_id, job_type)
-
-    async def _wait_until_job_finished_async(
-        self,
-        project_id: str,
-        job_type: ProjectJobType,
-        job_id: Optional[str],
-        job_access_interval: int,
-        max_job_access: int,
-    ) -> Optional[JobStatus]:
-        loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(None, self.wait_until_job_finished, project_id, job_type, job_id, job_access_interval, max_job_access)
-
     def can_execute_job(self, project_id: str, job_type: ProjectJobType) -> bool:
         """
         ジョブが実行できる状態か否か。他のジョブが実行中で同時に実行できない場合はFalseを返す。
 
         Args:
             project_id: プロジェクトID
-            job_type: ジョブ種別
-
-
-        Notes:
-            MFAが有効でログインしていない場合、login APIでエラーが発生します。事前にログインしておく必要があります。
+            job_type: 実行したいジョブの種別
 
         Returns:
             ジョブが実行できる状態か否か
         """
         job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
 
-        # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
-        if self.api.token_dict is None:
-            self.api.login()
+        # 依存する複数のジョブが進行中状態かどうかを確認する
+        result_list = [self.job_in_progress(project_id, dependent_job_type) for dependent_job_type in job_type_list]
 
-        # 複数のジョブに対して進行中かどうかを確認する
-        gather = asyncio.gather(*[self._job_in_progress_async(project_id, job_type) for job_type in job_type_list])
-        loop = asyncio.get_event_loop()
-        result = loop.run_until_complete(gather)
-
-        return all(not e for e in result)
+        # 依存するすべてのジョブが進行中状態なら
+        return all(not e for e in result_list)
 
     def wait_until_job_is_executable(
         self,
@@ -2286,33 +2262,23 @@ class Wrapper:
 
         Args:
             project_id: プロジェクトID
-            job_type: ジョブ種別
+            job_type: 実行したいジョブの種別
             job_access_interval: ジョブにアクセスする間隔[sec]
             max_job_access: ジョブに最大何回アクセスするか
 
         Returns:
             指定した時間（アクセス頻度と回数）待った後、ジョブが実行可能な状態かどうか。進行中のジョブが存在する場合は、ジョブが実行不可能。
 
-        Notes:
-            MFAが有効でログインしていない場合、login APIでエラーが発生します。事前にログインしておく必要があります。
-
         """
 
         job_type_list = _JOB_CONCURRENCY_LIMIT[job_type]
-        # tokenがない場合、ログインが複数回発生するので、事前にログインしておく
-        if self.api.token_dict is None:
-            self.api.login()
 
-        # 複数のジョブに対して進行中かどうかを確認する
-        gather = asyncio.gather(
-            *[
-                self._wait_until_job_finished_async(project_id, new_job_type, None, job_access_interval, max_job_access)
-                for new_job_type in job_type_list
-            ],
-            return_exceptions=True,
-        )
-        loop = asyncio.get_event_loop()
-        result = loop.run_until_complete(gather)
+        # `job_type`のジョブと同時に実行できないジョブが終了するまで待ちます。
+        # 非同期で実行しない理由：同期的に実行しても、最終的な待ち時間は変わらないため
+        result_list = []
+        for dependent_job_type in job_type_list:
+            result = self.wait_until_job_finished(project_id, dependent_job_type, None, job_access_interval, max_job_access)
+            result_list.append(result)
 
         # 依存するジョブが一つ以上進行中状態なら、Falseを返す
-        return all(e != JobStatus.PROGRESS for e in result)
+        return all(e != JobStatus.PROGRESS for e in result_list)
