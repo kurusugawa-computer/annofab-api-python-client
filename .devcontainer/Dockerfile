@@ -78,7 +78,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # # poetry
 RUN set -x \
-    && pipx install "poetry<1.9"
+    && python -m pip install "poetry<1.9"
 
 # Add user / Grant sudo privileges
 RUN useradd -m -s /bin/bash -u 5000 -U vscode \
