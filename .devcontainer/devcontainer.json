@@ -9,7 +9,6 @@
 	},
 	"containerUser": "vscode",
 	"remoteUser": "vscode",
-//	"updateRemoteUserUID": true,
 	// マウント対象のディレクトリを事前に作成する
 	"initializeCommand": "mkdir -p ${localWorkspaceFolder}/.devcontainer/venv",
 	"mounts": [
@@ -17,7 +16,6 @@
 		// ホスト側のvenvとコンテナ側のvenvを分類して、ホスト側でpoetryコマンドを利用できるようにする
 		"source=${localWorkspaceFolder}/.devcontainer/venv,target=${containerWorkspaceFolder}/.venv,type=bind"
 	],
-	// "forwardPorts": [],
 	"runArgs": [
 		"--init",
 		"--net=host",
