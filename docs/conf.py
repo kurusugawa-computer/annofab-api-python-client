@@ -10,10 +10,9 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
-
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../'))
 
 # -- Project information -----------------------------------------------------
 
@@ -54,7 +53,6 @@ html_css_files = ["css/custom.css"]
 html_theme_options = {
     "github_url": "https://github.com/kurusugawa-computer/annofab-api-python-client",
     "use_edit_page_button": True,
-    "footer_items": [],  # footerを空にする
 }
 
 html_logo = "img/logo_landscape.png"
