@@ -133,7 +133,7 @@ class TestAnnotationSpecs:
 
     def test_get_annotation_specs_relation(self):
         result = wrapper.get_annotation_specs_relation(project_id, project_id)
-        assert type(result) == annofabapi.wrapper.AnnotationSpecsRelation
+        assert type(result) is annofabapi.wrapper.AnnotationSpecsRelation
 
 
 class TestComment:
@@ -217,14 +217,14 @@ class TestInputData:
 
     def test_wrapper_put_input_data_from_file_and_delete_input_data(self):
         test_input_data_id = str(uuid.uuid4())
-        print("")
+        print()
         print(f"put_input_data: input_data_id={test_input_data_id}")
         assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f"{test_dir}/lenna.png")) == dict  # noqa: E721
         assert type(api.delete_input_data(project_id, test_input_data_id)[0]) == dict  # noqa: E721
 
     def test_put_input_data_from_file_and_batch_update_inputs(self):
         test_input_data_id = str(uuid.uuid4())
-        print("")
+        print()
         print(f"put_input_data: input_data_id={test_input_data_id}")
         wrapper.put_input_data_from_file(project_id, test_input_data_id, f"{test_dir}/lenna.png")
 
@@ -242,7 +242,7 @@ class TestInstruction:
 
     def test_wrapper_upload_instruction_image_and_delete_instruction_image(self):
         test_image_id = str(uuid.uuid4())
-        print("")
+        print()
         print(f"wrapper.upload_instruction_image: image_id={test_image_id}")
         wrapper.upload_instruction_image(project_id, test_image_id, f"{test_dir}/lenna.png")
 
@@ -524,7 +524,7 @@ class Testsupplementary:
         supplementary_data_id = str(uuid.uuid4())
         request_body = {"supplementary_data_number": 1}
 
-        print("")
+        print()
         print(f"wrapper.put_supplementary_data_from_file: supplementary_data_id={supplementary_data_id}")
         wrapper.put_supplementary_data_from_file(
             project_id, self.input_data_id, supplementary_data_id, f"{test_dir}/sample.txt", request_body=request_body
@@ -569,7 +569,7 @@ class TestTask:
     def test_put_task_and_delete_task(self):
         test_task_id = str(uuid.uuid4())
         request_body = {"input_data_id_list": [self.input_data_id]}
-        print("")
+        print()
         print(f"put_task: task_id={task_id}")
         test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]
         assert type(test_task_data) == dict  # noqa: E721
@@ -594,7 +594,7 @@ class TestTask:
     def test_batch_update_tasks(self):
         test_task_id = str(uuid.uuid4())
         request_body = {"input_data_id_list": [self.input_data_id]}
-        print("")
+        print()
         print(f"put_task: task_id={task_id}")
         test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]  # noqa: F841
 

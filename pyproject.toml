@@ -43,9 +43,9 @@ pytest-cov = "*"
 
 [tool.poetry.group.linter.dependencies]
 # pythonバージョンを指定している理由：lintは開発環境と同じPythonバージョンで実行するため。また古いPythonバージョンにサポートしていないライブラリのバージョンがあるため
-ruff = {version="^0.4", python = ">=3.11"}
-mypy = {version="^1", python = ">=3.11"}
-pylint = {version="^3", python = ">=3.11"}
+ruff = {version="^0.5", python = ">=3.12"}
+mypy = {version="^1", python = ">=3.12"}
+pylint = {version="^3", python = ">=3.12"}
 
 # type stub package
 types-requests = "*"
@@ -134,6 +134,7 @@ select = [
     "RUF100",  # unused-noqa
     "G004", # logging-f-string
     "SIM", #flake8-simplify
+    "PLC2401", # non-ascii-name, メソッド名に日本語を利用するため
 ]
 
 
