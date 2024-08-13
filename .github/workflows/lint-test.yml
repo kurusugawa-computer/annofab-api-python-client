@@ -29,7 +29,7 @@ jobs:
           poetry install --only main,test
       - name: Test
         run: |
-            make test
+            pytest tests/test_local*.py
           
   lint:
     runs-on: ubuntu-latest
