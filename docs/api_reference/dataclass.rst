@@ -17,24 +17,9 @@ annofabapi.dataclass.input module
     :members:
 
 
-annofabapi.dataclass.inspection module
---------------------------------------
-.. automodule:: annofabapi.dataclass.inspection
-    :members:
-
-annofabapi.dataclass.instruction module
----------------------------------------
-.. automodule:: annofabapi.dataclass.instruction
-    :members:
-
 annofabapi.dataclass.job module
 -------------------------------
 .. automodule:: annofabapi.dataclass.job
-    :members:
-
-annofabapi.dataclass.my module
-------------------------------
-.. automodule:: annofabapi.dataclass.my
     :members:
 
 annofabapi.dataclass.organization module
@@ -61,11 +46,6 @@ annofabapi.dataclass.project_member module
     :members:
 
 
-annofabapi.dataclass.statistics module
---------------------------------------
-.. automodule:: annofabapi.dataclass.statistics
-    :members:
-
 annofabapi.dataclass.supplementary module
 -----------------------------------------
 .. automodule:: annofabapi.dataclass.supplementary
@@ -75,10 +55,5 @@ annofabapi.dataclass.supplementary module
 annofabapi.dataclass.task module
 --------------------------------
 .. automodule:: annofabapi.dataclass.task
-    :members:
-
-annofabapi.dataclass.webhook module
------------------------------------
-.. automodule:: annofabapi.dataclass.webhook
     :members:
 

@@ -29,13 +29,15 @@ class AnnofabApi2(AbstractAnnofabApi2):
     Args:
         api: API v1のインスタンス（一部のAPIは、v1のログインメソッドを利用するため）
 
+    Attributes:
+        cookies: Signed Cookie情報
+
     """
 
     def __init__(self, api: AnnofabApi) -> None:
         self.api = api
         self.url_prefix = f"{api.endpoint_url}/api/v2"
 
-    #: Signed Cookie情報
     cookies: Optional[RequestsCookieJar] = None
 
     #########################################

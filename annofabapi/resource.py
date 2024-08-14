@@ -21,20 +21,22 @@ class Resource:
         endpoint_url: Annofab APIのエンドポイント。
         input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
 
+    Attributes:
+        api: ``annofabapi.AnnofabApi`` のインスタンス
+        wrapper: ``annofabapi.Wrapper`` のインスタンス
+        api2: ``annofabapi.AnnofabApi2`` のインスタンス
+
     """
 
     def __init__(
         self, login_user_id: str, login_password: str, *, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False
     ) -> None:
-        #: AnnofabApi Instance
         self.api = AnnofabApi(
             login_user_id=login_user_id, login_password=login_password, endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin
         )
 
-        #: Wrapper Instance
         self.wrapper = Wrapper(self.api)
 
-        #: AnnofabApi2 Instance
         self.api2 = AnnofabApi2(self.api)
 
         logger.debug("Create annofabapi resource instance :: %s", {"login_user_id": login_user_id, "endpoint_url": endpoint_url})
