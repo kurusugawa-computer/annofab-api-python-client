@@ -31,7 +31,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
     Attributes:
         cookies: Signed Cookie情報
-    
+
     """
 
     def __init__(self, api: AnnofabApi) -> None:
