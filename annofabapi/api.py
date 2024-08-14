@@ -257,10 +257,8 @@ class AnnofabApi(AbstractAnnofabApi):
         self.url_prefix = f"{endpoint_url}/api/v1"
         self.session = requests.Session()
 
-        #: login, refresh_tokenで取得したtoken情報
         self.token_dict: Optional[Dict[str, Any]] = None
 
-        #: Signed Cookie情報
         self.cookies: Optional[RequestsCookieJar] = None
 
         self.__account_id: Optional[str] = None
