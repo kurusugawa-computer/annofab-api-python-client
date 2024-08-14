@@ -64,11 +64,12 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 ipython = "*"
 
-# [tool.poetry.group.publish]
-# # PyPIにpublishするのに必要なライブラリ。インストールしなくても開発はできるので、オプショナルにする
+[tool.poetry.group.publish]
+# PyPIにpublishするのに必要なライブラリ。インストールしなくても開発はできるので、オプショナルにする
+optional = true
 
-# [tool.poetry.group.publish.dependencies]
-# poetry-dynamic-versioning = "*"
+[tool.poetry.group.publish.dependencies]
+poetry-dynamic-versioning = "*"
 
 
 [tool.mypy]
