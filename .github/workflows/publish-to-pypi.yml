@@ -17,7 +17,8 @@ jobs:
     - name: Install poetry
       run: |
           python -m pip install "poetry<1.9"
-          poetry install --only publish
+          poetry self add "poetry-dynamic-versioning[plugin] < 1.5"
+
     - name: Publish
       env:
         PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}

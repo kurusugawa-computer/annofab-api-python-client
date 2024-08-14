@@ -64,13 +64,6 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 ipython = "*"
 
-[tool.poetry.group.publish]
-# PyPIにpublishするのに必要なライブラリ。インストールしなくても開発はできるので、オプショナルにする
-optional = true
-
-[tool.poetry.group.publish.dependencies]
-poetry-dynamic-versioning = "*"
-
 
 [tool.mypy]
 # スタブが無いパッケージのエラーは無視させる.サードパーティのライブラリに型情報がないケースもあるため
@@ -154,7 +147,6 @@ max-args = 10
 
 [tool.poetry-dynamic-versioning]
 enable = true
-format = "{base}"
 
 
 [build-system]
