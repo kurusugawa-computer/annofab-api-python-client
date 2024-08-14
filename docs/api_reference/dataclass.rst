@@ -22,11 +22,6 @@ annofabapi.dataclass.job module
 .. automodule:: annofabapi.dataclass.job
     :members:
 
-annofabapi.dataclass.my module
-------------------------------
-.. automodule:: annofabapi.dataclass.my
-    :members:
-
 annofabapi.dataclass.organization module
 ----------------------------------------
 .. automodule:: annofabapi.dataclass.organization
