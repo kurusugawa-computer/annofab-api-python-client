@@ -124,7 +124,7 @@ def get_number_of_rejections(task_histories: List[TaskHistoryShort], phase: Task
     タスク履歴から、指定されたタスクフェーズでの差し戻し回数を取得する。
 
     Args:
-        task_histories: タスク履歴
+        task_histories: 簡易的なタスク履歴。 ``getTask`` APIで取得したタスクの ``histories_by_phase`` プロパティに相当します。
         phase: どのフェーズで差し戻されたか(TaskPhase.INSPECTIONかTaskPhase.ACCEPTANCE)
         phase_stage: どのフェーズステージで差し戻されたか。デフォルトは1。
 
