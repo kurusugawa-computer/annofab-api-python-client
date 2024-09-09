@@ -514,8 +514,8 @@ class AnnofabApi(AbstractAnnofabApi):
             },
         )
 
-        # Unauthorized Errorならば、ログイン後に再度実行する
-        if response.status_code == requests.codes.unauthorized:
+        # ID/PASSが指定されており、Unauthorized Errorならば、ログイン後に再度実行する
+        if isinstance(self.credentials, IdPass) and response.status_code == requests.codes.unauthorized:
             self.refresh_token()
             return self._request_wrapper(
                 http_method,
@@ -676,7 +676,7 @@ class AnnofabApi(AbstractAnnofabApi):
         if isinstance(self.credentials, IdPass):
             self._login(self.credentials, mfa_code)
         elif isinstance(self.credentials, Pat):
-            return
+            self.tokens = self.credentials
         else:
             assert_noreturn(self.credentials)
 
