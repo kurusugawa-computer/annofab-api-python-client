@@ -257,7 +257,7 @@ class AnnofabApi(AbstractAnnofabApi):
         self.url_prefix = f"{endpoint_url}/api/v1"
         self.session = requests.Session()
 
-        self.tokens: Union[Tokens, Pat, None] = None if isinstance(credentials, IdPass) else credentials
+        self.tokens: Union[Tokens, Pat, None] = None
 
         self.cookies: Optional[RequestsCookieJar] = None
 
@@ -497,6 +497,12 @@ class AnnofabApi(AbstractAnnofabApi):
         else:
             url = f"{self.url_prefix}{url_path}"
 
+        # patを使う場合は最初にtokensをセットする
+        # def logoutの呼び出しでtokensがNoneになった後にAPIを呼び出しても問題ないように（IdPassの場合も、自動loginしているので、その代わり）
+        # IdPassと同じ処理に合流させてしまうと、patが無効なときに無限ループしてしまうので、ここで1回だけ呼び出す
+        if self.tokens is None and isinstance(self.credentials, Pat):
+            self._login_pat(self.credentials)
+
         kwargs = self._create_kwargs(query_params, header_params, request_body)
         response = self.session.request(method=http_method.lower(), url=url, **kwargs)
         # response.requestよりメソッド引数のrequest情報の方が分かりやすいので、メソッド引数のrequest情報を出力する。
@@ -674,13 +680,13 @@ class AnnofabApi(AbstractAnnofabApi):
             MfaEnabledUserExecutionError: ``self.input_mfa_code_via_stdin`` が ``False`` AND ``mfa_code`` が未指定の場合
         """
         if isinstance(self.credentials, IdPass):
-            self._login(self.credentials, mfa_code)
+            self._login_id_pass(self.credentials, mfa_code)
         elif isinstance(self.credentials, Pat):
-            self.tokens = self.credentials
+            self._login_pat(self.credentials)
         else:
             assert_noreturn(self.credentials)
 
-    def _login(self, id_pass: IdPass, mfa_code: Optional[str] = None) -> None:
+    def _login_id_pass(self, id_pass: IdPass, mfa_code: Optional[str] = None) -> None:
         login_info = {"user_id": id_pass.user_id, "password": id_pass.password}
 
         url = f"{self.url_prefix}/login"
@@ -703,6 +709,9 @@ class AnnofabApi(AbstractAnnofabApi):
 
         self.tokens = Tokens.from_dict(token_dict)
         logger.debug("Logged in successfully. user_id = %s", id_pass.user_id)
+
+    def _login_pat(self, pat: Pat) -> None:
+        self.tokens = pat
 
     def logout(self) -> None:
         """
