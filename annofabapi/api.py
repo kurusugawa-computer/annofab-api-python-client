@@ -4,15 +4,17 @@ import logging
 import time
 from functools import wraps
 from json import JSONDecodeError
-from typing import Any, Callable, Collection, Dict, Optional, Tuple
+from typing import Any, Callable, Collection, Dict, Optional, Tuple, Union
 
 import backoff
 import requests
 from requests.auth import AuthBase
 from requests.cookies import RequestsCookieJar
 
+from annofabapi.credentials import IdPass, Pat, Tokens
 from annofabapi.exceptions import InvalidMfaCodeError, MfaEnabledUserExecutionError, NotLoggedInError
 from annofabapi.generated_api import AbstractAnnofabApi
+from annofabapi.util.type_util import assert_noreturn
 
 logger = logging.getLogger(__name__)
 
@@ -234,34 +236,33 @@ class AnnofabApi(AbstractAnnofabApi):
     Web APIに対応したメソッドが存在するクラス。
 
     Args:
-        login_user_id: AnnofabにログインするときのユーザID
-        login_password: Annofabにログインするときのパスワード
+        credentials: Annofabにログインするときの認証情報
         endpoint_url: Annofab APIのエンドポイント。
         input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
 
     Attributes:
-        token_dict: login, refresh_tokenで取得したtoken情報
+        tokens: login, refresh_tokenで取得したtoken情報
         cookies: Signed Cookie情報
     """
 
-    def __init__(
-        self, login_user_id: str, login_password: str, *, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False
-    ) -> None:
-        if not login_user_id or not login_password:
+    def __init__(self, credentials: Union[IdPass, Pat], *, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> None:
+        if isinstance(credentials, IdPass) and (not credentials.user_id or  not credentials.password):
             raise ValueError("login_user_id or login_password is empty.")
+        if isinstance(credentials, Pat) and not credentials.token:
+            raise ValueError("pat is empty.")
 
-        self.login_user_id = login_user_id
-        self.login_password = login_password
+        self.credentials = credentials
         self.endpoint_url = endpoint_url
         self.input_mfa_code_via_stdin = input_mfa_code_via_stdin
         self.url_prefix = f"{endpoint_url}/api/v1"
         self.session = requests.Session()
 
-        self.token_dict: Optional[Dict[str, Any]] = None
+        self.tokens: Union[Tokens, Pat, None] = None if isinstance(credentials, IdPass) else credentials
 
         self.cookies: Optional[RequestsCookieJar] = None
 
         self.__account_id: Optional[str] = None
+        self.__user_id: Optional[str] = None
 
     class _MyToken(AuthBase):
         """
@@ -328,8 +329,9 @@ class AnnofabApi(AbstractAnnofabApi):
             "params": new_params,
             "headers": headers,
         }
-        if self.token_dict is not None:
-            kwargs.update({"auth": self._MyToken(self.token_dict["id_token"])})
+        if self.tokens is not None:
+            token = self.tokens.auth_token
+            kwargs.update({"auth": self._MyToken(token)})
 
         if request_body is not None:
             if isinstance(request_body, (dict, list)):
@@ -616,7 +618,7 @@ class AnnofabApi(AbstractAnnofabApi):
     #########################################
     # Public Method : Login
     #########################################
-    def _login_respond_to_auth_challenge(self, mfa_code: str, session: str) -> Dict[str, Any]:
+    def _login_respond_to_auth_challenge(self, id_pass: IdPass, mfa_code: str, session: str) -> Dict[str, Any]:
         """
         MFAコードによるログインを実行します。
 
@@ -629,7 +631,7 @@ class AnnofabApi(AbstractAnnofabApi):
         Raises:
             InvalidMfaCodeError: ``self.input_mfa_code_via_stdin`` が ``False`` AND ``mfa_code`` が正しくない場合
         """
-        request_body = {"user_id": self.login_user_id, "mfa_code": mfa_code, "session": session}
+        request_body = {"user_id": id_pass.user_id, "mfa_code": mfa_code, "session": session}
         url = f"{self.url_prefix}/login-respond-to-auth-challenge"
 
         response = self._execute_http_request("post", url, json=request_body, raise_for_status=False)
@@ -645,7 +647,7 @@ class AnnofabApi(AbstractAnnofabApi):
                 if self.input_mfa_code_via_stdin:
                     logger.info(new_error_message)
                     new_mfa_code = _read_mfa_code_from_stdin()
-                    return self._login_respond_to_auth_challenge(new_mfa_code, session)
+                    return self._login_respond_to_auth_challenge(id_pass, new_mfa_code, session)
                 else:
                     raise InvalidMfaCodeError(new_error_message)
 
@@ -671,7 +673,15 @@ class AnnofabApi(AbstractAnnofabApi):
             InvalidMfaCodeError: ``self.input_mfa_code_via_stdin`` が ``False`` AND ``mfa_code`` が正しくない場合
             MfaEnabledUserExecutionError: ``self.input_mfa_code_via_stdin`` が ``False`` AND ``mfa_code`` が未指定の場合
         """
-        login_info = {"user_id": self.login_user_id, "password": self.login_password}
+        if isinstance(self.credentials, IdPass):
+            self._login(self.credentials, mfa_code)
+        elif isinstance(self.credentials, Pat):
+            return
+        else:
+            assert_noreturn(self.credentials)
+
+    def _login(self, id_pass: IdPass, mfa_code: Optional[str] = None) -> None:
+        login_info = {"user_id": id_pass.user_id, "password": id_pass.password}
 
         url = f"{self.url_prefix}/login"
 
@@ -683,21 +693,21 @@ class AnnofabApi(AbstractAnnofabApi):
                 if self.input_mfa_code_via_stdin:
                     mfa_code = _read_mfa_code_from_stdin()
                 else:
-                    raise MfaEnabledUserExecutionError(self.login_user_id)
+                    raise MfaEnabledUserExecutionError(id_pass.user_id)
 
-            mfa_json_obj = self._login_respond_to_auth_challenge(mfa_code, login_json_obj["session"])
+            mfa_json_obj = self._login_respond_to_auth_challenge(id_pass, mfa_code, login_json_obj["session"])
             token_dict = mfa_json_obj["token"]
         else:
             # `login` APIのレスポンスのスキーマがloginRespondToAuthChallengeのとき
             token_dict = login_json_obj["token"]
 
-        self.token_dict = token_dict
-        logger.debug("Logged in successfully. user_id = %s", self.login_user_id)
+        self.tokens = Tokens.from_dict(token_dict)
+        logger.debug("Logged in successfully. user_id = %s", id_pass.user_id)
 
     def logout(self) -> None:
         """
         ログアウトします。
-        ログアウト後は、インスタンス変数 ``token_dict`` をNoneにします。
+        ログアウト後は、インスタンス変数 ``tokens`` をNoneにします。
 
 
 
@@ -708,27 +718,33 @@ class AnnofabApi(AbstractAnnofabApi):
             NotLoggedInError: ログインしてない状態で関数を呼び出したときのエラー
         """
 
-        if self.token_dict is None:
+        if self.tokens is None:
             raise NotLoggedInError
+        if isinstance(self.tokens, Pat):
+            self.tokens = None
+            return
 
-        request_body = self.token_dict
+        request_body = self.tokens.to_dict()
         url = f"{self.url_prefix}/logout"
         self._execute_http_request("POST", url, json=request_body)
-        self.token_dict = None
+        self.tokens = None
 
     def refresh_token(self) -> None:
         """
         トークンを再発行して、新しいトークン情報をインスタンスに保持します。
+        パーソナルアクセストークンでのアクセスをしている場合はrefreshを行いません。
         ログインしていない場合やリフレッシュトークンの有効期限が切れている場合は、login APIを実行して新しいトークン情報をインスタンスに保持します。
 
         """
 
-        if self.token_dict is None:
+        if self.tokens is None:
             # 一度もログインしていないときは、login APIを実行して、トークン情報をインスタンスに保持する（login関数内でインスタンスに保持している）
             self.login()
             return
+        if isinstance(self.tokens, Pat):
+            return
 
-        request_body = {"refresh_token": self.token_dict["refresh_token"]}
+        request_body = {"refresh_token": self.tokens.refresh_token}
         url = f"{self.url_prefix}/refresh-token"
         response = self._execute_http_request("POST", url, json=request_body)
 
@@ -737,11 +753,12 @@ class AnnofabApi(AbstractAnnofabApi):
             self.login()
             return
 
-        self.token_dict = response.json()
+        self.tokens = Tokens.from_dict(response.json())
 
     #########################################
     # Public Method : Other
     #########################################
+
     @property
     def account_id(self) -> str:
         """
@@ -754,3 +771,19 @@ class AnnofabApi(AbstractAnnofabApi):
             account_id = content["account_id"]
             self.__account_id = account_id
             return account_id
+
+    @property
+    def login_user_id(self) -> str:
+        """
+        Annofabにログインするユーザのuser_id
+        """
+        if self.__user_id is not None:
+            return self.__user_id
+        if isinstance(self.credentials, IdPass):
+            self.__user_id = self.credentials.user_id
+            return self.__user_id
+        else:
+            content, _ = self.get_my_account()
+            user_id = content["user_id"]
+            self.__user_id = user_id
+            return user_id

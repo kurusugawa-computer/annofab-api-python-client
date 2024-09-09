@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 from annofabapi import AnnofabApi, AnnofabApi2, Wrapper
 from annofabapi.api import DEFAULT_ENDPOINT_URL
+from annofabapi.credentials import IdPass
 from annofabapi.exceptions import CredentialsNotFoundError
 
 logger = logging.getLogger(__name__)
@@ -32,7 +33,9 @@ class Resource:
         self, login_user_id: str, login_password: str, *, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False
     ) -> None:
         self.api = AnnofabApi(
-            login_user_id=login_user_id, login_password=login_password, endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin
+            credentials=IdPass(user_id=login_user_id, password=login_password),
+            endpoint_url=endpoint_url,
+            input_mfa_code_via_stdin=input_mfa_code_via_stdin,
         )
 
         self.wrapper = Wrapper(self.api)
