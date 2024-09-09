@@ -238,7 +238,7 @@ class AnnofabApi(AbstractAnnofabApi):
     Args:
         credentials: Annofabにログインするときの認証情報
         endpoint_url: Annofab APIのエンドポイント。
-        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
+        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか Falseの時にMFAコードの入力を求められた場合は例外を送出する
 
     Attributes:
         tokens: login, refresh_tokenで取得したtoken情報
@@ -246,7 +246,7 @@ class AnnofabApi(AbstractAnnofabApi):
     """
 
     def __init__(self, credentials: Union[IdPass, Pat], *, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> None:
-        if isinstance(credentials, IdPass) and (not credentials.user_id or  not credentials.password):
+        if isinstance(credentials, IdPass) and (not credentials.user_id or not credentials.password):
             raise ValueError("login_user_id or login_password is empty.")
         if isinstance(credentials, Pat) and not credentials.token:
             raise ValueError("pat is empty.")
