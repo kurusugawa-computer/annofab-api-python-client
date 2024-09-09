@@ -65,6 +65,19 @@ password = "YYYYYY"
 service = build(user_id, password)
 ```
 
+### PersonalAccessTokenをコンストラクタ引数に渡す場合
+
+```python
+# APIアクセス用のインスタンスを生成
+from annofabapi import build
+
+
+pat = "XXXXXX"
+
+service = build(pat = pat)
+```
+
+
 ### `.netrc`に認証情報を記載する場合
 `.netrc`ファイルに、AnnofabのユーザIDとパスワードを記載します。
 
@@ -91,7 +104,13 @@ service = build_from_netrc()
 
 
 ### 環境変数に認証情報を設定する場合
-環境変数`ANNOFAB_USER_ID`、`ANNOFAB_PASSWORD`にユーザIDとパスワードを設定します。
+
+
+* IDとパスワードで認証する場合
+    * 環境変数`ANNOFAB_USER_ID`、`ANNOFAB_PASSWORD`にユーザIDとパスワードを設定します。
+* パーソナルアクセストークンで認証する場合
+    * 環境変数`ANNOFAB_PAT`にトークンを設定します。
+    * `ANNOFAB_PAT`が設定されている場合、`ANNOFAB_USER_ID`、`ANNOFAB_PASSWORD`は無視されます。
 
 ```python
 from annofabapi import build_from_env
@@ -109,6 +128,8 @@ service = build()
 
 優先順位は以下の通りです。
 1. 環境変数
+    1. `ANNOFAB_PAT`
+    2. `ANNOFAB_USER_ID`及び`ANNOFAB_PASSWORD`
 2. `.netrc`
 
 
