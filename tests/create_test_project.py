@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional
 from more_itertools import first_true
 
 import annofabapi
+from annofabapi.api import DEFAULT_ENDPOINT_URL
 from annofabapi.models import TaskPhase
 
 logger = logging.getLogger(__name__)
@@ -291,6 +292,7 @@ def parse_args():
         default=DEFAULT_PROJECT_TITLE,
         help="作成するプロジェクトのタイトルを指定してください。",
     )
+    parser.add_argument("--endpoint", type=str, default=DEFAULT_ENDPOINT_URL, help="接続先エンドポイントを指定してください")
 
     return parser.parse_args()
 
@@ -307,7 +309,7 @@ def main() -> None:
 
     args = parse_args()
 
-    main_obj = CreatingTestProject(annofabapi.build())
+    main_obj = CreatingTestProject(annofabapi.build(endpoint_url=args.endpoint))
     main_obj.main(organization_name=args.organization, project_title=args.project_title)
 
 
