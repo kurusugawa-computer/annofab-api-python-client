@@ -1144,6 +1144,56 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
+    def get_personal_access_tokens(self, **kwargs) -> Tuple[Any, requests.Response]:
+        """パーソナルアクセストークン一覧を取得
+        https://annofab.com/docs/api/#operation/getPersonalAccessTokens
+
+
+        authorizations: Everyone
+
+
+        自分が発行したパーソナルアクセストークンの一覧を取得します。
+
+        Args:
+
+        Returns:
+            Tuple[List[PersonalAccessTokenInfo], requests.Response]
+
+
+        """
+        url_path = "/my/personal-access-tokens"
+        http_method = "GET"
+        keyword_params: Dict[str, Any] = {}
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def issue_personal_access_token(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+        """パーソナルアクセストークンの発行
+        https://annofab.com/docs/api/#operation/issuePersonalAccessToken
+
+
+        authorizations: Everyone
+
+
+        パーソナルアクセストークンを発行します。
+
+        Args:
+            request_body (Any): Request Body
+                issue_personal_access_token_request (IssuePersonalAccessTokenRequest):  (required)
+
+        Returns:
+            Tuple[PersonalAccessToken, requests.Response]
+
+
+        """
+        url_path = "/my/issue-personal-access-token"
+        http_method = "POST"
+        keyword_params: Dict[str, Any] = {
+            "request_body": request_body,
+        }
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
     def put_my_account(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
         """自分のアカウント情報更新
         https://annofab.com/docs/api/#operation/putMyAccount
@@ -1193,6 +1243,33 @@ class AbstractAnnofabApi(abc.ABC):
         """
         url_path = f"/my/messages/{message_id}/opened"
         http_method = "PUT"
+        keyword_params: Dict[str, Any] = {
+            "request_body": request_body,
+        }
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def revoke_personal_access_token(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+        """パーソナルアクセストークンの無効化
+        https://annofab.com/docs/api/#operation/revokePersonalAccessToken
+
+
+        authorizations: Everyone
+
+
+        発行済のパーソナルアクセストークンを無効化します。
+
+        Args:
+            request_body (Any): Request Body
+                revoke_personal_access_token_request (RevokePersonalAccessTokenRequest):  (required)
+
+        Returns:
+            Tuple[PersonalAccessTokenInfo, requests.Response]
+
+
+        """
+        url_path = "/my/revoke-personal-access-token"
+        http_method = "POST"
         keyword_params: Dict[str, Any] = {
             "request_body": request_body,
         }
@@ -1346,7 +1423,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/putOrganization
 
 
-        authorizations: OrganizationOwner
+        authorizations: OrganizationAdministrator
 
 
         組織を更新します。
@@ -2813,7 +2890,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        タスク作成ルールに基づいて、タスクを一括で作成します。  タスク作成ルールは、以下の3つです。  * `ByCount`：1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。この作成ルールは、画像を同じ枚数均等にタスクに割り振りたい場合に便利です。 * `ByDirectory`：入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。この作成ルールは、動画などから切り出した画像をディレクトリ別に格納し、その動画（ディレクトリ）の単位でタスクを作りたい場合に便利です。 * `ByInputDataCsv`：入力データを各タスクに割り振ったCSVへのS3パスを指定してタスクを生成できます。この作成ルールは、特定のデータの組み合わせを持ったタスクを作成したい場合に便利です。  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks`）。  **注意:** タスクに割り当てることができる入力データの個数は最大200です。  #### ByDirectory: ディレクトリ単位でのタスク一括生成の使い方 例えば、次のような `input_data_name` の入力データが登録されているとします。  * a.zip/dir1/image1.png * a.zip/dir1/image2.png * a.zip/dir1/subdir/image3.png * a.zip/dir1/subdir/image4.png * a.zip/dir1/subdir/image5.png * b.zip/dir2/subdir1/image6.png * b.zip/dir2/subdir1/image7.png * b.zip/dir2/subdir1/image8.png * b.zip/dir2/subdir2/image9.png * b.zip/dir2/subdir2/image10.png  ここで、`input_data_name_prefix`フィールド に `a.zip` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png  次に、`input_data_name_prefix` に `b.zip/dir2` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 2. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  `input_data_name_prefix` が未指定の時は、全ディレクトリごとにタスクが作成されます。つまり次のように4つのタスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png 3. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 4. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  タスクに割り当てられる「ディレクトリ内の入力データ」の順序は、名前の昇順となります。  **注意:** `ByDirectory`では、入力データ名がファイルパス形式になっていない入力データはタスクの作成対象になりません。 例えば、`foo/bar.png` はタスクの作成対象になりますが、ディレクトリを含まない`bar.png` や、最後がディレクトリになっている`foo/bar.png/` は対象になりません。  **注意:** `ByDirectory`では、入力データ名のディレクトリ部分がタスクIDの一部として利用されます。そのため、入力データ名のディレクトリ部分は、タスクIDとして利用できる文字で構成されている必要があります。[値の制約についてはこちら。](#section/API-Convention/APIID) 入力データ名のディレクトリ部分にタスクIDとして利用できない文字が含まれている場合、タスクの生成は失敗します。  **注意:** `ByDirectory`では、一つのディレクトリに200ファイルより多くの入力データがある場合、複数のタスクに分かれます。 例えば、`foo/` の中に201ファイルがある場合、fooから２つのタスクが作成されます。１つ目は最初の200ファイルを割り当て、２つ目は最後の１ファイルのタスクに分かれます。 分かれたタスクは、 `{上述のタスクIDの付与則}_連番` の形式でタスクIDが付与されます。連番は、対象の入力データ数の桁数まで0埋めされます。  **注意:** 動画プロジェクトの場合、ディレクトリに含まれる動画の入力データは1つに制限してください。 これが守られない場合、作成されたタスクで動画を再生できない場合があります。  #### ByInputDataCsv: CSVによるタスク一括生成の使い方 以下のように「タスクID,入力データ名,入力データID」を1行毎に指定したCSVを作成します。  ``` task_1,a001.jpg,ca0cb2f9-fec5-49b4-98df-dc34490f9785 task_1,a002.jpg,5ac1987e-ca7c-42a0-9c19-b5b23a41836b task_1,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_2,b001.jpg,4f2ae4d0-7a38-4f9a-be6f-170ba76aba73 task_2,b002.jpg,45ac5852-f20c-4938-9ee9-cc0274401df7 task_2,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_3,c001.jpg,3260c7a0-4820-424d-a26e-db7e91dbc139 task_3,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee ``` CSVのエンコーディングは UTF-8(BOM付き)、UTF-8(BOMなし)、UTF-16(BOM付きLE) のいずれかのみ対応しています。  リクエストボディの`csv_data_path`には、[createTempPath](#operation/createTempPath) APIで取得したS3パスを指定してください。[createTempPath](#operation/createTempPath) APIで取得したURLに、事前にCSVファイルをアップロードする必要があります。
+        タスク作成ルールに基づいて、タスクを一括で作成します。  タスク作成ルールは、以下の3つです。  * `ByCount`：1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。この作成ルールは、画像を同じ枚数均等にタスクに割り振りたい場合に便利です。 * `ByDirectory`：入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。この作成ルールは、動画などから切り出した画像をディレクトリ別に格納し、その動画（ディレクトリ）の単位でタスクを作りたい場合に便利です。 * `ByInputDataCsv`：入力データを各タスクに割り振ったCSVへの一時データ保存先を指定してタスクを生成できます。この作成ルールは、特定のデータの組み合わせを持ったタスクを作成したい場合に便利です。  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks`）。  **注意:** タスクに割り当てることができる入力データの個数は最大200です。  #### ByDirectory: ディレクトリ単位でのタスク一括生成の使い方 例えば、次のような `input_data_name` の入力データが登録されているとします。  * a.zip/dir1/image1.png * a.zip/dir1/image2.png * a.zip/dir1/subdir/image3.png * a.zip/dir1/subdir/image4.png * a.zip/dir1/subdir/image5.png * b.zip/dir2/subdir1/image6.png * b.zip/dir2/subdir1/image7.png * b.zip/dir2/subdir1/image8.png * b.zip/dir2/subdir2/image9.png * b.zip/dir2/subdir2/image10.png  ここで、`input_data_name_prefix`フィールド に `a.zip` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png  次に、`input_data_name_prefix` に `b.zip/dir2` を指定すると、次の2タスクが生成されます。  1. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 2. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  `input_data_name_prefix` が未指定の時は、全ディレクトリごとにタスクが作成されます。つまり次のように4つのタスクが生成されます。  1. タスク: `{task_id_prefix}_a.zip_dir1`   * a.zip/dir1/image1.png   * a.zip/dir1/image2.png 2. タスク: `{task_id_prefix}_a.zip_dir1_subdir`   * a.zip/dir1/subdir/image3.png   * a.zip/dir1/subdir/image4.png   * a.zip/dir1/subdir/image5.png 3. タスク: `{task_id_prefix}_b.zip_dir2_subdir1`   * b.zip/dir2/subdir1/image6.png   * b.zip/dir2/subdir1/image7.png   * b.zip/dir2/subdir1/image8.png 4. タスク: `{task_id_prefix}_b.zip_dir2_subdir2`   * b.zip/dir2/subdir2/image9.png   * b.zip/dir2/subdir2/image10.png  タスクに割り当てられる「ディレクトリ内の入力データ」の順序は、名前の昇順となります。  **注意:** `ByDirectory`では、入力データ名がファイルパス形式になっていない入力データはタスクの作成対象になりません。 例えば、`foo/bar.png` はタスクの作成対象になりますが、ディレクトリを含まない`bar.png` や、最後がディレクトリになっている`foo/bar.png/` は対象になりません。  **注意:** `ByDirectory`では、入力データ名のディレクトリ部分がタスクIDの一部として利用されます。そのため、入力データ名のディレクトリ部分は、タスクIDとして利用できる文字で構成されている必要があります。[値の制約についてはこちら。](#section/API-Convention/APIID) 入力データ名のディレクトリ部分にタスクIDとして利用できない文字が含まれている場合、タスクの生成は失敗します。  **注意:** `ByDirectory`では、一つのディレクトリに200ファイルより多くの入力データがある場合、複数のタスクに分かれます。 例えば、`foo/` の中に201ファイルがある場合、fooから２つのタスクが作成されます。１つ目は最初の200ファイルを割り当て、２つ目は最後の１ファイルのタスクに分かれます。 分かれたタスクは、 `{上述のタスクIDの付与則}_連番` の形式でタスクIDが付与されます。連番は、対象の入力データ数の桁数まで0埋めされます。  **注意:** 動画プロジェクトの場合、ディレクトリに含まれる動画の入力データは1つに制限してください。 これが守られない場合、作成されたタスクで動画を再生できない場合があります。  #### ByInputDataCsv: CSVによるタスク一括生成の使い方 以下のように「タスクID,入力データ名,入力データID」を1行毎に指定したCSVを作成します。  ``` task_1,a001.jpg,ca0cb2f9-fec5-49b4-98df-dc34490f9785 task_1,a002.jpg,5ac1987e-ca7c-42a0-9c19-b5b23a41836b task_1,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_2,b001.jpg,4f2ae4d0-7a38-4f9a-be6f-170ba76aba73 task_2,b002.jpg,45ac5852-f20c-4938-9ee9-cc0274401df7 task_2,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee task_3,c001.jpg,3260c7a0-4820-424d-a26e-db7e91dbc139 task_3,centinel.jpg,81d6407b-2172-4fa8-8525-2e43c49267ee ``` CSVのエンコーディングは UTF-8(BOM付き)、UTF-8(BOMなし)、UTF-16(BOM付きLE) のいずれかのみ対応しています。  リクエストボディの`csv_data_path`には、[createTempPath](#operation/createTempPath) APIで取得した一時データ保存先パスを指定してください。[createTempPath](#operation/createTempPath) APIで取得したURLに、事前にCSVファイルをアップロードする必要があります。
 
         Args:
             project_id (str):  プロジェクトID (required)
