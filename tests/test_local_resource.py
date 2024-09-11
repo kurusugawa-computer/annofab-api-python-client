@@ -7,6 +7,7 @@ import os
 import pytest
 
 import annofabapi.exceptions
+from annofabapi.credentials import IdPass
 from annofabapi.resource import build, build_from_env
 
 
@@ -17,7 +18,7 @@ class TestBuild:
 
     def test_raise_ValueError(self):
         with pytest.raises(ValueError):
-            annofabapi.AnnofabApi("test_user", "")
+            annofabapi.AnnofabApi(IdPass("test_user", ""))
 
     def test_build_from_env_raise_CredentialsNotFoundError(self):
         with pytest.raises(annofabapi.exceptions.CredentialsNotFoundError):
@@ -49,5 +50,4 @@ class TestBuild:
         resource = build(user_id, password, endpoint_url="https://localhost:8080")
         assert resource.api.url_prefix == "https://localhost:8080/api/v1"
         assert resource.api2.url_prefix == "https://localhost:8080/api/v2"
-        assert resource.api.login_user_id == user_id
-        assert resource.api.login_password == password
+        assert resource.api.credentials == IdPass(user_id, password)
