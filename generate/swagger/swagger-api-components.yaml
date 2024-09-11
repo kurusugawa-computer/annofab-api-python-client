@@ -373,9 +373,9 @@ components:
         username:
           type: string
         lang:
-          type: string
+          $ref: "#/components/schemas/Lang"
         keylayout:
-          type: string
+          $ref: "#/components/schemas/KeyLayout"
         confirmation_code:
           type: string
     LoginRequest:
@@ -390,8 +390,29 @@ components:
           type: string
           format: password
           description: パスワード
+    PostExchangeCodeResponse:
+      oneOf:
+        - $ref: "#/components/schemas/PostExchangeCodeLoginResponse"
+        - $ref: "#/components/schemas/UnconfirmedUserResponse"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          PostExchangeCodeLoginResponse: "#/components/schemas/PostExchangeCodeLoginResponse"
+          UnconfirmedUserResponse: "#/components/schemas/UnconfirmedUserResponse"
     PostExchangeCodeLoginResponse:
-      $ref: "#/components/schemas/LoginSucceedResponse"
+      type: object
+      required:
+       - token
+      properties:
+        token:
+          $ref: "#/components/schemas/Token"
+    UnconfirmedUserResponse:
+      type: object
+      required:
+        - temporary_token
+      properties:
+        temporary_token:
+          $ref: "#/components/schemas/Token"
     LoginResponse:
       oneOf:
         - $ref: "#/components/schemas/LoginSucceedResponse"
@@ -1256,7 +1277,7 @@ components:
         * カスタムタスク割当APIでは、Annofabで提供しているAPI (※2) を使用して作業者にタスクを割当してください。
         * タスクの割当に成功した場合は以下のHTTPレスポンスを返却してください。
           * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`
-          * レスポンスボディ: 割当した単一のタスク
+          * レスポンスボディ: 割当した単一の[タスク](https://annofab.com/docs/api/#section/Task)
           * ステータスコード: 200
         * 作業者に割当できるタスクがない場合は以下のHTTPレスポンスを返却してください。
           * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`
@@ -1496,6 +1517,11 @@ components:
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
         通知メッセージID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+    PersonalAccessTokenId:
+      type: string
+      example: "my-personal-access-token"
+      description: |
+        パーソナルアクセストークンのID。ユーザごとに一意な文字列。 [値の制約についてはこちら。](#section/API-Convention/APIID)
     Duration:
       type: string
       example: "PT34H17M36.789S"
@@ -4320,7 +4346,6 @@ components:
         - number_of_rejections
         - work_time_span
         - updated_datetime
-        - operation_updated_datetime
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -4469,7 +4494,7 @@ components:
         タスク生成のルール
         * `TaskGenerateRuleByCount`: 1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。
         * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立てて、ディレクトリ単位でタスクを生成します。
-        * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割り当てを記入したCSVへのS3上のパスを指定してタスクを生成します。
+        * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割り当てを記入したCSVをアップロードした、一時データ保存先パスを指定してタスクを生成します。
       oneOf:
         - $ref: "#/components/schemas/TaskGenerateRuleByCount"
         - $ref: "#/components/schemas/TaskGenerateRuleByDirectory"
@@ -5418,7 +5443,7 @@ components:
             外部ファイルに保存されたアノテーションのパス。`data_holding_type`が`inner`の場合は未指定です。
             レスポンスの場合は`annotation_id`と同じ値が格納されます。
 
-            [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は、[createTempPath](#operation/createTempPath) APIで取得できる一時データ保存先S3パスを格納してください。
+            [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は、[createTempPath](#operation/createTempPath) APIで取得できる一時データ保存先パスを格納してください。
             更新しない場合は、[getEditorAnnotation](#operation/getEditorAnnotation) APIで取得した`path`をそのまま渡せます。
 
             外部ファイルのフォーマットは下表の通りです。
@@ -8184,3 +8209,124 @@ components:
         unread:
           type: integer
           description: 通知メッセージの未読件数
+    PersonalAccessToken:
+      type: object
+      description: パーソナルアクセストークン
+      required:
+        - id
+        - token
+        - account_id
+        - note
+        - expired_datetime
+        - permissions
+        - created_datetime
+      properties:
+        id:
+          $ref: "#/components/schemas/PersonalAccessTokenId"
+        token:
+          type: string
+          description:  |
+            APIアクセスに用いるトークン文字列。
+            リクエストヘッダにおいて `Authorization: Bearer {token}` の形で指定します。
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+        note:
+          type: string
+          description: 人間可読なトークンの説明
+        expired_datetime:
+          type: string
+          description: トークンの有効期限
+          format: date-time
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PersonalAccessTokenPermission"
+          description: トークンが持つ権限
+        created_datetime:
+          type: string
+          description: トークンの作成時刻
+          format: date-time
+        last_used_datetime:
+          type: string
+          description: トークンの最終利用時刻
+          format: date-time
+    PersonalAccessTokenInfo:
+      type: object
+      description: パーソナルアクセストークンから実際のトークン文字列を取り除いたもの
+      required:
+        - id
+        - account_id
+        - note
+        - expired_datetime
+        - permissions
+        - created_datetime
+      properties:
+        id:
+          $ref: "#/components/schemas/PersonalAccessTokenId"
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+        note:
+          type: string
+          description: 人間可読なトークンの説明
+        expired_datetime:
+          type: string
+          description: トークンの有効期限
+          format: date-time
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PersonalAccessTokenPermission"
+          description: トークンが持つ権限
+        created_datetime:
+          type: string
+          description: トークンの作成時刻
+          format: date-time
+        last_used_datetime:
+          type: string
+          description: トークンの最終利用時刻
+          format: date-time
+    IssuePersonalAccessTokenRequest:
+      type: object
+      required:
+        - id
+        - note
+        - expired_datetime
+        - permissions
+      properties:
+        id:
+          $ref: "#/components/schemas/PersonalAccessTokenId"
+        note:
+          type: string
+          description: 人間可読なトークンの説明
+        expiration:
+          type: number
+          description: トークンの期間。 単位はミリ秒
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PersonalAccessTokenPermission"
+          description: トークンに与える権限
+    RevokePersonalAccessTokenRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: 失効させる対象トークンのID
+    PersonalAccessTokenPermission:
+      oneOf:
+        - $ref: "#/components/schemas/PersonalAccessTokenPermissionAll"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          All: "#/components/schemas/PersonalAccessTokenPermissionAll"
+    PersonalAccessTokenPermissionAll:
+        type: object
+        description: トークンにトークン発行者と完全に同等の権限を与える
+        required:
+            - _type
+        properties:
+            _type:
+              type: string
+              enum: ["All"]
