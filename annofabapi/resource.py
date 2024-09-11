@@ -20,7 +20,8 @@ class Resource:
         login_user_id: AnnofabにログインするときのユーザID
         login_password: Annofabにログインするときのパスワード
         endpoint_url: Annofab APIのエンドポイント。
-        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか Falseの時にMFAコードの入力を求められた場合は例外を送出する
+        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
+                                  Falseを渡して且つMFAコードの入力を求められるアカウントを利用する場合、mfa_codeを引数にloginメソッドを直接呼び出さなければならず、そうしない場合は例外を送出する
 
     Attributes:
         api: ``annofabapi.AnnofabApi`` のインスタンス
@@ -66,7 +67,8 @@ def build(
         login_password: Annofabにログインするときのパスワード
         pat: パーソナルアクセストークン。 この値を渡した場合、login_user_idとlogin_passwordは無視される
         endpoint_url: Annofab APIのエンドポイント。
-        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか Falseの時にMFAコードの入力を求められた場合は例外を送出する
+        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
+                                  Falseを渡して且つMFAコードの入力を求められるアカウントを利用する場合、mfa_codeを引数にloginメソッドを直接呼び出さなければならず、そうしない場合は例外を送出する
 
     Returns:
         AnnofabApi, Wrapperのインスタンスを保持するインスタンス
@@ -100,7 +102,8 @@ def build_from_netrc(*, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code
 
     Args:
         endpoint_url: Annofab APIのエンドポイント。
-        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか Falseの時にMFAコードの入力を求められた場合は例外を送出する
+        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
+                                  Falseを渡して且つMFAコードの入力を求められるアカウントを利用する場合、mfa_codeを引数にloginメソッドを直接呼び出さなければならず、そうしない場合は例外を送出する
 
     Returns:
         annofabapi.Resourceインスタンス
@@ -135,7 +138,8 @@ def build_from_env(*, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_v
 
     Args:
         endpoint_url: Annofab APIのエンドポイント。
-        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか Falseの時にMFAコードの入力を求められた場合は例外を送出する
+        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
+                                  Falseを渡して且つMFAコードの入力を求められるアカウントを利用する場合、mfa_codeを引数にloginメソッドを直接呼び出さなければならず、そうしない場合は例外を送出する
 
     Returns:
         annofabapi.Resourceインスタンス

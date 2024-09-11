@@ -238,7 +238,8 @@ class AnnofabApi(AbstractAnnofabApi):
     Args:
         credentials: Annofabにログインするときの認証情報
         endpoint_url: Annofab APIのエンドポイント。
-        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか Falseの時にMFAコードの入力を求められた場合は例外を送出する
+        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
+                                  Falseを渡して且つMFAコードの入力を求められるアカウントを利用する場合、mfa_codeを引数にloginメソッドを直接呼び出さなければならず、そうしない場合は例外を送出する
 
     Attributes:
         tokens: login, refresh_tokenで取得したtoken情報
