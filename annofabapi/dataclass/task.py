@@ -110,7 +110,7 @@ class Task(DataClassJsonMixin):
     updated_datetime: str
     """更新日時"""
 
-    operation_updated_datetime: str
+    operation_updated_datetime: Optional[str]
     """タスクのステータスやフェーズ、担当者などが更新されたときの日時"""
 
     sampling: Optional[str]
