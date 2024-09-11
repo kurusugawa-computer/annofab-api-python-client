@@ -85,6 +85,7 @@ info:
     ジョブID | プロジェクト内で一意
     入力データセットID | 組織内で一意
     プラグインID | 組織内で一意
+    パーソナルアクセストークンID | アカウント内で一意
 
     ## 検索結果の集約を表す AggregationResult
 
@@ -116,7 +117,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.187.2
+  version: 0.192.0
   title: Annofab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -855,6 +856,89 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /my/personal-access-tokens:
+    get:
+      tags:
+        - af-my
+      summary: パーソナルアクセストークン一覧を取得
+      description: |
+        自分が発行したパーソナルアクセストークンの一覧を取得します。
+      security:
+        - Everyone: []
+      operationId: getPersonalAccessTokens
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "swagger-api-components.yaml#/components/schemas/PersonalAccessTokenInfo"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /my/issue-personal-access-token:
+    post:
+      tags:
+        - af-my
+      summary: パーソナルアクセストークンの発行
+      description: |
+        パーソナルアクセストークンを発行します。
+      security:
+        - Everyone: []
+      operationId: issuePersonalAccessToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "swagger-api-components.yaml#/components/schemas/IssuePersonalAccessTokenRequest"
+      responses:
+        "200":
+          description: 正常時、発行したトークンの情報を返す
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/PersonalAccessToken"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /my/revoke-personal-access-token:
+    post:
+      tags:
+        - af-my
+      summary: パーソナルアクセストークンの無効化
+      description: |
+        発行済のパーソナルアクセストークンを無効化します。
+      security:
+        - Everyone: []
+      operationId: revokePersonalAccessToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "swagger-api-components.yaml#/components/schemas/RevokePersonalAccessTokenRequest"
+      responses:
+        "200":
+          description: 正常時、無効化したトークンの情報を返す
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/PersonalAccessTokenInfo"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /organizations:
     post:
       tags:
@@ -944,7 +1028,7 @@ paths:
       description: |
         組織を更新します。
       security:
-        - OrganizationOwner: []
+        - OrganizationAdministrator: []
       operationId: putOrganization
       parameters:
       - name: organization_name
@@ -3955,7 +4039,7 @@ paths:
 
         * `ByCount`：1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。この作成ルールは、画像を同じ枚数均等にタスクに割り振りたい場合に便利です。
         * `ByDirectory`：入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。この作成ルールは、動画などから切り出した画像をディレクトリ別に格納し、その動画（ディレクトリ）の単位でタスクを作りたい場合に便利です。
-        * `ByInputDataCsv`：入力データを各タスクに割り振ったCSVへのS3パスを指定してタスクを生成できます。この作成ルールは、特定のデータの組み合わせを持ったタスクを作成したい場合に便利です。
+        * `ByInputDataCsv`：入力データを各タスクに割り振ったCSVへの一時データ保存先を指定してタスクを生成できます。この作成ルールは、特定のデータの組み合わせを持ったタスクを作成したい場合に便利です。
 
         本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`gen-tasks`）。
 
@@ -4042,7 +4126,7 @@ paths:
         ```
         CSVのエンコーディングは UTF-8(BOM付き)、UTF-8(BOMなし)、UTF-16(BOM付きLE) のいずれかのみ対応しています。
 
-        リクエストボディの`csv_data_path`には、[createTempPath](#operation/createTempPath) APIで取得したS3パスを指定してください。[createTempPath](#operation/createTempPath) APIで取得したURLに、事前にCSVファイルをアップロードする必要があります。
+        リクエストボディの`csv_data_path`には、[createTempPath](#operation/createTempPath) APIで取得した一時データ保存先パスを指定してください。[createTempPath](#operation/createTempPath) APIで取得したURLに、事前にCSVファイルをアップロードする必要があります。
 
       security:
       - ProjectOwner: []
