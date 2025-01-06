@@ -52,10 +52,10 @@ fi
 
 JAVA_OPTS="-Dlog.level=info"
 
-# `__DictStrKeyAnyValue__`の意味：あとで`Dict[str,Any]`に置換できるようにするための無意味な値
+# `__DictStrKeyAnyValue__`の意味：あとで`dict[str,Any]`に置換できるようにするための無意味な値
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --output /local/out \
-    --type-mappings array=List,DateTime=str,date=str,object=__DictStrKeyAnyValue__"
+    --type-mappings array=list,DateTime=str,date=str,object=__dictStrKeyAnyValue__"
 
 # v1 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
@@ -240,12 +240,12 @@ declare -a model_files=(${MODELS_DIR}/task_history.py ${MODELS_DIR}/task_history
 cat partial-header/dataclass/common.py partial-header/dataclass/task.py  \
  ${model_files[@]} > ../annofabapi/dataclass/task.py
 
-# `dict(str, int)` を `Dict[str, int]`のように置換する
+# `dict(str, int)` を `dict[str, int]`のように置換する
 sed -E -e "s/dict\((.*)\)/Dict\[\1\]/g"  ../annofabapi/dataclass/*.py  --in-place
-# Task.metadataなどでは、`__DictStrKeyAnyValue__`を`Dict[str, Any]`に置換すると正しい型にならないので、無理やり正しい型に置換する
-sed -e  "s/Dict\[str, __DictStrKeyAnyValue__\]/Dict[str, Any]/g" ../annofabapi/dataclass/*.py  --in-place 
-# `__DictStrKeyAnyValue__`を`Dict[str, Any]`に置換する
-sed  -e "s/__DictStrKeyAnyValue__/Dict[str,Any]/g"  ../annofabapi/dataclass/*.py  --in-place
+# Task.metadataなどでは、`__DictStrKeyAnyValue__`を`dict[str, Any]`に置換すると正しい型にならないので、無理やり正しい型に置換する
+sed -e  "s/Dict\[str, __DictStrKeyAnyValue__\]/dict[str, Any]/g" ../annofabapi/dataclass/*.py  --in-place 
+# `__DictStrKeyAnyValue__`を`dict[str, Any]`に置換する
+sed  -e "s/__DictStrKeyAnyValue__/dict[str,Any]/g"  ../annofabapi/dataclass/*.py  --in-place
 
 
 

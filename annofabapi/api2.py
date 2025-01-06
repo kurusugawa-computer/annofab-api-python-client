@@ -50,8 +50,8 @@ class AnnofabApi2(AbstractAnnofabApi2):
         http_method: str,
         url_path: str,
         *,
-        query_params: Optional[Dict[str, Any]] = None,
-        header_params: Optional[Dict[str, Any]] = None,
+        query_params: Optional[dict[str, Any]] = None,
+        header_params: Optional[dict[str, Any]] = None,
         request_body: Optional[Any] = None,  # noqa: ANN401
         raise_for_status: bool = True,
     ) -> Tuple[Any, requests.Response]:
@@ -176,12 +176,12 @@ class AnnofabApi2(AbstractAnnofabApi2):
     #########################################
     # Public Method : Cache
     #########################################
-    def get_signed_access_v2(self, query_params: Dict[str, Any]) -> Tuple[Dict[str, Any], requests.Response]:
+    def get_signed_access_v2(self, query_params: dict[str, Any]) -> Tuple[dict[str, Any], requests.Response]:
         """
         Signed Cookieを取得して、インスタンスに保持する。
 
         Args:
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 url (str): アクセスするページのURL
 
         Returns:
@@ -191,7 +191,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
 
         url_path = "/sign-url"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
 

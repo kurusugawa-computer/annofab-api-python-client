@@ -16,7 +16,7 @@ from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import CommentType, TaskPhase
 
-CommentNode = Dict[str, Any]
+CommentNode = dict[str, Any]
 
 
 @dataclass

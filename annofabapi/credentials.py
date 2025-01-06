@@ -36,7 +36,7 @@ class Tokens(HasAuthToken):
     def auth_token(self) -> str:
         return self.id_token
 
-    def to_dict(self) -> Dict[str, str]:
+    def to_dict(self) -> dict[str, str]:
         return {
             "id_token": self.id_token,
             "access_token": self.access_token,
@@ -44,5 +44,5 @@ class Tokens(HasAuthToken):
         }
 
     @staticmethod
-    def from_dict(d: Dict[str, str]) -> "Tokens":
+    def from_dict(d: dict[str, str]) -> "Tokens":
         return Tokens(id_token=d["id_token"], access_token=d["access_token"], refresh_token=d["refresh_token"])

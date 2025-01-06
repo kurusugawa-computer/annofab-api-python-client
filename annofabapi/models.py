@@ -162,7 +162,7 @@ Example:
 """
 
 ### 以下は自動生成の部分
-AcceptOrganizationInvitationRequest = Dict[str, Any]
+AcceptOrganizationInvitationRequest = dict[str, Any]
 """
 
 
@@ -173,7 +173,7 @@ Kyes of Dict
 
 """
 
-Account = Dict[str, Any]
+Account = dict[str, Any]
 """
 
 
@@ -202,7 +202,7 @@ Kyes of Dict
 
 """
 
-AccountWorktimeStatistics = Dict[str, Any]
+AccountWorktimeStatistics = dict[str, Any]
 """
 
 
@@ -219,7 +219,7 @@ Kyes of Dict
 
 """
 
-ActionRequired = Dict[str, Any]
+ActionRequired = dict[str, Any]
 """
 対応が必要な検査コメントが残っている時のエラー
 
@@ -232,7 +232,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataDefaultType = Dict[str, Any]
+AdditionalDataDefaultType = dict[str, Any]
 """
 属性の初期値です。  初期値を設定する場合、属性の種類に応じて次の値を指定してください。 属性の種類に対して有効でない初期値を指定した場合、その初期値は無視されます。  |属性の種類（`type`）                 | 指定できる初期値| |-----------------|----------| | flag    | 真偽値(`true` or `false`)| | integer    | 整数値         | | text | 文字列         | | comment         | 文字列| | choice        | 選択肢(`choices`)の `choice_id` | | select           | 選択肢(`choices`)の`choice_id`|  属性の種類が`tracking`または`link`の場合、初期値を設定できません。  初期値を設定しない場合は、nullまたは空文字を指定してください。 
 
@@ -257,7 +257,7 @@ class AdditionalDataDefinitionType(Enum):
     LINK = "link"
 
 
-AdditionalDataDefinitionV1 = Dict[str, Any]
+AdditionalDataDefinitionV1 = dict[str, Any]
 """
 
 
@@ -288,7 +288,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataDefinitionV1Choices = Dict[str, Any]
+AdditionalDataDefinitionV1Choices = dict[str, Any]
 """
 
 
@@ -303,7 +303,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataDefinitionV2 = Dict[str, Any]
+AdditionalDataDefinitionV2 = dict[str, Any]
 """
 
 
@@ -328,7 +328,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestriction = Dict[str, Any]
+AdditionalDataRestriction = dict[str, Any]
 """
 
 
@@ -341,7 +341,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionCondition = Dict[str, Any]
+AdditionalDataRestrictionCondition = dict[str, Any]
 """
 属性の制約    * `AdditionalDataRestrictionConditionCanInput`: 属性値の入力を許可するかどうか   * `AdditionalDataRestrictionConditionEquals`: 指定した値に等しい   * `AdditionalDataRestrictionConditionNotEquals`: 指定した値に等しくない   * `AdditionalDataRestrictionConditionMatches`: 指定した正規表現に一致する   * `AdditionalDataRestrictionConditionNotMatches`: 指定した正規表現に一致しない   * `AdditionalDataRestrictionConditionHasLabel`: 指定したラベルIDに一致する（アノテーションリンク属性限定）   * `AdditionalDataRestrictionConditionImply`: 指定した前提条件を満たすときのみ、制約を満たすかどうか  以下のJSONは、「属性IDが`attr2`の属性値が`true`ならば、属性IDが`attr1`の属性値は`choice1`である」という制約を表しています。  ``` {     \"additional_data_definition_id\": \"attr1\",     \"condition\": {         \"_type\": \"Imply\",         \"premise\": {             \"additional_data_definition_id\": \"attr2\",             \"condition\": {                 \"_type\": \"Equals\",                 \"value\": \"true\"             }         },         \"condition\": {             \"_type\": \"Equals\",             \"value\": \"choice1\"         }     } } ``` 
 
@@ -362,7 +362,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionCanInput = Dict[str, Any]
+AdditionalDataRestrictionConditionCanInput = dict[str, Any]
 """
 
 
@@ -375,7 +375,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionEquals = Dict[str, Any]
+AdditionalDataRestrictionConditionEquals = dict[str, Any]
 """
 
 
@@ -388,7 +388,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionHasLabel = Dict[str, Any]
+AdditionalDataRestrictionConditionHasLabel = dict[str, Any]
 """
 
 
@@ -401,7 +401,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionImply = Dict[str, Any]
+AdditionalDataRestrictionConditionImply = dict[str, Any]
 """
 
 
@@ -416,7 +416,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionMatches = Dict[str, Any]
+AdditionalDataRestrictionConditionMatches = dict[str, Any]
 """
 
 
@@ -429,7 +429,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionNotEquals = Dict[str, Any]
+AdditionalDataRestrictionConditionNotEquals = dict[str, Any]
 """
 
 
@@ -442,7 +442,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionNotMatches = Dict[str, Any]
+AdditionalDataRestrictionConditionNotMatches = dict[str, Any]
 """
 
 
@@ -455,7 +455,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataV1 = Dict[str, Any]
+AdditionalDataV1 = dict[str, Any]
 """
 
 
@@ -474,7 +474,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataV2 = Dict[str, Any]
+AdditionalDataV2 = dict[str, Any]
 """
 
 
@@ -487,7 +487,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataValue = Dict[str, Any]
+AdditionalDataValue = dict[str, Any]
 """
 属性値 
 
@@ -504,7 +504,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueChoice = Dict[str, Any]
+AdditionalDataValueChoice = dict[str, Any]
 """
 
 
@@ -517,7 +517,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueComment = Dict[str, Any]
+AdditionalDataValueComment = dict[str, Any]
 """
 
 
@@ -530,7 +530,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueFlag = Dict[str, Any]
+AdditionalDataValueFlag = dict[str, Any]
 """
 
 
@@ -543,7 +543,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueInteger = Dict[str, Any]
+AdditionalDataValueInteger = dict[str, Any]
 """
 
 
@@ -556,7 +556,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueLink = Dict[str, Any]
+AdditionalDataValueLink = dict[str, Any]
 """
 
 
@@ -569,7 +569,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueSelect = Dict[str, Any]
+AdditionalDataValueSelect = dict[str, Any]
 """
 
 
@@ -582,7 +582,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueText = Dict[str, Any]
+AdditionalDataValueText = dict[str, Any]
 """
 
 
@@ -595,7 +595,7 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueTracking = Dict[str, Any]
+AdditionalDataValueTracking = dict[str, Any]
 """
 
 
@@ -608,7 +608,7 @@ Kyes of Dict
 
 """
 
-AggregationResult = Dict[str, Any]
+AggregationResult = dict[str, Any]
 """
 
 
@@ -627,7 +627,7 @@ class AnnotationDataHoldingType(Enum):
     OUTER = "outer"
 
 
-AnnotationDataV1 = Dict[str, Any]
+AnnotationDataV1 = dict[str, Any]
 """
 アノテーションの座標値や区間などのデータ。  APIのレスポンスから参照される場合は、`FullAnnotationDataString`形式です。 [putAnnotation](#operation/putAnnotation) APIのリクエストボディは、`FullAnnotationDataString`形式または`FullAnnotationData`形式に対応しています。 
 
@@ -636,7 +636,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentInput = Dict[str, Any]
+AnnotationDetailContentInput = dict[str, Any]
 """
 - **AnnotationDetailContentInputInner**   - アノテーションのデータ部をJSON内部に保持する場合、この型を利用します - **AnnotationDetailContentInputOuter**   - アノテーションのデータ部を外部ファイルの形式（画像など）で保持する場合、この型を利用します 
 
@@ -651,7 +651,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentInputInner = Dict[str, Any]
+AnnotationDetailContentInputInner = dict[str, Any]
 """
 アノテーションのデータ部をJSON内部に保持します
 
@@ -664,7 +664,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentInputOuter = Dict[str, Any]
+AnnotationDetailContentInputOuter = dict[str, Any]
 """
 アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
 
@@ -677,7 +677,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentOutput = Dict[str, Any]
+AnnotationDetailContentOutput = dict[str, Any]
 """
 - **AnnotationDetailContentOutputInner**   - アノテーションのデータ部をJSON内部に保持している場合、通常はこの型の値となります - **AnnotationDetailContentOutputInnerUnknown**   - アノテーションのデータ部をJSON内部に保持しており、且つ、AnnotationDetailV1の形式で保存されていたデータのAnnotationTypeが特定できない場合にこの値となります   - 典型的な例では、アノテーションの保存後にアノテーション仕様が書き換わっていた場合が該当します - **AnnotationDetailContentOutputOuter**   - アノテーションのデータ部を外部ファイルの形式（画像など）で保持している場合、通常はこの型の値となります - **AnnotationDetailContentOutputOuterUnresolved**   - アノテーションのデータ部を外部ファイルの形式（画像など）で保持しており、且つ、Outerのurl / etagを解決しなかった場合（過去のアノテーションを取得した場合等）にこの値となります 
 
@@ -694,7 +694,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentOutputInner = Dict[str, Any]
+AnnotationDetailContentOutputInner = dict[str, Any]
 """
 アノテーションのデータ部をJSON内部に保持します
 
@@ -707,7 +707,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentOutputInnerUnknown = Dict[str, Any]
+AnnotationDetailContentOutputInnerUnknown = dict[str, Any]
 """
 アノテーションのデータ部をJSON内部に保持します。 AnnotationDetailV1の形式で保存されていたデータのAnnotationTypeが特定できない場合にこの値となります。 典型的な例では、アノテーションの保存後にアノテーション仕様が書き換わっていた場合が該当します。 
 
@@ -720,7 +720,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentOutputOuter = Dict[str, Any]
+AnnotationDetailContentOutputOuter = dict[str, Any]
 """
 アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
 
@@ -735,7 +735,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentOutputOuterUnresolved = Dict[str, Any]
+AnnotationDetailContentOutputOuterUnresolved = dict[str, Any]
 """
 アノテーションのデータ部を外部ファイルの形式（画像など）で保持します。 Outerのurl / etagを解決しなかった場合（過去のアノテーションを取得した場合等）にこの値となります。 
 
@@ -746,7 +746,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailV1 = Dict[str, Any]
+AnnotationDetailV1 = dict[str, Any]
 """
 
 
@@ -779,7 +779,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailV2Create = Dict[str, Any]
+AnnotationDetailV2Create = dict[str, Any]
 """
 新規にアノテーションを作成する場合にこの型を利用します。
 
@@ -800,7 +800,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailV2Get = Dict[str, Any]
+AnnotationDetailV2Get = dict[str, Any]
 """
 
 
@@ -827,7 +827,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailV2Import = Dict[str, Any]
+AnnotationDetailV2Import = dict[str, Any]
 """
 過去にAnnofab内外で作成したアノテーションをそのままインポートする場合にこの型を利用します。
 
@@ -854,7 +854,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailV2Input = Dict[str, Any]
+AnnotationDetailV2Input = dict[str, Any]
 """
 - **AnnotationDetailV2Create**   - 新規にアノテーションを作成する場合にこの型を利用します。 - **AnnotationDetailV2Import**   - 過去にAnnofab内外で作成したアノテーションをそのままインポートする場合にこの型を利用します。 - **AnnotationDetailV2Update**   - 既に存在するアノテーションを更新する場合にこの型を利用します 
 
@@ -881,7 +881,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailV2Output = Dict[str, Any]
+AnnotationDetailV2Output = dict[str, Any]
 """
 
 
@@ -890,7 +890,7 @@ Kyes of Dict
 
 """
 
-AnnotationDetailV2Update = Dict[str, Any]
+AnnotationDetailV2Update = dict[str, Any]
 """
 既に存在するアノテーションを更新する場合にこの型を利用します
 
@@ -911,7 +911,7 @@ Kyes of Dict
 
 """
 
-AnnotationEditorFeature = Dict[str, Any]
+AnnotationEditorFeature = dict[str, Any]
 """
 塗りつぶしの作図機能に関する情報 
 
@@ -932,7 +932,7 @@ Kyes of Dict
 
 """
 
-AnnotationInput = Dict[str, Any]
+AnnotationInput = dict[str, Any]
 """
 
 
@@ -953,7 +953,7 @@ Kyes of Dict
 
 """
 
-AnnotationList = Dict[str, Any]
+AnnotationList = dict[str, Any]
 """
 
 
@@ -974,7 +974,7 @@ Kyes of Dict
 
 """
 
-AnnotationOutput = Dict[str, Any]
+AnnotationOutput = dict[str, Any]
 """
 
 
@@ -995,7 +995,7 @@ Kyes of Dict
 
 """
 
-AnnotationPropsForEditor = Dict[str, Any]
+AnnotationPropsForEditor = dict[str, Any]
 """
 アノテーションエディタ用のアノテーション毎のプロパティです。<br /> ここに含まれているデータはアノテーション結果に反映されず、エディタが利用するために存在します。  エディタ用のデータであるため、たとえば`can_delete`や`can_edit_data`が`false`でも、APIによる編集は妨げません。<br /> ここで定義されているデータを利用して動作を変えるかどうかは、エディタによって異なります。 
 
@@ -1016,7 +1016,7 @@ Kyes of Dict
 
 """
 
-AnnotationQuery = Dict[str, Any]
+AnnotationQuery = dict[str, Any]
 """
 アノテーションの絞り込み条件 
 
@@ -1041,7 +1041,7 @@ Kyes of Dict
 
 """
 
-AnnotationSpecs = Dict[str, Any]
+AnnotationSpecs = dict[str, Any]
 """
 
 
@@ -1070,7 +1070,7 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsHistory = Dict[str, Any]
+AnnotationSpecsHistory = dict[str, Any]
 """
 
 
@@ -1091,7 +1091,7 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsMovieOption = Dict[str, Any]
+AnnotationSpecsMovieOption = dict[str, Any]
 """
 
 
@@ -1102,7 +1102,7 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsOption = Dict[str, Any]
+AnnotationSpecsOption = dict[str, Any]
 """
 アノテーション仕様のオプション設定。  現時点では動画プロジェクトでのみ利用・指定可能。動画以外のプロジェクトでは値なし。  動画プロジェクトで値が未指定の場合、AnnotationSpecsOption内の値はすべてデフォルト値が指定されたものとして扱われる。 
 
@@ -1111,7 +1111,7 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsRequest = Dict[str, Any]
+AnnotationSpecsRequest = dict[str, Any]
 """
 
 
@@ -1142,7 +1142,7 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsRequestV1 = Dict[str, Any]
+AnnotationSpecsRequestV1 = dict[str, Any]
 """
 
 
@@ -1165,7 +1165,7 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsRequestV2 = Dict[str, Any]
+AnnotationSpecsRequestV2 = dict[str, Any]
 """
 
 
@@ -1194,7 +1194,7 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsRequestV3 = Dict[str, Any]
+AnnotationSpecsRequestV3 = dict[str, Any]
 """
 
 
@@ -1225,7 +1225,7 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsV1 = Dict[str, Any]
+AnnotationSpecsV1 = dict[str, Any]
 """
 
 
@@ -1246,7 +1246,7 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsV2 = Dict[str, Any]
+AnnotationSpecsV2 = dict[str, Any]
 """
 
 
@@ -1273,7 +1273,7 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsV3 = Dict[str, Any]
+AnnotationSpecsV3 = dict[str, Any]
 """
 
 
@@ -1302,7 +1302,7 @@ Kyes of Dict
 
 """
 
-AnnotationType = Dict[str, Any]
+AnnotationType = dict[str, Any]
 """
 
 
@@ -1311,7 +1311,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionAnnotationEditorFeature = Dict[str, Any]
+AnnotationTypeFieldDefinitionAnnotationEditorFeature = dict[str, Any]
 """
 作図ツール・作図モードのフィールドの定義 
 
@@ -1322,7 +1322,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionDisplayLineDirection = Dict[str, Any]
+AnnotationTypeFieldDefinitionDisplayLineDirection = dict[str, Any]
 """
 線の向き表示/非表示の設定のフィールド定義 
 
@@ -1333,7 +1333,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionMarginOfErrorTolerance = Dict[str, Any]
+AnnotationTypeFieldDefinitionMarginOfErrorTolerance = dict[str, Any]
 """
 誤差許容範囲のフィールド定義 
 
@@ -1344,7 +1344,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionMinimumArea2d = Dict[str, Any]
+AnnotationTypeFieldDefinitionMinimumArea2d = dict[str, Any]
 """
 最小の面積のフィールド定義 
 
@@ -1355,7 +1355,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionMinimumSize2d = Dict[str, Any]
+AnnotationTypeFieldDefinitionMinimumSize2d = dict[str, Any]
 """
 アノテーションの最小サイズに関する設定のフィールド定義 
 
@@ -1366,7 +1366,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionMinimumSize2dWithDefaultInsertPosition = Dict[str, Any]
+AnnotationTypeFieldDefinitionMinimumSize2dWithDefaultInsertPosition = dict[str, Any]
 """
 アノテーションの最小サイズに関する設定、および最小矩形の挿入位置のフィールド定義 
 
@@ -1377,7 +1377,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionOneBooleanField = Dict[str, Any]
+AnnotationTypeFieldDefinitionOneBooleanField = dict[str, Any]
 """
 真偽値の値をひとつだけ持つフィールドの定義 
 
@@ -1396,7 +1396,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionOneIntegerField = Dict[str, Any]
+AnnotationTypeFieldDefinitionOneIntegerField = dict[str, Any]
 """
 数値の値をひとつだけ持つフィールドの定義 
 
@@ -1417,7 +1417,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionOneStringField = Dict[str, Any]
+AnnotationTypeFieldDefinitionOneStringField = dict[str, Any]
 """
 文字列の値をひとつだけ持つフィールドの定義 
 
@@ -1438,7 +1438,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionVertexCountMinMax = Dict[str, Any]
+AnnotationTypeFieldDefinitionVertexCountMinMax = dict[str, Any]
 """
 頂点数の最大・最小のフィールド定義 
 
@@ -1459,7 +1459,7 @@ class AnnotationTypeFieldMinWarnRule(Enum):
     OR = "or"
 
 
-AnnotationTypeFieldValue = Dict[str, Any]
+AnnotationTypeFieldValue = dict[str, Any]
 """
 ユーザー定義アノテーション種別のフィールドに設定される値です。 アノテーション種別のフィールド定義と対応するフィールド値のみ登録を許可されます。 
 
@@ -1502,7 +1502,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueAnnotationEditorFeature = Dict[str, Any]
+AnnotationTypeFieldValueAnnotationEditorFeature = dict[str, Any]
 """
 作図ツール・作図モード 
 
@@ -1525,7 +1525,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueDisplayLineDirection = Dict[str, Any]
+AnnotationTypeFieldValueDisplayLineDirection = dict[str, Any]
 """
 線の向き表示/非表示の設定 
 
@@ -1538,7 +1538,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueEmptyFieldValue = Dict[str, Any]
+AnnotationTypeFieldValueEmptyFieldValue = dict[str, Any]
 """
 値を持たないフィールド。　アノテーション仕様上に定義が存在すること自体に意味がある場合のフィールド値に利用します。
 
@@ -1549,7 +1549,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueMarginOfErrorTolerance = Dict[str, Any]
+AnnotationTypeFieldValueMarginOfErrorTolerance = dict[str, Any]
 """
 誤差許容範囲
 
@@ -1562,7 +1562,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueMinimumArea2d = Dict[str, Any]
+AnnotationTypeFieldValueMinimumArea2d = dict[str, Any]
 """
 最小の面積 
 
@@ -1575,7 +1575,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueMinimumSize = Dict[str, Any]
+AnnotationTypeFieldValueMinimumSize = dict[str, Any]
 """
 アノテーションの最小サイズに関する設定
 
@@ -1592,7 +1592,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition = Dict[str, Any]
+AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition = dict[str, Any]
 """
 
 
@@ -1611,7 +1611,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueOneBooleanFieldValue = Dict[str, Any]
+AnnotationTypeFieldValueOneBooleanFieldValue = dict[str, Any]
 """
 真偽値をひとつだけ持つフィールド
 
@@ -1624,7 +1624,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueOneIntegerFieldValue = Dict[str, Any]
+AnnotationTypeFieldValueOneIntegerFieldValue = dict[str, Any]
 """
 数値をひとつだけ持つフィールド
 
@@ -1637,7 +1637,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueOneStringFieldValue = Dict[str, Any]
+AnnotationTypeFieldValueOneStringFieldValue = dict[str, Any]
 """
 文字列を一つだけ持つフィールド
 
@@ -1650,7 +1650,7 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueVertexCountMinMax = Dict[str, Any]
+AnnotationTypeFieldValueVertexCountMinMax = dict[str, Any]
 """
 頂点数の最大・最小 
 
@@ -1665,7 +1665,7 @@ Kyes of Dict
 
 """
 
-AnnotationV1 = Dict[str, Any]
+AnnotationV1 = dict[str, Any]
 """
 
 
@@ -1684,7 +1684,7 @@ Kyes of Dict
 
 """
 
-AnnotationV2Input = Dict[str, Any]
+AnnotationV2Input = dict[str, Any]
 """
 
 
@@ -1705,7 +1705,7 @@ Kyes of Dict
 
 """
 
-AnnotationV2Output = Dict[str, Any]
+AnnotationV2Output = dict[str, Any]
 """
 
 
@@ -1736,7 +1736,7 @@ class AssigneeRuleOfResubmittedTask(Enum):
     FIXED = "fixed"
 
 
-BatchAnnotationRequestItem = Dict[str, Any]
+BatchAnnotationRequestItem = dict[str, Any]
 """
 
 
@@ -1759,7 +1759,7 @@ Kyes of Dict
 
 """
 
-BatchAnnotationRequestItemDelete = Dict[str, Any]
+BatchAnnotationRequestItemDelete = dict[str, Any]
 """
 アノテーション削除
 
@@ -1780,7 +1780,7 @@ Kyes of Dict
 
 """
 
-BatchAnnotationRequestItemPutV1 = Dict[str, Any]
+BatchAnnotationRequestItemPutV1 = dict[str, Any]
 """
 アノテーション更新
 
@@ -1793,7 +1793,7 @@ Kyes of Dict
 
 """
 
-BatchAnnotationRequestItemPutV2 = Dict[str, Any]
+BatchAnnotationRequestItemPutV2 = dict[str, Any]
 """
 アノテーション更新
 
@@ -1806,7 +1806,7 @@ Kyes of Dict
 
 """
 
-BatchAnnotationV1 = Dict[str, Any]
+BatchAnnotationV1 = dict[str, Any]
 """
 
 
@@ -1829,7 +1829,7 @@ Kyes of Dict
 
 """
 
-BatchAnnotationV2 = Dict[str, Any]
+BatchAnnotationV2 = dict[str, Any]
 """
 
 
@@ -1852,7 +1852,7 @@ Kyes of Dict
 
 """
 
-BatchCommentRequestItem = Dict[str, Any]
+BatchCommentRequestItem = dict[str, Any]
 """
 
 
@@ -1881,7 +1881,7 @@ Kyes of Dict
 
 """
 
-BatchCommentRequestItemDelete = Dict[str, Any]
+BatchCommentRequestItemDelete = dict[str, Any]
 """
 コメント削除
 
@@ -1894,7 +1894,7 @@ Kyes of Dict
 
 """
 
-BatchCommentRequestItemPut = Dict[str, Any]
+BatchCommentRequestItemPut = dict[str, Any]
 """
 コメント更新
 
@@ -1923,7 +1923,7 @@ Kyes of Dict
 
 """
 
-BatchInputDataRequestItem = Dict[str, Any]
+BatchInputDataRequestItem = dict[str, Any]
 """
 
 
@@ -1932,7 +1932,7 @@ Kyes of Dict
 
 """
 
-BatchInputDataRequestItemDelete = Dict[str, Any]
+BatchInputDataRequestItemDelete = dict[str, Any]
 """
 入力データ削除
 
@@ -1947,7 +1947,7 @@ Kyes of Dict
 
 """
 
-BatchInspectionRequestItem = Dict[str, Any]
+BatchInspectionRequestItem = dict[str, Any]
 """
 
 
@@ -1968,7 +1968,7 @@ Kyes of Dict
 
 """
 
-BatchInspectionRequestItemDelete = Dict[str, Any]
+BatchInspectionRequestItemDelete = dict[str, Any]
 """
 検査コメント削除
 
@@ -1987,7 +1987,7 @@ Kyes of Dict
 
 """
 
-BatchInspectionRequestItemPut = Dict[str, Any]
+BatchInspectionRequestItemPut = dict[str, Any]
 """
 検査コメント更新
 
@@ -2000,7 +2000,7 @@ Kyes of Dict
 
 """
 
-BatchTaskRequestItem = Dict[str, Any]
+BatchTaskRequestItem = dict[str, Any]
 """
 
 
@@ -2009,7 +2009,7 @@ Kyes of Dict
 
 """
 
-BatchTaskRequestItemDelete = Dict[str, Any]
+BatchTaskRequestItemDelete = dict[str, Any]
 """
 タスク削除
 
@@ -2024,7 +2024,7 @@ Kyes of Dict
 
 """
 
-BoundingBoxMetadata = Dict[str, Any]
+BoundingBoxMetadata = dict[str, Any]
 """
 ベクター形式のアノテーション（矩形、ポリゴン、ポリライン、点）のメタデータ
 
@@ -2051,7 +2051,7 @@ Kyes of Dict
 
 """
 
-ChangePasswordRequest = Dict[str, Any]
+ChangePasswordRequest = dict[str, Any]
 """
 
 
@@ -2066,7 +2066,7 @@ Kyes of Dict
 
 """
 
-Color = Dict[str, Any]
+Color = dict[str, Any]
 """
 RGBで表現される色情報
 
@@ -2081,7 +2081,7 @@ Kyes of Dict
 
 """
 
-Comment = Dict[str, Any]
+Comment = dict[str, Any]
 """
 コメント
 
@@ -2118,7 +2118,7 @@ Kyes of Dict
 
 """
 
-CommentNode = Dict[str, Any]
+CommentNode = dict[str, Any]
 """
 コメントのノード固有のデータ。  * `RootComment` - スレッドの先頭のコメント（ルートコメント）。 * `ReplyComment` - あるコメントへの返信コメント。 
 
@@ -2159,7 +2159,7 @@ class CommentType(Enum):
     INSPECTION = "inspection"
 
 
-ConfirmAccountDeleteRequest = Dict[str, Any]
+ConfirmAccountDeleteRequest = dict[str, Any]
 """
 
 
@@ -2170,7 +2170,7 @@ Kyes of Dict
 
 """
 
-ConfirmResetEmailRequest = Dict[str, Any]
+ConfirmResetEmailRequest = dict[str, Any]
 """
 
 
@@ -2181,7 +2181,7 @@ Kyes of Dict
 
 """
 
-ConfirmResetPasswordRequest = Dict[str, Any]
+ConfirmResetPasswordRequest = dict[str, Any]
 """
 
 
@@ -2198,7 +2198,7 @@ Kyes of Dict
 
 """
 
-ConfirmSignUpRequest = Dict[str, Any]
+ConfirmSignUpRequest = dict[str, Any]
 """
 
 
@@ -2221,7 +2221,7 @@ Kyes of Dict
 
 """
 
-ConfirmVerifyEmailRequest = Dict[str, Any]
+ConfirmVerifyEmailRequest = dict[str, Any]
 """
 
 
@@ -2234,7 +2234,7 @@ Kyes of Dict
 
 """
 
-Count = Dict[str, Any]
+Count = dict[str, Any]
 """
 
 
@@ -2249,7 +2249,7 @@ Kyes of Dict
 
 """
 
-CountResult = Dict[str, Any]
+CountResult = dict[str, Any]
 """
 
 
@@ -2268,7 +2268,7 @@ Kyes of Dict
 
 """
 
-DataPath = Dict[str, Any]
+DataPath = dict[str, Any]
 """
 
 
@@ -2281,7 +2281,7 @@ Kyes of Dict
 
 """
 
-DateRange = Dict[str, Any]
+DateRange = dict[str, Any]
 """
 日付の期間
 
@@ -2311,7 +2311,7 @@ class DefaultAnnotationType(Enum):
     CUSTOM = "custom"
 
 
-DeleteProjectResponse = Dict[str, Any]
+DeleteProjectResponse = dict[str, Any]
 """
 
 
@@ -2324,7 +2324,7 @@ Kyes of Dict
 
 """
 
-DuplicatedSegmentationV2 = Dict[str, Any]
+DuplicatedSegmentationV2 = dict[str, Any]
 """
 塗りつぶしv2のラベルに対する1ラベルにつき1アノテーションまでの制約違反エラー
 
@@ -2339,7 +2339,7 @@ Kyes of Dict
 
 """
 
-DuplicatedV1 = Dict[str, Any]
+DuplicatedV1 = dict[str, Any]
 """
 値の重複が許可されていない属性の重複エラー
 
@@ -2356,7 +2356,7 @@ Kyes of Dict
 
 """
 
-DuplicatedV2 = Dict[str, Any]
+DuplicatedV2 = dict[str, Any]
 """
 値の重複が許可されていない属性の重複エラー
 
@@ -2373,7 +2373,7 @@ Kyes of Dict
 
 """
 
-EditorUsageTimespan = Dict[str, Any]
+EditorUsageTimespan = dict[str, Any]
 """
 エディタごとの利用時間
 
@@ -2386,7 +2386,7 @@ Kyes of Dict
 
 """
 
-ErrorItem = Dict[str, Any]
+ErrorItem = dict[str, Any]
 """
 
 
@@ -2401,7 +2401,7 @@ Kyes of Dict
 
 """
 
-Errors = Dict[str, Any]
+Errors = dict[str, Any]
 """
 
 
@@ -2414,7 +2414,7 @@ Kyes of Dict
 
 """
 
-FullAnnotation = Dict[str, Any]
+FullAnnotation = dict[str, Any]
 """
 
 
@@ -2443,7 +2443,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalData = Dict[str, Any]
+FullAnnotationAdditionalData = dict[str, Any]
 """
 属性情報 
 
@@ -2460,7 +2460,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataChoiceValue = Dict[str, Any]
+FullAnnotationAdditionalDataChoiceValue = dict[str, Any]
 """
 
 
@@ -2473,7 +2473,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValue = Dict[str, Any]
+FullAnnotationAdditionalDataValue = dict[str, Any]
 """
 属性値 
 
@@ -2486,7 +2486,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueChoice = Dict[str, Any]
+FullAnnotationAdditionalDataValueChoice = dict[str, Any]
 """
 
 
@@ -2499,7 +2499,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueComment = Dict[str, Any]
+FullAnnotationAdditionalDataValueComment = dict[str, Any]
 """
 
 
@@ -2512,7 +2512,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueFlag = Dict[str, Any]
+FullAnnotationAdditionalDataValueFlag = dict[str, Any]
 """
 
 
@@ -2525,7 +2525,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueInteger = Dict[str, Any]
+FullAnnotationAdditionalDataValueInteger = dict[str, Any]
 """
 
 
@@ -2538,7 +2538,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueLink = Dict[str, Any]
+FullAnnotationAdditionalDataValueLink = dict[str, Any]
 """
 
 
@@ -2551,7 +2551,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueTracking = Dict[str, Any]
+FullAnnotationAdditionalDataValueTracking = dict[str, Any]
 """
 
 
@@ -2564,7 +2564,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationData = Dict[str, Any]
+FullAnnotationData = dict[str, Any]
 """
 アノテーションのデータが格納されます。   * `FullAnnotationDataClassification`: 入力データ全体アノテーション   * `FullAnnotationDataSegmentation`: 塗りつぶしアノテーション   * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2アノテーション   * `FullAnnotationDataBoundingBox`: 矩形アノテーション   * `FullAnnotationDataPoints`: ポリゴンまたはポリラインアノテーション   * `FullAnnotationDataSinglePoint`: 点アノテーション   * `FullAnnotationDataRange`: 動画区間アノテーション   * `FullAnnotationDataUnknown`: カスタムアノテーション 
 
@@ -2591,7 +2591,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataBoundingBox = Dict[str, Any]
+FullAnnotationDataBoundingBox = dict[str, Any]
 """
 
 
@@ -2606,7 +2606,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataClassification = Dict[str, Any]
+FullAnnotationDataClassification = dict[str, Any]
 """
 
 
@@ -2617,7 +2617,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataPoints = Dict[str, Any]
+FullAnnotationDataPoints = dict[str, Any]
 """
 
 
@@ -2630,7 +2630,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataRange = Dict[str, Any]
+FullAnnotationDataRange = dict[str, Any]
 """
 
 
@@ -2645,7 +2645,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataSegmentation = Dict[str, Any]
+FullAnnotationDataSegmentation = dict[str, Any]
 """
 
 
@@ -2658,7 +2658,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataSegmentationV2 = Dict[str, Any]
+FullAnnotationDataSegmentationV2 = dict[str, Any]
 """
 
 
@@ -2671,7 +2671,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataSinglePoint = Dict[str, Any]
+FullAnnotationDataSinglePoint = dict[str, Any]
 """
 
 
@@ -2684,7 +2684,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataUnknown = Dict[str, Any]
+FullAnnotationDataUnknown = dict[str, Any]
 """
 
 
@@ -2697,7 +2697,7 @@ Kyes of Dict
 
 """
 
-FullAnnotationDetail = Dict[str, Any]
+FullAnnotationDetail = dict[str, Any]
 """
 
 
@@ -2739,7 +2739,7 @@ class GraphType(Enum):
     MEAN_LABOR_TIME_PER_MINUTE_OF_MOVIE_BY_MEMBER = "mean_labor_time_per_minute_of_movie_by_member"
 
 
-HistogramItem = Dict[str, Any]
+HistogramItem = dict[str, Any]
 """
 
 
@@ -2754,7 +2754,7 @@ Kyes of Dict
 
 """
 
-IllegalState = Dict[str, Any]
+IllegalState = dict[str, Any]
 """
 作業が開始されていない、担当が割り当たっていない等のエラー
 
@@ -2765,7 +2765,7 @@ Kyes of Dict
 
 """
 
-InitiateMfaSetupRequest = Dict[str, Any]
+InitiateMfaSetupRequest = dict[str, Any]
 """
 
 
@@ -2776,7 +2776,7 @@ Kyes of Dict
 
 """
 
-InitiateMfaSetupResponse = Dict[str, Any]
+InitiateMfaSetupResponse = dict[str, Any]
 """
 
 
@@ -2789,7 +2789,7 @@ Kyes of Dict
 
 """
 
-InputData = Dict[str, Any]
+InputData = dict[str, Any]
 """
 入力データの情報を表すデータ構造です。
 
@@ -2824,7 +2824,7 @@ Kyes of Dict
 
 """
 
-InputDataList = Dict[str, Any]
+InputDataList = dict[str, Any]
 """
 
 
@@ -2856,7 +2856,7 @@ class InputDataOrder(Enum):
     RANDOM = "random"
 
 
-InputDataRequest = Dict[str, Any]
+InputDataRequest = dict[str, Any]
 """
 
 
@@ -2875,7 +2875,7 @@ Kyes of Dict
 
 """
 
-InputDataSet = Dict[str, Any]
+InputDataSet = dict[str, Any]
 """
 入力データセットの情報を表すデータ構造です。
 
@@ -2896,7 +2896,7 @@ Kyes of Dict
 
 """
 
-InputDataSummary = Dict[str, Any]
+InputDataSummary = dict[str, Any]
 """
 ある入力データのバリデーション結果です。入力データIDをキーに引けるようにMap[入力データID, バリデーション結果]となっています
 
@@ -2922,7 +2922,7 @@ class InputDataType(Enum):
     CUSTOM = "custom"
 
 
-Inspection = Dict[str, Any]
+Inspection = dict[str, Any]
 """
 検査コメント
 
@@ -2963,7 +2963,7 @@ Kyes of Dict
 
 """
 
-InspectionData = Dict[str, Any]
+InspectionData = dict[str, Any]
 """
 ##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合  検査コメントの座標値や区間。  * `InspectionDataPoint`：点で検査コメントを付与したときの座標値 * `InspectionDataPolyline`：ポリラインで検査コメントを付与したときの座標値 * `InspectionDataTime`：検査コメントを付与した区間（動画プロジェクトの場合） * `InspectionDataCustom`：カスタム  ##### 返信コメントである（`parent_inspection_id` に値がある）場合  現在は使用しておらず、レスポンスに含まれる値は不定です。APIのレスポンスにこの値を含む場合でも、「スレッドの先頭のコメント」の値を利用してください。  リクエストボディに指定する場合は、スレッドの先頭のコメントと同じ値を指定します。 
 
@@ -2986,7 +2986,7 @@ Kyes of Dict
 
 """
 
-InspectionDataCustom = Dict[str, Any]
+InspectionDataCustom = dict[str, Any]
 """
 
 
@@ -2999,7 +2999,7 @@ Kyes of Dict
 
 """
 
-InspectionDataPoint = Dict[str, Any]
+InspectionDataPoint = dict[str, Any]
 """
 問題のある部分を示す座標 
 
@@ -3014,7 +3014,7 @@ Kyes of Dict
 
 """
 
-InspectionDataPolyline = Dict[str, Any]
+InspectionDataPolyline = dict[str, Any]
 """
 問題のある部分を示すポリライン 
 
@@ -3027,7 +3027,7 @@ Kyes of Dict
 
 """
 
-InspectionDataPolylineCoordinates = Dict[str, Any]
+InspectionDataPolylineCoordinates = dict[str, Any]
 """
 
 
@@ -3040,7 +3040,7 @@ Kyes of Dict
 
 """
 
-InspectionDataTime = Dict[str, Any]
+InspectionDataTime = dict[str, Any]
 """
 問題のある時間帯を表す区間 
 
@@ -3055,7 +3055,7 @@ Kyes of Dict
 
 """
 
-InspectionOrReplyRequired = Dict[str, Any]
+InspectionOrReplyRequired = dict[str, Any]
 """
 新規検査コメントまたは未対応検査コメントへの返信が必要である時のエラー
 
@@ -3066,7 +3066,7 @@ Kyes of Dict
 
 """
 
-InspectionPhrase = Dict[str, Any]
+InspectionPhrase = dict[str, Any]
 """
 
 
@@ -3079,7 +3079,7 @@ Kyes of Dict
 
 """
 
-InspectionStatistics = Dict[str, Any]
+InspectionStatistics = dict[str, Any]
 """
 
 
@@ -3094,7 +3094,7 @@ Kyes of Dict
 
 """
 
-InspectionStatisticsBreakdown = Dict[str, Any]
+InspectionStatisticsBreakdown = dict[str, Any]
 """
 検査コメント数の集計結果
 
@@ -3107,7 +3107,7 @@ Kyes of Dict
 
 """
 
-InspectionStatisticsPhrases = Dict[str, Any]
+InspectionStatisticsPhrases = dict[str, Any]
 """
 
 
@@ -3134,7 +3134,7 @@ class InspectionSummary(Enum):
     COMPLETE = "complete"
 
 
-InspectionValidationError = Dict[str, Any]
+InspectionValidationError = dict[str, Any]
 """
 
 
@@ -3147,7 +3147,7 @@ Kyes of Dict
 
 """
 
-Instruction = Dict[str, Any]
+Instruction = dict[str, Any]
 """
 
 
@@ -3160,7 +3160,7 @@ Kyes of Dict
 
 """
 
-InstructionHistory = Dict[str, Any]
+InstructionHistory = dict[str, Any]
 """
 
 
@@ -3175,7 +3175,7 @@ Kyes of Dict
 
 """
 
-InstructionImage = Dict[str, Any]
+InstructionImage = dict[str, Any]
 """
 
 
@@ -3192,7 +3192,7 @@ Kyes of Dict
 
 """
 
-InstructionImagePath = Dict[str, Any]
+InstructionImagePath = dict[str, Any]
 """
 
 
@@ -3205,7 +3205,7 @@ Kyes of Dict
 
 """
 
-InternationalizationMessage = Dict[str, Any]
+InternationalizationMessage = dict[str, Any]
 """
 
 
@@ -3218,7 +3218,7 @@ Kyes of Dict
 
 """
 
-InternationalizationMessageMessages = Dict[str, Any]
+InternationalizationMessageMessages = dict[str, Any]
 """
 
 
@@ -3231,7 +3231,7 @@ Kyes of Dict
 
 """
 
-InvalidAnnotationData = Dict[str, Any]
+InvalidAnnotationData = dict[str, Any]
 """
 アノテーションデータ不正エラー
 
@@ -3248,7 +3248,7 @@ Kyes of Dict
 
 """
 
-InvalidChoice = Dict[str, Any]
+InvalidChoice = dict[str, Any]
 """
 選択肢不正エラー
 
@@ -3265,7 +3265,7 @@ Kyes of Dict
 
 """
 
-InvalidLinkTarget = Dict[str, Any]
+InvalidLinkTarget = dict[str, Any]
 """
 リンク先アノテーションが許可されているラベルでないエラー
 
@@ -3282,7 +3282,7 @@ Kyes of Dict
 
 """
 
-InvalidValue = Dict[str, Any]
+InvalidValue = dict[str, Any]
 """
 値制約に合致しないエラー
 
@@ -3299,7 +3299,7 @@ Kyes of Dict
 
 """
 
-InviteOrganizationMemberRequest = Dict[str, Any]
+InviteOrganizationMemberRequest = dict[str, Any]
 """
 
 
@@ -3310,7 +3310,7 @@ Kyes of Dict
 
 """
 
-IssuePersonalAccessTokenRequest = Dict[str, Any]
+IssuePersonalAccessTokenRequest = dict[str, Any]
 """
 
 
@@ -3327,7 +3327,7 @@ Kyes of Dict
 
 """
 
-IssueProjectGuestUserTokenRequest = Dict[str, Any]
+IssueProjectGuestUserTokenRequest = dict[str, Any]
 """
 
 
@@ -3346,7 +3346,7 @@ Kyes of Dict
 
 """
 
-IssueProjectTokenRequest = Dict[str, Any]
+IssueProjectTokenRequest = dict[str, Any]
 """
 
 
@@ -3380,7 +3380,7 @@ class KeyLayout(Enum):
     OTHER = "other"
 
 
-Keybind = Dict[str, Any]
+Keybind = dict[str, Any]
 """
 
 
@@ -3397,7 +3397,7 @@ Kyes of Dict
 
 """
 
-LabelStatistics = Dict[str, Any]
+LabelStatistics = dict[str, Any]
 """
 
 
@@ -3412,7 +3412,7 @@ Kyes of Dict
 
 """
 
-LabelV1 = Dict[str, Any]
+LabelV1 = dict[str, Any]
 """
 
 
@@ -3441,7 +3441,7 @@ Kyes of Dict
 
 """
 
-LabelV2 = Dict[str, Any]
+LabelV2 = dict[str, Any]
 """
 
 
@@ -3470,7 +3470,7 @@ Kyes of Dict
 
 """
 
-LabelV3 = Dict[str, Any]
+LabelV3 = dict[str, Any]
 """
 
 
@@ -3506,7 +3506,7 @@ class Lang(Enum):
     VI_VN = "vi-VN"
 
 
-LoginNeedChallengeResponse = Dict[str, Any]
+LoginNeedChallengeResponse = dict[str, Any]
 """
 
 
@@ -3517,7 +3517,7 @@ Kyes of Dict
 
 """
 
-LoginRequest = Dict[str, Any]
+LoginRequest = dict[str, Any]
 """
 
 
@@ -3530,7 +3530,7 @@ Kyes of Dict
 
 """
 
-LoginRespondToAuthChallengeRequest = Dict[str, Any]
+LoginRespondToAuthChallengeRequest = dict[str, Any]
 """
 
 
@@ -3545,7 +3545,7 @@ Kyes of Dict
 
 """
 
-LoginResponse = Dict[str, Any]
+LoginResponse = dict[str, Any]
 """
 
 
@@ -3558,7 +3558,7 @@ Kyes of Dict
 
 """
 
-LoginSucceedResponse = Dict[str, Any]
+LoginSucceedResponse = dict[str, Any]
 """
 
 
@@ -3569,7 +3569,7 @@ Kyes of Dict
 
 """
 
-Marker = Dict[str, Any]
+Marker = dict[str, Any]
 """
 
 
@@ -3586,7 +3586,7 @@ Kyes of Dict
 
 """
 
-Markers = Dict[str, Any]
+Markers = dict[str, Any]
 """
 
 
@@ -3601,7 +3601,7 @@ Kyes of Dict
 
 """
 
-Message = Dict[str, Any]
+Message = dict[str, Any]
 """
 
 
@@ -3614,7 +3614,7 @@ Kyes of Dict
 
 """
 
-MessageOrJobInfo = Dict[str, Any]
+MessageOrJobInfo = dict[str, Any]
 """
 
 
@@ -3645,7 +3645,7 @@ Kyes of Dict
 
 """
 
-MfaSetting = Dict[str, Any]
+MfaSetting = dict[str, Any]
 """
 
 
@@ -3658,7 +3658,7 @@ Kyes of Dict
 
 """
 
-MyAccount = Dict[str, Any]
+MyAccount = dict[str, Any]
 """
 
 
@@ -3691,7 +3691,7 @@ Kyes of Dict
 
 """
 
-MyAccountAllOf = Dict[str, Any]
+MyAccountAllOf = dict[str, Any]
 """
 
 
@@ -3704,7 +3704,7 @@ Kyes of Dict
 
 """
 
-MyNotificationList = Dict[str, Any]
+MyNotificationList = dict[str, Any]
 """
 自分に届いているユーザー通知の取得結果です。
 
@@ -3725,7 +3725,7 @@ Kyes of Dict
 
 """
 
-MyNotificationMessage = Dict[str, Any]
+MyNotificationMessage = dict[str, Any]
 """
 自分への通知メッセージの情報です。
 
@@ -3748,7 +3748,7 @@ Kyes of Dict
 
 """
 
-MyNotificationUnreadMessagesCount = Dict[str, Any]
+MyNotificationUnreadMessagesCount = dict[str, Any]
 """
 通知メッセージの未読件数
 
@@ -3759,7 +3759,7 @@ Kyes of Dict
 
 """
 
-MyOrganization = Dict[str, Any]
+MyOrganization = dict[str, Any]
 """
 
 
@@ -3786,7 +3786,7 @@ Kyes of Dict
 
 """
 
-MyOrganizationList = Dict[str, Any]
+MyOrganizationList = dict[str, Any]
 """
 
 
@@ -3807,7 +3807,7 @@ Kyes of Dict
 
 """
 
-NoCommentInspection = Dict[str, Any]
+NoCommentInspection = dict[str, Any]
 """
 空の検査コメントがある時のエラー
 
@@ -3820,7 +3820,7 @@ Kyes of Dict
 
 """
 
-Organization = Dict[str, Any]
+Organization = dict[str, Any]
 """
 
 
@@ -3843,7 +3843,7 @@ Kyes of Dict
 
 """
 
-OrganizationActivity = Dict[str, Any]
+OrganizationActivity = dict[str, Any]
 """
 
 
@@ -3858,7 +3858,7 @@ Kyes of Dict
 
 """
 
-OrganizationCacheRecord = Dict[str, Any]
+OrganizationCacheRecord = dict[str, Any]
 """
 
 
@@ -3875,7 +3875,7 @@ Kyes of Dict
 
 """
 
-OrganizationJobInfo = Dict[str, Any]
+OrganizationJobInfo = dict[str, Any]
 """
 
 
@@ -3902,7 +3902,7 @@ Kyes of Dict
 
 """
 
-OrganizationJobInfoContainer = Dict[str, Any]
+OrganizationJobInfoContainer = dict[str, Any]
 """
 
 
@@ -3915,7 +3915,7 @@ Kyes of Dict
 
 """
 
-OrganizationMember = Dict[str, Any]
+OrganizationMember = dict[str, Any]
 """
 
 
@@ -3942,7 +3942,7 @@ Kyes of Dict
 
 """
 
-OrganizationMemberList = Dict[str, Any]
+OrganizationMemberList = dict[str, Any]
 """
 
 
@@ -3984,7 +3984,7 @@ class OrganizationMemberStatus(Enum):
     INACTIVE = "inactive"
 
 
-OrganizationPlugin = Dict[str, Any]
+OrganizationPlugin = dict[str, Any]
 """
 
 
@@ -4009,7 +4009,7 @@ Kyes of Dict
 
 """
 
-OrganizationPluginCompatibility = Dict[str, Any]
+OrganizationPluginCompatibility = dict[str, Any]
 """
 プラグイン間の互換性を表します。未指定の場合はinput、outputともに`Top`の`OrganizationPluginCompatibilityType`が設定されます。
 
@@ -4022,7 +4022,7 @@ Kyes of Dict
 
 """
 
-OrganizationPluginCompatibilityType = Dict[str, Any]
+OrganizationPluginCompatibilityType = dict[str, Any]
 """
 プラグインの入力/出力を表す型です。 
 
@@ -4035,7 +4035,7 @@ Kyes of Dict
 
 """
 
-OrganizationPluginCompatibilityTypeBottom = Dict[str, Any]
+OrganizationPluginCompatibilityTypeBottom = dict[str, Any]
 """
 
 
@@ -4046,7 +4046,7 @@ Kyes of Dict
 
 """
 
-OrganizationPluginCompatibilityTypeConstant = Dict[str, Any]
+OrganizationPluginCompatibilityTypeConstant = dict[str, Any]
 """
 
 
@@ -4059,7 +4059,7 @@ Kyes of Dict
 
 """
 
-OrganizationPluginCompatibilityTypeTop = Dict[str, Any]
+OrganizationPluginCompatibilityTypeTop = dict[str, Any]
 """
 
 
@@ -4070,7 +4070,7 @@ Kyes of Dict
 
 """
 
-OrganizationPluginList = Dict[str, Any]
+OrganizationPluginList = dict[str, Any]
 """
 
 
@@ -4091,7 +4091,7 @@ Kyes of Dict
 
 """
 
-OrganizationRegistrationRequest = Dict[str, Any]
+OrganizationRegistrationRequest = dict[str, Any]
 """
 
 
@@ -4104,7 +4104,7 @@ Kyes of Dict
 
 """
 
-OverlappedRangeAnnotation = Dict[str, Any]
+OverlappedRangeAnnotation = dict[str, Any]
 """
 区間が重複しているアノテーションが存在している場合に発生するエラー
 
@@ -4119,7 +4119,7 @@ Kyes of Dict
 
 """
 
-PasswordResetRequest = Dict[str, Any]
+PasswordResetRequest = dict[str, Any]
 """
 
 
@@ -4130,7 +4130,7 @@ Kyes of Dict
 
 """
 
-PersonalAccessToken = Dict[str, Any]
+PersonalAccessToken = dict[str, Any]
 """
 パーソナルアクセストークン
 
@@ -4155,7 +4155,7 @@ Kyes of Dict
 
 """
 
-PersonalAccessTokenInfo = Dict[str, Any]
+PersonalAccessTokenInfo = dict[str, Any]
 """
 パーソナルアクセストークンから実際のトークン文字列を取り除いたもの
 
@@ -4178,7 +4178,7 @@ Kyes of Dict
 
 """
 
-PersonalAccessTokenPermission = Dict[str, Any]
+PersonalAccessTokenPermission = dict[str, Any]
 """
 
 
@@ -4187,7 +4187,7 @@ Kyes of Dict
 
 """
 
-PersonalAccessTokenPermissionAll = Dict[str, Any]
+PersonalAccessTokenPermissionAll = dict[str, Any]
 """
 トークンにトークン発行者と完全に同等の権限を与える
 
@@ -4198,7 +4198,7 @@ Kyes of Dict
 
 """
 
-PhaseStatistics = Dict[str, Any]
+PhaseStatistics = dict[str, Any]
 """
 
 
@@ -4211,7 +4211,7 @@ Kyes of Dict
 
 """
 
-PluginDetail = Dict[str, Any]
+PluginDetail = dict[str, Any]
 """
 * `PluginDetailAnnotationEditor` - カスタムアノテーションエディタ用のプラグインを表します。 * `PluginDetailTaskAssignment` - カスタムタスク割当用のプラグインを表します。 * `PluginDetailAnnotationSpecs` - カスタムアノテーション仕様用のプラグインを表します。 * `PluginDetailExtendedAnnotationSpecs` - カスタムのアノテーション種別を作成するプラグインを表します。 
 
@@ -4234,7 +4234,7 @@ Kyes of Dict
 
 """
 
-PluginDetailAnnotationEditor = Dict[str, Any]
+PluginDetailAnnotationEditor = dict[str, Any]
 """
 カスタムアノテーションエディタ用のプラグインを表します。 
 
@@ -4251,7 +4251,7 @@ Kyes of Dict
 
 """
 
-PluginDetailAnnotationSpecs = Dict[str, Any]
+PluginDetailAnnotationSpecs = dict[str, Any]
 """
 カスタムアノテーション仕様用のプラグインを表します。 
 
@@ -4268,7 +4268,7 @@ Kyes of Dict
 
 """
 
-PluginDetailExtendedAnnotationSpecs = Dict[str, Any]
+PluginDetailExtendedAnnotationSpecs = dict[str, Any]
 """
 カスタムのアノテーション種別を作成するプラグインを表します。 なお、このプラグインが設定されているプロジェクトでは、ここで指定したアノテーション種別以外は使用できなくなります。 
 
@@ -4287,7 +4287,7 @@ Kyes of Dict
 
 """
 
-PluginDetailTaskAssignment = Dict[str, Any]
+PluginDetailTaskAssignment = dict[str, Any]
 """
 カスタムタスク割当用のプラグインを表します。 
 
@@ -4300,7 +4300,7 @@ Kyes of Dict
 
 """
 
-PluginTokenRequest = Dict[str, Any]
+PluginTokenRequest = dict[str, Any]
 """
 
 
@@ -4317,7 +4317,7 @@ Kyes of Dict
 
 """
 
-PluginTokenRequestAuthorizationCode = Dict[str, Any]
+PluginTokenRequestAuthorizationCode = dict[str, Any]
 """
 
 
@@ -4332,7 +4332,7 @@ Kyes of Dict
 
 """
 
-PluginTokenRequestRefreshToken = Dict[str, Any]
+PluginTokenRequestRefreshToken = dict[str, Any]
 """
 
 
@@ -4345,7 +4345,7 @@ Kyes of Dict
 
 """
 
-PluginTokenResponse = Dict[str, Any]
+PluginTokenResponse = dict[str, Any]
 """
 
 
@@ -4358,7 +4358,7 @@ Kyes of Dict
 
 """
 
-Point = Dict[str, Any]
+Point = dict[str, Any]
 """
 点の座標値
 
@@ -4371,7 +4371,7 @@ Kyes of Dict
 
 """
 
-PositionForMinimumBoundingBoxInsertion = Dict[str, Any]
+PositionForMinimumBoundingBoxInsertion = dict[str, Any]
 """
 `annotation_type` が `bounding_box` かつ `min_warn_rule` が `and` または `or` の場合のみ、挿入する最小矩形アノテーションの原点を指定できます。 画像左上の座標が「x=0, y=0」です。 未指定、もしくは「画像外に飛び出たアノテーション」を許可していないにも関わらず飛び出してしまう場合は、表示範囲の中央に挿入されます。 「スキャンした帳票の記入欄」や「定点カメラで撮影した製品ラベル」など、アノテーションしたい位置やサイズが多くの画像で共通している場合に便利です。  `annotation_type` が `bounding_box` 以外の場合は必ず未指定となります。 
 
@@ -4384,7 +4384,7 @@ Kyes of Dict
 
 """
 
-PostAnnotationArchiveUpdateResponse = Dict[str, Any]
+PostAnnotationArchiveUpdateResponse = dict[str, Any]
 """
 
 
@@ -4395,7 +4395,7 @@ Kyes of Dict
 
 """
 
-PostAnnotationArchiveUpdateResponseWrapper = Dict[str, Any]
+PostAnnotationArchiveUpdateResponseWrapper = dict[str, Any]
 """
 
 
@@ -4410,7 +4410,7 @@ Kyes of Dict
 
 """
 
-PostExchangeCodeLoginResponse = Dict[str, Any]
+PostExchangeCodeLoginResponse = dict[str, Any]
 """
 
 
@@ -4421,7 +4421,7 @@ Kyes of Dict
 
 """
 
-PostExchangeCodeResponse = Dict[str, Any]
+PostExchangeCodeResponse = dict[str, Any]
 """
 
 
@@ -4434,7 +4434,7 @@ Kyes of Dict
 
 """
 
-PostMfaSettingRequest = Dict[str, Any]
+PostMfaSettingRequest = dict[str, Any]
 """
 
 
@@ -4449,7 +4449,7 @@ Kyes of Dict
 
 """
 
-PostProjectTasksUpdateResponse = Dict[str, Any]
+PostProjectTasksUpdateResponse = dict[str, Any]
 """
 
 
@@ -4470,7 +4470,7 @@ class PricePlan(Enum):
     BUSINESS = "business"
 
 
-Project = Dict[str, Any]
+Project = dict[str, Any]
 """
 
 
@@ -4499,7 +4499,7 @@ Kyes of Dict
 
 """
 
-ProjectAccountStatistics = Dict[str, Any]
+ProjectAccountStatistics = dict[str, Any]
 """
 
 
@@ -4512,7 +4512,7 @@ Kyes of Dict
 
 """
 
-ProjectAccountStatisticsHistory = Dict[str, Any]
+ProjectAccountStatisticsHistory = dict[str, Any]
 """
 
 
@@ -4529,7 +4529,7 @@ Kyes of Dict
 
 """
 
-ProjectCacheRecord = Dict[str, Any]
+ProjectCacheRecord = dict[str, Any]
 """
 
 
@@ -4554,7 +4554,7 @@ Kyes of Dict
 
 """
 
-ProjectConfiguration = Dict[str, Any]
+ProjectConfiguration = dict[str, Any]
 """
 プロジェクトの設定情報
 
@@ -4597,7 +4597,7 @@ Kyes of Dict
 
 """
 
-ProjectContainer = Dict[str, Any]
+ProjectContainer = dict[str, Any]
 """
 
 
@@ -4610,7 +4610,7 @@ Kyes of Dict
 
 """
 
-ProjectCopyRequest = Dict[str, Any]
+ProjectCopyRequest = dict[str, Any]
 """
 
 
@@ -4637,7 +4637,7 @@ Kyes of Dict
 
 """
 
-ProjectCopyResponse = Dict[str, Any]
+ProjectCopyResponse = dict[str, Any]
 """
 
 
@@ -4650,7 +4650,7 @@ Kyes of Dict
 
 """
 
-ProjectGuestUserProfile = Dict[str, Any]
+ProjectGuestUserProfile = dict[str, Any]
 """
 ゲストユーザーのプロフィール情報
 
@@ -4667,7 +4667,7 @@ Kyes of Dict
 
 """
 
-ProjectInputsUpdateResponse = Dict[str, Any]
+ProjectInputsUpdateResponse = dict[str, Any]
 """
 
 
@@ -4678,7 +4678,7 @@ Kyes of Dict
 
 """
 
-ProjectJobInfo = Dict[str, Any]
+ProjectJobInfo = dict[str, Any]
 """
 
 
@@ -4705,7 +4705,7 @@ Kyes of Dict
 
 """
 
-ProjectJobInfoContainer = Dict[str, Any]
+ProjectJobInfoContainer = dict[str, Any]
 """
 
 
@@ -4735,7 +4735,7 @@ class ProjectJobType(Enum):
     MOVE_PROJECT = "move-project"
 
 
-ProjectList = Dict[str, Any]
+ProjectList = dict[str, Any]
 """
 
 
@@ -4756,7 +4756,7 @@ Kyes of Dict
 
 """
 
-ProjectMember = Dict[str, Any]
+ProjectMember = dict[str, Any]
 """
 
 
@@ -4787,7 +4787,7 @@ Kyes of Dict
 
 """
 
-ProjectMemberList = Dict[str, Any]
+ProjectMemberList = dict[str, Any]
 """
 
 
@@ -4808,7 +4808,7 @@ Kyes of Dict
 
 """
 
-ProjectMemberRequest = Dict[str, Any]
+ProjectMemberRequest = dict[str, Any]
 """
 
 
@@ -4858,7 +4858,7 @@ class ProjectStatus(Enum):
     INITIALIZING = "initializing"
 
 
-ProjectSummary = Dict[str, Any]
+ProjectSummary = dict[str, Any]
 """
 プロジェクトのサマリー情報
 
@@ -4869,7 +4869,7 @@ Kyes of Dict
 
 """
 
-ProjectTaskCounts = Dict[str, Any]
+ProjectTaskCounts = dict[str, Any]
 """
 
 
@@ -4880,7 +4880,7 @@ Kyes of Dict
 
 """
 
-ProjectTaskCountsTaskCounts = Dict[str, Any]
+ProjectTaskCountsTaskCounts = dict[str, Any]
 """
 
 
@@ -4895,7 +4895,7 @@ Kyes of Dict
 
 """
 
-ProjectTaskStatistics = Dict[str, Any]
+ProjectTaskStatistics = dict[str, Any]
 """
 
 
@@ -4912,7 +4912,7 @@ Kyes of Dict
 
 """
 
-ProjectTaskStatisticsHistory = Dict[str, Any]
+ProjectTaskStatisticsHistory = dict[str, Any]
 """
 
 
@@ -4925,7 +4925,7 @@ Kyes of Dict
 
 """
 
-ProjectToken = Dict[str, Any]
+ProjectToken = dict[str, Any]
 """
 
 
@@ -4940,7 +4940,7 @@ Kyes of Dict
 
 """
 
-ProjectTokenInfo = Dict[str, Any]
+ProjectTokenInfo = dict[str, Any]
 """
 プロジェクトトークンについての付加情報
 
@@ -4955,7 +4955,7 @@ Kyes of Dict
 
 """
 
-PutAnnotationRequest = Dict[str, Any]
+PutAnnotationRequest = dict[str, Any]
 """
 
 
@@ -4974,7 +4974,7 @@ Kyes of Dict
 
 """
 
-PutInputDataSetRequest = Dict[str, Any]
+PutInputDataSetRequest = dict[str, Any]
 """
 入力データセット新規作成/更新
 
@@ -4991,7 +4991,7 @@ Kyes of Dict
 
 """
 
-PutInstructionRequest = Dict[str, Any]
+PutInstructionRequest = dict[str, Any]
 """
 
 
@@ -5004,7 +5004,7 @@ Kyes of Dict
 
 """
 
-PutMarkersRequest = Dict[str, Any]
+PutMarkersRequest = dict[str, Any]
 """
 
 
@@ -5017,7 +5017,7 @@ Kyes of Dict
 
 """
 
-PutMyAccountRequest = Dict[str, Any]
+PutMyAccountRequest = dict[str, Any]
 """
 
 
@@ -5038,7 +5038,7 @@ Kyes of Dict
 
 """
 
-PutMyNotificationMessageOpenedRequest = Dict[str, Any]
+PutMyNotificationMessageOpenedRequest = dict[str, Any]
 """
 
 
@@ -5049,7 +5049,7 @@ Kyes of Dict
 
 """
 
-PutOrganizationMemberRoleRequest = Dict[str, Any]
+PutOrganizationMemberRoleRequest = dict[str, Any]
 """
 
 
@@ -5062,7 +5062,7 @@ Kyes of Dict
 
 """
 
-PutOrganizationPluginRequest = Dict[str, Any]
+PutOrganizationPluginRequest = dict[str, Any]
 """
 
 
@@ -5079,7 +5079,7 @@ Kyes of Dict
 
 """
 
-PutOrganizationRequest = Dict[str, Any]
+PutOrganizationRequest = dict[str, Any]
 """
 
 
@@ -5092,7 +5092,7 @@ Kyes of Dict
 
 """
 
-PutProjectRequest = Dict[str, Any]
+PutProjectRequest = dict[str, Any]
 """
 
 
@@ -5117,7 +5117,7 @@ Kyes of Dict
 
 """
 
-PutProjectResponse = Dict[str, Any]
+PutProjectResponse = dict[str, Any]
 """
 
 
@@ -5130,7 +5130,7 @@ Kyes of Dict
 
 """
 
-PutWebhookRequest = Dict[str, Any]
+PutWebhookRequest = dict[str, Any]
 """
 
 
@@ -5159,7 +5159,7 @@ Kyes of Dict
 
 """
 
-RefreshTokenRequest = Dict[str, Any]
+RefreshTokenRequest = dict[str, Any]
 """
 
 
@@ -5170,7 +5170,7 @@ Kyes of Dict
 
 """
 
-ReplyComment = Dict[str, Any]
+ReplyComment = dict[str, Any]
 """
 
 
@@ -5183,7 +5183,7 @@ Kyes of Dict
 
 """
 
-ReplyRequired = Dict[str, Any]
+ReplyRequired = dict[str, Any]
 """
 返信が必要な検査コメントが残っている時のエラー
 
@@ -5196,7 +5196,7 @@ Kyes of Dict
 
 """
 
-ResetEmailRequest = Dict[str, Any]
+ResetEmailRequest = dict[str, Any]
 """
 
 
@@ -5207,7 +5207,7 @@ Kyes of Dict
 
 """
 
-Resolution = Dict[str, Any]
+Resolution = dict[str, Any]
 """
 
 
@@ -5220,7 +5220,7 @@ Kyes of Dict
 
 """
 
-RevokePersonalAccessTokenRequest = Dict[str, Any]
+RevokePersonalAccessTokenRequest = dict[str, Any]
 """
 
 
@@ -5231,7 +5231,7 @@ Kyes of Dict
 
 """
 
-RevokeProjectTokenRequest = Dict[str, Any]
+RevokeProjectTokenRequest = dict[str, Any]
 """
 
 
@@ -5244,7 +5244,7 @@ Kyes of Dict
 
 """
 
-RootComment = Dict[str, Any]
+RootComment = dict[str, Any]
 """
 
 
@@ -5263,7 +5263,7 @@ Kyes of Dict
 
 """
 
-SegmentationMetadata = Dict[str, Any]
+SegmentationMetadata = dict[str, Any]
 """
 塗りつぶしアノテーションのメタデータ
 
@@ -5280,7 +5280,7 @@ Kyes of Dict
 
 """
 
-SignUpRequest = Dict[str, Any]
+SignUpRequest = dict[str, Any]
 """
 
 
@@ -5291,7 +5291,7 @@ Kyes of Dict
 
 """
 
-SimpleAnnotation = Dict[str, Any]
+SimpleAnnotation = dict[str, Any]
 """
 
 
@@ -5320,7 +5320,7 @@ Kyes of Dict
 
 """
 
-SimpleAnnotationDetail = Dict[str, Any]
+SimpleAnnotationDetail = dict[str, Any]
 """
 
 
@@ -5337,7 +5337,7 @@ Kyes of Dict
 
 """
 
-SingleAnnotation = Dict[str, Any]
+SingleAnnotation = dict[str, Any]
 """
 
 
@@ -5356,7 +5356,7 @@ Kyes of Dict
 
 """
 
-SingleAnnotationDetailV1 = Dict[str, Any]
+SingleAnnotationDetailV1 = dict[str, Any]
 """
 アノテーション情報 
 
@@ -5385,7 +5385,7 @@ Kyes of Dict
 
 """
 
-SingleAnnotationDetailV2 = Dict[str, Any]
+SingleAnnotationDetailV2 = dict[str, Any]
 """
 アノテーション情報 
 
@@ -5408,7 +5408,7 @@ Kyes of Dict
 
 """
 
-SingleAnnotationV1 = Dict[str, Any]
+SingleAnnotationV1 = dict[str, Any]
 """
 
 
@@ -5427,7 +5427,7 @@ Kyes of Dict
 
 """
 
-SingleAnnotationV2 = Dict[str, Any]
+SingleAnnotationV2 = dict[str, Any]
 """
 
 
@@ -5446,7 +5446,7 @@ Kyes of Dict
 
 """
 
-SupplementaryData = Dict[str, Any]
+SupplementaryData = dict[str, Any]
 """
 
 
@@ -5479,7 +5479,7 @@ Kyes of Dict
 
 """
 
-SupplementaryDataRequest = Dict[str, Any]
+SupplementaryDataRequest = dict[str, Any]
 """
 
 
@@ -5509,7 +5509,7 @@ class SupplementaryDataType(Enum):
     CUSTOM = "custom"
 
 
-SystemMetadata = Dict[str, Any]
+SystemMetadata = dict[str, Any]
 """
 Annofabが設定したメタデータです。 `metadata`プロパティとは違い、ユーザー側では値を編集できません。  * `SystemMetadataImage`: 画像プロジェクト用のメタデータ * `SystemMetadataMovie`: 動画プロジェクト用のメタデータ * `SystemMetadataCustom`: カスタムプロジェクト用のメタデータ 
 
@@ -5526,7 +5526,7 @@ Kyes of Dict
 
 """
 
-SystemMetadataCustom = Dict[str, Any]
+SystemMetadataCustom = dict[str, Any]
 """
 カスタムデータ用システムメタデータ。 現行はプロパティがない形式的なオブジェクトです。 
 
@@ -5537,7 +5537,7 @@ Kyes of Dict
 
 """
 
-SystemMetadataImage = Dict[str, Any]
+SystemMetadataImage = dict[str, Any]
 """
 画像データ用システムメタデータ。 
 
@@ -5552,7 +5552,7 @@ Kyes of Dict
 
 """
 
-SystemMetadataMovie = Dict[str, Any]
+SystemMetadataMovie = dict[str, Any]
 """
 動画データ用システムメタデータ。 
 
@@ -5565,7 +5565,7 @@ Kyes of Dict
 
 """
 
-Task = Dict[str, Any]
+Task = dict[str, Any]
 """
 
 
@@ -5604,7 +5604,7 @@ Kyes of Dict
 
 """
 
-TaskAssignRequest = Dict[str, Any]
+TaskAssignRequest = dict[str, Any]
 """
 
 
@@ -5615,7 +5615,7 @@ Kyes of Dict
 
 """
 
-TaskAssignRequestType = Dict[str, Any]
+TaskAssignRequestType = dict[str, Any]
 """
 * `TaskAssignRequestTypeRandom`: 自分自身にランダムにタスクを割り当てます。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: メンバーに指定したタスクを割り当てます。ただし、メンバーはプロジェクトオーナーもしくはチェッカーロールを持つ必要があります。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身に割り当てます。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。 
 
@@ -5632,7 +5632,7 @@ Kyes of Dict
 
 """
 
-TaskAssignRequestTypeRandom = Dict[str, Any]
+TaskAssignRequestTypeRandom = dict[str, Any]
 """
 
 
@@ -5645,7 +5645,7 @@ Kyes of Dict
 
 """
 
-TaskAssignRequestTypeSelection = Dict[str, Any]
+TaskAssignRequestTypeSelection = dict[str, Any]
 """
 
 
@@ -5660,7 +5660,7 @@ Kyes of Dict
 
 """
 
-TaskAssignRequestTypeTaskProperty = Dict[str, Any]
+TaskAssignRequestTypeTaskProperty = dict[str, Any]
 """
 
 
@@ -5683,7 +5683,7 @@ class TaskAssignmentOrder(Enum):
     DESC = "desc"
 
 
-TaskAssignmentProperty = Dict[str, Any]
+TaskAssignmentProperty = dict[str, Any]
 """
 プロジェクト設定でタスクプロパティ割当を有効にしている場合のみ指定してください。 
 
@@ -5709,7 +5709,7 @@ class TaskAssignmentType(Enum):
     CUSTOM = "custom"
 
 
-TaskGenerateRequest = Dict[str, Any]
+TaskGenerateRequest = dict[str, Any]
 """
 
 
@@ -5722,7 +5722,7 @@ Kyes of Dict
 
 """
 
-TaskGenerateResponse = Dict[str, Any]
+TaskGenerateResponse = dict[str, Any]
 """
 
 
@@ -5735,7 +5735,7 @@ Kyes of Dict
 
 """
 
-TaskGenerateResponseWrapper = Dict[str, Any]
+TaskGenerateResponseWrapper = dict[str, Any]
 """
 
 
@@ -5768,7 +5768,7 @@ Kyes of Dict
 
 """
 
-TaskGenerateRule = Dict[str, Any]
+TaskGenerateRule = dict[str, Any]
 """
 タスク生成のルール * `TaskGenerateRuleByCount`: 1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立てて、ディレクトリ単位でタスクを生成します。 * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割り当てを記入したCSVをアップロードした、一時データ保存先パスを指定してタスクを生成します。 
 
@@ -5791,7 +5791,7 @@ Kyes of Dict
 
 """
 
-TaskGenerateRuleByCount = Dict[str, Any]
+TaskGenerateRuleByCount = dict[str, Any]
 """
 1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。
 
@@ -5810,7 +5810,7 @@ Kyes of Dict
 
 """
 
-TaskGenerateRuleByDirectory = Dict[str, Any]
+TaskGenerateRuleByDirectory = dict[str, Any]
 """
 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。
 
@@ -5825,7 +5825,7 @@ Kyes of Dict
 
 """
 
-TaskGenerateRuleByInputDataCsv = Dict[str, Any]
+TaskGenerateRuleByInputDataCsv = dict[str, Any]
 """
 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。 1つのタスクに対する入力データの個数は最大200です。200を超えるタスクが1つでもある場合にはタスク生成に失敗します。 
 
@@ -5838,7 +5838,7 @@ Kyes of Dict
 
 """
 
-TaskHistory = Dict[str, Any]
+TaskHistory = dict[str, Any]
 """
 タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
 
@@ -5865,7 +5865,7 @@ Kyes of Dict
 
 """
 
-TaskHistoryEvent = Dict[str, Any]
+TaskHistoryEvent = dict[str, Any]
 """
 タスク履歴イベントは、タスクの状態が変化した１時点を表します。作業時間は、複数のこれらイベントを集約して計算するものなので、このオブジェクトには含まれません。
 
@@ -5892,7 +5892,7 @@ Kyes of Dict
 
 """
 
-TaskHistoryShort = Dict[str, Any]
+TaskHistoryShort = dict[str, Any]
 """
 タスクのあるフェーズを誰が担当したかを表します。
 
@@ -5909,7 +5909,7 @@ Kyes of Dict
 
 """
 
-TaskInputValidation = Dict[str, Any]
+TaskInputValidation = dict[str, Any]
 """
 タスクの提出操作に対する入力データID別のバリデーション結果です。
 
@@ -5924,7 +5924,7 @@ Kyes of Dict
 
 """
 
-TaskList = Dict[str, Any]
+TaskList = dict[str, Any]
 """
 
 
@@ -5945,7 +5945,7 @@ Kyes of Dict
 
 """
 
-TaskOperation = Dict[str, Any]
+TaskOperation = dict[str, Any]
 """
 
 
@@ -5973,7 +5973,7 @@ class TaskPhase(Enum):
     ACCEPTANCE = "acceptance"
 
 
-TaskPhaseStatistics = Dict[str, Any]
+TaskPhaseStatistics = dict[str, Any]
 """
 
 
@@ -5988,7 +5988,7 @@ Kyes of Dict
 
 """
 
-TaskRequest = Dict[str, Any]
+TaskRequest = dict[str, Any]
 """
 
 
@@ -6016,7 +6016,7 @@ class TaskStatus(Enum):
     CANCELLED = "cancelled"
 
 
-TaskValidation = Dict[str, Any]
+TaskValidation = dict[str, Any]
 """
 タスクの全入力データに対するバリデーション結果です。
 
@@ -6031,7 +6031,7 @@ Kyes of Dict
 
 """
 
-TemporaryUrl = Dict[str, Any]
+TemporaryUrl = dict[str, Any]
 """
 認証済み一時URL
 
@@ -6042,7 +6042,7 @@ Kyes of Dict
 
 """
 
-Token = Dict[str, Any]
+Token = dict[str, Any]
 """
 トークン情報
 
@@ -6057,7 +6057,7 @@ Kyes of Dict
 
 """
 
-UnconfirmedUserResponse = Dict[str, Any]
+UnconfirmedUserResponse = dict[str, Any]
 """
 
 
@@ -6068,7 +6068,7 @@ Kyes of Dict
 
 """
 
-UnknownAdditionalData = Dict[str, Any]
+UnknownAdditionalData = dict[str, Any]
 """
 何らかの原因で、アノテーション仕様にない属性がついているエラー
 
@@ -6085,7 +6085,7 @@ Kyes of Dict
 
 """
 
-UnknownLabel = Dict[str, Any]
+UnknownLabel = dict[str, Any]
 """
 何らかの原因で、アノテーション仕様にないラベルがついているエラー
 
@@ -6100,7 +6100,7 @@ Kyes of Dict
 
 """
 
-UnknownLinkTarget = Dict[str, Any]
+UnknownLinkTarget = dict[str, Any]
 """
 指定されたIDに該当するアノテーションが存在しないエラー
 
@@ -6117,7 +6117,7 @@ Kyes of Dict
 
 """
 
-UsageStatus = Dict[str, Any]
+UsageStatus = dict[str, Any]
 """
 利用状況
 
@@ -6138,7 +6138,7 @@ Kyes of Dict
 
 """
 
-UsageStatusByDay = Dict[str, Any]
+UsageStatusByDay = dict[str, Any]
 """
 日ごとの利用状況
 
@@ -6159,7 +6159,7 @@ Kyes of Dict
 
 """
 
-UsageStatusCsvFileUrl = Dict[str, Any]
+UsageStatusCsvFileUrl = dict[str, Any]
 """
 利用状況詳細のCSVファイルのURL
 
@@ -6170,7 +6170,7 @@ Kyes of Dict
 
 """
 
-UserCacheRecord = Dict[str, Any]
+UserCacheRecord = dict[str, Any]
 """
 
 
@@ -6187,7 +6187,7 @@ Kyes of Dict
 
 """
 
-UserDefinedAnnotationDataType = Dict[str, Any]
+UserDefinedAnnotationDataType = dict[str, Any]
 """
 
 
@@ -6198,7 +6198,7 @@ Kyes of Dict
 
 """
 
-UserDefinedAnnotationTypeDefinition = Dict[str, Any]
+UserDefinedAnnotationTypeDefinition = dict[str, Any]
 """
 
 
@@ -6215,7 +6215,7 @@ Kyes of Dict
 
 """
 
-UserDefinedAnnotationTypeDefinitionFieldDefinitions = Dict[str, Any]
+UserDefinedAnnotationTypeDefinitionFieldDefinitions = dict[str, Any]
 """
 
 
@@ -6228,7 +6228,7 @@ Kyes of Dict
 
 """
 
-UserDefinedAnnotationTypeFieldDefinition = Dict[str, Any]
+UserDefinedAnnotationTypeFieldDefinition = dict[str, Any]
 """
 ユーザー定義のアノテーション種別に設定可能なフィールドについての定義です。 
 
@@ -6251,7 +6251,7 @@ Kyes of Dict
 
 """
 
-ValidationError = Dict[str, Any]
+ValidationError = dict[str, Any]
 """
 
 
@@ -6274,7 +6274,7 @@ Kyes of Dict
 
 """
 
-VerifyEmailRequest = Dict[str, Any]
+VerifyEmailRequest = dict[str, Any]
 """
 
 
@@ -6285,7 +6285,7 @@ Kyes of Dict
 
 """
 
-Webhook = Dict[str, Any]
+Webhook = dict[str, Any]
 """
 
 
@@ -6326,7 +6326,7 @@ class WebhookEventType(Enum):
     PROJECT_COPY_COMPLETED = "project-copy-completed"
 
 
-WebhookHeader = Dict[str, Any]
+WebhookHeader = dict[str, Any]
 """
 
 
@@ -6360,7 +6360,7 @@ class WebhookStatus(Enum):
     INACTIVE = "inactive"
 
 
-WebhookTestRequest = Dict[str, Any]
+WebhookTestRequest = dict[str, Any]
 """
 
 
@@ -6371,7 +6371,7 @@ Kyes of Dict
 
 """
 
-WebhookTestResponse = Dict[str, Any]
+WebhookTestResponse = dict[str, Any]
 """
 
 
@@ -6390,7 +6390,7 @@ Kyes of Dict
 
 """
 
-WorktimeStatistics = Dict[str, Any]
+WorktimeStatistics = dict[str, Any]
 """
 
 
@@ -6411,7 +6411,7 @@ Kyes of Dict
 
 """
 
-WorktimeStatisticsByAccount = Dict[str, Any]
+WorktimeStatisticsByAccount = dict[str, Any]
 """
 
 
@@ -6426,7 +6426,7 @@ Kyes of Dict
 
 """
 
-WorktimeStatisticsByProject = Dict[str, Any]
+WorktimeStatisticsByProject = dict[str, Any]
 """
 
 
@@ -6439,7 +6439,7 @@ Kyes of Dict
 
 """
 
-WorktimeStatisticsData = Dict[str, Any]
+WorktimeStatisticsData = dict[str, Any]
 """
 
 
@@ -6456,7 +6456,7 @@ Kyes of Dict
 
 """
 
-WorktimeStatisticsItem = Dict[str, Any]
+WorktimeStatisticsItem = dict[str, Any]
 """
 
 

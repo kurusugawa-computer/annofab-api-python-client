@@ -7,15 +7,15 @@ from annofabapi.models import (
     TaskStatus,
 )
 
-AnnotationDataV1 = Union[str, Dict[str, Any]]
+AnnotationDataV1 = Union[str, dict[str, Any]]
 FullAnnotationData = Any
-AdditionalDataValue = Dict[str, Any]
-FullAnnotationAdditionalDataValue = Dict[str, Any]
-AnnotationDetailV2Input = Dict[str, Any]
-AnnotationDetailContentOutput = Dict[str, Any]
+AdditionalDataValue = dict[str, Any]
+FullAnnotationAdditionalDataValue = dict[str, Any]
+AnnotationDetailV2Input = dict[str, Any]
+AnnotationDetailContentOutput = dict[str, Any]
 
 AnnotationType = str
 
 
-AnnotationDetailContentInput = Dict[str, Any]
-AnnotationDetailV2Output  = Dict[str, Any]
+AnnotationDetailContentInput = dict[str, Any]
+AnnotationDetailV2Output  = dict[str, Any]

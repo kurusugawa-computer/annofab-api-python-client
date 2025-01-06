@@ -22,7 +22,7 @@ class CreatingTestProject:
 
         self.labels_dict = {"car": "car_label_id"}
 
-    def create_project(self, organization_name: str, project_title: Optional[str] = None) -> Dict[str, Any]:
+    def create_project(self, organization_name: str, project_title: Optional[str] = None) -> dict[str, Any]:
         project_id = str(uuid.uuid4())
 
         request_body = {
@@ -50,7 +50,7 @@ class CreatingTestProject:
         self.service.api.put_webhook(project_id, webhook_id, request_body=request_body)
         logger.debug(f"webhookを登録しました。webhook_id={webhook_id}")
 
-    def _create_bbox_label(self) -> Dict[str, Any]:
+    def _create_bbox_label(self) -> dict[str, Any]:
         label_name = "car"
         label_id = self.labels_dict[label_name]
         return {
@@ -73,7 +73,7 @@ class CreatingTestProject:
             },
         }
 
-    def create_annotation_specs(self, project_id: str) -> Dict[str, Any]:
+    def create_annotation_specs(self, project_id: str) -> dict[str, Any]:
         old_annotation_specs, _ = self.service.api.get_annotation_specs(project_id)
         request_body = {
             "labels": [self._create_bbox_label()],
@@ -183,7 +183,7 @@ class CreatingTestProject:
     def add_inspection_comment(
         self,
         project_id: str,
-        task: Dict[str, Any],
+        task: dict[str, Any],
         input_data_id: str,
         inspection_comment: str,
     ):

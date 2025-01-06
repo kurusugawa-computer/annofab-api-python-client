@@ -33,10 +33,10 @@ class ProjectJobInfo(DataClassJsonMixin):
     job_status: JobStatus
     """"""
 
-    job_execution: Optional[Dict[str, Any]]
+    job_execution: Optional[dict[str, Any]]
     """ジョブの内部情報"""
 
-    job_detail: Optional[Dict[str, Any]]
+    job_detail: Optional[dict[str, Any]]
     """ジョブ結果の内部情報"""
 
     errors: Errors

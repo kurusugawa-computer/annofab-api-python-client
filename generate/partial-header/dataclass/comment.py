@@ -5,4 +5,4 @@ from annofabapi.models import (
 )
 from typing import Dict, Any
 
-CommentNode = Dict[str, Any]
+CommentNode = dict[str, Any]

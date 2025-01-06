@@ -28,7 +28,7 @@ $ generate/generate.sh --download
 │   │   ├── *.py                       ... OpenAPI Specのスキーマに対応したDataClass
 │   ├── generated_api.py                ... WebAPI v1に対応したメソッド
 │   ├── generated_api2.py               ... WebAPI v2に対応したメソッド
-│   ├── models.py                       ... OpenAPI Specのスキーマに対応したクラス（`Enum` or `Dict[str,Any]`）
+│   ├── models.py                       ... OpenAPI Specのスキーマに対応したクラス（`Enum` or `dict[str,Any]`）
 ```
 
 
@@ -114,7 +114,7 @@ OpenAPI Specのスキーマ名をクラス名にした。
 ### クラスの中身
 #### models.py
 OpenAPI Specのスキーマが`Enum`の場合は、列挙体クラスにした。
-それ以外のクラスは、型ヒントとして利用できるよう、`Foo=Dict[str,Any]`のようにDict型のエイリアスとした。
+それ以外のクラスは、型ヒントとして利用できるよう、`Foo=dict[str,Any]`のようにDict型のエイリアスとした。
 
 #### dataclass/*.py
 dictよりdataclassの方が扱いやすい場合があるので、よく使うクラスはDataClassとして定義した。

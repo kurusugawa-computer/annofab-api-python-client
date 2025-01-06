@@ -34,7 +34,7 @@ def _read_mfa_code_from_stdin() -> str:
     return inputted_mfa_code
 
 
-def _mask_senritive_value_for_dict(data: Dict[str, Any], keys: Collection[str]) -> Dict[str, Any]:
+def _mask_senritive_value_for_dict(data: dict[str, Any], keys: Collection[str]) -> dict[str, Any]:
     """
     dictに含まれているセンシティブな情報を"***"でマスクします。
 
@@ -164,7 +164,7 @@ def _create_request_body_for_logger(data: Any) -> Any:  # noqa: ANN401
     )
 
 
-def _create_query_params_for_logger(params: Dict[str, Any]) -> Dict[str, Any]:
+def _create_query_params_for_logger(params: dict[str, Any]) -> dict[str, Any]:
     """
     ログに出力するためのquery_paramsを生成する。
      * AWS関係のcredential情報をマスクする。
@@ -283,15 +283,15 @@ class AnnofabApi(AbstractAnnofabApi):
     # Private Method
     #########################################
     @staticmethod
-    def _encode_query_params(query_params: Dict[str, Any]) -> Dict[str, Any]:
+    def _encode_query_params(query_params: dict[str, Any]) -> dict[str, Any]:
         """query_paramsのvalueがlist or dictのときは、JSON形式の文字列に変換する。
         `getAnnotationList` webapiで指定できる `query`などのように、2階層のquery_paramsに対応させる。
 
         Args:
-            query_params (Dict[str,Any]): [description]
+            query_params (dict[str,Any]): [description]
 
         Returns:
-            Dict[str, str]: [description]
+            dict[str, str]: [description]
         """
         new_params = {}
         if query_params is not None:
@@ -304,10 +304,10 @@ class AnnofabApi(AbstractAnnofabApi):
 
     def _create_kwargs(
         self,
-        params: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, Any]] = None,
+        params: Optional[dict[str, Any]] = None,
+        headers: Optional[dict[str, Any]] = None,
         request_body: Optional[Any] = None,  # noqa: ANN401
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         requestsモジュールのget,...メソッドに渡すkwargsを生成する。
 
@@ -327,7 +327,7 @@ class AnnofabApi(AbstractAnnofabApi):
                 else:
                     new_params[key] = value
 
-        kwargs: Dict[str, Any] = {
+        kwargs: dict[str, Any] = {
             "params": new_params,
             "headers": headers,
         }
@@ -382,10 +382,10 @@ class AnnofabApi(AbstractAnnofabApi):
         http_method: str,
         url: str,
         *,
-        params: Optional[Dict[str, Any]] = None,
+        params: Optional[dict[str, Any]] = None,
         data: Optional[Any] = None,  # noqa: ANN401
         json: Optional[Any] = None,  # pylint: disable=redefined-outer-name  # noqa: ANN401
-        headers: Optional[Dict[str, Any]] = None,
+        headers: Optional[dict[str, Any]] = None,
         stream: bool = False,
         raise_for_status: bool = True,
         **kwargs,
@@ -468,8 +468,8 @@ class AnnofabApi(AbstractAnnofabApi):
         http_method: str,
         url_path: str,
         *,
-        query_params: Optional[Dict[str, Any]] = None,
-        header_params: Optional[Dict[str, Any]] = None,
+        query_params: Optional[dict[str, Any]] = None,
+        header_params: Optional[dict[str, Any]] = None,
         request_body: Optional[Any] = None,  # noqa: ANN401
         raise_for_status: bool = True,
     ) -> Tuple[Any, requests.Response]:
@@ -575,7 +575,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         return content, response
 
-    def _get_signed_cookie(self, project_id, query_params: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], requests.Response]:  # noqa: ANN001
+    def _get_signed_cookie(self, project_id, query_params: Optional[dict[str, Any]] = None) -> Tuple[dict[str, Any], requests.Response]:  # noqa: ANN001
         """
         アノテーション仕様の履歴情報を取得するために、非公開APIにアクセスする。
         変更される可能性あり.
@@ -589,7 +589,7 @@ class AnnofabApi(AbstractAnnofabApi):
         """
         url_path = f"/internal/projects/{project_id}/sign-headers"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {"query_params": query_params}
+        keyword_params: dict[str, Any] = {"query_params": query_params}
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def _request_get_with_cookie(self, project_id: str, url: str) -> requests.Response:
@@ -626,7 +626,7 @@ class AnnofabApi(AbstractAnnofabApi):
     #########################################
     # Public Method : Login
     #########################################
-    def _login_respond_to_auth_challenge(self, id_pass: IdPass, mfa_code: str, session: str) -> Dict[str, Any]:
+    def _login_respond_to_auth_challenge(self, id_pass: IdPass, mfa_code: str, session: str) -> dict[str, Any]:
         """
         MFAコードによるログインを実行します。
 

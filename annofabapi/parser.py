@@ -9,7 +9,7 @@ from typing import Any, Callable, Dict, List, Optional, Type, Union
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
 
-CONVERT_ANNOTATION_DETAIL_DATA_FUNC = Callable[[Dict[str, Any]], Any]
+CONVERT_ANNOTATION_DETAIL_DATA_FUNC = Callable[[dict[str, Any]], Any]
 
 
 def _trim_extension(file_path: str) -> str:
@@ -521,11 +521,11 @@ def lazy_parse_simple_annotation_zip_by_task(zip_file_path: Path) -> Iterator[Si
             return False
         return True
 
-    def create_task_dict(arg_info_list: List[zipfile.ZipInfo]) -> Dict[str, List[str]]:
+    def create_task_dict(arg_info_list: List[zipfile.ZipInfo]) -> dict[str, List[str]]:
         """
         task_idとJSONパスリストの辞書を取得する。
         """
-        task_dict: Dict[str, List[str]] = {}
+        task_dict: dict[str, List[str]] = {}
         sorted_path_list = sorted([e.filename for e in arg_info_list if is_input_data_json(e)])
 
         before_task_id = None
@@ -547,7 +547,7 @@ def lazy_parse_simple_annotation_zip_by_task(zip_file_path: Path) -> Iterator[Si
     with zipfile.ZipFile(zip_file_path, mode="r") as file:
         info_list: List[zipfile.ZipInfo] = file.infolist()
 
-        task_dict: Dict[str, List[str]] = create_task_dict(info_list)
+        task_dict: dict[str, List[str]] = create_task_dict(info_list)
         for task_id, json_path_list in task_dict.items():
             yield SimpleAnnotationZipParserByTask(zip_file=file, task_id=task_id, json_path_list=json_path_list)
 

@@ -5,7 +5,7 @@
     #########################################
 {{#operation}}
 
-    def {{operationId}}(self, {{#sortParamsByRequiredFlag}}{{#pathParams}}{{paramName}}: {{dataType}}, {{/pathParams}}{{/sortParamsByRequiredFlag}}{{#hasQueryParams}}query_params: Optional[Dict[str, Any]] = None, {{/hasQueryParams}}{{#hasHeaderParams}}header_params: Optional[Dict[str, Any]] = None, {{/hasHeaderParams}}{{#hasBodyParam}}request_body: Optional[Any] = None, {{/hasBodyParam}}**kwargs) -> Tuple[Any, requests.Response]:
+    def {{operationId}}(self, {{#sortParamsByRequiredFlag}}{{#pathParams}}{{paramName}}: {{dataType}}, {{/pathParams}}{{/sortParamsByRequiredFlag}}{{#hasQueryParams}}query_params: Optional[dict[str, Any]] = None, {{/hasQueryParams}}{{#hasHeaderParams}}header_params: Optional[dict[str, Any]] = None, {{/hasHeaderParams}}{{#hasBodyParam}}request_body: Optional[Any] = None, {{/hasBodyParam}}**kwargs) -> Tuple[Any, requests.Response]:
         """{{#summary}}{{{.}}}{{/summary}}{{^summary}}{{operationId}}{{/summary}}
         {{! API DocumentのURL }}
         https://annofab.com/docs/api/#operation/{{operationIdOriginal}}
@@ -28,13 +28,13 @@
             {{paramName}} ({{dataType}}): {{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional){{/optional}}
 {{/pathParams}}
 {{#hasQueryParams}}
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
 {{#queryParams}}
                 {{baseName}} ({{dataType}}): {{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional){{/optional}}
 {{/queryParams}}
 {{/hasQueryParams}}
 {{#hasHeaderParams}}
-            header_params (Dict[str, Any]): Header Parameters
+            header_params (dict[str, Any]): Header Parameters
 {{#headerParams}}
                 {{paramName}} ({{dataType}}): {{#description}} {{{description}}}{{/description}}{{#required}} (required){{/required}}{{#optional}}(optional){{/optional}}
 {{/headerParams}}
@@ -56,7 +56,7 @@
         {{/isDeprecated}}
         url_path = f'{{{path}}}'
         http_method = '{{httpMethod}}'
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
 {{#hasQueryParams}}
             'query_params': query_params,
 {{/hasQueryParams}}

@@ -18,11 +18,11 @@ from annofabapi.models import AdditionalDataDefinitionType, AnnotationTypeFieldM
 
 AdditionalDataDefaultType = Union[bool, int, str]
 
-AdditionalDataRestrictionCondition = Dict[str, Any]
+AdditionalDataRestrictionCondition = dict[str, Any]
 
-AnnotationSpecsOption = Dict[str, Any]
+AnnotationSpecsOption = dict[str, Any]
 AnnotationType = str
-AnnotationTypeFieldValue = Dict[str, Any]
+AnnotationTypeFieldValue = dict[str, Any]
 
 
 @dataclass
@@ -228,7 +228,7 @@ class AdditionalDataDefinitionV1(DataClassJsonMixin):
     required: Optional[bool]
     """リンク属性において、入力を必須とするかどうか"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Optional[dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -257,7 +257,7 @@ class AdditionalDataDefinitionV2(DataClassJsonMixin):
     choices: Optional[List[AdditionalDataDefinitionV1Choices]]
     """ドロップダウンまたはラジオボタンの選択肢"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Optional[dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -488,7 +488,7 @@ class LabelV1(DataClassJsonMixin):
     annotation_editor_feature: AnnotationEditorFeature
     """"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Optional[dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -523,7 +523,7 @@ class LabelV2(DataClassJsonMixin):
     annotation_editor_feature: AnnotationEditorFeature
     """"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Optional[dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -557,7 +557,7 @@ class AnnotationSpecsV1(DataClassJsonMixin):
     option: Optional[AnnotationSpecsOption]
     """"""
 
-    metadata: Dict[str, str]
+    metadata: dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -589,7 +589,7 @@ class AnnotationSpecsV2(DataClassJsonMixin):
     option: Optional[AnnotationSpecsOption]
     """"""
 
-    metadata: Dict[str, str]
+    metadata: dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -609,7 +609,7 @@ class LabelV3(DataClassJsonMixin):
     annotation_type: AnnotationType
     """"""
 
-    field_values: Dict[str, AnnotationTypeFieldValue]
+    field_values: dict[str, AnnotationTypeFieldValue]
     """KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#section/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 """
 
     additional_data_definitions: List[str]
@@ -618,7 +618,7 @@ class LabelV3(DataClassJsonMixin):
     color: Color
     """"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Optional[dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -653,5 +653,5 @@ class AnnotationSpecsV3(DataClassJsonMixin):
     option: Optional[AnnotationSpecsOption]
     """"""
 
-    metadata: Dict[str, str]
+    metadata: dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
