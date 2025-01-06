@@ -10,13 +10,11 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Optional  # pylint: disable=unused-import
+from typing import Optional  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import InputDataType, ProjectStatus
-
-ProjectConfigurationGet = dict[str, Any]
 
 
 @dataclass
@@ -27,6 +25,11 @@ class ProjectSummary(DataClassJsonMixin):
 
     last_tasks_updated_datetime: Optional[str]
     """タスクの最終更新日時"""
+
+
+@dataclass
+class ProjectConfigurationGet(DataClassJsonMixin):
+    """ """
 
 
 @dataclass

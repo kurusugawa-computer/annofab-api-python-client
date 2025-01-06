@@ -10,6 +10,7 @@ Note:
 """
 
 from dataclasses import dataclass
+from typing import Any  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -32,7 +33,7 @@ class Organization(DataClassJsonMixin):
     price_plan: PricePlan
     """"""
 
-    summary: __DictStrKeyAnyValue__
+    summary: dict[str, Any]
     """廃止予定のプロパティです。常に中身は空です。 """
 
     created_datetime: str
