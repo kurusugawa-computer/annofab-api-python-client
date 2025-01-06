@@ -257,7 +257,7 @@ class SimpleAnnotationDetail(DataClassJsonMixin):
     data: FullAnnotationData
     """"""
 
-    attributes: dict[str, Any]
+    attributes: __DictStrKeyAnyValue__
     """キーと値が以下のようになっている辞書構造です。  * キー: アノテーション仕様で設定した属性名 (英語) * 値: 各属性の値   * 選択肢を定義している場合、その選択肢の表示名 (英語)   * それ以外は属性値そのまま (文字列、数値、論理値) """
 
 
@@ -483,7 +483,7 @@ class AnnotationPropsForEditor(DataClassJsonMixin):
     tags: Optional[list[str]]
     """アノテーションに付与されている機械可読・人間可読なタグの列。  2022/09現在、この値を利用しているエディタは存在しません"""
 
-    etc: Optional[dict[str, Any]]
+    etc: Optional[__DictStrKeyAnyValue__]
     """上記以外の任意のJson構造"""
 
 

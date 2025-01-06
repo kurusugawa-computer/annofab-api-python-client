@@ -67,7 +67,7 @@ class InputData(DataClassJsonMixin):
     sign_required: bool
     """CloudFrontのSignedCookieを使ったプライベートストレージを利用するかどうか """
 
-    metadata: dict[str, str]
+    metadata: dict(str, str)
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
     system_metadata: SystemMetadata

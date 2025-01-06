@@ -243,7 +243,7 @@ cat partial-header/dataclass/common.py partial-header/dataclass/task.py  \
 # `dict(str, int)` を `dict[str, int]`のように置換する
 sed -E -e "s/dict\((.*)\)/dict\[\1\]/g"  ../annofabapi/dataclass/*.py  --in-place
 # Task.metadataなどでは、`__DictStrKeyAnyValue__`を`dict[str, Any]`に置換すると正しい型にならないので、無理やり正しい型に置換する
-sed -e  "s/Dict\[str, __DictStrKeyAnyValue__\]/dict[str, Any]/g" ../annofabapi/dataclass/*.py  --in-place 
+sed -e  "s/dict\[str, __DictStrKeyAnyValue__\]/dict[str, Any]/g" ../annofabapi/dataclass/*.py  --in-place 
 # `__DictStrKeyAnyValue__`を`dict[str, Any]`に置換する
 sed  -e "s/__DictStrKeyAnyValue__/dict[str,Any]/g"  ../annofabapi/dataclass/*.py  --in-place
 

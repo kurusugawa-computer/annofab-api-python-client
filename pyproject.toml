@@ -133,6 +133,13 @@ select = [
 ]
 
 
+"annofabapi/generated*.py" = [
+    "A002",  # builtin-argument-shadowing
+    "ANN401", # any-type
+    "E501", 
+]
+
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 

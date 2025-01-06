@@ -1576,7 +1576,7 @@ components:
         input_data_type:
           $ref: "#/components/schemas/InputDataType"
         configuration:
-          $ref: "#/components/schemas/ProjectConfiguration"
+          $ref: "#/components/schemas/ProjectConfigurationGet"
         created_datetime:
           type: string
           format: date-time
@@ -1607,6 +1607,7 @@ components:
         再提出されたタスクの検査/受入担当者の割当方法
         * `no_assignee` - 以前の担当者で固定せず、未割当てにします。
         * `fixed` - 以前の担当者が再度担当します。以前の担当者がいない(1回目の検査/受入)場合は未割当てになります。
+      default: no_assignee
     InputDataType:
       type: string
       description: |
@@ -1618,111 +1619,145 @@ components:
         - image
         - movie
         - custom
-    ProjectConfiguration:
+    MaxTasksPerMember:
+      type: integer
+      description: |
+        保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数の上限。
+      default: 10
+      minimum: 1
+      maximum: 100
+    NumberOfInspections:
+      type: integer
+      description: |
+        検査回数。
+        * 0回：教師付け -> 受入
+        * 1回：教師付け -> 検査 -> 受入
+        * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入
+      default: 0
+      minimum: 0
+    MaxTasksPerMemberIncludingHold:
+      type: integer
+      description: |
+        保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。
+        割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。
+
+        例えばmax_tasks_per_memberが10、max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。
+      default: 20
+      minimum: 1
+      maximum: 100
+    InputDataSetIdList:
+      description: |
+        システム内部用のプロパティ。
+        [putProject](#operation/putProject) APIでプロジェクトを更新する際は、[getProject](#operation/getProject) APIで取得した値を指定してください。
+      type: array
+      items:
+        $ref: "#/components/schemas/InputDataSetId"
+      example: []
+    InputDataMaxLongSideLength:
+      type: integer
+      description: |
+        入力データ画像の長辺の最大値（未指定時は4096px）。
+
+        画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。
+        アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。
+
+        大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。
+      minimum: 0
+    SamplingInspectionRate:
+      type: integer
+      description: 抜取検査率[%]。未指定の場合は100%として扱う。
+      minimum: 0
+      maximum: 100
+    SamplingAcceptanceRate:
+      type: integer
+      description: 抜取受入率[%]。未指定の場合は100%として扱う。
+      minimum: 0
+      maximum: 100
+    PrivateStorageAwsIamRoleArn:
+      type: string
+      description: |
+        AWS IAMロール。S3プライベートストレージの認可で使います。
+        [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
+      example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
+    ProjectConfigurationPluginId:
+      $ref: "#/components/schemas/PluginId"
+      description: |
+        カスタムアノテーションエディタのプラグインID。カスタムプロジェクトの場合は必須です。
+    ProjectConfigurationCustomTaskAssignmentPluginId:
+      $ref: "#/components/schemas/PluginId"
+      description: |
+        `task_assignment_type`に`custom`を設定している場合のみ、カスタムタスク割当のプラグインIDを設定してください。
+        `custom`以外の場合は空文字とするか、値を設定しないでください。
+    ProjectConfigurationCustomSpecsPluginId:
+      $ref: "#/components/schemas/PluginId"
+      description: カスタムアノテーション仕様のプラグインID。
+    ProjectConfigurationExtendedSpecsPluginId:
+      $ref: "#/components/schemas/PluginId"
+      description: アノテーション種類を新しく定義できるようにするためのプラグインID。
+    EditorVersion:
+      type: string
+      description: |
+        標準アノテーションエディタのバージョン。
+
+        * `stable`
+            * 安定版。通常はこちらを利用してください。
+        * `preview`
+            * 最新版。新機能やUI変更の先行リリース版。
+
+        プロジェクト更新時に未指定の場合は `stable` が指定されたものとみなします。
+    UseBeginnerNavigation:
+      type: boolean
+      description: |
+        true の場合、プロジェクトの画面でナビゲーションUIを表示します（ログインユーザーがプロジェクトオーナーの場合のみ）。
+      default: false
+    ProjectConfigurationPut:
       description: プロジェクトの設定情報
       type: object
       properties:
         number_of_inspections:
-          description: |
-            検査回数。
-            * 0回：教師付け -> 受入
-            * 1回：教師付け -> 検査 -> 受入
-            * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入
-          type: integer
-          default: 0
-          minimum: 0
+          $ref: "#/components/schemas/NumberOfInspections"
         assignee_rule_of_resubmitted_task:
           $ref: "#/components/schemas/AssigneeRuleOfResubmittedTask"
-          default: no_assignee
         task_assignment_type:
           $ref: "#/components/schemas/TaskAssignmentType"
         task_assignment_property:
           $ref: "#/components/schemas/TaskAssignmentProperty"
         max_tasks_per_member:
-          description: |
-            保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数の上限。
-          type: integer
-          default: 10
-          minimum: 1
-          maximum: 100
+          $ref: "#/components/schemas/MaxTasksPerMember"
         max_tasks_per_member_including_hold:
-          description: |
-            保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。
-            割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。
-
-            例えばmax_tasks_per_memberが10、max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。
-          type: integer
-          default: 20
-          minimum: 1
-          maximum: 100
+          $ref: "#/components/schemas/MaxTasksPerMemberIncludingHold"
         input_data_set_id_list:
-          description: |
-            システム内部用のプロパティ。
-            [putProject](#operation/putProject) APIでプロジェクトを更新する際は、[getProject](#operation/getProject) APIで取得した値を指定してください。
-          type: array
-          items:
-            $ref: "#/components/schemas/InputDataSetId"
-          example: []
+          $ref: "#/components/schemas/InputDataSetIdList"
         input_data_max_long_side_length:
-          description: |
-            入力データ画像の長辺の最大値（未指定時は4096px）。
-
-            画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。
-            アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。
-
-            大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。
-          type: integer
-          minimum: 0
+          $ref: "#/components/schemas/InputDataMaxLongSideLength"
         sampling_inspection_rate:
-          description: 抜取検査率[%]。未指定の場合は100%として扱う。
-          type: integer
-          minimum: 0
-          maximum: 100
+          $ref: "#/components/schemas/SamplingInspectionRate"
         sampling_acceptance_rate:
-          description: 抜取受入率[%]。未指定の場合は100%として扱う。
-          type: integer
-          minimum: 0
-          maximum: 100
+          $ref: "#/components/schemas/SamplingAcceptanceRate"
         private_storage_aws_iam_role_arn:
-          type: string
-          description: |
-            AWS IAMロール。S3プライベートストレージの認可で使います。
-            [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
-          example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
+          $ref: "#/components/schemas/PrivateStorageAwsIamRoleArn"
         plugin_id:
-          $ref: "#/components/schemas/PluginId"
-          description: |
-            カスタムアノテーションエディタのプラグインID。カスタムプロジェクトの場合は必須です。
+          $ref: "#/components/schemas/ProjectConfigurationPluginId"
         custom_task_assignment_plugin_id:
-          $ref: "#/components/schemas/PluginId"
-          description: |
-            `task_assignment_type`に`custom`を設定している場合のみ、カスタムタスク割当のプラグインIDを設定してください。
-            `custom`以外の場合は空文字とするか、値を設定しないでください。
+          $ref: "#/components/schemas/ProjectConfigurationCustomTaskAssignmentPluginId"
         custom_specs_plugin_id:
-          $ref: "#/components/schemas/PluginId"
-          description: |
-            カスタムアノテーション仕様のプラグインID。
+          $ref: "#/components/schemas/ProjectConfigurationCustomSpecsPluginId"
         extended_specs_plugin_id:
-          $ref: "#/components/schemas/PluginId"
-          description: |
-            アノテーション種類を新しく定義できるようにするためのプラグインID。
+          $ref: "#/components/schemas/ProjectConfigurationExtendedSpecsPluginId"
         editor_version:
-          type: string
-          description: |
-            標準アノテーションエディタのバージョン。
-
-            * `stable`
-                * 安定版。通常はこちらを利用してください。
-            * `preview`
-                * 最新版。新機能やUI変更の先行リリース版。
-
-            プロジェクト更新時に未指定の場合は `stable` が指定されたものとみなします。
+          $ref: "#/components/schemas/EditorVersion"
         use_beginner_navigation:
-          type: boolean
-          default: false
-          description: |
-            true の場合、プロジェクトの画面でナビゲーションUIを表示します（ログインユーザーがプロジェクトオーナーの場合のみ）。
-
+          $ref: "#/components/schemas/UseBeginnerNavigation"
+    ProjectConfigurationGet:
+      allOf:
+        - $ref: "#/components/schemas/ProjectConfigurationPut"
+        - type: object
+          required:
+            - number_of_inspections
+            - assignee_rule_of_resubmitted_task
+            - task_assignment_type
+            - input_data_set_id_list
+            - use_beginner_navigation
     ProjectSummary:
       type: object
       description: プロジェクトのサマリー情報
@@ -1801,8 +1836,7 @@ components:
           type: object
           description: ジョブの内部情報
         job_detail:
-          type: object
-          description: ジョブ結果の内部情報
+          $ref: "#/components/schemas/JobDetail"
         errors:
           $ref: "#/components/schemas/Errors"
           description: |
@@ -1830,8 +1864,7 @@ components:
           type: object
           description: ジョブの内部情報
         job_detail:
-          type: object
-          description: ジョブ結果の内部情報
+          $ref: "#/components/schemas/JobDetail"
         errors:
           $ref: "#/components/schemas/Errors"
         created_datetime:
@@ -1941,7 +1974,73 @@ components:
       description: |
         ジョブの同時実行制御のために用いる、ジョブの種別。
         (現在はまだ、この種別に該当するものはありません)
-
+    JobDetail:
+      type: object
+      description: ジョブ結果の内部情報
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          GenInputs: '#/components/schemas/JobDetailGenInputs'
+          GenTasks: '#/components/schemas/JobDetailGenTasks'
+          CopyProject: '#/components/schemas/JobDetailCopyProject'
+          MoveProject: '#/components/schemas/JobDetailMoveProject'
+          InvokeHook: '#/components/schemas/JobDetailInvokeHook'
+      oneOf:
+        - $ref: '#/components/schemas/JobDetailGenInputs'
+        - $ref: '#/components/schemas/JobDetailGenTasks'
+        - $ref: '#/components/schemas/JobDetailCopyProject'
+        - $ref: '#/components/schemas/JobDetailMoveProject'
+        - $ref: '#/components/schemas/JobDetailInvokeHook'
+    JobDetailGenInputs:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/InputDataRequest'
+      required:
+        - request
+    JobDetailGenTasks:
+      type: object
+      required:
+        - request
+      properties:
+        request:
+          $ref: '#/components/schemas/TaskGenerateRequest'
+        generated_task_count:
+          type: integer
+    JobDetailCopyProject:
+      type: object
+      required:
+        - request
+      properties:
+        request:
+          $ref: '#/components/schemas/ProjectCopyRequest'
+    JobDetailMoveProject:
+      type: object
+      required:
+        - src_organization_id
+        - dest_organization_id
+        - src_input_data_set_id
+        - dest_input_data_set_id
+      properties:
+        src_organization_id:
+          type: string
+        dest_organization_id:
+          type: string
+        src_input_data_set_id:
+          type: string
+        dest_input_data_set_id:
+          type: string
+    JobDetailInvokeHook:
+      type: object
+      required:
+        - webhook
+      properties:
+        webhook:
+          $ref: '#/components/schemas/Webhook'
+        message:
+          type: string
+        replaced_body:
+          type: string
     JobStatus:
       type: string
       enum:
@@ -2094,7 +2193,7 @@ components:
           items:
             $ref: "#/components/schemas/WebhookHeader"
         body:
-          description: Webhookが送信するHTTPリクエストのボディ
+          description: Webhookが送信するHTTPリクエストのボディ。methodがGETの場合は指定不可。
           type: string
           example: '{"message": "{{PROJECT_ID}} is updated at {{COMPLETE_DATETIME}}"}'
         url:
@@ -2183,7 +2282,7 @@ components:
             * APIを呼び出すアカウントは、変更先組織の管理者またはオーナーである必要があります。
             * 変更後の組織に所属していないプロジェクトメンバーも残りますが、作業はできません。あらためて組織に招待してください。
         configuration:
-          $ref: "#/components/schemas/ProjectConfiguration"
+          $ref: "#/components/schemas/ProjectConfigurationPut"
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
         force_suspend:
@@ -4018,7 +4117,7 @@ components:
           description: 塗りつぶしの「矩形」機能が使えるか否か
         polygon_fill:
           type: boolean
-          description: 塗りつぶしの「ポリゴン」機能が使えるか否か
+          description: 塗りつぶしの「自由形状」機能が使えるか否か
         fill_near:
           type: boolean
           description: 「近似色塗りつぶし」機能を有効にするかどうか
@@ -8330,3 +8429,205 @@ components:
             _type:
               type: string
               enum: ["All"]
+    OrganizationIdpId:
+      type: string
+      description: 組織IDプロバイダーのID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+    OidcIssuer:
+        type: string
+        format: uri
+        description: RFC 8414で定義されるissuerの値。 `.well-known/openid-configuration`のissuer。
+    OidcEndpoints:
+      oneOf:
+        - $ref: "#/components/schemas/IssuerOnlyOidcEndpoints"
+        - $ref: "#/components/schemas/AllOidcEndpoints"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          IssuerOnly: "#/components/schemas/IssuerOnlyOidcEndpoints"
+          All: "#/components/schemas/AllOidcEndpoints"
+    IssuerOnlyOidcEndpoints:
+      type: object
+      description: OIDCエンドポイント
+      required:
+        - _type
+        - issuer
+      properties:
+        _type:
+          type: string
+          enum: ["IssuerOnly"]
+        issuer:
+          $ref: "#/components/schemas/OidcIssuer"
+    AllOidcEndpoints:
+      type: object
+      description: OIDCエンドポイント
+      required:
+        - _type
+        - issuer
+        - authorize_url
+        - token_url
+        - userinfo_url
+        - jwks_url
+      properties:
+        _type:
+          type: string
+          enum: ["All"]
+        issuer:
+          $ref: "#/components/schemas/OidcIssuer"
+        authorize_url:
+          type: string
+          format: uri
+          description: RFC 8414（及びRFC6749）で定義される、authorization_endpointのURL
+        token_url:
+          type: string
+          format: uri
+          description: RFC 8414（及びRFC6749）で定義される、token_endpointのURL
+        userinfo_url:
+          type: string
+          format: uri
+          description: OpenID Connect Core 1.0で定義される、UserInfo EndpointのURL
+        jwks_url:
+          type: string
+          format: uri
+          description: RFC 8414で定義される、jwks_uriの値
+    OidcAttributeMapping:
+      type: object
+      description: 外部IDプロバイダー上の属性と、Annofabが認識する属性のマッピング
+      required:
+        - name
+        - email
+      properties:
+        email:
+          type: string
+          description: Eメールアドレスを表す外部IDプロバイダー上の属性名
+        name:
+          type: string
+          description: ユーザーの表示名を表す外部IDプロバイダー上の属性名
+    OrganizationOidcIdp:
+      type: object
+      description: 組織が利用する外部IDプロバイダー設定
+      required:
+        - id
+        - organization_name
+        - client_id
+        - client_secret
+        - attributes_request_method
+        - endpoints
+        - attribute_mapping
+        - sign_up_url
+        - created_datetime
+        - updated_datetime
+      properties:
+        id:
+          $ref: "#/components/schemas/OrganizationIdpId"
+        organization_name:
+          $ref: "#/components/schemas/OrganizationName"
+          description: 組織IDプロバイダーが所属する組織名
+        client_id:
+          type: string
+          description: 外部IDプロバイダーで指定されたクライアントID
+        client_secret:
+          type: string
+          description: 外部IDプロバイダーで指定されたクライアントシークレット
+        attributes_request_method:
+            type: string
+            enum: ["GET", "POST"]
+            description: |
+                ユーザー属性を取得する際に利用するリクエストメソッド
+        endpoints:
+          $ref: "#/components/schemas/OidcEndpoints"
+        attribute_mapping:
+          $ref: "#/components/schemas/OidcAttributeMapping"
+        sign_up_url:
+          type: string
+          format: uri
+          description: |
+            組織IDプロバイダーを用いたユーザ登録時、ユーザがアクセスすべきURL
+        created_datetime:
+          type: string
+          format: date-time
+          description: IDプロバイダー設定の作成日時
+        updated_datetime:
+          type: string
+          format: date-time
+          description: IDプロバイダー設定の更新日時
+    PutOrganizationIdpBody:
+      type: object
+      description: 組織が利用するIDプロバイダー設定
+      required:
+        - client_id
+        - client_secret
+        - attributes_request_method
+        - endpoints
+        - attribute_mapping
+      properties:
+        client_id:
+          type: string
+          description: 外部IDプロバイダーで指定されたクライアントID
+        client_secret:
+          type: string
+          description: 外部IDプロバイダーで指定されたクライアントシークレット
+        attributes_request_method:
+          type: string
+          enum: ["GET", "POST"]
+          description: |
+            ユーザー属性を取得する際に利用するリクエストメソッド
+        endpoints:
+          $ref: "#/components/schemas/OidcEndpoints"
+        attribute_mapping:
+          $ref: "#/components/schemas/OidcAttributeMapping"
+    ExternalIdpDeterminant:
+      oneOf:
+        - $ref: "#/components/schemas/GlobalIdpNameDeterminant"
+        - $ref: "#/components/schemas/OrganizationIdpIdDeterminant"
+        - $ref: "#/components/schemas/UserIdDeterminant"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          GlobalIdpName: "#/components/schemas/GlobalIdpNameDeterminant"
+          OrganizationIdpId: "#/components/schemas/OrganizationIdpIdDeterminant"
+          UserId: "#/components/schemas/UserIdDeterminant"
+    GlobalIdpNameDeterminant:
+      type: object
+      description: Annofab全体で利用するIDプロバイダー名を元に外部IDプロバイダーを特定する決定因子
+      required:
+        - _type
+        - name
+      properties:
+        _type:
+          type: string
+          enum: ["GlobalIdpName"]
+        name:
+          type: string
+          enum: ["Google"]
+    OrganizationIdpIdDeterminant:
+      type: object
+      description: 組織名とIDプロバイダーIDを元に外部IDプロバイダーを特定する決定因子
+      required:
+        - _type
+        - organization_name
+        - provider_id
+      properties:
+        _type:
+          type: string
+          enum: ["OrganizationIdpId"]
+        organization_name:
+          $ref: "#/components/schemas/OrganizationName"
+          description: 組織名
+        provider_id:
+          $ref: "#/components/schemas/OrganizationIdpId"
+          description: 組織IDプロバイダーのID
+    UserIdDeterminant:
+      type: object
+      description: ユーザーIDを元に外部IDプロバイダーを特定する決定因子。 指定されたユーザが利用すべき外部IDプロバイダーが一つに定まる場合に、その一つを特定する。
+      required:
+        - _type
+        - user_id
+      properties:
+        _type:
+          type: string
+          enum: ["UserId"]
+        user_id:
+          $ref: "#/components/schemas/UserId"
+          description: ユーザーID
+
+
