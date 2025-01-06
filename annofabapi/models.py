@@ -11,7 +11,7 @@ Note:
 """
 
 from enum import Enum
-from typing import Any, Dict, NewType  # pylint: disable=unused-import
+from typing import Any, NewType  # pylint: disable=unused-import
 
 from annofabapi._utils import deprecated_class  # pylint: disable=unused-import
 

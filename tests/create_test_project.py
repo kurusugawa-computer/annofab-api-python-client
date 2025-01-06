@@ -3,7 +3,7 @@ import logging
 import os
 import uuid
 from argparse import ArgumentParser
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from more_itertools import first_true
 

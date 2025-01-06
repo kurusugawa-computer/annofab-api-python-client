@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Protocol
+from typing import Protocol
 
 
 class HasAuthToken(Protocol):

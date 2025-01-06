@@ -10,7 +10,7 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union  # pylint: disable=unused-import
+from typing import Any, Optional, Union  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 

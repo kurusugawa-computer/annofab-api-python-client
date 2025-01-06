@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import List, Optional
+from typing import Optional
 
 import dateutil
 import dateutil.tz

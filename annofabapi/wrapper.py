@@ -13,7 +13,7 @@ import warnings
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Optional, Tuple, Union
 
 import more_itertools
 import requests

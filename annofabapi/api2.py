@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Optional, Tuple
 
 import requests
 from requests.cookies import RequestsCookieJar

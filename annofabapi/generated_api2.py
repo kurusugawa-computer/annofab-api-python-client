@@ -9,7 +9,7 @@ Note:
 """
 
 import abc
-from typing import Any, Dict, Optional, Tuple  # pylint: disable=unused-import
+from typing import Any, Optional, Tuple  # pylint: disable=unused-import
 
 import requests
 

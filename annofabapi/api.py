@@ -5,7 +5,7 @@ import time
 from collections.abc import Collection
 from functools import wraps
 from json import JSONDecodeError
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Any, Callable, Optional, Tuple, Union
 
 import backoff
 import requests
