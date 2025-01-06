@@ -16,17 +16,15 @@ classifiers = [
 
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 requests = "*"
 python-dateutil = "*"
 backoff="*"
 dataclasses-json="*"
 more-itertools = "*"
 
-numpy = [
-  {version = ">=1.26", python = ">=3.9", optional=true },
-  {version = "<1.25", python = "=3.8", optional=true },
-]
+numpy = {version = "*",  optional=true}
+
 pillow={version="*", optional=true }
 
 
