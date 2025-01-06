@@ -72,7 +72,7 @@ check_untyped_defs = true
 plugins = ["numpy.typing.mypy_plugin"]
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
 line-length = 150
 exclude = ["annofabapi/__init__.py"]
 
