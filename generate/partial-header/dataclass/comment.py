@@ -3,6 +3,6 @@ from annofabapi.models import (
     TaskPhase,
     CommentStatus
 )
-from typing import Dict, Any
+from typing import Any
 
-CommentNode = Dict[str, Any]
+CommentNode = dict[str, Any]

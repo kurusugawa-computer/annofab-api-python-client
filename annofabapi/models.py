@@ -11,7 +11,7 @@ Note:
 """
 
 from enum import Enum
-from typing import Any, Dict, NewType  # pylint: disable=unused-import
+from typing import Any, NewType  # pylint: disable=unused-import
 
 from annofabapi._utils import deprecated_class  # pylint: disable=unused-import
 
@@ -162,22 +162,22 @@ Example:
 """
 
 ### 以下は自動生成の部分
-AcceptOrganizationInvitationRequest = Dict[str, Any]
+AcceptOrganizationInvitationRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * token: str
     [inviteOrganizationMember](#operation/inviteOrganizationMember) APIで送信された招待メールに記載されているトークンです。 メールに記載されているURLの`invitation-token`クエリパラメータの値が、トークンになります。 
 
 """
 
-Account = Dict[str, Any]
+Account = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -202,28 +202,28 @@ Kyes of Dict
 
 """
 
-AccountWorktimeStatistics = Dict[str, Any]
+AccountWorktimeStatistics = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* by_tasks: List[WorktimeStatisticsItem]
+* by_tasks: list[WorktimeStatisticsItem]
     タスクごとに計算した「画像1枚あたりの作業時間平均」の統計（動画プロジェクトの場合は空リスト）
-* by_inputs: List[WorktimeStatisticsItem]
+* by_inputs: list[WorktimeStatisticsItem]
     画像1枚あたりの作業時間情報（動画プロジェクトの場合は空リスト）
-* by_minutes: List[WorktimeStatisticsItem]
+* by_minutes: list[WorktimeStatisticsItem]
     動画1分あたりの作業時間情報（画像プロジェクトの場合は空リスト）
 
 """
 
-ActionRequired = Dict[str, Any]
+ActionRequired = dict[str, Any]
 """
 対応が必要な検査コメントが残っている時のエラー
 
-Kyes of Dict
+Kyes of dict
 
 * inspection: Inspection
     
@@ -232,11 +232,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataDefaultType = Dict[str, Any]
+AdditionalDataDefaultType = dict[str, Any]
 """
 属性の初期値です。  初期値を設定する場合、属性の種類に応じて次の値を指定してください。 属性の種類に対して有効でない初期値を指定した場合、その初期値は無視されます。  |属性の種類（`type`）                 | 指定できる初期値| |-----------------|----------| | flag    | 真偽値(`true` or `false`)| | integer    | 整数値         | | text | 文字列         | | comment         | 文字列| | choice        | 選択肢(`choices`)の `choice_id` | | select           | 選択肢(`choices`)の`choice_id`|  属性の種類が`tracking`または`link`の場合、初期値を設定できません。  初期値を設定しない場合は、nullまたは空文字を指定してください。 
 
-Kyes of Dict
+Kyes of dict
 
 
 """
@@ -257,11 +257,11 @@ class AdditionalDataDefinitionType(Enum):
     LINK = "link"
 
 
-AdditionalDataDefinitionV1 = Dict[str, Any]
+AdditionalDataDefinitionV1 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * additional_data_definition_id: str
     属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -271,15 +271,15 @@ Kyes of Dict
     
 * default: AdditionalDataDefaultType
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 * type: AdditionalDataDefinitionType
     
-* choices: List[AdditionalDataDefinitionV1Choices]
+* choices: list[AdditionalDataDefinitionV1Choices]
     ドロップダウンまたはラジオボタンの選択肢
 * regex: str
     属性の値が、指定した正規表現に一致している必要があります。
-* label_ids: List[str]
+* label_ids: list[str]
     リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）
 * required: bool
     リンク属性において、入力を必須とするかどうか
@@ -288,26 +288,26 @@ Kyes of Dict
 
 """
 
-AdditionalDataDefinitionV1Choices = Dict[str, Any]
+AdditionalDataDefinitionV1Choices = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * choice_id: str
     選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * name: InternationalizationMessage
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 
 """
 
-AdditionalDataDefinitionV2 = Dict[str, Any]
+AdditionalDataDefinitionV2 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * additional_data_definition_id: str
     属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -317,22 +317,22 @@ Kyes of Dict
     
 * default: AdditionalDataDefaultType
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 * type: AdditionalDataDefinitionType
     
-* choices: List[AdditionalDataDefinitionV1Choices]
+* choices: list[AdditionalDataDefinitionV1Choices]
     ドロップダウンまたはラジオボタンの選択肢
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
 
 """
 
-AdditionalDataRestriction = Dict[str, Any]
+AdditionalDataRestriction = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * additional_data_definition_id: str
     属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -341,11 +341,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionCondition = Dict[str, Any]
+AdditionalDataRestrictionCondition = dict[str, Any]
 """
 属性の制約    * `AdditionalDataRestrictionConditionCanInput`: 属性値の入力を許可するかどうか   * `AdditionalDataRestrictionConditionEquals`: 指定した値に等しい   * `AdditionalDataRestrictionConditionNotEquals`: 指定した値に等しくない   * `AdditionalDataRestrictionConditionMatches`: 指定した正規表現に一致する   * `AdditionalDataRestrictionConditionNotMatches`: 指定した正規表現に一致しない   * `AdditionalDataRestrictionConditionHasLabel`: 指定したラベルIDに一致する（アノテーションリンク属性限定）   * `AdditionalDataRestrictionConditionImply`: 指定した前提条件を満たすときのみ、制約を満たすかどうか  以下のJSONは、「属性IDが`attr2`の属性値が`true`ならば、属性IDが`attr1`の属性値は`choice1`である」という制約を表しています。  ``` {     \"additional_data_definition_id\": \"attr1\",     \"condition\": {         \"_type\": \"Imply\",         \"premise\": {             \"additional_data_definition_id\": \"attr2\",             \"condition\": {                 \"_type\": \"Equals\",                 \"value\": \"true\"             }         },         \"condition\": {             \"_type\": \"Equals\",             \"value\": \"choice1\"         }     } } ``` 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `Imply` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -353,7 +353,7 @@ Kyes of Dict
     `false`を指定することで、属性値の入力を許可しないようにできます。 `AdditionalDataRestrictionConditionImply`との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
 * value: str
     指定された正規表現に一致しないことを要求します。
-* labels: List[str]
+* labels: list[str]
     アノテーションリンク属性において、アノテーションリンク先として指定可能なラベルIDを制限します。
 * premise: AdditionalDataRestriction
     
@@ -362,11 +362,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionCanInput = Dict[str, Any]
+AdditionalDataRestrictionConditionCanInput = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `CanInput` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -375,11 +375,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionEquals = Dict[str, Any]
+AdditionalDataRestrictionConditionEquals = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `Equals` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -388,24 +388,24 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionHasLabel = Dict[str, Any]
+AdditionalDataRestrictionConditionHasLabel = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `HasLabel` [詳しくはこちら](#section/API-Convention/API-_type) 
-* labels: List[str]
+* labels: list[str]
     アノテーションリンク属性において、アノテーションリンク先として指定可能なラベルIDを制限します。
 
 """
 
-AdditionalDataRestrictionConditionImply = Dict[str, Any]
+AdditionalDataRestrictionConditionImply = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `Imply` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -416,11 +416,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionMatches = Dict[str, Any]
+AdditionalDataRestrictionConditionMatches = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `Matches` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -429,11 +429,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionNotEquals = Dict[str, Any]
+AdditionalDataRestrictionConditionNotEquals = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `NotEquals` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -442,11 +442,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataRestrictionConditionNotMatches = Dict[str, Any]
+AdditionalDataRestrictionConditionNotMatches = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `NotMatches` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -455,11 +455,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataV1 = Dict[str, Any]
+AdditionalDataV1 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * additional_data_definition_id: str
     属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -474,11 +474,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataV2 = Dict[str, Any]
+AdditionalDataV2 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * definition_id: str
     属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -487,11 +487,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataValue = Dict[str, Any]
+AdditionalDataValue = dict[str, Any]
 """
 属性値 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -504,11 +504,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueChoice = Dict[str, Any]
+AdditionalDataValueChoice = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -517,11 +517,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueComment = Dict[str, Any]
+AdditionalDataValueComment = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -530,11 +530,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueFlag = Dict[str, Any]
+AdditionalDataValueFlag = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -543,11 +543,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueInteger = Dict[str, Any]
+AdditionalDataValueInteger = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -556,11 +556,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueLink = Dict[str, Any]
+AdditionalDataValueLink = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -569,11 +569,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueSelect = Dict[str, Any]
+AdditionalDataValueSelect = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -582,11 +582,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueText = Dict[str, Any]
+AdditionalDataValueText = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -595,11 +595,11 @@ Kyes of Dict
 
 """
 
-AdditionalDataValueTracking = Dict[str, Any]
+AdditionalDataValueTracking = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -608,11 +608,11 @@ Kyes of Dict
 
 """
 
-AggregationResult = Dict[str, Any]
+AggregationResult = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 
 """
@@ -627,20 +627,20 @@ class AnnotationDataHoldingType(Enum):
     OUTER = "outer"
 
 
-AnnotationDataV1 = Dict[str, Any]
+AnnotationDataV1 = dict[str, Any]
 """
 アノテーションの座標値や区間などのデータ。  APIのレスポンスから参照される場合は、`FullAnnotationDataString`形式です。 [putAnnotation](#operation/putAnnotation) APIのリクエストボディは、`FullAnnotationDataString`形式または`FullAnnotationData`形式に対応しています。 
 
-Kyes of Dict
+Kyes of dict
 
 
 """
 
-AnnotationDetailContentInput = Dict[str, Any]
+AnnotationDetailContentInput = dict[str, Any]
 """
 - **AnnotationDetailContentInputInner**   - アノテーションのデータ部をJSON内部に保持する場合、この型を利用します - **AnnotationDetailContentInputOuter**   - アノテーションのデータ部を外部ファイルの形式（画像など）で保持する場合、この型を利用します 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -651,11 +651,11 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentInputInner = Dict[str, Any]
+AnnotationDetailContentInputInner = dict[str, Any]
 """
 アノテーションのデータ部をJSON内部に保持します
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -664,11 +664,11 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentInputOuter = Dict[str, Any]
+AnnotationDetailContentInputOuter = dict[str, Any]
 """
 アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -677,11 +677,11 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentOutput = Dict[str, Any]
+AnnotationDetailContentOutput = dict[str, Any]
 """
 - **AnnotationDetailContentOutputInner**   - アノテーションのデータ部をJSON内部に保持している場合、通常はこの型の値となります - **AnnotationDetailContentOutputInnerUnknown**   - アノテーションのデータ部をJSON内部に保持しており、且つ、AnnotationDetailV1の形式で保存されていたデータのAnnotationTypeが特定できない場合にこの値となります   - 典型的な例では、アノテーションの保存後にアノテーション仕様が書き換わっていた場合が該当します - **AnnotationDetailContentOutputOuter**   - アノテーションのデータ部を外部ファイルの形式（画像など）で保持している場合、通常はこの型の値となります - **AnnotationDetailContentOutputOuterUnresolved**   - アノテーションのデータ部を外部ファイルの形式（画像など）で保持しており、且つ、Outerのurl / etagを解決しなかった場合（過去のアノテーションを取得した場合等）にこの値となります 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -694,11 +694,11 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentOutputInner = Dict[str, Any]
+AnnotationDetailContentOutputInner = dict[str, Any]
 """
 アノテーションのデータ部をJSON内部に保持します
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -707,11 +707,11 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentOutputInnerUnknown = Dict[str, Any]
+AnnotationDetailContentOutputInnerUnknown = dict[str, Any]
 """
 アノテーションのデータ部をJSON内部に保持します。 AnnotationDetailV1の形式で保存されていたデータのAnnotationTypeが特定できない場合にこの値となります。 典型的な例では、アノテーションの保存後にアノテーション仕様が書き換わっていた場合が該当します。 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -720,11 +720,11 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentOutputOuter = Dict[str, Any]
+AnnotationDetailContentOutputOuter = dict[str, Any]
 """
 アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -735,22 +735,22 @@ Kyes of Dict
 
 """
 
-AnnotationDetailContentOutputOuterUnresolved = Dict[str, Any]
+AnnotationDetailContentOutputOuterUnresolved = dict[str, Any]
 """
 アノテーションのデータ部を外部ファイルの形式（画像など）で保持します。 Outerのurl / etagを解決しなかった場合（過去のアノテーションを取得した場合等）にこの値となります。 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
 
 """
 
-AnnotationDetailV1 = Dict[str, Any]
+AnnotationDetailV1 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
@@ -770,7 +770,7 @@ Kyes of Dict
     外部ファイルに保存されたアノテーションのETag。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
 * url: str
     外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
-* additional_data_list: List[AdditionalDataV1]
+* additional_data_list: list[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * created_datetime: str
     作成日時
@@ -779,11 +779,11 @@ Kyes of Dict
 
 """
 
-AnnotationDetailV2Create = Dict[str, Any]
+AnnotationDetailV2Create = dict[str, Any]
 """
 新規にアノテーションを作成する場合にこの型を利用します。
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -793,18 +793,18 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentInput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * editor_props: AnnotationPropsForEditor
     
 
 """
 
-AnnotationDetailV2Get = Dict[str, Any]
+AnnotationDetailV2Get = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -816,7 +816,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentOutput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * editor_props: AnnotationPropsForEditor
     
@@ -827,11 +827,11 @@ Kyes of Dict
 
 """
 
-AnnotationDetailV2Import = Dict[str, Any]
+AnnotationDetailV2Import = dict[str, Any]
 """
 過去にAnnofab内外で作成したアノテーションをそのままインポートする場合にこの型を利用します。
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -843,7 +843,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentInput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * editor_props: AnnotationPropsForEditor
     
@@ -854,11 +854,11 @@ Kyes of Dict
 
 """
 
-AnnotationDetailV2Input = Dict[str, Any]
+AnnotationDetailV2Input = dict[str, Any]
 """
 - **AnnotationDetailV2Create**   - 新規にアノテーションを作成する場合にこの型を利用します。 - **AnnotationDetailV2Import**   - 過去にAnnofab内外で作成したアノテーションをそのままインポートする場合にこの型を利用します。 - **AnnotationDetailV2Update**   - 既に存在するアノテーションを更新する場合にこの型を利用します 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -868,7 +868,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentInput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * editor_props: AnnotationPropsForEditor
     
@@ -881,20 +881,20 @@ Kyes of Dict
 
 """
 
-AnnotationDetailV2Output = Dict[str, Any]
+AnnotationDetailV2Output = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 
 """
 
-AnnotationDetailV2Update = Dict[str, Any]
+AnnotationDetailV2Update = dict[str, Any]
 """
 既に存在するアノテーションを更新する場合にこの型を利用します
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -904,18 +904,18 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentInput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * editor_props: AnnotationPropsForEditor
     
 
 """
 
-AnnotationEditorFeature = Dict[str, Any]
+AnnotationEditorFeature = dict[str, Any]
 """
 塗りつぶしの作図機能に関する情報 
 
-Kyes of Dict
+Kyes of dict
 
 * append: bool
     塗りつぶしの「追記」機能が使えるか否か
@@ -932,11 +932,11 @@ Kyes of Dict
 
 """
 
-AnnotationInput = Dict[str, Any]
+AnnotationInput = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -944,7 +944,7 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV2Input]
+* details: list[AnnotationDetailV2Input]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     対象タスク・対象入力データへの最初の保存時は未指定にしてください。 更新の場合はアノテーション取得時のupdated_datetimeをそのまま指定してください。 
@@ -953,13 +953,13 @@ Kyes of Dict
 
 """
 
-AnnotationList = Dict[str, Any]
+AnnotationList = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* list: List[SingleAnnotation]
+* list: list[SingleAnnotation]
     現在のページ番号に含まれる0件以上のアノテーションです。
 * page_no: float
     現在のページ番号です。
@@ -969,16 +969,16 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
 
 """
 
-AnnotationOutput = Dict[str, Any]
+AnnotationOutput = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -986,7 +986,7 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV2Output]
+* details: list[AnnotationDetailV2Output]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     対象タスク・対象入力データへ一度もアノテーションの保存が行われていない場合、未指定となります。 そうで無い場合、対象タスク・対象入力データのアノテーション最終更新時刻です。 
@@ -995,11 +995,11 @@ Kyes of Dict
 
 """
 
-AnnotationPropsForEditor = Dict[str, Any]
+AnnotationPropsForEditor = dict[str, Any]
 """
 アノテーションエディタ用のアノテーション毎のプロパティです。<br /> ここに含まれているデータはアノテーション結果に反映されず、エディタが利用するために存在します。  エディタ用のデータであるため、たとえば`can_delete`や`can_edit_data`が`false`でも、APIによる編集は妨げません。<br /> ここで定義されているデータを利用して動作を変えるかどうかは、エディタによって異なります。 
 
-Kyes of Dict
+Kyes of dict
 
 * can_delete: bool
     アノテーションがエディタ上で削除できるかどうか。 trueの場合削除可能。
@@ -1009,18 +1009,18 @@ Kyes of Dict
     アノテーションの付加情報を編集できるかどうか。  trueの場合編集可能。 2022/09現在、この値を利用しているエディタは存在しません。
 * description: str
     アノテーションについての人間可読な説明。 2022/09現在、この値を利用しているエディタは存在しません。
-* tags: List[str]
+* tags: list[str]
     アノテーションに付与されている機械可読・人間可読なタグの列。  2022/09現在、この値を利用しているエディタは存在しません
 * etc: __DictStrKeyAnyValue__
     上記以外の任意のJson構造
 
 """
 
-AnnotationQuery = Dict[str, Any]
+AnnotationQuery = dict[str, Any]
 """
 アノテーションの絞り込み条件 
 
-Kyes of Dict
+Kyes of dict
 
 * task_id: str
     タスクIDで絞り込みます。 
@@ -1032,7 +1032,7 @@ Kyes of Dict
     入力データIDの検索方法を指定します。 `true`の場合は完全一致検索、`false`の場合は部分一致検索です。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* attributes: List[AdditionalDataV1]
+* attributes: list[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * updated_from: str
     開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日（ISO 8601 拡張形式または基本形式）。  `updated_to` より後の日付が指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。 
@@ -1041,17 +1041,17 @@ Kyes of Dict
 
 """
 
-AnnotationSpecs = Dict[str, Any]
+AnnotationSpecs = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* labels: List[LabelV3]
+* labels: list[LabelV3]
     ラベル
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * updated_datetime: str
     更新日時 
@@ -1059,9 +1059,9 @@ Kyes of Dict
     
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
 * format_version: str
     アノテーション仕様のフォーマットのバージョン
@@ -1070,11 +1070,11 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsHistory = Dict[str, Any]
+AnnotationSpecsHistory = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * history_id: str
     アノテーション仕様の履歴ID
@@ -1091,35 +1091,35 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsMovieOption = Dict[str, Any]
+AnnotationSpecsMovieOption = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * can_overwrap: bool
     動画プロジェクトのアノテーションに重複配置を許すか否か。 
 
 """
 
-AnnotationSpecsOption = Dict[str, Any]
+AnnotationSpecsOption = dict[str, Any]
 """
 アノテーション仕様のオプション設定。  現時点では動画プロジェクトでのみ利用・指定可能。動画以外のプロジェクトでは値なし。  動画プロジェクトで値が未指定の場合、AnnotationSpecsOption内の値はすべてデフォルト値が指定されたものとして扱われる。 
 
-Kyes of Dict
+Kyes of dict
 
 
 """
 
-AnnotationSpecsRequest = Dict[str, Any]
+AnnotationSpecsRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* labels: List[LabelV3]
+* labels: list[LabelV3]
     ラベル
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * comment: str
     変更内容のコメント
@@ -1131,9 +1131,9 @@ Kyes of Dict
     
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
 * format_version: str
     アノテーション仕様のフォーマットのバージョン
@@ -1142,15 +1142,15 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsRequestV1 = Dict[str, Any]
+AnnotationSpecsRequestV1 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* labels: List[LabelV1]
+* labels: list[LabelV1]
     ラベル
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * comment: str
     変更内容のコメント
@@ -1165,19 +1165,19 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsRequestV2 = Dict[str, Any]
+AnnotationSpecsRequestV2 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* labels: List[LabelV2]
+* labels: list[LabelV2]
     ラベル
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * comment: str
     変更内容のコメント
@@ -1194,19 +1194,19 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsRequestV3 = Dict[str, Any]
+AnnotationSpecsRequestV3 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* labels: List[LabelV3]
+* labels: list[LabelV3]
     ラベル
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * comment: str
     変更内容のコメント
@@ -1225,17 +1225,17 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsV1 = Dict[str, Any]
+AnnotationSpecsV1 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* labels: List[LabelV1]
+* labels: list[LabelV1]
     ラベル
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * updated_datetime: str
     更新日時 
@@ -1246,21 +1246,21 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsV2 = Dict[str, Any]
+AnnotationSpecsV2 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* labels: List[LabelV2]
+* labels: list[LabelV2]
     ラベル
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * format_version: str
     アノテーション仕様のフォーマットのバージョン
@@ -1273,21 +1273,21 @@ Kyes of Dict
 
 """
 
-AnnotationSpecsV3 = Dict[str, Any]
+AnnotationSpecsV3 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* labels: List[LabelV3]
+* labels: list[LabelV3]
     ラベル
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * annotation_type_version: str
     アノテーション種別のバージョン。  拡張仕様プラグインで定義した値が転写されます。プロジェクトに拡張仕様プラグインが設定されていない場合は未指定です。 
@@ -1302,86 +1302,86 @@ Kyes of Dict
 
 """
 
-AnnotationType = Dict[str, Any]
+AnnotationType = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 
 """
 
-AnnotationTypeFieldDefinitionAnnotationEditorFeature = Dict[str, Any]
+AnnotationTypeFieldDefinitionAnnotationEditorFeature = dict[str, Any]
 """
 作図ツール・作図モードのフィールドの定義 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
 
 """
 
-AnnotationTypeFieldDefinitionDisplayLineDirection = Dict[str, Any]
+AnnotationTypeFieldDefinitionDisplayLineDirection = dict[str, Any]
 """
 線の向き表示/非表示の設定のフィールド定義 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
 
 """
 
-AnnotationTypeFieldDefinitionMarginOfErrorTolerance = Dict[str, Any]
+AnnotationTypeFieldDefinitionMarginOfErrorTolerance = dict[str, Any]
 """
 誤差許容範囲のフィールド定義 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
 
 """
 
-AnnotationTypeFieldDefinitionMinimumArea2d = Dict[str, Any]
+AnnotationTypeFieldDefinitionMinimumArea2d = dict[str, Any]
 """
 最小の面積のフィールド定義 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
 
 """
 
-AnnotationTypeFieldDefinitionMinimumSize2d = Dict[str, Any]
+AnnotationTypeFieldDefinitionMinimumSize2d = dict[str, Any]
 """
 アノテーションの最小サイズに関する設定のフィールド定義 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
 
 """
 
-AnnotationTypeFieldDefinitionMinimumSize2dWithDefaultInsertPosition = Dict[str, Any]
+AnnotationTypeFieldDefinitionMinimumSize2dWithDefaultInsertPosition = dict[str, Any]
 """
 アノテーションの最小サイズに関する設定、および最小矩形の挿入位置のフィールド定義 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
 
 """
 
-AnnotationTypeFieldDefinitionOneBooleanField = Dict[str, Any]
+AnnotationTypeFieldDefinitionOneBooleanField = dict[str, Any]
 """
 真偽値の値をひとつだけ持つフィールドの定義 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1396,11 +1396,11 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionOneIntegerField = Dict[str, Any]
+AnnotationTypeFieldDefinitionOneIntegerField = dict[str, Any]
 """
 数値の値をひとつだけ持つフィールドの定義 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1417,11 +1417,11 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionOneStringField = Dict[str, Any]
+AnnotationTypeFieldDefinitionOneStringField = dict[str, Any]
 """
 文字列の値をひとつだけ持つフィールドの定義 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1438,11 +1438,11 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldDefinitionVertexCountMinMax = Dict[str, Any]
+AnnotationTypeFieldDefinitionVertexCountMinMax = dict[str, Any]
 """
 頂点数の最大・最小のフィールド定義 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1459,11 +1459,11 @@ class AnnotationTypeFieldMinWarnRule(Enum):
     OR = "or"
 
 
-AnnotationTypeFieldValue = Dict[str, Any]
+AnnotationTypeFieldValue = dict[str, Any]
 """
 ユーザー定義アノテーション種別のフィールドに設定される値です。 アノテーション種別のフィールド定義と対応するフィールド値のみ登録を許可されます。 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1473,7 +1473,7 @@ Kyes of Dict
     
 * min_height: int
     
-* position_for_minimum_bounding_box_insertion: List[int]
+* position_for_minimum_bounding_box_insertion: list[int]
     最小矩形の挿入位置を、要素が2の配列で指定します。 
 * max_pixel: int
     
@@ -1502,11 +1502,11 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueAnnotationEditorFeature = Dict[str, Any]
+AnnotationTypeFieldValueAnnotationEditorFeature = dict[str, Any]
 """
 作図ツール・作図モード 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1525,11 +1525,11 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueDisplayLineDirection = Dict[str, Any]
+AnnotationTypeFieldValueDisplayLineDirection = dict[str, Any]
 """
 線の向き表示/非表示の設定 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1538,22 +1538,22 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueEmptyFieldValue = Dict[str, Any]
+AnnotationTypeFieldValueEmptyFieldValue = dict[str, Any]
 """
 値を持たないフィールド。　アノテーション仕様上に定義が存在すること自体に意味がある場合のフィールド値に利用します。
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
 
 """
 
-AnnotationTypeFieldValueMarginOfErrorTolerance = Dict[str, Any]
+AnnotationTypeFieldValueMarginOfErrorTolerance = dict[str, Any]
 """
 誤差許容範囲
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1562,11 +1562,11 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueMinimumArea2d = Dict[str, Any]
+AnnotationTypeFieldValueMinimumArea2d = dict[str, Any]
 """
 最小の面積 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1575,11 +1575,11 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueMinimumSize = Dict[str, Any]
+AnnotationTypeFieldValueMinimumSize = dict[str, Any]
 """
 アノテーションの最小サイズに関する設定
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1592,11 +1592,11 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition = Dict[str, Any]
+AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1606,16 +1606,16 @@ Kyes of Dict
     
 * min_height: int
     
-* position_for_minimum_bounding_box_insertion: List[int]
+* position_for_minimum_bounding_box_insertion: list[int]
     最小矩形の挿入位置を、要素が2の配列で指定します。 
 
 """
 
-AnnotationTypeFieldValueOneBooleanFieldValue = Dict[str, Any]
+AnnotationTypeFieldValueOneBooleanFieldValue = dict[str, Any]
 """
 真偽値をひとつだけ持つフィールド
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1624,11 +1624,11 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueOneIntegerFieldValue = Dict[str, Any]
+AnnotationTypeFieldValueOneIntegerFieldValue = dict[str, Any]
 """
 数値をひとつだけ持つフィールド
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1637,11 +1637,11 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueOneStringFieldValue = Dict[str, Any]
+AnnotationTypeFieldValueOneStringFieldValue = dict[str, Any]
 """
 文字列を一つだけ持つフィールド
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1650,11 +1650,11 @@ Kyes of Dict
 
 """
 
-AnnotationTypeFieldValueVertexCountMinMax = Dict[str, Any]
+AnnotationTypeFieldValueVertexCountMinMax = dict[str, Any]
 """
 頂点数の最大・最小 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -1665,11 +1665,11 @@ Kyes of Dict
 
 """
 
-AnnotationV1 = Dict[str, Any]
+AnnotationV1 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -1677,18 +1677,18 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV1]
+* details: list[AnnotationDetailV1]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     更新日時
 
 """
 
-AnnotationV2Input = Dict[str, Any]
+AnnotationV2Input = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -1696,7 +1696,7 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV2Input]
+* details: list[AnnotationDetailV2Input]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     対象タスク・対象入力データへの最初の保存時は未指定にしてください。 更新の場合はアノテーション取得時のupdated_datetimeをそのまま指定してください。 
@@ -1705,11 +1705,11 @@ Kyes of Dict
 
 """
 
-AnnotationV2Output = Dict[str, Any]
+AnnotationV2Output = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -1717,7 +1717,7 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV2Output]
+* details: list[AnnotationDetailV2Output]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     対象タスク・対象入力データへ一度もアノテーションの保存が行われていない場合、未指定となります。 そうで無い場合、対象タスク・対象入力データのアノテーション最終更新時刻です。 
@@ -1736,11 +1736,11 @@ class AssigneeRuleOfResubmittedTask(Enum):
     FIXED = "fixed"
 
 
-BatchAnnotationRequestItem = Dict[str, Any]
+BatchAnnotationRequestItem = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * data: BatchAnnotationV2
     
@@ -1759,11 +1759,11 @@ Kyes of Dict
 
 """
 
-BatchAnnotationRequestItemDelete = Dict[str, Any]
+BatchAnnotationRequestItemDelete = dict[str, Any]
 """
 アノテーション削除
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -1780,11 +1780,11 @@ Kyes of Dict
 
 """
 
-BatchAnnotationRequestItemPutV1 = Dict[str, Any]
+BatchAnnotationRequestItemPutV1 = dict[str, Any]
 """
 アノテーション更新
 
-Kyes of Dict
+Kyes of dict
 
 * data: BatchAnnotationV1
     
@@ -1793,11 +1793,11 @@ Kyes of Dict
 
 """
 
-BatchAnnotationRequestItemPutV2 = Dict[str, Any]
+BatchAnnotationRequestItemPutV2 = dict[str, Any]
 """
 アノテーション更新
 
-Kyes of Dict
+Kyes of dict
 
 * data: BatchAnnotationV2
     
@@ -1806,11 +1806,11 @@ Kyes of Dict
 
 """
 
-BatchAnnotationV1 = Dict[str, Any]
+BatchAnnotationV1 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -1822,18 +1822,18 @@ Kyes of Dict
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* additional_data_list: List[AdditionalDataV1]
+* additional_data_list: list[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * updated_datetime: str
     アノテーション取得時の更新日時。更新時の楽観ロックに利用されます。 AnnotationDetailのものではなく、それを格納するAnnotationV2Outputなどが保持する更新時刻であることに注意してください。 
 
 """
 
-BatchAnnotationV2 = Dict[str, Any]
+BatchAnnotationV2 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -1845,18 +1845,18 @@ Kyes of Dict
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * updated_datetime: str
     アノテーション取得時の更新日時。更新時の楽観ロックに利用されます。 AnnotationDetailのものではなく、それを格納するAnnotationV2Outputなどが保持する更新時刻であることに注意してください。 
 
 """
 
-BatchCommentRequestItem = Dict[str, Any]
+BatchCommentRequestItem = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * comment_id: str
     コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -1868,7 +1868,7 @@ Kyes of Dict
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * comment_type: str
     コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。 * `inspection` - 検査コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 
-* phrases: List[str]
+* phrases: list[str]
     `comment_type` の値によって指定可能な値が異なります。  * `onhold` の場合   * 使用しません（空配列 or 指定なし） 
 * comment: str
     コメント本文。 
@@ -1881,11 +1881,11 @@ Kyes of Dict
 
 """
 
-BatchCommentRequestItemDelete = Dict[str, Any]
+BatchCommentRequestItemDelete = dict[str, Any]
 """
 コメント削除
 
-Kyes of Dict
+Kyes of dict
 
 * comment_id: str
     コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -1894,11 +1894,11 @@ Kyes of Dict
 
 """
 
-BatchCommentRequestItemPut = Dict[str, Any]
+BatchCommentRequestItemPut = dict[str, Any]
 """
 コメント更新
 
-Kyes of Dict
+Kyes of dict
 
 * comment_id: str
     コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -1910,7 +1910,7 @@ Kyes of Dict
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * comment_type: str
     コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。 * `inspection` - 検査コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 
-* phrases: List[str]
+* phrases: list[str]
     `comment_type` の値によって指定可能な値が異なります。  * `onhold` の場合   * 使用しません（空配列 or 指定なし） 
 * comment: str
     コメント本文。 
@@ -1923,20 +1923,20 @@ Kyes of Dict
 
 """
 
-BatchInputDataRequestItem = Dict[str, Any]
+BatchInputDataRequestItem = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 
 """
 
-BatchInputDataRequestItemDelete = Dict[str, Any]
+BatchInputDataRequestItemDelete = dict[str, Any]
 """
 入力データ削除
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -1947,11 +1947,11 @@ Kyes of Dict
 
 """
 
-BatchInspectionRequestItem = Dict[str, Any]
+BatchInspectionRequestItem = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * data: Inspection
     
@@ -1968,11 +1968,11 @@ Kyes of Dict
 
 """
 
-BatchInspectionRequestItemDelete = Dict[str, Any]
+BatchInspectionRequestItemDelete = dict[str, Any]
 """
 検査コメント削除
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -1987,11 +1987,11 @@ Kyes of Dict
 
 """
 
-BatchInspectionRequestItemPut = Dict[str, Any]
+BatchInspectionRequestItemPut = dict[str, Any]
 """
 検査コメント更新
 
-Kyes of Dict
+Kyes of dict
 
 * data: Inspection
     
@@ -2000,20 +2000,20 @@ Kyes of Dict
 
 """
 
-BatchTaskRequestItem = Dict[str, Any]
+BatchTaskRequestItem = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 
 """
 
-BatchTaskRequestItemDelete = Dict[str, Any]
+BatchTaskRequestItemDelete = dict[str, Any]
 """
 タスク削除
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -2024,11 +2024,11 @@ Kyes of Dict
 
 """
 
-BoundingBoxMetadata = Dict[str, Any]
+BoundingBoxMetadata = dict[str, Any]
 """
 ベクター形式のアノテーション（矩形、ポリゴン、ポリライン、点）のメタデータ
 
-Kyes of Dict
+Kyes of dict
 
 * min_width: int
     幅の最小値[ピクセル]
@@ -2051,11 +2051,11 @@ Kyes of Dict
 
 """
 
-ChangePasswordRequest = Dict[str, Any]
+ChangePasswordRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -2066,11 +2066,11 @@ Kyes of Dict
 
 """
 
-Color = Dict[str, Any]
+Color = dict[str, Any]
 """
 RGBで表現される色情報
 
-Kyes of Dict
+Kyes of dict
 
 * red: int
     
@@ -2081,11 +2081,11 @@ Kyes of Dict
 
 """
 
-Comment = Dict[str, Any]
+Comment = dict[str, Any]
 """
 コメント
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -2103,7 +2103,7 @@ Kyes of Dict
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * comment_type: CommentType
     
-* phrases: List[str]
+* phrases: list[str]
     `comment_type` の値によって扱いが異なります。  * `onhold` の場合   * 使用しません（空配列） * `inspection` の場合   * 参照している定型指摘のIDリスト 
 * comment: str
     コメント本文。 
@@ -2118,11 +2118,11 @@ Kyes of Dict
 
 """
 
-CommentNode = Dict[str, Any]
+CommentNode = dict[str, Any]
 """
 コメントのノード固有のデータ。  * `RootComment` - スレッドの先頭のコメント（ルートコメント）。 * `ReplyComment` - あるコメントへの返信コメント。 
 
-Kyes of Dict
+Kyes of dict
 
 * data: InspectionData
     
@@ -2159,33 +2159,33 @@ class CommentType(Enum):
     INSPECTION = "inspection"
 
 
-ConfirmAccountDeleteRequest = Dict[str, Any]
+ConfirmAccountDeleteRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * token: str
     
 
 """
 
-ConfirmResetEmailRequest = Dict[str, Any]
+ConfirmResetEmailRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * token: str
     
 
 """
 
-ConfirmResetPasswordRequest = Dict[str, Any]
+ConfirmResetPasswordRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -2198,11 +2198,11 @@ Kyes of Dict
 
 """
 
-ConfirmSignUpRequest = Dict[str, Any]
+ConfirmSignUpRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -2221,11 +2221,11 @@ Kyes of Dict
 
 """
 
-ConfirmVerifyEmailRequest = Dict[str, Any]
+ConfirmVerifyEmailRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * token: Token
     
@@ -2234,26 +2234,26 @@ Kyes of Dict
 
 """
 
-Count = Dict[str, Any]
+Count = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * key: str
     集約対象の `field` の値です。 
 * count: int
     集約対象 `field` の値が `key` の値と等しかったリソースの件数です。 
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     この集約のサブ集約です。サブ集約がないときは空の配列になります。 
 
 """
 
-CountResult = Dict[str, Any]
+CountResult = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `CountResult` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -2263,16 +2263,16 @@ Kyes of Dict
     集約に使われたリソースのフィールド名です。  リソースの属性のさらに属性を参照するときは、`foo.bar.buz` のようにドット区切りになります。 
 * doc_count: int
     集約の件数です。 
-* items: List[Count]
+* items: list[Count]
     集約結果の値です。 
 
 """
 
-DataPath = Dict[str, Any]
+DataPath = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * url: str
     ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。
@@ -2281,11 +2281,11 @@ Kyes of Dict
 
 """
 
-DateRange = Dict[str, Any]
+DateRange = dict[str, Any]
 """
 日付の期間
 
-Kyes of Dict
+Kyes of dict
 
 * _from: str
     期間の開始日（ISO 8601 拡張形式）
@@ -2311,11 +2311,11 @@ class DefaultAnnotationType(Enum):
     CUSTOM = "custom"
 
 
-DeleteProjectResponse = Dict[str, Any]
+DeleteProjectResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * job: ProjectJobInfo
     
@@ -2324,26 +2324,26 @@ Kyes of Dict
 
 """
 
-DuplicatedSegmentationV2 = Dict[str, Any]
+DuplicatedSegmentationV2 = dict[str, Any]
 """
 塗りつぶしv2のラベルに対する1ラベルにつき1アノテーションまでの制約違反エラー
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
-* annotation_ids: List[str]
+* annotation_ids: list[str]
     
 * type: str
     DuplicatedSegmentationV2
 
 """
 
-DuplicatedV1 = Dict[str, Any]
+DuplicatedV1 = dict[str, Any]
 """
 値の重複が許可されていない属性の重複エラー
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
@@ -2356,11 +2356,11 @@ Kyes of Dict
 
 """
 
-DuplicatedV2 = Dict[str, Any]
+DuplicatedV2 = dict[str, Any]
 """
 値の重複が許可されていない属性の重複エラー
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
@@ -2373,11 +2373,11 @@ Kyes of Dict
 
 """
 
-EditorUsageTimespan = Dict[str, Any]
+EditorUsageTimespan = dict[str, Any]
 """
 エディタごとの利用時間
 
-Kyes of Dict
+Kyes of dict
 
 * editor_name: str
     エディタ名です。  | editor_nameの値 | エディタ名   | |-----------------|--------------| | image_editor    | 画像エディタ | | video_editor    | 動画エディタ | | 3d_editor       | 3Dエディタ   | 
@@ -2386,11 +2386,11 @@ Kyes of Dict
 
 """
 
-ErrorItem = Dict[str, Any]
+ErrorItem = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * error_code: str
     
@@ -2401,24 +2401,24 @@ Kyes of Dict
 
 """
 
-Errors = Dict[str, Any]
+Errors = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* errors: List[ErrorItem]
+* errors: list[ErrorItem]
     
 * context: __DictStrKeyAnyValue__
     内部補足情報
 
 """
 
-FullAnnotation = Dict[str, Any]
+FullAnnotation = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -2434,7 +2434,7 @@ Kyes of Dict
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
     入力データ名
-* details: List[FullAnnotationDetail]
+* details: list[FullAnnotationDetail]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列
 * updated_datetime: str
     更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。
@@ -2443,11 +2443,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalData = Dict[str, Any]
+FullAnnotationAdditionalData = dict[str, Any]
 """
 属性情報 
 
-Kyes of Dict
+Kyes of dict
 
 * additional_data_definition_id: str
     属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -2460,11 +2460,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataChoiceValue = Dict[str, Any]
+FullAnnotationAdditionalDataChoiceValue = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * id: str
     選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -2473,11 +2473,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValue = Dict[str, Any]
+FullAnnotationAdditionalDataValue = dict[str, Any]
 """
 属性値 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     Link
@@ -2486,11 +2486,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueChoice = Dict[str, Any]
+FullAnnotationAdditionalDataValueChoice = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `Choice` 
@@ -2499,11 +2499,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueComment = Dict[str, Any]
+FullAnnotationAdditionalDataValueComment = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `Comment` 
@@ -2512,11 +2512,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueFlag = Dict[str, Any]
+FullAnnotationAdditionalDataValueFlag = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `Flag` 
@@ -2525,11 +2525,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueInteger = Dict[str, Any]
+FullAnnotationAdditionalDataValueInteger = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `Integer` 
@@ -2538,11 +2538,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueLink = Dict[str, Any]
+FullAnnotationAdditionalDataValueLink = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     Link
@@ -2551,11 +2551,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationAdditionalDataValueTracking = Dict[str, Any]
+FullAnnotationAdditionalDataValueTracking = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     Tracking
@@ -2564,11 +2564,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationData = Dict[str, Any]
+FullAnnotationData = dict[str, Any]
 """
 アノテーションのデータが格納されます。   * `FullAnnotationDataClassification`: 入力データ全体アノテーション   * `FullAnnotationDataSegmentation`: 塗りつぶしアノテーション   * `FullAnnotationDataSegmentationV2`: 塗りつぶしv2アノテーション   * `FullAnnotationDataBoundingBox`: 矩形アノテーション   * `FullAnnotationDataPoints`: ポリゴンまたはポリラインアノテーション   * `FullAnnotationDataSinglePoint`: 点アノテーション   * `FullAnnotationDataRange`: 動画区間アノテーション   * `FullAnnotationDataUnknown`: カスタムアノテーション 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `Unknown` 
@@ -2578,7 +2578,7 @@ Kyes of Dict
     
 * right_bottom: Point
     
-* points: List[Point]
+* points: list[Point]
     頂点の座標値
 * point: Point
     
@@ -2591,11 +2591,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataBoundingBox = Dict[str, Any]
+FullAnnotationDataBoundingBox = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * left_top: Point
     
@@ -2606,35 +2606,35 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataClassification = Dict[str, Any]
+FullAnnotationDataClassification = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `Classification` 
 
 """
 
-FullAnnotationDataPoints = Dict[str, Any]
+FullAnnotationDataPoints = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* points: List[Point]
+* points: list[Point]
     頂点の座標値
 * type: str
     `Points` 
 
 """
 
-FullAnnotationDataRange = Dict[str, Any]
+FullAnnotationDataRange = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * begin: float
     開始時間（ミリ秒）
@@ -2645,11 +2645,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataSegmentation = Dict[str, Any]
+FullAnnotationDataSegmentation = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * data_uri: str
     塗りつぶし画像のパス。 塗りつぶし画像のファイル形式はPNGです。塗りつぶされた部分の色は`rgba(255, 255, 255, 1)`、塗りつぶされていない部分の色は`rgba(0, 0, 0, 0)`です。 
@@ -2658,11 +2658,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataSegmentationV2 = Dict[str, Any]
+FullAnnotationDataSegmentationV2 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * data_uri: str
     塗りつぶし画像のパス。 塗りつぶし画像のファイル形式はPNGです。塗りつぶされた部分の色は`rgba(255, 255, 255, 1)`、塗りつぶされていない部分の色は`rgba(0, 0, 0, 0)`です。 
@@ -2671,11 +2671,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataSinglePoint = Dict[str, Any]
+FullAnnotationDataSinglePoint = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * point: Point
     
@@ -2684,11 +2684,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationDataUnknown = Dict[str, Any]
+FullAnnotationDataUnknown = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * data: str
     アノテーションデータを文字列で表現した値
@@ -2697,11 +2697,11 @@ Kyes of Dict
 
 """
 
-FullAnnotationDetail = Dict[str, Any]
+FullAnnotationDetail = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
@@ -2717,7 +2717,7 @@ Kyes of Dict
     
 * data: FullAnnotationData
     
-* additional_data_list: List[FullAnnotationAdditionalData]
+* additional_data_list: list[FullAnnotationAdditionalData]
     属性情報。 
 
 """
@@ -2739,11 +2739,11 @@ class GraphType(Enum):
     MEAN_LABOR_TIME_PER_MINUTE_OF_MOVIE_BY_MEMBER = "mean_labor_time_per_minute_of_movie_by_member"
 
 
-HistogramItem = Dict[str, Any]
+HistogramItem = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * begin: float
     
@@ -2754,33 +2754,33 @@ Kyes of Dict
 
 """
 
-IllegalState = Dict[str, Any]
+IllegalState = dict[str, Any]
 """
 作業が開始されていない、担当が割り当たっていない等のエラー
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     IllegalState
 
 """
 
-InitiateMfaSetupRequest = Dict[str, Any]
+InitiateMfaSetupRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * access_token: str
     アクセストークン。[login](#operation/login) APIで取得します。 
 
 """
 
-InitiateMfaSetupResponse = Dict[str, Any]
+InitiateMfaSetupResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * secret_code: str
     TOTPアルゴリズムでワンタイムコードを生成するために使用される、一意に生成された共有秘密コードです。 
@@ -2789,11 +2789,11 @@ Kyes of Dict
 
 """
 
-InputData = Dict[str, Any]
+InputData = dict[str, Any]
 """
 入力データの情報を表すデータ構造です。
 
-Kyes of Dict
+Kyes of dict
 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -2824,13 +2824,13 @@ Kyes of Dict
 
 """
 
-InputDataList = Dict[str, Any]
+InputDataList = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* list: List[InputData]
+* list: list[InputData]
     現在のページ番号に含まれる0件以上の入力データです。
 * page_no: float
     現在のページ番号です。
@@ -2840,7 +2840,7 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果の件数が1万件を超えた場合は`true`になります。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     システム内部用のプロパティ。 
 
 """
@@ -2856,11 +2856,11 @@ class InputDataOrder(Enum):
     RANDOM = "random"
 
 
-InputDataRequest = Dict[str, Any]
+InputDataRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * input_data_name: str
     入力データ名。ZIPファイルをアップロードする際は、入力データ名のプレフィックスを指定してください。
@@ -2875,11 +2875,11 @@ Kyes of Dict
 
 """
 
-InputDataSet = Dict[str, Any]
+InputDataSet = dict[str, Any]
 """
 入力データセットの情報を表すデータ構造です。
 
-Kyes of Dict
+Kyes of dict
 
 * input_data_set_id: str
     入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -2896,17 +2896,17 @@ Kyes of Dict
 
 """
 
-InputDataSummary = Dict[str, Any]
+InputDataSummary = dict[str, Any]
 """
 ある入力データのバリデーション結果です。入力データIDをキーに引けるようにMap[入力データID, バリデーション結果]となっています
 
-Kyes of Dict
+Kyes of dict
 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * inspection_summary: InspectionSummary
     
-* annotation_summaries: List[ValidationError]
+* annotation_summaries: list[ValidationError]
     
 
 """
@@ -2922,11 +2922,11 @@ class InputDataType(Enum):
     CUSTOM = "custom"
 
 
-Inspection = Dict[str, Any]
+Inspection = dict[str, Any]
 """
 検査コメント
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -2950,7 +2950,7 @@ Kyes of Dict
     
 * parent_inspection_id: str
     検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* phrases: List[str]
+* phrases: list[str]
     参照している定型指摘のID。
 * comment: str
     検査コメントの中身 
@@ -2963,11 +2963,11 @@ Kyes of Dict
 
 """
 
-InspectionData = Dict[str, Any]
+InspectionData = dict[str, Any]
 """
 ##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合  検査コメントの座標値や区間。  * `InspectionDataPoint`：点で検査コメントを付与したときの座標値 * `InspectionDataPolyline`：ポリラインで検査コメントを付与したときの座標値 * `InspectionDataTime`：検査コメントを付与した区間（動画プロジェクトの場合） * `InspectionDataCustom`：カスタム  ##### 返信コメントである（`parent_inspection_id` に値がある）場合  現在は使用しておらず、レスポンスに含まれる値は不定です。APIのレスポンスにこの値を含む場合でも、「スレッドの先頭のコメント」の値を利用してください。  リクエストボディに指定する場合は、スレッドの先頭のコメントと同じ値を指定します。 
 
-Kyes of Dict
+Kyes of dict
 
 * x: int
     
@@ -2975,7 +2975,7 @@ Kyes of Dict
     
 * type: str
     `Custom` [詳しくはこちら](#section/API-Convention/API-_type) 
-* coordinates: List[InspectionDataPolylineCoordinates]
+* coordinates: list[InspectionDataPolylineCoordinates]
     ポリラインを構成する頂点の配列 
 * start: float
     開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
@@ -2986,11 +2986,11 @@ Kyes of Dict
 
 """
 
-InspectionDataCustom = Dict[str, Any]
+InspectionDataCustom = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * data: str
     
@@ -2999,11 +2999,11 @@ Kyes of Dict
 
 """
 
-InspectionDataPoint = Dict[str, Any]
+InspectionDataPoint = dict[str, Any]
 """
 問題のある部分を示す座標 
 
-Kyes of Dict
+Kyes of dict
 
 * x: int
     
@@ -3014,24 +3014,24 @@ Kyes of Dict
 
 """
 
-InspectionDataPolyline = Dict[str, Any]
+InspectionDataPolyline = dict[str, Any]
 """
 問題のある部分を示すポリライン 
 
-Kyes of Dict
+Kyes of dict
 
-* coordinates: List[InspectionDataPolylineCoordinates]
+* coordinates: list[InspectionDataPolylineCoordinates]
     ポリラインを構成する頂点の配列 
 * type: str
     `Polyline` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
-InspectionDataPolylineCoordinates = Dict[str, Any]
+InspectionDataPolylineCoordinates = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * x: int
     
@@ -3040,11 +3040,11 @@ Kyes of Dict
 
 """
 
-InspectionDataTime = Dict[str, Any]
+InspectionDataTime = dict[str, Any]
 """
 問題のある時間帯を表す区間 
 
-Kyes of Dict
+Kyes of dict
 
 * start: float
     開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
@@ -3055,22 +3055,22 @@ Kyes of Dict
 
 """
 
-InspectionOrReplyRequired = Dict[str, Any]
+InspectionOrReplyRequired = dict[str, Any]
 """
 新規検査コメントまたは未対応検査コメントへの返信が必要である時のエラー
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     InspectionOrReplyRequired
 
 """
 
-InspectionPhrase = Dict[str, Any]
+InspectionPhrase = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * id: str
     定型指摘ID
@@ -3079,11 +3079,11 @@ Kyes of Dict
 
 """
 
-InspectionStatistics = Dict[str, Any]
+InspectionStatistics = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3094,11 +3094,11 @@ Kyes of Dict
 
 """
 
-InspectionStatisticsBreakdown = Dict[str, Any]
+InspectionStatisticsBreakdown = dict[str, Any]
 """
 検査コメント数の集計結果
 
-Kyes of Dict
+Kyes of dict
 
 * labels: dict(str, InspectionStatisticsPhrases)
     ラベルに紐付いている検査コメントの集計結果。キーは`label_id`です。
@@ -3107,11 +3107,11 @@ Kyes of Dict
 
 """
 
-InspectionStatisticsPhrases = Dict[str, Any]
+InspectionStatisticsPhrases = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * phrases: dict(str, int)
     定型指摘ごとの検査コメントの個数。キーは定型指摘ID、値は検査コメント数です。
@@ -3134,11 +3134,11 @@ class InspectionSummary(Enum):
     COMPLETE = "complete"
 
 
-InspectionValidationError = Dict[str, Any]
+InspectionValidationError = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * inspection: Inspection
     
@@ -3147,11 +3147,11 @@ Kyes of Dict
 
 """
 
-Instruction = Dict[str, Any]
+Instruction = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * html: str
     作業ガイドのHTML
@@ -3160,11 +3160,11 @@ Kyes of Dict
 
 """
 
-InstructionHistory = Dict[str, Any]
+InstructionHistory = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * history_id: str
     作業ガイドの履歴ID
@@ -3175,11 +3175,11 @@ Kyes of Dict
 
 """
 
-InstructionImage = Dict[str, Any]
+InstructionImage = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * image_id: str
     作業ガイド画像ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3192,11 +3192,11 @@ Kyes of Dict
 
 """
 
-InstructionImagePath = Dict[str, Any]
+InstructionImagePath = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * url: str
     ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。
@@ -3205,24 +3205,24 @@ Kyes of Dict
 
 """
 
-InternationalizationMessage = Dict[str, Any]
+InternationalizationMessage = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* messages: List[InternationalizationMessageMessages]
+* messages: list[InternationalizationMessageMessages]
     言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、Annofabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * 以下の名前は、[Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます     * ラベル名     * 属性名     * 選択肢名 * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます 
 * default_lang: str
     希望された言語のメッセージが存在しない場合に、フォールバック先として使われる言語コード
 
 """
 
-InternationalizationMessageMessages = Dict[str, Any]
+InternationalizationMessageMessages = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * lang: str
     言語コード。`en-US` (英語) 、`ja-JP` (日本語)、 `vi-VN`（ベトナム語）のみサポートしています。
@@ -3231,11 +3231,11 @@ Kyes of Dict
 
 """
 
-InvalidAnnotationData = Dict[str, Any]
+InvalidAnnotationData = dict[str, Any]
 """
 アノテーションデータ不正エラー
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
@@ -3248,11 +3248,11 @@ Kyes of Dict
 
 """
 
-InvalidChoice = Dict[str, Any]
+InvalidChoice = dict[str, Any]
 """
 選択肢不正エラー
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
@@ -3265,11 +3265,11 @@ Kyes of Dict
 
 """
 
-InvalidLinkTarget = Dict[str, Any]
+InvalidLinkTarget = dict[str, Any]
 """
 リンク先アノテーションが許可されているラベルでないエラー
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
@@ -3282,11 +3282,11 @@ Kyes of Dict
 
 """
 
-InvalidValue = Dict[str, Any]
+InvalidValue = dict[str, Any]
 """
 値制約に合致しないエラー
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
@@ -3299,22 +3299,22 @@ Kyes of Dict
 
 """
 
-InviteOrganizationMemberRequest = Dict[str, Any]
+InviteOrganizationMemberRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * role: OrganizationMemberRole
     
 
 """
 
-IssuePersonalAccessTokenRequest = Dict[str, Any]
+IssuePersonalAccessTokenRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * id: str
     パーソナルアクセストークンのID。ユーザごとに一意な文字列。 [値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3322,16 +3322,16 @@ Kyes of Dict
     人間可読なトークンの説明
 * expiration: float
     トークンの期間。 単位はミリ秒
-* permissions: List[PersonalAccessTokenPermission]
+* permissions: list[PersonalAccessTokenPermission]
     トークンに与える権限
 
 """
 
-IssueProjectGuestUserTokenRequest = Dict[str, Any]
+IssueProjectGuestUserTokenRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     ゲストユーザーがアクセスするプロジェクトのID
@@ -3346,11 +3346,11 @@ Kyes of Dict
 
 """
 
-IssueProjectTokenRequest = Dict[str, Any]
+IssueProjectTokenRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトトークンの発行対象プロジェクトID
@@ -3380,11 +3380,11 @@ class KeyLayout(Enum):
     OTHER = "other"
 
 
-Keybind = Dict[str, Any]
+Keybind = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * code: str
     [KeyboardEvent.code](https://developer.mozilla.org/ja/docs/Web/API/KeyboardEvent/code)に相当する値です。 
@@ -3397,11 +3397,11 @@ Kyes of Dict
 
 """
 
-LabelStatistics = Dict[str, Any]
+LabelStatistics = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3412,17 +3412,17 @@ Kyes of Dict
 
 """
 
-LabelV1 = Dict[str, Any]
+LabelV1 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_name: InternationalizationMessage
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 * annotation_type: AnnotationType
     
@@ -3430,7 +3430,7 @@ Kyes of Dict
     
 * segmentation_metadata: SegmentationMetadata
     
-* additional_data_definitions: List[AdditionalDataDefinitionV1]
+* additional_data_definitions: list[AdditionalDataDefinitionV1]
     属性
 * color: Color
     
@@ -3441,17 +3441,17 @@ Kyes of Dict
 
 """
 
-LabelV2 = Dict[str, Any]
+LabelV2 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_name: InternationalizationMessage
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 * annotation_type: AnnotationType
     
@@ -3459,7 +3459,7 @@ Kyes of Dict
     
 * segmentation_metadata: SegmentationMetadata
     
-* additional_data_definitions: List[str]
+* additional_data_definitions: list[str]
     ラベルに所属する属性のID
 * color: Color
     
@@ -3470,23 +3470,23 @@ Kyes of Dict
 
 """
 
-LabelV3 = Dict[str, Any]
+LabelV3 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_name: InternationalizationMessage
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 * annotation_type: AnnotationType
     
 * field_values: dict(str, AnnotationTypeFieldValue)
     KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#section/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 
-* additional_data_definitions: List[str]
+* additional_data_definitions: list[str]
     ラベルに所属する属性のID
 * color: Color
     
@@ -3506,22 +3506,22 @@ class Lang(Enum):
     VI_VN = "vi-VN"
 
 
-LoginNeedChallengeResponse = Dict[str, Any]
+LoginNeedChallengeResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * session: str
     セッション
 
 """
 
-LoginRequest = Dict[str, Any]
+LoginRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3530,11 +3530,11 @@ Kyes of Dict
 
 """
 
-LoginRespondToAuthChallengeRequest = Dict[str, Any]
+LoginRespondToAuthChallengeRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3545,11 +3545,11 @@ Kyes of Dict
 
 """
 
-LoginResponse = Dict[str, Any]
+LoginResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * token: Token
     
@@ -3558,22 +3558,22 @@ Kyes of Dict
 
 """
 
-LoginSucceedResponse = Dict[str, Any]
+LoginSucceedResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * token: Token
     
 
 """
 
-Marker = Dict[str, Any]
+Marker = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * marker_id: str
     マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3586,26 +3586,26 @@ Kyes of Dict
 
 """
 
-Markers = Dict[str, Any]
+Markers = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* markers: List[Marker]
+* markers: list[Marker]
     マーカー一覧
 * updated_datetime: str
     更新日時
 
 """
 
-Message = Dict[str, Any]
+Message = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * message: str
     メッセージ
@@ -3614,11 +3614,11 @@ Kyes of Dict
 
 """
 
-MessageOrJobInfo = Dict[str, Any]
+MessageOrJobInfo = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * message: str
     メッセージ
@@ -3645,11 +3645,11 @@ Kyes of Dict
 
 """
 
-MfaSetting = Dict[str, Any]
+MfaSetting = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * enabled: bool
     MFAが有効か (trueの場合に有効)
@@ -3658,11 +3658,11 @@ Kyes of Dict
 
 """
 
-MyAccount = Dict[str, Any]
+MyAccount = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3686,31 +3686,31 @@ Kyes of Dict
     更新日時
 * reset_requested_email: str
     システム内部用のプロパティ
-* errors: List[str]
+* errors: list[str]
     システム内部用のプロパティ
 
 """
 
-MyAccountAllOf = Dict[str, Any]
+MyAccountAllOf = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * reset_requested_email: str
     システム内部用のプロパティ
-* errors: List[str]
+* errors: list[str]
     システム内部用のプロパティ
 
 """
 
-MyNotificationList = Dict[str, Any]
+MyNotificationList = dict[str, Any]
 """
 自分に届いているユーザー通知の取得結果です。
 
-Kyes of Dict
+Kyes of dict
 
-* messages: List[MyNotificationMessage]
+* messages: list[MyNotificationMessage]
     
 * opened: int
     開封済みの通知メッセージの数。 over_limitがtrueの場合、メッセージのタイムスタンプが新しい順から10000件のメッセージをもとに集計される 
@@ -3725,11 +3725,11 @@ Kyes of Dict
 
 """
 
-MyNotificationMessage = Dict[str, Any]
+MyNotificationMessage = dict[str, Any]
 """
 自分への通知メッセージの情報です。
 
-Kyes of Dict
+Kyes of dict
 
 * message_id: str
     通知メッセージID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3748,22 +3748,22 @@ Kyes of Dict
 
 """
 
-MyNotificationUnreadMessagesCount = Dict[str, Any]
+MyNotificationUnreadMessagesCount = dict[str, Any]
 """
 通知メッセージの未読件数
 
-Kyes of Dict
+Kyes of dict
 
 * unread: int
     通知メッセージの未読件数
 
 """
 
-MyOrganization = Dict[str, Any]
+MyOrganization = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3786,13 +3786,13 @@ Kyes of Dict
 
 """
 
-MyOrganizationList = Dict[str, Any]
+MyOrganizationList = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* list: List[MyOrganization]
+* list: list[MyOrganization]
     現在のページ番号に含まれる0件以上の所属組織です。
 * page_no: float
     現在のページ番号です。
@@ -3802,16 +3802,16 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     システム内部用のプロパティ。 
 
 """
 
-NoCommentInspection = Dict[str, Any]
+NoCommentInspection = dict[str, Any]
 """
 空の検査コメントがある時のエラー
 
-Kyes of Dict
+Kyes of dict
 
 * inspection: Inspection
     
@@ -3820,11 +3820,11 @@ Kyes of Dict
 
 """
 
-Organization = Dict[str, Any]
+Organization = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3843,11 +3843,11 @@ Kyes of Dict
 
 """
 
-OrganizationActivity = Dict[str, Any]
+OrganizationActivity = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3858,11 +3858,11 @@ Kyes of Dict
 
 """
 
-OrganizationCacheRecord = Dict[str, Any]
+OrganizationCacheRecord = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * input: str
     
@@ -3875,11 +3875,11 @@ Kyes of Dict
 
 """
 
-OrganizationJobInfo = Dict[str, Any]
+OrganizationJobInfo = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3902,24 +3902,24 @@ Kyes of Dict
 
 """
 
-OrganizationJobInfoContainer = Dict[str, Any]
+OrganizationJobInfoContainer = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* list: List[OrganizationJobInfo]
+* list: list[OrganizationJobInfo]
     バックグラウンドジョブの一覧。作成日時の降順でソートされています。
 * has_next: bool
     さらに古いジョブが存在する場合は`true`です。取得したジョブ一覧の中で`created_datetime`が最も古い値を、クエリパラメータ`exclusive_start_created_datetime`に指定することで、さらに古いジョブを取得することができます。
 
 """
 
-OrganizationMember = Dict[str, Any]
+OrganizationMember = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -3942,13 +3942,13 @@ Kyes of Dict
 
 """
 
-OrganizationMemberList = Dict[str, Any]
+OrganizationMemberList = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* list: List[OrganizationMember]
+* list: list[OrganizationMember]
     組織メンバーの一覧
 * page_no: float
     現在のページ番号です。
@@ -3958,7 +3958,7 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     システム内部用のプロパティ 
 
 """
@@ -3984,11 +3984,11 @@ class OrganizationMemberStatus(Enum):
     INACTIVE = "inactive"
 
 
-OrganizationPlugin = Dict[str, Any]
+OrganizationPlugin = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -4009,11 +4009,11 @@ Kyes of Dict
 
 """
 
-OrganizationPluginCompatibility = Dict[str, Any]
+OrganizationPluginCompatibility = dict[str, Any]
 """
 プラグイン間の互換性を表します。未指定の場合はinput、outputともに`Top`の`OrganizationPluginCompatibilityType`が設定されます。
 
-Kyes of Dict
+Kyes of dict
 
 * input: OrganizationPluginCompatibilityType
     
@@ -4022,11 +4022,11 @@ Kyes of Dict
 
 """
 
-OrganizationPluginCompatibilityType = Dict[str, Any]
+OrganizationPluginCompatibilityType = dict[str, Any]
 """
 プラグインの入力/出力を表す型です。 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     Constant型で、かつidの値が一致している場合に互換性があることを示します。 
@@ -4035,22 +4035,22 @@ Kyes of Dict
 
 """
 
-OrganizationPluginCompatibilityTypeBottom = Dict[str, Any]
+OrganizationPluginCompatibilityTypeBottom = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     inputに指定した場合、いずれのプラグインも前段になれないことを示します。 outputに指定した場合、いずれのプラグインも後段になれないことを示します。 
 
 """
 
-OrganizationPluginCompatibilityTypeConstant = Dict[str, Any]
+OrganizationPluginCompatibilityTypeConstant = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     Constant型で、かつidの値が一致している場合に互換性があることを示します。 
@@ -4059,24 +4059,24 @@ Kyes of Dict
 
 """
 
-OrganizationPluginCompatibilityTypeTop = Dict[str, Any]
+OrganizationPluginCompatibilityTypeTop = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     inputに指定した場合、あらゆるプラグインの後段になれることを示します。 outputに指定した場合、入力がTopであるプラグインだけが後段になれることを示します。 
 
 """
 
-OrganizationPluginList = Dict[str, Any]
+OrganizationPluginList = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* list: List[OrganizationPlugin]
+* list: list[OrganizationPlugin]
     プラグイン一覧
 * page_no: float
     現在のページ番号です。
@@ -4086,16 +4086,16 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[__DictStrKeyAnyValue__]
+* aggregations: list[__DictStrKeyAnyValue__]
     システム内部用のプロパティ。 
 
 """
 
-OrganizationRegistrationRequest = Dict[str, Any]
+OrganizationRegistrationRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * organization_name: str
     組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -4104,11 +4104,11 @@ Kyes of Dict
 
 """
 
-OverlappedRangeAnnotation = Dict[str, Any]
+OverlappedRangeAnnotation = dict[str, Any]
 """
 区間が重複しているアノテーションが存在している場合に発生するエラー
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
@@ -4119,22 +4119,22 @@ Kyes of Dict
 
 """
 
-PasswordResetRequest = Dict[str, Any]
+PasswordResetRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * email: str
     
 
 """
 
-PersonalAccessToken = Dict[str, Any]
+PersonalAccessToken = dict[str, Any]
 """
 パーソナルアクセストークン
 
-Kyes of Dict
+Kyes of dict
 
 * id: str
     パーソナルアクセストークンのID。ユーザごとに一意な文字列。 [値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -4146,7 +4146,7 @@ Kyes of Dict
     人間可読なトークンの説明
 * expired_datetime: str
     トークンの有効期限
-* permissions: List[PersonalAccessTokenPermission]
+* permissions: list[PersonalAccessTokenPermission]
     トークンが持つ権限
 * created_datetime: str
     トークンの作成時刻
@@ -4155,11 +4155,11 @@ Kyes of Dict
 
 """
 
-PersonalAccessTokenInfo = Dict[str, Any]
+PersonalAccessTokenInfo = dict[str, Any]
 """
 パーソナルアクセストークンから実際のトークン文字列を取り除いたもの
 
-Kyes of Dict
+Kyes of dict
 
 * id: str
     パーソナルアクセストークンのID。ユーザごとに一意な文字列。 [値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -4169,7 +4169,7 @@ Kyes of Dict
     人間可読なトークンの説明
 * expired_datetime: str
     トークンの有効期限
-* permissions: List[PersonalAccessTokenPermission]
+* permissions: list[PersonalAccessTokenPermission]
     トークンが持つ権限
 * created_datetime: str
     トークンの作成時刻
@@ -4178,31 +4178,31 @@ Kyes of Dict
 
 """
 
-PersonalAccessTokenPermission = Dict[str, Any]
+PersonalAccessTokenPermission = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 
 """
 
-PersonalAccessTokenPermissionAll = Dict[str, Any]
+PersonalAccessTokenPermissionAll = dict[str, Any]
 """
 トークンにトークン発行者と完全に同等の権限を与える
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
 
 """
 
-PhaseStatistics = Dict[str, Any]
+PhaseStatistics = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * phase: TaskPhase
     
@@ -4211,87 +4211,87 @@ Kyes of Dict
 
 """
 
-PluginDetail = Dict[str, Any]
+PluginDetail = dict[str, Any]
 """
 * `PluginDetailAnnotationEditor` - カスタムアノテーションエディタ用のプラグインを表します。 * `PluginDetailTaskAssignment` - カスタムタスク割当用のプラグインを表します。 * `PluginDetailAnnotationSpecs` - カスタムアノテーション仕様用のプラグインを表します。 * `PluginDetailExtendedAnnotationSpecs` - カスタムのアノテーション種別を作成するプラグインを表します。 
 
-Kyes of Dict
+Kyes of dict
 
 * url: str
     カスタムアノテーション仕様画面の URL です。 プラグイン種別がカスタムアノテーション仕様の場合のみ有効です。  この URL には、プロジェクトを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` 
 * auth_redirect_url: str
     認証後のリダイレクト先 
-* compatible_input_data_types: List[InputDataType]
+* compatible_input_data_types: list[InputDataType]
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
     `ExtendedAnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) 
 * plugin_compatibility: OrganizationPluginCompatibility
     
-* annotation_types: List[AnnotationType]
+* annotation_types: list[AnnotationType]
     プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。 同じ種別を重複して設定することはできません。 
 * user_defined_annotation_type_definitions: dict(str, UserDefinedAnnotationTypeDefinition)
     Keyが[アノテーションの種類(AnnotationType)](#section/AnnotationType)であるDictionaryです。 
 
 """
 
-PluginDetailAnnotationEditor = Dict[str, Any]
+PluginDetailAnnotationEditor = dict[str, Any]
 """
 カスタムアノテーションエディタ用のプラグインを表します。 
 
-Kyes of Dict
+Kyes of dict
 
 * url: str
     カスタムアノテーションエディタでタスクを開くための URL です。 プラグインを使用するプロジェクトのタスク一覧などで使用されます。 プラグイン種別がカスタムアノテーションエディタの場合のみ有効です。  この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` * `{taskId}`  以下のパラメーターは任意で指定します。  * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。 * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。 
 * auth_redirect_url: str
     認証後のリダイレクト先。このURLに `?code=xxx` をつけてリダイレクトされます。 url プロパティとは異なり、 `{projectId}` や `{taskId}` といったパラメータの置換は行われません。  詳しくは [requestPluginToken API](#operation/requestPluginToken) を参照してください。 
-* compatible_input_data_types: List[InputDataType]
+* compatible_input_data_types: list[InputDataType]
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
     `AnnotationEditor` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
-PluginDetailAnnotationSpecs = Dict[str, Any]
+PluginDetailAnnotationSpecs = dict[str, Any]
 """
 カスタムアノテーション仕様用のプラグインを表します。 
 
-Kyes of Dict
+Kyes of dict
 
 * url: str
     カスタムアノテーション仕様画面の URL です。 プラグイン種別がカスタムアノテーション仕様の場合のみ有効です。  この URL には、プロジェクトを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` 
 * auth_redirect_url: str
     認証後のリダイレクト先 
-* compatible_input_data_types: List[InputDataType]
+* compatible_input_data_types: list[InputDataType]
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
     `AnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
-PluginDetailExtendedAnnotationSpecs = Dict[str, Any]
+PluginDetailExtendedAnnotationSpecs = dict[str, Any]
 """
 カスタムのアノテーション種別を作成するプラグインを表します。 なお、このプラグインが設定されているプロジェクトでは、ここで指定したアノテーション種別以外は使用できなくなります。 
 
-Kyes of Dict
+Kyes of dict
 
 * plugin_compatibility: OrganizationPluginCompatibility
     
-* annotation_types: List[AnnotationType]
+* annotation_types: list[AnnotationType]
     プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。 同じ種別を重複して設定することはできません。 
 * user_defined_annotation_type_definitions: dict(str, UserDefinedAnnotationTypeDefinition)
     Keyが[アノテーションの種類(AnnotationType)](#section/AnnotationType)であるDictionaryです。 
-* compatible_input_data_types: List[InputDataType]
+* compatible_input_data_types: list[InputDataType]
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
     `ExtendedAnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) 
 
 """
 
-PluginDetailTaskAssignment = Dict[str, Any]
+PluginDetailTaskAssignment = dict[str, Any]
 """
 カスタムタスク割当用のプラグインを表します。 
 
-Kyes of Dict
+Kyes of dict
 
 * url: str
     「カスタムタスク割当API」のURLです。 プラグイン種別がカスタムタスク割当の場合のみ有効です。  #### カスタムタスク割当APIについて。  * 独自のアルゴリズムで作業者にタスクを割当するAPIです。 * Annofabから提供されるものではなく、第三者 (ユーザー様) が用意します。 * 作業者がタスク一覧やアノテーションエディタのタスク取得ボタンを押すと、指定したURLに複数の情報 (※1) と共にHTTPリクエスト (POST) が送られます。 * カスタムタスク割当APIでは、Annofabで提供しているAPI (※2) を使用して作業者にタスクを割当してください。 * タスクの割当に成功した場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: 割当した単一の[タスク](https://annofab.com/docs/api/#section/Task)   * ステータスコード: 200 * 作業者に割当できるタスクがない場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"MISSING_RESOURCE\"}]}`   * ステータスコード: 404 * 作業者の認証トークンの期限が切れている場合があります。その場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"EXPIRED_TOKEN\"}]}`   * ステータスコード: 401  #### Preflightリクエストについて。  * Annofabからカスタムタスク割当APIへCross-OriginなHTTPリクエストを送信するより前に、ブラウザの仕様により「Preflightリクエスト」と呼ばれるHTTPリクエストが送られます。 * カスタムタスク割当を利用するためには、カスタムタスク割当APIとは別に「Preflightリクエスト対応API」を用意する必要があります。 * 以下の要件を満たす「Preflightリクエスト対応API」を用意してください。   * URL: カスタムタスク割当APIと同じURL   * HTTPメソッド: OPTIONS   * レスポンスヘッダ:     * `Access-Control-Allow-Origin: https://annofab.com`     * `Access-Control-Allow-Headers: Content-Type`   * レスポンスボディ: 空(から)   * ステータスコード: 200  ※1 以下の情報が送られます。  * HTTPボディ (JSON形式)   * `authorization_token` : タスク割当専用の認証トークン。AnnofabのAPIを利用する際に使用します。   * `project_id` : タスクの割当リクエストが行われたプロジェクトのID。   * `phase` : 作業者が割当を要求したタスクフェーズ。このフェーズのタスクを割当してください。  ※2 例えば以下のAPIがあります。(詳しい情報はAPIドキュメントを参照してください)  * `getMyAccount` : 作業者のアカウント情報を取得できます。 * `getTasks` : プロジェクトのタスクを取得できます。 * `assignTasks` : 作業者にタスクを割当することができます。 
@@ -4300,11 +4300,11 @@ Kyes of Dict
 
 """
 
-PluginTokenRequest = Dict[str, Any]
+PluginTokenRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `RefreshToken` を指定します
@@ -4317,11 +4317,11 @@ Kyes of Dict
 
 """
 
-PluginTokenRequestAuthorizationCode = Dict[str, Any]
+PluginTokenRequestAuthorizationCode = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `AuthorizationCode` を指定します
@@ -4332,11 +4332,11 @@ Kyes of Dict
 
 """
 
-PluginTokenRequestRefreshToken = Dict[str, Any]
+PluginTokenRequestRefreshToken = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `RefreshToken` を指定します
@@ -4345,11 +4345,11 @@ Kyes of Dict
 
 """
 
-PluginTokenResponse = Dict[str, Any]
+PluginTokenResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * access_token: str
     APIアクセスに用いるトークン。 リクエストヘッダにおいて `Authorization: Bearer {access_token}` の形で指定します。 
@@ -4358,11 +4358,11 @@ Kyes of Dict
 
 """
 
-Point = Dict[str, Any]
+Point = dict[str, Any]
 """
 点の座標値
 
-Kyes of Dict
+Kyes of dict
 
 * x: int
     X座標の値[ピクセル]
@@ -4371,11 +4371,11 @@ Kyes of Dict
 
 """
 
-PositionForMinimumBoundingBoxInsertion = Dict[str, Any]
+PositionForMinimumBoundingBoxInsertion = dict[str, Any]
 """
 `annotation_type` が `bounding_box` かつ `min_warn_rule` が `and` または `or` の場合のみ、挿入する最小矩形アノテーションの原点を指定できます。 画像左上の座標が「x=0, y=0」です。 未指定、もしくは「画像外に飛び出たアノテーション」を許可していないにも関わらず飛び出してしまう場合は、表示範囲の中央に挿入されます。 「スキャンした帳票の記入欄」や「定点カメラで撮影した製品ラベル」など、アノテーションしたい位置やサイズが多くの画像で共通している場合に便利です。  `annotation_type` が `bounding_box` 以外の場合は必ず未指定となります。 
 
-Kyes of Dict
+Kyes of dict
 
 * x: int
     
@@ -4384,22 +4384,22 @@ Kyes of Dict
 
 """
 
-PostAnnotationArchiveUpdateResponse = Dict[str, Any]
+PostAnnotationArchiveUpdateResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * job: ProjectJobInfo
     
 
 """
 
-PostAnnotationArchiveUpdateResponseWrapper = Dict[str, Any]
+PostAnnotationArchiveUpdateResponseWrapper = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * message: str
     メッセージ
@@ -4410,22 +4410,22 @@ Kyes of Dict
 
 """
 
-PostExchangeCodeLoginResponse = Dict[str, Any]
+PostExchangeCodeLoginResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * token: Token
     
 
 """
 
-PostExchangeCodeResponse = Dict[str, Any]
+PostExchangeCodeResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * token: Token
     
@@ -4434,11 +4434,11 @@ Kyes of Dict
 
 """
 
-PostMfaSettingRequest = Dict[str, Any]
+PostMfaSettingRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * enabled: bool
     MFAをONにするか
@@ -4449,11 +4449,11 @@ Kyes of Dict
 
 """
 
-PostProjectTasksUpdateResponse = Dict[str, Any]
+PostProjectTasksUpdateResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * job: ProjectJobInfo
     
@@ -4470,11 +4470,11 @@ class PricePlan(Enum):
     BUSINESS = "business"
 
 
-Project = Dict[str, Any]
+Project = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -4499,24 +4499,24 @@ Kyes of Dict
 
 """
 
-ProjectAccountStatistics = Dict[str, Any]
+ProjectAccountStatistics = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* histories: List[ProjectAccountStatisticsHistory]
+* histories: list[ProjectAccountStatisticsHistory]
     
 
 """
 
-ProjectAccountStatisticsHistory = Dict[str, Any]
+ProjectAccountStatisticsHistory = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * date: str
     
@@ -4529,11 +4529,11 @@ Kyes of Dict
 
 """
 
-ProjectCacheRecord = Dict[str, Any]
+ProjectCacheRecord = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * input: str
     
@@ -4554,11 +4554,11 @@ Kyes of Dict
 
 """
 
-ProjectConfiguration = Dict[str, Any]
+ProjectConfiguration = dict[str, Any]
 """
 プロジェクトの設定情報
 
-Kyes of Dict
+Kyes of dict
 
 * number_of_inspections: int
     検査回数。 * 0回：教師付け -> 受入 * 1回：教師付け -> 検査 -> 受入 * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入 
@@ -4572,7 +4572,7 @@ Kyes of Dict
     保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数の上限。 
 * max_tasks_per_member_including_hold: int
     保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。 割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。  例えばmax_tasks_per_memberが10、max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。 
-* input_data_set_id_list: List[str]
+* input_data_set_id_list: list[str]
     システム内部用のプロパティ。 [putProject](#operation/putProject) APIでプロジェクトを更新する際は、[getProject](#operation/getProject) APIで取得した値を指定してください。 
 * input_data_max_long_side_length: int
     入力データ画像の長辺の最大値（未指定時は4096px）。  画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。 アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。  大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。 
@@ -4597,24 +4597,24 @@ Kyes of Dict
 
 """
 
-ProjectContainer = Dict[str, Any]
+ProjectContainer = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* list: List[Project]
+* list: list[Project]
     
 * has_next: bool
     
 
 """
 
-ProjectCopyRequest = Dict[str, Any]
+ProjectCopyRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * dest_project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -4637,11 +4637,11 @@ Kyes of Dict
 
 """
 
-ProjectCopyResponse = Dict[str, Any]
+ProjectCopyResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * job: ProjectJobInfo
     
@@ -4650,11 +4650,11 @@ Kyes of Dict
 
 """
 
-ProjectGuestUserProfile = Dict[str, Any]
+ProjectGuestUserProfile = dict[str, Any]
 """
 ゲストユーザーのプロフィール情報
 
-Kyes of Dict
+Kyes of dict
 
 * user_id: str
     ゲストユーザーのIDです。 同じ文字列の場合、同じゲストユーザーとして認識されます。 [値の制約についてはこちら。](#section/API-Convention/APIID)
@@ -4667,22 +4667,22 @@ Kyes of Dict
 
 """
 
-ProjectInputsUpdateResponse = Dict[str, Any]
+ProjectInputsUpdateResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * job: ProjectJobInfo
     
 
 """
 
-ProjectJobInfo = Dict[str, Any]
+ProjectJobInfo = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -4705,13 +4705,13 @@ Kyes of Dict
 
 """
 
-ProjectJobInfoContainer = Dict[str, Any]
+ProjectJobInfoContainer = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* list: List[ProjectJobInfo]
+* list: list[ProjectJobInfo]
     バックグラウンドジョブの一覧。作成日時の降順でソートされています。
 * has_next: bool
     さらに古いジョブが存在する場合は`true`です。取得したジョブ一覧の中で`created_datetime`が最も古い値を、クエリパラメータ`exclusive_start_created_datetime`に指定することで、さらに古いジョブを取得することができます。
@@ -4735,13 +4735,13 @@ class ProjectJobType(Enum):
     MOVE_PROJECT = "move-project"
 
 
-ProjectList = Dict[str, Any]
+ProjectList = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* list: List[Project]
+* list: list[Project]
     現在のページ番号に含まれる0件以上のプロジェクトです。
 * page_no: float
     現在のページ番号です。
@@ -4751,16 +4751,16 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     システム内部用のプロパティ 
 
 """
 
-ProjectMember = Dict[str, Any]
+ProjectMember = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -4787,13 +4787,13 @@ Kyes of Dict
 
 """
 
-ProjectMemberList = Dict[str, Any]
+ProjectMemberList = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* list: List[ProjectMember]
+* list: list[ProjectMember]
     プロジェクトメンバーの一覧
 * page_no: float
     現在のページ番号。
@@ -4803,16 +4803,16 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     システム内部用のプロパティ 
 
 """
 
-ProjectMemberRequest = Dict[str, Any]
+ProjectMemberRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * member_status: ProjectMemberStatus
     
@@ -4858,33 +4858,33 @@ class ProjectStatus(Enum):
     INITIALIZING = "initializing"
 
 
-ProjectSummary = Dict[str, Any]
+ProjectSummary = dict[str, Any]
 """
 プロジェクトのサマリー情報
 
-Kyes of Dict
+Kyes of dict
 
 * last_tasks_updated_datetime: str
     タスクの最終更新日時
 
 """
 
-ProjectTaskCounts = Dict[str, Any]
+ProjectTaskCounts = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* task_counts: List[ProjectTaskCountsTaskCounts]
+* task_counts: list[ProjectTaskCountsTaskCounts]
     
 
 """
 
-ProjectTaskCountsTaskCounts = Dict[str, Any]
+ProjectTaskCountsTaskCounts = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * phase: TaskPhase
     
@@ -4895,11 +4895,11 @@ Kyes of Dict
 
 """
 
-ProjectTaskStatistics = Dict[str, Any]
+ProjectTaskStatistics = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * phase: TaskPhase
     
@@ -4912,24 +4912,24 @@ Kyes of Dict
 
 """
 
-ProjectTaskStatisticsHistory = Dict[str, Any]
+ProjectTaskStatisticsHistory = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * date: str
     日付
-* tasks: List[ProjectTaskStatistics]
+* tasks: list[ProjectTaskStatistics]
     タスクのフェーズごと、ステータスごとの情報
 
 """
 
-ProjectToken = Dict[str, Any]
+ProjectToken = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトトークンの発行対象プロジェクトID
@@ -4940,11 +4940,11 @@ Kyes of Dict
 
 """
 
-ProjectTokenInfo = Dict[str, Any]
+ProjectTokenInfo = dict[str, Any]
 """
 プロジェクトトークンについての付加情報
 
-Kyes of Dict
+Kyes of dict
 
 * created_date_time: str
     トークンの作成日時
@@ -4955,11 +4955,11 @@ Kyes of Dict
 
 """
 
-PutAnnotationRequest = Dict[str, Any]
+PutAnnotationRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -4967,18 +4967,18 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV1]
+* details: list[AnnotationDetailV1]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
-PutInputDataSetRequest = Dict[str, Any]
+PutInputDataSetRequest = dict[str, Any]
 """
 入力データセット新規作成/更新
 
-Kyes of Dict
+Kyes of dict
 
 * input_data_set_name: str
     入力データセットの名前
@@ -4991,11 +4991,11 @@ Kyes of Dict
 
 """
 
-PutInstructionRequest = Dict[str, Any]
+PutInstructionRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * html: str
     作業ガイドのHTML
@@ -5004,24 +5004,24 @@ Kyes of Dict
 
 """
 
-PutMarkersRequest = Dict[str, Any]
+PutMarkersRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* markers: List[Marker]
+* markers: list[Marker]
     マーカー一覧
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
 
 """
 
-PutMyAccountRequest = Dict[str, Any]
+PutMyAccountRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5038,22 +5038,22 @@ Kyes of Dict
 
 """
 
-PutMyNotificationMessageOpenedRequest = Dict[str, Any]
+PutMyNotificationMessageOpenedRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * opened: bool
     メッセージの開封状態に対するアクション。 trueが指定された場合は開封済みの状態、falseが指定された場合は未開封の状態にします。 
 
 """
 
-PutOrganizationMemberRoleRequest = Dict[str, Any]
+PutOrganizationMemberRoleRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * role: OrganizationMemberRole
     
@@ -5062,11 +5062,11 @@ Kyes of Dict
 
 """
 
-PutOrganizationPluginRequest = Dict[str, Any]
+PutOrganizationPluginRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * plugin_name: str
     プラグインの名前です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 
@@ -5079,11 +5079,11 @@ Kyes of Dict
 
 """
 
-PutOrganizationRequest = Dict[str, Any]
+PutOrganizationRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * organization_name: str
     組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5092,11 +5092,11 @@ Kyes of Dict
 
 """
 
-PutProjectRequest = Dict[str, Any]
+PutProjectRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * title: str
     プロジェクトのタイトル
@@ -5117,11 +5117,11 @@ Kyes of Dict
 
 """
 
-PutProjectResponse = Dict[str, Any]
+PutProjectResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * job: ProjectJobInfo
     
@@ -5130,11 +5130,11 @@ Kyes of Dict
 
 """
 
-PutWebhookRequest = Dict[str, Any]
+PutWebhookRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5146,7 +5146,7 @@ Kyes of Dict
     
 * method: WebhookHttpMethod
     
-* headers: List[WebhookHeader]
+* headers: list[WebhookHeader]
     Webhookが送信するHTTPリクエストのヘッダー
 * body: str
     Webhookが送信するHTTPリクエストのボディ
@@ -5159,22 +5159,22 @@ Kyes of Dict
 
 """
 
-RefreshTokenRequest = Dict[str, Any]
+RefreshTokenRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * refresh_token: str
     リフレッシュトークン。[login](#operation/login) APIで取得します。 
 
 """
 
-ReplyComment = Dict[str, Any]
+ReplyComment = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * root_comment_id: str
     コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5183,11 +5183,11 @@ Kyes of Dict
 
 """
 
-ReplyRequired = Dict[str, Any]
+ReplyRequired = dict[str, Any]
 """
 返信が必要な検査コメントが残っている時のエラー
 
-Kyes of Dict
+Kyes of dict
 
 * inspection: Inspection
     
@@ -5196,22 +5196,22 @@ Kyes of Dict
 
 """
 
-ResetEmailRequest = Dict[str, Any]
+ResetEmailRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * email: str
     
 
 """
 
-Resolution = Dict[str, Any]
+Resolution = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * width: int
     画像の幅[ピクセル]
@@ -5220,22 +5220,22 @@ Kyes of Dict
 
 """
 
-RevokePersonalAccessTokenRequest = Dict[str, Any]
+RevokePersonalAccessTokenRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * id: str
     失効させる対象トークンのID
 
 """
 
-RevokeProjectTokenRequest = Dict[str, Any]
+RevokeProjectTokenRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     無効化するトークンが所属しているプロジェクトのID
@@ -5244,11 +5244,11 @@ Kyes of Dict
 
 """
 
-RootComment = Dict[str, Any]
+RootComment = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * data: InspectionData
     
@@ -5263,11 +5263,11 @@ Kyes of Dict
 
 """
 
-SegmentationMetadata = Dict[str, Any]
+SegmentationMetadata = dict[str, Any]
 """
 塗りつぶしアノテーションのメタデータ
 
-Kyes of Dict
+Kyes of dict
 
 * min_width: int
     幅の最小値[ピクセル]
@@ -5280,22 +5280,22 @@ Kyes of Dict
 
 """
 
-SignUpRequest = Dict[str, Any]
+SignUpRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * email: str
     
 
 """
 
-SimpleAnnotation = Dict[str, Any]
+SimpleAnnotation = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * annotation_format_version: str
     アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、Annofabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 
@@ -5313,18 +5313,18 @@ Kyes of Dict
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
     入力データ名
-* details: List[SimpleAnnotationDetail]
+* details: list[SimpleAnnotationDetail]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。
 
 """
 
-SimpleAnnotationDetail = Dict[str, Any]
+SimpleAnnotationDetail = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * label: str
     アノテーション仕様で設定したラベル名 (英語) です。 
@@ -5337,11 +5337,11 @@ Kyes of Dict
 
 """
 
-SingleAnnotation = Dict[str, Any]
+SingleAnnotation = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5356,11 +5356,11 @@ Kyes of Dict
 
 """
 
-SingleAnnotationDetailV1 = Dict[str, Any]
+SingleAnnotationDetailV1 = dict[str, Any]
 """
 アノテーション情報 
 
-Kyes of Dict
+Kyes of dict
 
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
@@ -5376,7 +5376,7 @@ Kyes of Dict
     data_holding_typeがouterの場合のみ存在し、データのETagが格納される
 * url: str
     data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
-* additional_data_list: List[AdditionalDataV1]
+* additional_data_list: list[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * created_datetime: str
     作成日時
@@ -5385,11 +5385,11 @@ Kyes of Dict
 
 """
 
-SingleAnnotationDetailV2 = Dict[str, Any]
+SingleAnnotationDetailV2 = dict[str, Any]
 """
 アノテーション情報 
 
-Kyes of Dict
+Kyes of dict
 
 * annotation_id: str
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
@@ -5399,7 +5399,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentOutput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * created_datetime: str
     作成日時
@@ -5408,11 +5408,11 @@ Kyes of Dict
 
 """
 
-SingleAnnotationV1 = Dict[str, Any]
+SingleAnnotationV1 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5427,11 +5427,11 @@ Kyes of Dict
 
 """
 
-SingleAnnotationV2 = Dict[str, Any]
+SingleAnnotationV2 = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5446,11 +5446,11 @@ Kyes of Dict
 
 """
 
-SupplementaryData = Dict[str, Any]
+SupplementaryData = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5479,11 +5479,11 @@ Kyes of Dict
 
 """
 
-SupplementaryDataRequest = Dict[str, Any]
+SupplementaryDataRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * supplementary_data_name: str
     補助情報の名前
@@ -5509,11 +5509,11 @@ class SupplementaryDataType(Enum):
     CUSTOM = "custom"
 
 
-SystemMetadata = Dict[str, Any]
+SystemMetadata = dict[str, Any]
 """
 Annofabが設定したメタデータです。 `metadata`プロパティとは違い、ユーザー側では値を編集できません。  * `SystemMetadataImage`: 画像プロジェクト用のメタデータ * `SystemMetadataMovie`: 動画プロジェクト用のメタデータ * `SystemMetadataCustom`: カスタムプロジェクト用のメタデータ 
 
-Kyes of Dict
+Kyes of dict
 
 * original_resolution: Resolution
     
@@ -5526,22 +5526,22 @@ Kyes of Dict
 
 """
 
-SystemMetadataCustom = Dict[str, Any]
+SystemMetadataCustom = dict[str, Any]
 """
 カスタムデータ用システムメタデータ。 現行はプロパティがない形式的なオブジェクトです。 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     `Custom`
 
 """
 
-SystemMetadataImage = Dict[str, Any]
+SystemMetadataImage = dict[str, Any]
 """
 画像データ用システムメタデータ。 
 
-Kyes of Dict
+Kyes of dict
 
 * original_resolution: Resolution
     
@@ -5552,11 +5552,11 @@ Kyes of Dict
 
 """
 
-SystemMetadataMovie = Dict[str, Any]
+SystemMetadataMovie = dict[str, Any]
 """
 動画データ用システムメタデータ。 
 
-Kyes of Dict
+Kyes of dict
 
 * input_duration: float
     動画の長さ[秒]。 動画の長さが取得できなかった場合は、設定されません。 
@@ -5565,11 +5565,11 @@ Kyes of Dict
 
 """
 
-Task = Dict[str, Any]
+Task = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5581,11 +5581,11 @@ Kyes of Dict
     タスクのフェーズのステージ番号
 * status: TaskStatus
     
-* input_data_id_list: List[str]
+* input_data_id_list: list[str]
     タスクに含まれる入力データのID
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* histories_by_phase: List[TaskHistoryShort]
+* histories_by_phase: list[TaskHistoryShort]
     簡易的なタスク履歴（あるフェーズを誰が担当したか）
 * work_time_span: int
     累計実作業時間(ミリ秒)
@@ -5604,22 +5604,22 @@ Kyes of Dict
 
 """
 
-TaskAssignRequest = Dict[str, Any]
+TaskAssignRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * request_type: TaskAssignRequestType
     
 
 """
 
-TaskAssignRequestType = Dict[str, Any]
+TaskAssignRequestType = dict[str, Any]
 """
 * `TaskAssignRequestTypeRandom`: 自分自身にランダムにタスクを割り当てます。プロジェクト設定でタスクのランダム割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeSelection`: メンバーに指定したタスクを割り当てます。ただし、メンバーはプロジェクトオーナーもしくはチェッカーロールを持つ必要があります。プロジェクト設定でタスクの選択割当を有効にした場合のみ利用できます。 * `TaskAssignRequestTypeTaskProperty`: タスクプロパティ割当の設定に基づいて、タスクを自分自身に割り当てます。プロジェクト設定でタスクプロパティ割当を有効にした場合のみ利用できます。 
 
-Kyes of Dict
+Kyes of dict
 
 * phase: TaskPhase
     
@@ -5627,16 +5627,16 @@ Kyes of Dict
     `TaskProperty` 
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* task_ids: List[str]
+* task_ids: list[str]
     割り当てるタスクのID
 
 """
 
-TaskAssignRequestTypeRandom = Dict[str, Any]
+TaskAssignRequestTypeRandom = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * phase: TaskPhase
     
@@ -5645,26 +5645,26 @@ Kyes of Dict
 
 """
 
-TaskAssignRequestTypeSelection = Dict[str, Any]
+TaskAssignRequestTypeSelection = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* task_ids: List[str]
+* task_ids: list[str]
     割り当てるタスクのID
 * type: str
     `Selection` 
 
 """
 
-TaskAssignRequestTypeTaskProperty = Dict[str, Any]
+TaskAssignRequestTypeTaskProperty = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * phase: TaskPhase
     
@@ -5683,11 +5683,11 @@ class TaskAssignmentOrder(Enum):
     DESC = "desc"
 
 
-TaskAssignmentProperty = Dict[str, Any]
+TaskAssignmentProperty = dict[str, Any]
 """
 プロジェクト設定でタスクプロパティ割当を有効にしている場合のみ指定してください。 
 
-Kyes of Dict
+Kyes of dict
 
 * name: str
     タスクの割当優先度を決定するためのタスクプロパティ。  指定できるプロパティは次のいずれかです。  * `task_id` * `updated_datetime` * `metadata` (`metadata.{メタデータ名}` の形式で指定してください) 
@@ -5709,11 +5709,11 @@ class TaskAssignmentType(Enum):
     CUSTOM = "custom"
 
 
-TaskGenerateRequest = Dict[str, Any]
+TaskGenerateRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * task_generate_rule: TaskGenerateRule
     
@@ -5722,11 +5722,11 @@ Kyes of Dict
 
 """
 
-TaskGenerateResponse = Dict[str, Any]
+TaskGenerateResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * job: ProjectJobInfo
     
@@ -5735,11 +5735,11 @@ Kyes of Dict
 
 """
 
-TaskGenerateResponseWrapper = Dict[str, Any]
+TaskGenerateResponseWrapper = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5768,11 +5768,11 @@ Kyes of Dict
 
 """
 
-TaskGenerateRule = Dict[str, Any]
+TaskGenerateRule = dict[str, Any]
 """
 タスク生成のルール * `TaskGenerateRuleByCount`: 1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。 * `TaskGenerateRuleByDirectory`: 入力データ名をファイルパスに見立てて、ディレクトリ単位でタスクを生成します。 * `TaskGenerateRuleByInputDataCsv`: 各タスクへの入力データへの割り当てを記入したCSVをアップロードした、一時データ保存先パスを指定してタスクを生成します。 
 
-Kyes of Dict
+Kyes of dict
 
 * task_id_prefix: str
     タスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5791,11 +5791,11 @@ Kyes of Dict
 
 """
 
-TaskGenerateRuleByCount = Dict[str, Any]
+TaskGenerateRuleByCount = dict[str, Any]
 """
 1つのタスクに割り当てる入力データの個数を指定してタスクを生成します。
 
-Kyes of Dict
+Kyes of dict
 
 * task_id_prefix: str
     タスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5810,11 +5810,11 @@ Kyes of Dict
 
 """
 
-TaskGenerateRuleByDirectory = Dict[str, Any]
+TaskGenerateRuleByDirectory = dict[str, Any]
 """
 入力データ名をファイルパスに見立て、ディレクトリ単位でタスクを生成します。
 
-Kyes of Dict
+Kyes of dict
 
 * task_id_prefix: str
     タスクIDのプレフィックス。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5825,11 +5825,11 @@ Kyes of Dict
 
 """
 
-TaskGenerateRuleByInputDataCsv = Dict[str, Any]
+TaskGenerateRuleByInputDataCsv = dict[str, Any]
 """
 各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。 1つのタスクに対する入力データの個数は最大200です。200を超えるタスクが1つでもある場合にはタスク生成に失敗します。 
 
-Kyes of Dict
+Kyes of dict
 
 * csv_data_path: str
     各タスクへの入力データへの割り当てを記入したCSVへのS3上のパス。 
@@ -5838,11 +5838,11 @@ Kyes of Dict
 
 """
 
-TaskHistory = Dict[str, Any]
+TaskHistory = dict[str, Any]
 """
 タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5865,11 +5865,11 @@ Kyes of Dict
 
 """
 
-TaskHistoryEvent = Dict[str, Any]
+TaskHistoryEvent = dict[str, Any]
 """
 タスク履歴イベントは、タスクの状態が変化した１時点を表します。作業時間は、複数のこれらイベントを集約して計算するものなので、このオブジェクトには含まれません。
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -5892,11 +5892,11 @@ Kyes of Dict
 
 """
 
-TaskHistoryShort = Dict[str, Any]
+TaskHistoryShort = dict[str, Any]
 """
 タスクのあるフェーズを誰が担当したかを表します。
 
-Kyes of Dict
+Kyes of dict
 
 * phase: TaskPhase
     
@@ -5909,28 +5909,28 @@ Kyes of Dict
 
 """
 
-TaskInputValidation = Dict[str, Any]
+TaskInputValidation = dict[str, Any]
 """
 タスクの提出操作に対する入力データID別のバリデーション結果です。
 
-Kyes of Dict
+Kyes of dict
 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* annotation_errors: List[ValidationError]
+* annotation_errors: list[ValidationError]
     
-* inspection_errors: List[InspectionValidationError]
+* inspection_errors: list[InspectionValidationError]
     
 
 """
 
-TaskList = Dict[str, Any]
+TaskList = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* list: List[Task]
+* list: list[Task]
     現在のページ番号に含まれる0件以上のタスクです。
 * page_no: float
     現在のページ番号です。
@@ -5940,16 +5940,16 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
 
 """
 
-TaskOperation = Dict[str, Any]
+TaskOperation = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * status: TaskStatus
     
@@ -5973,28 +5973,28 @@ class TaskPhase(Enum):
     ACCEPTANCE = "acceptance"
 
 
-TaskPhaseStatistics = Dict[str, Any]
+TaskPhaseStatistics = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * date: str
     日付
-* phases: List[PhaseStatistics]
+* phases: list[PhaseStatistics]
     タスクのフェーズごとの集計結果
 
 """
 
-TaskRequest = Dict[str, Any]
+TaskRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
-* input_data_id_list: List[str]
+* input_data_id_list: list[str]
     タスクに割り当てる入力データのID。タスクに割り当てることができる入力データの個数は最大200です。
 * metadata: dict(str, __DictStrKeyAnyValue__)
     ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 
@@ -6016,37 +6016,37 @@ class TaskStatus(Enum):
     CANCELLED = "cancelled"
 
 
-TaskValidation = Dict[str, Any]
+TaskValidation = dict[str, Any]
 """
 タスクの全入力データに対するバリデーション結果です。
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* inputs: List[InputDataSummary]
+* inputs: list[InputDataSummary]
     
 
 """
 
-TemporaryUrl = Dict[str, Any]
+TemporaryUrl = dict[str, Any]
 """
 認証済み一時URL
 
-Kyes of Dict
+Kyes of dict
 
 * url: str
     このURLは発行から1時間経過すると無効になります。 
 
 """
 
-Token = Dict[str, Any]
+Token = dict[str, Any]
 """
 トークン情報
 
-Kyes of Dict
+Kyes of dict
 
 * id_token: str
     IDトークン。HTTPリクエストの`Authorization`ヘッダーにIDトークンを指定することで、APIは認証されます。
@@ -6057,22 +6057,22 @@ Kyes of Dict
 
 """
 
-UnconfirmedUserResponse = Dict[str, Any]
+UnconfirmedUserResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * temporary_token: Token
     
 
 """
 
-UnknownAdditionalData = Dict[str, Any]
+UnknownAdditionalData = dict[str, Any]
 """
 何らかの原因で、アノテーション仕様にない属性がついているエラー
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
@@ -6085,11 +6085,11 @@ Kyes of Dict
 
 """
 
-UnknownLabel = Dict[str, Any]
+UnknownLabel = dict[str, Any]
 """
 何らかの原因で、アノテーション仕様にないラベルがついているエラー
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
@@ -6100,11 +6100,11 @@ Kyes of Dict
 
 """
 
-UnknownLinkTarget = Dict[str, Any]
+UnknownLinkTarget = dict[str, Any]
 """
 指定されたIDに該当するアノテーションが存在しないエラー
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
@@ -6117,11 +6117,11 @@ Kyes of Dict
 
 """
 
-UsageStatus = Dict[str, Any]
+UsageStatus = dict[str, Any]
 """
 利用状況
 
-Kyes of Dict
+Kyes of dict
 
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -6131,18 +6131,18 @@ Kyes of Dict
     集計期間の開始日時。日時のフォーマットはISO 8601 拡張形式です。
 * aggregation_period_to: str
     集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。
-* editor_usage: List[EditorUsageTimespan]
+* editor_usage: list[EditorUsageTimespan]
     エディタ利用時間のリスト
 * storage_usage: float
     ストレージ利用量。単位はGB時
 
 """
 
-UsageStatusByDay = Dict[str, Any]
+UsageStatusByDay = dict[str, Any]
 """
 日ごとの利用状況
 
-Kyes of Dict
+Kyes of dict
 
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -6152,29 +6152,29 @@ Kyes of Dict
     集計期間の開始日時。日時のフォーマットはISO 8601 拡張形式です。
 * aggregation_period_to: str
     集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。
-* editor_usage: List[EditorUsageTimespan]
+* editor_usage: list[EditorUsageTimespan]
     エディタ利用時間のリスト
 * storage_usage: float
     ストレージ利用量。単位はGB時
 
 """
 
-UsageStatusCsvFileUrl = Dict[str, Any]
+UsageStatusCsvFileUrl = dict[str, Any]
 """
 利用状況詳細のCSVファイルのURL
 
-Kyes of Dict
+Kyes of dict
 
 * url: str
     CSVファイルのURL
 
 """
 
-UserCacheRecord = Dict[str, Any]
+UserCacheRecord = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * account: str
     
@@ -6187,26 +6187,26 @@ Kyes of Dict
 
 """
 
-UserDefinedAnnotationDataType = Dict[str, Any]
+UserDefinedAnnotationDataType = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     ユーザー定義アノテーション種別の型を指定します。 指定可能な値と、その意味は下記の通りです。  * `BoundingBox2d` - 2次元の矩形 * `Polygon2d` - 2次元のポリゴン * `Polyline2d` - 2次元のポリライン * `SinglePoint2d` - 2次元の点 * `SemanticSegmentation2d` - 2次元のセマンティックセグメンテーション * `InstanceSegmentation2d` - 2次元のインスタンスセグメンテーション * `Range1d` - 1次元の範囲 * `Classification` - 全体アノテーション * `Unknown` - その他のアノテーション種別  下記のフィールド定義は、すべてのアノテーション種別の型に対して使用可能です。 * `OneIntegerField` * `OneStringField` * `OneBooleanField`  その他のフィールド定義は、使用可能なアノテーション種別の型に制限があります。 ユーザー定義アノテーション種別の型ごとの、使用可能なフィールド定義を下記の表で示します。  |ユーザー定義アノテーション種別の型 | 使用可能なフィールド定義 | |-----------------|:----------:| | BoundingBox2d          | MinimumSize2dWithDefaultInsertPosition, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polygon2d              | MinimumSize2d, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polyline2d             | VertexCountMinMax, DisplayLineDirection, MarginOfErrorTolerance | | SinglePoint2d          | MarginOfErrorTolerance | | SemanticSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | InstanceSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | Range1d                | MarginOfErrorTolerance | | Classification         | MarginOfErrorTolerance | | Unknown | - | 
 
 """
 
-UserDefinedAnnotationTypeDefinition = Dict[str, Any]
+UserDefinedAnnotationTypeDefinition = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * annotation_type_name: InternationalizationMessage
     
-* field_definitions: List[UserDefinedAnnotationTypeDefinitionFieldDefinitions]
+* field_definitions: list[UserDefinedAnnotationTypeDefinitionFieldDefinitions]
     ユーザーが定義するアノテーション種別のフィールド定義です。 フィールドIDをキー、フィールド定義を値とするオブジェクトを設定します。 
 * metadata: dict(str, str)
     アノテーション種別を設定した際に、ラベルのメタデータとしてデフォルトで設定される値です。 
@@ -6215,11 +6215,11 @@ Kyes of Dict
 
 """
 
-UserDefinedAnnotationTypeDefinitionFieldDefinitions = Dict[str, Any]
+UserDefinedAnnotationTypeDefinitionFieldDefinitions = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * field_id: str
     フィールドID。任意の文字列を設定できます。
@@ -6228,11 +6228,11 @@ Kyes of Dict
 
 """
 
-UserDefinedAnnotationTypeFieldDefinition = Dict[str, Any]
+UserDefinedAnnotationTypeFieldDefinition = dict[str, Any]
 """
 ユーザー定義のアノテーション種別に設定可能なフィールドについての定義です。 
 
-Kyes of Dict
+Kyes of dict
 
 * type: str
     
@@ -6251,11 +6251,11 @@ Kyes of Dict
 
 """
 
-ValidationError = Dict[str, Any]
+ValidationError = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * label_id: str
     
@@ -6265,7 +6265,7 @@ Kyes of Dict
     
 * type: str
     UnknownLabel
-* annotation_ids: List[str]
+* annotation_ids: list[str]
     
 * additional_data_definition_id: str
     
@@ -6274,22 +6274,22 @@ Kyes of Dict
 
 """
 
-VerifyEmailRequest = Dict[str, Any]
+VerifyEmailRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * token: Token
     
 
 """
 
-Webhook = Dict[str, Any]
+Webhook = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
@@ -6301,7 +6301,7 @@ Kyes of Dict
     
 * method: WebhookHttpMethod
     
-* headers: List[WebhookHeader]
+* headers: list[WebhookHeader]
     Webhookが送信するHTTPリクエストのヘッダー
 * body: str
     Webhookが送信するHTTPリクエストのボディ
@@ -6326,11 +6326,11 @@ class WebhookEventType(Enum):
     PROJECT_COPY_COMPLETED = "project-copy-completed"
 
 
-WebhookHeader = Dict[str, Any]
+WebhookHeader = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * name: str
     HTTPヘッダーのフィールド名
@@ -6360,22 +6360,22 @@ class WebhookStatus(Enum):
     INACTIVE = "inactive"
 
 
-WebhookTestRequest = Dict[str, Any]
+WebhookTestRequest = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * placeholders: dict(str, str)
     keyがプレースホルダーの名前、valueが置換後の値であるkey-valueペア
 
 """
 
-WebhookTestResponse = Dict[str, Any]
+WebhookTestResponse = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * result: str
     * success: 通知先から正常なレスポンス（2xx系）を受け取った * failure: 通知先からエラーレスポンス（2xx系以外）を受け取った * error: リクエスト送信に失敗した、もしくはレスポンスを受信できなかった 
@@ -6390,81 +6390,81 @@ Kyes of Dict
 
 """
 
-WorktimeStatistics = Dict[str, Any]
+WorktimeStatistics = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * date: str
     
-* by_tasks: List[WorktimeStatisticsItem]
+* by_tasks: list[WorktimeStatisticsItem]
     タスクごとに計算した「画像1枚あたりの作業時間平均」の統計（動画プロジェクトの場合は空リスト）
-* by_inputs: List[WorktimeStatisticsItem]
+* by_inputs: list[WorktimeStatisticsItem]
     画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
-* by_minutes: List[WorktimeStatisticsItem]
+* by_minutes: list[WorktimeStatisticsItem]
     動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
-* accounts: List[AccountWorktimeStatistics]
+* accounts: list[AccountWorktimeStatistics]
     ユーザーごとの作業時間情報
 
 """
 
-WorktimeStatisticsByAccount = Dict[str, Any]
+WorktimeStatisticsByAccount = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* data_series: List[WorktimeStatisticsData]
+* data_series: list[WorktimeStatisticsData]
     プロジェクトメンバーの日毎の作業時間統計データ
 
 """
 
-WorktimeStatisticsByProject = Dict[str, Any]
+WorktimeStatisticsByProject = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* data_series: List[WorktimeStatisticsData]
+* data_series: list[WorktimeStatisticsData]
     プロジェクトの日毎の作業時間統計データ
 
 """
 
-WorktimeStatisticsData = Dict[str, Any]
+WorktimeStatisticsData = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * date: str
     日付
-* grouped_by_input: List[WorktimeStatisticsItem]
+* grouped_by_input: list[WorktimeStatisticsItem]
     ユーザーごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
-* grouped_by_task: List[WorktimeStatisticsItem]
+* grouped_by_task: list[WorktimeStatisticsItem]
     ユーザーごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
-* grouped_by_minute: List[WorktimeStatisticsItem]
+* grouped_by_minute: list[WorktimeStatisticsItem]
     ユーザーごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
 
 """
 
-WorktimeStatisticsItem = Dict[str, Any]
+WorktimeStatisticsItem = dict[str, Any]
 """
 
 
-Kyes of Dict
+Kyes of dict
 
 * phase: TaskPhase
     
-* histogram: List[HistogramItem]
+* histogram: list[HistogramItem]
     ヒストグラム情報
 * average: str
     作業時間の平均（ISO 8601 duration）

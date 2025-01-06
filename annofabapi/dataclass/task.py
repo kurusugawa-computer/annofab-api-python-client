@@ -10,7 +10,7 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional  # pylint: disable=unused-import
+from typing import Any, Optional  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -89,13 +89,13 @@ class Task(DataClassJsonMixin):
     status: TaskStatus
     """"""
 
-    input_data_id_list: List[str]
+    input_data_id_list: list[str]
     """タスクに含まれる入力データのID"""
 
     account_id: Optional[str]
     """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    histories_by_phase: List[TaskHistoryShort]
+    histories_by_phase: list[TaskHistoryShort]
     """簡易的なタスク履歴（あるフェーズを誰が担当したか）"""
 
     work_time_span: int
@@ -116,5 +116,5 @@ class Task(DataClassJsonMixin):
     sampling: Optional[str]
     """検査抜取検査/抜取受入によって、どのフェーズがスキップされたか  * `inspection_skipped` - 抜取検査の対象外となり、検査フェーズがスキップされた * `inspection_stages_skipped` - 抜取検査の対象外となり、検査フェーズのステージの一部がスキップされた * `acceptance_skipped` - 抜取受入の対象外となり、受入フェーズがスキップされた * `inspection_and_acceptance_skipped` - 抜取検査・抜取受入の対象外となり、検査・受入フェーズがスキップされた  未指定ならば、どのフェーズもスキップされていません。 """
 
-    metadata: Optional[Dict[str, Any]]
+    metadata: Optional[dict[str, dict[str, Any]]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 """

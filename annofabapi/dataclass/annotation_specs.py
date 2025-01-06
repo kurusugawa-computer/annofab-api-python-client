@@ -10,7 +10,7 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union  # pylint: disable=unused-import
+from typing import Any, Optional, Union  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -18,11 +18,11 @@ from annofabapi.models import AdditionalDataDefinitionType, AnnotationTypeFieldM
 
 AdditionalDataDefaultType = Union[bool, int, str]
 
-AdditionalDataRestrictionCondition = Dict[str, Any]
+AdditionalDataRestrictionCondition = dict[str, Any]
 
-AnnotationSpecsOption = Dict[str, Any]
+AnnotationSpecsOption = dict[str, Any]
 AnnotationType = str
-AnnotationTypeFieldValue = Dict[str, Any]
+AnnotationTypeFieldValue = dict[str, Any]
 
 
 @dataclass
@@ -123,7 +123,7 @@ class InternationalizationMessageMessages(DataClassJsonMixin):
 class InternationalizationMessage(DataClassJsonMixin):
     """ """
 
-    messages: List[InternationalizationMessageMessages]
+    messages: list[InternationalizationMessageMessages]
     """言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、Annofabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * 以下の名前は、[Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます     * ラベル名     * 属性名     * 選択肢名 * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます """
 
     default_lang: str
@@ -190,7 +190,7 @@ class AdditionalDataDefinitionV1Choices(DataClassJsonMixin):
     name: InternationalizationMessage
     """"""
 
-    keybind: Optional[List[Keybind]]
+    keybind: Optional[list[Keybind]]
     """ショートカットキー"""
 
 
@@ -210,25 +210,25 @@ class AdditionalDataDefinitionV1(DataClassJsonMixin):
     default: Optional[AdditionalDataDefaultType]
     """"""
 
-    keybind: Optional[List[Keybind]]
+    keybind: Optional[list[Keybind]]
     """ショートカットキー"""
 
     type: AdditionalDataDefinitionType
     """"""
 
-    choices: Optional[List[AdditionalDataDefinitionV1Choices]]
+    choices: Optional[list[AdditionalDataDefinitionV1Choices]]
     """ドロップダウンまたはラジオボタンの選択肢"""
 
     regex: Optional[str]
     """属性の値が、指定した正規表現に一致している必要があります。"""
 
-    label_ids: Optional[List[str]]
+    label_ids: Optional[list[str]]
     """リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）"""
 
     required: Optional[bool]
     """リンク属性において、入力を必須とするかどうか"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Optional[dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -248,16 +248,16 @@ class AdditionalDataDefinitionV2(DataClassJsonMixin):
     default: Optional[AdditionalDataDefaultType]
     """"""
 
-    keybind: Optional[List[Keybind]]
+    keybind: Optional[list[Keybind]]
     """ショートカットキー"""
 
     type: AdditionalDataDefinitionType
     """"""
 
-    choices: Optional[List[AdditionalDataDefinitionV1Choices]]
+    choices: Optional[list[AdditionalDataDefinitionV1Choices]]
     """ドロップダウンまたはラジオボタンの選択肢"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Optional[dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -321,7 +321,7 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(DataClassJs
     min_height: int
     """"""
 
-    position_for_minimum_bounding_box_insertion: Optional[List[int]]
+    position_for_minimum_bounding_box_insertion: Optional[list[int]]
     """最小矩形の挿入位置を、要素が2の配列で指定します。 """
 
 
@@ -467,7 +467,7 @@ class LabelV1(DataClassJsonMixin):
     label_name: InternationalizationMessage
     """"""
 
-    keybind: List[Keybind]
+    keybind: list[Keybind]
     """ショートカットキー"""
 
     annotation_type: AnnotationType
@@ -479,7 +479,7 @@ class LabelV1(DataClassJsonMixin):
     segmentation_metadata: Optional[SegmentationMetadata]
     """"""
 
-    additional_data_definitions: List[AdditionalDataDefinitionV1]
+    additional_data_definitions: list[AdditionalDataDefinitionV1]
     """属性"""
 
     color: Color
@@ -488,7 +488,7 @@ class LabelV1(DataClassJsonMixin):
     annotation_editor_feature: AnnotationEditorFeature
     """"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Optional[dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -502,7 +502,7 @@ class LabelV2(DataClassJsonMixin):
     label_name: InternationalizationMessage
     """"""
 
-    keybind: List[Keybind]
+    keybind: list[Keybind]
     """ショートカットキー"""
 
     annotation_type: AnnotationType
@@ -514,7 +514,7 @@ class LabelV2(DataClassJsonMixin):
     segmentation_metadata: Optional[SegmentationMetadata]
     """"""
 
-    additional_data_definitions: List[str]
+    additional_data_definitions: list[str]
     """ラベルに所属する属性のID"""
 
     color: Color
@@ -523,7 +523,7 @@ class LabelV2(DataClassJsonMixin):
     annotation_editor_feature: AnnotationEditorFeature
     """"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Optional[dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -545,10 +545,10 @@ class AnnotationSpecsV1(DataClassJsonMixin):
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    labels: List[LabelV1]
+    labels: list[LabelV1]
     """ラベル"""
 
-    inspection_phrases: List[InspectionPhrase]
+    inspection_phrases: list[InspectionPhrase]
     """定型指摘"""
 
     updated_datetime: Optional[str]
@@ -557,7 +557,7 @@ class AnnotationSpecsV1(DataClassJsonMixin):
     option: Optional[AnnotationSpecsOption]
     """"""
 
-    metadata: Dict[str, str]
+    metadata: dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -568,16 +568,16 @@ class AnnotationSpecsV2(DataClassJsonMixin):
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    labels: List[LabelV2]
+    labels: list[LabelV2]
     """ラベル"""
 
-    additionals: List[AdditionalDataDefinitionV2]
+    additionals: list[AdditionalDataDefinitionV2]
     """属性"""
 
-    restrictions: List[AdditionalDataRestriction]
+    restrictions: list[AdditionalDataRestriction]
     """属性の制約"""
 
-    inspection_phrases: List[InspectionPhrase]
+    inspection_phrases: list[InspectionPhrase]
     """定型指摘"""
 
     format_version: str
@@ -589,7 +589,7 @@ class AnnotationSpecsV2(DataClassJsonMixin):
     option: Optional[AnnotationSpecsOption]
     """"""
 
-    metadata: Dict[str, str]
+    metadata: dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -603,22 +603,22 @@ class LabelV3(DataClassJsonMixin):
     label_name: InternationalizationMessage
     """"""
 
-    keybind: List[Keybind]
+    keybind: list[Keybind]
     """ショートカットキー"""
 
     annotation_type: AnnotationType
     """"""
 
-    field_values: Dict[str, AnnotationTypeFieldValue]
+    field_values: dict[str, AnnotationTypeFieldValue]
     """KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#section/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 """
 
-    additional_data_definitions: List[str]
+    additional_data_definitions: list[str]
     """ラベルに所属する属性のID"""
 
     color: Color
     """"""
 
-    metadata: Optional[Dict[str, str]]
+    metadata: Optional[dict[str, str]]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -629,16 +629,16 @@ class AnnotationSpecsV3(DataClassJsonMixin):
     project_id: str
     """プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    labels: List[LabelV3]
+    labels: list[LabelV3]
     """ラベル"""
 
-    additionals: List[AdditionalDataDefinitionV2]
+    additionals: list[AdditionalDataDefinitionV2]
     """属性"""
 
-    restrictions: List[AdditionalDataRestriction]
+    restrictions: list[AdditionalDataRestriction]
     """属性の制約"""
 
-    inspection_phrases: List[InspectionPhrase]
+    inspection_phrases: list[InspectionPhrase]
     """定型指摘"""
 
     annotation_type_version: Optional[str]
@@ -653,5 +653,5 @@ class AnnotationSpecsV3(DataClassJsonMixin):
     option: Optional[AnnotationSpecsOption]
     """"""
 
-    metadata: Dict[str, str]
+    metadata: dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """

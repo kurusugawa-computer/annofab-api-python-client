@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Optional
 
 import requests
 from requests.cookies import RequestsCookieJar
@@ -50,11 +50,11 @@ class AnnofabApi2(AbstractAnnofabApi2):
         http_method: str,
         url_path: str,
         *,
-        query_params: Optional[Dict[str, Any]] = None,
-        header_params: Optional[Dict[str, Any]] = None,
+        query_params: Optional[dict[str, Any]] = None,
+        header_params: Optional[dict[str, Any]] = None,
         request_body: Optional[Any] = None,  # noqa: ANN401
         raise_for_status: bool = True,
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """
         HTTP　Requestを投げて、Responseを返す。
         Args:
@@ -66,7 +66,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
             raise_for_status: Trueの場合HTTP Status Codeが4XX,5XXのときはHTTPErrorをスローします。Falseの場合はtuple[None, Response]を返します。
 
         Returns:
-            Tuple[content, Response]. contentはcontent_typeにより型が変わる。
+            tuple[content, Response]. contentはcontent_typeにより型が変わる。
             application/jsonならDict型, text/*ならばstr型, それ以外ならばbite型。
 
         """
@@ -176,22 +176,22 @@ class AnnofabApi2(AbstractAnnofabApi2):
     #########################################
     # Public Method : Cache
     #########################################
-    def get_signed_access_v2(self, query_params: Dict[str, Any]) -> Tuple[Dict[str, Any], requests.Response]:
+    def get_signed_access_v2(self, query_params: dict[str, Any]) -> tuple[dict[str, Any], requests.Response]:
         """
         Signed Cookieを取得して、インスタンスに保持する。
 
         Args:
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 url (str): アクセスするページのURL
 
         Returns:
-            Tuple[SignedCookie, requests.Response]
+            tuple[SignedCookie, requests.Response]
 
         """
 
         url_path = "/sign-url"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
 

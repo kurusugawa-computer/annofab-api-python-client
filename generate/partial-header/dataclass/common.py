@@ -11,7 +11,7 @@ Note:
 
 import warnings  # pylint: disable=unused-import
 from dataclasses import dataclass
-from typing import Any, Dict, List, NewType, Optional, Tuple, Union  # pylint: disable=unused-import
+from typing import Any, NewType, Optional, Union  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 

@@ -10,7 +10,7 @@ Note:
 
 import abc
 import warnings  # pylint: disable=unused-import
-from typing import Any, Dict, Optional, Tuple  # pylint: disable=unused-import
+from typing import Any, Optional  # pylint: disable=unused-import
 
 import requests
 
@@ -25,10 +25,10 @@ class AbstractAnnofabApi(abc.ABC):
         self,
         http_method: str,
         url_path: str,
-        query_params: Optional[Dict[str, Any]] = None,
-        header_params: Optional[Dict[str, Any]] = None,
+        query_params: Optional[dict[str, Any]] = None,
+        header_params: Optional[dict[str, Any]] = None,
         request_body: Optional[Any] = None,
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         pass
 
     #########################################
@@ -37,8 +37,8 @@ class AbstractAnnofabApi(abc.ABC):
     #########################################
 
     def batch_update_annotations(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+        self, project_id: str, query_params: Optional[dict[str, Any]] = None, request_body: Optional[Any] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
         """アノテーション一括更新
         https://annofab.com/docs/api/#operation/batchUpdateAnnotations
 
@@ -50,26 +50,26 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 v (str):  レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。 未指定の場合や\"2\"以外が指定された場合は\"1\"が指定されたものとして扱います。
             request_body (Any): Request Body
-                batch_annotation_request_item (List[BatchAnnotationRequestItem]):  (required)
+                batch_annotation_request_item (list[BatchAnnotationRequestItem]):  (required)
 
         Returns:
-            Tuple[List[SingleAnnotation], requests.Response]
+            tuple[list[SingleAnnotation], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/annotations"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_annotation(self, project_id: str, task_id: str, input_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_annotation(self, project_id: str, task_id: str, input_data_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """Simpleアノテーションの取得
         https://annofab.com/docs/api/#operation/getAnnotation
 
@@ -85,17 +85,17 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[SimpleAnnotation, requests.Response]
+            tuple[SimpleAnnotation, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation/simple"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_annotation_archive(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_annotation_archive(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """SimpleアノテーションZIP取得
         https://annofab.com/docs/api/#operation/getAnnotationArchive
 
@@ -109,17 +109,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[TemporaryUrl, requests.Response]
+            tuple[TemporaryUrl, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/archive/simple"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_annotation_list(self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_annotation_list(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """アノテーション一括取得
         https://annofab.com/docs/api/#operation/getAnnotationList
 
@@ -131,7 +131,7 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
                 aggregate_by_task_and_input (bool):  `true`を指定すると、「タスクIDと入力データIDの組」ごとに検索結果を集計します。
@@ -141,19 +141,19 @@ class AbstractAnnofabApi(abc.ABC):
                 v (str):  レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。 未指定の場合や\"2\"以外が指定された場合は\"1\"が指定されたものとして扱います。
 
         Returns:
-            Tuple[AnnotationList, requests.Response]
+            tuple[AnnotationList, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/annotations"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_archive_full_with_pro_id(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_archive_full_with_pro_id(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """FullアノテーションZIP取得
         https://annofab.com/docs/api/#operation/getArchiveFullWithProId
 
@@ -168,20 +168,20 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[TemporaryUrl, requests.Response]
+            tuple[TemporaryUrl, requests.Response]
 
 
         """
         warnings.warn("annofabapi.AnnofabApi.get_archive_full_with_pro_id() is deprecated and will be removed.", FutureWarning, stacklevel=2)
         url_path = f"/projects/{project_id}/archive/full"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_editor_annotation(
-        self, project_id: str, task_id: str, input_data_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+        self, project_id: str, task_id: str, input_data_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
         """アノテーションの取得
         https://annofab.com/docs/api/#operation/getEditorAnnotation
 
@@ -195,24 +195,24 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 task_history_id (str):  過去のフェーズのアノテーションを取得する場合、タスク履歴IDを指定します。未指定時は最新のアノテーションを取得します。  過去のアノテーションデータは最後に保存してから30日前のデータまで取得できます。 30日より前のデータを取得しようとした場合はアノテーションデータは空リストとなります。
                 v (str):  レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。 未指定の場合や\"2\"以外が指定された場合は\"1\"が指定されたものとして扱います。
 
         Returns:
-            Tuple[AnnotationOutput, requests.Response]
+            tuple[AnnotationOutput, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def post_annotation_archive_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def post_annotation_archive_update(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """アノテーションZIP更新開始
         https://annofab.com/docs/api/#operation/postAnnotationArchiveUpdate
 
@@ -226,13 +226,13 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[PostAnnotationArchiveUpdateResponse, requests.Response]
+            tuple[PostAnnotationArchiveUpdateResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/archive/update"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
@@ -241,10 +241,10 @@ class AbstractAnnofabApi(abc.ABC):
         project_id: str,
         task_id: str,
         input_data_id: str,
-        query_params: Optional[Dict[str, Any]] = None,
+        query_params: Optional[dict[str, Any]] = None,
         request_body: Optional[Any] = None,
         **kwargs,
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """アノテーション更新
         https://annofab.com/docs/api/#operation/putAnnotation
 
@@ -258,19 +258,19 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 v (str):  レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。 未指定の場合や\"2\"以外が指定された場合は\"1\"が指定されたものとして扱います。
             request_body (Any): Request Body
                 annotation_input (AnnotationInput):  (required)
 
         Returns:
-            Tuple[AnnotationOutput, requests.Response]
+            tuple[AnnotationOutput, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
             "request_body": request_body,
         }
@@ -282,7 +282,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def get_annotation_specs(self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_annotation_specs(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """アノテーション仕様取得
         https://annofab.com/docs/api/#operation/getAnnotationSpecs
 
@@ -294,24 +294,24 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 history_id (str):  アノテーション仕様の履歴ID。過去のアノテーション仕様を取得する場合は、[getAnnotationSpecsHistories](#operation/getAnnotationSpecsHistories) APIで取得した `history_id` の値を指定してください。 未指定時は最新のアノテーション仕様を取得します。
                 v (str):  取得するアノテーション仕様のフォーマットバージョンを指定します。`v=1`及び`v=2`は将来廃止する予定なので、非推奨です。
 
         Returns:
-            Tuple[AnnotationSpecs, requests.Response]
+            tuple[AnnotationSpecs, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/annotation-specs"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_annotation_specs_histories(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_annotation_specs_histories(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """アノテーション仕様履歴一括取得
         https://annofab.com/docs/api/#operation/getAnnotationSpecsHistories
 
@@ -325,19 +325,19 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[AnnotationSpecsHistory], requests.Response]
+            tuple[list[AnnotationSpecsHistory], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/annotation-specs-histories"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_annotation_specs(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+        self, project_id: str, query_params: Optional[dict[str, Any]] = None, request_body: Optional[Any] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
         """アノテーション仕様更新
         https://annofab.com/docs/api/#operation/putAnnotationSpecs
 
@@ -349,19 +349,19 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 v (str):  レスポンスに含まれるアノテーション仕様のフォーマットバージョンを指定します。`v=1`及び`v=2`は将来廃止する予定なので、非推奨です。
             request_body (Any): Request Body
                 annotation_specs_request (AnnotationSpecsRequest):  (required)
 
         Returns:
-            Tuple[AnnotationSpecs, requests.Response]
+            tuple[AnnotationSpecs, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/annotation-specs"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
             "request_body": request_body,
         }
@@ -378,10 +378,10 @@ class AbstractAnnofabApi(abc.ABC):
         project_id: str,
         task_id: str,
         input_data_id: str,
-        query_params: Optional[Dict[str, Any]] = None,
+        query_params: Optional[dict[str, Any]] = None,
         request_body: Optional[Any] = None,
         **kwargs,
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """コメント一括更新
         https://annofab.com/docs/api/#operation/batchUpdateComments
 
@@ -395,19 +395,19 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 v (str):  2 を指定した場合、検査コメントのデータも含めたコメントデータを返します。  パラメーターの指定がない、あるいは値が 2 以外の場合は検査コメントを除いたコメントデータを返します。
             request_body (Any): Request Body
-                batch_comment_request_item (List[BatchCommentRequestItem]):  (required)
+                batch_comment_request_item (list[BatchCommentRequestItem]):  (required)
 
         Returns:
-            Tuple[List[Comment], requests.Response]
+            tuple[list[Comment], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/comments"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
             "request_body": request_body,
         }
@@ -415,8 +415,8 @@ class AbstractAnnofabApi(abc.ABC):
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_comments(
-        self, project_id: str, task_id: str, input_data_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+        self, project_id: str, task_id: str, input_data_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
         """コメント一括取得
         https://annofab.com/docs/api/#operation/getComments
 
@@ -430,17 +430,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 v (str):  2 を指定した場合、検査コメントのデータも含めたコメントデータを返します。  パラメーターの指定がない、あるいは値が 2 以外の場合は検査コメントを除いたコメントデータを返します。
 
         Returns:
-            Tuple[List[Comment], requests.Response]
+            tuple[list[Comment], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/comments"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
@@ -451,7 +451,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def batch_update_inputs(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def batch_update_inputs(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """入力データの一括更新
         https://annofab.com/docs/api/#operation/batchUpdateInputs
 
@@ -464,22 +464,22 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                batch_input_data_request_item (List[BatchInputDataRequestItem]):  (required)
+                batch_input_data_request_item (list[BatchInputDataRequestItem]):  (required)
 
         Returns:
-            Tuple[List[InputData], requests.Response]
+            tuple[list[InputData], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/inputs"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def create_temp_path(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def create_temp_path(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """アップロード先URLの取得
         https://annofab.com/docs/api/#operation/createTempPath
 
@@ -493,17 +493,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[DataPath, requests.Response]
+            tuple[DataPath, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/create-temp-path"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def delete_input_data(self, project_id: str, input_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def delete_input_data(self, project_id: str, input_data_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """入力データの削除
         https://annofab.com/docs/api/#operation/deleteInputData
 
@@ -518,17 +518,17 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[InputData, requests.Response]
+            tuple[InputData, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/inputs/{input_data_id}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_input_data(self, project_id: str, input_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_input_data(self, project_id: str, input_data_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """入力データの取得
         https://annofab.com/docs/api/#operation/getInputData
 
@@ -543,17 +543,17 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[InputData, requests.Response]
+            tuple[InputData, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/inputs/{input_data_id}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_input_data_list(self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_input_data_list(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """入力データの一括取得
         https://annofab.com/docs/api/#operation/getInputDataList
 
@@ -565,7 +565,7 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 input_data_id (str):  入力データIDでの部分一致検索で使用。大文字小文字は区別しません。
                 input_data_name (str):  入力データ名での部分一致検索で使用。大文字小文字は区別しません。
                 input_data_path (str):  入力データパスでの部分一致検索で使用。
@@ -576,19 +576,19 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  1ページあたりの取得するデータ件数
 
         Returns:
-            Tuple[InputDataList, requests.Response]
+            tuple[InputDataList, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/inputs"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def put_input_data(self, project_id: str, input_data_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def put_input_data(self, project_id: str, input_data_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """入力データの作成/更新
         https://annofab.com/docs/api/#operation/putInputData
 
@@ -605,13 +605,13 @@ class AbstractAnnofabApi(abc.ABC):
                 input_data_request (InputDataRequest):  (required)
 
         Returns:
-            Tuple[InputData, requests.Response]
+            tuple[InputData, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/inputs/{input_data_id}"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -624,7 +624,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def batch_update_inspections(
         self, project_id: str, task_id: str, input_data_id: str, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """検査コメント一括更新
         https://annofab.com/docs/api/#operation/batchUpdateInspections
 
@@ -640,23 +640,23 @@ class AbstractAnnofabApi(abc.ABC):
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
             request_body (Any): Request Body
-                batch_inspection_request_item (List[BatchInspectionRequestItem]):  (required)
+                batch_inspection_request_item (list[BatchInspectionRequestItem]):  (required)
 
         Returns:
-            Tuple[List[Inspection], requests.Response]
+            tuple[list[Inspection], requests.Response]
 
 
         """
         warnings.warn("annofabapi.AnnofabApi.batch_update_inspections() is deprecated and will be removed.", FutureWarning, stacklevel=2)
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/inspections"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_inspections(self, project_id: str, task_id: str, input_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_inspections(self, project_id: str, task_id: str, input_data_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """検査コメント一括取得
         https://annofab.com/docs/api/#operation/getInspections
 
@@ -673,14 +673,14 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[List[Inspection], requests.Response]
+            tuple[list[Inspection], requests.Response]
 
 
         """
         warnings.warn("annofabapi.AnnofabApi.get_inspections() is deprecated and will be removed.", FutureWarning, stacklevel=2)
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/inspections"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
@@ -689,7 +689,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def delete_instruction_image(self, project_id: str, image_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def delete_instruction_image(self, project_id: str, image_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """作業ガイドの画像削除
         https://annofab.com/docs/api/#operation/deleteInstructionImage
 
@@ -704,17 +704,17 @@ class AbstractAnnofabApi(abc.ABC):
             image_id (str):  作業ガイド画像ID (required)
 
         Returns:
-            Tuple[, requests.Response]
+            tuple[, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/instruction-images/{image_id}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_instruction(self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_instruction(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """作業ガイドの取得
         https://annofab.com/docs/api/#operation/getInstruction
 
@@ -726,23 +726,23 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 history_id (str):  [getInstructionHistory](#operation/getInstructionHistory) APIで取得した、作業ガイドの履歴ID  (required)
 
         Returns:
-            Tuple[Instruction, requests.Response]
+            tuple[Instruction, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/instruction"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_instruction_history(self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_instruction_history(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """作業ガイドの編集履歴の取得
         https://annofab.com/docs/api/#operation/getInstructionHistory
 
@@ -754,23 +754,23 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 limit (int):  取得する編集履歴の件数
 
         Returns:
-            Tuple[List[InstructionHistory], requests.Response]
+            tuple[list[InstructionHistory], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/instruction-history"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_instruction_image_url_for_put(self, project_id: str, image_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_instruction_image_url_for_put(self, project_id: str, image_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """作業ガイドの画像登録・更新用URL取得
         https://annofab.com/docs/api/#operation/getInstructionImageUrlForPut
 
@@ -785,17 +785,17 @@ class AbstractAnnofabApi(abc.ABC):
             image_id (str):  作業ガイド画像ID (required)
 
         Returns:
-            Tuple[InstructionImagePath, requests.Response]
+            tuple[InstructionImagePath, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/instruction-images/{image_id}/put-url"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_instruction_images(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_instruction_images(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """作業ガイドの画像一覧の取得
         https://annofab.com/docs/api/#operation/getInstructionImages
 
@@ -809,17 +809,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[InstructionImage], requests.Response]
+            tuple[list[InstructionImage], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/instruction-images"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def put_instruction(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def put_instruction(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """作業ガイドの更新
         https://annofab.com/docs/api/#operation/putInstruction
 
@@ -835,13 +835,13 @@ class AbstractAnnofabApi(abc.ABC):
                 put_instruction_request (PutInstructionRequest):  (required)
 
         Returns:
-            Tuple[InstructionHistory, requests.Response]
+            tuple[InstructionHistory, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/instruction"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -852,7 +852,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def delete_project_job(self, project_id: str, job_type: str, job_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def delete_project_job(self, project_id: str, job_type: str, job_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """プロジェクトのバックグラウンドジョブ情報削除
         https://annofab.com/docs/api/#operation/deleteProjectJob
 
@@ -868,17 +868,17 @@ class AbstractAnnofabApi(abc.ABC):
             job_id (str):  ジョブID (required)
 
         Returns:
-            Tuple[, requests.Response]
+            tuple[, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/jobs/{job_type}/{job_id}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_organization_job(self, organization_name: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_organization_job(self, organization_name: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """組織のバックグラウンドジョブ情報取得
         https://annofab.com/docs/api/#operation/getOrganizationJob
 
@@ -890,25 +890,25 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             organization_name (str):  組織名 (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 type (str):  取得するジョブの種別。[詳細はこちら](#section/OrganizationJobType)。
                 limit (int):  1ページあたりの取得するデータ件数。 未指定時は30件取得。
                 exclusive_start_created_datetime (str):  作成日時が、指定した日付より古いジョブを取得します。
 
         Returns:
-            Tuple[OrganizationJobInfoContainer, requests.Response]
+            tuple[OrganizationJobInfoContainer, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/jobs"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_project_job(self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_project_job(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """プロジェクトのバックグラウンドジョブ情報取得
         https://annofab.com/docs/api/#operation/getProjectJob
 
@@ -920,19 +920,19 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 type (ProjectJobType):  取得するジョブの種別。[詳細はこちら](#section/ProjectJobType)。
                 limit (int):  1ページあたりの取得するデータ件数。 未指定時は30件取得。
                 exclusive_start_created_datetime (str):  作成日時が、指定した日付より古いジョブを取得します。
 
         Returns:
-            Tuple[ProjectJobInfoContainer, requests.Response]
+            tuple[ProjectJobInfoContainer, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/jobs"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
@@ -943,7 +943,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def get_my_account(self, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_my_account(self, **kwargs) -> tuple[Any, requests.Response]:
         """自分のアカウント取得
         https://annofab.com/docs/api/#operation/getMyAccount
 
@@ -956,17 +956,17 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
 
         Returns:
-            Tuple[MyAccount, requests.Response]
+            tuple[MyAccount, requests.Response]
 
 
         """
         url_path = "/my/account"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_my_member_in_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_my_member_in_project(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """自分のプロジェクトメンバー取得
         https://annofab.com/docs/api/#operation/getMyMemberInProject
 
@@ -980,17 +980,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[ProjectMember, requests.Response]
+            tuple[ProjectMember, requests.Response]
 
 
         """
         url_path = f"/my/projects/{project_id}/member"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_my_notification_message(self, message_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_my_notification_message(self, message_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """自分に届いているメッセージの取得
         https://annofab.com/docs/api/#operation/getMyNotificationMessage
 
@@ -1004,17 +1004,17 @@ class AbstractAnnofabApi(abc.ABC):
             message_id (str):  通知メッセージID  (required)
 
         Returns:
-            Tuple[MyNotificationMessage, requests.Response]
+            tuple[MyNotificationMessage, requests.Response]
 
 
         """
         url_path = f"/my/messages/{message_id}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_my_notification_messages(self, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_my_notification_messages(self, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """自分に届いている通知メッセージの一括取得
         https://annofab.com/docs/api/#operation/getMyNotificationMessages
 
@@ -1025,24 +1025,24 @@ class AbstractAnnofabApi(abc.ABC):
         自分に届いている通知メッセージを、メッセージの作成日時が新しい順で、一括取得します。 自身に届いている通知メッセージが上限(10000件)を超える場合、上限を超えた分の通知メッセージは取得できません。 また、上限を超える場合、開封済みの通知メッセージの数は、取得可能な通知メッセージ中の集計値となります。詳細はレスポンスの項目を参照ください。
 
         Args:
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 page (int):  表示するページ番号
                 limit (int):  1ページあたりの取得するデータ件数
 
         Returns:
-            Tuple[MyNotificationList, requests.Response]
+            tuple[MyNotificationList, requests.Response]
 
 
         """
         url_path = "/my/messages"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_my_notification_unread_messages_count(self, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_my_notification_unread_messages_count(self, **kwargs) -> tuple[Any, requests.Response]:
         """自分に届いている通知メッセージの未読件数を取得
         https://annofab.com/docs/api/#operation/getMyNotificationUnreadMessagesCount
 
@@ -1055,17 +1055,17 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
 
         Returns:
-            Tuple[MyNotificationUnreadMessagesCount, requests.Response]
+            tuple[MyNotificationUnreadMessagesCount, requests.Response]
 
 
         """
         url_path = "/my/unread-messages-count"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_my_organizations(self, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_my_organizations(self, **kwargs) -> tuple[Any, requests.Response]:
         """所属組織の一括取得
         https://annofab.com/docs/api/#operation/getMyOrganizations
 
@@ -1078,17 +1078,17 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
 
         Returns:
-            Tuple[MyOrganizationList, requests.Response]
+            tuple[MyOrganizationList, requests.Response]
 
 
         """
         url_path = "/my/organizations"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_my_project_members(self, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_my_project_members(self, **kwargs) -> tuple[Any, requests.Response]:
         """自分のプロジェクトメンバー情報一括取得
         https://annofab.com/docs/api/#operation/getMyProjectMembers
 
@@ -1101,17 +1101,17 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
 
         Returns:
-            Tuple[List[ProjectMember], requests.Response]
+            tuple[list[ProjectMember], requests.Response]
 
 
         """
         url_path = "/my/project-members"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_my_projects(self, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_my_projects(self, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """所属プロジェクトの一括取得
         https://annofab.com/docs/api/#operation/getMyProjects
 
@@ -1122,7 +1122,7 @@ class AbstractAnnofabApi(abc.ABC):
         自分が所属しているプロジェクトを一括で取得します。
 
         Args:
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 page (int):  表示するページ番号
                 limit (int):  1ページあたりの取得するデータ件数
                 organization_id (str):  指定した組織に属するプロジェクトに絞り込む。
@@ -1132,19 +1132,19 @@ class AbstractAnnofabApi(abc.ABC):
                 sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。
 
         Returns:
-            Tuple[ProjectContainer, requests.Response]
+            tuple[ProjectContainer, requests.Response]
 
 
         """
         url_path = "/my/projects"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_personal_access_tokens(self, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_personal_access_tokens(self, **kwargs) -> tuple[Any, requests.Response]:
         """パーソナルアクセストークン一覧を取得
         https://annofab.com/docs/api/#operation/getPersonalAccessTokens
 
@@ -1157,17 +1157,17 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
 
         Returns:
-            Tuple[List[PersonalAccessTokenInfo], requests.Response]
+            tuple[list[PersonalAccessTokenInfo], requests.Response]
 
 
         """
         url_path = "/my/personal-access-tokens"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def issue_personal_access_token(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def issue_personal_access_token(self, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """パーソナルアクセストークンの発行
         https://annofab.com/docs/api/#operation/issuePersonalAccessToken
 
@@ -1182,19 +1182,19 @@ class AbstractAnnofabApi(abc.ABC):
                 issue_personal_access_token_request (IssuePersonalAccessTokenRequest):  (required)
 
         Returns:
-            Tuple[PersonalAccessToken, requests.Response]
+            tuple[PersonalAccessToken, requests.Response]
 
 
         """
         url_path = "/my/issue-personal-access-token"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def put_my_account(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def put_my_account(self, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """自分のアカウント情報更新
         https://annofab.com/docs/api/#operation/putMyAccount
 
@@ -1209,19 +1209,19 @@ class AbstractAnnofabApi(abc.ABC):
                 put_my_account_request (PutMyAccountRequest):  (required)
 
         Returns:
-            Tuple[MyAccount, requests.Response]
+            tuple[MyAccount, requests.Response]
 
 
         """
         url_path = "/my/account"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def put_my_notification_message_opened(self, message_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def put_my_notification_message_opened(self, message_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """通知メッセージのステータス更新
         https://annofab.com/docs/api/#operation/putMyNotificationMessageOpened
 
@@ -1237,19 +1237,19 @@ class AbstractAnnofabApi(abc.ABC):
                 put_my_notification_message_opened_request (PutMyNotificationMessageOpenedRequest):  (required)
 
         Returns:
-            Tuple[, requests.Response]
+            tuple[, requests.Response]
 
 
         """
         url_path = f"/my/messages/{message_id}/opened"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def revoke_personal_access_token(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def revoke_personal_access_token(self, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """パーソナルアクセストークンの無効化
         https://annofab.com/docs/api/#operation/revokePersonalAccessToken
 
@@ -1264,13 +1264,13 @@ class AbstractAnnofabApi(abc.ABC):
                 revoke_personal_access_token_request (RevokePersonalAccessTokenRequest):  (required)
 
         Returns:
-            Tuple[PersonalAccessTokenInfo, requests.Response]
+            tuple[PersonalAccessTokenInfo, requests.Response]
 
 
         """
         url_path = "/my/revoke-personal-access-token"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -1281,7 +1281,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def create_new_organization(self, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def create_new_organization(self, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """組織の作成
         https://annofab.com/docs/api/#operation/createNewOrganization
 
@@ -1296,19 +1296,19 @@ class AbstractAnnofabApi(abc.ABC):
                 organization_registration_request (OrganizationRegistrationRequest):  (required)
 
         Returns:
-            Tuple[Organization, requests.Response]
+            tuple[Organization, requests.Response]
 
 
         """
         url_path = "/organizations"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def delete_organization(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def delete_organization(self, organization_name: str, **kwargs) -> tuple[Any, requests.Response]:
         """組織の削除
         https://annofab.com/docs/api/#operation/deleteOrganization
 
@@ -1322,17 +1322,17 @@ class AbstractAnnofabApi(abc.ABC):
             organization_name (str):  組織名 (required)
 
         Returns:
-            Tuple[Organization, requests.Response]
+            tuple[Organization, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_organization(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_organization(self, organization_name: str, **kwargs) -> tuple[Any, requests.Response]:
         """組織の取得
         https://annofab.com/docs/api/#operation/getOrganization
 
@@ -1346,17 +1346,17 @@ class AbstractAnnofabApi(abc.ABC):
             organization_name (str):  組織名 (required)
 
         Returns:
-            Tuple[Organization, requests.Response]
+            tuple[Organization, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_organization_activity(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_organization_activity(self, organization_name: str, **kwargs) -> tuple[Any, requests.Response]:
         """組織の活動状況の取得
         https://annofab.com/docs/api/#operation/getOrganizationActivity
 
@@ -1370,19 +1370,19 @@ class AbstractAnnofabApi(abc.ABC):
             organization_name (str):  組織名 (required)
 
         Returns:
-            Tuple[OrganizationActivity, requests.Response]
+            tuple[OrganizationActivity, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/activity"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_projects_of_organization(
-        self, organization_name: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+        self, organization_name: str, query_params: Optional[dict[str, Any]] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
         """組織配下プロジェクトの一括取得
         https://annofab.com/docs/api/#operation/getProjectsOfOrganization
 
@@ -1394,7 +1394,7 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             organization_name (str):  組織名 (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 page (int):  表示するページ番号
                 limit (int):  1ページあたりの取得するデータ件数
                 account_id (str):  指定したアカウントIDをメンバーに持つプロジェクトで絞り込む。  APIにアクセスしたユーザー（`Authorization`ヘッダーに格納されているIDトークンを発行したユーザー）の組織内ロールが`組織貢献者`の場合、**アクセスしたユーザーと指定したアカウントIDのユーザーがどちらも所属しているプロジェクトのみ**が取得されます。
@@ -1406,19 +1406,19 @@ class AbstractAnnofabApi(abc.ABC):
                 sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。
 
         Returns:
-            Tuple[ProjectList, requests.Response]
+            tuple[ProjectList, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/projects"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def put_organization(self, organization_name: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def put_organization(self, organization_name: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """組織の更新
         https://annofab.com/docs/api/#operation/putOrganization
 
@@ -1434,13 +1434,13 @@ class AbstractAnnofabApi(abc.ABC):
                 put_organization_request (PutOrganizationRequest):  (required)
 
         Returns:
-            Tuple[Organization, requests.Response]
+            tuple[Organization, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -1453,7 +1453,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def delete_organization_input_data(
         self, organization_name: str, input_data_set_id: str, input_data_id: str, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """入力データセット内の入力データの削除
         https://annofab.com/docs/api/#operation/deleteOrganizationInputData
 
@@ -1469,17 +1469,17 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[InputData, requests.Response]
+            tuple[InputData, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/input_data_set/{input_data_set_id}/inputs/{input_data_id}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_input_data_set(self, organization_name: str, input_data_set_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_input_data_set(self, organization_name: str, input_data_set_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """入力データセット情報取得
         https://annofab.com/docs/api/#operation/getInputDataSet
 
@@ -1494,17 +1494,17 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_set_id (str):  入力データセットID (required)
 
         Returns:
-            Tuple[InputDataSet, requests.Response]
+            tuple[InputDataSet, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/input_data_set/{input_data_set_id}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_input_data_set_list(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_input_data_set_list(self, organization_name: str, **kwargs) -> tuple[Any, requests.Response]:
         """入力データセットの一括取得
         https://annofab.com/docs/api/#operation/getInputDataSetList
 
@@ -1518,19 +1518,19 @@ class AbstractAnnofabApi(abc.ABC):
             organization_name (str):  組織名 (required)
 
         Returns:
-            Tuple[List[InputDataSet], requests.Response]
+            tuple[list[InputDataSet], requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/input_data_set"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_input_data(
         self, organization_name: str, input_data_set_id: str, input_data_id: str, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """入力データセット内の入力データの取得
         https://annofab.com/docs/api/#operation/getOrganizationInputData
 
@@ -1546,19 +1546,19 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[InputData, requests.Response]
+            tuple[InputData, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/input_data_set/{input_data_set_id}/inputs/{input_data_id}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_input_data_list(
-        self, organization_name: str, input_data_set_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+        self, organization_name: str, input_data_set_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
         """入力データセット内の入力データの一括取得
         https://annofab.com/docs/api/#operation/getOrganizationInputDataList
 
@@ -1571,7 +1571,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             organization_name (str):  組織名 (required)
             input_data_set_id (str):  入力データセットID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 input_data_id (str):  入力データIDでの部分一致検索で使用。
                 input_data_name (str):  入力データ名での部分一致検索で使用。
                 input_data_path (str):  入力データパスでの部分一致検索で使用。
@@ -1582,13 +1582,13 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  1ページあたりの取得するデータ件数
 
         Returns:
-            Tuple[InputDataList, requests.Response]
+            tuple[InputDataList, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/input_data_set/{input_data_set_id}/inputs"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
@@ -1596,7 +1596,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def put_input_data_set(
         self, organization_name: str, input_data_set_id: str, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """入力データセットの作成/更新
         https://annofab.com/docs/api/#operation/putInputDataSet
 
@@ -1613,13 +1613,13 @@ class AbstractAnnofabApi(abc.ABC):
                 put_input_data_set_request (PutInputDataSetRequest):
 
         Returns:
-            Tuple[InputDataSet, requests.Response]
+            tuple[InputDataSet, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/input_data_set/{input_data_set_id}"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -1632,7 +1632,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def accept_organization_invitation(
         self, organization_name: str, user_id: str, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """組織への招待の受諾
         https://annofab.com/docs/api/#operation/acceptOrganizationInvitation
 
@@ -1649,19 +1649,19 @@ class AbstractAnnofabApi(abc.ABC):
                 accept_organization_invitation_request (AcceptOrganizationInvitationRequest):  (required)
 
         Returns:
-            Tuple[Message, requests.Response]
+            tuple[Message, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/members/{user_id}/invitation/accept"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def delete_organization_member(self, organization_name: str, user_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def delete_organization_member(self, organization_name: str, user_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """組織メンバーの削除
         https://annofab.com/docs/api/#operation/deleteOrganizationMember
 
@@ -1676,17 +1676,17 @@ class AbstractAnnofabApi(abc.ABC):
             user_id (str):  ユーザーID (required)
 
         Returns:
-            Tuple[OrganizationMember, requests.Response]
+            tuple[OrganizationMember, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/members/{user_id}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_organization_member(self, organization_name: str, user_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_organization_member(self, organization_name: str, user_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """組織メンバー取得
         https://annofab.com/docs/api/#operation/getOrganizationMember
 
@@ -1701,17 +1701,17 @@ class AbstractAnnofabApi(abc.ABC):
             user_id (str):  ユーザーID (required)
 
         Returns:
-            Tuple[OrganizationMember, requests.Response]
+            tuple[OrganizationMember, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/members/{user_id}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_organization_members(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_organization_members(self, organization_name: str, **kwargs) -> tuple[Any, requests.Response]:
         """組織メンバー一括取得
         https://annofab.com/docs/api/#operation/getOrganizationMembers
 
@@ -1725,19 +1725,19 @@ class AbstractAnnofabApi(abc.ABC):
             organization_name (str):  組織名 (required)
 
         Returns:
-            Tuple[OrganizationMemberList, requests.Response]
+            tuple[OrganizationMemberList, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/members"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def invite_organization_member(
         self, organization_name: str, user_id: str, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """ユーザーを組織に招待
         https://annofab.com/docs/api/#operation/inviteOrganizationMember
 
@@ -1754,13 +1754,13 @@ class AbstractAnnofabApi(abc.ABC):
                 invite_organization_member_request (InviteOrganizationMemberRequest):  (required)
 
         Returns:
-            Tuple[OrganizationMember, requests.Response]
+            tuple[OrganizationMember, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/members/{user_id}/invitation"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -1768,7 +1768,7 @@ class AbstractAnnofabApi(abc.ABC):
 
     def update_organization_member_role(
         self, organization_name: str, user_id: str, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """組織メンバーのロール更新
         https://annofab.com/docs/api/#operation/updateOrganizationMemberRole
 
@@ -1785,13 +1785,13 @@ class AbstractAnnofabApi(abc.ABC):
                 put_organization_member_role_request (PutOrganizationMemberRoleRequest):  (required)
 
         Returns:
-            Tuple[OrganizationMember, requests.Response]
+            tuple[OrganizationMember, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/members/{user_id}/role"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -1802,7 +1802,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def delete_organization_plugin(self, organization_name: str, plugin_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def delete_organization_plugin(self, organization_name: str, plugin_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """プラグインの削除
         https://annofab.com/docs/api/#operation/deleteOrganizationPlugin
 
@@ -1817,17 +1817,17 @@ class AbstractAnnofabApi(abc.ABC):
             plugin_id (str):  プラグインID (required)
 
         Returns:
-            Tuple[OrganizationPlugin, requests.Response]
+            tuple[OrganizationPlugin, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/plugins/{plugin_id}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_organization_plugin(self, organization_name: str, plugin_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_organization_plugin(self, organization_name: str, plugin_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """プラグインの取得
         https://annofab.com/docs/api/#operation/getOrganizationPlugin
 
@@ -1842,17 +1842,17 @@ class AbstractAnnofabApi(abc.ABC):
             plugin_id (str):  プラグインID (required)
 
         Returns:
-            Tuple[OrganizationPlugin, requests.Response]
+            tuple[OrganizationPlugin, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/plugins/{plugin_id}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_organization_plugins(self, organization_name: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_organization_plugins(self, organization_name: str, **kwargs) -> tuple[Any, requests.Response]:
         """プラグインの一括取得
         https://annofab.com/docs/api/#operation/getOrganizationPlugins
 
@@ -1866,19 +1866,19 @@ class AbstractAnnofabApi(abc.ABC):
             organization_name (str):  組織名 (required)
 
         Returns:
-            Tuple[OrganizationPluginList, requests.Response]
+            tuple[OrganizationPluginList, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/plugins"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_organization_plugin(
         self, organization_name: str, plugin_id: str, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """プラグインの作成/更新
         https://annofab.com/docs/api/#operation/putOrganizationPlugin
 
@@ -1895,13 +1895,13 @@ class AbstractAnnofabApi(abc.ABC):
                 put_organization_plugin_request (PutOrganizationPluginRequest):  (required)
 
         Returns:
-            Tuple[OrganizationPlugin, requests.Response]
+            tuple[OrganizationPlugin, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/plugins/{plugin_id}"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -1912,7 +1912,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def delete_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def delete_project(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """プロジェクト削除
         https://annofab.com/docs/api/#operation/deleteProject
 
@@ -1926,17 +1926,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[DeleteProjectResponse, requests.Response]
+            tuple[DeleteProjectResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_organization_of_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_organization_of_project(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """プロジェクトの所属組織取得
         https://annofab.com/docs/api/#operation/getOrganizationOfProject
 
@@ -1950,17 +1950,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[Organization, requests.Response]
+            tuple[Organization, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/organization"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_project(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_project(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """プロジェクト取得
         https://annofab.com/docs/api/#operation/getProject
 
@@ -1974,17 +1974,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[Project, requests.Response]
+            tuple[Project, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_project_comments_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_project_comments_url(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """コメント全件ファイルの取得
         https://annofab.com/docs/api/#operation/getProjectCommentsUrl
 
@@ -1998,17 +1998,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[TemporaryUrl, requests.Response]
+            tuple[TemporaryUrl, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/rawdata/comments"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_project_inputs_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_project_inputs_url(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """入力データ情報全件ファイルの取得
         https://annofab.com/docs/api/#operation/getProjectInputsUrl
 
@@ -2022,17 +2022,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[TemporaryUrl, requests.Response]
+            tuple[TemporaryUrl, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/rawdata/inputs"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_project_inspections_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_project_inspections_url(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """検査コメント全件ファイルの取得
         https://annofab.com/docs/api/#operation/getProjectInspectionsUrl
 
@@ -2047,18 +2047,18 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[TemporaryUrl, requests.Response]
+            tuple[TemporaryUrl, requests.Response]
 
 
         """
         warnings.warn("annofabapi.AnnofabApi.get_project_inspections_url() is deprecated and will be removed.", FutureWarning, stacklevel=2)
         url_path = f"/projects/{project_id}/rawdata/inspections"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_project_task_histories_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_project_task_histories_url(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """プロジェクトのタスク履歴全件ファイルの取得
         https://annofab.com/docs/api/#operation/getProjectTaskHistoriesUrl
 
@@ -2072,17 +2072,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[TemporaryUrl, requests.Response]
+            tuple[TemporaryUrl, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/rawdata/task_histories"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_project_task_history_events_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_project_task_history_events_url(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """プロジェクトのタスク履歴イベント全件ファイルの取得
         https://annofab.com/docs/api/#operation/getProjectTaskHistoryEventsUrl
 
@@ -2097,18 +2097,18 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[TemporaryUrl, requests.Response]
+            tuple[TemporaryUrl, requests.Response]
 
 
         """
         warnings.warn("annofabapi.AnnofabApi.get_project_task_history_events_url() is deprecated and will be removed.", FutureWarning, stacklevel=2)
         url_path = f"/projects/{project_id}/rawdata/task_history_events"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_project_tasks_url(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_project_tasks_url(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """タスク全件ファイルの取得
         https://annofab.com/docs/api/#operation/getProjectTasksUrl
 
@@ -2122,17 +2122,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[TemporaryUrl, requests.Response]
+            tuple[TemporaryUrl, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/rawdata/tasks"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def initiate_project_copy(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def initiate_project_copy(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """プロジェクトのコピー
         https://annofab.com/docs/api/#operation/initiateProjectCopy
 
@@ -2148,19 +2148,19 @@ class AbstractAnnofabApi(abc.ABC):
                 project_copy_request (ProjectCopyRequest):  (required)
 
         Returns:
-            Tuple[ProjectCopyResponse, requests.Response]
+            tuple[ProjectCopyResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/copy"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def post_project_inputs_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def post_project_inputs_update(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """入力データ全件ファイルの更新開始
         https://annofab.com/docs/api/#operation/postProjectInputsUpdate
 
@@ -2174,17 +2174,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[ProjectInputsUpdateResponse, requests.Response]
+            tuple[ProjectInputsUpdateResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/rawdata/inputs"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def post_project_tasks_update(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def post_project_tasks_update(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """タスク全件ファイルの更新開始
         https://annofab.com/docs/api/#operation/postProjectTasksUpdate
 
@@ -2198,19 +2198,19 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[PostProjectTasksUpdateResponse, requests.Response]
+            tuple[PostProjectTasksUpdateResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/rawdata/tasks"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_project(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+        self, project_id: str, query_params: Optional[dict[str, Any]] = None, request_body: Optional[Any] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
         """プロジェクト作成/更新
         https://annofab.com/docs/api/#operation/putProject
 
@@ -2222,19 +2222,19 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：PutProjectResponse
             request_body (Any): Request Body
                 put_project_request (PutProjectRequest):
 
         Returns:
-            Tuple[Project, requests.Response]
+            tuple[Project, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
             "request_body": request_body,
         }
@@ -2246,7 +2246,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def get_project_member(self, project_id: str, user_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_project_member(self, project_id: str, user_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """プロジェクトメンバー取得
         https://annofab.com/docs/api/#operation/getProjectMember
 
@@ -2261,17 +2261,17 @@ class AbstractAnnofabApi(abc.ABC):
             user_id (str):  ユーザーID (required)
 
         Returns:
-            Tuple[ProjectMember, requests.Response]
+            tuple[ProjectMember, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/members/{user_id}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_project_members(self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_project_members(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """プロジェクトメンバー一括取得
         https://annofab.com/docs/api/#operation/getProjectMembers
 
@@ -2283,23 +2283,23 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 include_inactive_member (str):  脱退したプロジェクトメンバーも取得する時に、キーのみ指定します（値は無視されます）。
 
         Returns:
-            Tuple[ProjectMemberList, requests.Response]
+            tuple[ProjectMemberList, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/members"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def put_project_member(self, project_id: str, user_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def put_project_member(self, project_id: str, user_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """プロジェクトメンバー追加/更新
         https://annofab.com/docs/api/#operation/putProjectMember
 
@@ -2316,13 +2316,13 @@ class AbstractAnnofabApi(abc.ABC):
                 project_member_request (ProjectMemberRequest):  (required)
 
         Returns:
-            Tuple[ProjectMember, requests.Response]
+            tuple[ProjectMember, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/members/{user_id}"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -2333,7 +2333,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def get_account_daily_statistics(self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_account_daily_statistics(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """メンバー別作業時間の取得
         https://annofab.com/docs/api/#operation/getAccountDailyStatistics
 
@@ -2345,26 +2345,26 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[ProjectAccountStatistics], requests.Response]
+            tuple[list[ProjectAccountStatistics], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/statistics/accounts/daily"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_inspection_daily_statistics(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+        self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
         """ラベル別検査コメント数の取得
         https://annofab.com/docs/api/#operation/getInspectionDailyStatistics
 
@@ -2376,24 +2376,24 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[InspectionStatistics], requests.Response]
+            tuple[list[InspectionStatistics], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/statistics/inspections/daily"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_label_statistics(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_label_statistics(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """ラベル別アノテーション数の取得
         https://annofab.com/docs/api/#operation/getLabelStatistics
 
@@ -2407,17 +2407,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[TemporaryUrl, requests.Response]
+            tuple[TemporaryUrl, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/statistics/labels"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_markers(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_markers(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """統計グラフマーカー一括取得
         https://annofab.com/docs/api/#operation/getMarkers
 
@@ -2431,17 +2431,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[Markers, requests.Response]
+            tuple[Markers, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/statistics/markers"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_phase_daily_statistics(self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_phase_daily_statistics(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """フェーズ別作業時間の取得
         https://annofab.com/docs/api/#operation/getPhaseDailyStatistics
 
@@ -2453,24 +2453,24 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[TaskPhaseStatistics], requests.Response]
+            tuple[list[TaskPhaseStatistics], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/statistics/task-phases/daily"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_statistics_available_dates(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_statistics_available_dates(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """統計情報の期間の取得
         https://annofab.com/docs/api/#operation/getStatisticsAvailableDates
 
@@ -2484,17 +2484,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[DateRange], requests.Response]
+            tuple[list[DateRange], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/statistics/dates"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_task_daily_statistics(self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_task_daily_statistics(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """フェーズ別タスク数の取得
         https://annofab.com/docs/api/#operation/getTaskDailyStatistics
 
@@ -2506,26 +2506,26 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[ProjectTaskStatisticsHistory], requests.Response]
+            tuple[list[ProjectTaskStatisticsHistory], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/statistics/tasks/daily"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_worktime_daily_statistics(
-        self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+        self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
         """単位あたり作業時間の取得
         https://annofab.com/docs/api/#operation/getWorktimeDailyStatistics
 
@@ -2537,26 +2537,26 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[WorktimeStatisticsByProject, requests.Response]
+            tuple[WorktimeStatisticsByProject, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/statistics/worktimes/daily"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_worktime_daily_statistics_by_account(
-        self, project_id: str, account_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+        self, project_id: str, account_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
         """メンバーの単位あたり作業時間の取得
         https://annofab.com/docs/api/#operation/getWorktimeDailyStatisticsByAccount
 
@@ -2569,24 +2569,24 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             account_id (str):  アカウントID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 from (str):  取得する統計の区間の開始日 - `YYYY-MM-DD` (required)
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[WorktimeStatisticsByAccount, requests.Response]
+            tuple[WorktimeStatisticsByAccount, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/statistics/worktimes-by-account/{account_id}/daily"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def put_markers(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def put_markers(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """統計グラフマーカー更新
         https://annofab.com/docs/api/#operation/putMarkers
 
@@ -2602,13 +2602,13 @@ class AbstractAnnofabApi(abc.ABC):
                 put_markers_request (PutMarkersRequest):  (required)
 
         Returns:
-            Tuple[Markers, requests.Response]
+            tuple[Markers, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/statistics/markers"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -2619,7 +2619,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def delete_supplementary_data(self, project_id: str, input_data_id: str, supplementary_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def delete_supplementary_data(self, project_id: str, input_data_id: str, supplementary_data_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """補助情報削除
         https://annofab.com/docs/api/#operation/deleteSupplementaryData
 
@@ -2635,17 +2635,17 @@ class AbstractAnnofabApi(abc.ABC):
             supplementary_data_id (str):  補助情報ID (required)
 
         Returns:
-            Tuple[, requests.Response]
+            tuple[, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/inputs/{input_data_id}/supplementary-data/{supplementary_data_id}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_supplementary_data_list(self, project_id: str, input_data_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_supplementary_data_list(self, project_id: str, input_data_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """補助情報一括取得
         https://annofab.com/docs/api/#operation/getSupplementaryDataList
 
@@ -2660,19 +2660,19 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[List[SupplementaryData], requests.Response]
+            tuple[list[SupplementaryData], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/inputs/{input_data_id}/supplementary-data"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def put_supplementary_data(
         self, project_id: str, input_data_id: str, supplementary_data_id: str, request_body: Optional[Any] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """補助情報作成/更新
         https://annofab.com/docs/api/#operation/putSupplementaryData
 
@@ -2690,13 +2690,13 @@ class AbstractAnnofabApi(abc.ABC):
                 supplementary_data_request (SupplementaryDataRequest):  (required)
 
         Returns:
-            Tuple[SupplementaryData, requests.Response]
+            tuple[SupplementaryData, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/inputs/{input_data_id}/supplementary-data/{supplementary_data_id}"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -2707,7 +2707,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def assign_tasks(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def assign_tasks(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """タスク割当
         https://annofab.com/docs/api/#operation/assignTasks
 
@@ -2723,19 +2723,19 @@ class AbstractAnnofabApi(abc.ABC):
                 task_assign_request (TaskAssignRequest):  (required)
 
         Returns:
-            Tuple[List[Task], requests.Response]
+            tuple[list[Task], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/assign-tasks"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def batch_update_tasks(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def batch_update_tasks(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """タスク一括更新
         https://annofab.com/docs/api/#operation/batchUpdateTasks
 
@@ -2748,22 +2748,22 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                batch_task_request_item (List[BatchTaskRequestItem]):  (required)
+                batch_task_request_item (list[BatchTaskRequestItem]):  (required)
 
         Returns:
-            Tuple[List[Task], requests.Response]
+            tuple[list[Task], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def delete_task(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def delete_task(self, project_id: str, task_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """タスク削除
         https://annofab.com/docs/api/#operation/deleteTask
 
@@ -2778,17 +2778,17 @@ class AbstractAnnofabApi(abc.ABC):
             task_id (str):  タスクID (required)
 
         Returns:
-            Tuple[Task, requests.Response]
+            tuple[Task, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_task(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_task(self, project_id: str, task_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """タスク取得
         https://annofab.com/docs/api/#operation/getTask
 
@@ -2803,17 +2803,17 @@ class AbstractAnnofabApi(abc.ABC):
             task_id (str):  タスクID (required)
 
         Returns:
-            Tuple[Task, requests.Response]
+            tuple[Task, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_task_histories(self, project_id: str, task_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_task_histories(self, project_id: str, task_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """タスク履歴一括取得
         https://annofab.com/docs/api/#operation/getTaskHistories
 
@@ -2828,17 +2828,17 @@ class AbstractAnnofabApi(abc.ABC):
             task_id (str):  タスクID (required)
 
         Returns:
-            Tuple[List[TaskHistory], requests.Response]
+            tuple[list[TaskHistory], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/histories"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_tasks(self, project_id: str, query_params: Optional[Dict[str, Any]] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_tasks(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """タスクの一括取得
         https://annofab.com/docs/api/#operation/getTasks
 
@@ -2850,7 +2850,7 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             project_id (str):  プロジェクトID (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
                 task_id (str):  タスクIDでの部分一致検索で使用。大文字小文字は区別しません
@@ -2870,19 +2870,19 @@ class AbstractAnnofabApi(abc.ABC):
                 annotation (str):  アノテーションの絞り込み条件をJSON形式([AnnotationQuery](#section/AnnotationQuery))で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
 
         Returns:
-            Tuple[TaskList, requests.Response]
+            tuple[TaskList, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def initiate_tasks_generation(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def initiate_tasks_generation(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """タスク一括作成
         https://annofab.com/docs/api/#operation/initiateTasksGeneration
 
@@ -2898,19 +2898,19 @@ class AbstractAnnofabApi(abc.ABC):
                 task_generate_request (TaskGenerateRequest):  (required)
 
         Returns:
-            Tuple[TaskGenerateResponse, requests.Response]
+            tuple[TaskGenerateResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/generate-tasks"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def operate_task(self, project_id: str, task_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def operate_task(self, project_id: str, task_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """タスク状態変更
         https://annofab.com/docs/api/#operation/operateTask
 
@@ -2927,19 +2927,19 @@ class AbstractAnnofabApi(abc.ABC):
                 task_operation (TaskOperation):  (required)
 
         Returns:
-            Tuple[Task, requests.Response]
+            tuple[Task, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/operate"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def patch_tasks_metadata(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def patch_tasks_metadata(self, project_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """タスクメタデータの一括更新
         https://annofab.com/docs/api/#operation/patchTasksMetadata
 
@@ -2955,19 +2955,19 @@ class AbstractAnnofabApi(abc.ABC):
                 request_body (dict(str, dict)):  (required)
 
         Returns:
-            Tuple[Message, requests.Response]
+            tuple[Message, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/metadata"
         http_method = "PATCH"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def put_task(self, project_id: str, task_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def put_task(self, project_id: str, task_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """タスク作成/更新
         https://annofab.com/docs/api/#operation/putTask
 
@@ -2984,13 +2984,13 @@ class AbstractAnnofabApi(abc.ABC):
                 task_request (TaskRequest):  (required)
 
         Returns:
-            Tuple[Task, requests.Response]
+            tuple[Task, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
@@ -3001,7 +3001,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def get_organization_usage_status(self, organization_name: str, year_month: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_organization_usage_status(self, organization_name: str, year_month: str, **kwargs) -> tuple[Any, requests.Response]:
         """利用状況を取得
         https://annofab.com/docs/api/#operation/getOrganizationUsageStatus
 
@@ -3016,17 +3016,17 @@ class AbstractAnnofabApi(abc.ABC):
             year_month (str):  (required)
 
         Returns:
-            Tuple[List[UsageStatusByDay], requests.Response]
+            tuple[list[UsageStatusByDay], requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/usage-status/{year_month}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_organization_usage_status_detail(self, organization_name: str, year_month: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_organization_usage_status_detail(self, organization_name: str, year_month: str, **kwargs) -> tuple[Any, requests.Response]:
         """利用状況の詳細情報を取得
         https://annofab.com/docs/api/#operation/getOrganizationUsageStatusDetail
 
@@ -3041,19 +3041,19 @@ class AbstractAnnofabApi(abc.ABC):
             year_month (str):  (required)
 
         Returns:
-            Tuple[UsageStatusCsvFileUrl, requests.Response]
+            tuple[UsageStatusCsvFileUrl, requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/usage-status-detail/{year_month}"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
     def get_organization_usage_status_list(
-        self, organization_name: str, query_params: Optional[Dict[str, Any]] = None, **kwargs
-    ) -> Tuple[Any, requests.Response]:
+        self, organization_name: str, query_params: Optional[dict[str, Any]] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
         """利用状況の一覧を取得
         https://annofab.com/docs/api/#operation/getOrganizationUsageStatusList
 
@@ -3065,18 +3065,18 @@ class AbstractAnnofabApi(abc.ABC):
 
         Args:
             organization_name (str):  組織名 (required)
-            query_params (Dict[str, Any]): Query Parameters
+            query_params (dict[str, Any]): Query Parameters
                 from (str):  指定した年月以降の利用状況を取得します。省略した場合はtoで指定した年月の1年前です。年月のフォーマットは YYYY-MM です。指定年月は閉区間となります。
                 to (str):  指定した年月以前の利用状況を取得します。省略した場合はJSTでの現在の年月です。年月のフォーマットは YYYY-MM です。指定年月は閉区間となります。
 
         Returns:
-            Tuple[List[UsageStatus], requests.Response]
+            tuple[list[UsageStatus], requests.Response]
 
 
         """
         url_path = f"/organizations/{organization_name}/usage-status"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "query_params": query_params,
         }
         keyword_params.update(**kwargs)
@@ -3087,7 +3087,7 @@ class AbstractAnnofabApi(abc.ABC):
     # NOTE: This method is auto generated by OpenAPI Generator
     #########################################
 
-    def delete_webhook(self, project_id: str, webhook_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def delete_webhook(self, project_id: str, webhook_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """Webhookの削除
         https://annofab.com/docs/api/#operation/deleteWebhook
 
@@ -3102,17 +3102,17 @@ class AbstractAnnofabApi(abc.ABC):
             webhook_id (str):  WebhookID (required)
 
         Returns:
-            Tuple[Webhook, requests.Response]
+            tuple[Webhook, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/webhooks/{webhook_id}"
         http_method = "DELETE"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def get_webhooks(self, project_id: str, **kwargs) -> Tuple[Any, requests.Response]:
+    def get_webhooks(self, project_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """Webhookの一括取得
         https://annofab.com/docs/api/#operation/getWebhooks
 
@@ -3126,17 +3126,17 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[Webhook], requests.Response]
+            tuple[list[Webhook], requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/webhooks"
         http_method = "GET"
-        keyword_params: Dict[str, Any] = {}
+        keyword_params: dict[str, Any] = {}
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def put_webhook(self, project_id: str, webhook_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def put_webhook(self, project_id: str, webhook_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """Webhookの作成/更新
         https://annofab.com/docs/api/#operation/putWebhook
 
@@ -3153,19 +3153,19 @@ class AbstractAnnofabApi(abc.ABC):
                 put_webhook_request (PutWebhookRequest):  (required)
 
         Returns:
-            Tuple[Webhook, requests.Response]
+            tuple[Webhook, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/webhooks/{webhook_id}"
         http_method = "PUT"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
-    def test_webhook(self, project_id: str, webhook_id: str, request_body: Optional[Any] = None, **kwargs) -> Tuple[Any, requests.Response]:
+    def test_webhook(self, project_id: str, webhook_id: str, request_body: Optional[Any] = None, **kwargs) -> tuple[Any, requests.Response]:
         """Webhookのテスト実行
         https://annofab.com/docs/api/#operation/testWebhook
 
@@ -3182,13 +3182,13 @@ class AbstractAnnofabApi(abc.ABC):
                 webhook_test_request (WebhookTestRequest):  (required)
 
         Returns:
-            Tuple[WebhookTestResponse, requests.Response]
+            tuple[WebhookTestResponse, requests.Response]
 
 
         """
         url_path = f"/projects/{project_id}/webhooks/{webhook_id}/test"
         http_method = "POST"
-        keyword_params: Dict[str, Any] = {
+        keyword_params: dict[str, Any] = {
             "request_body": request_body,
         }
         keyword_params.update(**kwargs)

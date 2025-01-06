@@ -2,8 +2,8 @@ from annofabapi.models import AdditionalDataDefinitionType, AnnotationTypeFieldM
 
 AdditionalDataDefaultType = Union[bool, int, str]
 
-AdditionalDataRestrictionCondition = Dict[str, Any]
+AdditionalDataRestrictionCondition = dict[str, Any]
 
-AnnotationSpecsOption = Dict[str, Any]
+AnnotationSpecsOption = dict[str, Any]
 AnnotationType = str
-AnnotationTypeFieldValue = Dict[str, Any]
+AnnotationTypeFieldValue = dict[str, Any]
