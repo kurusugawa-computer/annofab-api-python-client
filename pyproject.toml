@@ -85,8 +85,6 @@ ignore = [
     "RUF003",# 全角記号など`ambiguous unicode character`も使いたいため
     "PLC1901", # compare-to-empty-string : `if a == "`のように空文字列で直接比較したいときがあるため
     "PLR2004", # magic-value-comparison: listのサイズで判定するときがよくあるため
-    "ANN101", # missing-type-self: 引数selfには型ヒントは付けていないため
-    "ANN102", # missing-type-cls: 引数clsには型ヒントは付けていないため
     "ANN002", # missing-type-args
     "ANN003", # missing-type-kwargs
     "ERA", # : 役立つこともあるが、コメントアウトしていないコードも警告されるので無視する
