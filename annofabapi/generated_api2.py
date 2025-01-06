@@ -385,7 +385,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[ProjectAccountStatistics], requests.Response]
+            Tuple[list[ProjectAccountStatistics], requests.Response]
 
 
         """
@@ -416,7 +416,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[InspectionStatistics], requests.Response]
+            Tuple[list[InspectionStatistics], requests.Response]
 
 
         """
@@ -444,7 +444,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 cache (str):  CACHE TIMESTAMP
 
         Returns:
-            Tuple[List[LabelStatistics], requests.Response]
+            Tuple[list[LabelStatistics], requests.Response]
 
 
         """
@@ -475,7 +475,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[TaskPhaseStatistics], requests.Response]
+            Tuple[list[TaskPhaseStatistics], requests.Response]
 
 
         """
@@ -504,7 +504,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[ProjectTaskStatisticsHistory], requests.Response]
+            Tuple[list[ProjectTaskStatisticsHistory], requests.Response]
 
 
         """
@@ -680,7 +680,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 cache (str):  CACHE TIMESTAMP
 
         Returns:
-            Tuple[List[ProjectMember], requests.Response]
+            Tuple[list[ProjectMember], requests.Response]
 
 
         """

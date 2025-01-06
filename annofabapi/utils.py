@@ -44,7 +44,7 @@ def to_iso8601_extension(d: datetime.datetime, tz: Optional[datetime.tzinfo] = N
     return d.isoformat(timespec="milliseconds")
 
 
-def get_task_history_index_skipped_acceptance(task_history_list: List[TaskHistory]) -> List[int]:
+def get_task_history_index_skipped_acceptance(task_history_list: list[TaskHistory]) -> list[int]:
     """
     受入がスキップされたタスク履歴のインデックス番号（0始まり）を返す。
 
@@ -82,7 +82,7 @@ def get_task_history_index_skipped_acceptance(task_history_list: List[TaskHistor
     return index_list
 
 
-def get_task_history_index_skipped_inspection(task_history_list: List[TaskHistory]) -> List[int]:
+def get_task_history_index_skipped_inspection(task_history_list: list[TaskHistory]) -> list[int]:
     """
     検査フェーズがスキップされたタスク履歴のインデックス番号（0始まり）を返す。
 
@@ -119,7 +119,7 @@ def get_task_history_index_skipped_inspection(task_history_list: List[TaskHistor
     return index_list
 
 
-def get_number_of_rejections(task_histories: List[TaskHistoryShort], phase: TaskPhase, phase_stage: int = 1) -> int:
+def get_number_of_rejections(task_histories: list[TaskHistoryShort], phase: TaskPhase, phase_stage: int = 1) -> int:
     """
     タスク履歴から、指定されたタスクフェーズでの差し戻し回数を取得する。
 

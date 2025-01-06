@@ -53,10 +53,10 @@ class AbstractAnnofabApi(abc.ABC):
             query_params (dict[str, Any]): Query Parameters
                 v (str):  レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。 未指定の場合や\"2\"以外が指定された場合は\"1\"が指定されたものとして扱います。
             request_body (Any): Request Body
-                batch_annotation_request_item (List[BatchAnnotationRequestItem]):  (required)
+                batch_annotation_request_item (list[BatchAnnotationRequestItem]):  (required)
 
         Returns:
-            Tuple[List[SingleAnnotation], requests.Response]
+            Tuple[list[SingleAnnotation], requests.Response]
 
 
         """
@@ -325,7 +325,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[AnnotationSpecsHistory], requests.Response]
+            Tuple[list[AnnotationSpecsHistory], requests.Response]
 
 
         """
@@ -398,10 +398,10 @@ class AbstractAnnofabApi(abc.ABC):
             query_params (dict[str, Any]): Query Parameters
                 v (str):  2 を指定した場合、検査コメントのデータも含めたコメントデータを返します。  パラメーターの指定がない、あるいは値が 2 以外の場合は検査コメントを除いたコメントデータを返します。
             request_body (Any): Request Body
-                batch_comment_request_item (List[BatchCommentRequestItem]):  (required)
+                batch_comment_request_item (list[BatchCommentRequestItem]):  (required)
 
         Returns:
-            Tuple[List[Comment], requests.Response]
+            Tuple[list[Comment], requests.Response]
 
 
         """
@@ -434,7 +434,7 @@ class AbstractAnnofabApi(abc.ABC):
                 v (str):  2 を指定した場合、検査コメントのデータも含めたコメントデータを返します。  パラメーターの指定がない、あるいは値が 2 以外の場合は検査コメントを除いたコメントデータを返します。
 
         Returns:
-            Tuple[List[Comment], requests.Response]
+            Tuple[list[Comment], requests.Response]
 
 
         """
@@ -464,10 +464,10 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                batch_input_data_request_item (List[BatchInputDataRequestItem]):  (required)
+                batch_input_data_request_item (list[BatchInputDataRequestItem]):  (required)
 
         Returns:
-            Tuple[List[InputData], requests.Response]
+            Tuple[list[InputData], requests.Response]
 
 
         """
@@ -640,10 +640,10 @@ class AbstractAnnofabApi(abc.ABC):
             task_id (str):  タスクID (required)
             input_data_id (str):  入力データID (required)
             request_body (Any): Request Body
-                batch_inspection_request_item (List[BatchInspectionRequestItem]):  (required)
+                batch_inspection_request_item (list[BatchInspectionRequestItem]):  (required)
 
         Returns:
-            Tuple[List[Inspection], requests.Response]
+            Tuple[list[Inspection], requests.Response]
 
 
         """
@@ -673,7 +673,7 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[List[Inspection], requests.Response]
+            Tuple[list[Inspection], requests.Response]
 
 
         """
@@ -758,7 +758,7 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  取得する編集履歴の件数
 
         Returns:
-            Tuple[List[InstructionHistory], requests.Response]
+            Tuple[list[InstructionHistory], requests.Response]
 
 
         """
@@ -809,7 +809,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[InstructionImage], requests.Response]
+            Tuple[list[InstructionImage], requests.Response]
 
 
         """
@@ -1101,7 +1101,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
 
         Returns:
-            Tuple[List[ProjectMember], requests.Response]
+            Tuple[list[ProjectMember], requests.Response]
 
 
         """
@@ -1157,7 +1157,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
 
         Returns:
-            Tuple[List[PersonalAccessTokenInfo], requests.Response]
+            Tuple[list[PersonalAccessTokenInfo], requests.Response]
 
 
         """
@@ -1518,7 +1518,7 @@ class AbstractAnnofabApi(abc.ABC):
             organization_name (str):  組織名 (required)
 
         Returns:
-            Tuple[List[InputDataSet], requests.Response]
+            Tuple[list[InputDataSet], requests.Response]
 
 
         """
@@ -2350,7 +2350,7 @@ class AbstractAnnofabApi(abc.ABC):
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[ProjectAccountStatistics], requests.Response]
+            Tuple[list[ProjectAccountStatistics], requests.Response]
 
 
         """
@@ -2381,7 +2381,7 @@ class AbstractAnnofabApi(abc.ABC):
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[InspectionStatistics], requests.Response]
+            Tuple[list[InspectionStatistics], requests.Response]
 
 
         """
@@ -2458,7 +2458,7 @@ class AbstractAnnofabApi(abc.ABC):
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[TaskPhaseStatistics], requests.Response]
+            Tuple[list[TaskPhaseStatistics], requests.Response]
 
 
         """
@@ -2484,7 +2484,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[DateRange], requests.Response]
+            Tuple[list[DateRange], requests.Response]
 
 
         """
@@ -2511,7 +2511,7 @@ class AbstractAnnofabApi(abc.ABC):
                 to (str):  取得する統計の区間の終了日 - `YYYY-MM-DD` 。この日は含まれます。 (required)
 
         Returns:
-            Tuple[List[ProjectTaskStatisticsHistory], requests.Response]
+            Tuple[list[ProjectTaskStatisticsHistory], requests.Response]
 
 
         """
@@ -2660,7 +2660,7 @@ class AbstractAnnofabApi(abc.ABC):
             input_data_id (str):  入力データID (required)
 
         Returns:
-            Tuple[List[SupplementaryData], requests.Response]
+            Tuple[list[SupplementaryData], requests.Response]
 
 
         """
@@ -2723,7 +2723,7 @@ class AbstractAnnofabApi(abc.ABC):
                 task_assign_request (TaskAssignRequest):  (required)
 
         Returns:
-            Tuple[List[Task], requests.Response]
+            Tuple[list[Task], requests.Response]
 
 
         """
@@ -2748,10 +2748,10 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                batch_task_request_item (List[BatchTaskRequestItem]):  (required)
+                batch_task_request_item (list[BatchTaskRequestItem]):  (required)
 
         Returns:
-            Tuple[List[Task], requests.Response]
+            Tuple[list[Task], requests.Response]
 
 
         """
@@ -2828,7 +2828,7 @@ class AbstractAnnofabApi(abc.ABC):
             task_id (str):  タスクID (required)
 
         Returns:
-            Tuple[List[TaskHistory], requests.Response]
+            Tuple[list[TaskHistory], requests.Response]
 
 
         """
@@ -3016,7 +3016,7 @@ class AbstractAnnofabApi(abc.ABC):
             year_month (str):  (required)
 
         Returns:
-            Tuple[List[UsageStatusByDay], requests.Response]
+            Tuple[list[UsageStatusByDay], requests.Response]
 
 
         """
@@ -3070,7 +3070,7 @@ class AbstractAnnofabApi(abc.ABC):
                 to (str):  指定した年月以前の利用状況を取得します。省略した場合はJSTでの現在の年月です。年月のフォーマットは YYYY-MM です。指定年月は閉区間となります。
 
         Returns:
-            Tuple[List[UsageStatus], requests.Response]
+            Tuple[list[UsageStatus], requests.Response]
 
 
         """
@@ -3126,7 +3126,7 @@ class AbstractAnnofabApi(abc.ABC):
             project_id (str):  プロジェクトID (required)
 
         Returns:
-            Tuple[List[Webhook], requests.Response]
+            Tuple[list[Webhook], requests.Response]
 
 
         """

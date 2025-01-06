@@ -89,13 +89,13 @@ class Task(DataClassJsonMixin):
     status: TaskStatus
     """"""
 
-    input_data_id_list: List[str]
+    input_data_id_list: list[str]
     """タスクに含まれる入力データのID"""
 
     account_id: Optional[str]
     """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    histories_by_phase: List[TaskHistoryShort]
+    histories_by_phase: list[TaskHistoryShort]
     """簡易的なタスク履歴（あるフェーズを誰が担当したか）"""
 
     work_time_span: int

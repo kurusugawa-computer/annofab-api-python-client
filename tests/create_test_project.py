@@ -118,7 +118,7 @@ class CreatingTestProject:
         logger.debug(f"補助情報を登録しました。supplementary_data_id={supplementary_data_id}")
         return
 
-    def create_task(self, project_id: str, task_id: str, input_data_id_list: List[str]):
+    def create_task(self, project_id: str, task_id: str, input_data_id_list: list[str]):
         """
         サンプルのタスクを登録する。
         """

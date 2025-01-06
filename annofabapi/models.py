@@ -210,11 +210,11 @@ Kyes of Dict
 
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* by_tasks: List[WorktimeStatisticsItem]
+* by_tasks: list[WorktimeStatisticsItem]
     タスクごとに計算した「画像1枚あたりの作業時間平均」の統計（動画プロジェクトの場合は空リスト）
-* by_inputs: List[WorktimeStatisticsItem]
+* by_inputs: list[WorktimeStatisticsItem]
     画像1枚あたりの作業時間情報（動画プロジェクトの場合は空リスト）
-* by_minutes: List[WorktimeStatisticsItem]
+* by_minutes: list[WorktimeStatisticsItem]
     動画1分あたりの作業時間情報（画像プロジェクトの場合は空リスト）
 
 """
@@ -271,15 +271,15 @@ Kyes of Dict
     
 * default: AdditionalDataDefaultType
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 * type: AdditionalDataDefinitionType
     
-* choices: List[AdditionalDataDefinitionV1Choices]
+* choices: list[AdditionalDataDefinitionV1Choices]
     ドロップダウンまたはラジオボタンの選択肢
 * regex: str
     属性の値が、指定した正規表現に一致している必要があります。
-* label_ids: List[str]
+* label_ids: list[str]
     リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）
 * required: bool
     リンク属性において、入力を必須とするかどうか
@@ -298,7 +298,7 @@ Kyes of Dict
     選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * name: InternationalizationMessage
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 
 """
@@ -317,11 +317,11 @@ Kyes of Dict
     
 * default: AdditionalDataDefaultType
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 * type: AdditionalDataDefinitionType
     
-* choices: List[AdditionalDataDefinitionV1Choices]
+* choices: list[AdditionalDataDefinitionV1Choices]
     ドロップダウンまたはラジオボタンの選択肢
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
@@ -353,7 +353,7 @@ Kyes of Dict
     `false`を指定することで、属性値の入力を許可しないようにできます。 `AdditionalDataRestrictionConditionImply`との組み合わせで、特定条件下のみ入力を許すといった制限ができます。 
 * value: str
     指定された正規表現に一致しないことを要求します。
-* labels: List[str]
+* labels: list[str]
     アノテーションリンク属性において、アノテーションリンク先として指定可能なラベルIDを制限します。
 * premise: AdditionalDataRestriction
     
@@ -396,7 +396,7 @@ Kyes of Dict
 
 * type: str
     `HasLabel` [詳しくはこちら](#section/API-Convention/API-_type) 
-* labels: List[str]
+* labels: list[str]
     アノテーションリンク属性において、アノテーションリンク先として指定可能なラベルIDを制限します。
 
 """
@@ -770,7 +770,7 @@ Kyes of Dict
     外部ファイルに保存されたアノテーションのETag。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
 * url: str
     外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
-* additional_data_list: List[AdditionalDataV1]
+* additional_data_list: list[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * created_datetime: str
     作成日時
@@ -793,7 +793,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentInput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * editor_props: AnnotationPropsForEditor
     
@@ -816,7 +816,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentOutput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * editor_props: AnnotationPropsForEditor
     
@@ -843,7 +843,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentInput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * editor_props: AnnotationPropsForEditor
     
@@ -868,7 +868,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentInput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * editor_props: AnnotationPropsForEditor
     
@@ -904,7 +904,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentInput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * editor_props: AnnotationPropsForEditor
     
@@ -944,7 +944,7 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV2Input]
+* details: list[AnnotationDetailV2Input]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     対象タスク・対象入力データへの最初の保存時は未指定にしてください。 更新の場合はアノテーション取得時のupdated_datetimeをそのまま指定してください。 
@@ -959,7 +959,7 @@ AnnotationList = dict[str, Any]
 
 Kyes of Dict
 
-* list: List[SingleAnnotation]
+* list: list[SingleAnnotation]
     現在のページ番号に含まれる0件以上のアノテーションです。
 * page_no: float
     現在のページ番号です。
@@ -969,7 +969,7 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
 
 """
@@ -986,7 +986,7 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV2Output]
+* details: list[AnnotationDetailV2Output]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     対象タスク・対象入力データへ一度もアノテーションの保存が行われていない場合、未指定となります。 そうで無い場合、対象タスク・対象入力データのアノテーション最終更新時刻です。 
@@ -1009,7 +1009,7 @@ Kyes of Dict
     アノテーションの付加情報を編集できるかどうか。  trueの場合編集可能。 2022/09現在、この値を利用しているエディタは存在しません。
 * description: str
     アノテーションについての人間可読な説明。 2022/09現在、この値を利用しているエディタは存在しません。
-* tags: List[str]
+* tags: list[str]
     アノテーションに付与されている機械可読・人間可読なタグの列。  2022/09現在、この値を利用しているエディタは存在しません
 * etc: __DictStrKeyAnyValue__
     上記以外の任意のJson構造
@@ -1032,7 +1032,7 @@ Kyes of Dict
     入力データIDの検索方法を指定します。 `true`の場合は完全一致検索、`false`の場合は部分一致検索です。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* attributes: List[AdditionalDataV1]
+* attributes: list[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * updated_from: str
     開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日（ISO 8601 拡張形式または基本形式）。  `updated_to` より後の日付が指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。 
@@ -1049,9 +1049,9 @@ Kyes of Dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* labels: List[LabelV3]
+* labels: list[LabelV3]
     ラベル
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * updated_datetime: str
     更新日時 
@@ -1059,9 +1059,9 @@ Kyes of Dict
     
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
 * format_version: str
     アノテーション仕様のフォーマットのバージョン
@@ -1117,9 +1117,9 @@ AnnotationSpecsRequest = dict[str, Any]
 
 Kyes of Dict
 
-* labels: List[LabelV3]
+* labels: list[LabelV3]
     ラベル
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * comment: str
     変更内容のコメント
@@ -1131,9 +1131,9 @@ Kyes of Dict
     
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
 * format_version: str
     アノテーション仕様のフォーマットのバージョン
@@ -1148,9 +1148,9 @@ AnnotationSpecsRequestV1 = dict[str, Any]
 
 Kyes of Dict
 
-* labels: List[LabelV1]
+* labels: list[LabelV1]
     ラベル
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * comment: str
     変更内容のコメント
@@ -1171,13 +1171,13 @@ AnnotationSpecsRequestV2 = dict[str, Any]
 
 Kyes of Dict
 
-* labels: List[LabelV2]
+* labels: list[LabelV2]
     ラベル
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * comment: str
     変更内容のコメント
@@ -1200,13 +1200,13 @@ AnnotationSpecsRequestV3 = dict[str, Any]
 
 Kyes of Dict
 
-* labels: List[LabelV3]
+* labels: list[LabelV3]
     ラベル
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * comment: str
     変更内容のコメント
@@ -1233,9 +1233,9 @@ Kyes of Dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* labels: List[LabelV1]
+* labels: list[LabelV1]
     ラベル
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * updated_datetime: str
     更新日時 
@@ -1254,13 +1254,13 @@ Kyes of Dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* labels: List[LabelV2]
+* labels: list[LabelV2]
     ラベル
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * format_version: str
     アノテーション仕様のフォーマットのバージョン
@@ -1281,13 +1281,13 @@ Kyes of Dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* labels: List[LabelV3]
+* labels: list[LabelV3]
     ラベル
-* additionals: List[AdditionalDataDefinitionV2]
+* additionals: list[AdditionalDataDefinitionV2]
     属性
-* restrictions: List[AdditionalDataRestriction]
+* restrictions: list[AdditionalDataRestriction]
     属性の制約
-* inspection_phrases: List[InspectionPhrase]
+* inspection_phrases: list[InspectionPhrase]
     定型指摘
 * annotation_type_version: str
     アノテーション種別のバージョン。  拡張仕様プラグインで定義した値が転写されます。プロジェクトに拡張仕様プラグインが設定されていない場合は未指定です。 
@@ -1473,7 +1473,7 @@ Kyes of Dict
     
 * min_height: int
     
-* position_for_minimum_bounding_box_insertion: List[int]
+* position_for_minimum_bounding_box_insertion: list[int]
     最小矩形の挿入位置を、要素が2の配列で指定します。 
 * max_pixel: int
     
@@ -1606,7 +1606,7 @@ Kyes of Dict
     
 * min_height: int
     
-* position_for_minimum_bounding_box_insertion: List[int]
+* position_for_minimum_bounding_box_insertion: list[int]
     最小矩形の挿入位置を、要素が2の配列で指定します。 
 
 """
@@ -1677,7 +1677,7 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV1]
+* details: list[AnnotationDetailV1]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     更新日時
@@ -1696,7 +1696,7 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV2Input]
+* details: list[AnnotationDetailV2Input]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     対象タスク・対象入力データへの最初の保存時は未指定にしてください。 更新の場合はアノテーション取得時のupdated_datetimeをそのまま指定してください。 
@@ -1717,7 +1717,7 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV2Output]
+* details: list[AnnotationDetailV2Output]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     対象タスク・対象入力データへ一度もアノテーションの保存が行われていない場合、未指定となります。 そうで無い場合、対象タスク・対象入力データのアノテーション最終更新時刻です。 
@@ -1822,7 +1822,7 @@ Kyes of Dict
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* additional_data_list: List[AdditionalDataV1]
+* additional_data_list: list[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * updated_datetime: str
     アノテーション取得時の更新日時。更新時の楽観ロックに利用されます。 AnnotationDetailのものではなく、それを格納するAnnotationV2Outputなどが保持する更新時刻であることに注意してください。 
@@ -1845,7 +1845,7 @@ Kyes of Dict
     アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * updated_datetime: str
     アノテーション取得時の更新日時。更新時の楽観ロックに利用されます。 AnnotationDetailのものではなく、それを格納するAnnotationV2Outputなどが保持する更新時刻であることに注意してください。 
@@ -1868,7 +1868,7 @@ Kyes of Dict
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * comment_type: str
     コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。 * `inspection` - 検査コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 
-* phrases: List[str]
+* phrases: list[str]
     `comment_type` の値によって指定可能な値が異なります。  * `onhold` の場合   * 使用しません（空配列 or 指定なし） 
 * comment: str
     コメント本文。 
@@ -1910,7 +1910,7 @@ Kyes of Dict
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * comment_type: str
     コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。 * `inspection` - 検査コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 
-* phrases: List[str]
+* phrases: list[str]
     `comment_type` の値によって指定可能な値が異なります。  * `onhold` の場合   * 使用しません（空配列 or 指定なし） 
 * comment: str
     コメント本文。 
@@ -2103,7 +2103,7 @@ Kyes of Dict
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * comment_type: CommentType
     
-* phrases: List[str]
+* phrases: list[str]
     `comment_type` の値によって扱いが異なります。  * `onhold` の場合   * 使用しません（空配列） * `inspection` の場合   * 参照している定型指摘のIDリスト 
 * comment: str
     コメント本文。 
@@ -2244,7 +2244,7 @@ Kyes of Dict
     集約対象の `field` の値です。 
 * count: int
     集約対象 `field` の値が `key` の値と等しかったリソースの件数です。 
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     この集約のサブ集約です。サブ集約がないときは空の配列になります。 
 
 """
@@ -2263,7 +2263,7 @@ Kyes of Dict
     集約に使われたリソースのフィールド名です。  リソースの属性のさらに属性を参照するときは、`foo.bar.buz` のようにドット区切りになります。 
 * doc_count: int
     集約の件数です。 
-* items: List[Count]
+* items: list[Count]
     集約結果の値です。 
 
 """
@@ -2332,7 +2332,7 @@ Kyes of Dict
 
 * label_id: str
     
-* annotation_ids: List[str]
+* annotation_ids: list[str]
     
 * type: str
     DuplicatedSegmentationV2
@@ -2407,7 +2407,7 @@ Errors = dict[str, Any]
 
 Kyes of Dict
 
-* errors: List[ErrorItem]
+* errors: list[ErrorItem]
     
 * context: __DictStrKeyAnyValue__
     内部補足情報
@@ -2434,7 +2434,7 @@ Kyes of Dict
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
     入力データ名
-* details: List[FullAnnotationDetail]
+* details: list[FullAnnotationDetail]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列
 * updated_datetime: str
     更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。
@@ -2578,7 +2578,7 @@ Kyes of Dict
     
 * right_bottom: Point
     
-* points: List[Point]
+* points: list[Point]
     頂点の座標値
 * point: Point
     
@@ -2623,7 +2623,7 @@ FullAnnotationDataPoints = dict[str, Any]
 
 Kyes of Dict
 
-* points: List[Point]
+* points: list[Point]
     頂点の座標値
 * type: str
     `Points` 
@@ -2717,7 +2717,7 @@ Kyes of Dict
     
 * data: FullAnnotationData
     
-* additional_data_list: List[FullAnnotationAdditionalData]
+* additional_data_list: list[FullAnnotationAdditionalData]
     属性情報。 
 
 """
@@ -2830,7 +2830,7 @@ InputDataList = dict[str, Any]
 
 Kyes of Dict
 
-* list: List[InputData]
+* list: list[InputData]
     現在のページ番号に含まれる0件以上の入力データです。
 * page_no: float
     現在のページ番号です。
@@ -2840,7 +2840,7 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果の件数が1万件を超えた場合は`true`になります。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     システム内部用のプロパティ。 
 
 """
@@ -2906,7 +2906,7 @@ Kyes of Dict
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * inspection_summary: InspectionSummary
     
-* annotation_summaries: List[ValidationError]
+* annotation_summaries: list[ValidationError]
     
 
 """
@@ -2950,7 +2950,7 @@ Kyes of Dict
     
 * parent_inspection_id: str
     検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* phrases: List[str]
+* phrases: list[str]
     参照している定型指摘のID。
 * comment: str
     検査コメントの中身 
@@ -2975,7 +2975,7 @@ Kyes of Dict
     
 * type: str
     `Custom` [詳しくはこちら](#section/API-Convention/API-_type) 
-* coordinates: List[InspectionDataPolylineCoordinates]
+* coordinates: list[InspectionDataPolylineCoordinates]
     ポリラインを構成する頂点の配列 
 * start: float
     開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。
@@ -3020,7 +3020,7 @@ InspectionDataPolyline = dict[str, Any]
 
 Kyes of Dict
 
-* coordinates: List[InspectionDataPolylineCoordinates]
+* coordinates: list[InspectionDataPolylineCoordinates]
     ポリラインを構成する頂点の配列 
 * type: str
     `Polyline` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -3211,7 +3211,7 @@ InternationalizationMessage = dict[str, Any]
 
 Kyes of Dict
 
-* messages: List[InternationalizationMessageMessages]
+* messages: list[InternationalizationMessageMessages]
     言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、Annofabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * 以下の名前は、[Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます     * ラベル名     * 属性名     * 選択肢名 * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます 
 * default_lang: str
     希望された言語のメッセージが存在しない場合に、フォールバック先として使われる言語コード
@@ -3322,7 +3322,7 @@ Kyes of Dict
     人間可読なトークンの説明
 * expiration: float
     トークンの期間。 単位はミリ秒
-* permissions: List[PersonalAccessTokenPermission]
+* permissions: list[PersonalAccessTokenPermission]
     トークンに与える権限
 
 """
@@ -3422,7 +3422,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_name: InternationalizationMessage
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 * annotation_type: AnnotationType
     
@@ -3430,7 +3430,7 @@ Kyes of Dict
     
 * segmentation_metadata: SegmentationMetadata
     
-* additional_data_definitions: List[AdditionalDataDefinitionV1]
+* additional_data_definitions: list[AdditionalDataDefinitionV1]
     属性
 * color: Color
     
@@ -3451,7 +3451,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_name: InternationalizationMessage
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 * annotation_type: AnnotationType
     
@@ -3459,7 +3459,7 @@ Kyes of Dict
     
 * segmentation_metadata: SegmentationMetadata
     
-* additional_data_definitions: List[str]
+* additional_data_definitions: list[str]
     ラベルに所属する属性のID
 * color: Color
     
@@ -3480,13 +3480,13 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * label_name: InternationalizationMessage
     
-* keybind: List[Keybind]
+* keybind: list[Keybind]
     ショートカットキー
 * annotation_type: AnnotationType
     
 * field_values: dict(str, AnnotationTypeFieldValue)
     KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#section/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 
-* additional_data_definitions: List[str]
+* additional_data_definitions: list[str]
     ラベルに所属する属性のID
 * color: Color
     
@@ -3594,7 +3594,7 @@ Kyes of Dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* markers: List[Marker]
+* markers: list[Marker]
     マーカー一覧
 * updated_datetime: str
     更新日時
@@ -3686,7 +3686,7 @@ Kyes of Dict
     更新日時
 * reset_requested_email: str
     システム内部用のプロパティ
-* errors: List[str]
+* errors: list[str]
     システム内部用のプロパティ
 
 """
@@ -3699,7 +3699,7 @@ Kyes of Dict
 
 * reset_requested_email: str
     システム内部用のプロパティ
-* errors: List[str]
+* errors: list[str]
     システム内部用のプロパティ
 
 """
@@ -3710,7 +3710,7 @@ MyNotificationList = dict[str, Any]
 
 Kyes of Dict
 
-* messages: List[MyNotificationMessage]
+* messages: list[MyNotificationMessage]
     
 * opened: int
     開封済みの通知メッセージの数。 over_limitがtrueの場合、メッセージのタイムスタンプが新しい順から10000件のメッセージをもとに集計される 
@@ -3792,7 +3792,7 @@ MyOrganizationList = dict[str, Any]
 
 Kyes of Dict
 
-* list: List[MyOrganization]
+* list: list[MyOrganization]
     現在のページ番号に含まれる0件以上の所属組織です。
 * page_no: float
     現在のページ番号です。
@@ -3802,7 +3802,7 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     システム内部用のプロパティ。 
 
 """
@@ -3908,7 +3908,7 @@ OrganizationJobInfoContainer = dict[str, Any]
 
 Kyes of Dict
 
-* list: List[OrganizationJobInfo]
+* list: list[OrganizationJobInfo]
     バックグラウンドジョブの一覧。作成日時の降順でソートされています。
 * has_next: bool
     さらに古いジョブが存在する場合は`true`です。取得したジョブ一覧の中で`created_datetime`が最も古い値を、クエリパラメータ`exclusive_start_created_datetime`に指定することで、さらに古いジョブを取得することができます。
@@ -3948,7 +3948,7 @@ OrganizationMemberList = dict[str, Any]
 
 Kyes of Dict
 
-* list: List[OrganizationMember]
+* list: list[OrganizationMember]
     組織メンバーの一覧
 * page_no: float
     現在のページ番号です。
@@ -3958,7 +3958,7 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     システム内部用のプロパティ 
 
 """
@@ -4076,7 +4076,7 @@ OrganizationPluginList = dict[str, Any]
 
 Kyes of Dict
 
-* list: List[OrganizationPlugin]
+* list: list[OrganizationPlugin]
     プラグイン一覧
 * page_no: float
     現在のページ番号です。
@@ -4086,7 +4086,7 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[__DictStrKeyAnyValue__]
+* aggregations: list[__DictStrKeyAnyValue__]
     システム内部用のプロパティ。 
 
 """
@@ -4146,7 +4146,7 @@ Kyes of Dict
     人間可読なトークンの説明
 * expired_datetime: str
     トークンの有効期限
-* permissions: List[PersonalAccessTokenPermission]
+* permissions: list[PersonalAccessTokenPermission]
     トークンが持つ権限
 * created_datetime: str
     トークンの作成時刻
@@ -4169,7 +4169,7 @@ Kyes of Dict
     人間可読なトークンの説明
 * expired_datetime: str
     トークンの有効期限
-* permissions: List[PersonalAccessTokenPermission]
+* permissions: list[PersonalAccessTokenPermission]
     トークンが持つ権限
 * created_datetime: str
     トークンの作成時刻
@@ -4221,13 +4221,13 @@ Kyes of Dict
     カスタムアノテーション仕様画面の URL です。 プラグイン種別がカスタムアノテーション仕様の場合のみ有効です。  この URL には、プロジェクトを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` 
 * auth_redirect_url: str
     認証後のリダイレクト先 
-* compatible_input_data_types: List[InputDataType]
+* compatible_input_data_types: list[InputDataType]
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
     `ExtendedAnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) 
 * plugin_compatibility: OrganizationPluginCompatibility
     
-* annotation_types: List[AnnotationType]
+* annotation_types: list[AnnotationType]
     プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。 同じ種別を重複して設定することはできません。 
 * user_defined_annotation_type_definitions: dict(str, UserDefinedAnnotationTypeDefinition)
     Keyが[アノテーションの種類(AnnotationType)](#section/AnnotationType)であるDictionaryです。 
@@ -4244,7 +4244,7 @@ Kyes of Dict
     カスタムアノテーションエディタでタスクを開くための URL です。 プラグインを使用するプロジェクトのタスク一覧などで使用されます。 プラグイン種別がカスタムアノテーションエディタの場合のみ有効です。  この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` * `{taskId}`  以下のパラメーターは任意で指定します。  * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。 * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。 
 * auth_redirect_url: str
     認証後のリダイレクト先。このURLに `?code=xxx` をつけてリダイレクトされます。 url プロパティとは異なり、 `{projectId}` や `{taskId}` といったパラメータの置換は行われません。  詳しくは [requestPluginToken API](#operation/requestPluginToken) を参照してください。 
-* compatible_input_data_types: List[InputDataType]
+* compatible_input_data_types: list[InputDataType]
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
     `AnnotationEditor` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -4261,7 +4261,7 @@ Kyes of Dict
     カスタムアノテーション仕様画面の URL です。 プラグイン種別がカスタムアノテーション仕様の場合のみ有効です。  この URL には、プロジェクトを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` 
 * auth_redirect_url: str
     認証後のリダイレクト先 
-* compatible_input_data_types: List[InputDataType]
+* compatible_input_data_types: list[InputDataType]
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
     `AnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -4276,11 +4276,11 @@ Kyes of Dict
 
 * plugin_compatibility: OrganizationPluginCompatibility
     
-* annotation_types: List[AnnotationType]
+* annotation_types: list[AnnotationType]
     プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。 同じ種別を重複して設定することはできません。 
 * user_defined_annotation_type_definitions: dict(str, UserDefinedAnnotationTypeDefinition)
     Keyが[アノテーションの種類(AnnotationType)](#section/AnnotationType)であるDictionaryです。 
-* compatible_input_data_types: List[InputDataType]
+* compatible_input_data_types: list[InputDataType]
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
     `ExtendedAnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) 
@@ -4507,7 +4507,7 @@ Kyes of Dict
 
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* histories: List[ProjectAccountStatisticsHistory]
+* histories: list[ProjectAccountStatisticsHistory]
     
 
 """
@@ -4572,7 +4572,7 @@ Kyes of Dict
     保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数の上限。 
 * max_tasks_per_member_including_hold: int
     保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。 割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。  例えばmax_tasks_per_memberが10、max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。 
-* input_data_set_id_list: List[str]
+* input_data_set_id_list: list[str]
     システム内部用のプロパティ。 [putProject](#operation/putProject) APIでプロジェクトを更新する際は、[getProject](#operation/getProject) APIで取得した値を指定してください。 
 * input_data_max_long_side_length: int
     入力データ画像の長辺の最大値（未指定時は4096px）。  画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。 アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。  大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。 
@@ -4603,7 +4603,7 @@ ProjectContainer = dict[str, Any]
 
 Kyes of Dict
 
-* list: List[Project]
+* list: list[Project]
     
 * has_next: bool
     
@@ -4711,7 +4711,7 @@ ProjectJobInfoContainer = dict[str, Any]
 
 Kyes of Dict
 
-* list: List[ProjectJobInfo]
+* list: list[ProjectJobInfo]
     バックグラウンドジョブの一覧。作成日時の降順でソートされています。
 * has_next: bool
     さらに古いジョブが存在する場合は`true`です。取得したジョブ一覧の中で`created_datetime`が最も古い値を、クエリパラメータ`exclusive_start_created_datetime`に指定することで、さらに古いジョブを取得することができます。
@@ -4741,7 +4741,7 @@ ProjectList = dict[str, Any]
 
 Kyes of Dict
 
-* list: List[Project]
+* list: list[Project]
     現在のページ番号に含まれる0件以上のプロジェクトです。
 * page_no: float
     現在のページ番号です。
@@ -4751,7 +4751,7 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     システム内部用のプロパティ 
 
 """
@@ -4793,7 +4793,7 @@ ProjectMemberList = dict[str, Any]
 
 Kyes of Dict
 
-* list: List[ProjectMember]
+* list: list[ProjectMember]
     プロジェクトメンバーの一覧
 * page_no: float
     現在のページ番号。
@@ -4803,7 +4803,7 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     システム内部用のプロパティ 
 
 """
@@ -4875,7 +4875,7 @@ ProjectTaskCounts = dict[str, Any]
 
 Kyes of Dict
 
-* task_counts: List[ProjectTaskCountsTaskCounts]
+* task_counts: list[ProjectTaskCountsTaskCounts]
     
 
 """
@@ -4920,7 +4920,7 @@ Kyes of Dict
 
 * date: str
     日付
-* tasks: List[ProjectTaskStatistics]
+* tasks: list[ProjectTaskStatistics]
     タスクのフェーズごと、ステータスごとの情報
 
 """
@@ -4967,7 +4967,7 @@ Kyes of Dict
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* details: List[AnnotationDetailV1]
+* details: list[AnnotationDetailV1]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
@@ -5010,7 +5010,7 @@ PutMarkersRequest = dict[str, Any]
 
 Kyes of Dict
 
-* markers: List[Marker]
+* markers: list[Marker]
     マーカー一覧
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
@@ -5146,7 +5146,7 @@ Kyes of Dict
     
 * method: WebhookHttpMethod
     
-* headers: List[WebhookHeader]
+* headers: list[WebhookHeader]
     Webhookが送信するHTTPリクエストのヘッダー
 * body: str
     Webhookが送信するHTTPリクエストのボディ
@@ -5313,7 +5313,7 @@ Kyes of Dict
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
     入力データ名
-* details: List[SimpleAnnotationDetail]
+* details: list[SimpleAnnotationDetail]
     矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。
 * updated_datetime: str
     更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。
@@ -5376,7 +5376,7 @@ Kyes of Dict
     data_holding_typeがouterの場合のみ存在し、データのETagが格納される
 * url: str
     data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
-* additional_data_list: List[AdditionalDataV1]
+* additional_data_list: list[AdditionalDataV1]
     属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * created_datetime: str
     作成日時
@@ -5399,7 +5399,7 @@ Kyes of Dict
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * body: AnnotationDetailContentOutput
     
-* additional_data_list: List[AdditionalDataV2]
+* additional_data_list: list[AdditionalDataV2]
     
 * created_datetime: str
     作成日時
@@ -5581,11 +5581,11 @@ Kyes of Dict
     タスクのフェーズのステージ番号
 * status: TaskStatus
     
-* input_data_id_list: List[str]
+* input_data_id_list: list[str]
     タスクに含まれる入力データのID
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* histories_by_phase: List[TaskHistoryShort]
+* histories_by_phase: list[TaskHistoryShort]
     簡易的なタスク履歴（あるフェーズを誰が担当したか）
 * work_time_span: int
     累計実作業時間(ミリ秒)
@@ -5627,7 +5627,7 @@ Kyes of Dict
     `TaskProperty` 
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* task_ids: List[str]
+* task_ids: list[str]
     割り当てるタスクのID
 
 """
@@ -5653,7 +5653,7 @@ Kyes of Dict
 
 * user_id: str
     ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* task_ids: List[str]
+* task_ids: list[str]
     割り当てるタスクのID
 * type: str
     `Selection` 
@@ -5917,9 +5917,9 @@ Kyes of Dict
 
 * input_data_id: str
     入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* annotation_errors: List[ValidationError]
+* annotation_errors: list[ValidationError]
     
-* inspection_errors: List[InspectionValidationError]
+* inspection_errors: list[InspectionValidationError]
     
 
 """
@@ -5930,7 +5930,7 @@ TaskList = dict[str, Any]
 
 Kyes of Dict
 
-* list: List[Task]
+* list: list[Task]
     現在のページ番号に含まれる0件以上のタスクです。
 * page_no: float
     現在のページ番号です。
@@ -5940,7 +5940,7 @@ Kyes of Dict
     検索結果の総件数。
 * over_limit: bool
     検索結果が1万件を超えた場合にtrueとなる。
-* aggregations: List[AggregationResult]
+* aggregations: list[AggregationResult]
     [Aggregationによる集約結果](#section/API-Convention/AggregationResult)。 
 
 """
@@ -5983,7 +5983,7 @@ Kyes of Dict
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * date: str
     日付
-* phases: List[PhaseStatistics]
+* phases: list[PhaseStatistics]
     タスクのフェーズごとの集計結果
 
 """
@@ -5994,7 +5994,7 @@ TaskRequest = dict[str, Any]
 
 Kyes of Dict
 
-* input_data_id_list: List[str]
+* input_data_id_list: list[str]
     タスクに割り当てる入力データのID。タスクに割り当てることができる入力データの個数は最大200です。
 * metadata: dict(str, __DictStrKeyAnyValue__)
     ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 
@@ -6026,7 +6026,7 @@ Kyes of Dict
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_id: str
     タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* inputs: List[InputDataSummary]
+* inputs: list[InputDataSummary]
     
 
 """
@@ -6131,7 +6131,7 @@ Kyes of Dict
     集計期間の開始日時。日時のフォーマットはISO 8601 拡張形式です。
 * aggregation_period_to: str
     集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。
-* editor_usage: List[EditorUsageTimespan]
+* editor_usage: list[EditorUsageTimespan]
     エディタ利用時間のリスト
 * storage_usage: float
     ストレージ利用量。単位はGB時
@@ -6152,7 +6152,7 @@ Kyes of Dict
     集計期間の開始日時。日時のフォーマットはISO 8601 拡張形式です。
 * aggregation_period_to: str
     集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。
-* editor_usage: List[EditorUsageTimespan]
+* editor_usage: list[EditorUsageTimespan]
     エディタ利用時間のリスト
 * storage_usage: float
     ストレージ利用量。単位はGB時
@@ -6206,7 +6206,7 @@ Kyes of Dict
 
 * annotation_type_name: InternationalizationMessage
     
-* field_definitions: List[UserDefinedAnnotationTypeDefinitionFieldDefinitions]
+* field_definitions: list[UserDefinedAnnotationTypeDefinitionFieldDefinitions]
     ユーザーが定義するアノテーション種別のフィールド定義です。 フィールドIDをキー、フィールド定義を値とするオブジェクトを設定します。 
 * metadata: dict(str, str)
     アノテーション種別を設定した際に、ラベルのメタデータとしてデフォルトで設定される値です。 
@@ -6265,7 +6265,7 @@ Kyes of Dict
     
 * type: str
     UnknownLabel
-* annotation_ids: List[str]
+* annotation_ids: list[str]
     
 * additional_data_definition_id: str
     
@@ -6301,7 +6301,7 @@ Kyes of Dict
     
 * method: WebhookHttpMethod
     
-* headers: List[WebhookHeader]
+* headers: list[WebhookHeader]
     Webhookが送信するHTTPリクエストのヘッダー
 * body: str
     Webhookが送信するHTTPリクエストのボディ
@@ -6400,13 +6400,13 @@ Kyes of Dict
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * date: str
     
-* by_tasks: List[WorktimeStatisticsItem]
+* by_tasks: list[WorktimeStatisticsItem]
     タスクごとに計算した「画像1枚あたりの作業時間平均」の統計（動画プロジェクトの場合は空リスト）
-* by_inputs: List[WorktimeStatisticsItem]
+* by_inputs: list[WorktimeStatisticsItem]
     画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
-* by_minutes: List[WorktimeStatisticsItem]
+* by_minutes: list[WorktimeStatisticsItem]
     動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
-* accounts: List[AccountWorktimeStatistics]
+* accounts: list[AccountWorktimeStatistics]
     ユーザーごとの作業時間情報
 
 """
@@ -6421,7 +6421,7 @@ Kyes of Dict
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * account_id: str
     アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* data_series: List[WorktimeStatisticsData]
+* data_series: list[WorktimeStatisticsData]
     プロジェクトメンバーの日毎の作業時間統計データ
 
 """
@@ -6434,7 +6434,7 @@ Kyes of Dict
 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* data_series: List[WorktimeStatisticsData]
+* data_series: list[WorktimeStatisticsData]
     プロジェクトの日毎の作業時間統計データ
 
 """
@@ -6447,11 +6447,11 @@ Kyes of Dict
 
 * date: str
     日付
-* grouped_by_input: List[WorktimeStatisticsItem]
+* grouped_by_input: list[WorktimeStatisticsItem]
     ユーザーごとの画像1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
-* grouped_by_task: List[WorktimeStatisticsItem]
+* grouped_by_task: list[WorktimeStatisticsItem]
     ユーザーごとのタスク1個当たりの作業時間情報（動画プロジェクトの場合は空リスト）
-* grouped_by_minute: List[WorktimeStatisticsItem]
+* grouped_by_minute: list[WorktimeStatisticsItem]
     ユーザーごとの動画1分当たりの作業時間情報（画像プロジェクトの場合は空リスト）
 
 """
@@ -6464,7 +6464,7 @@ Kyes of Dict
 
 * phase: TaskPhase
     
-* histogram: List[HistogramItem]
+* histogram: list[HistogramItem]
     ヒストグラム情報
 * average: str
     作業時間の平均（ISO 8601 duration）
