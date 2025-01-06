@@ -1,1 +1,1 @@
-SystemMetadata = Dict[str, Any]
+SystemMetadata = dict[str, Any]

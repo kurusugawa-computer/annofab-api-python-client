@@ -10,7 +10,7 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import List, Optional  # pylint: disable=unused-import
+from typing import Optional  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -51,7 +51,7 @@ class ProjectConfiguration(DataClassJsonMixin):
     max_tasks_per_member_including_hold: Optional[int]
     """保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。 割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。  例えばmax_tasks_per_memberが10、max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。 """
 
-    input_data_set_id_list: Optional[List[str]]
+    input_data_set_id_list: Optional[list[str]]
     """システム内部用のプロパティ。 [putProject](#operation/putProject) APIでプロジェクトを更新する際は、[getProject](#operation/getProject) APIで取得した値を指定してください。 """
 
     input_data_max_long_side_length: Optional[int]

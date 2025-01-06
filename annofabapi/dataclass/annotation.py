@@ -10,7 +10,7 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union  # pylint: disable=unused-import
+from typing import Any, Optional, Union  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -23,18 +23,18 @@ from annofabapi.models import (
     TaskStatus,
 )
 
-AnnotationDataV1 = Union[str, Dict[str, Any]]
+AnnotationDataV1 = Union[str, dict[str, Any]]
 FullAnnotationData = Any
-AdditionalDataValue = Dict[str, Any]
-FullAnnotationAdditionalDataValue = Dict[str, Any]
-AnnotationDetailV2Input = Dict[str, Any]
-AnnotationDetailContentOutput = Dict[str, Any]
+AdditionalDataValue = dict[str, Any]
+FullAnnotationAdditionalDataValue = dict[str, Any]
+AnnotationDetailV2Input = dict[str, Any]
+AnnotationDetailContentOutput = dict[str, Any]
 
 AnnotationType = str
 
 
-AnnotationDetailContentInput = Dict[str, Any]
-AnnotationDetailV2Output = Dict[str, Any]
+AnnotationDetailContentInput = dict[str, Any]
+AnnotationDetailV2Output = dict[str, Any]
 
 
 @dataclass
@@ -98,7 +98,7 @@ class FullAnnotationDataBoundingBox(DataClassJsonMixin):
 class FullAnnotationDataPoints(DataClassJsonMixin):
     """ """
 
-    points: List[Point]
+    points: list[Point]
     """頂点の座標値"""
 
     type: str
@@ -205,7 +205,7 @@ class FullAnnotationDetail(DataClassJsonMixin):
     data: FullAnnotationData
     """"""
 
-    additional_data_list: List[FullAnnotationAdditionalData]
+    additional_data_list: list[FullAnnotationAdditionalData]
     """属性情報。 """
 
 
@@ -234,7 +234,7 @@ class FullAnnotation(DataClassJsonMixin):
     input_data_name: str
     """入力データ名"""
 
-    details: List[FullAnnotationDetail]
+    details: list[FullAnnotationDetail]
     """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列"""
 
     updated_datetime: Optional[str]
@@ -257,7 +257,7 @@ class SimpleAnnotationDetail(DataClassJsonMixin):
     data: FullAnnotationData
     """"""
 
-    attributes: Dict[str, Any]
+    attributes: dict[str, Any]
     """キーと値が以下のようになっている辞書構造です。  * キー: アノテーション仕様で設定した属性名 (英語) * 値: 各属性の値   * 選択肢を定義している場合、その選択肢の表示名 (英語)   * それ以外は属性値そのまま (文字列、数値、論理値) """
 
 
@@ -289,7 +289,7 @@ class SimpleAnnotation(DataClassJsonMixin):
     input_data_name: str
     """入力データ名"""
 
-    details: List[SimpleAnnotationDetail]
+    details: list[SimpleAnnotationDetail]
     """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。"""
 
     updated_datetime: Optional[str]
@@ -323,7 +323,7 @@ class SingleAnnotationDetailV1(DataClassJsonMixin):
     url: Optional[str]
     """data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される"""
 
-    additional_data_list: List[AdditionalDataV1]
+    additional_data_list: list[AdditionalDataV1]
     """属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | """
 
     created_datetime: str
@@ -351,7 +351,7 @@ class SingleAnnotationDetailV2(DataClassJsonMixin):
     body: AnnotationDetailContentOutput
     """"""
 
-    additional_data_list: List[AdditionalDataV2]
+    additional_data_list: list[AdditionalDataV2]
     """"""
 
     created_datetime: str
@@ -432,7 +432,7 @@ class AnnotationDetailV1(DataClassJsonMixin):
     url: Optional[str]
     """外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。"""
 
-    additional_data_list: List[AdditionalDataV1]
+    additional_data_list: list[AdditionalDataV1]
     """属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | """
 
     created_datetime: Optional[str]
@@ -455,7 +455,7 @@ class AnnotationV1(DataClassJsonMixin):
     input_data_id: str
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    details: List[AnnotationDetailV1]
+    details: list[AnnotationDetailV1]
     """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。"""
 
     updated_datetime: Optional[str]
@@ -480,10 +480,10 @@ class AnnotationPropsForEditor(DataClassJsonMixin):
     description: Optional[str]
     """アノテーションについての人間可読な説明。 2022/09現在、この値を利用しているエディタは存在しません。"""
 
-    tags: Optional[List[str]]
+    tags: Optional[list[str]]
     """アノテーションに付与されている機械可読・人間可読なタグの列。  2022/09現在、この値を利用しているエディタは存在しません"""
 
-    etc: Optional[Dict[str, Any]]
+    etc: Optional[dict[str, Any]]
     """上記以外の任意のJson構造"""
 
 
@@ -619,7 +619,7 @@ class AnnotationDetailV2Create(DataClassJsonMixin):
     body: AnnotationDetailContentInput
     """"""
 
-    additional_data_list: List[AdditionalDataV2]
+    additional_data_list: list[AdditionalDataV2]
     """"""
 
     editor_props: AnnotationPropsForEditor
@@ -647,7 +647,7 @@ class AnnotationDetailV2Import(DataClassJsonMixin):
     body: AnnotationDetailContentInput
     """"""
 
-    additional_data_list: List[AdditionalDataV2]
+    additional_data_list: list[AdditionalDataV2]
     """"""
 
     editor_props: AnnotationPropsForEditor
@@ -678,7 +678,7 @@ class AnnotationDetailV2Update(DataClassJsonMixin):
     body: Optional[AnnotationDetailContentInput]
     """"""
 
-    additional_data_list: List[AdditionalDataV2]
+    additional_data_list: list[AdditionalDataV2]
     """"""
 
     editor_props: AnnotationPropsForEditor
@@ -698,7 +698,7 @@ class AnnotationV2Input(DataClassJsonMixin):
     input_data_id: str
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    details: List[AnnotationDetailV2Input]
+    details: list[AnnotationDetailV2Input]
     """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。"""
 
     updated_datetime: Optional[str]
@@ -779,7 +779,7 @@ class AnnotationDetailV2Get(DataClassJsonMixin):
     body: AnnotationDetailContentOutput
     """"""
 
-    additional_data_list: List[AdditionalDataV2]
+    additional_data_list: list[AdditionalDataV2]
     """"""
 
     editor_props: AnnotationPropsForEditor
@@ -805,7 +805,7 @@ class AnnotationV2Output(DataClassJsonMixin):
     input_data_id: str
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    details: List[AnnotationDetailV2Output]
+    details: list[AnnotationDetailV2Output]
     """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。"""
 
     updated_datetime: Optional[str]

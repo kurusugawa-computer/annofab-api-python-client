@@ -10,7 +10,7 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional  # pylint: disable=unused-import
+from typing import Any, Optional  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -33,10 +33,10 @@ class ProjectJobInfo(DataClassJsonMixin):
     job_status: JobStatus
     """"""
 
-    job_execution: Optional[Dict[str, Any]]
+    job_execution: Optional[dict[str, Any]]
     """ジョブの内部情報"""
 
-    job_detail: Optional[Dict[str, Any]]
+    job_detail: Optional[dict[str, Any]]
     """ジョブ結果の内部情報"""
 
     errors: Errors

@@ -10,11 +10,11 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional  # pylint: disable=unused-import
+from typing import Any, Optional  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
-SystemMetadata = Dict[str, Any]
+SystemMetadata = dict[str, Any]
 
 
 @dataclass
@@ -67,7 +67,7 @@ class InputData(DataClassJsonMixin):
     sign_required: bool
     """CloudFrontのSignedCookieを使ったプライベートストレージを利用するかどうか """
 
-    metadata: Dict[str, str]
+    metadata: dict[str, str]
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
     system_metadata: SystemMetadata

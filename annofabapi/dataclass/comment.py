@@ -10,13 +10,13 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional  # pylint: disable=unused-import
+from typing import Any, Optional  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import CommentType, TaskPhase
 
-CommentNode = Dict[str, Any]
+CommentNode = dict[str, Any]
 
 
 @dataclass
@@ -49,7 +49,7 @@ class Comment(DataClassJsonMixin):
     comment_type: CommentType
     """"""
 
-    phrases: Optional[List[str]]
+    phrases: Optional[list[str]]
     """`comment_type` の値によって扱いが異なります。  * `onhold` の場合   * 使用しません（空配列） * `inspection` の場合   * 参照している定型指摘のIDリスト """
 
     comment: str
