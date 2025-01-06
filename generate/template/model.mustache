@@ -17,12 +17,12 @@ class {{classname}}(Enum):
 
 {{/isEnum}}
 {{^isEnum}}
-{{! enum以外ならばDictとして型ヒントを定義する }}
+{{! enum以外ならばdictとして型ヒントを定義する }}
 {{classname}} = dict[str, Any]
 """
 {{#description}}{{{description}}}{{/description}}
 
-Kyes of Dict
+Kyes of dict
 
 {{#vars}}
 * {{name}}: {{{dataType}}}

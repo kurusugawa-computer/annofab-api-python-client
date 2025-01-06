@@ -55,7 +55,7 @@ JAVA_OPTS="-Dlog.level=info"
 # `__DictStrKeyAnyValue__`の意味：あとで`dict[str,Any]`に置換できるようにするための無意味な値
 OPENAPI_GENERATOR_CLI_COMMON_OPTION="--generator-name python \
     --output /local/out \
-    --type-mappings array=list,DateTime=str,date=str,object=__dictStrKeyAnyValue__"
+    --type-mappings array=list,DateTime=str,date=str,object=__DictStrKeyAnyValue__"
 
 # v1 apiを生成
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local  -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
