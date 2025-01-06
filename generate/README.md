@@ -101,7 +101,7 @@ OpenAPI Specファイルの間違いを許容する部分/許容しない部分�
 
 
 ### 戻り値
-* `Tuple[Content, Reponse]`
+* `tuple[Content, Reponse]`
     * `Content`：Responseの中身。
     * `Reponse`：Response Object。ReponseのLocationヘッダを参照するときもあるので、Responseも返すようにした。
 

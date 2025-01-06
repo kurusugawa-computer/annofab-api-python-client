@@ -5,7 +5,7 @@ import time
 from collections.abc import Collection
 from functools import wraps
 from json import JSONDecodeError
-from typing import Any, Callable, Optional, Tuple, Union
+from typing import Any, Callable, Optional, Union
 
 import backoff
 import requests
@@ -472,7 +472,7 @@ class AnnofabApi(AbstractAnnofabApi):
         header_params: Optional[dict[str, Any]] = None,
         request_body: Optional[Any] = None,  # noqa: ANN401
         raise_for_status: bool = True,
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """
         Annofab WebAPIにアクセスして、レスポンスの中身とレスポンスを取得します。
 
@@ -485,7 +485,7 @@ class AnnofabApi(AbstractAnnofabApi):
             raise_for_status: Trueの場合HTTP Status Codeが4XX,5XXのときはHTTPErrorをスローします。Falseの場合はtuple[None, Response]を返します。
 
         Returns:
-            Tuple[content, Response]. contentはcontent_typeにより型が変わる。
+            tuple[content, Response]. contentはcontent_typeにより型が変わる。
             application/jsonならDict型, text/*ならばstr型, それ以外ならばbite型。
 
         Raises:
@@ -575,7 +575,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         return content, response
 
-    def _get_signed_cookie(self, project_id, query_params: Optional[dict[str, Any]] = None) -> Tuple[dict[str, Any], requests.Response]:  # noqa: ANN001
+    def _get_signed_cookie(self, project_id, query_params: Optional[dict[str, Any]] = None) -> tuple[dict[str, Any], requests.Response]:  # noqa: ANN001
         """
         アノテーション仕様の履歴情報を取得するために、非公開APIにアクセスする。
         変更される可能性あり.
@@ -584,7 +584,7 @@ class AnnofabApi(AbstractAnnofabApi):
             project_id: プロジェクトID
 
         Returns:
-            Tuple[Content, Response)
+            tuple[Content, Response)
 
         """
         url_path = f"/internal/projects/{project_id}/sign-headers"
@@ -675,7 +675,7 @@ class AnnofabApi(AbstractAnnofabApi):
             mfa_code: ``loginRespondToAuthChallenge``のレスポンスから取得したMFAコード。この引数はexperimentalです。将来削除される可能性があります。
 
         Returns:
-            Tuple[Token, requests.Response]
+            tuple[Token, requests.Response]
 
         Raises:
             InvalidMfaCodeError: ``self.input_mfa_code_via_stdin`` が ``False`` AND ``mfa_code`` が正しくない場合
@@ -723,7 +723,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
 
         Returns:
-            Tuple[Token, requests.Response]
+            tuple[Token, requests.Response]
 
         Raises:
             NotLoggedInError: ログインしてない状態で関数を呼び出したときのエラー

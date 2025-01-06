@@ -13,7 +13,7 @@ import warnings
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Optional, Tuple, Union
+from typing import Any, Callable, Optional, Union
 
 import more_itertools
 import requests
@@ -1098,7 +1098,7 @@ class Wrapper:
 
     def _get_from_and_to_date_for_statistics_webapi(
         self, project_id: str, from_date: Optional[str], to_date: Optional[str]
-    ) -> Tuple[datetime.date, datetime.date]:
+    ) -> tuple[datetime.date, datetime.date]:
         """statistics webapi用に、from_date, to_dateを取得する。
 
         Args:
@@ -1107,7 +1107,7 @@ class Wrapper:
             to_date (Optional[str]): 取得する統計の区間の終了日(YYYY-MM-DD)。
 
         Returns:
-            Tuple[datetime.date, datetime.date]: [description]
+            tuple[datetime.date, datetime.date]: [description]
         """
         if from_date is None:
             project, _ = self.api.get_project(project_id)

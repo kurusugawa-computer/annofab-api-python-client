@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Any, Optional, Tuple
+from typing import Any, Optional
 
 import requests
 from requests.cookies import RequestsCookieJar
@@ -54,7 +54,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
         header_params: Optional[dict[str, Any]] = None,
         request_body: Optional[Any] = None,  # noqa: ANN401
         raise_for_status: bool = True,
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         """
         HTTP　Requestを投げて、Responseを返す。
         Args:
@@ -66,7 +66,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
             raise_for_status: Trueの場合HTTP Status Codeが4XX,5XXのときはHTTPErrorをスローします。Falseの場合はtuple[None, Response]を返します。
 
         Returns:
-            Tuple[content, Response]. contentはcontent_typeにより型が変わる。
+            tuple[content, Response]. contentはcontent_typeにより型が変わる。
             application/jsonならDict型, text/*ならばstr型, それ以外ならばbite型。
 
         """
@@ -176,7 +176,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
     #########################################
     # Public Method : Cache
     #########################################
-    def get_signed_access_v2(self, query_params: dict[str, Any]) -> Tuple[dict[str, Any], requests.Response]:
+    def get_signed_access_v2(self, query_params: dict[str, Any]) -> tuple[dict[str, Any], requests.Response]:
         """
         Signed Cookieを取得して、インスタンスに保持する。
 
@@ -185,7 +185,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
                 url (str): アクセスするページのURL
 
         Returns:
-            Tuple[SignedCookie, requests.Response]
+            tuple[SignedCookie, requests.Response]
 
         """
 

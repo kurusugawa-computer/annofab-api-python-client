@@ -28,5 +28,5 @@ class AbstractAnnofabApi(abc.ABC):
         query_params: Optional[dict[str, Any]] = None,
         header_params: Optional[dict[str, Any]] = None,
         request_body: Optional[Any] = None,
-    ) -> Tuple[Any, requests.Response]:
+    ) -> tuple[Any, requests.Response]:
         pass
