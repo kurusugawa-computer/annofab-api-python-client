@@ -4,7 +4,7 @@ import os
 import zipfile
 from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, Callable, Optional, Type, Union
+from typing import Any, Callable, Optional, Union
 
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
@@ -452,7 +452,7 @@ class SimpleAnnotationDirParserByTask(SimpleAnnotationParserByTask):
             raise ValueError(f"json_file_path '{json_file_path}' は `json_file_path_list` に含まれていません。")
 
 
-def __parse_annotation_dir(annotation_dir_path: Path, clazz: Type[Union[SimpleAnnotationDirParser, FullAnnotationDirParser]]) -> Iterator[Any]:
+def __parse_annotation_dir(annotation_dir_path: Path, clazz: type[Union[SimpleAnnotationDirParser, FullAnnotationDirParser]]) -> Iterator[Any]:
     for task_dir in annotation_dir_path.iterdir():
         if not task_dir.is_dir():
             continue
@@ -574,7 +574,7 @@ def lazy_parse_simple_annotation_dir_by_task(annotation_dir_path: Path) -> Itera
         yield task_parser
 
 
-def __parse_annotation_zip(zip_file_path: Path, clazz: Type[Union[SimpleAnnotationZipParser, FullAnnotationZipParser]]) -> Iterator[Any]:
+def __parse_annotation_zip(zip_file_path: Path, clazz: type[Union[SimpleAnnotationZipParser, FullAnnotationZipParser]]) -> Iterator[Any]:
     def lazy_parser(zip_file: zipfile.ZipFile, info: zipfile.ZipInfo) -> Optional[Any]:  # noqa: ANN401
         paths = [p for p in info.filename.split("/") if len(p) != 0]
         if len(paths) != 2:
