@@ -1,6 +1,3 @@
-# ruff: noqa: E501, W293, W291
-# pylint: disable=too-many-lines,trailing-whitespace
-
 """
 annofabapiのmodel(swagger.yamlの ``components.schemes`` )
 enumならば列挙体として定義する。
@@ -617,6 +614,27 @@ Kyes of dict
 
 """
 
+AllOidcEndpoints = dict[str, Any]
+"""
+OIDCエンドポイント
+
+Kyes of dict
+
+* type: str
+    
+* issuer: str
+    RFC 8414で定義されるissuerの値。 `.well-known/openid-configuration`のissuer。
+* authorize_url: str
+    RFC 8414（及びRFC6749）で定義される、authorization_endpointのURL
+* token_url: str
+    RFC 8414（及びRFC6749）で定義される、token_endpointのURL
+* userinfo_url: str
+    OpenID Connect Core 1.0で定義される、UserInfo EndpointのURL
+* jwks_url: str
+    RFC 8414で定義される、jwks_uriの値
+
+"""
+
 
 class AnnotationDataHoldingType(Enum):
     """
@@ -926,7 +944,7 @@ Kyes of dict
 * rectangle_fill: bool
     塗りつぶしの「矩形」機能が使えるか否か
 * polygon_fill: bool
-    塗りつぶしの「ポリゴン」機能が使えるか否か
+    塗りつぶしの「自由形状」機能が使えるか否か
 * fill_near: bool
     「近似色塗りつぶし」機能を有効にするかどうか
 
@@ -2414,6 +2432,25 @@ Kyes of dict
 
 """
 
+ExternalIdpDeterminant = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+* type: str
+    
+* name: str
+    
+* organization_name: str
+    組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* provider_id: str
+    組織IDプロバイダーのID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+* user_id: str
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+
+"""
+
 FullAnnotation = dict[str, Any]
 """
 
@@ -2719,6 +2756,19 @@ Kyes of dict
     
 * additional_data_list: list[FullAnnotationAdditionalData]
     属性情報。 
+
+"""
+
+GlobalIdpNameDeterminant = dict[str, Any]
+"""
+Annofab全体で利用するIDプロバイダー名を元に外部IDプロバイダーを特定する決定因子
+
+Kyes of dict
+
+* type: str
+    
+* name: str
+    
 
 """
 
@@ -3359,6 +3409,113 @@ Kyes of dict
 
 """
 
+IssuerOnlyOidcEndpoints = dict[str, Any]
+"""
+OIDCエンドポイント
+
+Kyes of dict
+
+* type: str
+    
+* issuer: str
+    RFC 8414で定義されるissuerの値。 `.well-known/openid-configuration`のissuer。
+
+"""
+
+JobDetail = dict[str, Any]
+"""
+ジョブ結果の内部情報
+
+Kyes of dict
+
+* request: ProjectCopyRequest
+    
+* generated_task_count: int
+    
+* src_organization_id: str
+    
+* dest_organization_id: str
+    
+* src_input_data_set_id: str
+    
+* dest_input_data_set_id: str
+    
+* webhook: Webhook
+    
+* message: str
+    
+* replaced_body: str
+    
+
+"""
+
+JobDetailCopyProject = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+* request: ProjectCopyRequest
+    
+
+"""
+
+JobDetailGenInputs = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+* request: InputDataRequest
+    
+
+"""
+
+JobDetailGenTasks = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+* request: TaskGenerateRequest
+    
+* generated_task_count: int
+    
+
+"""
+
+JobDetailInvokeHook = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+* webhook: Webhook
+    
+* message: str
+    
+* replaced_body: str
+    
+
+"""
+
+JobDetailMoveProject = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+* src_organization_id: str
+    
+* dest_organization_id: str
+    
+* src_input_data_set_id: str
+    
+* dest_input_data_set_id: str
+    
+
+"""
+
 
 class JobStatus(Enum):
     """
@@ -3634,8 +3791,8 @@ Kyes of dict
     
 * job_execution: __DictStrKeyAnyValue__
     ジョブの内部情報
-* job_detail: __DictStrKeyAnyValue__
-    ジョブ結果の内部情報
+* job_detail: JobDetail
+    
 * errors: Errors
     
 * created_datetime: str
@@ -3820,6 +3977,40 @@ Kyes of dict
 
 """
 
+OidcAttributeMapping = dict[str, Any]
+"""
+外部IDプロバイダー上の属性と、Annofabが認識する属性のマッピング
+
+Kyes of dict
+
+* email: str
+    Eメールアドレスを表す外部IDプロバイダー上の属性名
+* name: str
+    ユーザーの表示名を表す外部IDプロバイダー上の属性名
+
+"""
+
+OidcEndpoints = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+* type: str
+    
+* issuer: str
+    RFC 8414で定義されるissuerの値。 `.well-known/openid-configuration`のissuer。
+* authorize_url: str
+    RFC 8414（及びRFC6749）で定義される、authorization_endpointのURL
+* token_url: str
+    RFC 8414（及びRFC6749）で定義される、token_endpointのURL
+* userinfo_url: str
+    OpenID Connect Core 1.0で定義される、UserInfo EndpointのURL
+* jwks_url: str
+    RFC 8414で定義される、jwks_uriの値
+
+"""
+
 Organization = dict[str, Any]
 """
 
@@ -3875,6 +4066,21 @@ Kyes of dict
 
 """
 
+OrganizationIdpIdDeterminant = dict[str, Any]
+"""
+組織名とIDプロバイダーIDを元に外部IDプロバイダーを特定する決定因子
+
+Kyes of dict
+
+* type: str
+    
+* organization_name: str
+    組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* provider_id: str
+    組織IDプロバイダーのID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+
+"""
+
 OrganizationJobInfo = dict[str, Any]
 """
 
@@ -3891,8 +4097,8 @@ Kyes of dict
     
 * job_execution: __DictStrKeyAnyValue__
     ジョブの内部情報
-* job_detail: __DictStrKeyAnyValue__
-    ジョブ結果の内部情報
+* job_detail: JobDetail
+    
 * errors: Errors
     
 * created_datetime: str
@@ -3983,6 +4189,35 @@ class OrganizationMemberStatus(Enum):
     WAITING_RESPONSE = "waiting_response"
     INACTIVE = "inactive"
 
+
+OrganizationOidcIdp = dict[str, Any]
+"""
+組織が利用する外部IDプロバイダー設定
+
+Kyes of dict
+
+* id: str
+    組織IDプロバイダーのID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+* organization_name: str
+    組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* client_id: str
+    外部IDプロバイダーで指定されたクライアントID
+* client_secret: str
+    外部IDプロバイダーで指定されたクライアントシークレット
+* attributes_request_method: str
+    ユーザー属性を取得する際に利用するリクエストメソッド 
+* endpoints: OidcEndpoints
+    
+* attribute_mapping: OidcAttributeMapping
+    
+* sign_up_url: str
+    組織IDプロバイダーを用いたユーザ登録時、ユーザがアクセスすべきURL 
+* created_datetime: str
+    IDプロバイダー設定の作成日時
+* updated_datetime: str
+    IDプロバイダー設定の更新日時
+
+"""
 
 OrganizationPlugin = dict[str, Any]
 """
@@ -4488,7 +4723,7 @@ Kyes of dict
     
 * input_data_type: InputDataType
     
-* configuration: ProjectConfiguration
+* configuration: ProjectConfigurationGet
     
 * created_datetime: str
     作成日時
@@ -4554,7 +4789,16 @@ Kyes of dict
 
 """
 
-ProjectConfiguration = dict[str, Any]
+ProjectConfigurationGet = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+
+"""
+
+ProjectConfigurationPut = dict[str, Any]
 """
 プロジェクトの設定情報
 
@@ -4694,8 +4938,8 @@ Kyes of dict
     
 * job_execution: __DictStrKeyAnyValue__
     ジョブの内部情報
-* job_detail: __DictStrKeyAnyValue__
-    ジョブ結果の内部情報
+* job_detail: JobDetail
+    
 * errors: Errors
     
 * created_datetime: str
@@ -5049,6 +5293,25 @@ Kyes of dict
 
 """
 
+PutOrganizationIdpBody = dict[str, Any]
+"""
+組織が利用するIDプロバイダー設定
+
+Kyes of dict
+
+* client_id: str
+    外部IDプロバイダーで指定されたクライアントID
+* client_secret: str
+    外部IDプロバイダーで指定されたクライアントシークレット
+* attributes_request_method: str
+    ユーザー属性を取得する際に利用するリクエストメソッド 
+* endpoints: OidcEndpoints
+    
+* attribute_mapping: OidcAttributeMapping
+    
+
+"""
+
 PutOrganizationMemberRoleRequest = dict[str, Any]
 """
 
@@ -5108,7 +5371,7 @@ Kyes of dict
     
 * organization_name: str
     プロジェクトの所属組織を変更する場合は、ここに変更先の組織名を指定します。  * 所属組織を変更する前にプロジェクトを停止する必要があります。 * APIを呼び出すアカウントは、変更先組織の管理者またはオーナーである必要があります。 * 変更後の組織に所属していないプロジェクトメンバーも残りますが、作業はできません。あらためて組織に招待してください。 
-* configuration: ProjectConfiguration
+* configuration: ProjectConfigurationPut
     
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
@@ -5149,7 +5412,7 @@ Kyes of dict
 * headers: list[WebhookHeader]
     Webhookが送信するHTTPリクエストのヘッダー
 * body: str
-    Webhookが送信するHTTPリクエストのボディ
+    Webhookが送信するHTTPリクエストのボディ。methodがGETの場合は指定不可。
 * url: str
     Webhookの送信先URL
 * created_datetime: str
@@ -5753,7 +6016,7 @@ Kyes of dict
     
 * input_data_type: InputDataType
     
-* configuration: ProjectConfiguration
+* configuration: ProjectConfigurationGet
     
 * created_datetime: str
     作成日時
@@ -6248,6 +6511,19 @@ Kyes of dict
     フィールドの初期値 
 * label: InternationalizationMessage
     
+
+"""
+
+UserIdDeterminant = dict[str, Any]
+"""
+ユーザーIDを元に外部IDプロバイダーを特定する決定因子。 指定されたユーザが利用すべき外部IDプロバイダーが一つに定まる場合に、その一つを特定する。
+
+Kyes of dict
+
+* type: str
+    
+* user_id: str
+    ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 
 """
 

@@ -1,4 +1,9 @@
 [pylint]
+# 自動生成しているファイルは無視する
+ignore-paths=
+    annofabapi/generated_.*.py,
+    annofabapi/models.py,
+
 disable =
 # ===== May not modify =====
     fixme, # TODO remains
