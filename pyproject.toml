@@ -62,6 +62,9 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 ipython = "*"
 
+# wheelファイルをビルドすると時間がかかるため、python3.13のwheelファイルが存在するバージョンを明示する
+numpy = {version = ">=2.1", python = ">=3.13"}
+
 
 [tool.mypy]
 # スタブが無いパッケージのエラーは無視させる.サードパーティのライブラリに型情報がないケースもあるため
