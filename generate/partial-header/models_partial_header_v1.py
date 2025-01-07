@@ -1,6 +1,3 @@
-# ruff: noqa: E501, W293, W291
-# pylint: disable=too-many-lines,trailing-whitespace
-
 """
 annofabapiのmodel(swagger.yamlの ``components.schemes`` )
 enumならば列挙体として定義する。

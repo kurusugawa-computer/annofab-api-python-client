@@ -1,6 +1,3 @@
-# ruff: noqa: E501, ANN401
-# pylint: disable=too-many-lines,trailing-whitespace
-
 """
 AbstractAnnofabApiのヘッダ部分
 
