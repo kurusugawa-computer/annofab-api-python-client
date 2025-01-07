@@ -206,11 +206,6 @@ declare -a model_files=(${MODELS_DIR}/resolution.py ${MODELS_DIR}/input_data.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/input.py  \
  ${model_files[@]} > ../annofabapi/dataclass/input.py
 
-# Job
-declare -a model_files=(${MODELS_DIR}/project_job_info.py)
-cat partial-header/dataclass/common.py partial-header/dataclass/job.py  \
- ${model_files[@]}  > ../annofabapi/dataclass/job.py
-
 # Organization
 declare -a model_files=(${MODELS_DIR}/organization.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/organization.py  \
