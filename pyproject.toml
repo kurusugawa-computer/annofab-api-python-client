@@ -132,6 +132,23 @@ select = [
     "PLC2401", # non-ascii-name, メソッド名に日本語を利用するため
 ]
 
+# 以下のファイルは自動生成されるので、いくかのルールを無視する
+"annofabapi/generated*.py" = [
+    "A002",  # builtin-argument-shadowing
+    "ANN401", # any-type
+    "E501", # line-too-long
+    "W293",  # blank-line-with-whitespace
+    "W291", # trailing-whitespace
+]
+"annofabapi/models.py" = [
+    "A002",  # builtin-argument-shadowing
+    "ANN401", # any-type
+    "E501", # line-too-long
+    "W293",  # blank-line-with-whitespace
+    "W291", # trailing-whitespace
+]
+
+
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

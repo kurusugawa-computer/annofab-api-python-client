@@ -280,7 +280,7 @@ class AnnotationEditorFeature(DataClassJsonMixin):
     """塗りつぶしの「矩形」機能が使えるか否か"""
 
     polygon_fill: bool
-    """塗りつぶしの「ポリゴン」機能が使えるか否か"""
+    """塗りつぶしの「自由形状」機能が使えるか否か"""
 
     fill_near: bool
     """「近似色塗りつぶし」機能を有効にするかどうか"""
