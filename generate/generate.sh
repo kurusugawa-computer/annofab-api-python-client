@@ -190,6 +190,7 @@ declare -a model_files=(${MODELS_DIR}/keybind.py \
  ${MODELS_DIR}/annotation_specs_v2.py \
  ${MODELS_DIR}/label_v3.py \
  ${MODELS_DIR}/annotation_specs_v3.py \
+ 
 )
 cat partial-header/dataclass/common.py partial-header/dataclass/annotation_specs.py  \
  ${model_files[@]} > ../annofabapi/dataclass/annotation_specs.py
@@ -220,11 +221,6 @@ declare -a model_files=(${MODELS_DIR}/organization_member.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/organization_member.py  \
  ${model_files[@]} > ../annofabapi/dataclass/organization_member.py
 
-# Project
-declare -a model_files=(${MODELS_DIR}/project_summary.py ${MODELS_DIR}/project_configuration.py ${MODELS_DIR}/project.py)
-cat partial-header/dataclass/common.py partial-header/dataclass/project.py  \
- ${model_files[@]} > ../annofabapi/dataclass/project.py
-
 # Project Member
 declare -a model_files=(${MODELS_DIR}/project_member.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/project_member.py  \
@@ -249,7 +245,7 @@ sed  -e "s/__DictStrKeyAnyValue__/dict[str,Any]/g"  ../annofabapi/dataclass/*.py
 
 
 
-rm -Rf out/openapi_client
+# rm -Rf out/openapi_client
 
 
 cd ../
