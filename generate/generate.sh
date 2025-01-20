@@ -1,6 +1,6 @@
 #!/bin/bash -uex
 
-DOCKER_IMAGE=openapitools/openapi-generator-cli:v4.3.1
+DOCKER_IMAGE=openapitools/openapi-generator-cli:v7.10.0
 
 PROGNAME=$(basename $0)
 
@@ -86,6 +86,7 @@ rm -Rf out/openapi_client
 # modelsを生成
 cat swagger/swagger-partial-header.yaml swagger/swagger-api-components.yaml > swagger/swagger-models.yaml
 
+DOCKER_IMAGE=openapitools/openapi-generator-cli:v4.3.1
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
     --input-spec swagger/swagger-models.yaml \
     ${OPENAPI_GENERATOR_CLI_COMMON_OPTION} \
