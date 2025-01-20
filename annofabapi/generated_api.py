@@ -691,7 +691,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/deleteInstructionImage
 
 
-        authorizations: ProjectAccepter, ProjectOwner
+        authorizations: ProjectAccepterProjectOwner
 
 
         作業ガイドの画像を削除します。
@@ -772,7 +772,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/getInstructionImageUrlForPut
 
 
-        authorizations: ProjectAccepter, ProjectOwner
+        authorizations: ProjectAccepterProjectOwner
 
 
         プロジェクトの作業ガイドの画像を登録するためのput先URLを取得します。  作業ガイド画像の登録/更新方法は以下の通りです。 1. APIを実行して、ファイルアップロード用のURLを取得する。  ``` $ curl -X GET -H 'Content-Type: {CONTENT_TYPE_HERE}' 'https://annofab.com/api/v1/projects/{project_id}/instruction-images/{image_id}/put-url' ```  2. 手順1で取得したファイルアップロード用のURLに対して、登録/更新する作業ガイド画像ファイル(`hoge.jpg`)をPUTする。  ``` $ curl -X PUT -H 'Content-Type: {CONTENT_TYPE_HERE}' --data-binary @/hoge.jpg '{ファイルアップロード用のURL}' ```
@@ -821,7 +821,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/putInstruction
 
 
-        authorizations: ProjectAccepter, ProjectOwner
+        authorizations: ProjectAccepterProjectOwner
 
 
         作業ガイドのHTMLを更新します。
@@ -1453,7 +1453,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/deleteOrganizationIdp
 
 
-        authorizations: OrganizationAdministrator, OrganizationOwner
+        authorizations: OrganizationAdministratorOrganizationOwner
 
 
         組織のIDプロバイダーを削除します。  **このAPIは Annofab に許可された組織だけで使用できます。また、予告なく変更されることがあります。**
@@ -1502,7 +1502,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/putOrganizationIdp
 
 
-        authorizations: OrganizationAdministrator, OrganizationOwner
+        authorizations: OrganizationAdministratorOrganizationOwner
 
 
         組織のIDプロバイダーを作成または更新します。 2024/10現在、一つの組織が持つことのできるIDプロバイダーは1つのみです。  **このAPIは Annofab に許可された組織だけで使用できます。また、予告なく変更されることがあります。**
@@ -1538,7 +1538,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/deleteOrganizationInputData
 
 
-        authorizations: OrganizationAdministrator, ProjectOwner
+        authorizations: OrganizationAdministratorProjectOwner
 
 
         入力データセットに含まれる入力データ情報を削除します。
@@ -1589,7 +1589,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/getInputDataSetList
 
 
-        authorizations: OrganizationAdministrator, OrganizationOwner
+        authorizations: OrganizationAdministratorOrganizationOwner
 
 
         入力データセットを一括で取得します。
@@ -1681,7 +1681,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/putInputDataSet
 
 
-        authorizations: OrganizationAdministrator, OrganizationOwner
+        authorizations: OrganizationAdministratorOrganizationOwner
 
 
         入力データセットを作成または更新します。
@@ -1887,7 +1887,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/deleteOrganizationPlugin
 
 
-        authorizations: OrganizationAdministrator, OrganizationOwner
+        authorizations: OrganizationAdministratorOrganizationOwner
 
 
         プラグインを削除します。  **この API は Annofab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
@@ -1963,7 +1963,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/putOrganizationPlugin
 
 
-        authorizations: OrganizationAdministrator, OrganizationOwner
+        authorizations: OrganizationAdministratorOrganizationOwner
 
 
         プラグインを作成または更新します。  **この API は Annofab に許可された組織だけで使用できます。またアルファ版につき、予告なく変更されることがあります。**
@@ -2217,7 +2217,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/initiateProjectCopy
 
 
-        authorizations: OrganizationAdministrator, ProjectOwner
+        authorizations: OrganizationAdministratorProjectOwner
 
 
         プロジェクトをコピーします。  以下のデータがコピーされます。 * プロジェクト設定 * プロジェクトメンバー * アノテーション仕様  オプションを指定することで、以下のデータもコピーできます。  |コピー対象のデータ|同時にコピーする必要があるデータ| |:--|:--| |入力データ|| |タスク|入力データ| |アノテーション|入力データ、タスク| |補助情報|入力データ| |作業ガイド|| |Webhook||  このAPIを利用するには、以下のロールが必要です。 * コピー元プロジェクトのプロジェクトオーナーロール * コピー元プロジェクトが所属している組織の組織管理者または組織オーナーロール  本APIを実行すると、バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`copy-project`）。
@@ -2295,7 +2295,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/putProject
 
 
-        authorizations: OrganizationAdministrator, ProjectOwner
+        authorizations: OrganizationAdministratorProjectOwner
 
 
         プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。  所属組織が変更された場合バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`move-project`）。  APIの制限事項は、以下の通りです。  * `status`を`initializing`に変更できません。  * `status`が`initializing`のときは、所属組織を変更できません。
@@ -3032,7 +3032,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                request_body (dict(str, dict)):  (required)
+                request_body (Dict[str, Dict[str, __DictStrKeyAnyValue__]]):  (required)
 
         Returns:
             tuple[Message, requests.Response]

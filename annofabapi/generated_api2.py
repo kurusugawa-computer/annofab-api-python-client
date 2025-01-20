@@ -37,7 +37,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getAnnotationSpecsV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定したプロジェクトのアノテーション仕様を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
@@ -74,7 +74,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getOrganizationMemberV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定したユーザーが指定した組織にどのようなロールで参加しているかを取得します。
@@ -105,7 +105,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getOrganizationMembersV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         脱退したメンバーは含まれません。
@@ -140,7 +140,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getOrganizationByNameV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定された組織を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
@@ -168,7 +168,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getOrganizationCacheByNameV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         組織の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
@@ -192,7 +192,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getOrganizationCacheV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         組織の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
@@ -216,7 +216,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getOrganizationV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定された組織を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
@@ -244,7 +244,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getProjectTaskCountV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         プロジェクトのタスク件数を取得します。
@@ -276,7 +276,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getProjectMemberV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定したプロジェクトメンバーを取得します。
@@ -305,7 +305,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getProjectMembersV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定されたプロジェクトのメンバーを検索します。  パフォーマンスのため、結果はページング形式で返ります。全件取得したい場合は、レスポンスを見て、ページ移動してください。
@@ -339,7 +339,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getProjectCacheV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         プロジェクトの各種リソースのキャッシュタイムスタンプを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
@@ -370,7 +370,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getAccountDailyStatisticsV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定した期間の [ユーザー別タスク集計データ](/docs/api/#section/ArrayOfProjectAccountStatistics) を取得できるAPI。取得期間は最大3か月です。
@@ -401,7 +401,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getInspectionDailyStatisticsV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定した期間の [検査コメント集計データ](/docs/api/#section/ArrayOfInspectionStatistics) を取得できるAPI。取得期間は最大3か月です。
@@ -430,7 +430,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getLabelStatisticsV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定したプロジェクトのラベル別アノテーション数集計をすべて取得します。
@@ -460,7 +460,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getPhaseDailyStatisticsV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定した期間の [フェーズ別タスク集計データ](/docs/api/#section/ArrayOfTaskPhaseStatistics) を取得できるAPI。取得期間は最大3か月です。
@@ -489,7 +489,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getTaskDailyStatisticsV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定した期間の [タスク集計データ](/docs/api/#section/ArrayOfProjectTaskStatisticsHistory) を取得できるAPI。取得期間は最大3か月です。
@@ -520,7 +520,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getWorktimeDailyStatisticsByAccountV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定したプロジェクトメンバーのタスク作業時間集計データを指定した期間分取得できるAPI。取得期間は最大3か月です。
@@ -552,7 +552,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getWorktimeDailyStatisticsV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定したプロジェクトのタスク作業時間集計データを指定した期間分取得できるAPI。取得期間は最大3か月です。
@@ -586,7 +586,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getAccountV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定したユーザーの組織のアカウント情報を取得します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
@@ -614,7 +614,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getUserCacheV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         ユーザー別の各リソースのキャッシュタイムスタンプを格納したキャッシュレコードを取得します。  これらタイムスタンプは、各リソースを取得する API の `cache` クエリパラメータに使用します。
@@ -638,7 +638,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getUserOrganizationsV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定したユーザーが所属する組織を検索します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
@@ -666,7 +666,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getUserProjectMembersV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定したユーザーが所属する全てのプロジェクトのメンバー情報から、指定したユーザーを示す情報を抽出します。 このAPIが返すメンバー情報は、全て指定したユーザーのものとなり、その数は指定ユーザーが所属しているプロジェクト数となります。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
@@ -694,7 +694,7 @@ class AbstractAnnofabApi2(abc.ABC):
         https://annofab.com/docs/api/#operation/getUserProjectsV2
 
 
-        authorizations: SignedCookieKeyPairId, SignedCookiePolicy, SignedCookieSignature
+        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
         指定したユーザーが所属するプロジェクトを検索します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
