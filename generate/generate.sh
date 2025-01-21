@@ -86,7 +86,7 @@ rm -Rf out/openapi_client
 # modelsを生成
 cat swagger/swagger-partial-header.yaml swagger/swagger-api-components.yaml > swagger/swagger-models.yaml
 
-# datetime型を含むクラスでは、JSONにserializeできなかったので、str型にする
+# datetime型を含むクラスでは、JSONにserializeiできなかったので、str型にする
 # https://github.com/OpenAPITools/openapi-generator/issues/19517
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
     --input-spec swagger/swagger-models.yaml \
@@ -96,6 +96,20 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${
     --global-property models,modelTests=false,modelDocs=false \
 
 sed 's/from openapi_client.models./from annofabapi.pydantic_models./g' out/openapi_client/models/*.py --in-place
+
+
+replace_from_dict_method() {
+    # `from_json`メソッドで`_type`が正しくない場合は`ValueError`を発生させるようにする
+    # 本来は`from_dict`メソッドを修正すべきだが、
+    local type_value=$1
+    local filename=$2
+    sed "s/return cls\.from_dict(json\.loads(json_str))/result = cls.from_dict(json.loads(json_str))\\n        if result.type != \"$type_value\": raise ValueError(\"Invalid type\")\\n        return result/" out/openapi_client/models/${filename} --in-place
+}
+
+replace_from_dict_method Movie system_metadata_movie.py
+replace_from_dict_method Image system_metadata_image.py
+replace_from_dict_method Custom system_metadata_custom.py
+
 cp out/openapi_client/models/*.py ../annofabapi/pydantic_models
 rm -Rf out/openapi_client
 

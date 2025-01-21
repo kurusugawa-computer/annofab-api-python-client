@@ -49,7 +49,10 @@ class SystemMetadataMovie(BaseModel):
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
         """Create an instance of SystemMetadataMovie from a JSON string"""
-        return cls.from_dict(json.loads(json_str))
+        result = cls.from_dict(json.loads(json_str))
+        if result.type != "Movie":
+            raise ValueError("Invalid type")
+        return result
 
     def to_dict(self) -> Dict[str, Any]:
         """Return the dictionary representation of the model using alias.
