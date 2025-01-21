@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
@@ -32,7 +31,7 @@ class InputDataRequest(BaseModel):
     input_data_path: StrictStr = Field(
         description="入力データの実体が存在するURLです。 Annofabにファイルをアップロードして入力データを作成する場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。  入力データの実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、スキームが s3 または https であるURLを指定してください。 S3プライベートストレージに存在するファイルを入力データとして登録する場合は、事前に[認可の設定](/docs/faq/#m0b240)が必要です。 "
     )
-    last_updated_datetime: Optional[datetime] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     sign_required: Optional[StrictBool] = Field(
         default=None,
         description="CloudFrontのSignedCookieを使ったプライベートストレージを利用するかどうか。  `true`を指定する場合は，`input_data_path`にAnnofabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。 ",

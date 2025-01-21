@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -35,8 +34,8 @@ class MyOrganization(BaseModel):
     email: Optional[StrictStr] = None
     price_plan: Optional[PricePlan] = None
     summary: Optional[Dict[str, Any]] = Field(default=None, description="廃止予定のプロパティです。常に中身は空です。 ")
-    created_datetime: Optional[datetime] = Field(default=None, description="作成日時")
-    updated_datetime: Optional[datetime] = Field(default=None, description="更新日時")
+    created_datetime: Optional[str] = Field(default=None, description="作成日時")
+    updated_datetime: Optional[str] = Field(default=None, description="更新日時")
     my_role: Optional[OrganizationMemberRole] = None
     my_status: Optional[OrganizationMemberStatus] = None
     __properties: ClassVar[List[str]] = [

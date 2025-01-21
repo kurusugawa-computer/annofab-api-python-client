@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -28,7 +27,7 @@ class InstructionHistory(BaseModel):
 
     history_id: StrictStr = Field(description="作業ガイドの履歴ID")
     account_id: StrictStr = Field(description="作業ガイドを更新したユーザーのアカウントID")
-    updated_datetime: datetime = Field(description="作業ガイドの最終更新日時")
+    updated_datetime: str = Field(description="作業ガイドの最終更新日時")
     __properties: ClassVar[List[str]] = ["history_id", "account_id", "updated_datetime"]
 
     model_config = ConfigDict(

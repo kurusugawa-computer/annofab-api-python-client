@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -37,7 +36,7 @@ class PutMyAccountRequest(BaseModel):
         default=None,
         description="人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 ",
     )
-    last_updated_datetime: Optional[datetime] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     __properties: ClassVar[List[str]] = ["user_id", "username", "lang", "keylayout", "biography", "last_updated_datetime"]
 
     model_config = ConfigDict(

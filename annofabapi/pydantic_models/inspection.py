@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -49,8 +48,8 @@ class Inspection(BaseModel):
     phrases: Optional[List[StrictStr]] = Field(default=None, description="参照している定型指摘のID。")
     comment: StrictStr = Field(description="検査コメントの中身 ")
     status: InspectionStatus
-    created_datetime: datetime
-    updated_datetime: Optional[datetime] = None
+    created_datetime: str
+    updated_datetime: Optional[str] = None
     __properties: ClassVar[List[str]] = [
         "project_id",
         "task_id",

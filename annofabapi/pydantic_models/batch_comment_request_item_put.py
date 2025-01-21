@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
@@ -41,7 +40,7 @@ class BatchCommentRequestItemPut(BaseModel):
     )
     comment: StrictStr = Field(description="コメント本文。 ")
     comment_node: CommentNode
-    datetime_for_sorting: Optional[datetime] = Field(
+    datetime_for_sorting: Optional[str] = Field(
         default=None,
         description="コメントのソート順を決める日時。コメント作成時のみ指定可能です。  Annofab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。  コメント作成時に未指定とした場合は、作成操作オブジェクトの順序に応じてコメント作成日時からずれた時刻が自動設定されます（ソート順を一意とするため）。  なお、この値は後から更新することはできません（値を指定しても無視されます）。 ",
     )

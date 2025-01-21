@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -36,7 +35,7 @@ class InputDataSet(BaseModel):
         default=None,
         description="AWS IAMロール。S3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 ",
     )
-    updated_datetime: datetime = Field(description="入力データセットの最終更新日時")
+    updated_datetime: str = Field(description="入力データセットの最終更新日時")
     __properties: ClassVar[List[str]] = [
         "input_data_set_id",
         "input_data_set_name",

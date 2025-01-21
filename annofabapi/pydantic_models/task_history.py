@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -31,8 +30,8 @@ class TaskHistory(BaseModel):
     project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     task_history_id: StrictStr = Field(description="タスク履歴ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    started_datetime: Optional[datetime] = Field(default=None, description="開始日時")
-    ended_datetime: Optional[datetime] = Field(default=None, description="終了日時")
+    started_datetime: Optional[str] = Field(default=None, description="開始日時")
+    ended_datetime: Optional[str] = Field(default=None, description="終了日時")
     accumulated_labor_time_milliseconds: StrictStr = Field(description="累計実作業時間（ISO 8601 duration）")
     phase: TaskPhase
     phase_stage: Annotated[int, Field(strict=True, ge=1)] = Field(description="タスクのフェーズのステージ番号")

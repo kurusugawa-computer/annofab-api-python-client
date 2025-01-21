@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -39,8 +38,8 @@ class ProjectMember(BaseModel):
         default=None,
         description="人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 ",
     )
-    updated_datetime: datetime = Field(description="更新日時")
-    created_datetime: datetime = Field(description="作成日時")
+    updated_datetime: str = Field(description="更新日時")
+    created_datetime: str = Field(description="作成日時")
     sampling_inspection_rate: Optional[Annotated[int, Field(le=100, strict=True, ge=0)]] = Field(default=None, description="抜取検査率（パーセント）")
     sampling_acceptance_rate: Optional[Annotated[int, Field(le=100, strict=True, ge=0)]] = Field(default=None, description="抜取受入率（パーセント）")
     __properties: ClassVar[List[str]] = [

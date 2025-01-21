@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
@@ -38,8 +37,8 @@ class OrganizationPlugin(BaseModel):
     )
     detail: PluginDetail
     is_builtin: StrictBool = Field(description="trueの場合、プラグインはAnnofab組み込みのプラグインであり、更新や削除を行うことはできません。")
-    created_datetime: datetime
-    updated_datetime: datetime
+    created_datetime: str
+    updated_datetime: str
     __properties: ClassVar[List[str]] = [
         "organization_id",
         "plugin_id",

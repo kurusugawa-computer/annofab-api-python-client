@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
@@ -41,7 +40,7 @@ class InputData(BaseModel):
         default=None, description="[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 "
     )
     original_input_data_path: Optional[StrictStr] = Field(default=None, description="システム内部用のプロパティ ")
-    updated_datetime: datetime = Field(description="更新日時")
+    updated_datetime: str = Field(description="更新日時")
     sign_required: StrictBool = Field(description="CloudFrontのSignedCookieを使ったプライベートストレージを利用するかどうか ")
     metadata: Dict[str, StrictStr] = Field(description="ユーザーが自由に登録できるkey-value型のメタデータです。 ")
     system_metadata: SystemMetadata

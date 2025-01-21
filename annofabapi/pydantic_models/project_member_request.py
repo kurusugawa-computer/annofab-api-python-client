@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -33,7 +32,7 @@ class ProjectMemberRequest(BaseModel):
     member_role: ProjectMemberRole
     sampling_inspection_rate: Optional[Annotated[int, Field(le=100, strict=True, ge=0)]] = Field(default=None, description="抜取検査率（パーセント）")
     sampling_acceptance_rate: Optional[Annotated[int, Field(le=100, strict=True, ge=0)]] = Field(default=None, description="抜取受入率（パーセント）")
-    last_updated_datetime: Optional[datetime] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     __properties: ClassVar[List[str]] = [
         "member_status",
         "member_role",

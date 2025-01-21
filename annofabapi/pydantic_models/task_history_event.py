@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -33,7 +32,7 @@ class TaskHistoryEvent(BaseModel):
     project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     task_history_id: StrictStr = Field(description="タスク履歴ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    created_datetime: datetime = Field(description="作成日時")
+    created_datetime: str = Field(description="作成日時")
     phase: TaskPhase
     phase_stage: Annotated[int, Field(strict=True, ge=1)] = Field(description="タスクのフェーズのステージ番号")
     status: TaskStatus

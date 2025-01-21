@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
@@ -43,7 +42,7 @@ class Account(BaseModel):
     account_type: StrictStr = Field(
         description="アカウントの種別 * `annofab` - 通常の手順で登録されたアカウント。後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたアカウントの場合もこちらになります。 * `external` - [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344) * `project_guest` - [issueProjectGuestUserToken](#operation/issueProjectGuestUserToken)によって作成されたされたアカウント "
     )
-    updated_datetime: datetime = Field(description="更新日時")
+    updated_datetime: str = Field(description="更新日時")
     __properties: ClassVar[List[str]] = [
         "account_id",
         "user_id",

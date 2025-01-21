@@ -86,13 +86,13 @@ rm -Rf out/openapi_client
 # modelsを生成
 cat swagger/swagger-partial-header.yaml swagger/swagger-api-components.yaml > swagger/swagger-models.yaml
 
-# datetime型を含むクラスでは、JSONをparseできなかったので、str型にする
+# datetime型を含むクラスでは、JSONにserializeできなかったので、str型にする
 # https://github.com/OpenAPITools/openapi-generator/issues/19517
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
     --input-spec swagger/swagger-models.yaml \
     --generator-name python \
     --output /local/out \
-    --type-mappings array=DateTime=str,date=str \
+    --type-mappings DateTime=str,date=str \
     --global-property models,modelTests=false,modelDocs=false \
 
 sed 's/from openapi_client.models./from annofabapi.pydantic_models./g' out/openapi_client/models/*.py --in-place

@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -28,7 +27,7 @@ class AnnotationSpecsHistory(BaseModel):
 
     history_id: StrictStr = Field(description="アノテーション仕様の履歴ID")
     project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    updated_datetime: datetime = Field(description="更新日時")
+    updated_datetime: str = Field(description="更新日時")
     url: StrictStr = Field(description="アノテーション仕様が格納されたJSONのURL。URLにアクセスするには認証認可が必要です。")
     account_id: Optional[StrictStr] = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     comment: Optional[StrictStr] = Field(default=None, description="変更内容のコメント")

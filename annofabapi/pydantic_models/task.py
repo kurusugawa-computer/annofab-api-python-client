@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
@@ -42,9 +41,9 @@ class Task(BaseModel):
     number_of_rejections: StrictInt = Field(
         description="このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計  このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。 `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。  例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。 "
     )
-    started_datetime: Optional[datetime] = Field(default=None, description="現在のフェーズが開始された日時")
-    updated_datetime: datetime = Field(description="更新日時")
-    operation_updated_datetime: Optional[datetime] = Field(default=None, description="タスクのステータスやフェーズ、担当者などが更新されたときの日時")
+    started_datetime: Optional[str] = Field(default=None, description="現在のフェーズが開始された日時")
+    updated_datetime: str = Field(description="更新日時")
+    operation_updated_datetime: Optional[str] = Field(default=None, description="タスクのステータスやフェーズ、担当者などが更新されたときの日時")
     sampling: Optional[StrictStr] = Field(
         default=None,
         description="検査抜取検査/抜取受入によって、どのフェーズがスキップされたか  * `inspection_skipped` - 抜取検査の対象外となり、検査フェーズがスキップされた * `inspection_stages_skipped` - 抜取検査の対象外となり、検査フェーズのステージの一部がスキップされた * `acceptance_skipped` - 抜取受入の対象外となり、受入フェーズがスキップされた * `inspection_and_acceptance_skipped` - 抜取検査・抜取受入の対象外となり、検査・受入フェーズがスキップされた  未指定ならば、どのフェーズもスキップされていません。 ",

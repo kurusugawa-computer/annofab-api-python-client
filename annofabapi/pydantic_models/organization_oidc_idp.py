@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
@@ -37,8 +36,8 @@ class OrganizationOidcIdp(BaseModel):
     endpoints: OidcEndpoints
     attribute_mapping: OidcAttributeMapping
     sign_up_url: StrictStr = Field(description="組織IDプロバイダーを用いたユーザ登録時、ユーザがアクセスすべきURL ")
-    created_datetime: datetime = Field(description="IDプロバイダー設定の作成日時")
-    updated_datetime: datetime = Field(description="IDプロバイダー設定の更新日時")
+    created_datetime: str = Field(description="IDプロバイダー設定の作成日時")
+    updated_datetime: str = Field(description="IDプロバイダー設定の更新日時")
     __properties: ClassVar[List[str]] = [
         "id",
         "organization_name",

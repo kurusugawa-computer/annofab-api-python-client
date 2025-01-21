@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -39,8 +38,8 @@ class OrganizationMember(BaseModel):
         default=None,
         description="人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 ",
     )
-    created_datetime: datetime = Field(description="作成日時")
-    updated_datetime: datetime = Field(description="更新日時")
+    created_datetime: str = Field(description="作成日時")
+    updated_datetime: str = Field(description="更新日時")
     __properties: ClassVar[List[str]] = [
         "organization_id",
         "account_id",

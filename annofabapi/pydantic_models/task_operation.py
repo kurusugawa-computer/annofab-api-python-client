@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
@@ -29,7 +28,7 @@ class TaskOperation(BaseModel):
     """
 
     status: TaskStatus
-    last_updated_datetime: datetime = Field(description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    last_updated_datetime: str = Field(description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     account_id: Optional[StrictStr] = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     force: Optional[StrictBool] = Field(
         default=False, description="タスクの強制操作を行うかどうか。 `status`が`rejected`のときのみ、`true`を指定できます。 "

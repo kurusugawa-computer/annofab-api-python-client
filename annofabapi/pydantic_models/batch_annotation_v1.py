@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -38,7 +37,7 @@ class BatchAnnotationV1(BaseModel):
     additional_data_list: List[AdditionalDataV1] = Field(
         description="属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | "
     )
-    updated_datetime: datetime = Field(
+    updated_datetime: str = Field(
         description="アノテーション取得時の更新日時。更新時の楽観ロックに利用されます。 AnnotationDetailのものではなく、それを格納するAnnotationV2Outputなどが保持する更新時刻であることに注意してください。 "
     )
     __properties: ClassVar[List[str]] = [

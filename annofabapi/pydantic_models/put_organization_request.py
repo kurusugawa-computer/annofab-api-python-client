@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -27,7 +26,7 @@ class PutOrganizationRequest(BaseModel):
     """
 
     organization_name: StrictStr = Field(description="組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    last_updated_datetime: datetime = Field(description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    last_updated_datetime: str = Field(description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     __properties: ClassVar[List[str]] = ["organization_name", "last_updated_datetime"]
 
     model_config = ConfigDict(

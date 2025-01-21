@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -33,10 +32,10 @@ class PersonalAccessTokenInfo(BaseModel):
     )
     account_id: StrictStr = Field(description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     note: StrictStr = Field(description="人間可読なトークンの説明")
-    expired_datetime: datetime = Field(description="トークンの有効期限")
+    expired_datetime: str = Field(description="トークンの有効期限")
     permissions: List[PersonalAccessTokenPermission] = Field(description="トークンが持つ権限")
-    created_datetime: datetime = Field(description="トークンの作成時刻")
-    last_used_datetime: Optional[datetime] = Field(default=None, description="トークンの最終利用時刻")
+    created_datetime: str = Field(description="トークンの作成時刻")
+    last_used_datetime: Optional[str] = Field(default=None, description="トークンの最終利用時刻")
     __properties: ClassVar[List[str]] = ["id", "account_id", "note", "expired_datetime", "permissions", "created_datetime", "last_used_datetime"]
 
     model_config = ConfigDict(

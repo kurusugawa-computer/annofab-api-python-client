@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -39,8 +38,8 @@ class OrganizationJobInfo(BaseModel):
     job_execution: Optional[Dict[str, Any]] = Field(default=None, description="ジョブの内部情報")
     job_detail: Optional[JobDetail] = None
     errors: Optional[Errors] = None
-    created_datetime: Optional[datetime] = None
-    updated_datetime: Optional[datetime] = None
+    created_datetime: Optional[str] = None
+    updated_datetime: Optional[str] = None
     __properties: ClassVar[List[str]] = [
         "organization_id",
         "job_type",

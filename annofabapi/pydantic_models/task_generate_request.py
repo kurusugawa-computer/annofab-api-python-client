@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -29,7 +28,7 @@ class TaskGenerateRequest(BaseModel):
     """
 
     task_generate_rule: TaskGenerateRule
-    project_last_updated_datetime: datetime = Field(
+    project_last_updated_datetime: str = Field(
         description="プロジェクトの最終更新日時（[getProject](#operation/getProject) APIのレスポンス `updated_datetime`）。タスク生成の排他制御に使用。"
     )
     __properties: ClassVar[List[str]] = ["task_generate_rule", "project_last_updated_datetime"]

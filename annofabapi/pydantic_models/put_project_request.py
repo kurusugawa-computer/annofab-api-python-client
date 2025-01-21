@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
@@ -38,7 +37,7 @@ class PutProjectRequest(BaseModel):
         description="プロジェクトの所属組織を変更する場合は、ここに変更先の組織名を指定します。  * 所属組織を変更する前にプロジェクトを停止する必要があります。 * APIを呼び出すアカウントは、変更先組織の管理者またはオーナーである必要があります。 * 変更後の組織に所属していないプロジェクトメンバーも残りますが、作業はできません。あらためて組織に招待してください。 "
     )
     configuration: ProjectConfigurationPut
-    last_updated_datetime: Optional[datetime] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     force_suspend: Optional[StrictBool] = Field(default=False, description="作業中タスクがあるプロジェクトを停止する時trueにして下さい")
     __properties: ClassVar[List[str]] = [
         "title",

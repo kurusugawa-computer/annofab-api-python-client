@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -36,7 +35,7 @@ class BatchAnnotationV2(BaseModel):
     )
     label_id: StrictStr = Field(description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     additional_data_list: List[AdditionalDataV2]
-    updated_datetime: datetime = Field(
+    updated_datetime: str = Field(
         description="アノテーション取得時の更新日時。更新時の楽観ロックに利用されます。 AnnotationDetailのものではなく、それを格納するAnnotationV2Outputなどが保持する更新時刻であることに注意してください。 "
     )
     __properties: ClassVar[List[str]] = [

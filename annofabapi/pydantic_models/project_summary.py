@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -26,7 +25,7 @@ class ProjectSummary(BaseModel):
     プロジェクトのサマリー情報
     """
 
-    last_tasks_updated_datetime: Optional[datetime] = Field(default=None, description="タスクの最終更新日時")
+    last_tasks_updated_datetime: Optional[str] = Field(default=None, description="タスクの最終更新日時")
     __properties: ClassVar[List[str]] = ["last_tasks_updated_datetime"]
 
     model_config = ConfigDict(

@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -29,7 +28,7 @@ class PutMarkersRequest(BaseModel):
     """
 
     markers: Optional[List[Marker]] = Field(default=None, description="マーカー一覧")
-    last_updated_datetime: Optional[datetime] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     __properties: ClassVar[List[str]] = ["markers", "last_updated_datetime"]
 
     model_config = ConfigDict(

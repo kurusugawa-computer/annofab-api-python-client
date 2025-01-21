@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
@@ -30,8 +29,8 @@ class UsageStatus(BaseModel):
 
     organization_id: StrictStr = Field(description="組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     year_month: StrictStr = Field(description="対象月。年月のフォーマットは YYYY-MM です。")
-    aggregation_period_from: datetime = Field(description="集計期間の開始日時。日時のフォーマットはISO 8601 拡張形式です。")
-    aggregation_period_to: datetime = Field(description="集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。")
+    aggregation_period_from: str = Field(description="集計期間の開始日時。日時のフォーマットはISO 8601 拡張形式です。")
+    aggregation_period_to: str = Field(description="集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。")
     editor_usage: List[EditorUsageTimespan] = Field(description="エディタ利用時間のリスト")
     storage_usage: Union[StrictFloat, StrictInt] = Field(description="ストレージ利用量。単位はGB時")
     __properties: ClassVar[List[str]] = [

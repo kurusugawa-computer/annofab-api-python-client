@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -31,7 +30,7 @@ class Marker(BaseModel):
     marker_id: StrictStr = Field(description="マーカーID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     title: StrictStr = Field(description="マーカーのタイトル")
     graph_type: GraphType
-    marked_at: datetime = Field(description="グラフ上のマーカー位置(x軸)")
+    marked_at: str = Field(description="グラフ上のマーカー位置(x軸)")
     __properties: ClassVar[List[str]] = ["marker_id", "title", "graph_type", "marked_at"]
 
     model_config = ConfigDict(

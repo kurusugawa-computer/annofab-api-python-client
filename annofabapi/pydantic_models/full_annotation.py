@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -38,7 +37,7 @@ class FullAnnotation(BaseModel):
     input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     input_data_name: StrictStr = Field(description="入力データ名")
     details: List[FullAnnotationDetail] = Field(description="矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列")
-    updated_datetime: Optional[datetime] = Field(
+    updated_datetime: Optional[str] = Field(
         default=None, description="更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。"
     )
     annotation_format_version: StrictStr = Field(

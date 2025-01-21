@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
@@ -27,7 +26,7 @@ class OrganizationActivity(BaseModel):
     """
 
     organization_id: StrictStr = Field(description="組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    created_datetime: datetime = Field(description="作成日時")
+    created_datetime: str = Field(description="作成日時")
     storage_usage_bytes: StrictInt = Field(description="Annofabストレージの使用量[バイト]")
     __properties: ClassVar[List[str]] = ["organization_id", "created_datetime", "storage_usage_bytes"]
 

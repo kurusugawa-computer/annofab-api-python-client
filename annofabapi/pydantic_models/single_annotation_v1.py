@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -32,7 +31,7 @@ class SingleAnnotationV1(BaseModel):
     task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     detail: SingleAnnotationDetailV1
-    updated_datetime: datetime = Field(description="更新日時")
+    updated_datetime: str = Field(description="更新日時")
     __properties: ClassVar[List[str]] = ["project_id", "task_id", "input_data_id", "detail", "updated_datetime"]
 
     model_config = ConfigDict(

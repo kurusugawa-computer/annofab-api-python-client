@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -39,8 +38,8 @@ class PutWebhookRequest(BaseModel):
     headers: List[WebhookHeader] = Field(description="Webhookが送信するHTTPリクエストのヘッダー")
     body: Optional[StrictStr] = Field(default=None, description="Webhookが送信するHTTPリクエストのボディ。methodがGETの場合は指定不可。")
     url: StrictStr = Field(description="Webhookの送信先URL")
-    created_datetime: Optional[datetime] = Field(default=None, description="作成日時")
-    updated_datetime: Optional[datetime] = Field(default=None, description="更新日時")
+    created_datetime: Optional[str] = Field(default=None, description="作成日時")
+    updated_datetime: Optional[str] = Field(default=None, description="更新日時")
     __properties: ClassVar[List[str]] = [
         "project_id",
         "event_type",

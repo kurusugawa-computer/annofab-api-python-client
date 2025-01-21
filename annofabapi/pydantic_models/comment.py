@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -44,11 +43,11 @@ class Comment(BaseModel):
     )
     comment: StrictStr = Field(description="コメント本文。 ")
     comment_node: CommentNode
-    datetime_for_sorting: datetime = Field(
+    datetime_for_sorting: str = Field(
         description="コメントのソート順を決める日時。  Annofab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。 "
     )
-    created_datetime: datetime = Field(description="コメントの作成日時。")
-    updated_datetime: datetime = Field(description="コメントの更新日時。")
+    created_datetime: str = Field(description="コメントの作成日時。")
+    updated_datetime: str = Field(description="コメントの更新日時。")
     __properties: ClassVar[List[str]] = [
         "project_id",
         "task_id",

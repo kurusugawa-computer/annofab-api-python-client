@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -33,7 +32,7 @@ class AnnotationSpecsV1(BaseModel):
     project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     labels: List[LabelV1] = Field(description="ラベル")
     inspection_phrases: List[InspectionPhrase] = Field(description="定型指摘")
-    updated_datetime: Optional[datetime] = Field(default=None, description="更新日時 ")
+    updated_datetime: Optional[str] = Field(default=None, description="更新日時 ")
     option: Optional[AnnotationSpecsOption] = None
     metadata: Dict[str, StrictStr] = Field(description="ユーザーが自由に登録できるkey-value型のメタデータです。 ")
     __properties: ClassVar[List[str]] = ["project_id", "labels", "inspection_phrases", "updated_datetime", "option", "metadata"]

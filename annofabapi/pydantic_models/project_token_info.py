@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -26,8 +25,8 @@ class ProjectTokenInfo(BaseModel):
     プロジェクトトークンについての付加情報
     """
 
-    created_date_time: datetime = Field(description="トークンの作成日時")
-    last_used_date_time: datetime = Field(description="トークンが最後に利用された日時")
+    created_date_time: str = Field(description="トークンの作成日時")
+    last_used_date_time: str = Field(description="トークンが最後に利用された日時")
     description: StrictStr = Field(description="トークンについての人間可読な説明")
     __properties: ClassVar[List[str]] = ["created_date_time", "last_used_date_time", "description"]
 

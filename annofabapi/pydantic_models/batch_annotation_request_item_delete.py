@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
@@ -32,7 +31,7 @@ class BatchAnnotationRequestItemDelete(BaseModel):
     annotation_id: StrictStr = Field(
         description="アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 "
     )
-    updated_datetime: Optional[datetime] = Field(default=None, description="更新日時")
+    updated_datetime: Optional[str] = Field(default=None, description="更新日時")
     type: Optional[StrictStr] = Field(default=None, description="[詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
     __properties: ClassVar[List[str]] = ["project_id", "task_id", "input_data_id", "annotation_id", "updated_datetime", "_type"]
 

@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Annotated, Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
@@ -43,7 +42,7 @@ class SupplementaryData(BaseModel):
     )
     supplementary_data_type: SupplementaryDataType
     supplementary_data_number: Annotated[int, Field(strict=True, ge=0)] = Field(description="補助情報の表示順を表す数値。")
-    updated_datetime: datetime = Field(description="更新日時")
+    updated_datetime: str = Field(description="更新日時")
     __properties: ClassVar[List[str]] = [
         "organization_id",
         "input_data_set_id",

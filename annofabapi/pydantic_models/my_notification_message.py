@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
@@ -33,8 +32,8 @@ class MyNotificationMessage(BaseModel):
         default=None, description="メッセージのコンテンツタイプ。 メッセージを表示する際のマークアップのヒントとして使われることを想定しています。 "
     )
     opened: StrictBool = Field(description="自身がメッセージを開封したか(開封済みの場合true) ")
-    timestamp: datetime = Field(description="最後に通知メッセージ内容を更新した日時。更新がない場合はメッセージ作成日時 ")
-    created_datetime: datetime = Field(description="メッセージ作成日時 ")
+    timestamp: str = Field(description="最後に通知メッセージ内容を更新した日時。更新がない場合はメッセージ作成日時 ")
+    created_datetime: str = Field(description="メッセージ作成日時 ")
     __properties: ClassVar[List[str]] = ["message_id", "title", "body", "content_type", "opened", "timestamp", "created_datetime"]
 
     model_config = ConfigDict(

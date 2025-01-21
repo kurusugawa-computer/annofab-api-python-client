@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from datetime import datetime
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
@@ -46,7 +45,7 @@ class AnnotationSpecsRequestV3(BaseModel):
         description="アノテーション種別のバージョン。拡張仕様プラグインを利用している場合に、プラグインに設定されている値が転写されます。 プロジェクトに拡張仕様プラグインが設定されていない場合は未指定です。",
     )
     format_version: StrictStr = Field(description="アノテーション仕様のフォーマットのバージョン")
-    last_updated_datetime: Optional[datetime] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     option: Optional[AnnotationSpecsOption] = None
     metadata: Optional[Dict[str, StrictStr]] = Field(default=None, description="ユーザーが自由に登録できるkey-value型のメタデータです。 ")
     __properties: ClassVar[List[str]] = [
