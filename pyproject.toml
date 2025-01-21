@@ -26,6 +26,7 @@ more-itertools = "*"
 numpy = {version = "*",  optional=true}
 
 pillow={version="*", optional=true }
+pydantic = "^2"
 
 
 [tool.poetry.extras]
