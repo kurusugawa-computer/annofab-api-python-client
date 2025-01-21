@@ -32,45 +32,38 @@ else:
 def test__Task():
     content, _ = service.api.get_tasks(project_id)
     task = content["list"][0]
-    actual = Task.from_dict(task)
-    print(actual)
+    Task.from_dict(task)
 
 
 def test__InputData():
     content, _ = service.api.get_input_data_list(project_id)
     input_data = content["list"][0]
-    actual = InputData.from_dict(input_data)
-    print(actual)
+    InputData.from_dict(input_data)
 
 
 def test__ProjectMember():
     content, _ = service.api.get_project_members(project_id)
     member = content["list"][0]
-    actual = ProjectMember.from_dict(member)
-    print(actual)
+    ProjectMember.from_dict(member)
 
 
 def test__Project():
     project, _ = service.api.get_project(project_id)
-    actual = Project.from_dict(project)
-    print(actual)
+    Project.from_dict(project)
 
 
 def test_SingleAnnotation():
     content, _ = service.api.get_annotation_list(project_id, query_params={"v": "2"})
     annotation = content["list"][0]
-    actual = SingleAnnotation.from_dict(annotation)
-    print(actual)
+    SingleAnnotation.from_dict(annotation)
 
 
 def test_AnnotationSpecsV3():
     content, _ = service.api.get_annotation_specs(project_id, query_params={"v": "3"})
-    actual = AnnotationSpecsV3.from_dict(content)
-    print(actual)
+    AnnotationSpecsV3.from_dict(content)
 
 
 def test__SimpleAnnotation():
     with open("tests/data/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json") as f:
         content = json.load(f)
-    actual = SimpleAnnotation.from_dict(content)
-    print(actual)
+    SimpleAnnotation.from_dict(content)
