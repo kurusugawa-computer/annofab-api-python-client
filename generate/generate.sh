@@ -109,6 +109,10 @@ replace_from_dict_method() {
 replace_from_dict_method Movie system_metadata_movie.py
 replace_from_dict_method Image system_metadata_image.py
 replace_from_dict_method Custom system_metadata_custom.py
+replace_from_dict_method Classification full_annotation_data_classification.py
+replace_from_dict_method Segmentation full_annotation_data_segmentation.py
+replace_from_dict_method SegmentationV2 full_annotation_data_segmentation_v2.py
+
 
 cp out/openapi_client/models/*.py ../annofabapi/pydantic_models
 rm -Rf out/openapi_client
@@ -268,7 +272,7 @@ sed  -e "s/__DictStrKeyAnyValue__/dict[str,Any]/g"  ../annofabapi/dataclass/*.py
 
 
 
-# rm -Rf out/openapi_client
+rm -Rf out/openapi_client
 
 
 cd ../

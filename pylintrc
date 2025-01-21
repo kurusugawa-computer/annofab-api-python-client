@@ -3,6 +3,7 @@
 ignore-paths=
     annofabapi/generated_.*.py,
     annofabapi/models.py,
+    annofabapi/pydantic_models/
 
 disable =
 # ===== May not modify =====
