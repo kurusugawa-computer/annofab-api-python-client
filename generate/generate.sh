@@ -105,7 +105,8 @@ replace_from_dict_method() {
     local filename=$2
     sed "s/return cls\.from_dict(json\.loads(json_str))/result = cls.from_dict(json.loads(json_str))\\n        if result.type != \"$type_value\": raise ValueError(\"Invalid type\")\\n        return result/" out/openapi_client/models/${filename} --in-place
 }
-
+# `from_dict`メソッドで`oneOf`に該当するスキーマが複数見つかる場合はErrorが発生する
+# その場合は、`type`の値を判定するようにした
 replace_from_dict_method Movie system_metadata_movie.py
 replace_from_dict_method Image system_metadata_image.py
 replace_from_dict_method Custom system_metadata_custom.py
@@ -116,6 +117,7 @@ replace_from_dict_method SegmentationV2 full_annotation_data_segmentation_v2.py
 
 cp out/openapi_client/models/*.py ../annofabapi/pydantic_models
 rm -Rf out/openapi_client
+
 
 DOCKER_IMAGE=openapitools/openapi-generator-cli:v4.3.1
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
