@@ -26,6 +26,7 @@ more-itertools = "*"
 numpy = {version = "*",  optional=true}
 
 pillow={version="*", optional=true }
+pydantic = "^2"
 
 
 [tool.poetry.extras]
@@ -74,10 +75,17 @@ check_untyped_defs = true
 
 plugins = ["numpy.typing.mypy_plugin"]
 
+exclude = [
+    'annofabapi/pydantic_models/.*\.py',
+]
+
 [tool.ruff]
 target-version = "py39"
 line-length = 150
-exclude = ["annofabapi/__init__.py"]
+exclude = [
+    "annofabapi/__init__.py",
+    "annofabapi/pydantic_models/",  # 自動生成したファイルはチェックしない
+]
 
 [tool.ruff.lint]
 ignore = [

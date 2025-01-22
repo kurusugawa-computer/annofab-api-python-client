@@ -1,6 +1,6 @@
 #!/bin/bash -uex
 
-DOCKER_IMAGE=openapitools/openapi-generator-cli:v7.10.0
+DOCKER_IMAGE=openapitools/openapi-generator-cli:v7.11.0
 
 PROGNAME=$(basename $0)
 
@@ -85,6 +85,39 @@ rm -Rf out/openapi_client
 
 # modelsを生成
 cat swagger/swagger-partial-header.yaml swagger/swagger-api-components.yaml > swagger/swagger-models.yaml
+
+# datetime型を含むクラスでは、JSONにserializeiできなかったので、str型にする
+# https://github.com/OpenAPITools/openapi-generator/issues/19517
+docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
+    --input-spec swagger/swagger-models.yaml \
+    --generator-name python \
+    --output /local/out \
+    --type-mappings DateTime=str,date=str \
+    --global-property models,modelTests=false,modelDocs=false \
+
+sed 's/from openapi_client.models./from annofabapi.pydantic_models./g' out/openapi_client/models/*.py --in-place
+
+
+replace_from_dict_method() {
+    # `from_json`メソッドで`_type`が正しくない場合は`ValueError`を発生させるようにする
+    # 本来は`from_dict`メソッドを修正すべきだが、
+    local type_value=$1
+    local filename=$2
+    sed "s/return cls\.from_dict(json\.loads(json_str))/result = cls.from_dict(json.loads(json_str))\\n        if result.type != \"$type_value\": raise ValueError(\"Invalid type\")\\n        return result/" out/openapi_client/models/${filename} --in-place
+}
+# `from_dict`メソッドで`oneOf`に該当するスキーマが複数見つかる場合はErrorが発生する
+# その場合は、`type`の値を判定するようにした
+replace_from_dict_method Movie system_metadata_movie.py
+replace_from_dict_method Image system_metadata_image.py
+replace_from_dict_method Custom system_metadata_custom.py
+replace_from_dict_method Classification full_annotation_data_classification.py
+replace_from_dict_method Segmentation full_annotation_data_segmentation.py
+replace_from_dict_method SegmentationV2 full_annotation_data_segmentation_v2.py
+
+
+cp out/openapi_client/models/*.py ../annofabapi/pydantic_models
+rm -Rf out/openapi_client
+
 
 DOCKER_IMAGE=openapitools/openapi-generator-cli:v4.3.1
 docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${JAVA_OPTS} ${DOCKER_IMAGE} generate \
@@ -241,7 +274,7 @@ sed  -e "s/__DictStrKeyAnyValue__/dict[str,Any]/g"  ../annofabapi/dataclass/*.py
 
 
 
-# rm -Rf out/openapi_client
+rm -Rf out/openapi_client
 
 
 cd ../
