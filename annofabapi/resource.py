@@ -1,4 +1,4 @@
-import logging
+import logging  # noqa: A005
 import netrc
 import os
 from typing import Optional, Union

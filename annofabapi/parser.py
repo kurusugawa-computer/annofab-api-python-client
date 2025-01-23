@@ -1,4 +1,4 @@
-import abc
+import abc  # noqa: A005
 import json
 import os
 import zipfile
