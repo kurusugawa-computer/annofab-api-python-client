@@ -14,5 +14,7 @@ API reference
    dataclass
    exceptions
    segmentation
+   pydantic_models
    models
+   
 
