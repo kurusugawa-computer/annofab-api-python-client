@@ -23,7 +23,7 @@ from typing_extensions import Self
 class AnnotationDetailContentOutputOuterUnresolved(BaseModel):
     """
     アノテーションのデータ部を外部ファイルの形式（画像など）で保持します。 Outerのurl / etagを解決しなかった場合（過去のアノテーションを取得した場合等）にこの値となります。
-    """  # noqa: E501
+    """
 
     type: StrictStr = Field(alias="_type")
     __properties: ClassVar[List[str]] = ["_type"]

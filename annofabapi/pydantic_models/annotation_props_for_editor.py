@@ -23,7 +23,7 @@ from typing_extensions import Self
 class AnnotationPropsForEditor(BaseModel):
     """
     アノテーションエディタ用のアノテーション毎のプロパティです。<br /> ここに含まれているデータはアノテーション結果に反映されず、エディタが利用するために存在します。  エディタ用のデータであるため、たとえば`can_delete`や`can_edit_data`が`false`でも、APIによる編集は妨げません。<br /> ここで定義されているデータを利用して動作を変えるかどうかは、エディタによって異なります。
-    """  # noqa: E501
+    """
 
     can_delete: Optional[StrictBool] = Field(default=None, description="アノテーションがエディタ上で削除できるかどうか。 trueの場合削除可能。")
     can_edit_data: Optional[StrictBool] = Field(
