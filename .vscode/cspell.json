@@ -30,6 +30,7 @@
         "kurusugawa",
         "ndarray",
         "netrc",
+        "pydantic",
         "pydata",
         "pylint",
         "relativedelta",
