@@ -42,7 +42,7 @@ pytest-cov = "*"
 
 [tool.poetry.group.linter.dependencies]
 # pythonバージョンを指定している理由：lintは開発環境と同じPythonバージョンで実行するため。また古いPythonバージョンにサポートしていないライブラリのバージョンがあるため
-ruff = {version="^0.8", python = ">=3.12"}
+ruff = {version="^0.9", python = ">=3.12"}
 mypy = {version="^1", python = ">=3.12"}
 pylint = {version="^3", python = ">=3.12"}
 
@@ -84,10 +84,13 @@ target-version = "py39"
 line-length = 150
 exclude = [
     "annofabapi/__init__.py",
-    "annofabapi/pydantic_models/",  # 自動生成したファイルはチェックしない
 ]
 
 [tool.ruff.lint]
+exclude = [
+    'annofabapi/pydantic_models/.*\.py',
+]
+
 ignore = [
     "FA100", # `future-rewritable-type-annotation` : Python3.8をサポートしている間は無視する。
     "PD002", #すでにpandasで`inplace=True`はいろんなところで使っているため
@@ -143,6 +146,7 @@ select = [
     "PLC2401", # non-ascii-name, メソッド名に日本語を利用するため
 ]
 
+
 # 以下のファイルは自動生成されるので、いくかのルールを無視する
 "annofabapi/generated*.py" = [
     "A002",  # builtin-argument-shadowing
@@ -159,7 +163,24 @@ select = [
     "W291", # trailing-whitespace
 ]
 
+# "annofabapi/pydantic_models/*.py" = ["ALL"]
 
+"annofabapi/pydantic_models/*.py" = [
+    "A",  # flake8-builtins
+    "E501", # line-too-long
+    # "W293",  # blank-line-with-whitespace
+    # "W291", # trailing-whitespace
+    "UP007", # non-pep604-annotation-union
+    "UP006", # non-pep585-annotation
+    "UP035", #  deprecated-import
+    "E402", # module-level-imports
+    "C4",  # nnecessary-literal-set
+    "F841",
+    "ANN",  # flake8-annotations
+    "PLR",  # Pylint Refactor
+    "PERF",  # Perflint
+    "F811",  # redefined-while-unused
+]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
