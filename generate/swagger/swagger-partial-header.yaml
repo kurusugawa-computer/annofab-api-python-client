@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   version: 1.0.0
-  title: swagger-api-components.yaml に記載されたschemaを出力するためのヘッダ部分
+  title: ""
 paths:
   /none:
     get:
