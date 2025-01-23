@@ -23,7 +23,7 @@ from typing_extensions import Self
 class AnnotationDetailContentOutputInnerUnknown(BaseModel):
     """
     アノテーションのデータ部をJSON内部に保持します。 AnnotationDetailV1の形式で保存されていたデータのAnnotationTypeが特定できない場合にこの値となります。 典型的な例では、アノテーションの保存後にアノテーション仕様が書き換わっていた場合が該当します。
-    """  # noqa: E501
+    """
 
     type: StrictStr = Field(alias="_type")
     data: StrictStr = Field(

@@ -28,7 +28,7 @@ from annofabapi.pydantic_models.user_defined_annotation_type_definition import U
 class PluginDetailExtendedAnnotationSpecs(BaseModel):
     """
     カスタムのアノテーション種別を作成するプラグインを表します。 なお、このプラグインが設定されているプロジェクトでは、ここで指定したアノテーション種別以外は使用できなくなります。
-    """  # noqa: E501
+    """
 
     plugin_compatibility: Optional[OrganizationPluginCompatibility] = None
     annotation_types: List[AnnotationType] = Field(

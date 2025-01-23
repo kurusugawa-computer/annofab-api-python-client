@@ -23,7 +23,7 @@ from typing_extensions import Self
 class TaskGenerateRuleByInputDataCsv(BaseModel):
     """
     各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。 1つのタスクに対する入力データの個数は最大200です。200を超えるタスクが1つでもある場合にはタスク生成に失敗します。
-    """  # noqa: E501
+    """
 
     csv_data_path: StrictStr = Field(description="各タスクへの入力データへの割り当てを記入したCSVへのS3上のパス。 ")
     type: Optional[StrictStr] = Field(
