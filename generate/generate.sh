@@ -234,7 +234,6 @@ declare -a model_files=(${MODELS_DIR}/comment.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/comment.py  \
  ${model_files[@]} > ../annofabapi/dataclass/comment.py
 
-
 # Input
 declare -a model_files=(${MODELS_DIR}/resolution.py ${MODELS_DIR}/input_data.py)
 cat partial-header/dataclass/common.py partial-header/dataclass/input.py  \
@@ -276,12 +275,15 @@ sed  -e "s/__DictStrKeyAnyValue__/dict[str,Any]/g"  ../annofabapi/dataclass/*.py
 
 rm -Rf out/openapi_client
 
-
-cd ../
+pushd ../
 
 # Format
 make format
 
+# rstファイルの自動生成
+docs/create_pydantic_modes_rst.sh
+
+popd
 popd
 
 # Dictの型を修正
