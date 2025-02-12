@@ -27,7 +27,7 @@ class ProjectTaskCounts(BaseModel):
     ProjectTaskCounts
     """
 
-    task_counts: Optional[List[ProjectTaskCountsTaskCountsInner]] = None
+    task_counts: List[ProjectTaskCountsTaskCountsInner]
     __properties: ClassVar[List[str]] = ["task_counts"]
 
     model_config = ConfigDict(

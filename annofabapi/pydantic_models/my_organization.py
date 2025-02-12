@@ -29,15 +29,15 @@ class MyOrganization(BaseModel):
     MyOrganization
     """
 
-    organization_id: Optional[StrictStr] = Field(default=None, description="組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    name: Optional[StrictStr] = None
-    email: Optional[StrictStr] = None
-    price_plan: Optional[PricePlan] = None
-    summary: Optional[Dict[str, Any]] = Field(default=None, description="廃止予定のプロパティです。常に中身は空です。 ")
-    created_datetime: Optional[str] = Field(default=None, description="作成日時")
-    updated_datetime: Optional[str] = Field(default=None, description="更新日時")
-    my_role: Optional[OrganizationMemberRole] = None
-    my_status: Optional[OrganizationMemberStatus] = None
+    organization_id: StrictStr = Field(description="組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    name: StrictStr
+    email: StrictStr
+    price_plan: PricePlan
+    summary: Dict[str, Any] = Field(description="廃止予定のプロパティです。常に中身は空です。 ")
+    created_datetime: str = Field(description="作成日時")
+    updated_datetime: str = Field(description="更新日時")
+    my_role: OrganizationMemberRole
+    my_status: OrganizationMemberStatus
     __properties: ClassVar[List[str]] = [
         "organization_id",
         "name",
