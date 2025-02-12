@@ -4,6 +4,7 @@ import json
 import annofabapi
 from annofabapi.pydantic_models.annotation_specs_v3 import AnnotationSpecsV3
 from annofabapi.pydantic_models.input_data import InputData
+from annofabapi.pydantic_models.my_organization import MyOrganization
 from annofabapi.pydantic_models.project import Project
 from annofabapi.pydantic_models.project_member import ProjectMember
 from annofabapi.pydantic_models.simple_annotation import SimpleAnnotation
@@ -67,3 +68,8 @@ def test__SimpleAnnotation():
     with open("tests/data/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json") as f:
         content = json.load(f)
     SimpleAnnotation.from_dict(content)
+
+
+def test__MyOrganization():
+    organizations, _ = service.api.get_my_organizations()
+    MyOrganization.from_dict(organizations["list"][0])

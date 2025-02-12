@@ -1325,6 +1325,16 @@ components:
         * `{projectId}`
     MyOrganization:
       type: object
+      required:
+        - organization_id
+        - name
+        - email
+        - price_plan
+        - summary
+        - created_datetime
+        - updated_datetime
+        - my_role
+        - my_status
       properties:
         organization_id:
           $ref: "#/components/schemas/OrganizationId"
@@ -7703,11 +7713,17 @@ components:
           example: "IllegalState"
     ProjectTaskCounts:
       type: object
+      required:
+        - task_counts
       properties:
         task_counts:
           type: array
           items:
             type: object
+            required:
+              - phase
+              - status
+              - count
             properties:
               phase:
                 $ref: "#/components/schemas/TaskPhase"
