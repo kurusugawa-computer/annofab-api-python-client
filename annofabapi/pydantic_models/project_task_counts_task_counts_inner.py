@@ -28,9 +28,9 @@ class ProjectTaskCountsTaskCountsInner(BaseModel):
     ProjectTaskCountsTaskCountsInner
     """
 
-    phase: Optional[TaskPhase] = None
-    status: Optional[TaskStatus] = None
-    count: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="該当するタスクの数")
+    phase: TaskPhase
+    status: TaskStatus
+    count: Union[StrictFloat, StrictInt] = Field(description="該当するタスクの数")
     __properties: ClassVar[List[str]] = ["phase", "status", "count"]
 
     model_config = ConfigDict(
