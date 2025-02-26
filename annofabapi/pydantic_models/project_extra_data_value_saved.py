@@ -16,29 +16,26 @@ import pprint
 import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing_extensions import Self
 
-from annofabapi.pydantic_models.plugin_detail import PluginDetail
 
-
-class PutOrganizationPluginRequest(BaseModel):
+class ProjectExtraDataValueSaved(BaseModel):
     """
-    PutOrganizationPluginRequest
+    保存されているデータがある場合
     """
 
-    plugin_name: Optional[StrictStr] = Field(
-        default=None, description="プラグインの名前です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 "
-    )
-    description: Optional[StrictStr] = Field(
-        default=None, description="プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 "
-    )
-    project_extra_data_kinds: Optional[List[StrictStr]] = Field(
-        default=None, description="プラグインが適用されたプロジェクトで使用可能となるProjectExtraDataKindのId列。 "
-    )
-    detail: PluginDetail
-    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
-    __properties: ClassVar[List[str]] = ["plugin_name", "description", "project_extra_data_kinds", "detail", "last_updated_datetime"]
+    type: StrictStr = Field(alias="_type")
+    value: Optional[Any] = Field(description="プロジェクト追加データの値。 nullを除く任意のJson")
+    updated_datetime: str = Field(description="データが最後に更新された日時")
+    __properties: ClassVar[List[str]] = ["_type", "value", "updated_datetime"]
+
+    @field_validator("type")
+    def type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(["Saved"]):
+            raise ValueError("must be one of enum values ('Saved')")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -57,7 +54,7 @@ class PutOrganizationPluginRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of PutOrganizationPluginRequest from a JSON string"""
+        """Create an instance of ProjectExtraDataValueSaved from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -77,27 +74,21 @@ class PutOrganizationPluginRequest(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of detail
-        if self.detail:
-            _dict["detail"] = self.detail.to_dict()
+        # set to None if value (nullable) is None
+        # and model_fields_set contains the field
+        if self.value is None and "value" in self.model_fields_set:
+            _dict["value"] = None
+
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of PutOrganizationPluginRequest from a dict"""
+        """Create an instance of ProjectExtraDataValueSaved from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate(
-            {
-                "plugin_name": obj.get("plugin_name"),
-                "description": obj.get("description"),
-                "project_extra_data_kinds": obj.get("project_extra_data_kinds"),
-                "detail": PluginDetail.from_dict(obj["detail"]) if obj.get("detail") is not None else None,
-                "last_updated_datetime": obj.get("last_updated_datetime"),
-            }
-        )
+        _obj = cls.model_validate({"_type": obj.get("_type"), "value": obj.get("value"), "updated_datetime": obj.get("updated_datetime")})
         return _obj

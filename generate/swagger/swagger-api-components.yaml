@@ -1029,6 +1029,7 @@ components:
         - plugin_id
         - detail
         - is_builtin
+        - project_extra_data_kinds
         - created_datetime
         - updated_datetime
       properties:
@@ -1045,6 +1046,12 @@ components:
         is_builtin:
           type: boolean
           description: trueの場合、プラグインはAnnofab組み込みのプラグインであり、更新や削除を行うことはできません。
+        project_extra_data_kinds:
+          type: array
+          description: |
+            このプラグインが適用されたプロジェクトで使用可能となるProjectExtraDataKindのId列。
+          items:
+            $ref: "#/components/schemas/ProjectExtraDataKindId"
         created_datetime:
           type: string
           format: date-time
@@ -1060,6 +1067,12 @@ components:
           $ref: "#/components/schemas/PluginName"
         description:
           $ref: "#/components/schemas/PluginDescription"
+        project_extra_data_kinds:
+          type: array
+          description: |
+            プラグインが適用されたプロジェクトで使用可能となるProjectExtraDataKindのId列。
+          items:
+            $ref: "#/components/schemas/ProjectExtraDataKindId"
         detail:
           $ref: "#/components/schemas/PluginDetail"
         last_updated_datetime:
@@ -1474,7 +1487,7 @@ components:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
       description: |
-        入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+        入力データセットID(システム内部用のプロパティ)。[値の制約についてはこちら。](#section/API-Convention/APIID)
     SupplementaryDataId:
       type: string
       example: "12345678-abcd-1234-abcd-1234abcd5678"
@@ -4876,7 +4889,7 @@ components:
           $ref: "#/components/schemas/AccountId"
         request:
           description: |
-            [operateTask](#operation/createTempPath) APIによってタスク履歴イベントが生成されたときのリクエストボディ
+            [operateTask](#operation/operateTask) APIによってタスク履歴イベントが生成されたときのリクエストボディ
           $ref: "#/components/schemas/TaskOperation"
     TaskInputValidation:
       description: タスクの提出操作に対する入力データID別のバリデーション結果です。
@@ -4932,55 +4945,6 @@ components:
         - `new_unprocessed_inspection` - 現在進行中の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。
         - `unprocessed` - 過去の検査・受入フェーズでつけられた検査コメントのうち、未処理のものが1つ以上ある。
         - `complete` - 入力データにつけられた検査コメントで未処理のものがない。
-    InputDataSet:
-      description: 入力データセットの情報を表すデータ構造です。
-      type: object
-      required:
-        - input_data_set_id
-        - input_data_set_name
-        - organization_id
-        - input_data_type
-        - updated_datetime
-      properties:
-        input_data_set_id:
-          $ref: "#/components/schemas/InputDataSetId"
-        input_data_set_name:
-          type: string
-          description: 入力データセットの名前
-        organization_id:
-          $ref: "#/components/schemas/OrganizationId"
-        input_data_type:
-          $ref: "#/components/schemas/InputDataType"
-        private_storage_arn:
-          type: string
-          description: |
-            AWS IAMロール。S3プライベートストレージの認可で使います。
-            [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
-          example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
-        updated_datetime:
-          type: string
-          format: date-time
-          description: 入力データセットの最終更新日時
-    PutInputDataSetRequest:
-      description: 入力データセット新規作成/更新
-      type: object
-      required:
-        - input_data_set_name
-        - input_data_type
-      properties:
-        input_data_set_name:
-          type: string
-          description: 入力データセットの名前
-        input_data_type:
-          $ref: "#/components/schemas/InputDataType"
-        private_storage_arn:
-          type: string
-          description: |
-            AWS IAMロール。S3プライベートストレージの認可で使います。
-            [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
-          example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
-        last_updated_datetime:
-          $ref: "#/components/schemas/LastUpdatedDatetime"
     InputData:
       description: 入力データの情報を表すデータ構造です。
       type: object
@@ -8004,18 +7968,6 @@ components:
             $ref: "#/components/schemas/AggregationResult"
           description: |
             システム内部用のプロパティ
-    ProjectContainer:
-      type: object
-      required:
-        - list
-        - has_next
-      properties:
-        list:
-          type: array
-          items:
-            $ref: "#/components/schemas/Project"
-        has_next:
-          type: boolean
     TaskList:
       type: object
       required:
@@ -8645,5 +8597,284 @@ components:
         user_id:
           $ref: "#/components/schemas/UserId"
           description: ユーザーID
+    AnnotationThumbnail:
+      type: object
+      description: アノテーションのサムネイル情報
+      required:
+        - project_id
+        - task_id
+        - input_data_id
+        - images
+        - annotations
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        task_id:
+          $ref: "#/components/schemas/TaskId"
+        input_data_id:
+          $ref: "#/components/schemas/InputDataId"
+        images:
+          type: array
+          description: サムネイル画像情報の一覧
+          items:
+            $ref: "#/components/schemas/AnnotationThumbnailImage"
+        annotations:
+          type: object
+          description: アノテーションIDをキーとしたサムネイル情報
+          additionalProperties:
+            $ref: "#/components/schemas/AnnotationThumbnailDetail"
+        annotation_updated_datetime:
+          type: string
+          format: date-time
+          description: サムネイルの元になったアノテーションの更新日時。サムネイルが未作成の場合はnull。
+        created_datetime:
+          type: string
+          format: date-time
+          description: サムネイル登録日時。サムネイルが未作成の場合はnull。
+    PutAnnotationThumbnailBody:
+      type: object
+      description: アノテーションのサムネイル更新リクエスト
+      required:
+        - images
+        - annotations
+        - annotation_updated_datetime
+      properties:
+        images:
+          type: array
+          description: アップロードするサムネイル画像の一覧
+          items:
+            $ref: "#/components/schemas/AnnotationThumbnailImageSource"
+        annotations:
+          type: object
+          description: アノテーションIDをキーとしたサムネイル情報
+          additionalProperties:
+            $ref: "#/components/schemas/AnnotationThumbnailDetail"
+        annotation_updated_datetime:
+          type: string
+          format: date-time
+          description: サムネイルの元になったアノテーションの更新日時。 [putEditorAnnotation](#operation/putEditorAnnotation) API や [getEditorAnnotation](#operation/getEditorAnnotation) API のレスポンスに含まれる `updated_datetime` を指定します。
+    AnnotationThumbnailImage:
+      type: object
+      required:
+        - url
+        - width
+        - height
+      properties:
+        _type:
+          type: string
+          enum: ["Thumbnail"]
+        url:
+          type: string
+          format: uri
+          description: サムネイル画像のURL
+        width:
+          type: integer
+          description: 画像の幅
+        height:
+          type: integer
+          description: 画像の高さ
+    AnnotationThumbnailImageSource:
+      type: object
+      required:
+        - temporary_path
+      properties:
+        _type:
+          type: string
+          enum: ["Upload"]
+        temporary_path:
+          type: string
+          example: "s3://BUCKET/PATH/TO/OBJECT"
+          description: 事前にアップロードしたサムネイル画像のパス。 [createTempPath](#operation/createTempPath) APIで取得した `path` の値を指定します。
+    AnnotationThumbnailDetail:
+      description: |
+        - **AnnotationThumbnailDetailImageSlice**:<br>
+          画像の一部をサムネイルとして使用する
+        - **AnnotationThumbnailDetailUnsupported**:<br>
+          サムネイル生成に対応していない
+        - **AnnotationThumbnailDetailFailed**:<br>
+          サムネイル生成に失敗した
+      oneOf:
+        - $ref: "#/components/schemas/AnnotationThumbnailDetailImageSlice"
+        - $ref: "#/components/schemas/AnnotationThumbnailDetailUnsupported"
+        - $ref: "#/components/schemas/AnnotationThumbnailDetailFailed"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          ImageSlice: "#/components/schemas/AnnotationThumbnailDetailImageSlice"
+          Unsupported: "#/components/schemas/AnnotationThumbnailDetailUnsupported"
+          Failed: "#/components/schemas/AnnotationThumbnailDetailFailed"
+    AnnotationThumbnailDetailImageSlice:
+      type: object
+      description: 画像の一部をサムネイルとして使用する
+      required:
+        - _type
+        - image
+        - x
+        - y
+        - width
+        - height
+      properties:
+        _type:
+          type: string
+          enum: ["ImageSlice"]
+        image:
+          type: integer
+          description: AnnotationThumbnail.imageのインデックス
+        x:
+          type: integer
+          description: x座標
+        y:
+          type: integer
+          description: y座標
+        width:
+          type: integer
+          description: 幅
+        height:
+          type: integer
+          description: 高さ
+    AnnotationThumbnailDetailUnsupported:
+      type: object
+      description: サムネイル生成に対応していない
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["Unsupported"]
+    AnnotationThumbnailDetailFailed:
+      type: object
+      description: サムネイル生成に失敗した
+      required:
+        - _type
+        - reason
+      properties:
+        _type:
+          type: string
+          enum: ["Failed"]
+        reason:
+          type: string
+          description: 失敗理由
+    ProjectExtraDataKindId:
+      type: string
+      example: "12345678-abcd-1234-abcd-1234abcd5678"
+      description: |
+        プロジェクト追加データの種別ID。[値の制約についてはこちら。](#section/API-Convention/APIID)
+    ProjectExtraDataKind:
+      type: object
+      description: |
+        プロジェクトの追加データの種別。
+      required:
+        - id
+        - display_name
+        - schema
+        - scope
+      properties:
+        id:
+          $ref: "#/components/schemas/ProjectExtraDataKindId"
+          description: プロジェクト追加データの種別ID
+        display_name:
+          $ref: "#/components/schemas/InternationalizationMessage"
+          description: プロジェクト追加データの表示名
+        schema:
+          type: object
+          description: プロジェクト追加データのスキーマを表す構造。
+        scope:
+          $ref: "#/components/schemas/ProjectExtraDataKindScope"
+        default_value:
+          $ref: "#/components/schemas/ProjectExtraDataValueJson"
+          description: プロジェクト追加データのデフォルト値。 デフォルト値が存在しない場合は未指定
+    ProjectExtraDataKindScope:
+      type: string
+      enum: ["project", "user", "both"]
+      description: |
+        プロジェクト追加データがユーザーとプロジェクトに割りつくかどうかを表す列挙値。
 
-
+        - `project` => プロジェクトにのみ割りつき、ユーザには割りつかない
+        - `user` => ユーザにのみ割りつき、プロジェクトには割りつかない
+        - `both` => プロジェクトとユーザの両方に割りつく
+    ProjectExtraData:
+      type: object
+      description: |
+        プロジェクトの追加データ。
+        追加のプロジェクトの設定や、プロジェクトに対するユーザ毎のデータを表す。
+        (project_id, account_id, kind_id)の組み合わせで一意になり、account_idが指定指定されていない場合はユーザに割りつかず、プロジェクト自体に割りついている値を表す。
+      required:
+        - project_id
+        - kind_id
+        - value
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+          description: プロジェクトID
+        account_id:
+          $ref: "#/components/schemas/AccountId"
+          description: アカウントID
+        kind_id:
+          $ref: "#/components/schemas/ProjectExtraDataKindId"
+          description: プロジェクト追加データの種別ID
+        value:
+          $ref: "#/components/schemas/ProjectExtraDataValue"
+          description: プロジェクト追加データの値
+    ProjectExtraDataValue:
+      oneOf:
+        - $ref: "#/components/schemas/ProjectExtraDataValueEmpty"
+        - $ref: "#/components/schemas/ProjectExtraDataValueDefault"
+        - $ref: "#/components/schemas/ProjectExtraDataValueSaved"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          Empty: "#/components/schemas/ProjectExtraDataValueEmpty"
+          Default: "#/components/schemas/ProjectExtraDataValueDefault"
+          Saved: "#/components/schemas/ProjectExtraDataValueSaved"
+    ProjectExtraDataValueEmpty:
+      type: object
+      description: 保存されているデータが無く、デフォルト値も設定されていない場合
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum: ["Empty"]
+    ProjectExtraDataValueDefault:
+      type: object
+      description: 保存されているデータが無く、デフォルト値が設定されている場合
+      required:
+        - _type
+        - value
+      properties:
+        _type:
+          type: string
+          enum: ["Default"]
+        value:
+          $ref: "#/components/schemas/ProjectExtraDataValueJson"
+    ProjectExtraDataValueSaved:
+      type: object
+      description: 保存されているデータがある場合
+      required:
+        - _type
+        - value
+        - updated_datetime
+      properties:
+        _type:
+          type: string
+          enum: ["Saved"]
+        value:
+          $ref: "#/components/schemas/ProjectExtraDataValueJson"
+        updated_datetime:
+          type: string
+          format: date-time
+          description: データが最後に更新された日時
+    PutProjectExtraDataBody:
+      type: object
+      description: プロジェクトの追加データの更新時のリクエストボディ
+      required:
+        - value
+      properties:
+        value:
+          $ref: "#/components/schemas/ProjectExtraDataValueJson"
+        last_updated_datetime:
+          type: string
+          format: date-time
+          description: データの最終更新時刻。新規作成時は未指定、更新時は必須（更新前の日時）
+    ProjectExtraDataValueJson:
+      description: プロジェクト追加データの値。 nullを除く任意のJson

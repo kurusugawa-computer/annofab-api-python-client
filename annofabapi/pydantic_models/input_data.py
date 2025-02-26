@@ -30,7 +30,9 @@ class InputData(BaseModel):
     input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     organization_id: StrictStr = Field(description="組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    input_data_set_id: StrictStr = Field(description="入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    input_data_set_id: StrictStr = Field(
+        description="入力データセットID(システム内部用のプロパティ)。[値の制約についてはこちら。](#section/API-Convention/APIID) "
+    )
     input_data_name: StrictStr = Field(description="入力データ名")
     input_data_path: StrictStr = Field(
         description="入力データの実体が保存されたURLです。 URLスキームが s3 もしくは https であるもののみをサポートしています。 "

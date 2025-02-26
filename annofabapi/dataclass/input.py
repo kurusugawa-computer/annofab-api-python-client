@@ -44,7 +44,7 @@ class InputData(DataClassJsonMixin):
     """組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     input_data_set_id: str
-    """入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
+    """入力データセットID(システム内部用のプロパティ)。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     input_data_name: str
     """入力データ名"""
