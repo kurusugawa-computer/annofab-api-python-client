@@ -1320,6 +1320,127 @@ Kyes of dict
 
 """
 
+AnnotationThumbnail = dict[str, Any]
+"""
+アノテーションのサムネイル情報
+
+Kyes of dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* task_id: str
+    タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* input_data_id: str
+    入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* images: list[AnnotationThumbnailImage]
+    サムネイル画像情報の一覧
+* annotations: dict(str, AnnotationThumbnailDetail)
+    アノテーションIDをキーとしたサムネイル情報
+* annotation_updated_datetime: str
+    サムネイルの元になったアノテーションの更新日時。サムネイルが未作成の場合はnull。
+* created_datetime: str
+    サムネイル登録日時。サムネイルが未作成の場合はnull。
+
+"""
+
+AnnotationThumbnailDetail = dict[str, Any]
+"""
+- **AnnotationThumbnailDetailImageSlice**:<br>   画像の一部をサムネイルとして使用する - **AnnotationThumbnailDetailUnsupported**:<br>   サムネイル生成に対応していない - **AnnotationThumbnailDetailFailed**:<br>   サムネイル生成に失敗した 
+
+Kyes of dict
+
+* type: str
+    
+* image: int
+    AnnotationThumbnail.imageのインデックス
+* x: int
+    x座標
+* y: int
+    y座標
+* width: int
+    幅
+* height: int
+    高さ
+* reason: str
+    失敗理由
+
+"""
+
+AnnotationThumbnailDetailFailed = dict[str, Any]
+"""
+サムネイル生成に失敗した
+
+Kyes of dict
+
+* type: str
+    
+* reason: str
+    失敗理由
+
+"""
+
+AnnotationThumbnailDetailImageSlice = dict[str, Any]
+"""
+画像の一部をサムネイルとして使用する
+
+Kyes of dict
+
+* type: str
+    
+* image: int
+    AnnotationThumbnail.imageのインデックス
+* x: int
+    x座標
+* y: int
+    y座標
+* width: int
+    幅
+* height: int
+    高さ
+
+"""
+
+AnnotationThumbnailDetailUnsupported = dict[str, Any]
+"""
+サムネイル生成に対応していない
+
+Kyes of dict
+
+* type: str
+    
+
+"""
+
+AnnotationThumbnailImage = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+* type: str
+    
+* url: str
+    サムネイル画像のURL
+* width: int
+    画像の幅
+* height: int
+    画像の高さ
+
+"""
+
+AnnotationThumbnailImageSource = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+* type: str
+    
+* temporary_path: str
+    事前にアップロードしたサムネイル画像のパス。 [createTempPath](#operation/createTempPath) APIで取得した `path` の値を指定します。
+
+"""
+
 AnnotationType = dict[str, Any]
 """
 
@@ -2852,7 +2973,7 @@ Kyes of dict
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_set_id: str
-    入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+    入力データセットID(システム内部用のプロパティ)。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_name: str
     入力データ名
 * input_data_path: str
@@ -2922,27 +3043,6 @@ Kyes of dict
     CloudFrontのSignedCookieを使ったプライベートストレージを利用するかどうか。  `true`を指定する場合は，`input_data_path`にAnnofabのAWS IDをTrusted Signerとして登録したCloudFrontのURLを指定してください。 
 * metadata: dict(str, str)
     ユーザーが自由に登録できるkey-value型のメタデータです。 
-
-"""
-
-InputDataSet = dict[str, Any]
-"""
-入力データセットの情報を表すデータ構造です。
-
-Kyes of dict
-
-* input_data_set_id: str
-    入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* input_data_set_name: str
-    入力データセットの名前
-* organization_id: str
-    組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
-* input_data_type: InputDataType
-    
-* private_storage_arn: str
-    AWS IAMロール。S3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
-* updated_datetime: str
-    入力データセットの最終更新日時
 
 """
 
@@ -4237,6 +4337,8 @@ Kyes of dict
     
 * is_builtin: bool
     trueの場合、プラグインはAnnofab組み込みのプラグインであり、更新や削除を行うことはできません。
+* project_extra_data_kinds: list[str]
+    このプラグインが適用されたプロジェクトで使用可能となるProjectExtraDataKindのId列。 
 * created_datetime: str
     
 * updated_datetime: str
@@ -4841,19 +4943,6 @@ Kyes of dict
 
 """
 
-ProjectContainer = dict[str, Any]
-"""
-
-
-Kyes of dict
-
-* list: list[Project]
-    
-* has_next: bool
-    
-
-"""
-
 ProjectCopyRequest = dict[str, Any]
 """
 
@@ -4891,6 +4980,107 @@ Kyes of dict
     
 * dest_project: Project
     
+
+"""
+
+ProjectExtraData = dict[str, Any]
+"""
+プロジェクトの追加データ。 追加のプロジェクトの設定や、プロジェクトに対するユーザ毎のデータを表す。 (project_id, account_id, kind_id)の組み合わせで一意になり、account_idが指定指定されていない場合はユーザに割りつかず、プロジェクト自体に割りついている値を表す。 
+
+Kyes of dict
+
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* account_id: str
+    アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* kind_id: str
+    プロジェクト追加データの種別ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* value: ProjectExtraDataValue
+    
+
+"""
+
+ProjectExtraDataKind = dict[str, Any]
+"""
+プロジェクトの追加データの種別。 
+
+Kyes of dict
+
+* id: str
+    プロジェクト追加データの種別ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+* display_name: InternationalizationMessage
+    
+* schema: __DictStrKeyAnyValue__
+    プロジェクト追加データのスキーマを表す構造。
+* scope: ProjectExtraDataKindScope
+    
+* default_value: __DictStrKeyAnyValue__
+    プロジェクト追加データの値。 nullを除く任意のJson
+
+"""
+
+
+class ProjectExtraDataKindScope(Enum):
+    """
+    プロジェクト追加データがユーザーとプロジェクトに割りつくかどうかを表す列挙値。  - `project` => プロジェクトにのみ割りつき、ユーザには割りつかない - `user` => ユーザにのみ割りつき、プロジェクトには割りつかない - `both` => プロジェクトとユーザの両方に割りつく
+    """
+
+    PROJECT = "project"
+    USER = "user"
+    BOTH = "both"
+
+
+ProjectExtraDataValue = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+* type: str
+    
+* value: __DictStrKeyAnyValue__
+    プロジェクト追加データの値。 nullを除く任意のJson
+* updated_datetime: str
+    データが最後に更新された日時
+
+"""
+
+ProjectExtraDataValueDefault = dict[str, Any]
+"""
+保存されているデータが無く、デフォルト値が設定されている場合
+
+Kyes of dict
+
+* type: str
+    
+* value: __DictStrKeyAnyValue__
+    プロジェクト追加データの値。 nullを除く任意のJson
+
+"""
+
+ProjectExtraDataValueEmpty = dict[str, Any]
+"""
+保存されているデータが無く、デフォルト値も設定されていない場合
+
+Kyes of dict
+
+* type: str
+    
+
+"""
+
+ProjectExtraDataValueSaved = dict[str, Any]
+"""
+保存されているデータがある場合
+
+Kyes of dict
+
+* type: str
+    
+* value: __DictStrKeyAnyValue__
+    プロジェクト追加データの値。 nullを除く任意のJson
+* updated_datetime: str
+    データが最後に更新された日時
 
 """
 
@@ -5218,20 +5408,18 @@ Kyes of dict
 
 """
 
-PutInputDataSetRequest = dict[str, Any]
+PutAnnotationThumbnailBody = dict[str, Any]
 """
-入力データセット新規作成/更新
+アノテーションのサムネイル更新リクエスト
 
 Kyes of dict
 
-* input_data_set_name: str
-    入力データセットの名前
-* input_data_type: InputDataType
-    
-* private_storage_arn: str
-    AWS IAMロール。S3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
-* last_updated_datetime: str
-    新規作成時は未指定、更新時は必須（更新前の日時） 
+* images: list[AnnotationThumbnailImageSource]
+    アップロードするサムネイル画像の一覧
+* annotations: dict(str, AnnotationThumbnailDetail)
+    アノテーションIDをキーとしたサムネイル情報
+* annotation_updated_datetime: str
+    サムネイルの元になったアノテーションの更新日時。 [putEditorAnnotation](#operation/putEditorAnnotation) API や [getEditorAnnotation](#operation/getEditorAnnotation) API のレスポンスに含まれる `updated_datetime` を指定します。
 
 """
 
@@ -5335,6 +5523,8 @@ Kyes of dict
     プラグインの名前です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 
 * description: str
     プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 
+* project_extra_data_kinds: list[str]
+    プラグインが適用されたプロジェクトで使用可能となるProjectExtraDataKindのId列。 
 * detail: PluginDetail
     
 * last_updated_datetime: str
@@ -5352,6 +5542,19 @@ Kyes of dict
     組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * last_updated_datetime: str
     新規作成時は未指定、更新時は必須（更新前の日時） 
+
+"""
+
+PutProjectExtraDataBody = dict[str, Any]
+"""
+プロジェクトの追加データの更新時のリクエストボディ
+
+Kyes of dict
+
+* value: __DictStrKeyAnyValue__
+    プロジェクト追加データの値。 nullを除く任意のJson
+* last_updated_datetime: str
+    データの最終更新時刻。新規作成時は未指定、更新時は必須（更新前の日時）
 
 """
 
@@ -5718,7 +5921,7 @@ Kyes of dict
 * organization_id: str
     組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_set_id: str
-    入力データセットID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
+    入力データセットID(システム内部用のプロパティ)。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * project_id: str
     プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * input_data_id: str

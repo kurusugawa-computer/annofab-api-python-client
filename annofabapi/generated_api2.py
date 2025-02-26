@@ -712,7 +712,7 @@ class AbstractAnnofabApi2(abc.ABC):
                 cache (str):  CACHE TIMESTAMP
 
         Returns:
-            tuple[ProjectContainer, requests.Response]
+            tuple[ProjectList, requests.Response]
 
 
         """
