@@ -524,6 +524,62 @@ annofabapi.pydantic\_models.annotation\_specs\_v3 module
    :undoc-members:
    :show-inheritance:
 
+annofabapi.pydantic\_models.annotation\_thumbnail module
+--------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.annotation_thumbnail
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.annotation\_thumbnail\_detail module
+----------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.annotation_thumbnail_detail
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.annotation\_thumbnail\_detail\_failed module
+------------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.annotation_thumbnail_detail_failed
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.annotation\_thumbnail\_detail\_image\_slice module
+------------------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.annotation_thumbnail_detail_image_slice
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.annotation\_thumbnail\_detail\_unsupported module
+-----------------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.annotation_thumbnail_detail_unsupported
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.annotation\_thumbnail\_image module
+---------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.annotation_thumbnail_image
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.annotation\_thumbnail\_image\_source module
+-----------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.annotation_thumbnail_image_source
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 annofabapi.pydantic\_models.annotation\_type module
 ---------------------------------------------------
 
@@ -2268,6 +2324,62 @@ annofabapi.pydantic\_models.project\_copy\_response module
    :undoc-members:
    :show-inheritance:
 
+annofabapi.pydantic\_models.project\_extra\_data module
+-------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.project_extra_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.project\_extra\_data\_kind module
+-------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.project_extra_data_kind
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.project\_extra\_data\_kind\_scope module
+--------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.project_extra_data_kind_scope
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.project\_extra\_data\_value module
+--------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.project_extra_data_value
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.project\_extra\_data\_value\_default module
+-----------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.project_extra_data_value_default
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.project\_extra\_data\_value\_empty module
+---------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.project_extra_data_value_empty
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.project\_extra\_data\_value\_saved module
+---------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.project_extra_data_value_saved
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 annofabapi.pydantic\_models.project\_guest\_user\_profile module
 ----------------------------------------------------------------
 
@@ -2428,6 +2540,14 @@ annofabapi.pydantic\_models.put\_annotation\_request module
    :undoc-members:
    :show-inheritance:
 
+annofabapi.pydantic\_models.put\_annotation\_thumbnail\_body module
+-------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.put_annotation_thumbnail_body
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 annofabapi.pydantic\_models.put\_input\_data\_set\_request module
 -----------------------------------------------------------------
 
@@ -2496,6 +2616,14 @@ annofabapi.pydantic\_models.put\_organization\_request module
 -------------------------------------------------------------
 
 .. automodule:: annofabapi.pydantic_models.put_organization_request
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+annofabapi.pydantic\_models.put\_project\_extra\_data\_body module
+------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.put_project_extra_data_body
    :members:
    :undoc-members:
    :show-inheritance:

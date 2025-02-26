@@ -33,9 +33,12 @@ class PutOrganizationPluginRequest(BaseModel):
     description: Optional[StrictStr] = Field(
         default=None, description="プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 "
     )
+    project_extra_data_kinds: Optional[List[StrictStr]] = Field(
+        default=None, description="プラグインが適用されたプロジェクトで使用可能となるProjectExtraDataKindのId列。 "
+    )
     detail: PluginDetail
     last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
-    __properties: ClassVar[List[str]] = ["plugin_name", "description", "detail", "last_updated_datetime"]
+    __properties: ClassVar[List[str]] = ["plugin_name", "description", "project_extra_data_kinds", "detail", "last_updated_datetime"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -92,6 +95,7 @@ class PutOrganizationPluginRequest(BaseModel):
             {
                 "plugin_name": obj.get("plugin_name"),
                 "description": obj.get("description"),
+                "project_extra_data_kinds": obj.get("project_extra_data_kinds"),
                 "detail": PluginDetail.from_dict(obj["detail"]) if obj.get("detail") is not None else None,
                 "last_updated_datetime": obj.get("last_updated_datetime"),
             }

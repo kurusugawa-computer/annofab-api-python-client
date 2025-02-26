@@ -87,6 +87,7 @@ info:
     プラグインID | 組織内で一意
     組織IDプロバイダーID | 組織内で一意
     パーソナルアクセストークンID | アカウント内で一意
+    プロジェクト追加データの種別ID | Annofab内で一意
 
     ## 検索結果の集約を表す AggregationResult
 
@@ -118,7 +119,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.199.0
+  version: 0.200.0
   title: Annofab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -169,16 +170,6 @@ tags:
     組織で使用するIDプロバイダーに対する操作
 
     **このAPIは Annofab に許可された組織だけで使用できます。また、予告なく変更されることがあります。**
-- name: af-organization-input
-  x-displayName: Organization Input
-  description: |
-    入力データセットと入力データに対する操作
-
-    **入力データセットに関するAPIは開発中のため、予告なく変更されることがあります。**
-
-    **入力データセット**とは、プロジェクトが用いる入力データの集合です。入力データセットは組織に所属します。
-    現時点では入力データセットはプロジェクトを新規作成するごとに一つずつ作成されるようになっています。
-    将来的にプロジェクトの新規作成時に同じ組織の別のプロジェクトの入力データセットを指定して入力データを共有できるようにする機能のリリースを予定しています。
 - name: af-organization-member
   x-displayName: Organization Member
   description: 組織メンバーに対する操作
@@ -197,6 +188,9 @@ tags:
 - name: af-project-member
   x-displayName: Project Member
   description: プロジェクトメンバーに対する操作
+- name: af-project-extra-data
+  x-displayName: Project Extra Data
+  description: プロジェクトの追加データに対する操作
 - name: af-statistics
   x-displayName: Statistics
   description: 統計に関する操作
@@ -340,12 +334,12 @@ x-tagGroups:
       - af-my
       - af-organization
       - af-organization-idp
-      - af-organization-input
       - af-organization-member
       - af-organization-plugin
       - af-usage-status
       - af-project
       - af-project-member
+      - af-project-extra-data
       - af-statistics
       - af-supplementary
       - af-task
@@ -1651,311 +1645,6 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /organizations/{organization_name}/input_data_set:
-    get:
-      operationId: getInputDataSetList
-      summary: 入力データセットの一括取得
-      description: |
-        入力データセットを一括で取得します。
-      tags:
-        - af-organization-input
-      security:
-        - OrganizationAdministrator: []
-        - OrganizationOwner: []
-      parameters:
-        - name: organization_name
-          in: path
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
-          description: 組織名
-      responses:
-        "200":
-          description: 正常
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "swagger-api-components.yaml#/components/schemas/InputDataSet"
-        "400":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /organizations/{organization_name}/input_data_set/{input_data_set_id}:
-    get:
-      operationId: getInputDataSet
-      summary: 入力データセット情報取得
-      description: |
-        入力データセットを取得します。
-
-        組織オーナーまたは組織管理者でない場合は、自身が所属するプロジェクトの入力データセットのみが取得できます。
-      tags:
-        - af-organization-input
-      security:
-        - AllOrganizationMember: []
-      parameters:
-        - name: organization_name
-          in: path
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
-          description: 組織名
-        - name: input_data_set_id
-          in: path
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/InputDataSetId"
-          description: 入力データセットID
-      responses:
-        "200":
-          description: 正常
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/InputDataSet"
-        "400":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-    put:
-      operationId: putInputDataSet
-      summary: 入力データセットの作成/更新
-      description: |
-        入力データセットを作成または更新します。
-      tags:
-        - af-organization-input
-      security:
-        - OrganizationAdministrator: []
-        - OrganizationOwner: []
-      parameters:
-        - name: organization_name
-          in: path
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
-          description: 組織名
-        - name: input_data_set_id
-          in: path
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/InputDataSetId"
-          description: 入力データセットID
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "swagger-api-components.yaml#/components/schemas/PutInputDataSetRequest"
-      responses:
-        "200":
-          description: 正常
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/InputDataSet"
-        "400":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "409":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorStateMismatch"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /organizations/{organization_name}/input_data_set/{input_data_set_id}/inputs:
-    get:
-      tags:
-        - af-organization-input
-      summary: 入力データセット内の入力データの一括取得
-      description: |
-        入力データセットに含まれる入力データを一括で取得します。
-
-        組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。
-      security:
-        - AllOrganizationMember: []
-      operationId: getOrganizationInputDataList
-      parameters:
-        - name: organization_name
-          in: path
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
-          description: 組織名
-        - name: input_data_set_id
-          in: path
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/InputDataSetId"
-          description: 入力データセットID
-        - name: input_data_id
-          in: query
-          description: 入力データIDでの部分一致検索で使用。
-          required: false
-          schema:
-            type: string
-            minLength: 1
-        - name: input_data_name
-          in: query
-          description: 入力データ名での部分一致検索で使用。
-          required: false
-          schema:
-            type: string
-            minLength: 1
-        - name: input_data_path
-          in: query
-          description: 入力データパスでの部分一致検索で使用。
-          required: false
-          schema:
-            type: string
-            minLength: 1
-        - name: task_id
-          in: query
-          description: 入力データが紐づくタスクIDの部分一致検索で使用。条件に合致した先頭100件のタスクに使われている入力データを検索します。
-          required: false
-          schema:
-            type: string
-            minLength: 1
-        - name: from
-          in: query
-          description: 指定した日時以降に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
-          required: false
-          schema:
-            type: string
-            format: date-time
-        - name: to
-          in: query
-          description: 指定した日時以前に更新された入力データを取得します。日時のフォーマットはISO 8601 拡張形式です。
-          required: false
-          schema:
-            type: string
-            format: date-time
-        - name: page
-          in: query
-          description: 検索結果のうち、取得したいページの番号(1始まり）
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: limit
-          in: query
-          description: 1ページあたりの取得するデータ件数
-          required: false
-          schema:
-            type: integer
-            minimum: 0
-            maximum: 200
-            default: 30
-      responses:
-        "200":
-          description: 指定された条件にあてはまる入力データを返します。条件にあてはまる入力データが多数に及ぶことがあるので、すべての結果を得るにはページングしてください。
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/InputDataList"
-        "400":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /organizations/{organization_name}/input_data_set/{input_data_set_id}/inputs/{input_data_id}:
-    get:
-      tags:
-        - af-organization-input
-      summary: 入力データセット内の入力データの取得
-      description: |
-        入力データセットに含まれる入力データを取得します。
-
-        組織オーナーまたは組織管理者でない場合は自身が所属するプロジェクトの入力データセット内の入力データのみが取得できます。
-      security:
-        - AllOrganizationMember: []
-      operationId: getOrganizationInputData
-      parameters:
-        - name: organization_name
-          in: path
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
-          description: 組織名
-        - name: input_data_set_id
-          in: path
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/InputDataSetId"
-          description: 入力データセットID
-        - name: input_data_id
-          in: path
-          description: 入力データID
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
-      responses:
-        "200":
-          description: 正常
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/InputData"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-    delete:
-      tags:
-        - af-organization-input
-      summary: 入力データセット内の入力データの削除
-      description: |
-        入力データセットに含まれる入力データ情報を削除します。
-      security:
-        - OrganizationAdministrator: []
-        - ProjectOwner: []
-      operationId: deleteOrganizationInputData
-      parameters:
-        - name: organization_name
-          in: path
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
-          description: 組織名
-        - name: input_data_set_id
-          in: path
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/InputDataSetId"
-          description: 入力データセットID
-        - name: input_data_id
-          in: path
-          description: 入力データID
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
-      responses:
-        "200":
-          description: 正常
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/InputData"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /organizations/{organization_name}/usage-status:
     get:
       tags:
@@ -2145,7 +1834,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/ProjectContainer"
+                $ref: "swagger-api-components.yaml#/components/schemas/ProjectList"
         "400":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
         "401":
@@ -2835,6 +2524,139 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "409":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorStateMismatch"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/extra-data/{kind_id}:
+    get:
+      tags:
+        - af-project-extra-data
+      summary: プロジェクトの追加データ取得
+      description: |
+        プロジェクトの追加データを取得します。
+      security:
+        - AllProjectMember: []
+      operationId: getProjectExtraData
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+        - name: kind_id
+          in: path
+          description: 追加データの種類ID
+          required: true
+          schema:
+              $ref: "swagger-api-components.yaml#/components/schemas/ProjectExtraDataKindId"
+        - name: user_scope
+          in: query
+          description: |
+            ユーザスコープの値を取得するかどうか。
+            trueの場合、ユーザスコープの値を取得します。
+            未指定の場合、falseとして扱います。
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/ProjectExtraData"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+    put:
+      tags:
+        - af-project-extra-data
+      summary: プロジェクトの追加データ更新
+      description: |
+        プロジェクトの追加データを更新します。
+      security:
+        - AllProjectMember: []
+      operationId: putProjectExtraData
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+        - name: kind_id
+          in: path
+          description: 追加データの種類ID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectExtraDataKindId"
+        - name: user_scope
+          in: query
+          description: |
+            ユーザに割りつく値を保存するかどうか。
+            trueの場合、ユーザに割りつく値を保存します。
+            未指定の場合、falseとして扱います。
+          required: false
+          schema:
+            type: boolean
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "swagger-api-components.yaml#/components/schemas/PutProjectExtraDataBody"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/ProjectExtraData"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/extra-data-kinds:
+    get:
+      tags:
+        - af-project-extra-data
+      summary: プロジェクトに紐づく追加データ種別取得
+      description: |
+        プロジェクトに保存され得る追加データ種別をすべて取得します。
+      security:
+        - AllProjectMember: []
+      operationId: getProjectExtraDataKinds
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "swagger-api-components.yaml#/components/schemas/ProjectExtraDataKind"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/statistics/dates:
@@ -6240,6 +6062,107 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/InstructionImagePath"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/thumbnail:
+    get:
+      tags:
+        - af-annotation
+      summary: アノテーションのサムネイル情報の取得
+      description: |
+        アノテーションのサムネイル情報を取得します。
+
+        入力データの種類がカスタムであるプロジェクトにのみ対応しています。
+      security:
+        - AllProjectMember: []
+      operationId: getAnnotationThumbnail
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+        - name: task_id
+          in: path
+          description: タスクID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/TaskId"
+        - name: input_data_id
+          in: path
+          description: 入力データID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/AnnotationThumbnail"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
+        "404":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+    put:
+      tags:
+        - af-annotation
+      summary: アノテーションのサムネイル情報の更新
+      description: |
+        アノテーションのサムネイル情報を更新します。
+
+        入力データの種類がカスタムであるプロジェクトにのみ対応しています。
+
+        このAPIを呼び出せるユーザーは [putAnnotation](#operation/putAnnotation) API に準じます。
+      security:
+        - AllProjectMember: []
+      operationId: putAnnotationThumbnail
+      parameters:
+        - name: project_id
+          in: path
+          description: プロジェクトID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+        - name: task_id
+          in: path
+          description: タスクID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/TaskId"
+        - name: input_data_id
+          in: path
+          description: 入力データID
+          required: true
+          schema:
+            $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "swagger-api-components.yaml#/components/schemas/PutAnnotationThumbnailBody"
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/AnnotationThumbnail"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "403":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
         "503":

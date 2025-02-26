@@ -37,6 +37,9 @@ class OrganizationPlugin(BaseModel):
     )
     detail: PluginDetail
     is_builtin: StrictBool = Field(description="trueの場合、プラグインはAnnofab組み込みのプラグインであり、更新や削除を行うことはできません。")
+    project_extra_data_kinds: List[StrictStr] = Field(
+        description="このプラグインが適用されたプロジェクトで使用可能となるProjectExtraDataKindのId列。 "
+    )
     created_datetime: str
     updated_datetime: str
     __properties: ClassVar[List[str]] = [
@@ -46,6 +49,7 @@ class OrganizationPlugin(BaseModel):
         "description",
         "detail",
         "is_builtin",
+        "project_extra_data_kinds",
         "created_datetime",
         "updated_datetime",
     ]
@@ -109,6 +113,7 @@ class OrganizationPlugin(BaseModel):
                 "description": obj.get("description"),
                 "detail": PluginDetail.from_dict(obj["detail"]) if obj.get("detail") is not None else None,
                 "is_builtin": obj.get("is_builtin"),
+                "project_extra_data_kinds": obj.get("project_extra_data_kinds"),
                 "created_datetime": obj.get("created_datetime"),
                 "updated_datetime": obj.get("updated_datetime"),
             }
