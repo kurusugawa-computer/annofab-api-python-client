@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from annofabapi.util.attribute_restrictions import Checkbox, StringTextBox
+from annofabapi.util.attribute_restrictions import Checkbox, StringTextBox, IntegerTextBox
 
 
 class Test__Checkbox:
@@ -28,3 +28,14 @@ class Test__StringTextBox:
     def test__not_matches(self):
         actual = StringTextBox("id1").not_matches("\\w").generate()
         assert actual == {"additional_data_definition_id": "id1", "condition": {"_type": "NotMatches", "value": "\\w"}}
+
+
+class Test__IntegerTextBox:
+    def test__equals(self):
+        actual = IntegerTextBox("id1").equals(10).generate()
+        assert actual == {"additional_data_definition_id": "id1", "condition": {"_type": "Equals", "value": "10"}}
+
+    def test__not_matches(self):
+        actual = IntegerTextBox("id1").not_equals(10).generate()
+        assert actual == {"additional_data_definition_id": "id1", "condition": {"_type": "NotEquals", "value": "10"}}
+

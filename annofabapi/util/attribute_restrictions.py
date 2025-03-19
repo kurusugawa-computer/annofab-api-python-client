@@ -129,17 +129,31 @@ class StringTextBox(Attribute):
         """引数`value`に渡された正規表現に一致しないという条件"""
         return NotMatches(self.attribute_id, value)
 
+    def required(self) -> Condition:
+        """必須入力という条件"""
+        return NotEquals(self.attribute_id, "")
+
+class IntegerTextBox(Attribute):
+    """整数用のテキストボックスの属性"""
+
+    def equals(self, value: int) -> Condition:
+        """引数`value`に渡された整数に一致するという条件"""
+        return Equals(self.attribute_id, str(value))
+
+    def not_equals(self, value: int) -> Condition:
+        """引数`value`に渡された整数に一致しないという条件"""
+        return NotEquals(self.attribute_id, str(value))
+
+    def required(self) -> Condition:
+        """必須入力という条件"""
+        return NotEquals(self.attribute_id, "")
+
 
 class LinkAttribute:
     """アノテーションリンク属性"""
 
     pass
 
-
-class IntegerTextBoxAttribute:
-    """整数用のテキストボックスの属性"""
-
-    pass
 
 
 class SelectionAttribute:
