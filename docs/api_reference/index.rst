@@ -8,7 +8,6 @@ API reference
    api2
    wrapper
    resource
-   utils
    parser
    plugin
    dataclass
@@ -16,5 +15,8 @@ API reference
    segmentation
    pydantic_models
    models
+   util
+   utils
+   credentials
    
 
