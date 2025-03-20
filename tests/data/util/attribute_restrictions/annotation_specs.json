@@ -1,0 +1,902 @@
+{
+    "labels" : [
+      {
+        "label_id" : "9d6cca8d-3f5a-4808-a6c9-0ae18a478176",
+        "label_name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "car"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "自動車"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "car"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+          {
+            "code" : "KeyQ",
+            "shift" : false,
+            "ctrl" : false,
+            "alt" : false
+          }
+        ],
+        "annotation_type" : "bounding_box",
+        "field_values" : {
+          "minimum_size_2d_with_default_insert_position" : {
+            "min_warn_rule" : {
+              "_type" : "And"
+            },
+            "min_width" : 35,
+            "min_height" : 35,
+            "position_for_minimum_bounding_box_insertion" : null,
+            "_type" : "MinimumSize2dWithDefaultInsertPosition"
+          },
+          "margin_of_error_tolerance" : {
+            "max_pixel" : 3,
+            "_type" : "MarginOfErrorTolerance"
+          }
+        },
+        "additional_data_definitions" : [
+          "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
+          "d349e76d-b59a-44cd-94b4-713a00b2e84d",
+          "ec27de5d-122c-40e7-89bc-5500e37bae6a",
+          "69a20a12-ef5f-446f-a03e-0c4ab487ff90",
+          "2517f635-2269-4142-8ef4-16312b4cc9f7",
+          "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+          "e771ac4b-97d1-4af3-ba4b-f0e5b22e8648"
+        ],
+        "color" : {
+          "red" : 251,
+          "green" : 0,
+          "blue" : 0
+        },
+        "metadata" : {
+          
+        }
+      },
+      {
+        "label_id" : "39d05700-7c12-4732-bc35-02d65367cc3e",
+        "label_name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "number_plate"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "ナンバープレート"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "number_plate"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+          {
+            "code" : "KeyW",
+            "shift" : false,
+            "ctrl" : false,
+            "alt" : false
+          }
+        ],
+        "annotation_type" : "bounding_box",
+        "field_values" : {
+          "minimum_size_2d_with_default_insert_position" : {
+            "min_warn_rule" : {
+              "_type" : "And"
+            },
+            "min_width" : 16,
+            "min_height" : 8,
+            "position_for_minimum_bounding_box_insertion" : null,
+            "_type" : "MinimumSize2dWithDefaultInsertPosition"
+          },
+          "margin_of_error_tolerance" : {
+            "max_pixel" : 3,
+            "_type" : "MarginOfErrorTolerance"
+          }
+        },
+        "additional_data_definitions" : [
+          "15ba8b9d-4882-40c2-bb31-ed3f68197c2e"
+        ],
+        "color" : {
+          "red" : 0,
+          "green" : 0,
+          "blue" : 251
+        },
+        "metadata" : {
+          
+        }
+      },
+      {
+        "label_id" : "afc8ffef-ce87-463d-bf62-070771465438",
+        "label_name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "white_line"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "白線"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "white_line"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+          {
+            "code" : "KeyE",
+            "shift" : false,
+            "ctrl" : false,
+            "alt" : false
+          }
+        ],
+        "annotation_type" : "polyline",
+        "field_values" : {
+          "display_line_direction" : {
+            "has_direction" : false,
+            "_type" : "DisplayLineDirection"
+          },
+          "minimum_size_2d" : {
+            "min_warn_rule" : {
+              "_type" : "And"
+            },
+            "min_width" : 6,
+            "min_height" : 6,
+            "_type" : "MinimumSize2d"
+          },
+          "margin_of_error_tolerance" : {
+            "max_pixel" : 3,
+            "_type" : "MarginOfErrorTolerance"
+          }
+        },
+        "additional_data_definitions" : [
+        ],
+        "color" : {
+          "red" : 225,
+          "green" : 255,
+          "blue" : 0
+        },
+        "metadata" : {
+          
+        }
+      },
+      {
+        "label_id" : "cf4d3a30-4efe-410d-b5e0-c35fd46d080c",
+        "label_name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "road"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "路面"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "road"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+          {
+            "code" : "KeyR",
+            "shift" : false,
+            "ctrl" : false,
+            "alt" : false
+          }
+        ],
+        "annotation_type" : "segmentation_v2",
+        "field_values" : {
+          "minimum_size_2d" : {
+            "min_warn_rule" : {
+              "_type" : "Or"
+            },
+            "min_width" : 6,
+            "min_height" : 6,
+            "_type" : "MinimumSize2d"
+          },
+          "margin_of_error_tolerance" : {
+            "max_pixel" : 3,
+            "_type" : "MarginOfErrorTolerance"
+          },
+          "annotation_editor_feature" : {
+            "append" : true,
+            "erase" : true,
+            "freehand" : true,
+            "rectangle_fill" : true,
+            "polygon_fill" : true,
+            "fill_near" : true,
+            "_type" : "AnnotationEditorFeature"
+          }
+        },
+        "additional_data_definitions" : [
+        ],
+        "color" : {
+          "red" : 253,
+          "green" : 88,
+          "blue" : 248
+        },
+        "metadata" : {
+          
+        }
+      },
+      {
+        "label_id" : "7391e5f4-38e9-4660-85b9-3d908506634c",
+        "label_name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "traffic_sign"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "交通標識"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "traffic_sign"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+          {
+            "code" : "KeyT",
+            "shift" : false,
+            "ctrl" : false,
+            "alt" : false
+          }
+        ],
+        "annotation_type" : "polygon",
+        "field_values" : {
+          "minimum_size_2d" : {
+            "min_warn_rule" : {
+              "_type" : "Or"
+            },
+            "min_width" : 6,
+            "min_height" : 6,
+            "_type" : "MinimumSize2d"
+          },
+          "margin_of_error_tolerance" : {
+            "max_pixel" : 3,
+            "_type" : "MarginOfErrorTolerance"
+          }
+        },
+        "additional_data_definitions" : [
+        ],
+        "color" : {
+          "red" : 0,
+          "green" : 255,
+          "blue" : 0
+        },
+        "metadata" : {
+          
+        }
+      },
+      {
+        "label_id" : "fcb847a5-5607-4467-a72b-fc11fb5cfbab",
+        "label_name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "whole"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "全体"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "whole"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+          {
+            "code" : "KeyY",
+            "shift" : false,
+            "ctrl" : false,
+            "alt" : false
+          }
+        ],
+        "annotation_type" : "classification",
+        "field_values" : {
+          
+        },
+        "additional_data_definitions" : [
+          "fff3fcc3-093d-41ce-90cf-b4d9b2688b78"
+        ],
+        "color" : {
+          "red" : 241,
+          "green" : 192,
+          "blue" : 243
+        },
+        "metadata" : {
+          
+        }
+      }
+    ],
+    "additionals" : [
+      {
+        "additional_data_definition_id" : "15ba8b9d-4882-40c2-bb31-ed3f68197c2e",
+        "read_only" : false,
+        "name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "link_car"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "リンク_車両"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "link_car"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+          {
+            "code" : "Digit4",
+            "shift" : false,
+            "ctrl" : false,
+            "alt" : false
+          }
+        ],
+        "type" : "link",
+        "default" : "",
+        "choices" : [
+        ],
+        "metadata" : {
+          
+        }
+      },
+      {
+        "additional_data_definition_id" : "d349e76d-b59a-44cd-94b4-713a00b2e84d",
+        "read_only" : false,
+        "name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "tracking"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "トラッキング"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "tracking"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+          {
+            "code" : "Digit1",
+            "shift" : false,
+            "ctrl" : false,
+            "alt" : false
+          }
+        ],
+        "type" : "tracking",
+        "default" : "",
+        "choices" : [
+        ],
+        "metadata" : {
+          
+        }
+      },
+      {
+        "additional_data_definition_id" : "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
+        "read_only" : false,
+        "name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "car_kind"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "種別"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "car_kind"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+        ],
+        "type" : "choice",
+        "default" : "7512ee39-8073-4e24-9b8c-93d99b76b7d2",
+        "choices" : [
+          {
+            "choice_id" : "7512ee39-8073-4e24-9b8c-93d99b76b7d2",
+            "name" : {
+              "messages" : [
+                {
+                  "lang" : "en-US",
+                  "message" : "general_car"
+                },
+                {
+                  "lang" : "ja-JP",
+                  "message" : "車両一般"
+                },
+                {
+                  "lang" : "vi-VN",
+                  "message" : "general_car"
+                }
+              ],
+              "default_lang" : "ja-JP"
+            },
+            "keybind" : [
+              {
+                "code" : "Digit1",
+                "shift" : true,
+                "ctrl" : false,
+                "alt" : false
+              }
+            ]
+          },
+          {
+            "choice_id" : "c07f9702-4760-4e7c-824d-b87bac356a80",
+            "name" : {
+              "messages" : [
+                {
+                  "lang" : "en-US",
+                  "message" : "emergency_vehicle"
+                },
+                {
+                  "lang" : "ja-JP",
+                  "message" : "緊急車両"
+                },
+                {
+                  "lang" : "vi-VN",
+                  "message" : "emergency_vehicle"
+                }
+              ],
+              "default_lang" : "ja-JP"
+            },
+            "keybind" : [
+              {
+                "code" : "Digit2",
+                "shift" : true,
+                "ctrl" : false,
+                "alt" : false
+              }
+            ]
+          },
+          {
+            "choice_id" : "75e848f81a-ce06-4669-bd07-4af96306de56",
+            "name" : {
+              "messages" : [
+                {
+                  "lang" : "en-US",
+                  "message" : "construction_vehicle"
+                },
+                {
+                  "lang" : "ja-JP",
+                  "message" : "重機"
+                },
+                {
+                  "lang" : "vi-VN",
+                  "message" : "construction_vehicle"
+                }
+              ],
+              "default_lang" : "ja-JP"
+            },
+            "keybind" : [
+              {
+                "code" : "Digit3",
+                "shift" : true,
+                "ctrl" : false,
+                "alt" : false
+              }
+            ]
+          }
+        ],
+        "metadata" : {
+          
+        }
+      },
+      {
+        "additional_data_definition_id" : "fff3fcc3-093d-41ce-90cf-b4d9b2688b78",
+        "read_only" : false,
+        "name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "weater"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "天候"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "weater"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+        ],
+        "type" : "choice",
+        "default" : "",
+        "choices" : [
+          {
+            "choice_id" : "c557a034-1abc-479a-bed3-3a33c006a195",
+            "name" : {
+              "messages" : [
+                {
+                  "lang" : "en-US",
+                  "message" : "fine"
+                },
+                {
+                  "lang" : "ja-JP",
+                  "message" : "晴れ"
+                },
+                {
+                  "lang" : "vi-VN",
+                  "message" : "fine"
+                }
+              ],
+              "default_lang" : "ja-JP"
+            },
+            "keybind" : [
+              {
+                "code" : "Digit5",
+                "shift" : false,
+                "ctrl" : false,
+                "alt" : false
+              }
+            ]
+          },
+          {
+            "choice_id" : "10744a0f-ceb0-4064-b2ce-f7d2d5714794",
+            "name" : {
+              "messages" : [
+                {
+                  "lang" : "en-US",
+                  "message" : "cloudy"
+                },
+                {
+                  "lang" : "ja-JP",
+                  "message" : "曇り"
+                },
+                {
+                  "lang" : "vi-VN",
+                  "message" : "cloudy"
+                }
+              ],
+              "default_lang" : "ja-JP"
+            },
+            "keybind" : [
+              {
+                "code" : "Digit6",
+                "shift" : false,
+                "ctrl" : false,
+                "alt" : false
+              }
+            ]
+          },
+          {
+            "choice_id" : "49515f1d-cc5c-41c1-8c5c-a13764ab30d2",
+            "name" : {
+              "messages" : [
+                {
+                  "lang" : "en-US",
+                  "message" : "rainy"
+                },
+                {
+                  "lang" : "ja-JP",
+                  "message" : "雨"
+                },
+                {
+                  "lang" : "vi-VN",
+                  "message" : "rainy"
+                }
+              ],
+              "default_lang" : "ja-JP"
+            },
+            "keybind" : [
+              {
+                "code" : "Digit7",
+                "shift" : false,
+                "ctrl" : false,
+                "alt" : false
+              }
+            ]
+          },
+          {
+            "choice_id" : "8f04498e-079f-409b-8e7c-703e006bdceb",
+            "name" : {
+              "messages" : [
+                {
+                  "lang" : "en-US",
+                  "message" : "other"
+                },
+                {
+                  "lang" : "ja-JP",
+                  "message" : "不明"
+                },
+                {
+                  "lang" : "vi-VN",
+                  "message" : "other"
+                }
+              ],
+              "default_lang" : "ja-JP"
+            },
+            "keybind" : [
+              {
+                "code" : "Digit8",
+                "shift" : false,
+                "ctrl" : false,
+                "alt" : false
+              }
+            ]
+          }
+        ],
+        "metadata" : {
+          
+        }
+      },
+      {
+        "additional_data_definition_id" : "ec27de5d-122c-40e7-89bc-5500e37bae6a",
+        "read_only" : false,
+        "name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "traffic_lane"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "車線"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "traffic_lane"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+          {
+            "code" : "Digit2",
+            "shift" : false,
+            "ctrl" : false,
+            "alt" : false
+          }
+        ],
+        "type" : "integer",
+        "default" : "",
+        "choices" : [
+        ],
+        "metadata" : {
+          
+        }
+      },
+      {
+        "additional_data_definition_id" : "69a20a12-ef5f-446f-a03e-0c4ab487ff90",
+        "read_only" : false,
+        "name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "condition"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "状態"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "condition"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+          {
+            "code" : "Digit3",
+            "shift" : false,
+            "ctrl" : false,
+            "alt" : false
+          }
+        ],
+        "type" : "select",
+        "default" : "",
+        "choices" : [
+          {
+            "choice_id" : "stopping",
+            "name" : {
+              "messages" : [
+                {
+                  "lang" : "en-US",
+                  "message" : "stopping"
+                },
+                {
+                  "lang" : "ja-JP",
+                  "message" : "停車"
+                },
+                {
+                  "lang" : "vi-VN",
+                  "message" : "stopping"
+                }
+              ],
+              "default_lang" : "ja-JP"
+            },
+            "keybind" : [
+            ]
+          },
+          {
+            "choice_id" : "running",
+            "name" : {
+              "messages" : [
+                {
+                  "lang" : "en-US",
+                  "message" : "running"
+                },
+                {
+                  "lang" : "ja-JP",
+                  "message" : "走行"
+                },
+                {
+                  "lang" : "vi-VN",
+                  "message" : "running"
+                }
+              ],
+              "default_lang" : "ja-JP"
+            },
+            "keybind" : [
+            ]
+          }
+        ],
+        "metadata" : {
+          
+        }
+      },
+      {
+        "additional_data_definition_id" : "2517f635-2269-4142-8ef4-16312b4cc9f7",
+        "read_only" : false,
+        "name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "occluded"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "occluded"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "occluded"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+        ],
+        "type" : "flag",
+        "default" : false,
+        "choices" : [
+        ],
+        "metadata" : {
+          
+        }
+      },
+      {
+        "additional_data_definition_id" : "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+        "read_only" : false,
+        "name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "note"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "note"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "note"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+        ],
+        "type" : "text",
+        "default" : "",
+        "choices" : [
+        ],
+        "metadata" : {
+          
+        }
+      },
+      {
+        "additional_data_definition_id" : "e771ac4b-97d1-4af3-ba4b-f0e5b22e8648",
+        "read_only" : false,
+        "name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "truncated"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "truncated"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "truncated"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+        ],
+        "type" : "flag",
+        "default" : false,
+        "choices" : [
+        ],
+        "metadata" : {
+          
+        }
+      }
+    ],
+    "restrictions" : [
+      {
+        "additional_data_definition_id" : "15ba8b9d-4882-40c2-bb31-ed3f68197c2e",
+        "condition" : {
+          "labels" : [
+            "9d6cca8d-3f5a-4808-a6c9-0ae18a478176"
+          ],
+          "_type" : "HasLabel"
+        }
+      },
+      {
+        "additional_data_definition_id" : "d349e76d-b59a-44cd-94b4-713a00b2e84d",
+        "condition" : {
+          "value" : "",
+          "_type" : "NotEquals"
+        }
+      }
+    ],
+    "inspection_phrases" : [
+    ],
+    "comment" : null,
+    "auto_marking" : false,
+    "annotation_type_version" : null,
+    "format_version" : "3.0.0",
+    "last_updated_datetime" : "2025-03-20T14:45:23.641+09:00",
+    "option" : {
+      "can_overwrap" : true
+    },
+    "metadata" : {
+      
+    }
+  }
