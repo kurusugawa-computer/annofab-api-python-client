@@ -119,6 +119,12 @@ def get_label(labels: list[dict[str, Any]], *, label_id: Optional[str] = None, l
 
 
 class AnnotationSpecsAccessor:
+    """
+    アノテーション仕様の情報にアクセスするためのクラス。
+    
+    Args:
+        annotation_specs: アノテーション仕様(v3)の情報
+    """
     def __init__(self, annotation_specs: dict[str, Any]) -> None:
         self.labels = annotation_specs["labels"]
         self.additionals = annotation_specs["additionals"]
