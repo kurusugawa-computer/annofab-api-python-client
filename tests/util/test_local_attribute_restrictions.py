@@ -63,7 +63,7 @@ class Test__IntegerTextBox:
         actual = IntegerTextBox(accessor, attribute_name="traffic_lane").equals(10).to_dict()
         assert actual == {"additional_data_definition_id": "ec27de5d-122c-40e7-89bc-5500e37bae6a", "condition": {"_type": "Equals", "value": "10"}}
 
-    def test__not_matches(self):
+    def test__not_equals(self):
         actual = IntegerTextBox(accessor, attribute_name="traffic_lane").not_equals(10).to_dict()
         assert actual == {"additional_data_definition_id": "ec27de5d-122c-40e7-89bc-5500e37bae6a", "condition": {"_type": "NotEquals", "value": "10"}}
 
