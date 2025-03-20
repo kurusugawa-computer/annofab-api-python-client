@@ -111,7 +111,7 @@ class Attribute(ABC):
         self.accessor = accessor
         self.attribute = self.accessor.get_attribute(attribute_id=attribute_id, attribute_name=attribute_name)
         self.attribute_id = self.attribute["additional_data_definition_id"]
-        if self.is_valid_attribute_type() is False:
+        if self._is_valid_attribute_type() is False:
             raise ValueError(f"属性の種類が'{self.attribute['type']}'である属性は、クラス'{self.__class__.__name__}'では扱えません。")
 
     def disabled(self) -> Condition:
@@ -119,7 +119,7 @@ class Attribute(ABC):
         return CanInput(self.attribute_id, enable=False)
 
     @abstractmethod
-    def is_valid_attribute_type(self) -> bool:
+    def _is_valid_attribute_type(self) -> bool:
         pass
 
 
@@ -134,14 +134,14 @@ class Checkbox(Attribute):
         """チェックされていないという条件"""
         return NotEquals(self.attribute_id, "true")
 
-    def is_valid_attribute_type(self) -> bool:
+    def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] == "flag"
 
 
 class StringTextBox(Attribute, EmptyCheckMixin):
     """文字列用のテキストボックス（自由記述）の属性"""
 
-    def is_valid_attribute_type(self) -> bool:
+    def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] in {"text", "comment"}
 
     def equals(self, value: str) -> Condition:
@@ -158,15 +158,11 @@ class StringTextBox(Attribute, EmptyCheckMixin):
         """引数`value`に渡された正規表現に一致しないという条件"""
         return NotMatches(self.attribute_id, value)
 
-    def required(self) -> Condition:
-        """必須入力という条件"""
-        return NotEquals(self.attribute_id, "")
-
 
 class IntegerTextBox(Attribute, EmptyCheckMixin):
     """整数用のテキストボックスの属性"""
 
-    def is_valid_attribute_type(self) -> bool:
+    def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] == "integer"
 
     def equals(self, value: int) -> Condition:
@@ -177,16 +173,11 @@ class IntegerTextBox(Attribute, EmptyCheckMixin):
         """引数`value`に渡された整数に一致しないという条件"""
         return NotEquals(self.attribute_id, str(value))
 
-    def required(self) -> Condition:
-        """必須入力という条件"""
-        # TODO
-        return NotEquals(self.attribute_id, "")
-
 
 class AnnotationLink(Attribute, EmptyCheckMixin):
     """アノテーションリンク属性"""
 
-    def is_valid_attribute_type(self) -> bool:
+    def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] == "link"
 
     def has_label(self, label_ids: Optional[Collection[str]] = None, label_names: Optional[Collection[str]] = None) -> Condition:
@@ -203,7 +194,7 @@ class AnnotationLink(Attribute, EmptyCheckMixin):
 class TrackingId(Attribute, EmptyCheckMixin):
     """トラッキングID属性"""
 
-    def is_valid_attribute_type(self) -> bool:
+    def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] == "tracking"
 
     def equals(self, value: str) -> Condition:
@@ -216,7 +207,7 @@ class TrackingId(Attribute, EmptyCheckMixin):
 class Selection(Attribute, EmptyCheckMixin):
     """排他選択の属性（ドロップダウンまたラジオボタン）"""
 
-    def is_valid_attribute_type(self) -> bool:
+    def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] in {"choice", "select"}
 
     def is_selected(self, choice_id: str, choice_name: str) -> Condition:

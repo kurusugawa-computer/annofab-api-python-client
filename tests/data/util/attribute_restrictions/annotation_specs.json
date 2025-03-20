@@ -48,7 +48,8 @@
           "d349e76d-b59a-44cd-94b4-713a00b2e84d",
           "ec27de5d-122c-40e7-89bc-5500e37bae6a",
           "69a20a12-ef5f-446f-a03e-0c4ab487ff90",
-          "2517f635-2269-4142-8ef4-16312b4cc9f7"
+          "2517f635-2269-4142-8ef4-16312b4cc9f7",
+          "9b05648d-1e16-4ea2-ab79-48907f5eed00"
         ],
         "color" : {
           "red" : 251,
@@ -804,6 +805,36 @@
         "metadata" : {
           
         }
+      },
+      {
+        "additional_data_definition_id" : "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+        "read_only" : false,
+        "name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "note"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "note"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "note"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+        ],
+        "type" : "text",
+        "default" : "",
+        "choices" : [
+        ],
+        "metadata" : {
+          
+        }
       }
     ],
     "restrictions" : [
@@ -830,7 +861,7 @@
     "auto_marking" : false,
     "annotation_type_version" : null,
     "format_version" : "3.0.0",
-    "last_updated_datetime" : "2025-03-20T13:47:34.17+09:00",
+    "last_updated_datetime" : "2025-03-20T13:53:31.006+09:00",
     "option" : {
       "can_overwrap" : true
     },

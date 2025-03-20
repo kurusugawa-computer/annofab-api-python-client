@@ -28,19 +28,41 @@ class Test__Checkbox:
 
 class Test__StringTextBox:
     def test__matches(self):
-        actual = StringTextBox(accessor, attribute_id="id1").matches("\\w").generate()
-        assert actual == {"additional_data_definition_id": "id1", "condition": {"_type": "Matches", "value": "\\w"}}
+        actual = StringTextBox(accessor, attribute_name="note").matches("\\w").generate()
+        assert actual == {"additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00", "condition": {"_type": "Matches", "value": "\\w"}}
 
     def test__not_matches(self):
-        actual = StringTextBox(accessor, attribute_id="id1").not_matches("\\w").generate()
-        assert actual == {"additional_data_definition_id": "id1", "condition": {"_type": "NotMatches", "value": "\\w"}}
+        actual = StringTextBox(accessor, attribute_name="note").not_matches("\\w").generate()
+        assert actual == {
+            "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+            "condition": {"_type": "NotMatches", "value": "\\w"},
+        }
+
+    def test__equals(self):
+        actual = StringTextBox(accessor, attribute_name="note").equals("foo").generate()
+        assert actual == {"additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00", "condition": {"_type": "Equals", "value": "foo"}}
+
+    def test__not_equals(self):
+        actual = StringTextBox(accessor, attribute_name="note").not_equals("foo").generate()
+        assert actual == {
+            "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+            "condition": {"_type": "NotEquals", "value": "foo"},
+        }
+
+    def test__is_empty(self):
+        actual = StringTextBox(accessor, attribute_name="note").is_empty().generate()
+        assert actual == {"additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00", "condition": {"_type": "Equals", "value": ""}}
+
+    def test__is_not_empty(self):
+        actual = StringTextBox(accessor, attribute_name="note").is_not_empty().generate()
+        assert actual == {"additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00", "condition": {"_type": "NotEquals", "value": ""}}
 
 
 class Test__IntegerTextBox:
     def test__equals(self):
-        actual = IntegerTextBox(accessor, attribute_id="id1").equals(10).generate()
-        assert actual == {"additional_data_definition_id": "id1", "condition": {"_type": "Equals", "value": "10"}}
+        actual = IntegerTextBox(accessor, attribute_name="traffic_lane").equals(10).generate()
+        assert actual == {"additional_data_definition_id": "ec27de5d-122c-40e7-89bc-5500e37bae6a", "condition": {"_type": "Equals", "value": "10"}}
 
     def test__not_matches(self):
-        actual = IntegerTextBox(accessor, attribute_id="id1").not_equals(10).generate()
-        assert actual == {"additional_data_definition_id": "id1", "condition": {"_type": "NotEquals", "value": "10"}}
+        actual = IntegerTextBox(accessor, attribute_name="traffic_lane").not_equals(10).generate()
+        assert actual == {"additional_data_definition_id": "ec27de5d-122c-40e7-89bc-5500e37bae6a", "condition": {"_type": "NotEquals", "value": "10"}}
