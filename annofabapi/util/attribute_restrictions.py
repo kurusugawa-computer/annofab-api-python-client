@@ -1,6 +1,7 @@
 """属性の制約を定義するモジュール。"""
 
-from abc import ABC, Collection, abstractmethod
+from abc import ABC, abstractmethod
+from collections.abc import Collection
 from typing import Any, Optional
 
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, get_choice
@@ -111,7 +112,7 @@ class Attribute(ABC):
         self.attribute = self.accessor.get_attribute(attribute_id=attribute_id, attribute_name=attribute_name)
         self.attribute_id = self.attribute["additional_data_definition_id"]
         if self.is_valid_attribute_type() is False:
-            raise ValueError(f"属性の種類'{self.attribute['type']}'である属性は、クラス'{self.__class__.__name__}'では扱えません。")
+            raise ValueError(f"属性の種類が'{self.attribute['type']}'である属性は、クラス'{self.__class__.__name__}'では扱えません。")
 
     def disabled(self) -> Condition:
         """属性値を入力できないようにします。"""
