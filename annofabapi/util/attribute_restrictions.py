@@ -1,19 +1,21 @@
 """属性の制約を定義するモジュール。"""
 
-from typing import Any
-from abc import ABC, abstractmethod
+from abc import ABC, Collection, abstractmethod
+from typing import Any, Optional
+
+from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, get_choice
 
 
 class Condition(ABC):
-    def __init__(self, attribute_id):
-        self._attr_id = attribute_id
+    def __init__(self, attribute_id: str) -> None:
+        self.attribute_id = attribute_id
 
-    @property
-    def attr_id(self) -> str:
-        return self._attr_id
+    # @property
+    # def attribute_id(self) -> str:
+    #     return self._attr_id
 
     def generate(self) -> dict[str, Any]:
-        return {"additional_data_definition_id": self.attr_id, "condition": self.generate_condition()}
+        return {"additional_data_definition_id": self.attribute_id, "condition": self.generate_condition()}
 
     @abstractmethod
     def generate_condition(self) -> dict[str, Any]:
@@ -25,7 +27,7 @@ class Condition(ABC):
 
 
 class CanInput(Condition):
-    def __init__(self, attribute_id: str, enable: bool):
+    def __init__(self, attribute_id: str, enable: bool) -> None:
         super().__init__(attribute_id)
         self.enable = enable
 
@@ -34,7 +36,7 @@ class CanInput(Condition):
 
 
 class Equals(Condition):
-    def __init__(self, attribute_id: str, value: str):
+    def __init__(self, attribute_id: str, value: str) -> None:
         super().__init__(attribute_id)
         self.value = value
 
@@ -43,7 +45,7 @@ class Equals(Condition):
 
 
 class NotEquals(Condition):
-    def __init__(self, attribute_id: str, value: str):
+    def __init__(self, attribute_id: str, value: str) -> None:
         super().__init__(attribute_id)
         self.value = value
 
@@ -52,7 +54,7 @@ class NotEquals(Condition):
 
 
 class Matches(Condition):
-    def __init__(self, attribute_id: str, value: str):
+    def __init__(self, attribute_id: str, value: str) -> None:
         super().__init__(attribute_id)
         self.value = value
 
@@ -61,7 +63,7 @@ class Matches(Condition):
 
 
 class NotMatches(Condition):
-    def __init__(self, attribute_id: str, value: str):
+    def __init__(self, attribute_id: str, value: str) -> None:
         super().__init__(attribute_id)
         self.value = value
 
@@ -70,34 +72,54 @@ class NotMatches(Condition):
 
 
 class HasLabel(Condition):
-    def __init__(self, attr_id: str, label_ids: list[str]):
-        super().__init__(attr_id)
+    def __init__(self, attribute_id: str, label_ids: Collection[str]) -> None:
+        super().__init__(attribute_id)
         self.label_ids = label_ids
 
     def generate_condition(self) -> dict[str, Any]:
-        return {"_type": "HasLabel", "value": self.label_ids}
+        return {"_type": "HasLabel", "labels": list(self.label_ids)}
 
 
-class Imply(Condition):
-    def __init__(self, pre_condition: Condition, post_condition: Condition):
-        super().__init__(post_condition.attr_id)
-        self.pre_condition = pre_condition
-        self.post_condition = post_condition
+# class Imply(Condition):
+#     def __init__(self, pre_condition: Condition, post_condition: Condition):
+#         super().__init__(post_condition.attribute_id)
+#         self.pre_condition = pre_condition
+#         self.post_condition = post_condition
 
-    def generate(self) -> dict[str, Any]:
-        return {"additional_data_definition_id": self.attr_id, "condition": self.generate_condition()}
+#     def generate(self) -> dict[str, Any]:
+#         return {"additional_data_definition_id": self.attribute_id, "condition": self.generate_condition()}
 
-    def generate_condition(self) -> dict[str, Any]:
-        return {"_type": "Imply", "premise": self.pre_condition.generate(), "condition": self.post_condition.generate_condition()}
+#     def generate_condition(self) -> dict[str, Any]:
+#         return {"_type": "Imply", "premise": self.pre_condition.generate(), "condition": self.post_condition.generate_condition()}
+
+
+class EmptyCheckMixin:
+    """属性が空かどうかを判定するメソッドを提供するMix-inクラス"""
+
+    def is_empty(self) -> Condition:
+        """属性が空であるという条件"""
+        return Equals(self.attribute_id, "")
+
+    def is_not_empty(self) -> Condition:
+        """属性が空でないという条件"""
+        return NotEquals(self.attribute_id, "")
 
 
 class Attribute(ABC):
-    def __init__(self, attribute_id: str) -> None:
-        self.attribute_id = attribute_id
+    def __init__(self, accessor: AnnotationSpecsAccessor, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> None:
+        self.accessor = accessor
+        self.attribute = self.accessor.get_attribute(attribute_id=attribute_id, attribute_name=attribute_name)
+        self.attribute_id = self.attribute["additional_data_definition_id"]
+        if self.is_valid_attribute_type() is False:
+            raise ValueError(f"属性の種類'{self.attribute['type']}'である属性は、クラス'{self.__class__.__name__}'では扱えません。")
 
     def disabled(self) -> Condition:
         """属性値を入力できないようにします。"""
         return CanInput(self.attribute_id, enable=False)
+
+    @abstractmethod
+    def is_valid_attribute_type(self) -> bool:
+        pass
 
 
 class Checkbox(Attribute):
@@ -111,9 +133,15 @@ class Checkbox(Attribute):
         """チェックされていないという条件"""
         return NotEquals(self.attribute_id, "true")
 
+    def is_valid_attribute_type(self) -> bool:
+        return self.attribute["type"] == "flag"
 
-class StringTextBox(Attribute):
+
+class StringTextBox(Attribute, EmptyCheckMixin):
     """文字列用のテキストボックス（自由記述）の属性"""
+
+    def is_valid_attribute_type(self) -> bool:
+        return self.attribute["type"] in {"text", "comment"}
 
     def equals(self, value: str) -> Condition:
         return Equals(self.attribute_id, value)
@@ -133,8 +161,12 @@ class StringTextBox(Attribute):
         """必須入力という条件"""
         return NotEquals(self.attribute_id, "")
 
-class IntegerTextBox(Attribute):
+
+class IntegerTextBox(Attribute, EmptyCheckMixin):
     """整数用のテキストボックスの属性"""
+
+    def is_valid_attribute_type(self) -> bool:
+        return self.attribute["type"] == "integer"
 
     def equals(self, value: int) -> Condition:
         """引数`value`に渡された整数に一致するという条件"""
@@ -146,23 +178,64 @@ class IntegerTextBox(Attribute):
 
     def required(self) -> Condition:
         """必須入力という条件"""
+        # TODO
         return NotEquals(self.attribute_id, "")
 
 
-class LinkAttribute:
+class AnnotationLink(Attribute, EmptyCheckMixin):
     """アノテーションリンク属性"""
 
-    pass
+    def is_valid_attribute_type(self) -> bool:
+        return self.attribute["type"] == "link"
+
+    def has_label(self, label_ids: Optional[Collection[str]] = None, label_names: Optional[Collection[str]] = None) -> Condition:
+        if label_ids is not None:
+            labels = [self.accessor.get_label(label_id=label_id) for label_id in label_ids]
+        elif label_names is not None:
+            labels = [self.accessor.get_label(label_name=label_name) for label_name in label_names]
+        else:
+            raise ValueError("label_idsまたはlabel_namesのいずれかを指定してください。")
+
+        return HasLabel(self.attribute_id, label_ids=[label["label_id"] for label in labels])
 
 
-
-class SelectionAttribute:
-    """排他選択の属性（ドロップダウンまたラジオボタン）"""
-
-    pass
-
-
-class TrackingIdAttribute:
+class TrackingId(Attribute, EmptyCheckMixin):
     """トラッキングID属性"""
 
-    pass
+    def is_valid_attribute_type(self) -> bool:
+        return self.attribute["type"] == "tracking"
+
+    def equals(self, value: str) -> Condition:
+        return Equals(self.attribute_id, value)
+
+    def not_equals(self, value: str) -> Condition:
+        return NotEquals(self.attribute_id, value)
+
+
+class Selection(Attribute, EmptyCheckMixin):
+    """排他選択の属性（ドロップダウンまたラジオボタン）"""
+
+    def is_valid_attribute_type(self) -> bool:
+        return self.attribute["type"] in {"choice", "select"}
+
+    def is_selected(self, choice_id: str, choice_name: str) -> Condition:
+        choices = self.attribute["choices"]
+        choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
+        return Equals(self.attribute_id, choice["choice_id"])
+
+    def is_not_selected(self, choice_id: str, choice_name: str) -> Condition:
+        choices = self.attribute["choices"]
+        choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
+        return NotEquals(self.attribute_id, choice["choice_id"])
+
+
+######
+
+# accessor = AnnotationSpecsAccessor()
+# s.get_attribute(name=)
+# Selection("id1", choices=[]).is_selected("choice1").imply()
+
+# Selection(accessor, attribute_name="id1").is_selected("choice1").imply()
+
+
+# TrackingId(s.get_attribute_id(name="foo"))
