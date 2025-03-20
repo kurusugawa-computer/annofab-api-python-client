@@ -141,4 +141,4 @@ class AnnotationSpecsAccessor:
             label_id: ラベルID
             label_name: ラベル名(英語)
         """
-        self.get_label(self.labels, label_id=label_id, label_name=label_name)
+        return get_label(self.labels, label_id=label_id, label_name=label_name)

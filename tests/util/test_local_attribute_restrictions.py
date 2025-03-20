@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
-from annofabapi.util.attribute_restrictions import Checkbox, IntegerTextBox, StringTextBox
+from annofabapi.util.attribute_restrictions import AnnotationLink, Checkbox, IntegerTextBox, Selection, StringTextBox, TrackingId
 
 accessor = AnnotationSpecsAccessor(annotation_specs=json.loads(Path("tests/data/util/attribute_restrictions/annotation_specs.json").read_text()))
 
@@ -66,3 +66,47 @@ class Test__IntegerTextBox:
     def test__not_matches(self):
         actual = IntegerTextBox(accessor, attribute_name="traffic_lane").not_equals(10).generate()
         assert actual == {"additional_data_definition_id": "ec27de5d-122c-40e7-89bc-5500e37bae6a", "condition": {"_type": "NotEquals", "value": "10"}}
+
+
+class Test__AnnotationLink:
+    def test__has_label(self):
+        actual = AnnotationLink(accessor, attribute_name="link_car").has_label(label_names=["car"]).generate()
+        assert actual == {
+            "additional_data_definition_id": "15ba8b9d-4882-40c2-bb31-ed3f68197c2e",
+            "condition": {"_type": "HasLabel", "labels": ["9d6cca8d-3f5a-4808-a6c9-0ae18a478176"]},
+        }
+
+        actual = AnnotationLink(accessor, attribute_name="link_car").has_label(label_ids=["9d6cca8d-3f5a-4808-a6c9-0ae18a478176"]).generate()
+        assert actual == {
+            "additional_data_definition_id": "15ba8b9d-4882-40c2-bb31-ed3f68197c2e",
+            "condition": {"_type": "HasLabel", "labels": ["9d6cca8d-3f5a-4808-a6c9-0ae18a478176"]},
+        }
+
+
+class Test__TrackingId:
+    def test__equals(self):
+        actual = TrackingId(accessor, attribute_name="tracking").equals("foo").generate()
+        assert actual == {"additional_data_definition_id": "d349e76d-b59a-44cd-94b4-713a00b2e84d", "condition": {"_type": "Equals", "value": "foo"}}
+
+    def test__not_equals(self):
+        actual = TrackingId(accessor, attribute_name="tracking").not_equals("foo").generate()
+        assert actual == {
+            "additional_data_definition_id": "d349e76d-b59a-44cd-94b4-713a00b2e84d",
+            "condition": {"_type": "NotEquals", "value": "foo"},
+        }
+
+
+class Test__Selection:
+    def test__has_choice(self):
+        actual = Selection(accessor, attribute_name="car_kind").has_choice(choice_name="general_car").generate()
+        assert actual == {
+            "additional_data_definition_id": "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
+            "condition": {"_type": "Equals", "value": "7512ee39-8073-4e24-9b8c-93d99b76b7d2"},
+        }
+
+    def test__not_has_choice(self):
+        actual = Selection(accessor, attribute_name="car_kind").not_has_choice(choice_id="7512ee39-8073-4e24-9b8c-93d99b76b7d2").generate()
+        assert actual == {
+            "additional_data_definition_id": "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
+            "condition": {"_type": "NotEquals", "value": "7512ee39-8073-4e24-9b8c-93d99b76b7d2"},
+        }

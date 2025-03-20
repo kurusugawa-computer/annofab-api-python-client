@@ -97,13 +97,15 @@ class HasLabel(Condition):
 class EmptyCheckMixin:
     """属性が空かどうかを判定するメソッドを提供するMix-inクラス"""
 
+    attribute_id: str
+
     def is_empty(self) -> Condition:
-        """属性が空であるという条件"""
-        return Equals(self.attribute_id, "")
+        """属性値が空であるという条件"""
+        return Equals(self.attribute_id, value="")
 
     def is_not_empty(self) -> Condition:
-        """属性が空でないという条件"""
-        return NotEquals(self.attribute_id, "")
+        """属性値が空でないという条件"""
+        return NotEquals(self.attribute_id, value="")
 
 
 class Attribute(ABC):
@@ -115,7 +117,7 @@ class Attribute(ABC):
             raise ValueError(f"属性の種類が'{self.attribute['type']}'である属性は、クラス'{self.__class__.__name__}'では扱えません。")
 
     def disabled(self) -> Condition:
-        """属性値を入力できないようにします。"""
+        """属性値を入力できないという条件"""
         return CanInput(self.attribute_id, enable=False)
 
     @abstractmethod
@@ -145,9 +147,11 @@ class StringTextBox(Attribute, EmptyCheckMixin):
         return self.attribute["type"] in {"text", "comment"}
 
     def equals(self, value: str) -> Condition:
+        """引数`value`に渡された文字列に一致するという条件"""
         return Equals(self.attribute_id, value)
 
     def not_equals(self, value: str) -> Condition:
+        """引数`value`に渡された文字列に一致しないという条件"""
         return NotEquals(self.attribute_id, value)
 
     def matches(self, value: str) -> Condition:
@@ -181,6 +185,7 @@ class AnnotationLink(Attribute, EmptyCheckMixin):
         return self.attribute["type"] == "link"
 
     def has_label(self, label_ids: Optional[Collection[str]] = None, label_names: Optional[Collection[str]] = None) -> Condition:
+        """リンク先のアノテーションが、引数`label_ids`または`label_names`に一致するラベルであるという条件"""
         if label_ids is not None:
             labels = [self.accessor.get_label(label_id=label_id) for label_id in label_ids]
         elif label_names is not None:
@@ -198,9 +203,11 @@ class TrackingId(Attribute, EmptyCheckMixin):
         return self.attribute["type"] == "tracking"
 
     def equals(self, value: str) -> Condition:
+        """引数`value`に渡された文字列に一致するという条件"""
         return Equals(self.attribute_id, value)
 
     def not_equals(self, value: str) -> Condition:
+        """引数`value`に渡された文字列に一致しないという条件"""
         return NotEquals(self.attribute_id, value)
 
 
@@ -210,12 +217,14 @@ class Selection(Attribute, EmptyCheckMixin):
     def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] in {"choice", "select"}
 
-    def is_selected(self, choice_id: str, choice_name: str) -> Condition:
+    def has_choice(self, *, choice_id: Optional[str] = None, choice_name: Optional[str] = None) -> Condition:
+        """引数`choice_id`または`choice_name`に一致する選択肢が選択されているという条件"""
         choices = self.attribute["choices"]
         choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
         return Equals(self.attribute_id, choice["choice_id"])
 
-    def is_not_selected(self, choice_id: str, choice_name: str) -> Condition:
+    def not_has_choice(self, *, choice_id: Optional[str] = None, choice_name: Optional[str] = None) -> Condition:
+        """引数`choice_id`または`choice_name`に一致する選択肢が選択されていないという条件"""
         choices = self.attribute["choices"]
         choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
         return NotEquals(self.attribute_id, choice["choice_id"])

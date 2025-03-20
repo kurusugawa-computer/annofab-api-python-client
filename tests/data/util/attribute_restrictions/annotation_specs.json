@@ -853,6 +853,14 @@
           "value" : "",
           "_type" : "NotEquals"
         }
+      },
+      {
+        "additional_data_definition_id" : "ec27de5d-122c-40e7-89bc-5500e37bae6a",
+        "condition" : {
+          "labels" : [
+          ],
+          "_type" : "HasLabel"
+        }
       }
     ],
     "inspection_phrases" : [
