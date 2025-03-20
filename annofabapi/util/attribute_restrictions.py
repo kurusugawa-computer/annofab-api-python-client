@@ -7,85 +7,102 @@ from typing import Any, Optional
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, get_choice
 
 
-class Condition(ABC):
+class Restriction(ABC):
+    """
+    属性の制約を表すクラス。
+    """
+
     def __init__(self, attribute_id: str) -> None:
         self.attribute_id = attribute_id
 
-    def generate(self) -> dict[str, Any]:
-        return {"additional_data_definition_id": self.attribute_id, "condition": self._generate_condition()}
+    def to_dict(self) -> dict[str, Any]:
+        """
+        アノテーション仕様の`restrictions`に格納できるdictを出力します。
+        """
+        return {"additional_data_definition_id": self.attribute_id, "condition": self._to_dict_only_condition()}
 
     @abstractmethod
-    def _generate_condition(self) -> dict[str, Any]:
-        pass
+    def _to_dict_only_condition(self) -> dict[str, Any]:
+        """
+        制約の条件部分のみdictで出力します。
+        """
 
-    def imply(self, condition: "Condition") -> "Condition":
-        return Imply(self, condition)
+    def imply(self, conclusion_restriction: "Restriction") -> "Restriction":
+        return Imply(premise_restriction=self, conclusion_restriction=conclusion_restriction)
 
 
-class Imply(Condition):
-    def __init__(self, pre_condition: Condition, post_condition: Condition) -> None:
-        super().__init__(post_condition.attribute_id)
-        self.pre_condition = pre_condition
-        self.post_condition = post_condition
+class Imply(Restriction):
+    """
+    「AならB」という制約を表すクラス
 
-    def imply(self, condition: "Condition") -> "Condition":
+    Args:
+        premise_restriction: 前提となる制約
+        conclusion_restriction: 最終的に満たしたい制約
+    """
+
+    def __init__(self, premise_restriction: Restriction, conclusion_restriction: Restriction) -> None:
+        super().__init__(conclusion_restriction.attribute_id)
+        self.premise_restriction = premise_restriction
+        self.conclusion_restriction = conclusion_restriction
+
+    def imply(self, conclusion_restriction: "Restriction") -> "Restriction":
         raise NotImplementedError("`imply`メソッドの戻り値に対して`imply`メソッドを実行できません。")
 
-    def _generate_condition(self) -> dict[str, Any]:
-        return {"_type": "Imply", "premise": self.pre_condition.generate(), "condition": self.post_condition._generate_condition()}
+    def _to_dict_only_condition(self) -> dict[str, Any]:
+        return {"_type": "Imply", "premise": self.premise_restriction.to_dict(), "condition": self.conclusion_restriction._to_dict_only_condition()}
 
 
-class CanInput(Condition):
+class CanInput(Restriction):
     def __init__(self, attribute_id: str, enable: bool) -> None:
         super().__init__(attribute_id)
         self.enable = enable
 
-    def _generate_condition(self) -> dict[str, Any]:
+    def _to_dict_only_condition(self) -> dict[str, Any]:
         return {"_type": "CanInput", "enable": self.enable}
 
 
-class Equals(Condition):
+class Equals(Restriction):
     def __init__(self, attribute_id: str, value: str) -> None:
         super().__init__(attribute_id)
         self.value = value
 
-    def _generate_condition(self) -> dict[str, Any]:
+    def _to_dict_only_condition(self) -> dict[str, Any]:
         return {"_type": "Equals", "value": self.value}
 
 
-class NotEquals(Condition):
+class NotEquals(Restriction):
     def __init__(self, attribute_id: str, value: str) -> None:
         super().__init__(attribute_id)
         self.value = value
 
-    def _generate_condition(self) -> dict[str, Any]:
+    def _to_dict_only_condition(self) -> dict[str, Any]:
         return {"_type": "NotEquals", "value": self.value}
 
 
-class Matches(Condition):
+class Matches(Restriction):
     def __init__(self, attribute_id: str, value: str) -> None:
         super().__init__(attribute_id)
         self.value = value
 
-    def _generate_condition(self) -> dict[str, Any]:
+    def _to_dict_only_condition(self) -> dict[str, Any]:
         return {"_type": "Matches", "value": self.value}
 
 
-class NotMatches(Condition):
+class NotMatches(Restriction):
     def __init__(self, attribute_id: str, value: str) -> None:
         super().__init__(attribute_id)
         self.value = value
 
-    def _generate_condition(self) -> dict[str, Any]:
+    def _to_dict_only_condition(self) -> dict[str, Any]:
         return {"_type": "NotMatches", "value": self.value}
 
 
-class HasLabel(Condition):
+class HasLabel(Restriction):
     def __init__(self, attribute_id: str, label_ids: Collection[str]) -> None:
         super().__init__(attribute_id)
         self.label_ids = label_ids
 
-    def _generate_condition(self) -> dict[str, Any]:
+    def _to_dict_only_condition(self) -> dict[str, Any]:
         return {"_type": "HasLabel", "labels": list(self.label_ids)}
 
 
@@ -94,12 +111,12 @@ class EmptyCheckMixin:
 
     attribute_id: str
 
-    def is_empty(self) -> Condition:
-        """属性値が空であるという条件"""
+    def is_empty(self) -> Restriction:
+        """属性値が空であるという制約"""
         return Equals(self.attribute_id, value="")
 
-    def is_not_empty(self) -> Condition:
-        """属性値が空でないという条件"""
+    def is_not_empty(self) -> Restriction:
+        """属性値が空でないという制約"""
         return NotEquals(self.attribute_id, value="")
 
 
@@ -111,8 +128,8 @@ class Attribute(ABC):
         if self._is_valid_attribute_type() is False:
             raise ValueError(f"属性の種類が'{self.attribute['type']}'である属性は、クラス'{self.__class__.__name__}'では扱えません。")
 
-    def disabled(self) -> Condition:
-        """属性値を入力できないという条件"""
+    def disabled(self) -> Restriction:
+        """属性値を入力できないという制約"""
         return CanInput(self.attribute_id, enable=False)
 
     @abstractmethod
@@ -123,12 +140,12 @@ class Attribute(ABC):
 class Checkbox(Attribute):
     """チェックボックスの属性"""
 
-    def checked(self) -> Condition:
-        """チェックされているという条件"""
+    def checked(self) -> Restriction:
+        """チェックされているという制約"""
         return Equals(self.attribute_id, "true")
 
-    def unchecked(self) -> Condition:
-        """チェックされていないという条件"""
+    def unchecked(self) -> Restriction:
+        """チェックされていないという制約"""
         return NotEquals(self.attribute_id, "true")
 
     def _is_valid_attribute_type(self) -> bool:
@@ -141,20 +158,20 @@ class StringTextBox(Attribute, EmptyCheckMixin):
     def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] in {"text", "comment"}
 
-    def equals(self, value: str) -> Condition:
-        """引数`value`に渡された文字列に一致するという条件"""
+    def equals(self, value: str) -> Restriction:
+        """引数`value`に渡された文字列に一致するという制約"""
         return Equals(self.attribute_id, value)
 
-    def not_equals(self, value: str) -> Condition:
-        """引数`value`に渡された文字列に一致しないという条件"""
+    def not_equals(self, value: str) -> Restriction:
+        """引数`value`に渡された文字列に一致しないという制約"""
         return NotEquals(self.attribute_id, value)
 
-    def matches(self, value: str) -> Condition:
-        """引数`value`に渡された正規表現に一致するという条件"""
+    def matches(self, value: str) -> Restriction:
+        """引数`value`に渡された正規表現に一致するという制約"""
         return Matches(self.attribute_id, value)
 
-    def not_matches(self, value: str) -> Condition:
-        """引数`value`に渡された正規表現に一致しないという条件"""
+    def not_matches(self, value: str) -> Restriction:
+        """引数`value`に渡された正規表現に一致しないという制約"""
         return NotMatches(self.attribute_id, value)
 
 
@@ -164,12 +181,12 @@ class IntegerTextBox(Attribute, EmptyCheckMixin):
     def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] == "integer"
 
-    def equals(self, value: int) -> Condition:
-        """引数`value`に渡された整数に一致するという条件"""
+    def equals(self, value: int) -> Restriction:
+        """引数`value`に渡された整数に一致するという制約"""
         return Equals(self.attribute_id, str(value))
 
-    def not_equals(self, value: int) -> Condition:
-        """引数`value`に渡された整数に一致しないという条件"""
+    def not_equals(self, value: int) -> Restriction:
+        """引数`value`に渡された整数に一致しないという制約"""
         return NotEquals(self.attribute_id, str(value))
 
 
@@ -179,8 +196,8 @@ class AnnotationLink(Attribute, EmptyCheckMixin):
     def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] == "link"
 
-    def has_label(self, label_ids: Optional[Collection[str]] = None, label_names: Optional[Collection[str]] = None) -> Condition:
-        """リンク先のアノテーションが、引数`label_ids`または`label_names`に一致するラベルであるという条件"""
+    def has_label(self, label_ids: Optional[Collection[str]] = None, label_names: Optional[Collection[str]] = None) -> Restriction:
+        """リンク先のアノテーションが、引数`label_ids`または`label_names`に一致するラベルであるという制約"""
         if label_ids is not None:
             labels = [self.accessor.get_label(label_id=label_id) for label_id in label_ids]
         elif label_names is not None:
@@ -197,12 +214,12 @@ class TrackingId(Attribute, EmptyCheckMixin):
     def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] == "tracking"
 
-    def equals(self, value: str) -> Condition:
-        """引数`value`に渡された文字列に一致するという条件"""
+    def equals(self, value: str) -> Restriction:
+        """引数`value`に渡された文字列に一致するという制約"""
         return Equals(self.attribute_id, value)
 
-    def not_equals(self, value: str) -> Condition:
-        """引数`value`に渡された文字列に一致しないという条件"""
+    def not_equals(self, value: str) -> Restriction:
+        """引数`value`に渡された文字列に一致しないという制約"""
         return NotEquals(self.attribute_id, value)
 
 
@@ -212,14 +229,14 @@ class Selection(Attribute, EmptyCheckMixin):
     def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] in {"choice", "select"}
 
-    def has_choice(self, *, choice_id: Optional[str] = None, choice_name: Optional[str] = None) -> Condition:
-        """引数`choice_id`または`choice_name`に一致する選択肢が選択されているという条件"""
+    def has_choice(self, *, choice_id: Optional[str] = None, choice_name: Optional[str] = None) -> Restriction:
+        """引数`choice_id`または`choice_name`に一致する選択肢が選択されているという制約"""
         choices = self.attribute["choices"]
         choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
         return Equals(self.attribute_id, choice["choice_id"])
 
-    def not_has_choice(self, *, choice_id: Optional[str] = None, choice_name: Optional[str] = None) -> Condition:
-        """引数`choice_id`または`choice_name`に一致する選択肢が選択されていないという条件"""
+    def not_has_choice(self, *, choice_id: Optional[str] = None, choice_name: Optional[str] = None) -> Restriction:
+        """引数`choice_id`または`choice_name`に一致する選択肢が選択されていないという制約"""
         choices = self.attribute["choices"]
         choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
         return NotEquals(self.attribute_id, choice["choice_id"])
