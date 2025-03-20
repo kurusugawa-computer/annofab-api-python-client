@@ -8,7 +8,7 @@ from annofabapi.models import Lang
 
 def get_english_message(internationalization_message: dict[str, Any]) -> str:
     """
-    `InternalizationMessage`クラスの値から、英語メッセージを取得します。
+    `InternationalizationMessage`クラスの値から、英語メッセージを取得します。
     英語メッセージが見つからない場合は ``ValueError`` をスローします。
 
     Notes:
@@ -39,7 +39,7 @@ STR_LANG = Literal["en-US", "ja-JP", "vi-VN"]
 
 def get_message_with_lang(internationalization_message: dict[str, Any], lang: Union[Lang, STR_LANG]) -> Optional[str]:
     """
-    `InternalizationMessage`クラスの値から、指定した ``lang`` に対応するメッセージを取得します。
+    `InternationalizationMessage`クラスの値から、指定した ``lang`` に対応するメッセージを取得します。
 
     Args:
         internationalization_message: 多言語化されたメッセージ。キー ``messages`` が存在している必要があります。
