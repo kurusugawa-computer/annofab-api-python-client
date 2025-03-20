@@ -49,7 +49,8 @@
           "ec27de5d-122c-40e7-89bc-5500e37bae6a",
           "69a20a12-ef5f-446f-a03e-0c4ab487ff90",
           "2517f635-2269-4142-8ef4-16312b4cc9f7",
-          "9b05648d-1e16-4ea2-ab79-48907f5eed00"
+          "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+          "e771ac4b-97d1-4af3-ba4b-f0e5b22e8648"
         ],
         "color" : {
           "red" : 251,
@@ -835,6 +836,36 @@
         "metadata" : {
           
         }
+      },
+      {
+        "additional_data_definition_id" : "e771ac4b-97d1-4af3-ba4b-f0e5b22e8648",
+        "read_only" : false,
+        "name" : {
+          "messages" : [
+            {
+              "lang" : "en-US",
+              "message" : "truncated"
+            },
+            {
+              "lang" : "ja-JP",
+              "message" : "truncated"
+            },
+            {
+              "lang" : "vi-VN",
+              "message" : "truncated"
+            }
+          ],
+          "default_lang" : "ja-JP"
+        },
+        "keybind" : [
+        ],
+        "type" : "flag",
+        "default" : false,
+        "choices" : [
+        ],
+        "metadata" : {
+          
+        }
       }
     ],
     "restrictions" : [
@@ -853,14 +884,6 @@
           "value" : "",
           "_type" : "NotEquals"
         }
-      },
-      {
-        "additional_data_definition_id" : "ec27de5d-122c-40e7-89bc-5500e37bae6a",
-        "condition" : {
-          "labels" : [
-          ],
-          "_type" : "HasLabel"
-        }
       }
     ],
     "inspection_phrases" : [
@@ -869,7 +892,7 @@
     "auto_marking" : false,
     "annotation_type_version" : null,
     "format_version" : "3.0.0",
-    "last_updated_datetime" : "2025-03-20T13:53:31.006+09:00",
+    "last_updated_datetime" : "2025-03-20T14:45:23.641+09:00",
     "option" : {
       "can_overwrap" : true
     },

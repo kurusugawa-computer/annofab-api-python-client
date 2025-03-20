@@ -110,3 +110,54 @@ class Test__Selection:
             "additional_data_definition_id": "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
             "condition": {"_type": "NotEquals", "value": "7512ee39-8073-4e24-9b8c-93d99b76b7d2"},
         }
+
+
+class Test__imply:
+    def test__occludedチェックボックスがONならばnoteテキストボックスは空ではない(self):
+        condition = Checkbox(accessor, attribute_name="occluded").checked().imply(StringTextBox(accessor, attribute_name="note").is_not_empty())
+        actual = condition.generate()
+        assert actual == {
+            "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+            "condition": {
+                "_type": "Imply",
+                "premise": {
+                    "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+                    "condition": {"_type": "Equals", "value": "true"},
+                },
+                "condition": {"_type": "NotEquals", "value": ""},
+            },
+        }
+
+    def test__occludedチェックボックスがONかつtraffic_laneが2ならばnoteテキストボックスは空ではない(self):
+        condition = (
+            Checkbox(accessor, attribute_name="occluded")
+            .checked()
+            .imply(
+                IntegerTextBox(accessor, attribute_name="traffic_lane").equals(2).imply(StringTextBox(accessor, attribute_name="note").is_not_empty())
+            )
+        )
+        actual = condition.generate()
+        assert actual == {
+            "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+            "condition": {
+                "_type": "Imply",
+                "premise": {
+                    "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+                    "condition": {"_type": "Equals", "value": "true"},
+                },
+                "condition": {
+                    "_type": "Imply",
+                    "premise": {
+                        "additional_data_definition_id": "ec27de5d-122c-40e7-89bc-5500e37bae6a",
+                        "condition": {"_type": "Equals", "value": "2"},
+                    },
+                    "condition": {"_type": "NotEquals", "value": ""},
+                },
+            },
+        }
+
+    def test__implyメソッドの戻りに対してimplyメソッドを実行するとNotImplementedErrorが発生する(self):
+        with pytest.raises(NotImplementedError):
+            Checkbox(accessor, attribute_name="occluded").checked().imply(IntegerTextBox(accessor, attribute_name="traffic_lane").equals(2)).imply(
+                StringTextBox(accessor, attribute_name="note").is_not_empty()
+            )

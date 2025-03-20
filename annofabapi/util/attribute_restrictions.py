@@ -11,20 +11,28 @@ class Condition(ABC):
     def __init__(self, attribute_id: str) -> None:
         self.attribute_id = attribute_id
 
-    # @property
-    # def attribute_id(self) -> str:
-    #     return self._attr_id
-
     def generate(self) -> dict[str, Any]:
-        return {"additional_data_definition_id": self.attribute_id, "condition": self.generate_condition()}
+        return {"additional_data_definition_id": self.attribute_id, "condition": self._generate_condition()}
 
     @abstractmethod
-    def generate_condition(self) -> dict[str, Any]:
+    def _generate_condition(self) -> dict[str, Any]:
         pass
 
-    # def imply(self, condition: Condition) -> Condition2:
-    #     # implyを連続で使えない
-    #     return Imply(self, condition)
+    def imply(self, condition: "Condition") -> "Condition":
+        return Imply(self, condition)
+
+
+class Imply(Condition):
+    def __init__(self, pre_condition: Condition, post_condition: Condition) -> None:
+        super().__init__(post_condition.attribute_id)
+        self.pre_condition = pre_condition
+        self.post_condition = post_condition
+
+    def imply(self, condition: "Condition") -> "Condition":
+        raise NotImplementedError("`imply`メソッドの戻り値に対して`imply`メソッドを実行できません。")
+
+    def _generate_condition(self) -> dict[str, Any]:
+        return {"_type": "Imply", "premise": self.pre_condition.generate(), "condition": self.post_condition._generate_condition()}
 
 
 class CanInput(Condition):
@@ -32,7 +40,7 @@ class CanInput(Condition):
         super().__init__(attribute_id)
         self.enable = enable
 
-    def generate_condition(self) -> dict[str, Any]:
+    def _generate_condition(self) -> dict[str, Any]:
         return {"_type": "CanInput", "enable": self.enable}
 
 
@@ -41,7 +49,7 @@ class Equals(Condition):
         super().__init__(attribute_id)
         self.value = value
 
-    def generate_condition(self) -> dict[str, Any]:
+    def _generate_condition(self) -> dict[str, Any]:
         return {"_type": "Equals", "value": self.value}
 
 
@@ -50,7 +58,7 @@ class NotEquals(Condition):
         super().__init__(attribute_id)
         self.value = value
 
-    def generate_condition(self) -> dict[str, Any]:
+    def _generate_condition(self) -> dict[str, Any]:
         return {"_type": "NotEquals", "value": self.value}
 
 
@@ -59,7 +67,7 @@ class Matches(Condition):
         super().__init__(attribute_id)
         self.value = value
 
-    def generate_condition(self) -> dict[str, Any]:
+    def _generate_condition(self) -> dict[str, Any]:
         return {"_type": "Matches", "value": self.value}
 
 
@@ -68,7 +76,7 @@ class NotMatches(Condition):
         super().__init__(attribute_id)
         self.value = value
 
-    def generate_condition(self) -> dict[str, Any]:
+    def _generate_condition(self) -> dict[str, Any]:
         return {"_type": "NotMatches", "value": self.value}
 
 
@@ -77,21 +85,8 @@ class HasLabel(Condition):
         super().__init__(attribute_id)
         self.label_ids = label_ids
 
-    def generate_condition(self) -> dict[str, Any]:
+    def _generate_condition(self) -> dict[str, Any]:
         return {"_type": "HasLabel", "labels": list(self.label_ids)}
-
-
-# class Imply(Condition):
-#     def __init__(self, pre_condition: Condition, post_condition: Condition):
-#         super().__init__(post_condition.attribute_id)
-#         self.pre_condition = pre_condition
-#         self.post_condition = post_condition
-
-#     def generate(self) -> dict[str, Any]:
-#         return {"additional_data_definition_id": self.attribute_id, "condition": self.generate_condition()}
-
-#     def generate_condition(self) -> dict[str, Any]:
-#         return {"_type": "Imply", "premise": self.pre_condition.generate(), "condition": self.post_condition.generate_condition()}
 
 
 class EmptyCheckMixin:
