@@ -4,39 +4,47 @@
 以下のサンプルコードのように属性名で制約情報を出力できます。
 
 Examples:
-    # 「'occluded'チェックボックスがONならば、'note'テキストボックスは空ではない」という制約
-    >>> premise_restriction = Checkbox(accessor, attribute_name="occluded").checked()
-    >>> conclusion_restriction = StringTextBox(accessor, attribute_name="note").is_not_empty()
-    >>> restriction = premise_restriction.imply(conclusion_restriction)
-    >>> restriction.to_dict()
-    {
-        "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
-        "condition": {
-            "_type": "Imply",
-            "premise": {
-                "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
-                "condition": {"_type": "Equals", "value": "true"},
-            },
-            "condition": {"_type": "NotEquals", "value": ""},
-        },
-    }
+    .. code-block:: python
 
-    # 「'occluded'チェックボックスがONならば、'car_kind'セレクトボックス(ラジオボタン)は選択肢'general_car'を選択しない」という制約
-    >>> premise_restriction = Checkbox(accessor, attribute_name="occluded").checked()
-    >>> conclusion_restriction = Selection(accessor, attribute_name="car_kind").not_has_choice(choice_name="general_car")
-    >>> restriction = premise_restriction.imply(conclusion_restriction)
-    >>> restriction.to_dict()
-    {
-        "additional_data_definition_id": "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
-        "condition": {
-            "_type": "Imply",
-            "premise": {
-                "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
-                "condition": {"_type": "Equals", "value": "true"},
+        >>> from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
+        >>> from annofabapi.util.attribute_restrictions import Checkbox, Selection, StringTextBox
+        >>> service = annofabapi.build()
+        >>> annotation_specs, _ = service.api.get_annotation_specs("prj1", query_params={"v": "3"})
+        >>> accessor = AnnotationSpecsAccessor(annotation_specs)
+
+        # 「'occluded'チェックボックスがONならば、'note'テキストボックスは空ではない」という制約
+        >>> premise_restriction = Checkbox(accessor, attribute_name="occluded").checked()
+        >>> conclusion_restriction = StringTextBox(accessor, attribute_name="note").is_not_empty()
+        >>> restriction = premise_restriction.imply(conclusion_restriction)
+        >>> restriction.to_dict()
+        {
+            "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+            "condition": {
+                "_type": "Imply",
+                "premise": {
+                    "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+                    "condition": {"_type": "Equals", "value": "true"},
+                },
+                "condition": {"_type": "NotEquals", "value": ""},
             },
-            "condition": {"_type": "Equals", "value": "7512ee39-8073-4e24-9b8c-93d99b76b7d2"},
-        },
-    }
+        }
+
+        # 「'occluded'チェックボックスがONならば、'car_kind'セレクトボックス(またはラジオボタン)は選択肢'general_car'を選択しない」という制約
+        >>> premise_restriction = Checkbox(accessor, attribute_name="occluded").checked()
+        >>> conclusion_restriction = Selection(accessor, attribute_name="car_kind").not_has_choice(choice_name="general_car")
+        >>> restriction = premise_restriction.imply(conclusion_restriction)
+        >>> restriction.to_dict()
+        {
+            "additional_data_definition_id": "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
+            "condition": {
+                "_type": "Imply",
+                "premise": {
+                    "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+                    "condition": {"_type": "Equals", "value": "true"},
+                },
+                "condition": {"_type": "Equals", "value": "7512ee39-8073-4e24-9b8c-93d99b76b7d2"},
+            },
+        }
 """
 
 from abc import ABC, abstractmethod
