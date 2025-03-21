@@ -481,7 +481,7 @@ def lazy_parse_simple_annotation_dir(annotation_dir_path: Path) -> Iterator[Simp
     return __parse_annotation_dir(annotation_dir_path, SimpleAnnotationDirParser)
 
 
-def lazy_parse_full_annotation_dir(annotation_dir_path: Path) -> Iterator[SimpleAnnotationParser]:
+def lazy_parse_full_annotation_dir(annotation_dir_path: Path) -> Iterator[FullAnnotationParser]:
     """Fullアノテーションzipを展開したディレクトリ内を探索し、各annotationをparse可能なオブジェクトの列を返します。
 
     Args:
