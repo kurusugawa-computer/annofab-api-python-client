@@ -1099,7 +1099,8 @@ class Wrapper:
     def _get_from_and_to_date_for_statistics_webapi(
         self, project_id: str, from_date: Optional[str], to_date: Optional[str]
     ) -> tuple[datetime.date, datetime.date]:
-        """statistics webapi用に、from_date, to_dateを取得する。
+        """statistics webapi用に、`datetime.date`型であるfrom_date, to_dateを取得する。
+        `from_date`または`to_date`がNoneならば、`get_statistics_available_dates` APIで取得した統計情報が存在する期間を参照して、`from_date`と`to_date`を決めます。
 
         Args:
             project_id (str): プロジェクトID。
@@ -1108,13 +1109,7 @@ class Wrapper:
 
         Returns:
             tuple[datetime.date, datetime.date]: [description]
-        """
-        if from_date is None:
-            project, _ = self.api.get_project(project_id)
-            from_date = project["created_datetime"][0:10]  # "YYYY-MM-DD"の部分を抽出
-        if to_date is None:
-            to_date = str(datetime.datetime.now(tz=datetime.timezone(datetime.timedelta(hours=9))).date())
-
+        """  # noqa: E501
         if from_date is None or to_date is None:
             dates, _ = self.api.get_statistics_available_dates(project_id)
             assert len(dates) > 0
@@ -1123,9 +1118,8 @@ class Wrapper:
             if to_date is None:
                 to_date = dates[-1]["to"]
 
-        DATE_FORMAT = "%Y-%m-%d"
-        dt_from_date = datetime.datetime.strptime(from_date, DATE_FORMAT).date()  # noqa: DTZ007
-        dt_to_date = datetime.datetime.strptime(to_date, DATE_FORMAT).date()  # noqa: DTZ007
+        dt_from_date = datetime.datetime.fromisoformat(from_date).date()
+        dt_to_date = datetime.datetime.fromisoformat(to_date).date()
         return dt_from_date, dt_to_date
 
     def get_account_daily_statistics(

@@ -5,7 +5,7 @@ import time
 from collections.abc import Collection
 from functools import wraps
 from json import JSONDecodeError
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Optional, TypeVar, Union, overload
 
 import backoff
 import requests
@@ -34,7 +34,7 @@ def _read_mfa_code_from_stdin() -> str:
     return inputted_mfa_code
 
 
-def _mask_senritive_value_for_dict(data: dict[str, Any], keys: Collection[str]) -> dict[str, Any]:
+def _mask_sensitive_value_for_dict(data: dict[str, Any], keys: Collection[str]) -> dict[str, Any]:
     """
     dictに含まれているセンシティブな情報を"***"でマスクします。
 
@@ -108,7 +108,7 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
 
     if 400 <= response.status_code < 600:
         # logにAuthorizationを出力しないようにマスクする
-        headers_for_logger = _mask_senritive_value_for_dict(dict(response.request.headers), {"Authorization"})
+        headers_for_logger = _mask_sensitive_value_for_dict(dict(response.request.headers), {"Authorization"})
 
         # request_bodyのpassword関係をマスクして、logに出力する
         request_body_for_logger: Optional[Any] = None
@@ -140,12 +140,23 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
         )
 
 
-def _create_request_body_for_logger(data: Any) -> Any:  # noqa: ANN401
+T = TypeVar("T")
+
+
+@overload
+def _create_request_body_for_logger(data: bytes) -> str:
+    pass
+
+
+@overload
+def _create_request_body_for_logger(data: T) -> T: ...
+
+
+def _create_request_body_for_logger(data: Any) -> Any:
     """
-    ログに出力するためのreqest_bodyを生成する。
+    ログに出力するためのrequest_bodyを生成する。
      * パスワードやトークンなどの機密情報をマスクする
      * bytes型の場合は `(bytes)`と記載する。
-
 
     Args:
         data: request_body
@@ -153,15 +164,16 @@ def _create_request_body_for_logger(data: Any) -> Any:  # noqa: ANN401
     Returns:
         ログ出力用のrequest_body
     """
-    if not isinstance(data, dict):
-        return data
-    elif isinstance(data, bytes):
+    if isinstance(data, bytes):
         # bytes型のときは値を出力しても意味がないので、bytesであることが分かるようにする
         return "(bytes)"
 
-    return _mask_senritive_value_for_dict(
-        data, keys={"password", "old_password", "new_password", "id_token", "refresh_token", "access_token", "session", "mfa_code"}
-    )
+    # dictの場合は機密情報をマスクする
+    sensitive_keys = {"password", "old_password", "new_password", "id_token", "refresh_token", "access_token", "session", "mfa_code"}
+    if isinstance(data, dict):
+        return _mask_sensitive_value_for_dict(data, keys=sensitive_keys)
+
+    return data
 
 
 def _create_query_params_for_logger(params: dict[str, Any]) -> dict[str, Any]:
@@ -175,7 +187,7 @@ def _create_query_params_for_logger(params: dict[str, Any]) -> dict[str, Any]:
     Returns:
         ログ出力用のparams
     """
-    return _mask_senritive_value_for_dict(params, keys={"X-Amz-Security-Token", "X-Amz-Credential"})
+    return _mask_sensitive_value_for_dict(params, keys={"X-Amz-Security-Token", "X-Amz-Credential"})
 
 
 def _should_retry_with_status(status_code: int) -> bool:
