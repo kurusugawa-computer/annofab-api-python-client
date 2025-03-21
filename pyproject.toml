@@ -42,7 +42,7 @@ pytest-cov = "*"
 
 [tool.poetry.group.linter.dependencies]
 # pythonバージョンを指定している理由：lintは開発環境と同じPythonバージョンで実行するため。また古いPythonバージョンにサポートしていないライブラリのバージョンがあるため
-ruff = {version="^0.9", python = ">=3.12"}
+ruff = {version="^0.11", python = ">=3.12"}
 mypy = {version="^1", python = ">=3.12"}
 pylint = {version="^3", python = ">=3.12"}
 
@@ -72,6 +72,8 @@ numpy = {version = ">=2.1", python = ">=3.13"}
 ignore_missing_imports = true
 # 型ヒントが付いていない関数もチェックする
 check_untyped_defs = true
+warn_unused_configs = true
+warn_unreachable = true
 
 plugins = ["numpy.typing.mypy_plugin"]
 
