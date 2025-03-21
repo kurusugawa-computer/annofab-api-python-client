@@ -72,6 +72,8 @@ numpy = {version = ">=2.1", python = ">=3.13"}
 ignore_missing_imports = true
 # 型ヒントが付いていない関数もチェックする
 check_untyped_defs = true
+warn_unused_configs = true
+warn_unreachable = true
 
 plugins = ["numpy.typing.mypy_plugin"]
 
