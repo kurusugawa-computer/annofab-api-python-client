@@ -20,6 +20,15 @@ annofabapi.util.attribute\_restrictions module
    :undoc-members:
    :show-inheritance:
 
+annofabapi.util.task\_history module
+---------------------------------
+
+.. automodule:: annofabapi.util.task_history
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 annofabapi.util.type\_util module
 ---------------------------------
 
