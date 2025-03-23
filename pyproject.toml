@@ -18,6 +18,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.9"
 requests = "*"
+isodate = "*"
 python-dateutil = "*"
 backoff="*"
 dataclasses-json="*"
