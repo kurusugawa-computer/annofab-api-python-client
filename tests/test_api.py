@@ -584,7 +584,7 @@ class TestStatistics:
 
 
 @pytest.mark.access_webapi
-class Testsupplementary:
+class TestSupplementary:
     input_data_id: str
 
     @classmethod
