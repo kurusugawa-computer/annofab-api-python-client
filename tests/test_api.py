@@ -93,7 +93,6 @@ class TestMyBackoff:
         assert len(log) == 1
 
 
-
 class Test__create_request_body_for_logger:
     def test_data_dict(self):
         actual = _create_request_body_for_logger({"foo": "1", "password": "x", "new_password": "y", "old_password": "z"})
