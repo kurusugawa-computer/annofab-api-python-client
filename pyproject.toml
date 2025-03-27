@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "annofabapi"
 version = "0.0.0"  # `poetry-dynamic-versioning`を使ってGitHubのバージョンタグを取得している。変更不要
-description = "Python Clinet Library of Annofab WebAPI (https://annofab.com/docs/api/)"
+description = "Python Client Library of Annofab WebAPI (https://annofab.com/docs/api/)"
 authors = ["Kurusugawa Computer Inc."]
 license = "MIT"
 keywords=["annofab", "api"]
