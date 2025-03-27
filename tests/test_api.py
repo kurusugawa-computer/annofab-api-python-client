@@ -53,7 +53,7 @@ test_wrapper = WrapperForTest(api)
 
 class TestMyBackoff:
     @my_backoff
-    def acesss_api(self, log: list[str], exception: Exception):
+    def access_api_with_retry(self, log: list[str], exception: Exception):
         """何回実行されるかを確認する"""
         if len(log) == 0:
             log.append("foo")
@@ -62,11 +62,11 @@ class TestMyBackoff:
     def test__connection_errorが発生したらリトライされる(self):
         # ２回呼ばれることを確認する
         log: list[str] = []
-        self.acesss_api(log, requests.exceptions.ConnectionError)
+        self.access_api_with_retry(log, requests.exceptions.ConnectionError)
         assert len(log) == 1
 
         log = []
-        self.acesss_api(log, ConnectionError)
+        self.access_api_with_retry(log, ConnectionError)
         assert len(log) == 1
 
     def test__http_errorのstatus_codeリトライされる(self):
@@ -77,19 +77,19 @@ class TestMyBackoff:
         response.status_code = 400
         log: list[str] = []
         with pytest.raises(requests.exceptions.HTTPError):
-            self.acesss_api(log, requests.exceptions.HTTPError(response=response))
+            self.access_api_with_retry(log, requests.exceptions.HTTPError(response=response))
 
         response = requests.Response()
         response.status_code = 501
         log = []
         with pytest.raises(requests.exceptions.HTTPError):
-            self.acesss_api(log, requests.exceptions.HTTPError(response=response))
+            self.access_api_with_retry(log, requests.exceptions.HTTPError(response=response))
 
         # リトライする
         response = requests.Response()
         response.status_code = 500
         log = []
-        self.acesss_api(log, requests.exceptions.HTTPError(response=response))
+        self.access_api_with_retry(log, requests.exceptions.HTTPError(response=response))
         assert len(log) == 1
 
 
