@@ -193,8 +193,16 @@ def _create_query_params_for_logger(params: dict[str, Any]) -> dict[str, Any]:
 def _should_retry_with_status(status_code: int) -> bool:
     """
     HTTP Status Codeからリトライすべきかどうかを返す。
+
+    Notes:
+        429(Too many requests)の場合も、`@my_backoff`ではリトライしません。
+        レスポンスヘッダーの`Retry-After`を参照するため、`@my_backoff`ではなく、直接リトライするコードを書いています。
+
+    Returns:
+        trueならばリトライする
     """
-    # 注意：429(Too many requests)の場合は、backoffモジュール外でリトライするため、このメソッドでは判定しない
+
+    # 501の場合は、未実装のためリトライしない
     if status_code == requests.codes.not_implemented:
         return False
     if 500 <= status_code < 600:  # noqa: SIM103
@@ -204,19 +212,14 @@ def _should_retry_with_status(status_code: int) -> bool:
 
 def my_backoff(function) -> Callable:  # noqa: ANN001
     """
-    HTTP Status Codeが429 or 5XXのときはリトライする. 最大5分間リトライする。
+    リトライした方が良い場合は、バックオフする
     """
 
     @wraps(function)
     def wrapped(*args, **kwargs):  # noqa: ANN202
-        def fatal_code(e):  # noqa: ANN001, ANN202
+        def should_give_up(e: Exception) -> bool:
             """
-            リトライするかどうか
-            status codeが5xxのとき、またはToo many Requests(429)のときはリトライする。429以外の4XXはリトライしない
-            https://requests.kennethreitz.org/en/master/user/quickstart/#errors-and-exceptions
-
-            Args:
-                e: exception
+            ギブアップ（リトライしない）かどうか
 
             Returns:
                 True: give up(リトライしない), False: リトライする
@@ -236,7 +239,7 @@ def my_backoff(function) -> Callable:  # noqa: ANN001
             (requests.exceptions.HTTPError, requests.exceptions.ConnectionError, ConnectionError),
             jitter=backoff.full_jitter,
             max_time=300,
-            giveup=fatal_code,
+            giveup=should_give_up,
             # loggerの名前をbackoffからannofabapiに変更する
             logger=logger,
         )(function)(*args, **kwargs)

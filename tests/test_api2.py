@@ -5,8 +5,13 @@ AnnofabApi2のテストメソッド
 
 import configparser
 
+import pytest
+
 import annofabapi
 from tests.utils_for_test import WrapperForTest
+
+# webapiにアクセスするテストモジュール
+pytestmark = pytest.mark.access_webapi
 
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")

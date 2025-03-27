@@ -15,6 +15,7 @@ import requests
 from more_itertools import first_true
 
 import annofabapi
+from annofabapi.api import _create_request_body_for_logger, my_backoff
 from annofabapi.dataclass.annotation import AnnotationV2Output, SimpleAnnotation, SingleAnnotationV2
 from annofabapi.dataclass.annotation_specs import AnnotationSpecsV3
 from annofabapi.dataclass.comment import Comment
@@ -50,6 +51,63 @@ wrapper = service.wrapper
 test_wrapper = WrapperForTest(api)
 
 
+class TestMyBackoff:
+    @my_backoff
+    def access_api_with_retry(self, log: list[str], exception: Exception):
+        """何回実行されるかを確認する"""
+        if len(log) == 0:
+            log.append("foo")
+            raise exception
+
+    def test__connection_errorが発生したらリトライされる(self):
+        # ２回呼ばれることを確認する
+        log: list[str] = []
+        self.access_api_with_retry(log, requests.exceptions.ConnectionError)
+        assert len(log) == 1
+
+        log = []
+        self.access_api_with_retry(log, ConnectionError)
+        assert len(log) == 1
+
+    def test__http_errorのstatus_codeリトライされる(self):
+        # ２回呼ばれることを確認する
+
+        # リトライしない
+        response = requests.Response()
+        response.status_code = 400
+        log: list[str] = []
+        with pytest.raises(requests.exceptions.HTTPError):
+            self.access_api_with_retry(log, requests.exceptions.HTTPError(response=response))
+
+        response = requests.Response()
+        response.status_code = 501
+        log = []
+        with pytest.raises(requests.exceptions.HTTPError):
+            self.access_api_with_retry(log, requests.exceptions.HTTPError(response=response))
+
+        # リトライする
+        response = requests.Response()
+        response.status_code = 500
+        log = []
+        self.access_api_with_retry(log, requests.exceptions.HTTPError(response=response))
+        assert len(log) == 1
+
+
+class Test__create_request_body_for_logger:
+    def test_data_dict(self):
+        actual = _create_request_body_for_logger({"foo": "1", "password": "x", "new_password": "y", "old_password": "z"})
+        assert actual == {"foo": "1", "password": "***", "new_password": "***", "old_password": "***"}
+
+    def test_data_dict2(self):
+        actual = _create_request_body_for_logger({"foo": "1"})
+        assert actual == {"foo": "1"}
+
+    def test_data_list(self):
+        actual = _create_request_body_for_logger([{"foo": "1"}])
+        assert actual == [{"foo": "1"}]
+
+
+@pytest.mark.access_webapi
 class TestAnnotation:
     input_data_id: str
 
@@ -107,6 +165,7 @@ class TestAnnotation:
         )
 
 
+@pytest.mark.access_webapi
 class TestAnnotationSpecs:
     def test_get_annotation_specs(self):
         annotation_spec, _ = api.get_annotation_specs(project_id, query_params={"v": "3"})
@@ -136,6 +195,7 @@ class TestAnnotationSpecs:
         assert type(result) is annofabapi.wrapper.AnnotationSpecsRelation
 
 
+@pytest.mark.access_webapi
 class TestComment:
     task: dict[str, Any]
 
@@ -199,6 +259,7 @@ class TestComment:
         wrapper.change_task_status_to_break(project_id, task_id)
 
 
+@pytest.mark.access_webapi
 class TestInputData:
     input_data_id: str
 
@@ -232,6 +293,7 @@ class TestInputData:
         assert type(api.batch_update_inputs(project_id, request_body=request_body)[0]) == list  # noqa: E721
 
 
+@pytest.mark.access_webapi
 class TestInstruction:
     def test_wrapper_get_latest_instruction(self):
         assert type(wrapper.get_latest_instruction(project_id)) == dict  # noqa: E721
@@ -261,6 +323,7 @@ class TestInstruction:
         assert type(api.put_instruction(project_id, request_body=put_request_body)[0]) == dict  # noqa: E721
 
 
+@pytest.mark.access_webapi
 class TestJob:
     @pytest.mark.submitting_job
     def test_scenario(self):
@@ -292,6 +355,7 @@ class TestJob:
         assert first_true(job_list, pred=lambda e: e["job_id"] == job_id) is None
 
 
+@pytest.mark.access_webapi
 class TestLogin:
     def test_login(self):
         # Exceptionをスローしないことの確認
@@ -300,6 +364,7 @@ class TestLogin:
         api.logout()
 
 
+@pytest.mark.access_webapi
 class TestMy:
     def test_get_my_account(self):
         my_account, _ = api.get_my_account()
@@ -322,6 +387,7 @@ class TestMy:
         assert type(my_member_in_project) == dict  # noqa: E721
 
 
+@pytest.mark.access_webapi
 class TestOrganization:
     organization_name: str
 
@@ -342,6 +408,7 @@ class TestOrganization:
         assert len(wrapper.get_all_projects_of_organization(self.organization_name)) > 0
 
 
+@pytest.mark.access_webapi
 class TestOrganizationMember:
     organization_name: str
 
@@ -365,6 +432,7 @@ class TestOrganizationMember:
         api.update_organization_member_role(self.organization_name, api.login_user_id, request_body=request_body)
 
 
+@pytest.mark.access_webapi
 class TestProject:
     def test_get_project(self):
         dict_project, _ = api.get_project(project_id)
@@ -395,6 +463,7 @@ class TestProject:
         assert wrapper.download_project_comments_url(project_id, f"{out_dir}/comments.json").startswith("https://")
 
 
+@pytest.mark.access_webapi
 class TestProjectMember:
     def test_get_project_member(self):
         my_member = api.get_project_member(project_id, api.login_user_id)[0]
@@ -406,6 +475,7 @@ class TestProjectMember:
         ProjectMember.schema().load(member_list, many=True)
 
 
+@pytest.mark.access_webapi
 class TestStatistics:
     def test_wrapper_get_account_daily_statistics(self):
         actual = wrapper.get_account_daily_statistics(project_id, from_date="2021-04-01", to_date="2021-06-30")
@@ -513,7 +583,8 @@ class TestStatistics:
         assert type(content) == list  # noqa: E721
 
 
-class Testsupplementary:
+@pytest.mark.access_webapi
+class TestSupplementary:
     input_data_id: str
 
     @classmethod
@@ -542,6 +613,7 @@ class Testsupplementary:
         assert len([e for e in supplementary_data_list2 if e["supplementary_data_id"] == supplementary_data_id]) == 0
 
 
+@pytest.mark.access_webapi
 class TestTask:
     input_data_id: str
 
@@ -608,6 +680,7 @@ class TestTask:
         assert type(content) == dict  # noqa: E721
 
 
+@pytest.mark.access_webapi
 class TestWebhook:
     def test_scenario(self):
         """
@@ -643,6 +716,7 @@ class TestWebhook:
         assert first_true(webhook_list, pred=lambda e: e["webhook_id"] == test_webhook_id) is None
 
 
+@pytest.mark.access_webapi
 class TestGetObjOrNone:
     """
     wrapper.get_xxx_or_none メソッドの確認
@@ -708,6 +782,7 @@ class TestGetObjOrNone:
         assert supplementary_data_list is None
 
 
+@pytest.mark.access_webapi
 class TestProtectedMethod:
     input_data_id: str
 
@@ -733,6 +808,7 @@ class TestProtectedMethod:
             api._request_get_with_cookie(project_id, url)
 
 
+@pytest.mark.access_webapi
 class TestProperty:
     def test_account_id(self):
         account_id = api.account_id

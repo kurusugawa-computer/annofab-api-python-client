@@ -24,6 +24,7 @@ class TestBuild:
         with pytest.raises(annofabapi.exceptions.CredentialsNotFoundError):
             os.environ.pop("ANNOFAB_USER_ID", None)
             os.environ.pop("ANNOFAB_PASSWORD", None)
+            os.environ.pop("ANNOFAB_PAT", None)
             build_from_env()
 
     def test_build_from_env(self):
