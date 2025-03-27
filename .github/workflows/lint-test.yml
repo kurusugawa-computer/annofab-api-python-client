@@ -28,6 +28,9 @@ jobs:
           python -m pip install --upgrade pip "poetry<1.9"
           poetry install --only main,test --all-extras
       - name: Test
+        env:
+          # 以下の環境変数がないとテストに失敗するため、ダミーの値を設定する
+          ANNOFAB_PAT: "foo"
         run: |
             poetry run pytest -n auto -m "not access_webapi"
           
