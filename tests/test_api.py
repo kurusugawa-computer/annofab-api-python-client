@@ -30,6 +30,12 @@ from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.models import GraphType, ProjectJobType
 from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
+import pytest
+import requests
+
+from annofabapi.api import _create_request_body_for_logger, my_backoff
+
+
 
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
