@@ -217,7 +217,7 @@ def my_backoff(function) -> Callable:  # noqa: ANN001
 
     @wraps(function)
     def wrapped(*args, **kwargs):  # noqa: ANN202
-        def fatal_code(e: Exception) -> bool:
+        def should_give_up(e: Exception) -> bool:
             """
             ギブアップ（リトライしない）かどうか
 
@@ -239,7 +239,7 @@ def my_backoff(function) -> Callable:  # noqa: ANN001
             (requests.exceptions.HTTPError, requests.exceptions.ConnectionError, ConnectionError),
             jitter=backoff.full_jitter,
             max_time=300,
-            giveup=fatal_code,
+            giveup=should_give_up,
             # loggerの名前をbackoffからannofabapiに変更する
             logger=logger,
         )(function)(*args, **kwargs)
