@@ -30,6 +30,10 @@ from annofabapi.models import GraphType, ProjectJobType
 from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
+# webapiにアクセスするテストモジュール
+pytestmark = pytest.mark.access_webapi
+
+
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
 
