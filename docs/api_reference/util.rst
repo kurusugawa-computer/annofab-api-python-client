@@ -21,7 +21,7 @@ annofabapi.util.attribute\_restrictions module
    :show-inheritance:
 
 annofabapi.util.task\_history module
----------------------------------
+------------------------------------------------------------------
 
 .. automodule:: annofabapi.util.task_history
    :members:
