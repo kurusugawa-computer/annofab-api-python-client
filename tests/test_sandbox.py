@@ -4,7 +4,12 @@ Annofabプロジェクトやタスクに大きく依存したテストコード�
 
 import configparser
 
+import pytest
+
 import annofabapi
+
+# webapiにアクセスするテストモジュール
+pytestmark = pytest.mark.access_webapi
 
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")

@@ -1,6 +1,8 @@
 import configparser
 import json
 
+import pytest
+
 import annofabapi
 from annofabapi.pydantic_models.annotation_specs_v3 import AnnotationSpecsV3
 from annofabapi.pydantic_models.input_data import InputData
@@ -10,6 +12,9 @@ from annofabapi.pydantic_models.project_member import ProjectMember
 from annofabapi.pydantic_models.simple_annotation import SimpleAnnotation
 from annofabapi.pydantic_models.single_annotation import SingleAnnotation
 from annofabapi.pydantic_models.task import Task
+
+# webapiにアクセスするテストモジュール
+pytestmark = pytest.mark.access_webapi
 
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")

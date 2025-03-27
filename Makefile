@@ -12,6 +12,7 @@ format:
 	poetry run ruff check ${SOURCE_FILES} ${TEST_FILES} --fix-only --exit-zero
 
 lint:
+	poetry run ruff format ${SOURCE_FILES} ${TEST_FILES} --check
 	poetry run ruff check ${SOURCE_FILES} ${TEST_FILES} 
 	poetry run mypy ${SOURCE_FILES} ${TEST_FILES}
 	# テストコードはチェックを緩和するためpylintは実行しない
