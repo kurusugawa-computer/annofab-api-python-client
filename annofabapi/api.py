@@ -209,7 +209,7 @@ def my_backoff(function) -> Callable:  # noqa: ANN001
 
     @wraps(function)
     def wrapped(*args, **kwargs):  # noqa: ANN202
-        def fatal_code(e):  # noqa: ANN001, ANN202
+        def fatal_code(e: Exception) -> bool:
             """
             リトライするかどうか
             status codeが5xxのとき、またはToo many Requests(429)のときはリトライする。429以外の4XXはリトライしない

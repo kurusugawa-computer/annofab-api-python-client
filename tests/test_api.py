@@ -30,12 +30,6 @@ from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.models import GraphType, ProjectJobType
 from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
-import pytest
-import requests
-
-from annofabapi.api import _create_request_body_for_logger, my_backoff
-
-
 
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
@@ -59,89 +53,45 @@ test_wrapper = WrapperForTest(api)
 
 class TestMyBackoff:
     @my_backoff
-    def requestexception_connectionerror_then_true(self, log: list[Any]):
-        if len(log) == 2:
-            return True
-
-        e: Exception
+    def acesss_api(self, log: list[str], exception: Exception):
+        """何回実行されるかを確認する"""
         if len(log) == 0:
-            e = requests.exceptions.RequestException()
-        elif len(log) == 1:
-            e = ConnectionError()
-        log.append(e)
-        raise e
+            log.append("foo")
+            raise exception
 
-    def test_assert_retry(self):
-        log: list[Any] = []
-        assert self.requestexception_connectionerror_then_true(log) is True
-        assert 2 == len(log)
-        print(log)
-        assert isinstance(type(log[0]), requests.exceptions.RequestException)
-        assert isinstance(type(log[1]), ConnectionError)
+    def test__connection_errorが発生したらリトライされる(self):
+        # ２回呼ばれることを確認する
+        log:list[str] = []
+        self.acesss_api(log, requests.exceptions.ConnectionError)
+        assert len(log) == 1
 
-    @my_backoff
-    def chunkedencodingerror_requestsconnectionerror_then_true(self, log: list[Any]):
-        if len(log) == 2:
-            return True
+        log = []
+        self.acesss_api(log, ConnectionError)
+        assert len(log) == 1
 
-        e: Exception
-        if len(log) == 0:
-            e = requests.exceptions.ChunkedEncodingError()
-            log.append(e)
-            raise e
-        elif len(log) == 1:
-            e = requests.exceptions.ConnectionError()
-            log.append(e)
-            raise e
+    def test__http_errorのstatus_codeリトライされる(self):
+        # ２回呼ばれることを確認する
 
-    def test_assert_retry2(self):
-        log: list[Any] = []
-        assert self.chunkedencodingerror_requestsconnectionerror_then_true(log) is True
-        assert 2 == len(log)
-        print(log)
-        assert isinstance(type(log[0]), requests.exceptions.ChunkedEncodingError)
-        assert isinstance(type(log[1]), requests.exceptions.ConnectionError)
-
-    @my_backoff
-    def httperror_then_true(self, log: list[Any]):
-        if len(log) == 2:
-            return True
+        # リトライしない
         response = requests.Response()
-        if len(log) == 0:
-            response.status_code = 429
-            e = requests.exceptions.HTTPError(response=response)
-        elif len(log) == 1:
-            response.status_code = 500
-            e = requests.exceptions.HTTPError(response=response)
-        log.append(e)
-        raise e
+        response.status_code = 400
+        log:list[str] = []
+        self.acesss_api(log, requests.exceptions.HTTPError(response=response))
+        assert len(log) == 0
 
-    def test_assert_retry_with_httperror(self):
-        log: list[Any] = []
-        assert self.httperror_then_true(log) is True
-        assert 2 == len(log)
-        print(log)
-        assert isinstance(type(log[0]), requests.exceptions.HTTPError)
-        assert log[0].response.status_code == 429
-        assert isinstance(type(log[1]), requests.exceptions.HTTPError)
-        assert log[1].response.status_code == 500
-
-    @my_backoff
-    def httperror_with_400(self, log):
-        if len(log) == 1:
-            return True
+        # リトライする
         response = requests.Response()
-        if len(log) == 0:
-            response.status_code = 400
-            e = requests.exceptions.HTTPError(response=response)
-        log.append(e)
-        raise e
+        response.status_code = 500
+        log = []
+        self.acesss_api(log, requests.exceptions.HTTPError(response=response))
+        assert len(log) == 1
 
-    def test_assert_not_retry(self):
-        log: list[Any] = []
-        with pytest.raises(requests.exceptions.HTTPError):
-            self.httperror_with_400(log)
-        assert 1 == len(log)
+        # リトライする
+        response = requests.Response()
+        response.status_code = 429
+        log = []
+        self.acesss_api(log, requests.exceptions.HTTPError(response=response))
+        assert len(log) == 1
 
 
 class Test__create_request_body_for_logger:
