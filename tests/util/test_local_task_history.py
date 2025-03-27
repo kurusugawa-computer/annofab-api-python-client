@@ -1,6 +1,6 @@
 from typing import Any
 
-from annofabapi.util.task_history import find_rejected_task_history_indices
+from annofabapi.util.task_history import find_rejected_task_history_indices, get_task_creation_datetime
 
 
 def test__find_rejected_task_history_indices():
@@ -184,3 +184,85 @@ def test__find_rejected_task_history_indices():
     ]
     actual = find_rejected_task_history_indices(task_histories)
     assert actual == [4, 12]
+
+
+def test__get_task_creation_datetime__タスク作成直後の状態から算出():
+    task = {
+        "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
+        "task_id": "20250327_02",
+        "phase": "annotation",
+        "phase_stage": 1,
+        "status": "not_started",
+        "input_data_id_list": ["bbc5faf4-f22f-48ac-9393-b524cb3e0034"],
+        "account_id": None,
+        "histories_by_phase": [],
+        "work_time_span": 0,
+        "number_of_rejections": 0,
+        "started_datetime": None,
+        "updated_datetime": "2025-03-27T11:31:23.513+09:00",
+        "operation_updated_datetime": "2025-03-27T11:31:23.513+09:00",
+        "sampling": None,
+        "metadata": {},
+    }
+    task_history_list = [
+        {
+            "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
+            "task_id": "20250327_02",
+            "task_history_id": "f8e21d05-4726-4706-865c-52a85fd8f2ae",
+            "started_datetime": None,
+            "ended_datetime": None,
+            "accumulated_labor_time_milliseconds": "PT0S",
+            "phase": "annotation",
+            "phase_stage": 1,
+            "account_id": None,
+        }
+    ]
+
+    assert get_task_creation_datetime(task, task_history_list) == "2025-03-27T11:31:23.513+09:00"
+
+
+def test__get_task_creation_datetime__タスクに担当者を割り当てた状態から算出():
+    task = {
+        "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
+        "task_id": "20250327_32",
+        "phase": "annotation",
+        "phase_stage": 1,
+        "status": "not_started",
+        "input_data_id_list": ["dcd56d5f-77a8-4a78-b191-755e109032fa"],
+        "account_id": "00589ed0-dd63-40db-abb2-dfe5e13c8299",
+        "histories_by_phase": [{"account_id": "00589ed0-dd63-40db-abb2-dfe5e13c8299", "phase": "annotation", "phase_stage": 1, "worked": False}],
+        "work_time_span": 0,
+        "number_of_rejections": 0,
+        "started_datetime": None,
+        "updated_datetime": "2025-03-27T13:07:35.04+09:00",
+        "operation_updated_datetime": "2025-03-27T11:31:23.482+09:00",
+        "sampling": None,
+        "metadata": {},
+    }
+
+    task_history_list = [
+        {
+            "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
+            "task_id": "20250327_32",
+            "task_history_id": "ff451241-2ace-40fa-8a5d-f1d688a6d588",
+            "started_datetime": "2025-03-27T11:31:22.91+09:00",
+            "ended_datetime": None,
+            "accumulated_labor_time_milliseconds": "PT0S",
+            "phase": "annotation",
+            "phase_stage": 1,
+            "account_id": None,
+        },
+        {
+            "project_id": "58a2a621-7d4b-41e7-927b-cdc570c1114a",
+            "task_id": "20250327_32",
+            "task_history_id": "c239ce9a-36da-4330-ad09-154705c308a5",
+            "started_datetime": "2025-03-27T13:07:35.133+09:00",
+            "ended_datetime": None,
+            "accumulated_labor_time_milliseconds": "PT0S",
+            "phase": "annotation",
+            "phase_stage": 1,
+            "account_id": "00589ed0-dd63-40db-abb2-dfe5e13c8299",
+        },
+    ]
+
+    assert get_task_creation_datetime(task, task_history_list) == "2025-03-27T11:31:22.91+09:00"
