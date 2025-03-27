@@ -61,7 +61,7 @@ class TestMyBackoff:
 
     def test__connection_errorが発生したらリトライされる(self):
         # ２回呼ばれることを確認する
-        log:list[str] = []
+        log: list[str] = []
         self.acesss_api(log, requests.exceptions.ConnectionError)
         assert len(log) == 1
 
@@ -75,9 +75,15 @@ class TestMyBackoff:
         # リトライしない
         response = requests.Response()
         response.status_code = 400
-        log:list[str] = []
-        self.acesss_api(log, requests.exceptions.HTTPError(response=response))
-        assert len(log) == 0
+        log: list[str] = []
+        with pytest.raises(requests.exceptions.HTTPError):
+            self.acesss_api(log, requests.exceptions.HTTPError(response=response))
+
+        response = requests.Response()
+        response.status_code = 501
+        log = []
+        with pytest.raises(requests.exceptions.HTTPError):
+            self.acesss_api(log, requests.exceptions.HTTPError(response=response))
 
         # リトライする
         response = requests.Response()
@@ -86,12 +92,6 @@ class TestMyBackoff:
         self.acesss_api(log, requests.exceptions.HTTPError(response=response))
         assert len(log) == 1
 
-        # リトライする
-        response = requests.Response()
-        response.status_code = 429
-        log = []
-        self.acesss_api(log, requests.exceptions.HTTPError(response=response))
-        assert len(log) == 1
 
 
 class Test__create_request_body_for_logger:
