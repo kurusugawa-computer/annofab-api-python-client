@@ -197,7 +197,7 @@ class Wrapper:
 
         return all_objects
 
-    def execute_http_get(self, url: str) -> requests.Response:
+    def execute_http_get(self, url: str, **kwargs) -> requests.Response:
         """
         指定したURLに対してHTTP GETを実行します。
 
@@ -218,7 +218,7 @@ class Wrapper:
 
 
         """  # noqa: E501
-        return self.api._execute_http_request(http_method="get", url=url)
+        return self.api._execute_http_request(http_method="get", url=url, **kwargs)
 
     def download(self, url: str, dest_path: Union[str, Path], *, chunk_size: int = 1024 * 1024 * 500, logger_prefix: str = "") -> None:
         """
