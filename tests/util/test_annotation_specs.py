@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, Lang, get_english_message, get_message_with_lang, get_choice
+from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, Lang, get_choice, get_english_message, get_message_with_lang
 
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
@@ -110,4 +110,3 @@ class Test__get_choice:
     def test_get_choice_no_arguments(self):
         with pytest.raises(ValueError):
             get_choice(self.choices)
-
