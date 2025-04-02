@@ -289,24 +289,30 @@ class Selection(Attribute, EmptyCheckMixin):
         return NotEquals(self.attribute_id, choice["choice_id"])
 
 
-class Foo:
+class AttributeFactory:
+    """
+    属性を生成するためのFactoryクラス
+    
+    Attributes:
+        accessor: アノテーション仕様のアクセサ
+    """
     def __init__(self, accessor: AnnotationSpecsAccessor) -> None:
         self.accessor = accessor
 
-    def check_box(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> Checkbox:
+    def checkbox(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> Checkbox:
         return Checkbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
     def string_textbox(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> StringTextbox:
         return StringTextbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
+    def integer_textbox(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> IntegerTextbox:
+        return IntegerTextbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
-######
+    def annotation_link(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> AnnotationLink:
+        return AnnotationLink(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
-# accessor = AnnotationSpecsAccessor()
-# s.get_attribute(name=)
-# Selection("id1", choices=[]).is_selected("choice1").imply()
+    def tracking_id(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> TrackingId:
+        return TrackingId(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
-# Selection(accessor, attribute_name="id1").is_selected("choice1").imply()
-
-
-# TrackingId(s.get_attribute_id(name="foo"))
+    def selection(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> Selection:
+        return Selection(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
