@@ -6,15 +6,16 @@
 Examples:
     .. code-block:: python
 
+        >>> import annofabapi
         >>> from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
-        >>> from annofabapi.util.attribute_restrictions import Checkbox, Selection, StringTextBox
+        >>> from annofabapi.util.attribute_restrictions import AttributeFactory
         >>> service = annofabapi.build()
         >>> annotation_specs, _ = service.api.get_annotation_specs("prj1", query_params={"v": "3"})
-        >>> accessor = AnnotationSpecsAccessor(annotation_specs)
+        >>> fac = AttributeFactory(AnnotationSpecsAccessor(annotation_specs))
 
         # 「'occluded'チェックボックスがONならば、'note'テキストボックスは空ではない」という制約
-        >>> premise_restriction = Checkbox(accessor, attribute_name="occluded").checked()
-        >>> conclusion_restriction = StringTextBox(accessor, attribute_name="note").is_not_empty()
+        >>> premise_restriction = fac.checkbox(attribute_name="occluded").checked()
+        >>> conclusion_restriction = fac.string_textbox(attribute_name="note").is_not_empty()
         >>> restriction = premise_restriction.imply(conclusion_restriction)
         >>> restriction.to_dict()
         {
@@ -30,8 +31,8 @@ Examples:
         }
 
         # 「'occluded'チェックボックスがONならば、'car_kind'セレクトボックス(またはラジオボタン)は選択肢'general_car'を選択しない」という制約
-        >>> premise_restriction = Checkbox(accessor, attribute_name="occluded").checked()
-        >>> conclusion_restriction = Selection(accessor, attribute_name="car_kind").not_has_choice(choice_name="general_car")
+        >>> premise_restriction = fac.checkbox(attribute_name="occluded").checked()
+        >>> conclusion_restriction = fac.selection(attribute_name="car_kind").not_has_choice(choice_name="general_car")
         >>> restriction = premise_restriction.imply(conclusion_restriction)
         >>> restriction.to_dict()
         {
@@ -199,7 +200,7 @@ class Checkbox(Attribute):
         return self.attribute["type"] == "flag"
 
 
-class StringTextBox(Attribute, EmptyCheckMixin):
+class StringTextbox(Attribute, EmptyCheckMixin):
     """文字列用のテキストボックス（自由記述）の属性"""
 
     def _is_valid_attribute_type(self) -> bool:
@@ -222,7 +223,7 @@ class StringTextBox(Attribute, EmptyCheckMixin):
         return NotMatches(self.attribute_id, value)
 
 
-class IntegerTextBox(Attribute, EmptyCheckMixin):
+class IntegerTextbox(Attribute, EmptyCheckMixin):
     """整数用のテキストボックスの属性"""
 
     def _is_valid_attribute_type(self) -> bool:
@@ -289,13 +290,31 @@ class Selection(Attribute, EmptyCheckMixin):
         return NotEquals(self.attribute_id, choice["choice_id"])
 
 
-######
+class AttributeFactory:
+    """
+    属性を生成するためのFactoryクラス
 
-# accessor = AnnotationSpecsAccessor()
-# s.get_attribute(name=)
-# Selection("id1", choices=[]).is_selected("choice1").imply()
+    Attributes:
+        accessor: アノテーション仕様のアクセサ
+    """
 
-# Selection(accessor, attribute_name="id1").is_selected("choice1").imply()
+    def __init__(self, accessor: AnnotationSpecsAccessor) -> None:
+        self.accessor = accessor
 
+    def checkbox(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> Checkbox:
+        return Checkbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
-# TrackingId(s.get_attribute_id(name="foo"))
+    def string_textbox(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> StringTextbox:
+        return StringTextbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
+
+    def integer_textbox(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> IntegerTextbox:
+        return IntegerTextbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
+
+    def annotation_link(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> AnnotationLink:
+        return AnnotationLink(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
+
+    def tracking_id(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> TrackingId:
+        return TrackingId(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
+
+    def selection(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> Selection:
+        return Selection(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)

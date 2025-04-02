@@ -68,13 +68,20 @@ def get_choice(choices: list[dict[str, Any]], *, choice_id: Optional[str] = None
     Args:
         choice_id: 選択肢ID
         choice_name: 選択肢名(英語)
+
+    Raises:
+        ValueError: 'choice_id'か'choice_name'の指定方法が間違っている。または引数に合致する選択肢情報が見つからない。
+
     """
+    if choice_id is not None and choice_name is not None:
+        raise ValueError("'choice_id'か'choice_name'のどちらかはNoneにしてください。")
+
     if choice_id is not None:
         result = first_true(choices, pred=lambda e: e["choice_id"] == choice_id)
     elif choice_name is not None:
         result = first_true(choices, pred=lambda e: get_english_message(e["name"]) == choice_name)
     else:
-        raise ValueError("choice_idまたはchoice_nameのいずれかを指定してください。")
+        raise ValueError("'choice_id'か'choice_name'のどちらかはNone以外にしてください。")
     if result is None:
         raise ValueError(f"選択肢情報が見つかりませんでした。 :: choice_id='{choice_id}', choice_name='{choice_name}'")
     return result
@@ -87,13 +94,19 @@ def get_attribute(additionals: list[dict[str, Any]], *, attribute_id: Optional[s
     Args:
         attribute_id: 属性ID
         attribute_name: 属性名(英語)
+
+    Raises:
+        ValueError: 'attribute_id'か'attribute_name'の指定方法が間違っている。または引数に合致する属性情報が見つからない。
     """
+    if attribute_id is not None and attribute_name is not None:
+        raise ValueError("'attribute_id'か'attribute_name'のどちらかはNoneにしてください。")
+
     if attribute_id is not None:
         result = first_true(additionals, pred=lambda e: e["additional_data_definition_id"] == attribute_id)
     elif attribute_name is not None:
         result = first_true(additionals, pred=lambda e: get_english_message(e["name"]) == attribute_name)
     else:
-        raise ValueError("attribute_idまたはattribute_nameのいずれかを指定してください。")
+        raise ValueError("'attribute_id'か'attribute_name'のどちらかはNone以外にしてください。")
     if result is None:
         raise ValueError(f"属性情報が見つかりませんでした。 :: attribute_id='{attribute_id}', attribute_name='{attribute_name}'")
     return result
@@ -106,13 +119,20 @@ def get_label(labels: list[dict[str, Any]], *, label_id: Optional[str] = None, l
     Args:
         label_id: ラベルID
         label_name: ラベル名(英語)
+
+    Raises:
+        ValueError: 'label_id'か'label_name'の指定方法が間違っている。または引数に合致するラベル情報が見つからない。
+
     """
+    if label_id is not None and label_name is not None:
+        raise ValueError("'label_id'か'label_name'のどちらかはNoneにしてください。")
+
     if label_id is not None:
         result = first_true(labels, pred=lambda e: e["label_id"] == label_id)
     elif label_name is not None:
         result = first_true(labels, pred=lambda e: get_english_message(e["label_name"]) == label_name)
     else:
-        raise ValueError("label_idまたはlabel_nameのいずれかを指定してください。")
+        raise ValueError("'label_id'か'label_name'のどちらかはNone以外にしてください。")
     if result is None:
         raise ValueError(f"ラベル情報が見つかりませんでした。 :: label_id='{label_id}', label_name='{label_name}'")
     return result
