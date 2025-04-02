@@ -1,14 +1,7 @@
-import configparser
-from pathlib import Path
 
 import pytest
 
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, Lang, get_choice, get_english_message, get_message_with_lang
-
-inifile = configparser.ConfigParser()
-inifile.read("./pytest.ini", "UTF-8")
-
-test_dir = Path("./tests/data")
 
 
 class Test__get_english_message:
