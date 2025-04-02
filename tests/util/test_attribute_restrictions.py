@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
-from annofabapi.util.attribute_restrictions import AnnotationLink, Checkbox, IntegerTextBox, Selection, StringTextBox, TrackingId
+from annofabapi.util.attribute_restrictions import AnnotationLink, Checkbox, IntegerTextbox, Selection, StringTextbox, TrackingId
 
 accessor = AnnotationSpecsAccessor(annotation_specs=json.loads(Path("tests/data/util/attribute_restrictions/annotation_specs.json").read_text()))
 
@@ -28,43 +28,43 @@ class Test__Checkbox:
 
 class Test__StringTextBox:
     def test__matches(self):
-        actual = StringTextBox(accessor, attribute_name="note").matches("\\w").to_dict()
+        actual = StringTextbox(accessor, attribute_name="note").matches("\\w").to_dict()
         assert actual == {"additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00", "condition": {"_type": "Matches", "value": "\\w"}}
 
     def test__not_matches(self):
-        actual = StringTextBox(accessor, attribute_name="note").not_matches("\\w").to_dict()
+        actual = StringTextbox(accessor, attribute_name="note").not_matches("\\w").to_dict()
         assert actual == {
             "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
             "condition": {"_type": "NotMatches", "value": "\\w"},
         }
 
     def test__equals(self):
-        actual = StringTextBox(accessor, attribute_name="note").equals("foo").to_dict()
+        actual = StringTextbox(accessor, attribute_name="note").equals("foo").to_dict()
         assert actual == {"additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00", "condition": {"_type": "Equals", "value": "foo"}}
 
     def test__not_equals(self):
-        actual = StringTextBox(accessor, attribute_name="note").not_equals("foo").to_dict()
+        actual = StringTextbox(accessor, attribute_name="note").not_equals("foo").to_dict()
         assert actual == {
             "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
             "condition": {"_type": "NotEquals", "value": "foo"},
         }
 
     def test__is_empty(self):
-        actual = StringTextBox(accessor, attribute_name="note").is_empty().to_dict()
+        actual = StringTextbox(accessor, attribute_name="note").is_empty().to_dict()
         assert actual == {"additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00", "condition": {"_type": "Equals", "value": ""}}
 
     def test__is_not_empty(self):
-        actual = StringTextBox(accessor, attribute_name="note").is_not_empty().to_dict()
+        actual = StringTextbox(accessor, attribute_name="note").is_not_empty().to_dict()
         assert actual == {"additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00", "condition": {"_type": "NotEquals", "value": ""}}
 
 
 class Test__IntegerTextBox:
     def test__equals(self):
-        actual = IntegerTextBox(accessor, attribute_name="traffic_lane").equals(10).to_dict()
+        actual = IntegerTextbox(accessor, attribute_name="traffic_lane").equals(10).to_dict()
         assert actual == {"additional_data_definition_id": "ec27de5d-122c-40e7-89bc-5500e37bae6a", "condition": {"_type": "Equals", "value": "10"}}
 
     def test__not_equals(self):
-        actual = IntegerTextBox(accessor, attribute_name="traffic_lane").not_equals(10).to_dict()
+        actual = IntegerTextbox(accessor, attribute_name="traffic_lane").not_equals(10).to_dict()
         assert actual == {"additional_data_definition_id": "ec27de5d-122c-40e7-89bc-5500e37bae6a", "condition": {"_type": "NotEquals", "value": "10"}}
 
 
@@ -114,7 +114,7 @@ class Test__Selection:
 
 class Test__imply:
     def test__occludedチェックボックスがONならばnoteテキストボックスは空ではない(self):
-        condition = Checkbox(accessor, attribute_name="occluded").checked().imply(StringTextBox(accessor, attribute_name="note").is_not_empty())
+        condition = Checkbox(accessor, attribute_name="occluded").checked().imply(StringTextbox(accessor, attribute_name="note").is_not_empty())
         actual = condition.to_dict()
         assert actual == {
             "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
@@ -133,7 +133,7 @@ class Test__imply:
             Checkbox(accessor, attribute_name="occluded")
             .checked()
             .imply(
-                IntegerTextBox(accessor, attribute_name="traffic_lane").equals(2).imply(StringTextBox(accessor, attribute_name="note").is_not_empty())
+                IntegerTextbox(accessor, attribute_name="traffic_lane").equals(2).imply(StringTextbox(accessor, attribute_name="note").is_not_empty())
             )
         )
         actual = condition.to_dict()
@@ -158,6 +158,6 @@ class Test__imply:
 
     def test__implyメソッドの戻りに対してimplyメソッドを実行するとNotImplementedErrorが発生する(self):
         with pytest.raises(NotImplementedError):
-            Checkbox(accessor, attribute_name="occluded").checked().imply(IntegerTextBox(accessor, attribute_name="traffic_lane").equals(2)).imply(
-                StringTextBox(accessor, attribute_name="note").is_not_empty()
+            Checkbox(accessor, attribute_name="occluded").checked().imply(IntegerTextbox(accessor, attribute_name="traffic_lane").equals(2)).imply(
+                StringTextbox(accessor, attribute_name="note").is_not_empty()
             )
