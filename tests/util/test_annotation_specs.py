@@ -1,4 +1,3 @@
-
 import pytest
 
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, Lang, get_choice, get_english_message, get_message_with_lang
