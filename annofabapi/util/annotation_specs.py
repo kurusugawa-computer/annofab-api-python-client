@@ -87,13 +87,19 @@ def get_attribute(additionals: list[dict[str, Any]], *, attribute_id: Optional[s
     Args:
         attribute_id: 属性ID
         attribute_name: 属性名(英語)
+
+    Raises:
+        ValueError: attribute_id'か'attribute_name'の指定方法が間違っている。または引数に合致する属性情報が見つからない。
     """
+    if attribute_id is not None and attribute_name is not None:
+        raise ValueError("'attribute_id'か'attribute_name'のどちらかはNoneにしてください。")
+
     if attribute_id is not None:
         result = first_true(additionals, pred=lambda e: e["additional_data_definition_id"] == attribute_id)
     elif attribute_name is not None:
         result = first_true(additionals, pred=lambda e: get_english_message(e["name"]) == attribute_name)
     else:
-        raise ValueError("attribute_idまたはattribute_nameのいずれかを指定してください。")
+        raise ValueError("'attribute_id'か'attribute_name'のどちらかはNone以外にしてください。")
     if result is None:
         raise ValueError(f"属性情報が見つかりませんでした。 :: attribute_id='{attribute_id}', attribute_name='{attribute_name}'")
     return result
