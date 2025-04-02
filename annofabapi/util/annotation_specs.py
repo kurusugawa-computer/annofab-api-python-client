@@ -71,11 +71,11 @@ def get_choice(choices: list[dict[str, Any]], *, choice_id: Optional[str] = None
 
     Raises:
         ValueError: 'choice_id'か'choice_name'の指定方法が間違っている。または引数に合致する選択肢情報が見つからない。
-                    
+
     """
     if choice_id is not None and choice_name is not None:
         raise ValueError("'choice_id'か'choice_name'のどちらかはNoneにしてください。")
-    
+
     if choice_id is not None:
         result = first_true(choices, pred=lambda e: e["choice_id"] == choice_id)
     elif choice_name is not None:
@@ -122,12 +122,11 @@ def get_label(labels: list[dict[str, Any]], *, label_id: Optional[str] = None, l
 
     Raises:
         ValueError: 'label_id'か'label_name'の指定方法が間違っている。または引数に合致するラベル情報が見つからない。
-                
+
     """
     if label_id is not None and label_name is not None:
         raise ValueError("'label_id'か'label_name'のどちらかはNoneにしてください。")
 
-    
     if label_id is not None:
         result = first_true(labels, pred=lambda e: e["label_id"] == label_id)
     elif label_name is not None:

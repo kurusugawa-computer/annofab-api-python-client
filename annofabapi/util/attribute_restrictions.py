@@ -292,10 +292,11 @@ class Selection(Attribute, EmptyCheckMixin):
 class AttributeFactory:
     """
     属性を生成するためのFactoryクラス
-    
+
     Attributes:
         accessor: アノテーション仕様のアクセサ
     """
+
     def __init__(self, accessor: AnnotationSpecsAccessor) -> None:
         self.accessor = accessor
 

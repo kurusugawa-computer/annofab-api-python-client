@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from annofabapi.util.annotation_specs import Lang, get_english_message, get_message_with_lang
+from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, Lang, get_english_message, get_message_with_lang
 
 inifile = configparser.ConfigParser()
 inifile.read("./pytest.ini", "UTF-8")
@@ -37,3 +37,46 @@ class Test__get_message_with_lang:
         assert get_message_with_lang(i18n_message, Lang.JA_JP) == "自動車"
         assert get_message_with_lang(i18n_message, "en-US") == "car"
         assert get_message_with_lang(i18n_message, Lang.VI_VN) is None
+
+
+class Test__AnnotationSpecsAccessor:
+    def setup_method(self):
+        self.annotation_specs = {
+            "labels": [
+                {"label_id": "1", "label_name": {"messages": [{"lang": "en-US", "message": "Car"}]}},
+                {"label_id": "2", "label_name": {"messages": [{"lang": "en-US", "message": "Bike"}]}},
+            ],
+            "additionals": [
+                {"additional_data_definition_id": "1", "name": {"messages": [{"lang": "en-US", "message": "Color"}]}},
+                {"additional_data_definition_id": "2", "name": {"messages": [{"lang": "en-US", "message": "Size"}]}},
+            ],
+        }
+        self.accessor = AnnotationSpecsAccessor(self.annotation_specs)
+
+    def test_get_label_by_id(self):
+        label = self.accessor.get_label(label_id="1")
+        assert label["label_id"] == "1"
+        assert get_english_message(label["label_name"]) == "Car"
+
+    def test_get_label_by_name(self):
+        label = self.accessor.get_label(label_name="Bike")
+        assert label["label_id"] == "2"
+        assert get_english_message(label["label_name"]) == "Bike"
+
+    def test_get_label_not_found(self):
+        with pytest.raises(ValueError):
+            self.accessor.get_label(label_id="3")
+
+    def test_get_attribute_by_id(self):
+        attribute = self.accessor.get_attribute(attribute_id="1")
+        assert attribute["additional_data_definition_id"] == "1"
+        assert get_english_message(attribute["name"]) == "Color"
+
+    def test_get_attribute_by_name(self):
+        attribute = self.accessor.get_attribute(attribute_name="Size")
+        assert attribute["additional_data_definition_id"] == "2"
+        assert get_english_message(attribute["name"]) == "Size"
+
+    def test_get_attribute_not_found(self):
+        with pytest.raises(ValueError):
+            self.accessor.get_attribute(attribute_id="3")
