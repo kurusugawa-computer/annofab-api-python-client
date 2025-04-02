@@ -199,7 +199,7 @@ class Checkbox(Attribute):
         return self.attribute["type"] == "flag"
 
 
-class StringTextBox(Attribute, EmptyCheckMixin):
+class StringTextbox(Attribute, EmptyCheckMixin):
     """文字列用のテキストボックス（自由記述）の属性"""
 
     def _is_valid_attribute_type(self) -> bool:
@@ -222,7 +222,7 @@ class StringTextBox(Attribute, EmptyCheckMixin):
         return NotMatches(self.attribute_id, value)
 
 
-class IntegerTextBox(Attribute, EmptyCheckMixin):
+class IntegerTextbox(Attribute, EmptyCheckMixin):
     """整数用のテキストボックスの属性"""
 
     def _is_valid_attribute_type(self) -> bool:
@@ -287,6 +287,17 @@ class Selection(Attribute, EmptyCheckMixin):
         choices = self.attribute["choices"]
         choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
         return NotEquals(self.attribute_id, choice["choice_id"])
+
+
+class Foo:
+    def __init__(self, accessor: AnnotationSpecsAccessor) -> None:
+        self.accessor = accessor
+
+    def check_box(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> Checkbox:
+        return Checkbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
+
+    def string_textbox(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> StringTextbox:
+        return StringTextbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
 
 ######
