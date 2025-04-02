@@ -6,6 +6,7 @@
 Examples:
     .. code-block:: python
 
+        >>> import annofabapi
         >>> from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
         >>> from annofabapi.util.attribute_restrictions import AttributeFactory
         >>> service = annofabapi.build()
