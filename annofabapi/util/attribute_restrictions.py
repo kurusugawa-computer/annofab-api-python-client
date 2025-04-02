@@ -7,14 +7,14 @@ Examples:
     .. code-block:: python
 
         >>> from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
-        >>> from annofabapi.util.attribute_restrictions import Checkbox, Selection, StringTextBox
+        >>> from annofabapi.util.attribute_restrictions import AttributeFactory
         >>> service = annofabapi.build()
         >>> annotation_specs, _ = service.api.get_annotation_specs("prj1", query_params={"v": "3"})
-        >>> accessor = AnnotationSpecsAccessor(annotation_specs)
+        >>> fac = AttributeFactory(AnnotationSpecsAccessor(annotation_specs))
 
         # 「'occluded'チェックボックスがONならば、'note'テキストボックスは空ではない」という制約
-        >>> premise_restriction = Checkbox(accessor, attribute_name="occluded").checked()
-        >>> conclusion_restriction = StringTextBox(accessor, attribute_name="note").is_not_empty()
+        >>> premise_restriction = fac.checkbox(attribute_name="occluded").checked()
+        >>> conclusion_restriction = fac.string_textbox(attribute_name="note").is_not_empty()
         >>> restriction = premise_restriction.imply(conclusion_restriction)
         >>> restriction.to_dict()
         {
@@ -30,8 +30,8 @@ Examples:
         }
 
         # 「'occluded'チェックボックスがONならば、'car_kind'セレクトボックス(またはラジオボタン)は選択肢'general_car'を選択しない」という制約
-        >>> premise_restriction = Checkbox(accessor, attribute_name="occluded").checked()
-        >>> conclusion_restriction = Selection(accessor, attribute_name="car_kind").not_has_choice(choice_name="general_car")
+        >>> premise_restriction = fac.checkbox(attribute_name="occluded").checked()
+        >>> conclusion_restriction = fac.selection(attribute_name="car_kind").not_has_choice(choice_name="general_car")
         >>> restriction = premise_restriction.imply(conclusion_restriction)
         >>> restriction.to_dict()
         {
