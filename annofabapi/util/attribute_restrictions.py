@@ -7,7 +7,7 @@ Examples:
     .. code-block:: python
 
         >>> import annofabapi
-        >>> from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
+        >>> from annofabapi.util.attribute_restrictions import AttributeFactory
         >>> service = annofabapi.build()
         >>> annotation_specs, _ = service.api.get_annotation_specs("prj1", query_params={"v": "3"})
         >>> fac = AttributeFactory(annotation_specs)
