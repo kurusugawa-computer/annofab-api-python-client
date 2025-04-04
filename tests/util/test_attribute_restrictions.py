@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
-from annofabapi.util.attribute_restrictions import AnnotationLink, Checkbox, IntegerTextbox, Selection, StringTextbox, TrackingId, AttributeFactory
+from annofabapi.util.attribute_restrictions import AnnotationLink, AttributeFactory, Checkbox, IntegerTextbox, Selection, StringTextbox, TrackingId
 
 accessor = AnnotationSpecsAccessor(annotation_specs=json.loads(Path("tests/data/util/attribute_restrictions/annotation_specs.json").read_text()))
 
@@ -161,8 +161,8 @@ class Test__imply:
             Checkbox(accessor, attribute_name="occluded").checked().imply(IntegerTextbox(accessor, attribute_name="traffic_lane").equals(2)).imply(
                 StringTextbox(accessor, attribute_name="note").is_not_empty()
             )
-            
-            
+
+
 class Test__AttributeFactory:
     def setup_method(self):
         self.annotation_specs = json.loads(Path("tests/data/util/attribute_restrictions/annotation_specs.json").read_text())
@@ -197,4 +197,3 @@ class Test__AttributeFactory:
         selection = self.factory.selection(attribute_name="car_kind")
         assert isinstance(selection, Selection)
         assert selection.attribute_id == "cbb0155f-1631-48e1-8fc3-43c5f254b6f2"
-
