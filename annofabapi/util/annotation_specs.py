@@ -147,6 +147,7 @@ class AnnotationSpecsAccessor:
     """
 
     def __init__(self, annotation_specs: dict[str, Any]) -> None:
+        self.annotation_specs = annotation_specs
         self.labels = annotation_specs["labels"]
         self.additionals = annotation_specs["additionals"]
 

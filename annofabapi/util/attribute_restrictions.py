@@ -8,10 +8,9 @@ Examples:
 
         >>> import annofabapi
         >>> from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
-        >>> from annofabapi.util.attribute_restrictions import AttributeFactory
         >>> service = annofabapi.build()
         >>> annotation_specs, _ = service.api.get_annotation_specs("prj1", query_params={"v": "3"})
-        >>> fac = AttributeFactory(AnnotationSpecsAccessor(annotation_specs))
+        >>> fac = AttributeFactory(annotation_specs)
 
         # 「'occluded'チェックボックスがONならば、'note'テキストボックスは空ではない」という制約
         >>> premise_restriction = fac.checkbox(attribute_name="occluded").checked()
@@ -295,11 +294,11 @@ class AttributeFactory:
     属性を生成するためのFactoryクラス
 
     Attributes:
-        accessor: アノテーション仕様のアクセサ
+        annotation_specs: アノテーション仕様(v3)の情報
     """
 
-    def __init__(self, accessor: AnnotationSpecsAccessor) -> None:
-        self.accessor = accessor
+    def __init__(self, annotation_specs: dict[str, Any]) -> None:
+        self.accessor = AnnotationSpecsAccessor(annotation_specs)
 
     def checkbox(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> Checkbox:
         return Checkbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
