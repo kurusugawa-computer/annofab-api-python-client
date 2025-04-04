@@ -33,6 +33,7 @@
         "pydantic",
         "pydata",
         "pylint",
+        "pytest",
         "relativedelta",
         "timespec",
         "tzlocal",

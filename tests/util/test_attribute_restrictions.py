@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
-from annofabapi.util.attribute_restrictions import AnnotationLink, Checkbox, IntegerTextbox, Selection, StringTextbox, TrackingId
+from annofabapi.util.attribute_restrictions import AnnotationLink, AttributeFactory, Checkbox, IntegerTextbox, Selection, StringTextbox, TrackingId
 
 accessor = AnnotationSpecsAccessor(annotation_specs=json.loads(Path("tests/data/util/attribute_restrictions/annotation_specs.json").read_text()))
 
@@ -161,3 +161,39 @@ class Test__imply:
             Checkbox(accessor, attribute_name="occluded").checked().imply(IntegerTextbox(accessor, attribute_name="traffic_lane").equals(2)).imply(
                 StringTextbox(accessor, attribute_name="note").is_not_empty()
             )
+
+
+class Test__AttributeFactory:
+    def setup_method(self):
+        self.annotation_specs = json.loads(Path("tests/data/util/attribute_restrictions/annotation_specs.json").read_text())
+        self.factory = AttributeFactory(self.annotation_specs)
+
+    def test__checkbox(self):
+        checkbox = self.factory.checkbox(attribute_name="occluded")
+        assert isinstance(checkbox, Checkbox)
+        assert checkbox.attribute_id == "2517f635-2269-4142-8ef4-16312b4cc9f7"
+
+    def test__string_textbox(self):
+        string_textbox = self.factory.string_textbox(attribute_name="note")
+        assert isinstance(string_textbox, StringTextbox)
+        assert string_textbox.attribute_id == "9b05648d-1e16-4ea2-ab79-48907f5eed00"
+
+    def test__integer_textbox(self):
+        integer_textbox = self.factory.integer_textbox(attribute_name="traffic_lane")
+        assert isinstance(integer_textbox, IntegerTextbox)
+        assert integer_textbox.attribute_id == "ec27de5d-122c-40e7-89bc-5500e37bae6a"
+
+    def test__annotation_link(self):
+        annotation_link = self.factory.annotation_link(attribute_name="link_car")
+        assert isinstance(annotation_link, AnnotationLink)
+        assert annotation_link.attribute_id == "15ba8b9d-4882-40c2-bb31-ed3f68197c2e"
+
+    def test__tracking_id(self):
+        tracking_id = self.factory.tracking_id(attribute_name="tracking")
+        assert isinstance(tracking_id, TrackingId)
+        assert tracking_id.attribute_id == "d349e76d-b59a-44cd-94b4-713a00b2e84d"
+
+    def test__selection(self):
+        selection = self.factory.selection(attribute_name="car_kind")
+        assert isinstance(selection, Selection)
+        assert selection.attribute_id == "cbb0155f-1631-48e1-8fc3-43c5f254b6f2"
