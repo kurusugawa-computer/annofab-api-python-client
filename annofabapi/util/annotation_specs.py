@@ -69,7 +69,7 @@ def get_choice(choices: list[dict[str, Any]], *, choice_id: Optional[str] = None
         choice_name: 選択肢名(英語)
 
     Raises:
-        ValueError: 'choice_id'か'choice_name'の指定方法が間違っている。または引数に合致する選択肢情報が見つからない。
+        ValueError: 'choice_id'か'choice_name'の指定方法が間違っている。または引数に合致する選択肢情報が見つからない。または複数見つかった。
 
     """
     if choice_id is not None and choice_name is not None:
@@ -98,7 +98,7 @@ def get_attribute(additionals: list[dict[str, Any]], *, attribute_id: Optional[s
         attribute_name: 属性名(英語)
 
     Raises:
-        ValueError: 'attribute_id'か'attribute_name'の指定方法が間違っている。または引数に合致する属性情報が見つからない。
+        ValueError: 'attribute_id'か'attribute_name'の指定方法が間違っている。または引数に合致する属性情報が見つからない。または複数見つかった。
     """
     if attribute_id is not None and attribute_name is not None:
         raise ValueError("'attribute_id'か'attribute_name'のどちらかはNoneにしてください。")
@@ -126,7 +126,7 @@ def get_label(labels: list[dict[str, Any]], *, label_id: Optional[str] = None, l
         label_name: ラベル名(英語)
 
     Raises:
-        ValueError: 'label_id'か'label_name'の指定方法が間違っている。または引数に合致するラベル情報が見つからない。
+        ValueError: 'label_id'か'label_name'の指定方法が間違っている。または引数に合致するラベル情報が見つからない。または複数見つかった。
 
     """
     if label_id is not None and label_name is not None:
