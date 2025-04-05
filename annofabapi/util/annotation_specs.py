@@ -84,7 +84,7 @@ def get_choice(choices: list[dict[str, Any]], *, choice_id: Optional[str] = None
 
     if len(result) == 0:
         raise ValueError(f"選択肢情報が見つかりませんでした。 :: choice_id='{choice_id}', choice_name='{choice_name}'")
-    elif len(result) > 1:
+    if len(result) > 1:
         raise ValueError(f"選択肢情報が複数（{len(result)}件）見つかりました。 :: choice_id='{choice_id}', choice_name='{choice_name}'")
     return result[0]
 
@@ -112,7 +112,7 @@ def get_attribute(additionals: list[dict[str, Any]], *, attribute_id: Optional[s
 
     if len(result) == 0:
         raise ValueError(f"属性情報が見つかりませんでした。 :: attribute_id='{attribute_id}', attribute_name='{attribute_name}'")
-    elif len(result) > 1:
+    if len(result) > 1:
         raise ValueError(f"属性情報が複数（{len(result)}件）見つかりました。 :: attribute_id='{attribute_id}', attribute_name='{attribute_name}'")
     return result[0]
 
@@ -141,7 +141,7 @@ def get_label(labels: list[dict[str, Any]], *, label_id: Optional[str] = None, l
 
     if len(result) == 0:
         raise ValueError(f"ラベル情報が見つかりませんでした。 :: label_id='{label_id}', label_name='{label_name}'")
-    elif len(result) > 1:
+    if len(result) > 1:
         raise ValueError(f"ラベル情報が複数（{len(result)}件）見つかりました。 :: label_id='{label_id}', label_name='{label_name}'")
     return result[0]
 
