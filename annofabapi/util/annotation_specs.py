@@ -1,7 +1,6 @@
 from typing import Any, Literal, Optional, Union
 
 import more_itertools
-from more_itertools import first_true
 
 from annofabapi.models import Lang
 
@@ -77,13 +76,16 @@ def get_choice(choices: list[dict[str, Any]], *, choice_id: Optional[str] = None
         raise ValueError("'choice_id'か'choice_name'のどちらかはNoneにしてください。")
 
     if choice_id is not None:
-        result = first_true(choices, pred=lambda e: e["choice_id"] == choice_id)
+        result = [e for e in choices if e["choice_id"] == choice_id]
     elif choice_name is not None:
-        result = first_true(choices, pred=lambda e: get_english_message(e["name"]) == choice_name)
+        result = [e for e in choices if get_english_message(e["name"]) == choice_name]
     else:
         raise ValueError("'choice_id'か'choice_name'のどちらかはNone以外にしてください。")
-    if result is None:
+
+    if len(result) == 0:
         raise ValueError(f"選択肢情報が見つかりませんでした。 :: choice_id='{choice_id}', choice_name='{choice_name}'")
+    elif len(result) > 1:
+        raise ValueError(f"選択肢情報が複数（{len(result)}件）見つかりました。 :: choice_id='{choice_id}', choice_name='{choice_name}'")
     return result
 
 
@@ -102,13 +104,16 @@ def get_attribute(additionals: list[dict[str, Any]], *, attribute_id: Optional[s
         raise ValueError("'attribute_id'か'attribute_name'のどちらかはNoneにしてください。")
 
     if attribute_id is not None:
-        result = first_true(additionals, pred=lambda e: e["additional_data_definition_id"] == attribute_id)
+        result = [e for e in additionals if e["additional_data_definition_id"] == attribute_id]
     elif attribute_name is not None:
-        result = first_true(additionals, pred=lambda e: get_english_message(e["name"]) == attribute_name)
+        result = [e for e in additionals if get_english_message(e["name"]) == attribute_name]
     else:
         raise ValueError("'attribute_id'か'attribute_name'のどちらかはNone以外にしてください。")
-    if result is None:
+
+    if len(result) == 0:
         raise ValueError(f"属性情報が見つかりませんでした。 :: attribute_id='{attribute_id}', attribute_name='{attribute_name}'")
+    elif len(result) > 1:
+        raise ValueError(f"属性情報が複数（{len(result)}件）見つかりました。 :: attribute_id='{attribute_id}', attribute_name='{attribute_name}'")
     return result
 
 
@@ -128,13 +133,16 @@ def get_label(labels: list[dict[str, Any]], *, label_id: Optional[str] = None, l
         raise ValueError("'label_id'か'label_name'のどちらかはNoneにしてください。")
 
     if label_id is not None:
-        result = first_true(labels, pred=lambda e: e["label_id"] == label_id)
+        result = [e for e in labels if e["label_id"] == label_id]
     elif label_name is not None:
-        result = first_true(labels, pred=lambda e: get_english_message(e["label_name"]) == label_name)
+        result = [e for e in labels if get_english_message(e["label_name"]) == label_name]
     else:
         raise ValueError("'label_id'か'label_name'のどちらかはNone以外にしてください。")
-    if result is None:
+
+    if len(result) == 0:
         raise ValueError(f"ラベル情報が見つかりませんでした。 :: label_id='{label_id}', label_name='{label_name}'")
+    elif len(result) > 1:
+        raise ValueError(f"ラベル情報が複数（{len(result)}件）見つかりました。 :: label_id='{label_id}', label_name='{label_name}'")
     return result
 
 
