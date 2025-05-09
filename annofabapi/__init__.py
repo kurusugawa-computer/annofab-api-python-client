@@ -8,11 +8,11 @@ from annofabapi.wrapper import Wrapper
 __all__ = [
     "AnnofabApi",
     "AnnofabApi2",
-    "Resource",
     "Wrapper",
     "build",
-    "build_from_env",
     "build_from_netrc",
+    "build_from_env",
+    "Resource",
 ]
 
 
