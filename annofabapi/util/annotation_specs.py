@@ -89,13 +89,20 @@ def get_choice(choices: list[dict[str, Any]], *, choice_id: Optional[str] = None
     return result[0]
 
 
-def get_attribute(additionals: list[dict[str, Any]], *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> dict[str, Any]:
+def get_attribute(
+    additionals: list[dict[str, Any]],
+    *,
+    attribute_id: Optional[str] = None,
+    attribute_name: Optional[str] = None,
+    label: Optional[dict[str, Any]] = None,
+) -> dict[str, Any]:
     """
     属性情報を取得します。
 
     Args:
         attribute_id: 属性ID
         attribute_name: 属性名(英語)
+        label: Noneでなければ、指定したラベルに紐づく属性情報を取得します。
 
     Raises:
         ValueError: 'attribute_id'か'attribute_name'の指定方法が間違っている。または引数に合致する属性情報が見つからない。または複数見つかった。
@@ -110,10 +117,19 @@ def get_attribute(additionals: list[dict[str, Any]], *, attribute_id: Optional[s
     else:
         raise ValueError("'attribute_id'か'attribute_name'のどちらかはNone以外にしてください。")
 
+    label_name = None
+    if label is not None:
+        result = [e for e in result if e["additional_data_definition_id"] in label["additional_data_definitions"]]
+        label_name = get_english_message(label["label_name"])
+
     if len(result) == 0:
-        raise ValueError(f"属性情報が見つかりませんでした。 :: attribute_id='{attribute_id}', attribute_name='{attribute_name}'")
+        raise ValueError(
+            f"属性情報が見つかりませんでした。 :: attribute_id='{attribute_id}', attribute_name='{attribute_name}', label_name='{label_name}'"
+        )
     if len(result) > 1:
-        raise ValueError(f"属性情報が複数（{len(result)}件）見つかりました。 :: attribute_id='{attribute_id}', attribute_name='{attribute_name}'")
+        raise ValueError(
+            f"属性情報が複数（{len(result)}件）見つかりました。 :: attribute_id='{attribute_id}', attribute_name='{attribute_name}', label_name='{label_name}'"  # noqa: E501
+        )
     return result[0]
 
 
@@ -159,15 +175,22 @@ class AnnotationSpecsAccessor:
         self.labels = annotation_specs["labels"]
         self.additionals = annotation_specs["additionals"]
 
-    def get_attribute(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> dict[str, Any]:
+    def get_attribute(
+        self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None, label: Optional[dict[str, Any]] = None
+    ) -> dict[str, Any]:
         """
         属性情報を取得します。
 
         Args:
             attribute_id: 属性ID
             attribute_name: 属性名(英語)
+            label: Noneでなければ、指定したラベルに紐づく属性情報を取得します。
+
+        Raises:
+            ValueError: 'attribute_id'か'attribute_name'の指定方法が間違っている。または引数に合致する属性情報が見つからない。または複数見つかった。
+
         """
-        return get_attribute(self.additionals, attribute_id=attribute_id, attribute_name=attribute_name)
+        return get_attribute(self.additionals, attribute_id=attribute_id, attribute_name=attribute_name, label=label)
 
     def get_label(self, *, label_id: Optional[str] = None, label_name: Optional[str] = None) -> dict[str, Any]:
         """
@@ -176,5 +199,9 @@ class AnnotationSpecsAccessor:
         Args:
             label_id: ラベルID
             label_name: ラベル名(英語)
+
+        Raises:
+            ValueError: 'label_id'か'label_name'の指定方法が間違っている。または引数に合致するラベル情報が見つからない。または複数見つかった。
+
         """
         return get_label(self.labels, label_id=label_id, label_name=label_name)

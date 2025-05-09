@@ -35,8 +35,8 @@ class Test__AnnotationSpecsAccessor:
     def setup_method(self):
         self.annotation_specs = {
             "labels": [
-                {"label_id": "1", "label_name": {"messages": [{"lang": "en-US", "message": "Car"}]}},
-                {"label_id": "2", "label_name": {"messages": [{"lang": "en-US", "message": "Bike"}]}},
+                {"label_id": "1", "label_name": {"messages": [{"lang": "en-US", "message": "Car"}]}, "additional_data_definitions": ["1", "2"]},
+                {"label_id": "2", "label_name": {"messages": [{"lang": "en-US", "message": "Bike"}]}, "additional_data_definitions": []},
             ],
             "additionals": [
                 {"additional_data_definition_id": "1", "name": {"messages": [{"lang": "en-US", "message": "Color"}]}},
@@ -72,6 +72,17 @@ class Test__AnnotationSpecsAccessor:
     def test_get_attribute_not_found(self):
         with pytest.raises(ValueError):
             self.accessor.get_attribute(attribute_id="3")
+
+    def test_get_attribute_by_id_and_label(self):
+        label = self.accessor.get_label(label_id="1")
+        attribute = self.accessor.get_attribute(attribute_id="1", label=label)
+        assert attribute["additional_data_definition_id"] == "1"
+        assert get_english_message(attribute["name"]) == "Color"
+
+    def test_get_attribute_by_id_and_label__not_found(self):
+        label = self.accessor.get_label(label_id="2")
+        with pytest.raises(ValueError):
+            self.accessor.get_attribute(attribute_id="1", label=label)
 
 
 class Test__get_choice:
