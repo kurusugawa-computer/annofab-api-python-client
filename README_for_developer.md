@@ -25,7 +25,7 @@ $ make format && make lint
 ## テストの実行方法
 1. Annofabの認証情報を、`.netrc`ファイルまたは環境変数に設定する。
 2. 以下のコマンドを実行して、テスト用のプロジェクトとタスクを作成する。
-     * `poetry run python tests/create_test_project.py --organization ${MY_ORGANIZATION}`
+     * `uv run python tests/create_test_project.py --organization ${MY_ORGANIZATION}`
 3. `pytest.ini`に、テスト対象の`project_id`と`task_id`を指定する。
     * `task_id`はプロジェクト`project_id`配下であること
     * **【注意】テストを実行すると、Annofabプロジェクトの内容が変更される**
@@ -35,17 +35,17 @@ $ make format && make lint
 #### テストメソッドを指定してテストする方法
 
 ```
-$ poetry run pytest tests/test_api.py::TestLogin::test_login
+$ uv run pytest tests/test_api.py::TestLogin::test_login
 ```
 
 annofabapiでは、pytestのカスタムオプションを定義しています。
 
 ```
 # ジョブを投げるテスト（時間がかかるテスト）を実行する。
-$ poetry run pytest --run_submitting_job tests 
+$ uv run pytest --run_submitting_job tests 
 
 # annofabapiモジュールのログを表示する。
-$ poetry run pytest --print_log_annofabapi tests 
+$ uv run pytest --print_log_annofabapi tests 
 ```
 
 #### カバレッジの確認
@@ -67,7 +67,7 @@ GitHubのReleasesからリリースしてください。
 バージョンはSemantic Versioningに従います。
 リリースすると、以下の状態になります。
 
-* ソース内のバージョン情報（`pyproject.toml`, `__version__.py`）は、https://github.com/mtkennerly/poetry-dynamic-versioning でGitHubのバージョンタグから生成されます。
+* ソース内のバージョン情報（`pyproject.toml`, `__init__.py`）は、uv-dynamic-versioning によりGitHubのバージョンタグから生成されます。
 * 自動でPyPIに公開されます。
 
 
