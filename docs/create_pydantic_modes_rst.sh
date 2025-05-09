@@ -8,7 +8,7 @@ pushd ${SCRIPT_DIR}/../
 
 tempdir=$(mktemp -d)
 
-poetry run sphinx-apidoc annofabapi -o docs/api_reference/foo --output-dir ${tempdir}
+uv run sphinx-apidoc annofabapi -o docs/api_reference/foo --output-dir ${tempdir}
 cp ${tempdir}/annofabapi.pydantic_models.rst docs/api_reference/pydantic_models.rst
 
 rm -rf ${tempdir}

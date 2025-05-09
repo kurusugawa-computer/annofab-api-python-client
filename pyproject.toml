@@ -1,72 +1,75 @@
-[tool.poetry]
+[project]
 name = "annofabapi"
-version = "0.0.0"  # `poetry-dynamic-versioning`を使ってGitHubのバージョンタグを取得している。変更不要
+dynamic = ["version"]
 description = "Python Client Library of Annofab WebAPI (https://annofab.com/docs/api/)"
-authors = ["Kurusugawa Computer Inc."]
+authors = [{ name = "Kurusugawa Computer Inc." }]
+requires-python = ">=3.9"
+readme = "README.md"
 license = "MIT"
-keywords=["annofab", "api"]
-readme="README.md"
-repository="https://github.com/kurusugawa-computer/annofab-api-python-client"
+keywords = [
+    "annofab",
+    "api",
+]
 classifiers = [
-        "Development Status :: 4 - Beta",
-        "Intended Audience :: Developers",
-        "Topic :: Utilities",
-        "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Utilities",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13"    
+]
+dependencies = [
+    "requests",
+    "isodate",
+    "python-dateutil",
+    "backoff",
+    "dataclasses-json",
+    "more-itertools",
+    "pydantic>=2,<3",
 ]
 
+[project.optional-dependencies]
+segmentation = [
+    "numpy",
+    "pillow",
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-requests = "*"
-isodate = "*"
-python-dateutil = "*"
-backoff="*"
-dataclasses-json="*"
-more-itertools = "*"
+[project.urls]
+Repository = "https://github.com/kurusugawa-computer/annofab-api-python-client"
 
-numpy = {version = "*",  optional=true}
+[dependency-groups]
+test = [
+    "pytest>=8,<9",
+    "pytest-xdist",
+    "pytest-cov",
+]
+linter = [
+    "ruff>=0.11,<0.12 ; python_version >= '3.12'",
+    "mypy>=1,<2 ; python_version >= '3.12'",
+    "pylint>=3,<4 ; python_version >= '3.12'",
+    "types-requests",
+    "types-python-dateutil",
+    "types-dataclasses",
+]
+documentation = [
+    "sphinx>=8,<9 ; python_version >= '3.12'",
+    "pydata-sphinx-theme ; python_version >= '3.12'",
+]
+dev = [
+    "ipython",
+    "numpy>=2.1 ; python_version >= '3.13'",
+]
 
-pillow={version="*", optional=true }
-pydantic = "^2"
-
-
-[tool.poetry.extras]
-# 塗りつぶし画像を扱うためのオプション
-segmentation = ["numpy", "pillow"]
-
-
-[tool.poetry.group.test.dependencies]
-pytest = "^8"
-pytest-xdist = "*"
-pytest-cov = "*"
-
-
-[tool.poetry.group.linter.dependencies]
-# pythonバージョンを指定している理由：lintは開発環境と同じPythonバージョンで実行するため。また古いPythonバージョンにサポートしていないライブラリのバージョンがあるため
-ruff = {version="^0.11", python = ">=3.12"}
-mypy = {version="^1", python = ">=3.12"}
-pylint = {version="^3", python = ">=3.12"}
-
-# type stub package
-types-requests = "*"
-types-python-dateutil = "*"
-types-dataclasses = "*"
-
-
-[tool.poetry.group.documentation.dependencies]
-sphinx = {version="^8", python = ">=3.12"}
-pydata-sphinx-theme = {version="*", python = ">=3.12"}
-
-[tool.poetry.group.dev]
-# 開発するときのみ必要なライブラリ。インストールしなくても開発はできるので、オプショナルにする
-optional = true
-
-[tool.poetry.group.dev.dependencies]
-ipython = "*"
-
-# wheelファイルをビルドすると時間がかかるため、python3.13のwheelファイルが存在するバージョンを明示する
-numpy = {version = ">=2.1", python = ">=3.13"}
-
+[tool.uv]
+default-groups = [
+    "test",
+    "linter",
+    "documentation",
+    "dev",
+]
 
 [tool.mypy]
 # スタブが無いパッケージのエラーは無視させる.サードパーティのライブラリに型情報がないケースもあるため
@@ -136,7 +139,6 @@ select = [
     "ALL"
 ]
 
-
 [tool.ruff.lint.per-file-ignores]
 # テストコードはチェックを緩和する
 "tests/**.py" = [
@@ -193,11 +195,10 @@ convention = "google"
 max-args = 10
 
 
-
-[tool.poetry-dynamic-versioning]
-enable = true
-
-
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
-build-backend = "poetry_dynamic_versioning.backend"
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
