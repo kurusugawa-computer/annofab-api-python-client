@@ -234,6 +234,9 @@ components:
           type: string
     Errors:
       type: object
+      required:
+        - errors
+        - context
       properties:
         errors:
           type: array
@@ -1119,6 +1122,8 @@ components:
       required:
         - compatible_input_data_types
       properties:
+        plugin_compatibility:
+          $ref: "#/components/schemas/OrganizationPluginCompatibility"
         url:
           $ref: "#/components/schemas/AnnotationEditorUrl"
         auth_redirect_url:
@@ -1142,6 +1147,8 @@ components:
       description: |
         カスタムタスク割当用のプラグインを表します。
       properties:
+        plugin_compatibility:
+          $ref: "#/components/schemas/OrganizationPluginCompatibility"
         url:
           $ref: "#/components/schemas/TaskAssignmentUrl"
         _type:
@@ -1157,6 +1164,8 @@ components:
       required:
         - compatible_input_data_types
       properties:
+        plugin_compatibility:
+          $ref: "#/components/schemas/OrganizationPluginCompatibility"
         url:
           $ref: "#/components/schemas/AnnotationSpecsUrl"
         auth_redirect_url:
@@ -1213,6 +1222,9 @@ components:
         プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。
     OrganizationPluginCompatibility:
       type: object
+      required:
+        - input
+        - output
       properties:
         input:
           $ref: "#/components/schemas/OrganizationPluginCompatibilityType"
@@ -1702,6 +1714,12 @@ components:
         AWS IAMロール。S3プライベートストレージの認可で使います。
         [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。
       example: "arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"
+    UseS3TransferAcceleration:
+      type: boolean
+      description: |
+        S3プライベートストレージにアクセスする際に、AWS S3 Transfer Accelerationを使用するかどうか。trueの場合に使用します。
+        private_storage_aws_iam_role_arnの設定がなされていない場合、この値は無視されます。
+      default: false
     ProjectConfigurationPluginId:
       $ref: "#/components/schemas/PluginId"
       description: |
@@ -1759,6 +1777,8 @@ components:
           $ref: "#/components/schemas/SamplingAcceptanceRate"
         private_storage_aws_iam_role_arn:
           $ref: "#/components/schemas/PrivateStorageAwsIamRoleArn"
+        use_s3_transfer_acceleration:
+          $ref: "#/components/schemas/UseS3TransferAcceleration"
         plugin_id:
           $ref: "#/components/schemas/ProjectConfigurationPluginId"
         custom_task_assignment_plugin_id:
@@ -4274,8 +4294,11 @@ components:
           * `AdditionalDataRestrictionConditionEquals`: 指定した値に等しい
           * `AdditionalDataRestrictionConditionNotEquals`: 指定した値に等しくない
           * `AdditionalDataRestrictionConditionMatches`: 指定した正規表現に一致する
+              * `AdditionalDataDefinitionType`が`text`か`comment`のときのみ利用可能
           * `AdditionalDataRestrictionConditionNotMatches`: 指定した正規表現に一致しない
+              * `AdditionalDataDefinitionType`が`text`か`comment`のときのみ利用可能
           * `AdditionalDataRestrictionConditionHasLabel`: 指定したラベルIDに一致する（アノテーションリンク属性限定）
+              * `AdditionalDataDefinitionType`が`link`のときのみ利用可能
           * `AdditionalDataRestrictionConditionImply`: 指定した前提条件を満たすときのみ、制約を満たすかどうか
 
         以下のJSONは、「属性IDが`attr2`の属性値が`true`ならば、属性IDが`attr1`の属性値は`choice1`である」という制約を表しています。
@@ -4894,6 +4917,11 @@ components:
     TaskInputValidation:
       description: タスクの提出操作に対する入力データID別のバリデーション結果です。
       type: object
+      required:
+        - input_data_id
+        - annotation_errors
+        - inspection_errors
+        - comment_errors
       properties:
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
@@ -4905,9 +4933,17 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/InspectionValidationError"
+        comment_errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/CommentValidationError"
     TaskValidation:
       description: タスクの全入力データに対するバリデーション結果です。
       type: object
+      required:
+        - project_id
+        - task_id
+        - inputs
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -4920,6 +4956,10 @@ components:
     InputDataSummary:
       description: ある入力データのバリデーション結果です。入力データIDをキーに引けるようにMap[入力データID, バリデーション結果]となっています
       type: object
+      required:
+        - input_data_id
+        - inspection_summary
+        - annotation_summaries
       properties:
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
@@ -4963,10 +5003,7 @@ components:
         input_data_id:
           $ref: "#/components/schemas/InputDataId"
         project_id:
-          deprecated: true
           $ref: "#/components/schemas/ProjectId"
-          description: |
-            プロジェクトID。将来的に廃止する予定です。
         organization_id:
           $ref: "#/components/schemas/OrganizationId"
         input_data_set_id:
@@ -6326,6 +6363,7 @@ components:
         - task_id
         - input_data_id
         - annotation_id
+        - updated_datetime
       properties:
         project_id:
           $ref: "#/components/schemas/ProjectId"
@@ -7260,6 +7298,11 @@ components:
           CountResult: "#/components/schemas/CountResult"
     CountResult:
       type: object
+      required:
+        - _type
+        - name
+        - field
+        - items
       properties:
         _type:
           type: string
@@ -7675,11 +7718,47 @@ components:
           type: string
           description: IllegalState
           example: "IllegalState"
+    CommentValidationError:
+      oneOf:
+        - $ref: "#/components/schemas/NoComment"
+        - $ref: "#/components/schemas/UpdateStatusRequired"
+      discriminator:
+        propertyName: "_type"
+        mapping:
+          NoComment: "#/components/schemas/NoComment"
+          UpdateStatusRequired: "#/components/schemas/UpdateStatusRequired"
+    NoComment:
+      type: object
+      description: 空のコメントがある時のエラー
+      required:
+        - _type
+        - comment
+      properties:
+        comment:
+          $ref: "#/components/schemas/Comment"
+        _type:
+          type: string
+          enum: ["NoComment"]
+    UpdateStatusRequired:
+      type: object
+      description: 状態変更が必要である時のエラー
+      required:
+        - _type
+        - comment
+      properties:
+        comment:
+          $ref: "#/components/schemas/Comment"
+        _type:
+          type: string
+          enum: ["UpdateStatusRequired"]
     ProjectTaskCounts:
       type: object
       required:
+        - project_id
         - task_counts
       properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
         task_counts:
           type: array
           items:
@@ -8145,6 +8224,7 @@ components:
         - aggregation_period_to
         - editor_usage
         - storage_usage
+        - created_datetime
       properties:
         organization_id:
           $ref: "#/components/schemas/OrganizationId"
@@ -8168,6 +8248,10 @@ components:
         storage_usage:
           type: number
           description: ストレージ利用量。単位はGB時
+        created_datetime:
+          type: string
+          format: date-time
+          description: このデータの生成日時。
     UsageStatusCsvFileUrl:
       type: object
       description: 利用状況詳細のCSVファイルのURL
