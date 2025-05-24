@@ -16,20 +16,27 @@ import pprint
 import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing_extensions import Self
 
-from annofabapi.pydantic_models.project_task_counts_task_counts_inner import ProjectTaskCountsTaskCountsInner
+from annofabapi.pydantic_models.comment import Comment
 
 
-class ProjectTaskCounts(BaseModel):
+class NoComment(BaseModel):
     """
-    ProjectTaskCounts
+    空のコメントがある時のエラー
     """
 
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    task_counts: List[ProjectTaskCountsTaskCountsInner]
-    __properties: ClassVar[List[str]] = ["project_id", "task_counts"]
+    comment: Comment
+    type: StrictStr = Field(alias="_type")
+    __properties: ClassVar[List[str]] = ["comment", "_type"]
+
+    @field_validator("type")
+    def type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(["NoComment"]):
+            raise ValueError("must be one of enum values ('NoComment')")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +55,7 @@ class ProjectTaskCounts(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of ProjectTaskCounts from a JSON string"""
+        """Create an instance of NoComment from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -68,18 +75,14 @@ class ProjectTaskCounts(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in task_counts (list)
-        _items = []
-        if self.task_counts:
-            for _item_task_counts in self.task_counts:
-                if _item_task_counts:
-                    _items.append(_item_task_counts.to_dict())
-            _dict["task_counts"] = _items
+        # override the default output from pydantic by calling `to_dict()` of comment
+        if self.comment:
+            _dict["comment"] = self.comment.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of ProjectTaskCounts from a dict"""
+        """Create an instance of NoComment from a dict"""
         if obj is None:
             return None
 
@@ -87,11 +90,6 @@ class ProjectTaskCounts(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate(
-            {
-                "project_id": obj.get("project_id"),
-                "task_counts": [ProjectTaskCountsTaskCountsInner.from_dict(_item) for _item in obj["task_counts"]]
-                if obj.get("task_counts") is not None
-                else None,
-            }
+            {"comment": Comment.from_dict(obj["comment"]) if obj.get("comment") is not None else None, "_type": obj.get("_type")}
         )
         return _obj

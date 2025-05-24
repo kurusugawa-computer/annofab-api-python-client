@@ -27,9 +27,9 @@ class TaskValidation(BaseModel):
     タスクの全入力データに対するバリデーション結果です。
     """
 
-    project_id: Optional[StrictStr] = Field(default=None, description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    task_id: Optional[StrictStr] = Field(default=None, description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    inputs: Optional[List[InputDataSummary]] = None
+    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    inputs: List[InputDataSummary]
     __properties: ClassVar[List[str]] = ["project_id", "task_id", "inputs"]
 
     model_config = ConfigDict(

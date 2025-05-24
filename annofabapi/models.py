@@ -340,7 +340,7 @@ Kyes of dict
 
 AdditionalDataRestrictionCondition = dict[str, Any]
 """
-属性の制約    * `AdditionalDataRestrictionConditionCanInput`: 属性値の入力を許可するかどうか   * `AdditionalDataRestrictionConditionEquals`: 指定した値に等しい   * `AdditionalDataRestrictionConditionNotEquals`: 指定した値に等しくない   * `AdditionalDataRestrictionConditionMatches`: 指定した正規表現に一致する   * `AdditionalDataRestrictionConditionNotMatches`: 指定した正規表現に一致しない   * `AdditionalDataRestrictionConditionHasLabel`: 指定したラベルIDに一致する（アノテーションリンク属性限定）   * `AdditionalDataRestrictionConditionImply`: 指定した前提条件を満たすときのみ、制約を満たすかどうか  以下のJSONは、「属性IDが`attr2`の属性値が`true`ならば、属性IDが`attr1`の属性値は`choice1`である」という制約を表しています。  ``` {     \"additional_data_definition_id\": \"attr1\",     \"condition\": {         \"_type\": \"Imply\",         \"premise\": {             \"additional_data_definition_id\": \"attr2\",             \"condition\": {                 \"_type\": \"Equals\",                 \"value\": \"true\"             }         },         \"condition\": {             \"_type\": \"Equals\",             \"value\": \"choice1\"         }     } } ``` 
+属性の制約    * `AdditionalDataRestrictionConditionCanInput`: 属性値の入力を許可するかどうか   * `AdditionalDataRestrictionConditionEquals`: 指定した値に等しい   * `AdditionalDataRestrictionConditionNotEquals`: 指定した値に等しくない   * `AdditionalDataRestrictionConditionMatches`: 指定した正規表現に一致する       * `AdditionalDataDefinitionType`が`text`か`comment`のときのみ利用可能   * `AdditionalDataRestrictionConditionNotMatches`: 指定した正規表現に一致しない       * `AdditionalDataDefinitionType`が`text`か`comment`のときのみ利用可能   * `AdditionalDataRestrictionConditionHasLabel`: 指定したラベルIDに一致する（アノテーションリンク属性限定）       * `AdditionalDataDefinitionType`が`link`のときのみ利用可能   * `AdditionalDataRestrictionConditionImply`: 指定した前提条件を満たすときのみ、制約を満たすかどうか  以下のJSONは、「属性IDが`attr2`の属性値が`true`ならば、属性IDが`attr1`の属性値は`choice1`である」という制約を表しています。  ``` {     \"additional_data_definition_id\": \"attr1\",     \"condition\": {         \"_type\": \"Imply\",         \"premise\": {             \"additional_data_definition_id\": \"attr2\",             \"condition\": {                 \"_type\": \"Equals\",                 \"value\": \"true\"             }         },         \"condition\": {             \"_type\": \"Equals\",             \"value\": \"choice1\"         }     } } ``` 
 
 Kyes of dict
 
@@ -2298,6 +2298,19 @@ class CommentType(Enum):
     INSPECTION = "inspection"
 
 
+CommentValidationError = dict[str, Any]
+"""
+
+
+Kyes of dict
+
+* comment: Comment
+    
+* type: str
+    
+
+"""
+
 ConfirmAccountDeleteRequest = dict[str, Any]
 """
 
@@ -4064,6 +4077,19 @@ Kyes of dict
 
 """
 
+NoComment = dict[str, Any]
+"""
+空のコメントがある時のエラー
+
+Kyes of dict
+
+* comment: Comment
+    
+* type: str
+    
+
+"""
+
 NoCommentInspection = dict[str, Any]
 """
 空の検査コメントがある時のエラー
@@ -4554,6 +4580,8 @@ PluginDetail = dict[str, Any]
 
 Kyes of dict
 
+* plugin_compatibility: OrganizationPluginCompatibility
+    
 * url: str
     カスタムアノテーション仕様画面の URL です。 プラグイン種別がカスタムアノテーション仕様の場合のみ有効です。  この URL には、プロジェクトを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` 
 * auth_redirect_url: str
@@ -4562,8 +4590,6 @@ Kyes of dict
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
     `ExtendedAnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) 
-* plugin_compatibility: OrganizationPluginCompatibility
-    
 * annotation_types: list[AnnotationType]
     プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。 同じ種別を重複して設定することはできません。 
 * user_defined_annotation_type_definitions: dict(str, UserDefinedAnnotationTypeDefinition)
@@ -4577,6 +4603,8 @@ PluginDetailAnnotationEditor = dict[str, Any]
 
 Kyes of dict
 
+* plugin_compatibility: OrganizationPluginCompatibility
+    
 * url: str
     カスタムアノテーションエディタでタスクを開くための URL です。 プラグインを使用するプロジェクトのタスク一覧などで使用されます。 プラグイン種別がカスタムアノテーションエディタの場合のみ有効です。  この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` * `{taskId}`  以下のパラメーターは任意で指定します。  * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。 * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。 
 * auth_redirect_url: str
@@ -4594,6 +4622,8 @@ PluginDetailAnnotationSpecs = dict[str, Any]
 
 Kyes of dict
 
+* plugin_compatibility: OrganizationPluginCompatibility
+    
 * url: str
     カスタムアノテーション仕様画面の URL です。 プラグイン種別がカスタムアノテーション仕様の場合のみ有効です。  この URL には、プロジェクトを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` 
 * auth_redirect_url: str
@@ -4630,6 +4660,8 @@ PluginDetailTaskAssignment = dict[str, Any]
 
 Kyes of dict
 
+* plugin_compatibility: OrganizationPluginCompatibility
+    
 * url: str
     「カスタムタスク割当API」のURLです。 プラグイン種別がカスタムタスク割当の場合のみ有効です。  #### カスタムタスク割当APIについて。  * 独自のアルゴリズムで作業者にタスクを割当するAPIです。 * Annofabから提供されるものではなく、第三者 (ユーザー様) が用意します。 * 作業者がタスク一覧やアノテーションエディタのタスク取得ボタンを押すと、指定したURLに複数の情報 (※1) と共にHTTPリクエスト (POST) が送られます。 * カスタムタスク割当APIでは、Annofabで提供しているAPI (※2) を使用して作業者にタスクを割当してください。 * タスクの割当に成功した場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: 割当した単一の[タスク](https://annofab.com/docs/api/#section/Task)   * ステータスコード: 200 * 作業者に割当できるタスクがない場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"MISSING_RESOURCE\"}]}`   * ステータスコード: 404 * 作業者の認証トークンの期限が切れている場合があります。その場合は以下のHTTPレスポンスを返却してください。   * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`   * レスポンスボディ: `{\"errors\": [{\"error_code\": \"EXPIRED_TOKEN\"}]}`   * ステータスコード: 401  #### Preflightリクエストについて。  * Annofabからカスタムタスク割当APIへCross-OriginなHTTPリクエストを送信するより前に、ブラウザの仕様により「Preflightリクエスト」と呼ばれるHTTPリクエストが送られます。 * カスタムタスク割当を利用するためには、カスタムタスク割当APIとは別に「Preflightリクエスト対応API」を用意する必要があります。 * 以下の要件を満たす「Preflightリクエスト対応API」を用意してください。   * URL: カスタムタスク割当APIと同じURL   * HTTPメソッド: OPTIONS   * レスポンスヘッダ:     * `Access-Control-Allow-Origin: https://annofab.com`     * `Access-Control-Allow-Headers: Content-Type`   * レスポンスボディ: 空(から)   * ステータスコード: 200  ※1 以下の情報が送られます。  * HTTPボディ (JSON形式)   * `authorization_token` : タスク割当専用の認証トークン。AnnofabのAPIを利用する際に使用します。   * `project_id` : タスクの割当リクエストが行われたプロジェクトのID。   * `phase` : 作業者が割当を要求したタスクフェーズ。このフェーズのタスクを割当してください。  ※2 例えば以下のAPIがあります。(詳しい情報はAPIドキュメントを参照してください)  * `getMyAccount` : 作業者のアカウント情報を取得できます。 * `getTasks` : プロジェクトのタスクを取得できます。 * `assignTasks` : 作業者にタスクを割当することができます。 
 * type: str
@@ -4928,6 +4960,8 @@ Kyes of dict
     抜取受入率[%]。未指定の場合は100%として扱う。
 * private_storage_aws_iam_role_arn: str
     AWS IAMロール。S3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 
+* use_s3_transfer_acceleration: bool
+    S3プライベートストレージにアクセスする際に、AWS S3 Transfer Accelerationを使用するかどうか。trueの場合に使用します。 private_storage_aws_iam_role_arnの設定がなされていない場合、この値は無視されます。 
 * plugin_id: str
     プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * custom_task_assignment_plugin_id: str
@@ -5309,6 +5343,8 @@ ProjectTaskCounts = dict[str, Any]
 
 Kyes of dict
 
+* project_id: str
+    プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * task_counts: list[ProjectTaskCountsTaskCounts]
     
 
@@ -6387,6 +6423,8 @@ Kyes of dict
     
 * inspection_errors: list[InspectionValidationError]
     
+* comment_errors: list[CommentValidationError]
+    
 
 """
 
@@ -6583,6 +6621,19 @@ Kyes of dict
 
 """
 
+UpdateStatusRequired = dict[str, Any]
+"""
+状態変更が必要である時のエラー
+
+Kyes of dict
+
+* comment: Comment
+    
+* type: str
+    
+
+"""
+
 UsageStatus = dict[str, Any]
 """
 利用状況
@@ -6622,6 +6673,8 @@ Kyes of dict
     エディタ利用時間のリスト
 * storage_usage: float
     ストレージ利用量。単位はGB時
+* created_datetime: str
+    このデータの生成日時。
 
 """
 
