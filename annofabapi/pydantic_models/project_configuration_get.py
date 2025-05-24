@@ -59,6 +59,10 @@ class ProjectConfigurationGet(BaseModel):
         default=None,
         description="AWS IAMロール。S3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 ",
     )
+    use_s3_transfer_acceleration: Optional[StrictBool] = Field(
+        default=False,
+        description="S3プライベートストレージにアクセスする際に、AWS S3 Transfer Accelerationを使用するかどうか。trueの場合に使用します。 private_storage_aws_iam_role_arnの設定がなされていない場合、この値は無視されます。 ",
+    )
     plugin_id: Optional[StrictStr] = Field(default=None, description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     custom_task_assignment_plugin_id: Optional[StrictStr] = Field(
         default=None, description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) "
@@ -88,6 +92,7 @@ class ProjectConfigurationGet(BaseModel):
         "sampling_inspection_rate",
         "sampling_acceptance_rate",
         "private_storage_aws_iam_role_arn",
+        "use_s3_transfer_acceleration",
         "plugin_id",
         "custom_task_assignment_plugin_id",
         "custom_specs_plugin_id",
@@ -166,6 +171,9 @@ class ProjectConfigurationGet(BaseModel):
                 "sampling_inspection_rate": obj.get("sampling_inspection_rate"),
                 "sampling_acceptance_rate": obj.get("sampling_acceptance_rate"),
                 "private_storage_aws_iam_role_arn": obj.get("private_storage_aws_iam_role_arn"),
+                "use_s3_transfer_acceleration": obj.get("use_s3_transfer_acceleration")
+                if obj.get("use_s3_transfer_acceleration") is not None
+                else False,
                 "plugin_id": obj.get("plugin_id"),
                 "custom_task_assignment_plugin_id": obj.get("custom_task_assignment_plugin_id"),
                 "custom_specs_plugin_id": obj.get("custom_specs_plugin_id"),

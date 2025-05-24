@@ -16,7 +16,7 @@ import pprint
 import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.project_task_counts_task_counts_inner import ProjectTaskCountsTaskCountsInner
@@ -27,8 +27,9 @@ class ProjectTaskCounts(BaseModel):
     ProjectTaskCounts
     """
 
+    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     task_counts: List[ProjectTaskCountsTaskCountsInner]
-    __properties: ClassVar[List[str]] = ["task_counts"]
+    __properties: ClassVar[List[str]] = ["project_id", "task_counts"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -87,9 +88,10 @@ class ProjectTaskCounts(BaseModel):
 
         _obj = cls.model_validate(
             {
+                "project_id": obj.get("project_id"),
                 "task_counts": [ProjectTaskCountsTaskCountsInner.from_dict(_item) for _item in obj["task_counts"]]
                 if obj.get("task_counts") is not None
-                else None
+                else None,
             }
         )
         return _obj

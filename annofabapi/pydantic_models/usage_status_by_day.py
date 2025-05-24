@@ -33,6 +33,7 @@ class UsageStatusByDay(BaseModel):
     aggregation_period_to: str = Field(description="集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。")
     editor_usage: List[EditorUsageTimespan] = Field(description="エディタ利用時間のリスト")
     storage_usage: Union[StrictFloat, StrictInt] = Field(description="ストレージ利用量。単位はGB時")
+    created_datetime: str = Field(description="このデータの生成日時。")
     __properties: ClassVar[List[str]] = [
         "organization_id",
         "date",
@@ -40,6 +41,7 @@ class UsageStatusByDay(BaseModel):
         "aggregation_period_to",
         "editor_usage",
         "storage_usage",
+        "created_datetime",
     ]
 
     model_config = ConfigDict(
@@ -107,6 +109,7 @@ class UsageStatusByDay(BaseModel):
                 if obj.get("editor_usage") is not None
                 else None,
                 "storage_usage": obj.get("storage_usage"),
+                "created_datetime": obj.get("created_datetime"),
             }
         )
         return _obj

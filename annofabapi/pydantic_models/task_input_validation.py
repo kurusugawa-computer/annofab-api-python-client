@@ -19,6 +19,7 @@ from typing import Any, ClassVar, Dict, List, Optional, Set
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
 
+from annofabapi.pydantic_models.comment_validation_error import CommentValidationError
 from annofabapi.pydantic_models.inspection_validation_error import InspectionValidationError
 from annofabapi.pydantic_models.validation_error import ValidationError
 
@@ -28,10 +29,11 @@ class TaskInputValidation(BaseModel):
     タスクの提出操作に対する入力データID別のバリデーション結果です。
     """
 
-    input_data_id: Optional[StrictStr] = Field(default=None, description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    annotation_errors: Optional[List[ValidationError]] = None
-    inspection_errors: Optional[List[InspectionValidationError]] = None
-    __properties: ClassVar[List[str]] = ["input_data_id", "annotation_errors", "inspection_errors"]
+    input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    annotation_errors: List[ValidationError]
+    inspection_errors: List[InspectionValidationError]
+    comment_errors: List[CommentValidationError]
+    __properties: ClassVar[List[str]] = ["input_data_id", "annotation_errors", "inspection_errors", "comment_errors"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -84,6 +86,13 @@ class TaskInputValidation(BaseModel):
                 if _item_inspection_errors:
                     _items.append(_item_inspection_errors.to_dict())
             _dict["inspection_errors"] = _items
+        # override the default output from pydantic by calling `to_dict()` of each item in comment_errors (list)
+        _items = []
+        if self.comment_errors:
+            for _item_comment_errors in self.comment_errors:
+                if _item_comment_errors:
+                    _items.append(_item_comment_errors.to_dict())
+            _dict["comment_errors"] = _items
         return _dict
 
     @classmethod
@@ -103,6 +112,9 @@ class TaskInputValidation(BaseModel):
                 else None,
                 "inspection_errors": [InspectionValidationError.from_dict(_item) for _item in obj["inspection_errors"]]
                 if obj.get("inspection_errors") is not None
+                else None,
+                "comment_errors": [CommentValidationError.from_dict(_item) for _item in obj["comment_errors"]]
+                if obj.get("comment_errors") is not None
                 else None,
             }
         )

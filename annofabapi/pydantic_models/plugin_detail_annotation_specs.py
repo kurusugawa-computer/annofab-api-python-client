@@ -20,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.input_data_type import InputDataType
+from annofabapi.pydantic_models.organization_plugin_compatibility import OrganizationPluginCompatibility
 
 
 class PluginDetailAnnotationSpecs(BaseModel):
@@ -27,6 +28,7 @@ class PluginDetailAnnotationSpecs(BaseModel):
     カスタムアノテーション仕様用のプラグインを表します。
     """
 
+    plugin_compatibility: Optional[OrganizationPluginCompatibility] = None
     url: Optional[StrictStr] = Field(
         default=None,
         description="カスタムアノテーション仕様画面の URL です。 プラグイン種別がカスタムアノテーション仕様の場合のみ有効です。  この URL には、プロジェクトを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` ",
@@ -38,7 +40,7 @@ class PluginDetailAnnotationSpecs(BaseModel):
     type: Optional[StrictStr] = Field(
         default=None, description="`AnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type"
     )
-    __properties: ClassVar[List[str]] = ["url", "auth_redirect_url", "compatible_input_data_types", "_type"]
+    __properties: ClassVar[List[str]] = ["plugin_compatibility", "url", "auth_redirect_url", "compatible_input_data_types", "_type"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -77,6 +79,9 @@ class PluginDetailAnnotationSpecs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of plugin_compatibility
+        if self.plugin_compatibility:
+            _dict["plugin_compatibility"] = self.plugin_compatibility.to_dict()
         return _dict
 
     @classmethod
@@ -90,6 +95,9 @@ class PluginDetailAnnotationSpecs(BaseModel):
 
         _obj = cls.model_validate(
             {
+                "plugin_compatibility": OrganizationPluginCompatibility.from_dict(obj["plugin_compatibility"])
+                if obj.get("plugin_compatibility") is not None
+                else None,
                 "url": obj.get("url"),
                 "auth_redirect_url": obj.get("auth_redirect_url"),
                 "compatible_input_data_types": obj.get("compatible_input_data_types"),

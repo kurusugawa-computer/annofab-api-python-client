@@ -27,8 +27,8 @@ class OrganizationPluginCompatibility(BaseModel):
     プラグイン間の互換性を表します。未指定の場合はinput、outputともに`Top`の`OrganizationPluginCompatibilityType`が設定されます。
     """
 
-    input: Optional[OrganizationPluginCompatibilityType] = None
-    output: Optional[OrganizationPluginCompatibilityType] = None
+    input: OrganizationPluginCompatibilityType
+    output: OrganizationPluginCompatibilityType
     __properties: ClassVar[List[str]] = ["input", "output"]
 
     model_config = ConfigDict(

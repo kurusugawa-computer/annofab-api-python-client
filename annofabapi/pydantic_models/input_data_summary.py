@@ -28,9 +28,9 @@ class InputDataSummary(BaseModel):
     ある入力データのバリデーション結果です。入力データIDをキーに引けるようにMap[入力データID, バリデーション結果]となっています
     """
 
-    input_data_id: Optional[StrictStr] = Field(default=None, description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    inspection_summary: Optional[InspectionSummary] = None
-    annotation_summaries: Optional[List[ValidationError]] = None
+    input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    inspection_summary: InspectionSummary
+    annotation_summaries: List[ValidationError]
     __properties: ClassVar[List[str]] = ["input_data_id", "inspection_summary", "annotation_summaries"]
 
     model_config = ConfigDict(

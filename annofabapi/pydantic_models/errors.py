@@ -27,8 +27,8 @@ class Errors(BaseModel):
     Errors
     """
 
-    errors: Optional[List[ErrorItem]] = None
-    context: Optional[Dict[str, Any]] = Field(default=None, description="内部補足情報")
+    errors: List[ErrorItem]
+    context: Dict[str, Any] = Field(description="内部補足情報")
     __properties: ClassVar[List[str]] = ["errors", "context"]
 
     model_config = ConfigDict(

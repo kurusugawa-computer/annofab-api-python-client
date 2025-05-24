@@ -25,18 +25,16 @@ class CountResult(BaseModel):
     CountResult
     """
 
-    type: Optional[StrictStr] = Field(default=None, description="`CountResult` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
-    name: Optional[StrictStr] = Field(
-        default=None,
-        description="複数の集約を区別するための名前です。  `(フィールド名)_(集約内容)` のように命名されます。例えば `account_id` フィールドを `count` する場合、`account_id_count` となります。 ",
+    type: StrictStr = Field(description="`CountResult` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    name: StrictStr = Field(
+        description="複数の集約を区別するための名前です。  `(フィールド名)_(集約内容)` のように命名されます。例えば `account_id` フィールドを `count` する場合、`account_id_count` となります。 "
     )
-    var_field: Optional[StrictStr] = Field(
-        default=None,
+    var_field: StrictStr = Field(
         description="集約に使われたリソースのフィールド名です。  リソースの属性のさらに属性を参照するときは、`foo.bar.buz` のようにドット区切りになります。 ",
         alias="field",
     )
     doc_count: Optional[StrictInt] = Field(default=None, description="集約の件数です。 ")
-    items: Optional[List[Count]] = Field(default=None, description="集約結果の値です。 ")
+    items: List[Count] = Field(description="集約結果の値です。 ")
     __properties: ClassVar[List[str]] = ["_type", "name", "field", "doc_count", "items"]
 
     model_config = ConfigDict(
