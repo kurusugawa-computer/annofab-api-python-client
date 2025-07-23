@@ -94,7 +94,7 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
 
     """
 
-    def mask_str_rquest_body(str_request_body: str) -> Any:  # noqa: ANN401
+    def mask_str_request_body(str_request_body: str) -> Any:  # noqa: ANN401
         """
         文字列型であるrequest_bodyがJSON形式だとみなして、センシティブな情報をマスクします。
         """
@@ -116,12 +116,12 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
             try:
                 # 文字列への変換を試みる
                 str_request_body = response.request.body.decode()
-                request_body_for_logger = mask_str_rquest_body(str_request_body)
+                request_body_for_logger = mask_str_request_body(str_request_body)
             except UnicodeError:
                 request_body_for_logger = response.request.body
 
         elif isinstance(response.request.body, str):
-            request_body_for_logger = mask_str_rquest_body(response.request.body)
+            request_body_for_logger = mask_str_request_body(response.request.body)
 
         arg_logger.error(
             "HTTP error occurred :: %s",
@@ -418,6 +418,35 @@ class AnnofabApi(AbstractAnnofabApi):
         Raises:
             requests.exceptions.HTTPError: http status codeが4XXX,5XXXのとき
 
+        """
+        return self._execute_http_request_without_backoff(
+            http_method=http_method,
+            url=url,
+            params=params,
+            data=data,
+            json=json,
+            headers=headers,
+            stream=stream,
+            raise_for_status=raise_for_status,
+            **kwargs,
+        )
+
+    def _execute_http_request_without_backoff(
+        self,
+        http_method: str,
+        url: str,
+        *,
+        params: Optional[dict[str, Any]] = None,
+        data: Optional[Any] = None,  # noqa: ANN401
+        json: Optional[Any] = None,  # pylint: disable=redefined-outer-name  # noqa: ANN401
+        headers: Optional[dict[str, Any]] = None,
+        stream: bool = False,
+        raise_for_status: bool = True,
+        **kwargs,
+    ) -> requests.Response:
+        """
+        Session情報を使って、HTTP Requestを投げます。Annofab WebAPIで取得したAWS S3のURLなどに、アクセスすることを想定しています。
+        ただし、backoffは行いません。
         """
         response = self.session.request(method=http_method, url=url, params=params, data=data, headers=headers, json=json, stream=stream, **kwargs)
         # response.requestよりメソッド引数のrequest情報の方が分かりやすいので、メソッド引数のrequest情報を出力する。
