@@ -20,7 +20,7 @@ import requests
 from dateutil.relativedelta import relativedelta
 
 from annofabapi import AnnofabApi
-from annofabapi.api import _log_error_response, _raise_for_status
+from annofabapi.api import _log_error_response, _raise_for_status, my_backoff
 from annofabapi.exceptions import AnnofabApiException, CheckSumError
 from annofabapi.models import (
     AdditionalDataDefinitionType,
@@ -930,6 +930,7 @@ class Wrapper:
                 )
                 raise CheckSumError(message=message, uploaded_data_hash=e.uploaded_data_hash, response_etag=e.response_etag) from e
 
+    @my_backoff
     def upload_data_to_s3(self, project_id: str, data: Any, content_type: str) -> str:  # noqa: ANN401
         """
         createTempPath APIを使ってアップロード用のURLとS3パスを取得して、"data" をアップロードする。
@@ -964,11 +965,15 @@ class Wrapper:
         # URL Queryを除いたURLを取得する
         s3_url = content["url"].split("?")[0]
 
-        # アップロード
-        res_put = self.api._execute_http_request(http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type})
+        # アップロード前にファイルオブジェクトなら必ず先頭に戻す（再送時対応）
+        if hasattr(data, "seek"):
+            data.seek(0)
+        res_put = self.api._execute_http_request_without_backoff(
+            http_method="put", url=s3_url, params=query_dict, data=data, headers={"content-type": content_type}
+        )
 
         # アップロードしたファイルが破損していなかをチェックする
-        if hasattr(data, "read"):
+        if hasattr(data, "seek"):
             # 読み込み位置を先頭に戻す
             data.seek(0)
             uploaded_data_hash = get_md5_value_from_file(data)
