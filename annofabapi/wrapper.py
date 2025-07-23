@@ -947,7 +947,7 @@ class Wrapper:
             CheckSumError: アップロードしたデータのMD5ハッシュ値が、S3にアップロードしたときのレスポンスのETagと一致しない
         """  # noqa: E501
 
-        def get_md5_value_from_file(fp):  # noqa: ANN001, ANN202
+        def get_md5_value_from_file(fp) -> str:  # noqa: ANN001
             md5_obj = hashlib.md5()
             while True:
                 chunk = fp.read(2048 * md5_obj.block_size)
