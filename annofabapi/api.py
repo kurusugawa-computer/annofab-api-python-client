@@ -94,7 +94,7 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
 
     """
 
-    def mask_str_rquest_body(str_request_body: str) -> Any:  # noqa: ANN401
+    def mask_str_request_body(str_request_body: str) -> Any:  # noqa: ANN401
         """
         文字列型であるrequest_bodyがJSON形式だとみなして、センシティブな情報をマスクします。
         """
@@ -116,12 +116,12 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
             try:
                 # 文字列への変換を試みる
                 str_request_body = response.request.body.decode()
-                request_body_for_logger = mask_str_rquest_body(str_request_body)
+                request_body_for_logger = mask_str_request_body(str_request_body)
             except UnicodeError:
                 request_body_for_logger = response.request.body
 
         elif isinstance(response.request.body, str):
-            request_body_for_logger = mask_str_rquest_body(response.request.body)
+            request_body_for_logger = mask_str_request_body(response.request.body)
 
         arg_logger.error(
             "HTTP error occurred :: %s",
