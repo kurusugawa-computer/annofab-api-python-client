@@ -16,7 +16,8 @@ def create_video_editor_url(project_id: str, task_id: str, *, annotation_id: Opt
         seek_seconds: 動画の再生位置（単位は秒）
 
     Returns:
-        動画エディタ画面のURL（例：https://annofab.com/projects/p1/tasks/t1/timeline?#a1/3.3）
+        動画エディタ画面のURL
+        （例： ``https://annofab.com/projects/p1/tasks/t1/timeline?#a1/3.3`` ）
 
     """
     url = f"https://annofab.com/projects/{project_id}/tasks/{task_id}/timeline"
@@ -42,7 +43,8 @@ def create_image_editor_url(project_id: str, task_id: str, *, input_data_id: Opt
         annotation_id: アノテーションID。指定した場合は、input_data_idも指定する必要があります。
 
     Returns:
-        画像エディタ画面のURL（例：https://annofab.com/projects/p1/tasks/t1/editor?#i1/a1）
+        画像エディタ画面のURL
+        （例： ``https://annofab.com/projects/p1/tasks/t1/editor?#i1/a1`` ）
 
     """
     url = f"https://annofab.com/projects/{project_id}/tasks/{task_id}/editor"
@@ -77,7 +79,8 @@ def create_3dpc_editor_url(
         base_url: 3次元エディタ画面のベースとなるURL。この部分はプラグインにより変更可能なので、引数として受け取るようにしました。
 
     Returns:
-        3次元エディタ画面のURL（例：https://d2rljy8mjgrfyd.cloudfront.net/3d-editor-latest/index.html?p=p1&t=t1#/i1/a1）
+        3次元エディタ画面のURL
+        （例： ``https://d2rljy8mjgrfyd.cloudfront.net/3d-editor-latest/index.html?p=p1&t=t1#/i1/a1`` ）
 
     """
     url = f"{base_url}?p={project_id}&t={task_id}"
