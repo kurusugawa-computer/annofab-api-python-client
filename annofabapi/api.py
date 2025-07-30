@@ -469,7 +469,7 @@ class AnnofabApi(AbstractAnnofabApi):
             retry_after_value = response.headers.get("Retry-After")
             waiting_time_seconds = float(retry_after_value) if retry_after_value is not None else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
 
-            logger.warning(
+            logger.info(
                 "HTTPステータスコードが'%s'なので、%s秒待ってからリトライします。 :: %s",
                 response.status_code,
                 waiting_time_seconds,
@@ -581,7 +581,7 @@ class AnnofabApi(AbstractAnnofabApi):
             retry_after_value = response.headers.get("Retry-After")
             waiting_time_seconds = float(retry_after_value) if retry_after_value is not None else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
 
-            logger.warning(
+            logger.info(
                 "HTTPステータスコードが'%s'なので、%s秒待ってからリトライします。 :: %s",
                 response.status_code,
                 waiting_time_seconds,
