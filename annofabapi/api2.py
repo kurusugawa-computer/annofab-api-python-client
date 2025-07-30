@@ -131,7 +131,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
                     float(retry_after_value) if retry_after_value is not None else DEFAULT_WAITING_TIME_SECONDS_WITH_429_STATUS_CODE
                 )
 
-                logger.warning(
+                logger.info(
                     "HTTPステータスコードが'%s'なので、%s秒待ってからリトライします。 :: %s",
                     response.status_code,
                     waiting_time_seconds,
