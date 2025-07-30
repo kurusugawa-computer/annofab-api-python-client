@@ -153,7 +153,7 @@ class CreatingTestProject:
             logger.debug(f"task_id={task_id}, input_data_id={input_data_id}にすでにアノテーションは存在するので、アノテーションは登録しません。")
             return
 
-        request_body = {
+        request_body: dict[str, Any] = {
             "project_id": project_id,
             "task_id": task_id,
             "input_data_id": input_data_id,

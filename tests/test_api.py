@@ -347,12 +347,12 @@ class TestJob:
         job_list = wrapper.get_all_project_job(project_id, {"type": job_type})
         job = first_true(job_list, pred=lambda e: e["job_id"] == job_id)
         # 問題なければ成功しているはず
-        assert job["job_status"] == "succeeded"
+        assert job is not None and job["job_status"] == "succeeded"
 
         # ジョブの削除
         api.delete_project_job(project_id, job_type=job["job_type"], job_id=job_id)
         job_list = wrapper.get_all_project_job(project_id, {"type": job_type})
-        assert first_true(job_list, pred=lambda e: e["job_id"] == job_id) is None
+        assert job is not None and first_true(job_list, pred=lambda e: e["job_id"] == job_id) is None
 
 
 @pytest.mark.access_webapi
