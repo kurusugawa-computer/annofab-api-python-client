@@ -79,7 +79,6 @@ check_untyped_defs = true
 warn_unused_configs = true
 warn_unreachable = true
 
-plugins = ["numpy.typing.mypy_plugin"]
 
 exclude = [
     'annofabapi/pydantic_models/.*\.py',
