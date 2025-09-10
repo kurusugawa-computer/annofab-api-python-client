@@ -1,4 +1,3 @@
-# ruff: noqa: E501
 # pylint: disable=too-many-lines,trailing-whitespace
 
 """
