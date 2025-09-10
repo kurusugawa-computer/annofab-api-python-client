@@ -16,18 +16,21 @@ import pprint
 import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
-from pydantic import BaseModel, ConfigDict, StrictStr
+from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import Self
 
+from annofabapi.pydantic_models.input_data import InputData
+from annofabapi.pydantic_models.input_data_identifier import InputDataIdentifier
 
-class OrganizationCacheRecord(BaseModel):
+
+class GetInputDataInBulkResponse(BaseModel):
     """
-    OrganizationCacheRecord
+    複数の入力データ取得時のレスポンス
     """
 
-    members: Optional[StrictStr] = None
-    organization: Optional[StrictStr] = None
-    __properties: ClassVar[List[str]] = ["members", "organization"]
+    success: List[InputData] = Field(description="取得に成功した入力データ")
+    failure: List[InputDataIdentifier] = Field(description="取得に失敗した入力データのIDとそのプロジェクトID")
+    __properties: ClassVar[List[str]] = ["success", "failure"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -46,7 +49,7 @@ class OrganizationCacheRecord(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of OrganizationCacheRecord from a JSON string"""
+        """Create an instance of GetInputDataInBulkResponse from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -66,16 +69,35 @@ class OrganizationCacheRecord(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of each item in success (list)
+        _items = []
+        if self.success:
+            for _item_success in self.success:
+                if _item_success:
+                    _items.append(_item_success.to_dict())
+            _dict["success"] = _items
+        # override the default output from pydantic by calling `to_dict()` of each item in failure (list)
+        _items = []
+        if self.failure:
+            for _item_failure in self.failure:
+                if _item_failure:
+                    _items.append(_item_failure.to_dict())
+            _dict["failure"] = _items
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of OrganizationCacheRecord from a dict"""
+        """Create an instance of GetInputDataInBulkResponse from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({"members": obj.get("members"), "organization": obj.get("organization")})
+        _obj = cls.model_validate(
+            {
+                "success": [InputData.from_dict(_item) for _item in obj["success"]] if obj.get("success") is not None else None,
+                "failure": [InputDataIdentifier.from_dict(_item) for _item in obj["failure"]] if obj.get("failure") is not None else None,
+            }
+        )
         return _obj
