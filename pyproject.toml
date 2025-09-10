@@ -47,7 +47,7 @@ test = [
     "pytest-cov",
 ]
 linter = [
-    "ruff>=0.11,<0.12 ; python_version >= '3.12'",
+    "ruff>=0.12 ; python_version >= '3.12'",
     "mypy>=1,<2 ; python_version >= '3.12'",
     "pylint>=3,<4 ; python_version >= '3.12'",
     "types-requests",
@@ -111,6 +111,7 @@ ignore = [
     "TD", # flake8-todos
     "FIX", # flake8-fixme
     "SIM108", # if-else-block-instead-of-if-exp, 三項演算子が読みにくい場合もあるので無視する
+    "UP045", # non-pep604-annotation-optional: Python 3.9をサポートしている間は無視する。
 
     # 以下のルールはコードに合っていないので無効化した
     "RSE", # flake8-raise
@@ -149,6 +150,7 @@ select = [
     "G004", # logging-f-string
     "SIM", #flake8-simplify
     "PLC2401", # non-ascii-name, メソッド名に日本語を利用するため
+    "RUF059", # unused-unpacked-variable
 ]
 
 
