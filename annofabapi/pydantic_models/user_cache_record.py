@@ -27,9 +27,8 @@ class UserCacheRecord(BaseModel):
 
     account: Optional[StrictStr] = None
     members: Optional[StrictStr] = None
-    projects: Optional[StrictStr] = None
     organizations: Optional[StrictStr] = None
-    __properties: ClassVar[List[str]] = ["account", "members", "projects", "organizations"]
+    __properties: ClassVar[List[str]] = ["account", "members", "organizations"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -79,7 +78,5 @@ class UserCacheRecord(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate(
-            {"account": obj.get("account"), "members": obj.get("members"), "projects": obj.get("projects"), "organizations": obj.get("organizations")}
-        )
+        _obj = cls.model_validate({"account": obj.get("account"), "members": obj.get("members"), "organizations": obj.get("organizations")})
         return _obj

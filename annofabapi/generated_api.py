@@ -100,7 +100,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        SimpleアノテーションZIPをダウンロードするための、認証済み一時URLを取得します。 取得したURLは1時間で失効します。  アノテーションZIPの更新中に、このAPIを実行すると409エラーが発生します。  SimpleアノテーションZIPのデータ構造については、[Simple Annotation ZIP](#section/Simple-Annotation-ZIP)を参照ください。
+        SimpleアノテーションZIPをダウンロードするための、認証済み一時URLを取得します。 取得したURLは1時間で失効します。  アノテーションZIPの更新中に、このAPIを実行すると409エラーが発生します。  SimpleアノテーションZIPのデータ構造については、[Simple Annotation ZIP](#tag/x-annotation-zip/Simple-Annotation-ZIP)を参照ください。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -133,7 +133,7 @@ class AbstractAnnofabApi(abc.ABC):
                 limit (int):  1ページあたりの取得するデータ件数
                 aggregate_by_task_and_input (bool):  `true`を指定すると、「タスクIDと入力データIDの組」ごとに検索結果を集計します。
                 no_aggregate_label_and_input (bool):  `true`を指定すると、ラベルIDによるアノテーション検索数の集約結果、および属性IDによるアノテーション検索数の集約結果を取得しません。  このパラメーターを`true`に指定することで集約計算は行われなくなるので、アノテーションの検索が速くなる可能性があります。
-                query (str):  絞り込み条件([AnnotationQuery](#section/AnnotationQuery))をJSON形式で表した文字列。
+                query (str):  絞り込み条件([AnnotationQuery](#tag/x-data-types/AnnotationQuery))をJSON形式で表した文字列。
                 sort (str):  ソート順の指定。 以下のキーを使用できます。 * `task_id` * `input_data_id` * `detail.annotation_id` * `detail.account_id` * `detail.label_id` * `detail.data_holding_type` * `detail.created_datetime` * `detail.updated_datetime`   キーの先頭に`-`を付けると、降順でソートされます。  `,`でキーを区切ると、複数のキーでソートされます。先頭のキーから順に優先順位が割り振られます。
                 v (str):  レスポンスに含まれるアノテーションのフォーマットバージョンを指定します。 未指定の場合や\"2\"以外が指定された場合は\"1\"が指定されたものとして扱います。
 
@@ -185,7 +185,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        FullアノテーションZIPをダウンロードするための、認証済み一時URLを取得します。 取得したURLは1時間で失効します。  アノテーションZIPの更新中に、このAPIを実行すると409エラーが発生します。  FullアノテーションZIPのデータ構造については、[Full Annotation ZIP](#section/Full-Annotation-ZIP)を参照ください。
+        FullアノテーションZIPをダウンロードするための、認証済み一時URLを取得します。 取得したURLは1時間で失効します。  アノテーションZIPの更新中に、このAPIを実行すると409エラーが発生します。  FullアノテーションZIPのデータ構造については、[Full Annotation ZIP](#tag/x-annotation-zip/Full-Annotation-ZIP)を参照ください。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -228,6 +228,37 @@ class AbstractAnnofabApi(abc.ABC):
 
         """
         url_path = f"/projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation"
+        http_method = "GET"
+        keyword_params: dict[str, Any] = {
+            "query_params": query_params,
+        }
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def get_editor_annotations_in_bulk(
+        self, project_id: str, task_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
+        """アノテーションのバルク取得
+        https://annofab.com/docs/api/#operation/getEditorAnnotationsInBulk
+
+
+        authorizations: AllProjectMember
+
+
+        アノテーションをバルク取得します。  このAPIは、[getEditorAnnotation](#operation/getEditorAnnotation) APIと似た機能を持ちますが、`input_data_id`を複数指定できる点が異なります。
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+            task_id (str):  タスクID (required)
+            query_params (dict[str, Any]): Query Parameters
+                input_data_id (list[str]):  入力データID (required)
+
+        Returns:
+            tuple[GetEditorAnnotationsInBulkResponse, requests.Response]
+
+
+        """
+        url_path = f"/projects/{project_id}/tasks/{task_id}/annotations-in-bulk"
         http_method = "GET"
         keyword_params: dict[str, Any] = {
             "query_params": query_params,
@@ -608,6 +639,34 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
+    def get_input_data_in_bulk(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
+        """入力データのバルク取得
+        https://annofab.com/docs/api/#operation/getInputDataInBulk
+
+
+        authorizations: AllProjectMember
+
+
+        入力データをバルク取得します。  このAPIは、[getInputData](#operation/getInputData) APIと似た機能を持ちますが、`input_data_id`を複数指定できる点が異なります。
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+            query_params (dict[str, Any]): Query Parameters
+                input_data_id (list[str]):  入力データIDのカンマ区切りリスト (required)
+
+        Returns:
+            tuple[GetInputDataInBulkResponse, requests.Response]
+
+
+        """
+        url_path = f"/projects/{project_id}/input-data-in-bulk"
+        http_method = "GET"
+        keyword_params: dict[str, Any] = {
+            "query_params": query_params,
+        }
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
     def get_input_data_list(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
         """入力データの一括取得
         https://annofab.com/docs/api/#operation/getInputDataList
@@ -946,7 +1005,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             organization_name (str):  組織名 (required)
             query_params (dict[str, Any]): Query Parameters
-                type (str):  取得するジョブの種別。[詳細はこちら](#section/OrganizationJobType)。
+                type (str):  取得するジョブの種別。[詳細はこちら](#tag/x-data-types/OrganizationJobType)。
                 limit (int):  1ページあたりの取得するデータ件数。 未指定時は30件取得。
                 exclusive_start_created_datetime (str):  作成日時が、指定した日付より古いジョブを取得します。
 
@@ -976,7 +1035,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             query_params (dict[str, Any]): Query Parameters
-                type (ProjectJobType):  取得するジョブの種別。[詳細はこちら](#section/ProjectJobType)。
+                type (ProjectJobType):  取得するジョブの種別。[詳細はこちら](#tag/x-data-types/ProjectJobType)。
                 limit (int):  1ページあたりの取得するデータ件数。 未指定時は30件取得。
                 exclusive_start_created_datetime (str):  作成日時が、指定した日付より古いジョブを取得します。
 
@@ -1003,7 +1062,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/getMyAccount
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         自分のアカウント情報を取得します。
@@ -1050,7 +1109,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/getMyNotificationMessage
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         自分に届いているメッセージを取得します。
@@ -1074,7 +1133,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/getMyNotificationMessages
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         自分に届いている通知メッセージを、メッセージの作成日時が新しい順で、一括取得します。 自身に届いている通知メッセージが上限(10000件)を超える場合、上限を超えた分の通知メッセージは取得できません。 また、上限を超える場合、開封済みの通知メッセージの数は、取得可能な通知メッセージ中の集計値となります。詳細はレスポンスの項目を参照ください。
@@ -1102,7 +1161,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/getMyNotificationUnreadMessagesCount
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         自分に届いている通知メッセージの未読件数を取得します。
@@ -1148,7 +1207,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/getMyProjectMembers
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         自分が所属するプロジェクトのメンバー情報を一括で取得します。
@@ -1171,7 +1230,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/getMyProjects
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         自分が所属しているプロジェクトを一括で取得します。
@@ -1183,7 +1242,7 @@ class AbstractAnnofabApi(abc.ABC):
                 organization_id (str):  指定した組織に属するプロジェクトに絞り込む。
                 title (str):  プロジェクトタイトルでの部分一致検索。大文字小文字は区別しません。
                 status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。
-                input_data_type (InputDataType):  入力データの種類でプロジェクトを絞り込みます。[詳細はこちら](#section/InputDataType)を参照してください。
+                input_data_type (InputDataType):  入力データの種類でプロジェクトを絞り込みます。[詳細はこちら](#tag/x-data-types/InputDataType)を参照してください。
                 sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。
 
         Returns:
@@ -1204,7 +1263,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/getPersonalAccessTokens
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         自分が発行したパーソナルアクセストークンの一覧を取得します。
@@ -1227,7 +1286,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/issuePersonalAccessToken
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         パーソナルアクセストークンを発行します。
@@ -1254,7 +1313,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/putMyAccount
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         自分のアカウント情報を更新します。
@@ -1281,7 +1340,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/putMyNotificationMessageOpened
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         通知メッセージのステータスを更新します。 自分に届いた通知メッセージのみ更新できます。
@@ -1309,7 +1368,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/revokePersonalAccessToken
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         発行済のパーソナルアクセストークンを無効化します。
@@ -1341,7 +1400,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/createNewOrganization
 
 
-        authorizations: Everyone
+        authorizations: AnnofabUser
 
 
         組織を作成します。  既に存在する組織名をリクエストボディに指定すると、400エラーが発生します。
@@ -1457,7 +1516,7 @@ class AbstractAnnofabApi(abc.ABC):
                 title (str):  プロジェクトタイトルでの部分一致検索。大文字小文字は区別しません。
                 status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。
                 plugin_id (str):  指定したプラグインIDを使用しているプロジェクトで絞り込む。
-                input_data_type (InputDataType):  入力データの種類でプロジェクトを絞り込みます。[詳細はこちら](#section/InputDataType)を参照してください。
+                input_data_type (InputDataType):  入力データの種類でプロジェクトを絞り込みます。[詳細はこちら](#tag/x-data-types/InputDataType)を参照してください。
                 sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。
 
         Returns:
@@ -1596,7 +1655,7 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/acceptOrganizationInvitation
 
 
-        authorizations: EveryoneRequestBody
+        authorizations: AnnofabUser
 
 
         組織への招待を受諾し、組織へのメンバー登録を完了します。
@@ -1951,7 +2010,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        コメント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  コメント全件ファイルは、すべてのコメントが記載されたJSONファイルです。 JSON構造は、[Comment](#section/Comment)の配列です。  毎日AM02:00(JST)頃に更新されます。
+        コメント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  コメント全件ファイルは、すべてのコメントが記載されたJSONファイルです。 JSON構造は、[Comment](#tag/x-data-types/Comment)の配列です。  毎日AM02:00(JST)頃に更新されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -1975,7 +2034,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        入力データ全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  入力データ全件ファイルは、すべての入力データが記載されたJSONファイルです。SON構造は、[InputData](#section/InputData)の配列です。 ただしInputData中のurlは常にnullです。  毎日AM02:00(JST)頃に更新されます。 [postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを利用すれば、手動で入力データ全件ファイルを更新できます。
+        入力データ全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  入力データ全件ファイルは、すべての入力データが記載されたJSONファイルです。SON構造は、[InputData](#tag/x-data-types/InputData)の配列です。 ただしInputData中のurlは常にnullです。  毎日AM02:00(JST)頃に更新されます。 [postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを利用すれば、手動で入力データ全件ファイルを更新できます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2000,7 +2059,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        検査コメント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  検査コメント全件ファイルには、すべての検査コメントが記載されたファイルです。 JSON構造は、[Inspection](#section/Inspection)の配列です。  毎日AM02:00(JST)頃に更新されます。
+        検査コメント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  検査コメント全件ファイルには、すべての検査コメントが記載されたファイルです。 JSON構造は、[Inspection](#tag/x-data-types/Inspection)の配列です。  毎日AM02:00(JST)頃に更新されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2025,7 +2084,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        タスク履歴全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。   タスク履歴イベント全件ファイルは、すべてのタスク履歴情報が記載されたJSONファイルです。JSON構造は、キーがタスクID、値が[TaskHistory](#section/TaskHistory)の配列となるマップです。  毎日AM02:00(JST)頃に更新されます。
+        タスク履歴全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。   タスク履歴イベント全件ファイルは、すべてのタスク履歴情報が記載されたJSONファイルです。JSON構造は、キーがタスクID、値が[TaskHistory](#tag/x-data-types/TaskHistory)の配列となるマップです。  毎日AM02:00(JST)頃に更新されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2050,7 +2109,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        タスク履歴イベント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。   タスク履歴イベント全件ファイルは、すべてのタスク履歴イベント情報が記載されたJSONファイルです。 JSON構造は、[TaskHistoryEvent](#section/TaskHistoryEvent)の配列です。  毎日AM02:00(JST)頃に更新されます。
+        タスク履歴イベント全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。   タスク履歴イベント全件ファイルは、すべてのタスク履歴イベント情報が記載されたJSONファイルです。 JSON構造は、[TaskHistoryEvent](#tag/x-data-types/TaskHistoryEvent)の配列です。  毎日AM02:00(JST)頃に更新されます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2075,7 +2134,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        タスク全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  タスク全件ファイルは、すべてのタスクが記載されたJSONファイルです。JSON構造は、[Task](#section/Task)の配列です。  毎日AM02:00(JST)頃に更新されます。 [postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを利用すれば、手動でタスク全件ファイルを更新できます。
+        タスク全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  タスク全件ファイルは、すべてのタスクが記載されたJSONファイルです。JSON構造は、[Task](#tag/x-data-types/Task)の配列です。  毎日AM02:00(JST)頃に更新されます。 [postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを利用すれば、手動でタスク全件ファイルを更新できます。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2177,12 +2236,12 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: OrganizationAdministratorProjectOwner
 
 
-        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。  所属組織が変更された場合バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`move-project`）。  APIの制限事項は、以下の通りです。  * `status`を`initializing`に変更できません。  * `status`が`initializing`のときは、所属組織を変更できません。
+        プロジェクトを新規作成または更新します。  ### 新規作成する場合 ユーザーは、作成するプロジェクトをひもづける組織の `組織管理者` である必要があります。  ### 更新する場合 ユーザーは、更新するプロジェクトの `プロジェクトオーナー` である必要があります。 また所属組織を変更する場合は、新しくひもづける組織の `組織管理者` である必要があります。  なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。  所属組織が変更された場合バックグラウンドジョブが登録されます。ジョブは [getProjectJob](#operation/getProjectJob) APIで確認できます（ジョブ種別は`move-project`）。  APIの制限事項は、以下の通りです。  * `status`を`initializing`に変更できません。  * `status`が`initializing`のときは、所属組織を変更できません。
 
         Args:
             project_id (str):  プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID)  (required)
             query_params (dict[str, Any]): Query Parameters
-                v (str):  APIの戻り型のバージョンを指定します。 値と戻り型の対応は以下です。 - \"1\"：Project - \"2\"：PutProjectResponse
+                v (str):  **所属組織を変更したとき**のレスポンスのフォーマットバージョンを指定します。 - \"1\"：ステータスコードは200で、スキーマは`Project` - \"2\"：ステータスコードは202で、スキーマは`PutProjectResponse`。`PutProjectResponse`には、登録されたジョブが含まれます。
             request_body (Any): Request Body
                 put_project_request (PutProjectRequest):
 
@@ -2454,7 +2513,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: AllProjectMember
 
 
-        [ラベル別アノテーション数集計データ](#section/ArrayOfLabelStatistics) を取得するための認証済み一時URLを取得します。
+        [ラベル別アノテーション数集計データ](#tag/x-data-types/ArrayOfLabelStatistics) を取得するための認証済み一時URLを取得します。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -2698,6 +2757,36 @@ class AbstractAnnofabApi(abc.ABC):
         keyword_params.update(**kwargs)
         return self._request_wrapper(http_method, url_path, **keyword_params)
 
+    def get_supplementary_data_in_bulk(
+        self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs
+    ) -> tuple[Any, requests.Response]:
+        """補助情報のバルク取得
+        https://annofab.com/docs/api/#operation/getSupplementaryDataInBulk
+
+
+        authorizations: AllProjectMember
+
+
+        補助情報をバルク取得します。 このAPIは、[getSupplementaryDataList](#operation/getSupplementaryDataList) APIと似た機能を持ちますが、`input_data_id`を複数指定できる点が異なります。
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+            query_params (dict[str, Any]): Query Parameters
+                input_data_id (list[str]):  入力データIDのカンマ区切りリスト (required)
+
+        Returns:
+            tuple[GetSupplementaryDataInBulkResponse, requests.Response]
+
+
+        """
+        url_path = f"/projects/{project_id}/supplementary-data-in-bulk"
+        http_method = "GET"
+        keyword_params: dict[str, Any] = {
+            "query_params": query_params,
+        }
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
     def get_supplementary_data_list(self, project_id: str, input_data_id: str, **kwargs) -> tuple[Any, requests.Response]:
         """補助情報一括取得
         https://annofab.com/docs/api/#operation/getSupplementaryDataList
@@ -2920,7 +3009,7 @@ class AbstractAnnofabApi(abc.ABC):
                 auto_accepted_only (str):  「抜取検査の対象外となり、自動受入されたタスク」だけを絞り込む時に、キーのみ指定します（値は無視されます）。
                 metadata (str):  メタデータからタスクを検索できます。  例えば、 `priority` (数値) や `assignable` (真偽値) といったメタデータを個々のタスクに登録していたとします。 その場合、次のように検索できます。  ``` // priorityが5のタスクを検索 priority:5  // priorityが5以外のタスクを検索 -priority:5  // priorityが1より大きいタスクを検索 priority:>1  // priorityが1以上のタスクを検索 priority:>=1  // priorityが100未満のタスクを検索 priority:<100  // priorityが100以下のタスクを検索 priority:<=100  // priorityが1~100のタスクを検索 (複数の検索条件は半角スペースで区切ります) priority:>=1 priority:<=100  // priorityが1以上、且つ、assignableがtrueのタスクを検索 priority:>=1 assignable:true ```  (注意) これらの例は、説明の都合上「URLエンコード」を施していません。実際には、URLエンコードを施してください。
                 sort (str):  ソート順の指定。以下のキーを使用できます。 * `task_id` * `updated_datetime` * `number_of_rejections` * `phase` * `phase_stage` * `account_id` * `metadata.{メタデータのキー}`   * キーの先頭に`-`を付けると、降順でソートされます。 * `,`でキーを区切ると、複数のキーでソートされます。先頭のキーから順に優先順位が割り振られます。
-                annotation (str):  アノテーションの絞り込み条件をJSON形式([AnnotationQuery](#section/AnnotationQuery))で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
+                annotation (str):  アノテーションの絞り込み条件をJSON形式([AnnotationQuery](#tag/x-data-types/AnnotationQuery))で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
 
         Returns:
             tuple[TaskList, requests.Response]
@@ -2928,6 +3017,34 @@ class AbstractAnnofabApi(abc.ABC):
 
         """
         url_path = f"/projects/{project_id}/tasks"
+        http_method = "GET"
+        keyword_params: dict[str, Any] = {
+            "query_params": query_params,
+        }
+        keyword_params.update(**kwargs)
+        return self._request_wrapper(http_method, url_path, **keyword_params)
+
+    def get_tasks_in_bulk(self, project_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
+        """タスクのバルク取得
+        https://annofab.com/docs/api/#operation/getTasksInBulk
+
+
+        authorizations: AllProjectMember
+
+
+        タスクをバルク取得します。  このAPIは、[getTask](#operation/getTask) APIと似た機能を持ちますが、`task_id`を複数指定できる点が異なります。
+
+        Args:
+            project_id (str):  プロジェクトID (required)
+            query_params (dict[str, Any]): Query Parameters
+                task_id (list[str]):  タスクIDのカンマ区切りリスト (required)
+
+        Returns:
+            tuple[GetTasksInBulkResponse, requests.Response]
+
+
+        """
+        url_path = f"/projects/{project_id}/tasks-in-bulk"
         http_method = "GET"
         keyword_params: dict[str, Any] = {
             "query_params": query_params,

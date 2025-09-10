@@ -25,11 +25,9 @@ class OrganizationCacheRecord(BaseModel):
     OrganizationCacheRecord
     """
 
-    input: Optional[StrictStr] = None
     members: Optional[StrictStr] = None
-    statistics: Optional[StrictStr] = None
     organization: Optional[StrictStr] = None
-    __properties: ClassVar[List[str]] = ["input", "members", "statistics", "organization"]
+    __properties: ClassVar[List[str]] = ["members", "organization"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -79,7 +77,5 @@ class OrganizationCacheRecord(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate(
-            {"input": obj.get("input"), "members": obj.get("members"), "statistics": obj.get("statistics"), "organization": obj.get("organization")}
-        )
+        _obj = cls.model_validate({"members": obj.get("members"), "organization": obj.get("organization")})
         return _obj

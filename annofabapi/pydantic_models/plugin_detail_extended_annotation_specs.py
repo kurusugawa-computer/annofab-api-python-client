@@ -35,7 +35,7 @@ class PluginDetailExtendedAnnotationSpecs(BaseModel):
         description="プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。 同じ種別を重複して設定することはできません。 "
     )
     user_defined_annotation_type_definitions: Optional[Dict[str, UserDefinedAnnotationTypeDefinition]] = Field(
-        default=None, description="Keyが[アノテーションの種類(AnnotationType)](#section/AnnotationType)であるDictionaryです。 "
+        default=None, description="Keyが[アノテーションの種類(AnnotationType)](#tag/x-data-types/AnnotationType)であるDictionaryです。 "
     )
     compatible_input_data_types: List[InputDataType] = Field(
         description="プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 "

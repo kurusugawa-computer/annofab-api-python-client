@@ -18,23 +18,7 @@ components:
       type: "apiKey"
       in: "cookie"
       name: "CloudFront-Signature"
-    EveryoneRequestBody:
-      description: |
-        Annofabのユーザーなら誰でも利用できます。
-
-        認証/認可には、リクエストボディに含まれるパスワード、トークン、または何らかの検証コードを用います。
-        詳しくは個別のAPIの説明を確認してください。
-      type: "http"
-      scheme: "requestBody"
-    EveryoneQueryParameter:
-      description: |
-        Annofabのユーザーなら誰でも利用できます。
-
-        認証/認可には、クエリパラメータに含まれるトークンまたは何らかの検証コードを用います。
-        詳しくは個別のAPIの説明を確認してください。
-      type: "http"
-      scheme: "requestBody"
-    Everyone:
+    AnnofabUser:
       description: |
         Annofabのユーザーなら誰でも利用できます。
 
@@ -326,7 +310,7 @@ components:
             言語コードとメッセージ（テキスト）のリスト。
 
             * アノテーションエディタなどでは、Annofabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます
-            * 以下の名前は、[Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます
+            * 以下の名前は、[Simple Annotation](#tag/x-annotation-zip/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます
                 * ラベル名
                 * 属性名
                 * 選択肢名
@@ -946,11 +930,7 @@ components:
     OrganizationCacheRecord:
       type: object
       properties:
-        input:
-          type: string
         members:
-          type: string
-        statistics:
           type: string
         organization:
           type: string
@@ -1201,7 +1181,7 @@ components:
         user_defined_annotation_type_definitions:
           type: object
           description: |
-            Keyが[アノテーションの種類(AnnotationType)](#section/AnnotationType)であるDictionaryです。
+            Keyが[アノテーションの種類(AnnotationType)](#tag/x-data-types/AnnotationType)であるDictionaryです。
           additionalProperties:
             $ref: "#/components/schemas/UserDefinedAnnotationTypeDefinition"
         compatible_input_data_types:
@@ -1302,7 +1282,7 @@ components:
         * カスタムタスク割当APIでは、Annofabで提供しているAPI (※2) を使用して作業者にタスクを割当してください。
         * タスクの割当に成功した場合は以下のHTTPレスポンスを返却してください。
           * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`
-          * レスポンスボディ: 割当した単一の[タスク](https://annofab.com/docs/api/#section/Task)
+          * レスポンスボディ: 割当した単一の[タスク](https://annofab.com/docs/api/#tag/x-data-types/Task)
           * ステータスコード: 200
         * 作業者に割当できるタスクがない場合は以下のHTTPレスポンスを返却してください。
           * レスポンスヘッダ: `Access-Control-Allow-Origin: https://annofab.com`
@@ -1447,8 +1427,6 @@ components:
         account:
           type: string
         members:
-          type: string
-        projects:
           type: string
         organizations:
           type: string
@@ -2313,7 +2291,7 @@ components:
           $ref: "#/components/schemas/InputDataType"
           default: image
           description: |
-            アノテーション対象の入力データの種類。[詳細はこちら](#section/InputDataType)を参照してください。
+            アノテーション対象の入力データの種類。[詳細はこちら](#tag/x-data-types/InputDataType)を参照してください。
 
             プロジェクトの作成時のみ指定可能です。更新時は無視されます。
         organization_name:
@@ -2934,7 +2912,7 @@ components:
           description: マーカーのタイトル
         graph_type:
           description: |
-            マーカーを配置するグラフ。[詳細はこちら](#section/GraphType)
+            マーカーを配置するグラフ。[詳細はこちら](#tag/x-data-types/GraphType)
           $ref: "#/components/schemas/GraphType"
         marked_at:
           description: グラフ上のマーカー位置(x軸)
@@ -3882,7 +3860,7 @@ components:
           description: |
             KeyがフィールドIdであるDictionaryです。
 
-            カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#section/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。
+            カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#tag/x-data-types/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。
           additionalProperties:
             $ref: "#/components/schemas/AnnotationTypeFieldValue"
         additional_data_definitions:
@@ -4742,7 +4720,7 @@ components:
         status:
           $ref: "#/components/schemas/TaskStatus"
           description: |
-            次に遷移させるタスクの状態。[詳細はこちら](#section/TaskStatus)。
+            次に遷移させるタスクの状態。[詳細はこちら](#tag/x-data-types/TaskStatus)。
         last_updated_datetime:
           $ref: "#/components/schemas/LastUpdatedDatetime"
           description: |
@@ -4786,7 +4764,7 @@ components:
       properties:
         phase:
           $ref: "#/components/schemas/TaskPhase"
-          description: 割り当てるタスクのフェーズ。[詳細はこちら](#section/TaskPhase)
+          description: 割り当てるタスクのフェーズ。[詳細はこちら](#tag/x-data-types/TaskPhase)
         _type:
           type: string
           description: |
@@ -4818,7 +4796,7 @@ components:
       properties:
         phase:
           $ref: "#/components/schemas/TaskPhase"
-          description: 割り当てるタスクのフェーズ。[詳細はこちら](#section/TaskPhase)
+          description: 割り当てるタスクのフェーズ。[詳細はこちら](#tag/x-data-types/TaskPhase)
         _type:
           type: string
           description: |
@@ -6167,11 +6145,11 @@ components:
         annotation_id:
           $ref: "#/components/schemas/AnnotationId"
           description: "アノテーションリンク属性の属性値。 リンク先アノテーションのIDが格納されます。"
-# これを定義して使いたいが、api-js-clientがコンパイルできない（実装も適切でない）コードを生成してしまうのでコメントアウトしている
-#    SingleAnnotationList:
-#      oneOf:
-#        - $ref: "#/components/schemas/SingleAnnotationV1List"
-#        - $ref: "#/components/schemas/SingleAnnotationV2List"
+    # これを定義して使いたいが、api-js-clientがコンパイルできない（実装も適切でない）コードを生成してしまうのでコメントアウトしている
+    #    SingleAnnotationList:
+    #      oneOf:
+    #        - $ref: "#/components/schemas/SingleAnnotationV1List"
+    #        - $ref: "#/components/schemas/SingleAnnotationV2List"
     SingleAnnotationV1List:
       description: SingleAnnotationV1の配列です
       type: array
@@ -6839,7 +6817,7 @@ components:
           $ref: "#/components/schemas/InspectionId"
         phase:
           $ref: "#/components/schemas/TaskPhase"
-          description: 検査コメントを付与したときのタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+          description: 検査コメントを付与したときのタスクフェーズ。[詳細はこちら](#tag/x-data-types/TaskPhase)
         phase_stage:
           type: integer
           description: 検査コメントを付与したときのフェーズのステージ
@@ -6854,7 +6832,7 @@ components:
             ##### スレッドの先頭のコメントである（`parent_inspection_id` に値がない）場合
 
             検査コメントに紐づくアノテーションのID。アノテーションに紐付けられていない場合（アノテーションの付け忘れに対する指定など）は未指定。
-            [詳細はこちら](#section/AnnotationId)。
+            [詳細はこちら](#tag/x-data-types/AnnotationId)。
 
             ##### 返信コメントである（`parent_inspection_id` に値がある）場合
 
@@ -7056,7 +7034,7 @@ components:
           $ref: "#/components/schemas/CommentId"
         phase:
           $ref: "#/components/schemas/TaskPhase"
-          description: コメントを作成したときのタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+          description: コメントを作成したときのタスクフェーズ。[詳細はこちら](#tag/x-data-types/TaskPhase)
         phase_stage:
           type: integer
           description: コメントを作成したときのフェーズのステージ。
@@ -7133,7 +7111,7 @@ components:
         annotation_id:
           $ref: "#/components/schemas/AnnotationId"
           description: |
-              コメントに紐づくアノテーションのID。アノテーションに紐付けられていない場合（アノテーションの付け忘れに対する指摘など）は未指定。[詳細はこちら](#section/AnnotationId)。
+              コメントに紐づくアノテーションのID。アノテーションに紐付けられていない場合（アノテーションの付け忘れに対する指摘など）は未指定。[詳細はこちら](#tag/x-data-types/AnnotationId)。
         label_id:
           $ref: "#/components/schemas/LabelId"
           description: |
@@ -7211,7 +7189,7 @@ components:
           $ref: "#/components/schemas/CommentId"
         phase:
           $ref: "#/components/schemas/TaskPhase"
-          description: コメントを作成したときのタスクフェーズ。[詳細はこちら](#section/TaskPhase)
+          description: コメントを作成したときのタスクフェーズ。[詳細はこちら](#tag/x-data-types/TaskPhase)
         phase_stage:
           type: integer
           description: コメントを作成したときのフェーズのステージ。
@@ -8736,7 +8714,7 @@ components:
         annotation_updated_datetime:
           type: string
           format: date-time
-          description: サムネイルの元になったアノテーションの更新日時。 [putEditorAnnotation](#operation/putEditorAnnotation) API や [getEditorAnnotation](#operation/getEditorAnnotation) API のレスポンスに含まれる `updated_datetime` を指定します。
+          description: サムネイルの元になったアノテーションの更新日時。 [putAnnotation](#operation/putAnnotation) API や [getEditorAnnotation](#operation/getEditorAnnotation) API のレスポンスに含まれる `updated_datetime` を指定します。
     AnnotationThumbnailImage:
       type: object
       required:
@@ -8962,3 +8940,118 @@ components:
           description: データの最終更新時刻。新規作成時は未指定、更新時は必須（更新前の日時）
     ProjectExtraDataValueJson:
       description: プロジェクト追加データの値。 nullを除く任意のJson
+    TaskIdentifier:
+      type: object
+      description: タスクを指定するための情報
+      required:
+        - project_id
+        - task_id
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        task_id:
+          $ref: "#/components/schemas/TaskId"
+    GetTasksInBulkResponse:
+      type: object
+      description: 複数のタスク取得時のレスポンス
+      required:
+        - success
+        - failure
+      properties:
+        success:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+          description: 取得に成功したタスク
+        failure:
+          type: array
+          items:
+            $ref: "#/components/schemas/TaskIdentifier"
+          description: 取得に失敗したタスクのIDとそのプロジェクトID
+    InputDataIdentifier:
+      type: object
+      description: 入力データを指定するための情報
+      required:
+        - project_id
+        - input_data_id
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        input_data_id:
+          $ref: "#/components/schemas/InputDataId"
+    GetInputDataInBulkResponse:
+      type: object
+      description: 複数の入力データ取得時のレスポンス
+      required:
+        - success
+        - failure
+      properties:
+        success:
+          type: array
+          items:
+            $ref: "#/components/schemas/InputData"
+          description: 取得に成功した入力データ
+        failure:
+          type: array
+          items:
+            $ref: "#/components/schemas/InputDataIdentifier"
+          description: 取得に失敗した入力データのIDとそのプロジェクトID
+    AnnotationsByInputDataIdIdentifier:
+      type: object
+      description: アノテーションの所属先
+      required:
+        - project_id
+        - task_id
+        - input_data_id
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        task_id:
+          $ref: "#/components/schemas/TaskId"
+        input_data_id:
+          $ref: "#/components/schemas/InputDataId"
+    GetEditorAnnotationsInBulkResponse:
+      type: object
+      description: 複数の入力データにわたるアノテーション取得時のレスポンス
+      required:
+        - success
+        - failure
+      properties:
+        success:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnnotationV2Output"
+          description: 取得に成功したアノテーション
+        failure:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnnotationsByInputDataIdIdentifier"
+          description: 取得に失敗したアノテーションの所属先
+    SupplementaryDataByInputDataIdIdentifier:
+      type: object
+      description: 補助情報の所属先
+      required:
+        - project_id
+        - input_data_id
+      properties:
+        project_id:
+          $ref: "#/components/schemas/ProjectId"
+        input_data_id:
+          $ref: "#/components/schemas/InputDataId"
+    GetSupplementaryDataInBulkResponse:
+      type: object
+      description: 複数の入力データにわたる補助情報取得時のレスポンス
+      required:
+        - success
+        - failure
+      properties:
+        success:
+          type: array
+          items:
+            $ref: "#/components/schemas/SupplementaryData"
+          description: 取得に成功した補助情報
+        failure:
+          type: array
+          items:
+            $ref: "#/components/schemas/SupplementaryDataByInputDataIdIdentifier"
+          description: 取得に失敗した補助情報の所属先

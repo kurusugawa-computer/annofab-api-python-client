@@ -124,7 +124,7 @@ class InternationalizationMessage(DataClassJsonMixin):
     """ """
 
     messages: list[InternationalizationMessageMessages]
-    """言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、Annofabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * 以下の名前は、[Simple Annotation](#section/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます     * ラベル名     * 属性名     * 選択肢名 * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます """
+    """言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、Annofabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * 以下の名前は、[Simple Annotation](#tag/x-annotation-zip/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます     * ラベル名     * 属性名     * 選択肢名 * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます """
 
     default_lang: str
     """希望された言語のメッセージが存在しない場合に、フォールバック先として使われる言語コード"""
@@ -610,7 +610,7 @@ class LabelV3(DataClassJsonMixin):
     """"""
 
     field_values: dict[str, AnnotationTypeFieldValue]
-    """KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#section/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 """
+    """KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#tag/x-data-types/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 """
 
     additional_data_definitions: list[str]
     """ラベルに所属する属性のID"""
