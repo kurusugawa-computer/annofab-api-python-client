@@ -31,7 +31,7 @@ class PutAnnotationThumbnailBody(BaseModel):
     images: List[AnnotationThumbnailImageSource] = Field(description="アップロードするサムネイル画像の一覧")
     annotations: Dict[str, AnnotationThumbnailDetail] = Field(description="アノテーションIDをキーとしたサムネイル情報")
     annotation_updated_datetime: str = Field(
-        description="サムネイルの元になったアノテーションの更新日時。 [putEditorAnnotation](#operation/putEditorAnnotation) API や [getEditorAnnotation](#operation/getEditorAnnotation) API のレスポンスに含まれる `updated_datetime` を指定します。"
+        description="サムネイルの元になったアノテーションの更新日時。 [putAnnotation](#operation/putAnnotation) API や [getEditorAnnotation](#operation/getEditorAnnotation) API のレスポンスに含まれる `updated_datetime` を指定します。"
     )
     __properties: ClassVar[List[str]] = ["images", "annotations", "annotation_updated_datetime"]
 

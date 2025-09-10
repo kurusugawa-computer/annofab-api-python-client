@@ -115,7 +115,7 @@ info:
 
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
 
-  version: 0.203.1
+  version: 0.206.0
   title: Annofab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -168,12 +168,8 @@ components:
       $ref: "swagger-api-components.yaml#/components/securitySchemes/SignedCookiePolicy"
     SignedCookieSignature:
       $ref: "swagger-api-components.yaml#/components/securitySchemes/SignedCookieSignature"
-    EveryoneRequestBody:
-      $ref: "swagger-api-components.yaml#/components/securitySchemes/EveryoneRequestBody"
-    EveryoneQueryParameter:
-      $ref: "swagger-api-components.yaml#/components/securitySchemes/EveryoneQueryParameter"
-    Everyone:
-      $ref: "swagger-api-components.yaml#/components/securitySchemes/Everyone"
+    AnnofabUser:
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/AnnofabUser"
     AnnofabAdminOnly:
       $ref: "swagger-api-components.yaml#/components/securitySchemes/AnnofabAdminOnly"
     AllProjectMember:
@@ -203,7 +199,7 @@ paths:
         この Cookie には有効期限があり、有効期限はリソース種類によって異なる場合があります。
         有効期限が切れた場合は再取得します。
       security:
-      - Everyone: []
+      - AnnofabUser: []
       operationId: getSignedAccessV2
       parameters:
       - name: url
@@ -220,7 +216,7 @@ paths:
             Set-Cookie:
               schema:
                 type: string
-                description: Signed Cookieが発行されます。発行されるCookieの詳細は [こちら](#section/Authentication) を参照ください。
+                description: Signed Cookieが発行されます。Cookieの構成は変更される可能性があります。
                 example: CloudFront-Key-Pair-Id=XXXXYYYZZZZ; Path=/api/v2/projects/xxxx-xxxx-xxx; max-age=84600; HttpOnly; SameSite=Strict; Secure
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
@@ -367,7 +363,7 @@ paths:
         - af-statistics-v2
       summary: タスク集計取得
       description: |
-        指定した期間の [タスク集計データ](/docs/api/#section/ArrayOfProjectTaskStatisticsHistory) を取得できるAPI。取得期間は最大3か月です。
+        指定した期間の [タスク集計データ](/docs/api/#tag/x-data-types/ArrayOfProjectTaskStatisticsHistory) を取得できるAPI。取得期間は最大3か月です。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -415,7 +411,7 @@ paths:
         - af-statistics-v2
       summary: ユーザー別タスク集計取得
       description: |
-        指定した期間の [ユーザー別タスク集計データ](/docs/api/#section/ArrayOfProjectAccountStatistics) を取得できるAPI。取得期間は最大3か月です。
+        指定した期間の [ユーザー別タスク集計データ](/docs/api/#tag/x-data-types/ArrayOfProjectAccountStatistics) を取得できるAPI。取得期間は最大3か月です。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -463,7 +459,7 @@ paths:
         - af-statistics-v2
       summary: 検査コメント集計取得
       description: |
-        指定した期間の [検査コメント集計データ](/docs/api/#section/ArrayOfInspectionStatistics) を取得できるAPI。取得期間は最大3か月です。
+        指定した期間の [検査コメント集計データ](/docs/api/#tag/x-data-types/ArrayOfInspectionStatistics) を取得できるAPI。取得期間は最大3か月です。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -511,7 +507,7 @@ paths:
         - af-statistics-v2
       summary: フェーズ別タスク集計取得
       description: |
-        指定した期間の [フェーズ別タスク集計データ](/docs/api/#section/ArrayOfTaskPhaseStatistics) を取得できるAPI。取得期間は最大3か月です。
+        指定した期間の [フェーズ別タスク集計データ](/docs/api/#tag/x-data-types/ArrayOfTaskPhaseStatistics) を取得できるAPI。取得期間は最大3か月です。
       security:
         - SignedCookieKeyPairId: []
           SignedCookiePolicy: []
@@ -737,7 +733,7 @@ paths:
         - name: history_id
           in: query
           description: |
-            過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。
+            過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](/docs/api/#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。
             未指定時は最新のアノテーション仕様を取得します。
           required: false
           schema:
@@ -1176,105 +1172,6 @@ paths:
             application/json:
               schema:
                 $ref: "swagger-api-components.yaml#/components/schemas/MyOrganizationList"
-        "401":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
-        "403":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorForbiddenResource"
-        "404":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
-        "503":
-          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
-  /users/{account_id}/projects:
-    get:
-      tags:
-        - af-users-v2
-      summary: 自分のプロジェクトメンバー情報検索
-      description: |
-        指定したユーザーが所属するプロジェクトを検索します。
-
-        本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
-      security:
-        - SignedCookieKeyPairId: []
-          SignedCookiePolicy: []
-          SignedCookieSignature: []
-      operationId: getUserProjectsV2
-      parameters:
-        - name: account_id
-          in: path
-          description: アカウントID
-          required: true
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/AccountId"
-        - name: page
-          in: query
-          description: |
-            表示するページ番号
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: limit
-          in: query
-          description: |
-            1ページあたりの取得するデータ件数
-          required: false
-          schema:
-            type: integer
-            minimum: 0
-            maximum: 200
-        - name: organization_id
-          in: query
-          description: |
-            指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。
-          required: false
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/OrganizationId"
-        - name: title
-          in: query
-          description: |
-            プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。
-          required: false
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: |
-            指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。
-          required: false
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/ProjectStatus"
-        - name: input_data_type
-          in: query
-          description: |
-            指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト
-          required: false
-          schema:
-            $ref: "swagger-api-components.yaml#/components/schemas/InputDataType"
-        - name: sort_by
-          in: query
-          description: |
-            `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。
-            未指定時はプロジェクト名でソートする。
-          required: false
-          schema:
-            type: string
-            example: date
-        - name: cache
-          in: query
-          description: |
-            CACHE TIMESTAMP
-          required: false
-          schema:
-            type: string
-            example: "123456789"
-      responses:
-        "200":
-          description: 正常
-          content:
-            application/json:
-              schema:
-                $ref: "swagger-api-components.yaml#/components/schemas/ProjectList"
         "401":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "403":

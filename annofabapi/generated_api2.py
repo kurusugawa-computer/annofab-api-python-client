@@ -46,7 +46,7 @@ class AbstractAnnofabApi2(abc.ABC):
             project_id (str):  プロジェクトID (required)
             query_params (dict[str, Any]): Query Parameters
                 cache (str):  CACHE TIMESTAMP
-                history_id (str):  過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。 未指定時は最新のアノテーション仕様を取得します。
+                history_id (str):  過去のアノテーション仕様を取得する場合、[アノテーション仕様履歴取得](/docs/api/#operation/getAnnotationSpecsHistories)APIで取得した `history_id` の値を指定します。 未指定時は最新のアノテーション仕様を取得します。
                 v (str):  取得するアノテーション仕様のフォーマットバージョンを指定します。
 
         Returns:
@@ -373,7 +373,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
-        指定した期間の [ユーザー別タスク集計データ](/docs/api/#section/ArrayOfProjectAccountStatistics) を取得できるAPI。取得期間は最大3か月です。
+        指定した期間の [ユーザー別タスク集計データ](/docs/api/#tag/x-data-types/ArrayOfProjectAccountStatistics) を取得できるAPI。取得期間は最大3か月です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -404,7 +404,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
-        指定した期間の [検査コメント集計データ](/docs/api/#section/ArrayOfInspectionStatistics) を取得できるAPI。取得期間は最大3か月です。
+        指定した期間の [検査コメント集計データ](/docs/api/#tag/x-data-types/ArrayOfInspectionStatistics) を取得できるAPI。取得期間は最大3か月です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -463,7 +463,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
-        指定した期間の [フェーズ別タスク集計データ](/docs/api/#section/ArrayOfTaskPhaseStatistics) を取得できるAPI。取得期間は最大3か月です。
+        指定した期間の [フェーズ別タスク集計データ](/docs/api/#tag/x-data-types/ArrayOfTaskPhaseStatistics) を取得できるAPI。取得期間は最大3か月です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -492,7 +492,7 @@ class AbstractAnnofabApi2(abc.ABC):
         authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
 
 
-        指定した期間の [タスク集計データ](/docs/api/#section/ArrayOfProjectTaskStatisticsHistory) を取得できるAPI。取得期間は最大3か月です。
+        指定した期間の [タスク集計データ](/docs/api/#tag/x-data-types/ArrayOfProjectTaskStatisticsHistory) を取得できるAPI。取得期間は最大3か月です。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -682,41 +682,6 @@ class AbstractAnnofabApi2(abc.ABC):
 
         """
         url_path = f"/users/{account_id}/project-members"
-        http_method = "GET"
-        keyword_params: dict[str, Any] = {
-            "query_params": query_params,
-        }
-        keyword_params.update(**kwargs)
-        return self._request_wrapper(http_method, url_path, **keyword_params)
-
-    def get_user_projects_v2(self, account_id: str, query_params: Optional[dict[str, Any]] = None, **kwargs) -> tuple[Any, requests.Response]:
-        """自分のプロジェクトメンバー情報検索
-        https://annofab.com/docs/api/#operation/getUserProjectsV2
-
-
-        authorizations: SignedCookieKeyPairIdSignedCookieSignatureSignedCookiePolicy
-
-
-        指定したユーザーが所属するプロジェクトを検索します。  本 API は `cache` クエリパラメータが同じであれば結果がキャッシュされ、以降は高速にレスポンスが返ります。
-
-        Args:
-            account_id (str):  アカウントID (required)
-            query_params (dict[str, Any]): Query Parameters
-                page (int):  表示するページ番号
-                limit (int):  1ページあたりの取得するデータ件数
-                organization_id (str):  指定した組織に属するプロジェクトに絞り込む。未指定時は全プロジェクト。
-                title (str):  プロジェクトタイトルでの部分一致検索。1文字以上あれば使用します。利便性のため、大文字小文字は区別しません。
-                status (ProjectStatus):  指定した状態のプロジェクトで絞り込む。未指定時は全プロジェクト。
-                input_data_type (InputDataType):  指定した入力データ種別でプロジェクトを絞り込む。未指定時は全プロジェクト
-                sort_by (str):  `date` を指定することでプロジェクトの最新のタスク更新時間の順にソートして出力する。 未指定時はプロジェクト名でソートする。
-                cache (str):  CACHE TIMESTAMP
-
-        Returns:
-            tuple[ProjectList, requests.Response]
-
-
-        """
-        url_path = f"/users/{account_id}/projects"
         http_method = "GET"
         keyword_params: dict[str, Any] = {
             "query_params": query_params,

@@ -16,18 +16,19 @@ import pprint
 import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Optional, Set
 
-from pydantic import BaseModel, ConfigDict, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
 
 
-class OrganizationCacheRecord(BaseModel):
+class AnnotationsByInputDataIdIdentifier(BaseModel):
     """
-    OrganizationCacheRecord
+    アノテーションの所属先
     """
 
-    members: Optional[StrictStr] = None
-    organization: Optional[StrictStr] = None
-    __properties: ClassVar[List[str]] = ["members", "organization"]
+    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    __properties: ClassVar[List[str]] = ["project_id", "task_id", "input_data_id"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -46,7 +47,7 @@ class OrganizationCacheRecord(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of OrganizationCacheRecord from a JSON string"""
+        """Create an instance of AnnotationsByInputDataIdIdentifier from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -70,12 +71,12 @@ class OrganizationCacheRecord(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of OrganizationCacheRecord from a dict"""
+        """Create an instance of AnnotationsByInputDataIdIdentifier from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({"members": obj.get("members"), "organization": obj.get("organization")})
+        _obj = cls.model_validate({"project_id": obj.get("project_id"), "task_id": obj.get("task_id"), "input_data_id": obj.get("input_data_id")})
         return _obj

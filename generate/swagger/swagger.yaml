@@ -119,7 +119,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.203.1
+  version: 0.206.0
   title: Annofab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -350,12 +350,8 @@ x-tagGroups:
       - x-data-types
 components:
   securitySchemes:
-    EveryoneRequestBody:
-      $ref: "swagger-api-components.yaml#/components/securitySchemes/EveryoneRequestBody"
-    EveryoneQueryParameter:
-      $ref: "swagger-api-components.yaml#/components/securitySchemes/EveryoneQueryParameter"
-    Everyone:
-      $ref: "swagger-api-components.yaml#/components/securitySchemes/Everyone"
+    AnnofabUser:
+      $ref: "swagger-api-components.yaml#/components/securitySchemes/AnnofabUser"
     AnnofabAdminOnly:
       $ref: "swagger-api-components.yaml#/components/securitySchemes/AnnofabAdminOnly"
     AllProjectMember:
@@ -384,8 +380,7 @@ paths:
         ログインして、APIの認証に必要なトークンを取得します。
 
         なりすましなどの悪用を防ぐため、トークンは他人に教えたり外部に公開しないでください。
-      security:
-      - EveryoneRequestBody: []
+      security: []
       operationId: login
       requestBody:
         required: true
@@ -412,8 +407,7 @@ paths:
       - af-login
       summary: ログアウト
       description: ログアウトします。
-      security:
-      - EveryoneRequestBody: []
+      security: []
       operationId: logout
       requestBody:
         required: true
@@ -436,8 +430,7 @@ paths:
         - af-login
       summary: MFAコードによるログイン
       description: MFAコードによるログインを行います。
-      security:
-        - EveryoneRequestBody: []
+      security: []
       operationId: loginRespondToAuthChallenge
       requestBody:
         required: true
@@ -468,8 +461,7 @@ paths:
         IDトークンやアクセストークンの有効期限が切れた場合に使います。
 
         リフレッシュトークンの有効期限が切れた場合は、本APIでは再発行できません。代わりに、[login API](#operation/login)を実行してください。
-      security:
-      - EveryoneRequestBody: []
+      security: []
       operationId: refreshToken
       requestBody:
         required: true
@@ -516,8 +508,7 @@ paths:
         #### refresh_token を使う場合 (PluginTokenRequestRefreshToken)
         1. プラグイン: 前回のトークン発行時に access_token と共に発行される refresh_token を記憶しておく
         1. プラグイン: 本APIに上記 refresh_token を渡し、 access_token と refresh_token を得る
-      security:
-        - EveryoneRequestBody: []
+      security: []
       operationId: requestPluginToken
       requestBody:
         required: true
@@ -635,8 +626,7 @@ paths:
       description: |
         プロジェクトゲスト用のトークンを発行します。
         このAPIが返すトークンを利用することで、Annofabにユーザー登録を行わず、対象のプロジェクトの一部操作が可能となります。
-      security:
-        - EveryoneRequestBody: []
+      security: []
       operationId: issueProjectGuestUserToken
       requestBody:
         required: true
@@ -663,7 +653,7 @@ paths:
       description: |
         自分のアカウント情報を取得します。
       security:
-      - Everyone: []
+      - AnnofabUser: []
       operationId: getMyAccount
       responses:
         "200":
@@ -683,7 +673,7 @@ paths:
       description: |
         自分のアカウント情報を更新します。
       security:
-      - Everyone: []
+      - AnnofabUser: []
       operationId: putMyAccount
       requestBody:
         required: true
@@ -712,7 +702,7 @@ paths:
       description: |
         自分が所属するプロジェクトのメンバー情報を一括で取得します。
       security:
-      - Everyone: []
+      - AnnofabUser: []
       operationId: getMyProjectMembers
       responses:
         "200":
@@ -735,7 +725,7 @@ paths:
         自身に届いている通知メッセージが上限(10000件)を超える場合、上限を超えた分の通知メッセージは取得できません。
         また、上限を超える場合、開封済みの通知メッセージの数は、取得可能な通知メッセージ中の集計値となります。詳細はレスポンスの項目を参照ください。
       security:
-        - Everyone: []
+        - AnnofabUser: []
       operationId: getMyNotificationMessages
       parameters:
         - name: page
@@ -778,7 +768,7 @@ paths:
       description: |
         自分に届いている通知メッセージの未読件数を取得します。
       security:
-        - Everyone: []
+        - AnnofabUser: []
       operationId: getMyNotificationUnreadMessagesCount
       responses:
         "200":
@@ -801,7 +791,7 @@ paths:
       description: |
         自分に届いているメッセージを取得します。
       security:
-        - Everyone: []
+        - AnnofabUser: []
       operationId: getMyNotificationMessage
       parameters:
         - name: message_id
@@ -833,7 +823,7 @@ paths:
         通知メッセージのステータスを更新します。
         自分に届いた通知メッセージのみ更新できます。
       security:
-        - Everyone: []
+        - AnnofabUser: []
       operationId: putMyNotificationMessageOpened
       parameters:
         - name: message_id
@@ -866,7 +856,7 @@ paths:
       description: |
         自分が発行したパーソナルアクセストークンの一覧を取得します。
       security:
-        - Everyone: []
+        - AnnofabUser: []
       operationId: getPersonalAccessTokens
       responses:
         "200":
@@ -889,7 +879,7 @@ paths:
       description: |
         パーソナルアクセストークンを発行します。
       security:
-        - Everyone: []
+        - AnnofabUser: []
       operationId: issuePersonalAccessToken
       requestBody:
         required: true
@@ -918,7 +908,7 @@ paths:
       description: |
         発行済のパーソナルアクセストークンを無効化します。
       security:
-        - Everyone: []
+        - AnnofabUser: []
       operationId: revokePersonalAccessToken
       requestBody:
         required: true
@@ -951,7 +941,7 @@ paths:
 
         既に存在する組織名をリクエストボディに指定すると、400エラーが発生します。
       security:
-        - Everyone: []
+        - AnnofabUser: []
       operationId: createNewOrganization
       requestBody:
         required: true
@@ -1191,7 +1181,7 @@ paths:
       - name: input_data_type
         in: query
         description: |
-          入力データの種類でプロジェクトを絞り込みます。[詳細はこちら](#section/InputDataType)を参照してください。
+          入力データの種類でプロジェクトを絞り込みます。[詳細はこちら](#tag/x-data-types/InputDataType)を参照してください。
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/InputDataType"
       - name: sort_by
@@ -1423,9 +1413,8 @@ paths:
       summary: 組織への招待の受諾
       description: |
         組織への招待を受諾し、組織へのメンバー登録を完了します。
-
       security:
-      - EveryoneRequestBody: []
+        - AnnofabUser: []
       operationId: acceptOrganizationInvitation
       parameters:
       - name: organization_name
@@ -1768,7 +1757,7 @@ paths:
       description: |
         自分が所属しているプロジェクトを一括で取得します。
       security:
-      - Everyone: []
+      - AnnofabUser: []
       operationId: getMyProjects
       parameters:
       - name: page
@@ -1815,7 +1804,7 @@ paths:
       - name: input_data_type
         in: query
         description: |
-          入力データの種類でプロジェクトを絞り込みます。[詳細はこちら](#section/InputDataType)を参照してください。
+          入力データの種類でプロジェクトを絞り込みます。[詳細はこちら](#tag/x-data-types/InputDataType)を参照してください。
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/InputDataType"
@@ -1879,11 +1868,11 @@ paths:
         プロジェクトを新規作成または更新します。
 
         ### 新規作成する場合
-        ユーザーは、作成するプロジェクトをひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。
+        ユーザーは、作成するプロジェクトをひもづける組織の `組織管理者` である必要があります。
 
         ### 更新する場合
-        ユーザーは、更新するプロジェクトの [ProjectOwner](#section/Authentication/ProjectOwner) である必要があります。
-        また所属組織を変更する場合は、新しくひもづける組織の [OrganizationAdministrator](#section/Authentication/OrganizationAdministrator) である必要があります。
+        ユーザーは、更新するプロジェクトの `プロジェクトオーナー` である必要があります。
+        また所属組織を変更する場合は、新しくひもづける組織の `組織管理者` である必要があります。
 
         なお、プロジェクト状態を「停止中」にした場合、アノテーションZIPやタスク進捗状況などの集計情報は自動更新されなくなります。
 
@@ -1908,13 +1897,15 @@ paths:
       - name: v
         in: query
         description: |
-          APIの戻り型のバージョンを指定します。
-          値と戻り型の対応は以下です。
-          - "1"：Project
-          - "2"：PutProjectResponse
+          **所属組織を変更したとき**のレスポンスのフォーマットバージョンを指定します。
+          - "1"：ステータスコードは200で、スキーマは`Project`
+          - "2"：ステータスコードは202で、スキーマは`PutProjectResponse`。`PutProjectResponse`には、登録されたジョブが含まれます。
         required: false
         schema:
           type: string
+          enum:
+            - "1"
+            - "2"
           default: "1"
           example: "2"
       requestBody:
@@ -1930,7 +1921,7 @@ paths:
               schema:
                 $ref: "swagger-api-components.yaml#/components/schemas/Project"
         "202":
-          description: 組織変更実施時
+          description: クエリパラメータに`v=2`を指定して、所属組織変更を実施した場合
           content:
             application/json:
               schema:
@@ -2103,7 +2094,7 @@ paths:
         入力データ全件ファイルにアクセスするための、認証済み一時URLを取得します。
         取得したURLは1時間で失効し、アクセスできなくなります。
 
-        入力データ全件ファイルは、すべての入力データが記載されたJSONファイルです。SON構造は、[InputData](#section/InputData)の配列です。
+        入力データ全件ファイルは、すべての入力データが記載されたJSONファイルです。SON構造は、[InputData](#tag/x-data-types/InputData)の配列です。
         ただしInputData中のurlは常にnullです。
 
         毎日AM02:00(JST)頃に更新されます。
@@ -2179,7 +2170,7 @@ paths:
         タスク全件ファイルにアクセスするための、認証済み一時URLを取得します。
         取得したURLは1時間で失効し、アクセスできなくなります。
 
-        タスク全件ファイルは、すべてのタスクが記載されたJSONファイルです。JSON構造は、[Task](#section/Task)の配列です。
+        タスク全件ファイルは、すべてのタスクが記載されたJSONファイルです。JSON構造は、[Task](#tag/x-data-types/Task)の配列です。
 
         毎日AM02:00(JST)頃に更新されます。
         [postProjectTasksUpdate](#operation/postProjectTasksUpdate) APIを利用すれば、手動でタスク全件ファイルを更新できます。
@@ -2256,7 +2247,7 @@ paths:
         取得したURLは1時間で失効し、アクセスできなくなります。
 
         検査コメント全件ファイルには、すべての検査コメントが記載されたファイルです。
-        JSON構造は、[Inspection](#section/Inspection)の配列です。
+        JSON構造は、[Inspection](#tag/x-data-types/Inspection)の配列です。
 
         毎日AM02:00(JST)頃に更新されます。
       security:
@@ -2288,7 +2279,7 @@ paths:
         取得したURLは1時間で失効し、アクセスできなくなります。
 
         コメント全件ファイルは、すべてのコメントが記載されたJSONファイルです。
-        JSON構造は、[Comment](#section/Comment)の配列です。
+        JSON構造は、[Comment](#tag/x-data-types/Comment)の配列です。
 
         毎日AM02:00(JST)頃に更新されます。
       security:
@@ -2322,7 +2313,7 @@ paths:
 
 
         タスク履歴イベント全件ファイルは、すべてのタスク履歴イベント情報が記載されたJSONファイルです。
-        JSON構造は、[TaskHistoryEvent](#section/TaskHistoryEvent)の配列です。
+        JSON構造は、[TaskHistoryEvent](#tag/x-data-types/TaskHistoryEvent)の配列です。
 
         毎日AM02:00(JST)頃に更新されます。
       security:
@@ -2354,7 +2345,7 @@ paths:
         取得したURLは1時間で失効し、アクセスできなくなります。
 
 
-        タスク履歴イベント全件ファイルは、すべてのタスク履歴情報が記載されたJSONファイルです。JSON構造は、キーがタスクID、値が[TaskHistory](#section/TaskHistory)の配列となるマップです。
+        タスク履歴イベント全件ファイルは、すべてのタスク履歴情報が記載されたJSONファイルです。JSON構造は、キーがタスクID、値が[TaskHistory](#tag/x-data-types/TaskHistory)の配列となるマップです。
 
         毎日AM02:00(JST)頃に更新されます。
       security:
@@ -2915,7 +2906,7 @@ paths:
       - af-statistics
       summary: ラベル別アノテーション数の取得
       description: |
-        [ラベル別アノテーション数集計データ](#section/ArrayOfLabelStatistics) を取得するための認証済み一時URLを取得します。
+        [ラベル別アノテーション数集計データ](#tag/x-data-types/ArrayOfLabelStatistics) を取得するための認証済み一時URLを取得します。
       security:
       - AllProjectMember: []
       operationId: getLabelStatistics
@@ -3141,7 +3132,7 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/OrganizationName"
       - name: type
         in: query
-        description: 取得するジョブの種別。[詳細はこちら](#section/OrganizationJobType)。
+        description: 取得するジョブの種別。[詳細はこちら](#tag/x-data-types/OrganizationJobType)。
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/OrganizationJobType"
@@ -3328,7 +3319,7 @@ paths:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
       - name: type
         in: query
-        description: 取得するジョブの種別。[詳細はこちら](#section/ProjectJobType)。
+        description: 取得するジョブの種別。[詳細はこちら](#tag/x-data-types/ProjectJobType)。
         required: false
         schema:
           $ref: "swagger-api-components.yaml#/components/schemas/ProjectJobType"
@@ -3909,7 +3900,7 @@ paths:
       - name: annotation
         in: query
         description: |
-          アノテーションの絞り込み条件をJSON形式([AnnotationQuery](#section/AnnotationQuery))で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
+          アノテーションの絞り込み条件をJSON形式([AnnotationQuery](#tag/x-data-types/AnnotationQuery))で指定したもの。指定した条件に合致するアノテーションを持つタスクを絞り込む際に指定する。
         required: false
         example: '{"label_id":"b048c6b3-b36f-4c8d-97ea-96828a50a44c"}'
         schema:
@@ -4249,6 +4240,51 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/tasks-in-bulk:
+    get:
+      tags:
+      - af-task
+      summary: タスクのバルク取得
+      description: |
+        タスクをバルク取得します。
+
+        このAPIは、[getTask](#operation/getTask) APIと似た機能を持ちますが、`task_id`を複数指定できる点が異なります。
+      security:
+      - AllProjectMember: []
+      operationId: getTasksInBulk
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: task_id
+        in: query
+        description: タスクIDのカンマ区切りリスト
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            $ref: "swagger-api-components.yaml#/components/schemas/TaskId"
+          example: [task_1,task_2,task_3]
+          minItems: 1
+          maxItems: 100
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/GetTasksInBulkResponse"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/assign-tasks:
@@ -4592,7 +4628,7 @@ paths:
       - name: query
         in: query
         description: |
-          絞り込み条件([AnnotationQuery](#section/AnnotationQuery))をJSON形式で表した文字列。
+          絞り込み条件([AnnotationQuery](#tag/x-data-types/AnnotationQuery))をJSON形式で表した文字列。
         required: false
         example: '{"label_id":"b048c6b3-b36f-4c8d-97ea-96828a50a44c"}'
         schema:
@@ -4867,6 +4903,57 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/Errors"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/tasks/{task_id}/annotations-in-bulk:
+    get:
+      tags:
+      - af-annotation
+      summary: アノテーションのバルク取得
+      description: |
+        アノテーションをバルク取得します。
+
+        このAPIは、[getEditorAnnotation](#operation/getEditorAnnotation) APIと似た機能を持ちますが、`input_data_id`を複数指定できる点が異なります。
+      security:
+      - AllProjectMember: []
+      operationId: getEditorAnnotationsInBulk
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: task_id
+        in: path
+        description: タスクID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/TaskId"
+      - name: input_data_id
+        in: query
+        description: 入力データID
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
+          example: [input_data_1,input_data_2]
+          minItems: 1
+          maxItems: 10
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/GetEditorAnnotationsInBulkResponse"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/tasks/{task_id}/inputs/{input_data_id}/annotation/simple:
     get:
       tags:
@@ -4925,7 +5012,7 @@ paths:
 
         アノテーションZIPの更新中に、このAPIを実行すると409エラーが発生します。
 
-        FullアノテーションZIPのデータ構造については、[Full Annotation ZIP](#section/Full-Annotation-ZIP)を参照ください。
+        FullアノテーションZIPのデータ構造については、[Full Annotation ZIP](#tag/x-annotation-zip/Full-Annotation-ZIP)を参照ください。
       security:
       - ProjectDataUser: []
       operationId: getArchiveFullWithProId
@@ -4963,7 +5050,7 @@ paths:
 
         アノテーションZIPの更新中に、このAPIを実行すると409エラーが発生します。
 
-        SimpleアノテーションZIPのデータ構造については、[Simple Annotation ZIP](#section/Simple-Annotation-ZIP)を参照ください。
+        SimpleアノテーションZIPのデータ構造については、[Simple Annotation ZIP](#tag/x-annotation-zip/Simple-Annotation-ZIP)を参照ください。
 
       security:
       - ProjectDataUser: []
@@ -5436,6 +5523,51 @@ paths:
                 $ref: "swagger-api-components.yaml#/components/schemas/Errors"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/input-data-in-bulk:
+    get:
+      tags:
+      - af-input
+      summary: 入力データのバルク取得
+      description: |
+        入力データをバルク取得します。
+
+        このAPIは、[getInputData](#operation/getInputData) APIと似た機能を持ちますが、`input_data_id`を複数指定できる点が異なります。
+      security:
+      - AllProjectMember: []
+      operationId: getInputDataInBulk
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: input_data_id
+        in: query
+        description: 入力データIDのカンマ区切りリスト
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
+          example: [input_data_id1,input_data_id2]
+          minItems: 1
+          maxItems: 100
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/GetInputDataInBulkResponse"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/inputs/{input_data_id}:
     get:
       tags:
@@ -5673,6 +5805,50 @@ paths:
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "404":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorMissingResource"
+        "503":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
+  /projects/{project_id}/supplementary-data-in-bulk:
+    get:
+      tags:
+      - af-supplementary
+      summary: 補助情報のバルク取得
+      description: |
+        補助情報をバルク取得します。
+        このAPIは、[getSupplementaryDataList](#operation/getSupplementaryDataList) APIと似た機能を持ちますが、`input_data_id`を複数指定できる点が異なります。
+      security:
+      - AllProjectMember: []
+      operationId: getSupplementaryDataInBulk
+      parameters:
+      - name: project_id
+        in: path
+        description: プロジェクトID
+        required: true
+        schema:
+          $ref: "swagger-api-components.yaml#/components/schemas/ProjectId"
+      - name: input_data_id
+        in: query
+        description: 入力データIDのカンマ区切りリスト
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            $ref: "swagger-api-components.yaml#/components/schemas/InputDataId"
+          example: [input_data_id1,input_data_id2]
+          minItems: 1
+          maxItems: 100
+      responses:
+        "200":
+          description: 正常
+          content:
+            application/json:
+              schema:
+                $ref: "swagger-api-components.yaml#/components/schemas/GetSupplementaryDataInBulkResponse"
+        "400":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorInvalidRequest"
+        "401":
+          $ref: "swagger-api-components.yaml#/components/responses/ErrorUnauthorizedApi"
         "503":
           $ref: "swagger-api-components.yaml#/components/responses/ErrorUnderMaintenance"
   /projects/{project_id}/inputs/{input_data_id}/supplementary-data/{supplementary_data_id}:

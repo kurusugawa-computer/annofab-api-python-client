@@ -36,7 +36,7 @@ class LabelV3(BaseModel):
     keybind: List[Keybind] = Field(description="ショートカットキー")
     annotation_type: AnnotationType
     field_values: Dict[str, AnnotationTypeFieldValue] = Field(
-        description="KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#section/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 "
+        description="KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#tag/x-data-types/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 "
     )
     additional_data_definitions: List[StrictStr] = Field(description="ラベルに所属する属性のID")
     color: Color

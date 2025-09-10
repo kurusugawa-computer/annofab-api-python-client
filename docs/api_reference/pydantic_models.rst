@@ -796,6 +796,14 @@ annofabapi.pydantic\_models.annotation\_v2\_output module
    :show-inheritance:
    :undoc-members:
 
+annofabapi.pydantic\_models.annotations\_by\_input\_data\_id\_identifier module
+-------------------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.annotations_by_input_data_id_identifier
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 annofabapi.pydantic\_models.assignee\_rule\_of\_resubmitted\_task module
 ------------------------------------------------------------------------
 
@@ -1300,6 +1308,38 @@ annofabapi.pydantic\_models.full\_annotation\_detail module
    :show-inheritance:
    :undoc-members:
 
+annofabapi.pydantic\_models.get\_editor\_annotations\_in\_bulk\_response module
+-------------------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.get_editor_annotations_in_bulk_response
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+annofabapi.pydantic\_models.get\_input\_data\_in\_bulk\_response module
+-----------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.get_input_data_in_bulk_response
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+annofabapi.pydantic\_models.get\_supplementary\_data\_in\_bulk\_response module
+-------------------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.get_supplementary_data_in_bulk_response
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+annofabapi.pydantic\_models.get\_tasks\_in\_bulk\_response module
+-----------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.get_tasks_in_bulk_response
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 annofabapi.pydantic\_models.global\_idp\_name\_determinant module
 -----------------------------------------------------------------
 
@@ -1352,6 +1392,14 @@ annofabapi.pydantic\_models.input\_data module
 ----------------------------------------------
 
 .. automodule:: annofabapi.pydantic_models.input_data
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+annofabapi.pydantic\_models.input\_data\_identifier module
+----------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.input_data_identifier
    :members:
    :show-inheritance:
    :undoc-members:
@@ -2812,6 +2860,14 @@ annofabapi.pydantic\_models.supplementary\_data module
    :show-inheritance:
    :undoc-members:
 
+annofabapi.pydantic\_models.supplementary\_data\_by\_input\_data\_id\_identifier module
+---------------------------------------------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.supplementary_data_by_input_data_id_identifier
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 annofabapi.pydantic\_models.supplementary\_data\_request module
 ---------------------------------------------------------------
 
@@ -3008,6 +3064,14 @@ annofabapi.pydantic\_models.task\_history\_short module
 -------------------------------------------------------
 
 .. automodule:: annofabapi.pydantic_models.task_history_short
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+annofabapi.pydantic\_models.task\_identifier module
+---------------------------------------------------
+
+.. automodule:: annofabapi.pydantic_models.task_identifier
    :members:
    :show-inheritance:
    :undoc-members:
