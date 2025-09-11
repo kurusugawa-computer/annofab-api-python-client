@@ -623,7 +623,7 @@ class TestCanPutAnnotation:
 
     def test_can_put_annotation_project_member_role_none_no_history(self):
         """project_member_role=None, 履歴なしの場合"""
-        task = {"histories_by_phase": [], "account_id": None}
+        task: dict[str, Any] = {"histories_by_phase": [], "account_id": None}
         actual = can_put_annotation(task, self.MY_ACCOUNT_ID, project_member_role=None)
         assert actual is True
 
