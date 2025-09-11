@@ -627,8 +627,8 @@ class TestCanPutAnnotation:
         actual = can_put_annotation(task, self.MY_ACCOUNT_ID, project_member_role=None)
         assert actual is True
 
-    def test_can_put_annotation_project_member_role_none_with_history_different_account(self):
-        """project_member_role=None, 履歴あり、異なるアカウントID"""
+    def test_can_put_annotation_project_member_role_owner_with_history_different_account(self):
+        """project_member_role=OWNER, 履歴あり、異なるアカウントID"""
         task = {
             "histories_by_phase": [{"phase": "annotation", "phase_stage": 1, "worked": True, "account_id": self.OTHER_ACCOUNT_ID}],
             "account_id": self.OTHER_ACCOUNT_ID,
@@ -636,7 +636,7 @@ class TestCanPutAnnotation:
         actual = can_put_annotation(task, self.MY_ACCOUNT_ID, project_member_role=ProjectMemberRole.OWNER)
         assert actual is False
 
-    def test_can_put_annotation_project_member_role_owner_with_history_different_account(self):
+    def test_can_put_annotation_project_member_role_owner_with_history_same_account(self):
         """project_member_role=OWNER, 同じアカウントID"""
         task = {
             "histories_by_phase": [{"phase": "annotation", "phase_stage": 1, "worked": True, "account_id": self.MY_ACCOUNT_ID}],
