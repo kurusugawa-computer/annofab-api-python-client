@@ -93,7 +93,7 @@ OpenAPI Specファイルの間違いを許容する部分/許容しない部分�
 * `operationId`をスネークケースに変換したもの
 
 ### 引数
-* Path Prametersの中身を引数にする。
+* Path Parametersの中身を引数にする。
 * WebAPIにQuery Parametersがあれば、引数に`query_params`を追加する。
 * WebAPIにHeader Parametersがあれば、引数に`header_params`を追加する。
 * WebAPIにRequest Bodyがあれば、引数に`request_body`を追加する。
