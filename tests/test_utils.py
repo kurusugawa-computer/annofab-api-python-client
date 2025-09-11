@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from annofabapi.models import TaskPhase
+from annofabapi.models import ProjectMemberRole, TaskPhase
 from annofabapi.utils import (
+    can_put_annotation,
     get_number_of_rejections,
     get_task_history_index_skipped_acceptance,
     get_task_history_index_skipped_inspection,
@@ -614,3 +615,50 @@ class TestTaskHistoryUtils2:
         actual = get_task_history_index_skipped_inspection(task_history_list)
         expected: list[int] = []
         assert all([a == b for a, b in zip(actual, expected)])  # noqa: C419
+
+
+class TestCanPutAnnotation:
+    MY_ACCOUNT_ID = "12345678-abcd-1234-abcd-1234abcd5678"
+    OTHER_ACCOUNT_ID = "87654321-dcba-4321-dcba-4321dcba8765"
+
+    def test_can_put_annotation_project_member_role_none_no_history(self):
+        """project_member_role=None, 履歴なしの場合"""
+        task: dict[str, Any] = {"histories_by_phase": [], "account_id": None}
+        actual = can_put_annotation(task, self.MY_ACCOUNT_ID, project_member_role=None)
+        assert actual is True
+
+    def test_can_put_annotation_project_member_role_owner_with_history_different_account(self):
+        """project_member_role=OWNER, 履歴あり、異なるアカウントID"""
+        task = {
+            "histories_by_phase": [{"phase": "annotation", "phase_stage": 1, "worked": True, "account_id": self.OTHER_ACCOUNT_ID}],
+            "account_id": self.OTHER_ACCOUNT_ID,
+        }
+        actual = can_put_annotation(task, self.MY_ACCOUNT_ID, project_member_role=ProjectMemberRole.OWNER)
+        assert actual is False
+
+    def test_can_put_annotation_project_member_role_owner_with_history_same_account(self):
+        """project_member_role=OWNER, 同じアカウントID"""
+        task = {
+            "histories_by_phase": [{"phase": "annotation", "phase_stage": 1, "worked": True, "account_id": self.MY_ACCOUNT_ID}],
+            "account_id": self.MY_ACCOUNT_ID,
+        }
+        actual = can_put_annotation(task, self.MY_ACCOUNT_ID, project_member_role=ProjectMemberRole.OWNER)
+        assert actual is True
+
+    def test_can_put_annotation_project_member_role_accepter_same_account(self):
+        """project_member_role=ACCEPTER, 同じアカウントID"""
+        task = {
+            "histories_by_phase": [],
+            "account_id": self.MY_ACCOUNT_ID,
+        }
+        actual = can_put_annotation(task, self.MY_ACCOUNT_ID, project_member_role=ProjectMemberRole.ACCEPTER)
+        assert actual is True
+
+    def test_can_put_annotation_project_member_role_worker_same_account(self):
+        """project_member_role=WORKER, 同じアカウントID"""
+        task = {
+            "histories_by_phase": [],
+            "account_id": self.MY_ACCOUNT_ID,
+        }
+        actual = can_put_annotation(task, self.MY_ACCOUNT_ID, project_member_role=ProjectMemberRole.WORKER)
+        assert actual is True

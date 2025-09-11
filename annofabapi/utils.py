@@ -5,7 +5,7 @@ from typing import Optional
 import dateutil
 import dateutil.tz
 
-from annofabapi.models import Task, TaskHistory, TaskHistoryShort, TaskPhase
+from annofabapi.models import ProjectMemberRole, Task, TaskHistory, TaskHistoryShort, TaskPhase
 
 logger = logging.getLogger(__name__)
 
@@ -145,7 +145,7 @@ def get_number_of_rejections(task_histories: list[TaskHistoryShort], phase: Task
     return rejections_by_phase
 
 
-def can_put_annotation(task: Task, my_account_id: str) -> bool:
+def can_put_annotation(task: Task, my_account_id: str, *, project_member_role: Optional[ProjectMemberRole] = None) -> bool:
     """
     対象タスクが、`put_annotation` APIで、アノテーションを更新できる状態かどうか。
     過去に担当者が割り当たっている場合、または現在の担当者が自分自身の場合は、アノテーションを更新できる。
@@ -153,9 +153,15 @@ def can_put_annotation(task: Task, my_account_id: str) -> bool:
     Args:
         task: 対象タスク
         my_account_id: 自分（ログインしているユーザ）のアカウントID
+        project_member_role: プロジェクトメンバーロール。Noneの場合、プロジェクトオーナであるとみなします。
 
     Returns:
-        Trueならば、タスクの状態を変更せずに`put_annotation` APIを実行できる。
+        Trueならば、タスクの担当者を変更せずに`put_annotation` APIを実行できる。
+        Falseならば、タスクの担当者を変更してから、`put_annotation` APIを実行する必要がある。
     """
-    # ログインユーザはプロジェクトオーナであること前提
-    return len(task["histories_by_phase"]) == 0 or task["account_id"] == my_account_id
+    if project_member_role is None or project_member_role == ProjectMemberRole.OWNER:
+        return len(task["histories_by_phase"]) == 0 or task["account_id"] == my_account_id
+    elif project_member_role in [ProjectMemberRole.ACCEPTER, ProjectMemberRole.WORKER]:
+        return task["account_id"] == my_account_id
+    else:
+        raise ValueError(f"引数'project_member_role'の値は不正です。 :: {project_member_role=}")
