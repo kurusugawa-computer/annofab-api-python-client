@@ -10,13 +10,13 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Optional, Union  # pylint: disable=unused-import
+from typing import Any  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import AdditionalDataDefinitionType, AnnotationTypeFieldMinWarnRule
 
-AdditionalDataDefaultType = Union[bool, int, str]
+AdditionalDataDefaultType = bool | int | str
 
 AdditionalDataRestrictionCondition = dict[str, Any]
 
@@ -70,22 +70,22 @@ class BoundingBoxMetadata(DataClassJsonMixin):
     min_warn_rule: str
     """サイズの制約に関する情報 * `none` - 制約なし * `or` - 幅と高さの両方が最小値以上 * `and` - 幅と高さのどちらか一方が最小値以上 """
 
-    min_area: Optional[int]
+    min_area: int | None
     """面積の最小値[平方ピクセル]"""
 
-    max_vertices: Optional[int]
+    max_vertices: int | None
     """頂点数の最大値"""
 
-    min_vertices: Optional[int]
+    min_vertices: int | None
     """頂点数の最小値"""
 
-    position_for_minimum_bounding_box_insertion: Optional[PositionForMinimumBoundingBoxInsertion]
+    position_for_minimum_bounding_box_insertion: PositionForMinimumBoundingBoxInsertion | None
     """"""
 
-    tolerance: Optional[int]
+    tolerance: int | None
     """許容誤差[ピクセル]"""
 
-    has_direction: Optional[bool]
+    has_direction: bool | None
     """`annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。 この値が `true` の場合、Annofabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。  `annotationType` が `polyline` 以外の場合は必ず `false` となります。 """
 
 
@@ -104,7 +104,7 @@ class SegmentationMetadata(DataClassJsonMixin):
     min_warn_rule: str
     """サイズの制約に関する情報 * `none` - 制約なし * `or` - 幅と高さの両方が最小値以上 * `and` - 幅と高さのどちらか一方が最小値以上 """
 
-    tolerance: Optional[int]
+    tolerance: int | None
     """許容誤差[ピクセル]"""
 
 
@@ -157,10 +157,10 @@ class AnnotationSpecsHistory(DataClassJsonMixin):
     url: str
     """アノテーション仕様が格納されたJSONのURL。URLにアクセスするには認証認可が必要です。"""
 
-    account_id: Optional[str]
+    account_id: str | None
     """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    comment: Optional[str]
+    comment: str | None
     """変更内容のコメント"""
 
 
@@ -190,7 +190,7 @@ class AdditionalDataDefinitionV1Choices(DataClassJsonMixin):
     name: InternationalizationMessage
     """"""
 
-    keybind: Optional[list[Keybind]]
+    keybind: list[Keybind] | None
     """ショートカットキー"""
 
 
@@ -201,34 +201,34 @@ class AdditionalDataDefinitionV1(DataClassJsonMixin):
     additional_data_definition_id: str
     """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    read_only: Optional[bool]
+    read_only: bool | None
     """読み込み専用"""
 
-    name: Optional[InternationalizationMessage]
+    name: InternationalizationMessage | None
     """"""
 
-    default: Optional[AdditionalDataDefaultType]
+    default: AdditionalDataDefaultType | None
     """"""
 
-    keybind: Optional[list[Keybind]]
+    keybind: list[Keybind] | None
     """ショートカットキー"""
 
     type: AdditionalDataDefinitionType
     """"""
 
-    choices: Optional[list[AdditionalDataDefinitionV1Choices]]
+    choices: list[AdditionalDataDefinitionV1Choices] | None
     """ドロップダウンまたはラジオボタンの選択肢"""
 
-    regex: Optional[str]
+    regex: str | None
     """属性の値が、指定した正規表現に一致している必要があります。"""
 
-    label_ids: Optional[list[str]]
+    label_ids: list[str] | None
     """リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）"""
 
-    required: Optional[bool]
+    required: bool | None
     """リンク属性において、入力を必須とするかどうか"""
 
-    metadata: Optional[dict[str, str]]
+    metadata: dict[str, str] | None
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -239,25 +239,25 @@ class AdditionalDataDefinitionV2(DataClassJsonMixin):
     additional_data_definition_id: str
     """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    read_only: Optional[bool]
+    read_only: bool | None
     """読み込み専用"""
 
     name: InternationalizationMessage
     """"""
 
-    default: Optional[AdditionalDataDefaultType]
+    default: AdditionalDataDefaultType | None
     """"""
 
-    keybind: Optional[list[Keybind]]
+    keybind: list[Keybind] | None
     """ショートカットキー"""
 
     type: AdditionalDataDefinitionType
     """"""
 
-    choices: Optional[list[AdditionalDataDefinitionV1Choices]]
+    choices: list[AdditionalDataDefinitionV1Choices] | None
     """ドロップダウンまたはラジオボタンの選択肢"""
 
-    metadata: Optional[dict[str, str]]
+    metadata: dict[str, str] | None
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -321,7 +321,7 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(DataClassJs
     min_height: int
     """"""
 
-    position_for_minimum_bounding_box_insertion: Optional[list[int]]
+    position_for_minimum_bounding_box_insertion: list[int] | None
     """最小矩形の挿入位置を、要素が2の配列で指定します。 """
 
 
@@ -473,10 +473,10 @@ class LabelV1(DataClassJsonMixin):
     annotation_type: AnnotationType
     """"""
 
-    bounding_box_metadata: Optional[BoundingBoxMetadata]
+    bounding_box_metadata: BoundingBoxMetadata | None
     """"""
 
-    segmentation_metadata: Optional[SegmentationMetadata]
+    segmentation_metadata: SegmentationMetadata | None
     """"""
 
     additional_data_definitions: list[AdditionalDataDefinitionV1]
@@ -488,7 +488,7 @@ class LabelV1(DataClassJsonMixin):
     annotation_editor_feature: AnnotationEditorFeature
     """"""
 
-    metadata: Optional[dict[str, str]]
+    metadata: dict[str, str] | None
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -508,10 +508,10 @@ class LabelV2(DataClassJsonMixin):
     annotation_type: AnnotationType
     """"""
 
-    bounding_box_metadata: Optional[BoundingBoxMetadata]
+    bounding_box_metadata: BoundingBoxMetadata | None
     """"""
 
-    segmentation_metadata: Optional[SegmentationMetadata]
+    segmentation_metadata: SegmentationMetadata | None
     """"""
 
     additional_data_definitions: list[str]
@@ -523,7 +523,7 @@ class LabelV2(DataClassJsonMixin):
     annotation_editor_feature: AnnotationEditorFeature
     """"""
 
-    metadata: Optional[dict[str, str]]
+    metadata: dict[str, str] | None
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -551,10 +551,10 @@ class AnnotationSpecsV1(DataClassJsonMixin):
     inspection_phrases: list[InspectionPhrase]
     """定型指摘"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str | None
     """更新日時 """
 
-    option: Optional[AnnotationSpecsOption]
+    option: AnnotationSpecsOption | None
     """"""
 
     metadata: dict[str, str]
@@ -583,10 +583,10 @@ class AnnotationSpecsV2(DataClassJsonMixin):
     format_version: str
     """アノテーション仕様のフォーマットのバージョン"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str | None
     """更新日時 """
 
-    option: Optional[AnnotationSpecsOption]
+    option: AnnotationSpecsOption | None
     """"""
 
     metadata: dict[str, str]
@@ -618,7 +618,7 @@ class LabelV3(DataClassJsonMixin):
     color: Color
     """"""
 
-    metadata: Optional[dict[str, str]]
+    metadata: dict[str, str] | None
     """ユーザーが自由に登録できるkey-value型のメタデータです。 """
 
 
@@ -641,16 +641,16 @@ class AnnotationSpecsV3(DataClassJsonMixin):
     inspection_phrases: list[InspectionPhrase]
     """定型指摘"""
 
-    annotation_type_version: Optional[str]
+    annotation_type_version: str | None
     """アノテーション種別のバージョン。  拡張仕様プラグインで定義した値が転写されます。プロジェクトに拡張仕様プラグインが設定されていない場合は未指定です。 """
 
     format_version: str
     """アノテーション仕様のフォーマットのバージョン"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str | None
     """更新日時 """
 
-    option: Optional[AnnotationSpecsOption]
+    option: AnnotationSpecsOption | None
     """"""
 
     metadata: dict[str, str]

@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -28,21 +28,19 @@ class PluginDetailAnnotationEditor(BaseModel):
     カスタムアノテーションエディタ用のプラグインを表します。
     """
 
-    plugin_compatibility: Optional[OrganizationPluginCompatibility] = None
-    url: Optional[StrictStr] = Field(
+    plugin_compatibility: OrganizationPluginCompatibility | None = None
+    url: StrictStr | None = Field(
         default=None,
         description="カスタムアノテーションエディタでタスクを開くための URL です。 プラグインを使用するプロジェクトのタスク一覧などで使用されます。 プラグイン種別がカスタムアノテーションエディタの場合のみ有効です。  この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` * `{taskId}`  以下のパラメーターは任意で指定します。  * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。 * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。 ",
     )
-    auth_redirect_url: Optional[StrictStr] = Field(
+    auth_redirect_url: StrictStr | None = Field(
         default=None,
         description="認証後のリダイレクト先。このURLに `?code=xxx` をつけてリダイレクトされます。 url プロパティとは異なり、 `{projectId}` や `{taskId}` といったパラメータの置換は行われません。  詳しくは [requestPluginToken API](#operation/requestPluginToken) を参照してください。 ",
     )
     compatible_input_data_types: List[InputDataType] = Field(
         description="プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 "
     )
-    type: Optional[StrictStr] = Field(
-        default=None, description="`AnnotationEditor` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type"
-    )
+    type: StrictStr | None = Field(default=None, description="`AnnotationEditor` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
     __properties: ClassVar[List[str]] = ["plugin_compatibility", "url", "auth_redirect_url", "compatible_input_data_types", "_type"]
 
     model_config = ConfigDict(
@@ -61,7 +59,7 @@ class PluginDetailAnnotationEditor(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of PluginDetailAnnotationEditor from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -88,7 +86,7 @@ class PluginDetailAnnotationEditor(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of PluginDetailAnnotationEditor from a dict"""
         if obj is None:
             return None

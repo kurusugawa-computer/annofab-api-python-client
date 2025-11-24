@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Self
@@ -32,16 +32,16 @@ class AdditionalDataDefinitionV1(BaseModel):
     """
 
     additional_data_definition_id: StrictStr = Field(description="属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    read_only: Optional[StrictBool] = Field(default=False, description="読み込み専用")
-    name: Optional[InternationalizationMessage] = None
-    default: Optional[AdditionalDataDefaultType] = None
-    keybind: Optional[List[Keybind]] = Field(default=None, description="ショートカットキー")
+    read_only: StrictBool | None = Field(default=False, description="読み込み専用")
+    name: InternationalizationMessage | None = None
+    default: AdditionalDataDefaultType | None = None
+    keybind: List[Keybind] | None = Field(default=None, description="ショートカットキー")
     type: AdditionalDataDefinitionType
-    choices: Optional[List[AdditionalDataDefinitionV1ChoicesInner]] = Field(default=None, description="ドロップダウンまたはラジオボタンの選択肢")
-    regex: Optional[StrictStr] = Field(default=None, description="属性の値が、指定した正規表現に一致している必要があります。")
-    label_ids: Optional[List[StrictStr]] = Field(default=None, description="リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）")
-    required: Optional[StrictBool] = Field(default=None, description="リンク属性において、入力を必須とするかどうか")
-    metadata: Optional[Dict[str, StrictStr]] = Field(default=None, description="ユーザーが自由に登録できるkey-value型のメタデータです。 ")
+    choices: List[AdditionalDataDefinitionV1ChoicesInner] | None = Field(default=None, description="ドロップダウンまたはラジオボタンの選択肢")
+    regex: StrictStr | None = Field(default=None, description="属性の値が、指定した正規表現に一致している必要があります。")
+    label_ids: List[StrictStr] | None = Field(default=None, description="リンク属性において、リンク先として指定可能なラベルID（空の場合制限なし）")
+    required: StrictBool | None = Field(default=None, description="リンク属性において、入力を必須とするかどうか")
+    metadata: Dict[str, StrictStr] | None = Field(default=None, description="ユーザーが自由に登録できるkey-value型のメタデータです。 ")
     __properties: ClassVar[List[str]] = [
         "additional_data_definition_id",
         "read_only",
@@ -72,7 +72,7 @@ class AdditionalDataDefinitionV1(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AdditionalDataDefinitionV1 from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -116,7 +116,7 @@ class AdditionalDataDefinitionV1(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AdditionalDataDefinitionV1 from a dict"""
         if obj is None:
             return None

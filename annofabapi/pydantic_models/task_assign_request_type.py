@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -31,12 +31,12 @@ class TaskAssignRequestType(BaseModel):
     """
 
     # data type: TaskAssignRequestTypeRandom
-    oneof_schema_1_validator: Optional[TaskAssignRequestTypeRandom] = None
+    oneof_schema_1_validator: TaskAssignRequestTypeRandom | None = None
     # data type: TaskAssignRequestTypeSelection
-    oneof_schema_2_validator: Optional[TaskAssignRequestTypeSelection] = None
+    oneof_schema_2_validator: TaskAssignRequestTypeSelection | None = None
     # data type: TaskAssignRequestTypeTaskProperty
-    oneof_schema_3_validator: Optional[TaskAssignRequestTypeTaskProperty] = None
-    actual_instance: Optional[Union[TaskAssignRequestTypeRandom, TaskAssignRequestTypeSelection, TaskAssignRequestTypeTaskProperty]] = None
+    oneof_schema_3_validator: TaskAssignRequestTypeTaskProperty | None = None
+    actual_instance: Union[TaskAssignRequestTypeRandom, TaskAssignRequestTypeSelection, TaskAssignRequestTypeTaskProperty] | None = None
     one_of_schemas: Set[str] = {"TaskAssignRequestTypeRandom", "TaskAssignRequestTypeSelection", "TaskAssignRequestTypeTaskProperty"}
 
     model_config = ConfigDict(
@@ -148,7 +148,7 @@ class TaskAssignRequestType(BaseModel):
 
     def to_dict(
         self,
-    ) -> Optional[Union[Dict[str, Any], TaskAssignRequestTypeRandom, TaskAssignRequestTypeSelection, TaskAssignRequestTypeTaskProperty]]:
+    ) -> Union[Dict[str, Any], TaskAssignRequestTypeRandom, TaskAssignRequestTypeSelection, TaskAssignRequestTypeTaskProperty] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

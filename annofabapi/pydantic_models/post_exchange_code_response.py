@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -30,10 +30,10 @@ class PostExchangeCodeResponse(BaseModel):
     """
 
     # data type: PostExchangeCodeLoginResponse
-    oneof_schema_1_validator: Optional[PostExchangeCodeLoginResponse] = None
+    oneof_schema_1_validator: PostExchangeCodeLoginResponse | None = None
     # data type: UnconfirmedUserResponse
-    oneof_schema_2_validator: Optional[UnconfirmedUserResponse] = None
-    actual_instance: Optional[Union[PostExchangeCodeLoginResponse, UnconfirmedUserResponse]] = None
+    oneof_schema_2_validator: UnconfirmedUserResponse | None = None
+    actual_instance: Union[PostExchangeCodeLoginResponse, UnconfirmedUserResponse] | None = None
     one_of_schemas: Set[str] = {"PostExchangeCodeLoginResponse", "UnconfirmedUserResponse"}
 
     model_config = ConfigDict(
@@ -132,7 +132,7 @@ class PostExchangeCodeResponse(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], PostExchangeCodeLoginResponse, UnconfirmedUserResponse]]:
+    def to_dict(self) -> Union[Dict[str, Any], PostExchangeCodeLoginResponse, UnconfirmedUserResponse] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

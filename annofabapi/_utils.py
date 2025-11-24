@@ -1,10 +1,9 @@
 import enum
 import warnings
 from functools import wraps
-from typing import Optional
 
 
-def _issue_deprecated_warning_with_class(cls, stacklevel: int, deprecated_date: str, new_class_name: Optional[str] = None):  # noqa: ANN001, ANN202
+def _issue_deprecated_warning_with_class(cls, stacklevel: int, deprecated_date: str, new_class_name: str | None = None):  # noqa: ANN001, ANN202
     """非推奨なクラスに対する警告メッセージを出力する。"""
     old_class_name = f"{cls.__module__}.{cls.__name__}"
     message = f"deprecated: '{old_class_name}'は{deprecated_date}以降に廃止します。"
@@ -13,7 +12,7 @@ def _issue_deprecated_warning_with_class(cls, stacklevel: int, deprecated_date: 
     warnings.warn(message, FutureWarning, stacklevel=stacklevel)
 
 
-def _process_class(cls, deprecated_date: str, new_class_name: Optional[str] = None):  # noqa: ANN001, ANN202
+def _process_class(cls, deprecated_date: str, new_class_name: str | None = None):  # noqa: ANN001, ANN202
     def decorator(function):  # noqa: ANN001, ANN202
         @wraps(function)
         def wrapped(*args, **kwargs):  # noqa: ANN202
@@ -26,7 +25,7 @@ def _process_class(cls, deprecated_date: str, new_class_name: Optional[str] = No
     return cls
 
 
-def _process_enum_class(cls, deprecated_date: str, new_class_name: Optional[str] = None):  # noqa: ANN001, ANN202
+def _process_enum_class(cls, deprecated_date: str, new_class_name: str | None = None):  # noqa: ANN001, ANN202
     def getattribute(self, name):  # noqa: ANN001, ANN202
         _issue_deprecated_warning_with_class(cls, stacklevel=4, deprecated_date=deprecated_date, new_class_name=new_class_name)
         return super(type(self), self).__getattribute__(name)
@@ -35,7 +34,7 @@ def _process_enum_class(cls, deprecated_date: str, new_class_name: Optional[str]
     return cls
 
 
-def deprecated_class(_cls=None, *, deprecated_date: str, new_class_name: Optional[str] = None):  # noqa: ANN001, ANN202
+def deprecated_class(_cls=None, *, deprecated_date: str, new_class_name: str | None = None):  # noqa: ANN001, ANN202
     """クラスを非推奨にします。"""
 
     def wrap(cls):  # noqa: ANN001, ANN202

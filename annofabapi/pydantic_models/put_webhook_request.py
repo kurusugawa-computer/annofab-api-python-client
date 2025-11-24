@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -36,10 +36,10 @@ class PutWebhookRequest(BaseModel):
     webhook_status: WebhookStatus
     method: WebhookHttpMethod
     headers: List[WebhookHeader] = Field(description="Webhookが送信するHTTPリクエストのヘッダー")
-    body: Optional[StrictStr] = Field(default=None, description="Webhookが送信するHTTPリクエストのボディ。methodがGETの場合は指定不可。")
+    body: StrictStr | None = Field(default=None, description="Webhookが送信するHTTPリクエストのボディ。methodがGETの場合は指定不可。")
     url: StrictStr = Field(description="Webhookの送信先URL")
-    created_datetime: Optional[str] = Field(default=None, description="作成日時")
-    updated_datetime: Optional[str] = Field(default=None, description="更新日時")
+    created_datetime: str | None = Field(default=None, description="作成日時")
+    updated_datetime: str | None = Field(default=None, description="更新日時")
     __properties: ClassVar[List[str]] = [
         "project_id",
         "event_type",
@@ -69,7 +69,7 @@ class PutWebhookRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of PutWebhookRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -100,7 +100,7 @@ class PutWebhookRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of PutWebhookRequest from a dict"""
         if obj is None:
             return None

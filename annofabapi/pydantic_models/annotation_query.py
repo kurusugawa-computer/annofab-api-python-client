@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Annotated, Self
@@ -27,24 +27,24 @@ class AnnotationQuery(BaseModel):
     アノテーションの絞り込み条件
     """
 
-    task_id: Optional[Annotated[str, Field(strict=True, max_length=300)]] = Field(default=None, description="タスクIDで絞り込みます。 ")
-    exact_match_task_id: Optional[StrictBool] = Field(
+    task_id: Annotated[str, Field(strict=True, max_length=300)] | None = Field(default=None, description="タスクIDで絞り込みます。 ")
+    exact_match_task_id: StrictBool | None = Field(
         default=True, description="タスクIDの検索方法を指定します。 `true`の場合は完全一致検索、`false`の場合は部分一致検索です。 "
     )
-    input_data_id: Optional[Annotated[str, Field(strict=True, max_length=300)]] = Field(default=None, description="入力データID絞り込みます。 ")
-    exact_match_input_data_id: Optional[StrictBool] = Field(
+    input_data_id: Annotated[str, Field(strict=True, max_length=300)] | None = Field(default=None, description="入力データID絞り込みます。 ")
+    exact_match_input_data_id: StrictBool | None = Field(
         default=True, description="入力データIDの検索方法を指定します。 `true`の場合は完全一致検索、`false`の場合は部分一致検索です。 "
     )
-    label_id: Optional[StrictStr] = Field(default=None, description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    attributes: Optional[List[AdditionalDataV1]] = Field(
+    label_id: StrictStr | None = Field(default=None, description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    attributes: List[AdditionalDataV1] | None = Field(
         default=None,
         description="属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | ",
     )
-    updated_from: Optional[str] = Field(
+    updated_from: str | None = Field(
         default=None,
         description="開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日（ISO 8601 拡張形式または基本形式）。  `updated_to` より後の日付が指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。 ",
     )
-    updated_to: Optional[str] = Field(
+    updated_to: str | None = Field(
         default=None,
         description="開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、終了日（ISO 8601 拡張形式または基本形式）。  未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。 ",
     )
@@ -75,7 +75,7 @@ class AnnotationQuery(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationQuery from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -106,7 +106,7 @@ class AnnotationQuery(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationQuery from a dict"""
         if obj is None:
             return None

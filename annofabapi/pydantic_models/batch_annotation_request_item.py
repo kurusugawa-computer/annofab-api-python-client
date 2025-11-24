@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -31,12 +31,12 @@ class BatchAnnotationRequestItem(BaseModel):
     """
 
     # data type: BatchAnnotationRequestItemPutV1
-    oneof_schema_1_validator: Optional[BatchAnnotationRequestItemPutV1] = None
+    oneof_schema_1_validator: BatchAnnotationRequestItemPutV1 | None = None
     # data type: BatchAnnotationRequestItemPutV2
-    oneof_schema_2_validator: Optional[BatchAnnotationRequestItemPutV2] = None
+    oneof_schema_2_validator: BatchAnnotationRequestItemPutV2 | None = None
     # data type: BatchAnnotationRequestItemDelete
-    oneof_schema_3_validator: Optional[BatchAnnotationRequestItemDelete] = None
-    actual_instance: Optional[Union[BatchAnnotationRequestItemDelete, BatchAnnotationRequestItemPutV1, BatchAnnotationRequestItemPutV2]] = None
+    oneof_schema_3_validator: BatchAnnotationRequestItemDelete | None = None
+    actual_instance: Union[BatchAnnotationRequestItemDelete, BatchAnnotationRequestItemPutV1, BatchAnnotationRequestItemPutV2] | None = None
     one_of_schemas: Set[str] = {"BatchAnnotationRequestItemDelete", "BatchAnnotationRequestItemPutV1", "BatchAnnotationRequestItemPutV2"}
 
     model_config = ConfigDict(
@@ -148,7 +148,7 @@ class BatchAnnotationRequestItem(BaseModel):
 
     def to_dict(
         self,
-    ) -> Optional[Union[Dict[str, Any], BatchAnnotationRequestItemDelete, BatchAnnotationRequestItemPutV1, BatchAnnotationRequestItemPutV2]]:
+    ) -> Union[Dict[str, Any], BatchAnnotationRequestItemDelete, BatchAnnotationRequestItemPutV1, BatchAnnotationRequestItemPutV2] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

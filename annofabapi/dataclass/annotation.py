@@ -10,7 +10,7 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Optional, Union  # pylint: disable=unused-import
+from typing import Any  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -23,7 +23,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 
-AnnotationDataV1 = Union[str, dict[str, Any]]
+AnnotationDataV1 = str | dict[str, Any]
 FullAnnotationData = Any
 AdditionalDataValue = dict[str, Any]
 FullAnnotationAdditionalDataValue = dict[str, Any]
@@ -137,16 +137,16 @@ class AdditionalDataV1(DataClassJsonMixin):
     additional_data_definition_id: str
     """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    flag: Optional[bool]
+    flag: bool | None
     """`additional_data_definition`の`type`が`flag`のときの属性値。 """
 
-    integer: Optional[int]
+    integer: int | None
     """`additional_data_definition`の`type`が`integer`のときの属性値。 """
 
-    comment: Optional[str]
+    comment: str | None
     """`additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 """
 
-    choice: Optional[str]
+    choice: str | None
     """選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
 
@@ -157,7 +157,7 @@ class AdditionalDataV2(DataClassJsonMixin):
     definition_id: str
     """属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    value: Optional[AdditionalDataValue]
+    value: AdditionalDataValue | None
     """"""
 
 
@@ -237,7 +237,7 @@ class FullAnnotation(DataClassJsonMixin):
     details: list[FullAnnotationDetail]
     """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str | None
     """更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。"""
 
     annotation_format_version: str
@@ -292,7 +292,7 @@ class SimpleAnnotation(DataClassJsonMixin):
     details: list[SimpleAnnotationDetail]
     """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str | None
     """更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。"""
 
 
@@ -314,13 +314,13 @@ class SingleAnnotationDetailV1(DataClassJsonMixin):
     data_holding_type: AnnotationDataHoldingType
     """"""
 
-    data: Optional[FullAnnotationData]
+    data: FullAnnotationData | None
     """"""
 
-    etag: Optional[str]
+    etag: str | None
     """data_holding_typeがouterの場合のみ存在し、データのETagが格納される"""
 
-    url: Optional[str]
+    url: str | None
     """data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される"""
 
     additional_data_list: list[AdditionalDataV1]
@@ -420,25 +420,25 @@ class AnnotationDetailV1(DataClassJsonMixin):
     data_holding_type: AnnotationDataHoldingType
     """"""
 
-    data: Optional[AnnotationDataV1]
+    data: AnnotationDataV1 | None
     """"""
 
-    path: Optional[str]
+    path: str | None
     """外部ファイルに保存されたアノテーションのパス。`data_holding_type`が`inner`の場合は未指定です。 レスポンスの場合は`annotation_id`と同じ値が格納されます。  [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は、[createTempPath](#operation/createTempPath) APIで取得できる一時データ保存先パスを格納してください。 更新しない場合は、[getEditorAnnotation](#operation/getEditorAnnotation) APIで取得した`path`をそのまま渡せます。  外部ファイルのフォーマットは下表の通りです。  <table> <tr><th>annotation_type</th><th>形式</th></tr> <tr><td>segmentation / segmentation_v2   </td><td>PNG画像。塗りつぶした部分は<code>rgba(255, 255, 255, 1) </code>、塗りつぶしていない部分は<code>rgba(0, 0, 0, 0) </code>。</td></tr> </table> """
 
-    etag: Optional[str]
+    etag: str | None
     """外部ファイルに保存されたアノテーションのETag。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。"""
 
-    url: Optional[str]
+    url: str | None
     """外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。"""
 
     additional_data_list: list[AdditionalDataV1]
     """属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | """
 
-    created_datetime: Optional[str]
+    created_datetime: str | None
     """作成日時"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str | None
     """更新日時"""
 
 
@@ -458,7 +458,7 @@ class AnnotationV1(DataClassJsonMixin):
     details: list[AnnotationDetailV1]
     """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str | None
     """更新日時"""
 
 
@@ -468,22 +468,22 @@ class AnnotationPropsForEditor(DataClassJsonMixin):
     アノテーションエディタ用のアノテーション毎のプロパティです。<br /> ここに含まれているデータはアノテーション結果に反映されず、エディタが利用するために存在します。  エディタ用のデータであるため、たとえば`can_delete`や`can_edit_data`が`false`でも、APIによる編集は妨げません。<br /> ここで定義されているデータを利用して動作を変えるかどうかは、エディタによって異なります。
     """
 
-    can_delete: Optional[bool]
+    can_delete: bool | None
     """アノテーションがエディタ上で削除できるかどうか。 trueの場合削除可能。"""
 
-    can_edit_data: Optional[bool]
+    can_edit_data: bool | None
     """アノテーションの本体のデータを編集できるかどうか。 trueの場合編集可能。 2022/09現在、この値を利用しているエディタは存在しません。"""
 
-    can_edit_additional: Optional[bool]
+    can_edit_additional: bool | None
     """アノテーションの付加情報を編集できるかどうか。  trueの場合編集可能。 2022/09現在、この値を利用しているエディタは存在しません。"""
 
-    description: Optional[str]
+    description: str | None
     """アノテーションについての人間可読な説明。 2022/09現在、この値を利用しているエディタは存在しません。"""
 
-    tags: Optional[list[str]]
+    tags: list[str] | None
     """アノテーションに付与されている機械可読・人間可読なタグの列。  2022/09現在、この値を利用しているエディタは存在しません"""
 
-    etc: Optional[dict[str, Any]]
+    etc: dict[str, Any] | None
     """上記以外の任意のJson構造"""
 
 
@@ -675,7 +675,7 @@ class AnnotationDetailV2Update(DataClassJsonMixin):
     label_id: str
     """ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    body: Optional[AnnotationDetailContentInput]
+    body: AnnotationDetailContentInput | None
     """"""
 
     additional_data_list: list[AdditionalDataV2]
@@ -701,7 +701,7 @@ class AnnotationV2Input(DataClassJsonMixin):
     details: list[AnnotationDetailV2Input]
     """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str | None
     """対象タスク・対象入力データへの最初の保存時は未指定にしてください。 更新の場合はアノテーション取得時のupdated_datetimeをそのまま指定してください。 """
 
     format_version: str
@@ -808,7 +808,7 @@ class AnnotationV2Output(DataClassJsonMixin):
     details: list[AnnotationDetailV2Output]
     """矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。"""
 
-    updated_datetime: Optional[str]
+    updated_datetime: str | None
     """対象タスク・対象入力データへ一度もアノテーションの保存が行われていない場合、未指定となります。 そうで無い場合、対象タスク・対象入力データのアノテーション最終更新時刻です。 """
 
     format_version: str

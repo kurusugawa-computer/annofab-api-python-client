@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -30,10 +30,10 @@ class PostAnnotationArchiveUpdateResponseWrapper(BaseModel):
     """
 
     # data type: Message
-    oneof_schema_1_validator: Optional[Message] = None
+    oneof_schema_1_validator: Message | None = None
     # data type: PostAnnotationArchiveUpdateResponse
-    oneof_schema_2_validator: Optional[PostAnnotationArchiveUpdateResponse] = None
-    actual_instance: Optional[Union[Message, PostAnnotationArchiveUpdateResponse]] = None
+    oneof_schema_2_validator: PostAnnotationArchiveUpdateResponse | None = None
+    actual_instance: Union[Message, PostAnnotationArchiveUpdateResponse] | None = None
     one_of_schemas: Set[str] = {"Message", "PostAnnotationArchiveUpdateResponse"}
 
     model_config = ConfigDict(
@@ -130,7 +130,7 @@ class PostAnnotationArchiveUpdateResponseWrapper(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], Message, PostAnnotationArchiveUpdateResponse]]:
+    def to_dict(self) -> Union[Dict[str, Any], Message, PostAnnotationArchiveUpdateResponse] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

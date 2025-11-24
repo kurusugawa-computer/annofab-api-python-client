@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, StrictInt
 from typing_extensions import Self
@@ -25,8 +25,8 @@ class InspectionDataPolylineCoordinatesInner(BaseModel):
     InspectionDataPolylineCoordinatesInner
     """
 
-    x: Optional[StrictInt] = None
-    y: Optional[StrictInt] = None
+    x: StrictInt | None = None
+    y: StrictInt | None = None
     __properties: ClassVar[List[str]] = ["x", "y"]
 
     model_config = ConfigDict(
@@ -45,7 +45,7 @@ class InspectionDataPolylineCoordinatesInner(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of InspectionDataPolylineCoordinatesInner from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -69,7 +69,7 @@ class InspectionDataPolylineCoordinatesInner(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of InspectionDataPolylineCoordinatesInner from a dict"""
         if obj is None:
             return None

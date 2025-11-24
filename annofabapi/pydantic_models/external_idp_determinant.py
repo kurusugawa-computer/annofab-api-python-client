@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -31,12 +31,12 @@ class ExternalIdpDeterminant(BaseModel):
     """
 
     # data type: GlobalIdpNameDeterminant
-    oneof_schema_1_validator: Optional[GlobalIdpNameDeterminant] = None
+    oneof_schema_1_validator: GlobalIdpNameDeterminant | None = None
     # data type: OrganizationIdpIdDeterminant
-    oneof_schema_2_validator: Optional[OrganizationIdpIdDeterminant] = None
+    oneof_schema_2_validator: OrganizationIdpIdDeterminant | None = None
     # data type: UserIdDeterminant
-    oneof_schema_3_validator: Optional[UserIdDeterminant] = None
-    actual_instance: Optional[Union[GlobalIdpNameDeterminant, OrganizationIdpIdDeterminant, UserIdDeterminant]] = None
+    oneof_schema_3_validator: UserIdDeterminant | None = None
+    actual_instance: Union[GlobalIdpNameDeterminant, OrganizationIdpIdDeterminant, UserIdDeterminant] | None = None
     one_of_schemas: Set[str] = {"GlobalIdpNameDeterminant", "OrganizationIdpIdDeterminant", "UserIdDeterminant"}
 
     model_config = ConfigDict(
@@ -146,7 +146,7 @@ class ExternalIdpDeterminant(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], GlobalIdpNameDeterminant, OrganizationIdpIdDeterminant, UserIdDeterminant]]:
+    def to_dict(self) -> Union[Dict[str, Any], GlobalIdpNameDeterminant, OrganizationIdpIdDeterminant, UserIdDeterminant] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

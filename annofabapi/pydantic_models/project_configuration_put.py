@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Annotated, Self
@@ -29,57 +29,57 @@ class ProjectConfigurationPut(BaseModel):
     プロジェクトの設定情報
     """
 
-    number_of_inspections: Optional[Annotated[int, Field(strict=True, ge=0)]] = Field(
+    number_of_inspections: Annotated[int, Field(strict=True, ge=0)] | None = Field(
         default=0,
         description="検査回数。 * 0回：教師付け -> 受入 * 1回：教師付け -> 検査 -> 受入 * n回(n >= 2)：教師付け -> 検査1 -> ... -> 検査n -> 受入 ",
     )
-    assignee_rule_of_resubmitted_task: Optional[AssigneeRuleOfResubmittedTask] = AssigneeRuleOfResubmittedTask.NO_ASSIGNEE
-    task_assignment_type: Optional[TaskAssignmentType] = TaskAssignmentType.RANDOM
-    task_assignment_property: Optional[TaskAssignmentProperty] = None
-    max_tasks_per_member: Optional[Annotated[int, Field(le=100, strict=True, ge=1)]] = Field(
+    assignee_rule_of_resubmitted_task: AssigneeRuleOfResubmittedTask | None = AssigneeRuleOfResubmittedTask.NO_ASSIGNEE
+    task_assignment_type: TaskAssignmentType | None = TaskAssignmentType.RANDOM
+    task_assignment_property: TaskAssignmentProperty | None = None
+    max_tasks_per_member: Annotated[int, Field(le=100, strict=True, ge=1)] | None = Field(
         default=10, description="保留中のタスクを除き、1人（オーナー以外）に割り当てられるタスク数の上限。 "
     )
-    max_tasks_per_member_including_hold: Optional[Annotated[int, Field(le=100, strict=True, ge=1)]] = Field(
+    max_tasks_per_member_including_hold: Annotated[int, Field(le=100, strict=True, ge=1)] | None = Field(
         default=20,
         description="保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。 割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。  例えばmax_tasks_per_memberが10、max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。 ",
     )
-    input_data_set_id_list: Optional[List[StrictStr]] = Field(
+    input_data_set_id_list: List[StrictStr] | None = Field(
         default=None,
         description="システム内部用のプロパティ。 [putProject](#operation/putProject) APIでプロジェクトを更新する際は、[getProject](#operation/getProject) APIで取得した値を指定してください。 ",
     )
-    input_data_max_long_side_length: Optional[Annotated[int, Field(strict=True, ge=0)]] = Field(
+    input_data_max_long_side_length: Annotated[int, Field(strict=True, ge=0)] | None = Field(
         default=None,
         description="入力データ画像の長辺の最大値（未指定時は4096px）。  画像をアップロードすると、長辺がこの値になるように画像が自動で圧縮されます。 アノテーションの座標は、もとの解像度の画像でつけたものに復元されます。  大きな数値を設定すると入力データ画像のサイズが大きくなり、生産性低下やブラウザで画像を表示できない懸念があります。注意して設定してください。 ",
     )
-    sampling_inspection_rate: Optional[Annotated[int, Field(le=100, strict=True, ge=0)]] = Field(
+    sampling_inspection_rate: Annotated[int, Field(le=100, strict=True, ge=0)] | None = Field(
         default=None, description="抜取検査率[%]。未指定の場合は100%として扱う。"
     )
-    sampling_acceptance_rate: Optional[Annotated[int, Field(le=100, strict=True, ge=0)]] = Field(
+    sampling_acceptance_rate: Annotated[int, Field(le=100, strict=True, ge=0)] | None = Field(
         default=None, description="抜取受入率[%]。未指定の場合は100%として扱う。"
     )
-    private_storage_aws_iam_role_arn: Optional[StrictStr] = Field(
+    private_storage_aws_iam_role_arn: StrictStr | None = Field(
         default=None,
         description="AWS IAMロール。S3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 ",
     )
-    use_s3_transfer_acceleration: Optional[StrictBool] = Field(
+    use_s3_transfer_acceleration: StrictBool | None = Field(
         default=False,
         description="S3プライベートストレージにアクセスする際に、AWS S3 Transfer Accelerationを使用するかどうか。trueの場合に使用します。 private_storage_aws_iam_role_arnの設定がなされていない場合、この値は無視されます。 ",
     )
-    plugin_id: Optional[StrictStr] = Field(default=None, description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    custom_task_assignment_plugin_id: Optional[StrictStr] = Field(
+    plugin_id: StrictStr | None = Field(default=None, description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    custom_task_assignment_plugin_id: StrictStr | None = Field(
         default=None, description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) "
     )
-    custom_specs_plugin_id: Optional[StrictStr] = Field(
+    custom_specs_plugin_id: StrictStr | None = Field(
         default=None, description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) "
     )
-    extended_specs_plugin_id: Optional[StrictStr] = Field(
+    extended_specs_plugin_id: StrictStr | None = Field(
         default=None, description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) "
     )
-    editor_version: Optional[StrictStr] = Field(
+    editor_version: StrictStr | None = Field(
         default=None,
         description="標準アノテーションエディタのバージョン。  * `stable`     * 安定版。通常はこちらを利用してください。 * `preview`     * 最新版。新機能やUI変更の先行リリース版。  プロジェクト更新時に未指定の場合は `stable` が指定されたものとみなします。 ",
     )
-    use_beginner_navigation: Optional[StrictBool] = Field(
+    use_beginner_navigation: StrictBool | None = Field(
         default=False,
         description="true の場合、プロジェクトの画面でナビゲーションUIを表示します（ログインユーザーがプロジェクトオーナーの場合のみ）。 ",
     )
@@ -120,7 +120,7 @@ class ProjectConfigurationPut(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of ProjectConfigurationPut from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -147,7 +147,7 @@ class ProjectConfigurationPut(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of ProjectConfigurationPut from a dict"""
         if obj is None:
             return None

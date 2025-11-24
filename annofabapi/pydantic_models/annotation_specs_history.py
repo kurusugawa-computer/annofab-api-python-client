@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -29,8 +29,8 @@ class AnnotationSpecsHistory(BaseModel):
     project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     updated_datetime: str = Field(description="更新日時")
     url: StrictStr = Field(description="アノテーション仕様が格納されたJSONのURL。URLにアクセスするには認証認可が必要です。")
-    account_id: Optional[StrictStr] = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    comment: Optional[StrictStr] = Field(default=None, description="変更内容のコメント")
+    account_id: StrictStr | None = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    comment: StrictStr | None = Field(default=None, description="変更内容のコメント")
     __properties: ClassVar[List[str]] = ["history_id", "project_id", "updated_datetime", "url", "account_id", "comment"]
 
     model_config = ConfigDict(
@@ -49,7 +49,7 @@ class AnnotationSpecsHistory(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationSpecsHistory from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -73,7 +73,7 @@ class AnnotationSpecsHistory(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationSpecsHistory from a dict"""
         if obj is None:
             return None

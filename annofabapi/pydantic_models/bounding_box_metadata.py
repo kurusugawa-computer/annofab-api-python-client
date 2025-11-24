@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr, field_validator
 from typing_extensions import Annotated, Self
@@ -32,12 +32,12 @@ class BoundingBoxMetadata(BaseModel):
     min_warn_rule: StrictStr = Field(
         description="サイズの制約に関する情報 * `none` - 制約なし * `or` - 幅と高さの両方が最小値以上 * `and` - 幅と高さのどちらか一方が最小値以上 "
     )
-    min_area: Optional[Annotated[int, Field(strict=True, ge=1)]] = Field(default=None, description="面積の最小値[平方ピクセル]")
-    max_vertices: Optional[StrictInt] = Field(default=None, description="頂点数の最大値")
-    min_vertices: Optional[StrictInt] = Field(default=None, description="頂点数の最小値")
-    position_for_minimum_bounding_box_insertion: Optional[PositionForMinimumBoundingBoxInsertion] = None
-    tolerance: Optional[StrictInt] = Field(default=None, description="許容誤差[ピクセル]")
-    has_direction: Optional[StrictBool] = Field(
+    min_area: Annotated[int, Field(strict=True, ge=1)] | None = Field(default=None, description="面積の最小値[平方ピクセル]")
+    max_vertices: StrictInt | None = Field(default=None, description="頂点数の最大値")
+    min_vertices: StrictInt | None = Field(default=None, description="頂点数の最小値")
+    position_for_minimum_bounding_box_insertion: PositionForMinimumBoundingBoxInsertion | None = None
+    tolerance: StrictInt | None = Field(default=None, description="許容誤差[ピクセル]")
+    has_direction: StrictBool | None = Field(
         default=False,
         description="`annotation_type` が `polyline` の場合、アノテーションに向きを持たせるかどうかを指定できます。 この値が `true` の場合、Annofabの標準画像エディタ上ではポリラインの向きを示す矢印が描画されるようになります。  `annotationType` が `polyline` 以外の場合は必ず `false` となります。 ",
     )
@@ -76,7 +76,7 @@ class BoundingBoxMetadata(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of BoundingBoxMetadata from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -103,7 +103,7 @@ class BoundingBoxMetadata(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of BoundingBoxMetadata from a dict"""
         if obj is None:
             return None

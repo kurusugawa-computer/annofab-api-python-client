@@ -1,6 +1,5 @@
 import datetime
 import logging
-from typing import Optional
 
 import dateutil
 import dateutil.tz
@@ -26,7 +25,7 @@ def str_now() -> str:
     return to_iso8601_extension(datetime.datetime.now(tz=datetime.timezone(datetime.timedelta(hours=9))))
 
 
-def to_iso8601_extension(d: datetime.datetime, tz: Optional[datetime.tzinfo] = None) -> str:
+def to_iso8601_extension(d: datetime.datetime, tz: datetime.tzinfo | None = None) -> str:
     """
     datetime.datetimeを、ISO8601 拡張形式のstringに変換する。
     ``2019-05-08T10:00:00.000+09:00``
@@ -145,7 +144,7 @@ def get_number_of_rejections(task_histories: list[TaskHistoryShort], phase: Task
     return rejections_by_phase
 
 
-def can_put_annotation(task: Task, my_account_id: str, *, project_member_role: Optional[ProjectMemberRole] = None) -> bool:
+def can_put_annotation(task: Task, my_account_id: str, *, project_member_role: ProjectMemberRole | None = None) -> bool:
     """
     対象タスクが、`put_annotation` APIで、アノテーションを更新できる状態かどうか。
     過去に担当者が割り当たっている場合、または現在の担当者が自分自身の場合は、アノテーションを更新できる。

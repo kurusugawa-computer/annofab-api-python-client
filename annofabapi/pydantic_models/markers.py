@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -29,7 +29,7 @@ class Markers(BaseModel):
 
     project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     markers: List[Marker] = Field(description="マーカー一覧")
-    updated_datetime: Optional[str] = Field(default=None, description="更新日時")
+    updated_datetime: str | None = Field(default=None, description="更新日時")
     __properties: ClassVar[List[str]] = ["project_id", "markers", "updated_datetime"]
 
     model_config = ConfigDict(
@@ -48,7 +48,7 @@ class Markers(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of Markers from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -79,7 +79,7 @@ class Markers(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of Markers from a dict"""
         if obj is None:
             return None

@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -34,8 +34,8 @@ class ProjectJobInfo(BaseModel):
     job_type: ProjectJobType
     job_id: StrictStr = Field(description="ジョブID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     job_status: JobStatus
-    job_execution: Optional[Dict[str, Any]] = Field(default=None, description="ジョブの内部情報")
-    job_detail: Optional[JobDetail] = None
+    job_execution: Dict[str, Any] | None = Field(default=None, description="ジョブの内部情報")
+    job_detail: JobDetail | None = None
     errors: Errors
     created_datetime: str = Field(description="作成日時")
     updated_datetime: str = Field(description="更新日時")
@@ -67,7 +67,7 @@ class ProjectJobInfo(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of ProjectJobInfo from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -97,7 +97,7 @@ class ProjectJobInfo(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of ProjectJobInfo from a dict"""
         if obj is None:
             return None

@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Self
@@ -29,8 +29,8 @@ class TaskOperation(BaseModel):
 
     status: TaskStatus
     last_updated_datetime: str = Field(description="新規作成時は未指定、更新時は必須（更新前の日時） ")
-    account_id: Optional[StrictStr] = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    force: Optional[StrictBool] = Field(
+    account_id: StrictStr | None = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    force: StrictBool | None = Field(
         default=False, description="タスクの強制操作を行うかどうか。 `status`が`rejected`のときのみ、`true`を指定できます。 "
     )
     __properties: ClassVar[List[str]] = ["status", "last_updated_datetime", "account_id", "force"]
@@ -51,7 +51,7 @@ class TaskOperation(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of TaskOperation from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -75,7 +75,7 @@ class TaskOperation(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of TaskOperation from a dict"""
         if obj is None:
             return None

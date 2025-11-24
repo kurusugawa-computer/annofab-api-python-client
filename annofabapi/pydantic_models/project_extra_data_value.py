@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -31,12 +31,12 @@ class ProjectExtraDataValue(BaseModel):
     """
 
     # data type: ProjectExtraDataValueEmpty
-    oneof_schema_1_validator: Optional[ProjectExtraDataValueEmpty] = None
+    oneof_schema_1_validator: ProjectExtraDataValueEmpty | None = None
     # data type: ProjectExtraDataValueDefault
-    oneof_schema_2_validator: Optional[ProjectExtraDataValueDefault] = None
+    oneof_schema_2_validator: ProjectExtraDataValueDefault | None = None
     # data type: ProjectExtraDataValueSaved
-    oneof_schema_3_validator: Optional[ProjectExtraDataValueSaved] = None
-    actual_instance: Optional[Union[ProjectExtraDataValueDefault, ProjectExtraDataValueEmpty, ProjectExtraDataValueSaved]] = None
+    oneof_schema_3_validator: ProjectExtraDataValueSaved | None = None
+    actual_instance: Union[ProjectExtraDataValueDefault, ProjectExtraDataValueEmpty, ProjectExtraDataValueSaved] | None = None
     one_of_schemas: Set[str] = {"ProjectExtraDataValueDefault", "ProjectExtraDataValueEmpty", "ProjectExtraDataValueSaved"}
 
     model_config = ConfigDict(
@@ -146,7 +146,7 @@ class ProjectExtraDataValue(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], ProjectExtraDataValueDefault, ProjectExtraDataValueEmpty, ProjectExtraDataValueSaved]]:
+    def to_dict(self) -> Union[Dict[str, Any], ProjectExtraDataValueDefault, ProjectExtraDataValueEmpty, ProjectExtraDataValueSaved] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

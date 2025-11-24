@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set, Union
+from typing import Any, ClassVar, Dict, List, Set, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
 from typing_extensions import Self
@@ -31,7 +31,7 @@ class IssuePersonalAccessTokenRequest(BaseModel):
         description="パーソナルアクセストークンのID。ユーザごとに一意な文字列。 [値の制約についてはこちら。](#section/API-Convention/APIID) "
     )
     note: StrictStr = Field(description="人間可読なトークンの説明")
-    expiration: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="トークンの期間。 単位はミリ秒")
+    expiration: Union[StrictFloat, StrictInt] | None = Field(default=None, description="トークンの期間。 単位はミリ秒")
     permissions: List[PersonalAccessTokenPermission] = Field(description="トークンに与える権限")
     __properties: ClassVar[List[str]] = ["id", "note", "expiration", "permissions"]
 
@@ -51,7 +51,7 @@ class IssuePersonalAccessTokenRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of IssuePersonalAccessTokenRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -82,7 +82,7 @@ class IssuePersonalAccessTokenRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of IssuePersonalAccessTokenRequest from a dict"""
         if obj is None:
             return None

@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -53,28 +53,28 @@ class AnnotationTypeFieldValue(BaseModel):
     """
 
     # data type: AnnotationTypeFieldValueMinimumSize
-    oneof_schema_1_validator: Optional[AnnotationTypeFieldValueMinimumSize] = None
+    oneof_schema_1_validator: AnnotationTypeFieldValueMinimumSize | None = None
     # data type: AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition
-    oneof_schema_2_validator: Optional[AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition] = None
+    oneof_schema_2_validator: AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition | None = None
     # data type: AnnotationTypeFieldValueMarginOfErrorTolerance
-    oneof_schema_3_validator: Optional[AnnotationTypeFieldValueMarginOfErrorTolerance] = None
+    oneof_schema_3_validator: AnnotationTypeFieldValueMarginOfErrorTolerance | None = None
     # data type: AnnotationTypeFieldValueVertexCountMinMax
-    oneof_schema_4_validator: Optional[AnnotationTypeFieldValueVertexCountMinMax] = None
+    oneof_schema_4_validator: AnnotationTypeFieldValueVertexCountMinMax | None = None
     # data type: AnnotationTypeFieldValueMinimumArea2d
-    oneof_schema_5_validator: Optional[AnnotationTypeFieldValueMinimumArea2d] = None
+    oneof_schema_5_validator: AnnotationTypeFieldValueMinimumArea2d | None = None
     # data type: AnnotationTypeFieldValueDisplayLineDirection
-    oneof_schema_6_validator: Optional[AnnotationTypeFieldValueDisplayLineDirection] = None
+    oneof_schema_6_validator: AnnotationTypeFieldValueDisplayLineDirection | None = None
     # data type: AnnotationTypeFieldValueAnnotationEditorFeature
-    oneof_schema_7_validator: Optional[AnnotationTypeFieldValueAnnotationEditorFeature] = None
+    oneof_schema_7_validator: AnnotationTypeFieldValueAnnotationEditorFeature | None = None
     # data type: AnnotationTypeFieldValueOneIntegerFieldValue
-    oneof_schema_8_validator: Optional[AnnotationTypeFieldValueOneIntegerFieldValue] = None
+    oneof_schema_8_validator: AnnotationTypeFieldValueOneIntegerFieldValue | None = None
     # data type: AnnotationTypeFieldValueOneStringFieldValue
-    oneof_schema_9_validator: Optional[AnnotationTypeFieldValueOneStringFieldValue] = None
+    oneof_schema_9_validator: AnnotationTypeFieldValueOneStringFieldValue | None = None
     # data type: AnnotationTypeFieldValueOneBooleanFieldValue
-    oneof_schema_10_validator: Optional[AnnotationTypeFieldValueOneBooleanFieldValue] = None
+    oneof_schema_10_validator: AnnotationTypeFieldValueOneBooleanFieldValue | None = None
     # data type: AnnotationTypeFieldValueEmptyFieldValue
-    oneof_schema_11_validator: Optional[AnnotationTypeFieldValueEmptyFieldValue] = None
-    actual_instance: Optional[
+    oneof_schema_11_validator: AnnotationTypeFieldValueEmptyFieldValue | None = None
+    actual_instance: (
         Union[
             AnnotationTypeFieldValueAnnotationEditorFeature,
             AnnotationTypeFieldValueDisplayLineDirection,
@@ -88,7 +88,8 @@ class AnnotationTypeFieldValue(BaseModel):
             AnnotationTypeFieldValueOneStringFieldValue,
             AnnotationTypeFieldValueVertexCountMinMax,
         ]
-    ] = None
+        | None
+    ) = None
     one_of_schemas: Set[str] = {
         "AnnotationTypeFieldValueAnnotationEditorFeature",
         "AnnotationTypeFieldValueDisplayLineDirection",
@@ -300,7 +301,7 @@ class AnnotationTypeFieldValue(BaseModel):
 
     def to_dict(
         self,
-    ) -> Optional[
+    ) -> (
         Union[
             Dict[str, Any],
             AnnotationTypeFieldValueAnnotationEditorFeature,
@@ -315,7 +316,8 @@ class AnnotationTypeFieldValue(BaseModel):
             AnnotationTypeFieldValueOneStringFieldValue,
             AnnotationTypeFieldValueVertexCountMinMax,
         ]
-    ]:
+        | None
+    ):
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

@@ -9,7 +9,6 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Optional  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -44,7 +43,7 @@ class SupplementaryData(DataClassJsonMixin):
     url: str
     """システム内部用のプロパティ"""
 
-    etag: Optional[str]
+    etag: str | None
     """[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 """
 
     supplementary_data_type: SupplementaryDataType

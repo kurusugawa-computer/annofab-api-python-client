@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -37,12 +37,12 @@ class LabelV2(BaseModel):
     label_name: InternationalizationMessage
     keybind: List[Keybind] = Field(description="ショートカットキー")
     annotation_type: AnnotationType
-    bounding_box_metadata: Optional[BoundingBoxMetadata] = None
-    segmentation_metadata: Optional[SegmentationMetadata] = None
+    bounding_box_metadata: BoundingBoxMetadata | None = None
+    segmentation_metadata: SegmentationMetadata | None = None
     additional_data_definitions: List[StrictStr] = Field(description="ラベルに所属する属性のID")
     color: Color
     annotation_editor_feature: AnnotationEditorFeature
-    metadata: Optional[Dict[str, StrictStr]] = Field(default=None, description="ユーザーが自由に登録できるkey-value型のメタデータです。 ")
+    metadata: Dict[str, StrictStr] | None = Field(default=None, description="ユーザーが自由に登録できるkey-value型のメタデータです。 ")
     __properties: ClassVar[List[str]] = [
         "label_id",
         "label_name",
@@ -72,7 +72,7 @@ class LabelV2(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of LabelV2 from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -121,7 +121,7 @@ class LabelV2(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of LabelV2 from a dict"""
         if obj is None:
             return None

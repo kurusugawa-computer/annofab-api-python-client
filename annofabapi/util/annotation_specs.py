@@ -1,4 +1,4 @@
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal
 
 import more_itertools
 
@@ -36,7 +36,7 @@ STR_LANG = Literal["en-US", "ja-JP", "vi-VN"]
 """
 
 
-def get_message_with_lang(internationalization_message: dict[str, Any], lang: Union[Lang, STR_LANG]) -> Optional[str]:
+def get_message_with_lang(internationalization_message: dict[str, Any], lang: Lang | STR_LANG) -> str | None:
     """
     `InternationalizationMessage`クラスの値から、指定した ``lang`` に対応するメッセージを取得します。
 
@@ -60,7 +60,7 @@ def get_message_with_lang(internationalization_message: dict[str, Any], lang: Un
     return None
 
 
-def get_choice(choices: list[dict[str, Any]], *, choice_id: Optional[str] = None, choice_name: Optional[str] = None) -> dict[str, Any]:
+def get_choice(choices: list[dict[str, Any]], *, choice_id: str | None = None, choice_name: str | None = None) -> dict[str, Any]:
     """
     選択肢情報を取得します。
 
@@ -92,9 +92,9 @@ def get_choice(choices: list[dict[str, Any]], *, choice_id: Optional[str] = None
 def get_attribute(
     additionals: list[dict[str, Any]],
     *,
-    attribute_id: Optional[str] = None,
-    attribute_name: Optional[str] = None,
-    label: Optional[dict[str, Any]] = None,
+    attribute_id: str | None = None,
+    attribute_name: str | None = None,
+    label: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     属性情報を取得します。
@@ -133,7 +133,7 @@ def get_attribute(
     return result[0]
 
 
-def get_label(labels: list[dict[str, Any]], *, label_id: Optional[str] = None, label_name: Optional[str] = None) -> dict[str, Any]:
+def get_label(labels: list[dict[str, Any]], *, label_id: str | None = None, label_name: str | None = None) -> dict[str, Any]:
     """
     ラベル情報を取得します。
 
@@ -176,7 +176,7 @@ class AnnotationSpecsAccessor:
         self.additionals = annotation_specs["additionals"]
 
     def get_attribute(
-        self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None, label: Optional[dict[str, Any]] = None
+        self, *, attribute_id: str | None = None, attribute_name: str | None = None, label: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         """
         属性情報を取得します。
@@ -192,7 +192,7 @@ class AnnotationSpecsAccessor:
         """
         return get_attribute(self.additionals, attribute_id=attribute_id, attribute_name=attribute_name, label=label)
 
-    def get_label(self, *, label_id: Optional[str] = None, label_name: Optional[str] = None) -> dict[str, Any]:
+    def get_label(self, *, label_id: str | None = None, label_name: str | None = None) -> dict[str, Any]:
         """
         ラベル情報を取得します。
 

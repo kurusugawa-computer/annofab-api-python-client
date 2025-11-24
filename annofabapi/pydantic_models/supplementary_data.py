@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Annotated, Self
@@ -39,7 +39,7 @@ class SupplementaryData(BaseModel):
         description="補助情報の実体が存在するURLです。 URLスキームが s3 もしくは https であるもののみをサポートしています。 "
     )
     url: StrictStr = Field(description="システム内部用のプロパティ")
-    etag: Optional[StrictStr] = Field(
+    etag: StrictStr | None = Field(
         default=None, description="[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 "
     )
     supplementary_data_type: SupplementaryDataType
@@ -76,7 +76,7 @@ class SupplementaryData(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of SupplementaryData from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -100,7 +100,7 @@ class SupplementaryData(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of SupplementaryData from a dict"""
         if obj is None:
             return None

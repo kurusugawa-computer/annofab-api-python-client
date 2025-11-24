@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -26,7 +26,7 @@ class ReplyComment(BaseModel):
     """
 
     root_comment_id: StrictStr = Field(description="コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    type: Optional[StrictStr] = Field(default=None, description="`Reply` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    type: StrictStr | None = Field(default=None, description="`Reply` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
     __properties: ClassVar[List[str]] = ["root_comment_id", "_type"]
 
     model_config = ConfigDict(
@@ -45,7 +45,7 @@ class ReplyComment(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of ReplyComment from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -69,7 +69,7 @@ class ReplyComment(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of ReplyComment from a dict"""
         if obj is None:
             return None

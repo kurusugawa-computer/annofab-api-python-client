@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -32,8 +32,8 @@ class AnnotationSpecsV1(BaseModel):
     project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     labels: List[LabelV1] = Field(description="ラベル")
     inspection_phrases: List[InspectionPhrase] = Field(description="定型指摘")
-    updated_datetime: Optional[str] = Field(default=None, description="更新日時 ")
-    option: Optional[AnnotationSpecsOption] = None
+    updated_datetime: str | None = Field(default=None, description="更新日時 ")
+    option: AnnotationSpecsOption | None = None
     metadata: Dict[str, StrictStr] = Field(description="ユーザーが自由に登録できるkey-value型のメタデータです。 ")
     __properties: ClassVar[List[str]] = ["project_id", "labels", "inspection_phrases", "updated_datetime", "option", "metadata"]
 
@@ -53,7 +53,7 @@ class AnnotationSpecsV1(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationSpecsV1 from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -94,7 +94,7 @@ class AnnotationSpecsV1(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationSpecsV1 from a dict"""
         if obj is None:
             return None

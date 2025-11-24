@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Self
@@ -37,11 +37,11 @@ class InputData(BaseModel):
     input_data_path: StrictStr = Field(
         description="入力データの実体が保存されたURLです。 URLスキームが s3 もしくは https であるもののみをサポートしています。 "
     )
-    url: Optional[StrictStr] = Field(default=None, description="システム内部用のプロパティ")
-    etag: Optional[StrictStr] = Field(
+    url: StrictStr | None = Field(default=None, description="システム内部用のプロパティ")
+    etag: StrictStr | None = Field(
         default=None, description="[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 "
     )
-    original_input_data_path: Optional[StrictStr] = Field(default=None, description="システム内部用のプロパティ ")
+    original_input_data_path: StrictStr | None = Field(default=None, description="システム内部用のプロパティ ")
     updated_datetime: str = Field(description="更新日時")
     sign_required: StrictBool = Field(description="CloudFrontのSignedCookieを使ったプライベートストレージを利用するかどうか ")
     metadata: Dict[str, StrictStr] = Field(description="ユーザーが自由に登録できるkey-value型のメタデータです。 ")
@@ -78,7 +78,7 @@ class InputData(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of InputData from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -105,7 +105,7 @@ class InputData(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of InputData from a dict"""
         if obj is None:
             return None

@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -31,12 +31,12 @@ class TaskGenerateRule(BaseModel):
     """
 
     # data type: TaskGenerateRuleByCount
-    oneof_schema_1_validator: Optional[TaskGenerateRuleByCount] = None
+    oneof_schema_1_validator: TaskGenerateRuleByCount | None = None
     # data type: TaskGenerateRuleByDirectory
-    oneof_schema_2_validator: Optional[TaskGenerateRuleByDirectory] = None
+    oneof_schema_2_validator: TaskGenerateRuleByDirectory | None = None
     # data type: TaskGenerateRuleByInputDataCsv
-    oneof_schema_3_validator: Optional[TaskGenerateRuleByInputDataCsv] = None
-    actual_instance: Optional[Union[TaskGenerateRuleByCount, TaskGenerateRuleByDirectory, TaskGenerateRuleByInputDataCsv]] = None
+    oneof_schema_3_validator: TaskGenerateRuleByInputDataCsv | None = None
+    actual_instance: Union[TaskGenerateRuleByCount, TaskGenerateRuleByDirectory, TaskGenerateRuleByInputDataCsv] | None = None
     one_of_schemas: Set[str] = {"TaskGenerateRuleByCount", "TaskGenerateRuleByDirectory", "TaskGenerateRuleByInputDataCsv"}
 
     model_config = ConfigDict(
@@ -146,7 +146,7 @@ class TaskGenerateRule(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], TaskGenerateRuleByCount, TaskGenerateRuleByDirectory, TaskGenerateRuleByInputDataCsv]]:
+    def to_dict(self) -> Union[Dict[str, Any], TaskGenerateRuleByCount, TaskGenerateRuleByDirectory, TaskGenerateRuleByInputDataCsv] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

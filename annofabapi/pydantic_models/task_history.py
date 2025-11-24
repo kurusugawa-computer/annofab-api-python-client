@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Annotated, Self
@@ -30,12 +30,12 @@ class TaskHistory(BaseModel):
     project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     task_history_id: StrictStr = Field(description="タスク履歴ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    started_datetime: Optional[str] = Field(default=None, description="開始日時")
-    ended_datetime: Optional[str] = Field(default=None, description="終了日時")
+    started_datetime: str | None = Field(default=None, description="開始日時")
+    ended_datetime: str | None = Field(default=None, description="終了日時")
     accumulated_labor_time_milliseconds: StrictStr = Field(description="累計実作業時間（ISO 8601 duration）")
     phase: TaskPhase
     phase_stage: Annotated[int, Field(strict=True, ge=1)] = Field(description="タスクのフェーズのステージ番号")
-    account_id: Optional[StrictStr] = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    account_id: StrictStr | None = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     __properties: ClassVar[List[str]] = [
         "project_id",
         "task_id",
@@ -64,7 +64,7 @@ class TaskHistory(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of TaskHistory from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -88,7 +88,7 @@ class TaskHistory(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of TaskHistory from a dict"""
         if obj is None:
             return None

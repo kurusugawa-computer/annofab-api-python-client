@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Any, Optional
+from typing import Any
 
 import requests
 from requests.cookies import RequestsCookieJar
@@ -38,7 +38,7 @@ class AnnofabApi2(AbstractAnnofabApi2):
         self.api = api
         self.url_prefix = f"{api.endpoint_url}/api/v2"
 
-    cookies: Optional[RequestsCookieJar] = None
+    cookies: RequestsCookieJar | None = None
 
     #########################################
     # Private Method
@@ -50,9 +50,9 @@ class AnnofabApi2(AbstractAnnofabApi2):
         http_method: str,
         url_path: str,
         *,
-        query_params: Optional[dict[str, Any]] = None,
-        header_params: Optional[dict[str, Any]] = None,
-        request_body: Optional[Any] = None,  # noqa: ANN401
+        query_params: dict[str, Any] | None = None,
+        header_params: dict[str, Any] | None = None,
+        request_body: Any | None = None,  # noqa: ANN401
         raise_for_status: bool = True,
     ) -> tuple[Any, requests.Response]:
         """

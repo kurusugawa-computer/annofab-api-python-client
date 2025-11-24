@@ -10,7 +10,6 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Optional  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -39,7 +38,7 @@ class OrganizationMember(DataClassJsonMixin):
     status: OrganizationMemberStatus
     """"""
 
-    biography: Optional[str]
+    biography: str | None
     """人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 """
 
     created_datetime: str

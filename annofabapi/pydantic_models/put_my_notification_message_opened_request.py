@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
 from typing_extensions import Self
@@ -25,7 +25,7 @@ class PutMyNotificationMessageOpenedRequest(BaseModel):
     PutMyNotificationMessageOpenedRequest
     """
 
-    opened: Optional[StrictBool] = Field(
+    opened: StrictBool | None = Field(
         default=None,
         description="メッセージの開封状態に対するアクション。 trueが指定された場合は開封済みの状態、falseが指定された場合は未開封の状態にします。 ",
     )
@@ -47,7 +47,7 @@ class PutMyNotificationMessageOpenedRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of PutMyNotificationMessageOpenedRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -71,7 +71,7 @@ class PutMyNotificationMessageOpenedRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of PutMyNotificationMessageOpenedRequest from a dict"""
         if obj is None:
             return None

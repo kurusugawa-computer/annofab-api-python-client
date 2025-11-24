@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Self
@@ -27,22 +27,22 @@ class ProjectCopyRequest(BaseModel):
 
     dest_project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     dest_title: StrictStr = Field(description="コピー先プロジェクトのタイトル")
-    dest_overview: Optional[StrictStr] = Field(default=None, description="コピー先プロジェクトの概要")
-    copy_inputs: Optional[StrictBool] = Field(default=False, description="「入力データ」をコピーするかどうかを指定します。 ")
-    copy_tasks: Optional[StrictBool] = Field(
+    dest_overview: StrictStr | None = Field(default=None, description="コピー先プロジェクトの概要")
+    copy_inputs: StrictBool | None = Field(default=False, description="「入力データ」をコピーするかどうかを指定します。 ")
+    copy_tasks: StrictBool | None = Field(
         default=False,
         description="「タスク」をコピーするかどうかを指定します。  この属性の値を`true`にする場合、他の属性の値を必ず次のように指定してください。  * `copy_inputs`の値を`true`とする ",
     )
-    copy_annotations: Optional[StrictBool] = Field(
+    copy_annotations: StrictBool | None = Field(
         default=False,
         description="「アノテーション」をコピーするかどうかを指定します。  この属性の値を`true`にする場合、他の属性の値を必ず次のように指定してください。  * `copy_inputs`の値を`true`とする * `copy_tasks`の値を`true`とする ",
     )
-    copy_webhooks: Optional[StrictBool] = Field(default=False, description="「Webhook」をコピーするかどうかを指定します。 ")
-    copy_supplementary_data: Optional[StrictBool] = Field(
+    copy_webhooks: StrictBool | None = Field(default=False, description="「Webhook」をコピーするかどうかを指定します。 ")
+    copy_supplementary_data: StrictBool | None = Field(
         default=False,
         description="「補助情報」をコピーするかどうかを指定します。  この属性の値を`true`にする場合、他の属性の値を必ず次のように指定してください。  * `copy_inputs`の値を`true`とする ",
     )
-    copy_instructions: Optional[StrictBool] = Field(default=False, description="「作業ガイド」をコピーするかどうかを指定します。 ")
+    copy_instructions: StrictBool | None = Field(default=False, description="「作業ガイド」をコピーするかどうかを指定します。 ")
     __properties: ClassVar[List[str]] = [
         "dest_project_id",
         "dest_title",
@@ -71,7 +71,7 @@ class ProjectCopyRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of ProjectCopyRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -95,7 +95,7 @@ class ProjectCopyRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of ProjectCopyRequest from a dict"""
         if obj is None:
             return None

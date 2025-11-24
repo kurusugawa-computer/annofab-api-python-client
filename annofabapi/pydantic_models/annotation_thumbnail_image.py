@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing_extensions import Self
@@ -25,7 +25,7 @@ class AnnotationThumbnailImage(BaseModel):
     AnnotationThumbnailImage
     """
 
-    type: Optional[StrictStr] = Field(default=None, alias="_type")
+    type: StrictStr | None = Field(default=None, alias="_type")
     url: StrictStr = Field(description="サムネイル画像のURL")
     width: StrictInt = Field(description="画像の幅")
     height: StrictInt = Field(description="画像の高さ")
@@ -57,7 +57,7 @@ class AnnotationThumbnailImage(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationThumbnailImage from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -81,7 +81,7 @@ class AnnotationThumbnailImage(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationThumbnailImage from a dict"""
         if obj is None:
             return None

@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -28,7 +28,7 @@ class AdditionalDataV2(BaseModel):
     """
 
     definition_id: StrictStr = Field(description="属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    value: Optional[AdditionalDataValue] = None
+    value: AdditionalDataValue | None = None
     __properties: ClassVar[List[str]] = ["definition_id", "value"]
 
     model_config = ConfigDict(
@@ -47,7 +47,7 @@ class AdditionalDataV2(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AdditionalDataV2 from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -74,7 +74,7 @@ class AdditionalDataV2(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AdditionalDataV2 from a dict"""
         if obj is None:
             return None

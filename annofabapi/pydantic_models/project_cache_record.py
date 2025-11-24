@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, StrictStr
 from typing_extensions import Self
@@ -25,14 +25,14 @@ class ProjectCacheRecord(BaseModel):
     ProjectCacheRecord
     """
 
-    input: Optional[StrictStr] = None
-    members: Optional[StrictStr] = None
-    project: Optional[StrictStr] = None
-    instruction: Optional[StrictStr] = None
-    specs: Optional[StrictStr] = None
-    statistics: Optional[StrictStr] = None
-    organization: Optional[StrictStr] = None
-    supplementary: Optional[StrictStr] = None
+    input: StrictStr | None = None
+    members: StrictStr | None = None
+    project: StrictStr | None = None
+    instruction: StrictStr | None = None
+    specs: StrictStr | None = None
+    statistics: StrictStr | None = None
+    organization: StrictStr | None = None
+    supplementary: StrictStr | None = None
     __properties: ClassVar[List[str]] = ["input", "members", "project", "instruction", "specs", "statistics", "organization", "supplementary"]
 
     model_config = ConfigDict(
@@ -51,7 +51,7 @@ class ProjectCacheRecord(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of ProjectCacheRecord from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -75,7 +75,7 @@ class ProjectCacheRecord(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of ProjectCacheRecord from a dict"""
         if obj is None:
             return None

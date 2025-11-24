@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
 from typing_extensions import Self
@@ -26,12 +26,12 @@ class AdditionalDataV1(BaseModel):
     """
 
     additional_data_definition_id: StrictStr = Field(description="属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    flag: Optional[StrictBool] = Field(default=None, description="`additional_data_definition`の`type`が`flag`のときの属性値。 ")
-    integer: Optional[StrictInt] = Field(default=None, description="`additional_data_definition`の`type`が`integer`のときの属性値。 ")
-    comment: Optional[StrictStr] = Field(
+    flag: StrictBool | None = Field(default=None, description="`additional_data_definition`の`type`が`flag`のときの属性値。 ")
+    integer: StrictInt | None = Field(default=None, description="`additional_data_definition`の`type`が`integer`のときの属性値。 ")
+    comment: StrictStr | None = Field(
         default=None, description="`additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 "
     )
-    choice: Optional[StrictStr] = Field(default=None, description="選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    choice: StrictStr | None = Field(default=None, description="選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     __properties: ClassVar[List[str]] = ["additional_data_definition_id", "flag", "integer", "comment", "choice"]
 
     model_config = ConfigDict(
@@ -50,7 +50,7 @@ class AdditionalDataV1(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AdditionalDataV1 from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -74,7 +74,7 @@ class AdditionalDataV1(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AdditionalDataV1 from a dict"""
         if obj is None:
             return None

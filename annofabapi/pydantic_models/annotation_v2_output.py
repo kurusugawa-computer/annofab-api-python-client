@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing_extensions import Self
@@ -31,7 +31,7 @@ class AnnotationV2Output(BaseModel):
     task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     details: List[AnnotationDetailV2Output] = Field(description="矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。")
-    updated_datetime: Optional[str] = Field(
+    updated_datetime: str | None = Field(
         default=None,
         description="対象タスク・対象入力データへ一度もアノテーションの保存が行われていない場合、未指定となります。 そうで無い場合、対象タスク・対象入力データのアノテーション最終更新時刻です。 ",
     )
@@ -61,7 +61,7 @@ class AnnotationV2Output(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationV2Output from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -92,7 +92,7 @@ class AnnotationV2Output(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationV2Output from a dict"""
         if obj is None:
             return None

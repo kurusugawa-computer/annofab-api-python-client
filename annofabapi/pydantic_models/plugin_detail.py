@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -37,16 +37,16 @@ class PluginDetail(BaseModel):
     """
 
     # data type: PluginDetailAnnotationEditor
-    oneof_schema_1_validator: Optional[PluginDetailAnnotationEditor] = None
+    oneof_schema_1_validator: PluginDetailAnnotationEditor | None = None
     # data type: PluginDetailTaskAssignment
-    oneof_schema_2_validator: Optional[PluginDetailTaskAssignment] = None
+    oneof_schema_2_validator: PluginDetailTaskAssignment | None = None
     # data type: PluginDetailAnnotationSpecs
-    oneof_schema_3_validator: Optional[PluginDetailAnnotationSpecs] = None
+    oneof_schema_3_validator: PluginDetailAnnotationSpecs | None = None
     # data type: PluginDetailExtendedAnnotationSpecs
-    oneof_schema_4_validator: Optional[PluginDetailExtendedAnnotationSpecs] = None
-    actual_instance: Optional[
-        Union[PluginDetailAnnotationEditor, PluginDetailAnnotationSpecs, PluginDetailExtendedAnnotationSpecs, PluginDetailTaskAssignment]
-    ] = None
+    oneof_schema_4_validator: PluginDetailExtendedAnnotationSpecs | None = None
+    actual_instance: (
+        Union[PluginDetailAnnotationEditor, PluginDetailAnnotationSpecs, PluginDetailExtendedAnnotationSpecs, PluginDetailTaskAssignment] | None
+    ) = None
     one_of_schemas: Set[str] = {
         "PluginDetailAnnotationEditor",
         "PluginDetailAnnotationSpecs",
@@ -174,11 +174,12 @@ class PluginDetail(BaseModel):
 
     def to_dict(
         self,
-    ) -> Optional[
+    ) -> (
         Union[
             Dict[str, Any], PluginDetailAnnotationEditor, PluginDetailAnnotationSpecs, PluginDetailExtendedAnnotationSpecs, PluginDetailTaskAssignment
         ]
-    ]:
+        | None
+    ):
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

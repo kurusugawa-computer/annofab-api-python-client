@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -36,7 +36,7 @@ class Webhook(BaseModel):
     webhook_status: WebhookStatus
     method: WebhookHttpMethod
     headers: List[WebhookHeader] = Field(description="Webhookが送信するHTTPリクエストのヘッダー")
-    body: Optional[StrictStr] = Field(default=None, description="Webhookが送信するHTTPリクエストのボディ")
+    body: StrictStr | None = Field(default=None, description="Webhookが送信するHTTPリクエストのボディ")
     url: StrictStr = Field(description="Webhookの送信先URL")
     created_datetime: str = Field(description="作成日時")
     updated_datetime: str = Field(description="更新日時")
@@ -69,7 +69,7 @@ class Webhook(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of Webhook from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -100,7 +100,7 @@ class Webhook(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of Webhook from a dict"""
         if obj is None:
             return None

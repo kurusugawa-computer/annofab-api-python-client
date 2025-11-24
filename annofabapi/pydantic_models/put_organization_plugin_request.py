@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -27,17 +27,17 @@ class PutOrganizationPluginRequest(BaseModel):
     PutOrganizationPluginRequest
     """
 
-    plugin_name: Optional[StrictStr] = Field(
+    plugin_name: StrictStr | None = Field(
         default=None, description="プラグインの名前です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 "
     )
-    description: Optional[StrictStr] = Field(
+    description: StrictStr | None = Field(
         default=None, description="プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 "
     )
-    project_extra_data_kinds: Optional[List[StrictStr]] = Field(
+    project_extra_data_kinds: List[StrictStr] | None = Field(
         default=None, description="プラグインが適用されたプロジェクトで使用可能となるProjectExtraDataKindのId列。 "
     )
     detail: PluginDetail
-    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    last_updated_datetime: str | None = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     __properties: ClassVar[List[str]] = ["plugin_name", "description", "project_extra_data_kinds", "detail", "last_updated_datetime"]
 
     model_config = ConfigDict(
@@ -56,7 +56,7 @@ class PutOrganizationPluginRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of PutOrganizationPluginRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -83,7 +83,7 @@ class PutOrganizationPluginRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of PutOrganizationPluginRequest from a dict"""
         if obj is None:
             return None

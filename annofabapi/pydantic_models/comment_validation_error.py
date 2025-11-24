@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -30,10 +30,10 @@ class CommentValidationError(BaseModel):
     """
 
     # data type: NoComment
-    oneof_schema_1_validator: Optional[NoComment] = None
+    oneof_schema_1_validator: NoComment | None = None
     # data type: UpdateStatusRequired
-    oneof_schema_2_validator: Optional[UpdateStatusRequired] = None
-    actual_instance: Optional[Union[NoComment, UpdateStatusRequired]] = None
+    oneof_schema_2_validator: UpdateStatusRequired | None = None
+    actual_instance: Union[NoComment, UpdateStatusRequired] | None = None
     one_of_schemas: Set[str] = {"NoComment", "UpdateStatusRequired"}
 
     model_config = ConfigDict(
@@ -132,7 +132,7 @@ class CommentValidationError(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], NoComment, UpdateStatusRequired]]:
+    def to_dict(self) -> Union[Dict[str, Any], NoComment, UpdateStatusRequired] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

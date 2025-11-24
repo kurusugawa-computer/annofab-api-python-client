@@ -49,7 +49,7 @@ Examples:
 
 from abc import ABC, abstractmethod
 from collections.abc import Collection
-from typing import Any, Optional
+from typing import Any
 
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, get_choice
 
@@ -168,7 +168,7 @@ class EmptyCheckMixin:
 
 
 class Attribute(ABC):
-    def __init__(self, accessor: AnnotationSpecsAccessor, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> None:
+    def __init__(self, accessor: AnnotationSpecsAccessor, *, attribute_id: str | None = None, attribute_name: str | None = None) -> None:
         self.accessor = accessor
         self.attribute = self.accessor.get_attribute(attribute_id=attribute_id, attribute_name=attribute_name)
         self.attribute_id = self.attribute["additional_data_definition_id"]
@@ -243,7 +243,7 @@ class AnnotationLink(Attribute, EmptyCheckMixin):
     def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] == "link"
 
-    def has_label(self, label_ids: Optional[Collection[str]] = None, label_names: Optional[Collection[str]] = None) -> Restriction:
+    def has_label(self, label_ids: Collection[str] | None = None, label_names: Collection[str] | None = None) -> Restriction:
         """リンク先のアノテーションが、引数`label_ids`または`label_names`に一致するラベルであるという制約"""
         if label_ids is not None:
             labels = [self.accessor.get_label(label_id=label_id) for label_id in label_ids]
@@ -276,13 +276,13 @@ class Selection(Attribute, EmptyCheckMixin):
     def _is_valid_attribute_type(self) -> bool:
         return self.attribute["type"] in {"choice", "select"}
 
-    def has_choice(self, *, choice_id: Optional[str] = None, choice_name: Optional[str] = None) -> Restriction:
+    def has_choice(self, *, choice_id: str | None = None, choice_name: str | None = None) -> Restriction:
         """引数`choice_id`または`choice_name`に一致する選択肢が選択されているという制約"""
         choices = self.attribute["choices"]
         choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
         return Equals(self.attribute_id, choice["choice_id"])
 
-    def not_has_choice(self, *, choice_id: Optional[str] = None, choice_name: Optional[str] = None) -> Restriction:
+    def not_has_choice(self, *, choice_id: str | None = None, choice_name: str | None = None) -> Restriction:
         """引数`choice_id`または`choice_name`に一致する選択肢が選択されていないという制約"""
         choices = self.attribute["choices"]
         choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
@@ -300,20 +300,20 @@ class AttributeFactory:
     def __init__(self, annotation_specs: dict[str, Any]) -> None:
         self.accessor = AnnotationSpecsAccessor(annotation_specs)
 
-    def checkbox(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> Checkbox:
+    def checkbox(self, *, attribute_id: str | None = None, attribute_name: str | None = None) -> Checkbox:
         return Checkbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
-    def string_textbox(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> StringTextbox:
+    def string_textbox(self, *, attribute_id: str | None = None, attribute_name: str | None = None) -> StringTextbox:
         return StringTextbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
-    def integer_textbox(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> IntegerTextbox:
+    def integer_textbox(self, *, attribute_id: str | None = None, attribute_name: str | None = None) -> IntegerTextbox:
         return IntegerTextbox(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
-    def annotation_link(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> AnnotationLink:
+    def annotation_link(self, *, attribute_id: str | None = None, attribute_name: str | None = None) -> AnnotationLink:
         return AnnotationLink(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
-    def tracking_id(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> TrackingId:
+    def tracking_id(self, *, attribute_id: str | None = None, attribute_name: str | None = None) -> TrackingId:
         return TrackingId(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
-    def selection(self, *, attribute_id: Optional[str] = None, attribute_name: Optional[str] = None) -> Selection:
+    def selection(self, *, attribute_id: str | None = None, attribute_name: str | None = None) -> Selection:
         return Selection(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)

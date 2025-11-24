@@ -4,8 +4,6 @@ annofabapi.exceptions
 This module contains the set of annofabapi exceptions.
 """
 
-from typing import Optional
-
 
 class AnnofabApiException(Exception):
     """
@@ -29,7 +27,7 @@ class AnnotationOuterFileNotFoundError(AnnofabApiException):
 
     """
 
-    def __init__(self, outer_file_path: str, zipfile_path: Optional[str] = None) -> None:
+    def __init__(self, outer_file_path: str, zipfile_path: str | None = None) -> None:
         if zipfile_path is None:
             message = f"No such file or directory: '{outer_file_path}'"
         else:
@@ -48,7 +46,7 @@ class NotLoggedInError(AnnofabApiException):
 
     """
 
-    def __init__(self, message: Optional[str] = None) -> None:
+    def __init__(self, message: str | None = None) -> None:
         if message is None:
             message = "You are not logged in."
         super().__init__(message)

@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -45,22 +45,22 @@ class AdditionalDataValue(BaseModel):
     """
 
     # data type: AdditionalDataValueFlag
-    oneof_schema_1_validator: Optional[AdditionalDataValueFlag] = None
+    oneof_schema_1_validator: AdditionalDataValueFlag | None = None
     # data type: AdditionalDataValueInteger
-    oneof_schema_2_validator: Optional[AdditionalDataValueInteger] = None
+    oneof_schema_2_validator: AdditionalDataValueInteger | None = None
     # data type: AdditionalDataValueComment
-    oneof_schema_3_validator: Optional[AdditionalDataValueComment] = None
+    oneof_schema_3_validator: AdditionalDataValueComment | None = None
     # data type: AdditionalDataValueText
-    oneof_schema_4_validator: Optional[AdditionalDataValueText] = None
+    oneof_schema_4_validator: AdditionalDataValueText | None = None
     # data type: AdditionalDataValueChoice
-    oneof_schema_5_validator: Optional[AdditionalDataValueChoice] = None
+    oneof_schema_5_validator: AdditionalDataValueChoice | None = None
     # data type: AdditionalDataValueSelect
-    oneof_schema_6_validator: Optional[AdditionalDataValueSelect] = None
+    oneof_schema_6_validator: AdditionalDataValueSelect | None = None
     # data type: AdditionalDataValueTracking
-    oneof_schema_7_validator: Optional[AdditionalDataValueTracking] = None
+    oneof_schema_7_validator: AdditionalDataValueTracking | None = None
     # data type: AdditionalDataValueLink
-    oneof_schema_8_validator: Optional[AdditionalDataValueLink] = None
-    actual_instance: Optional[
+    oneof_schema_8_validator: AdditionalDataValueLink | None = None
+    actual_instance: (
         Union[
             AdditionalDataValueChoice,
             AdditionalDataValueComment,
@@ -71,7 +71,8 @@ class AdditionalDataValue(BaseModel):
             AdditionalDataValueText,
             AdditionalDataValueTracking,
         ]
-    ] = None
+        | None
+    ) = None
     one_of_schemas: Set[str] = {
         "AdditionalDataValueChoice",
         "AdditionalDataValueComment",
@@ -247,7 +248,7 @@ class AdditionalDataValue(BaseModel):
 
     def to_dict(
         self,
-    ) -> Optional[
+    ) -> (
         Union[
             Dict[str, Any],
             AdditionalDataValueChoice,
@@ -259,7 +260,8 @@ class AdditionalDataValue(BaseModel):
             AdditionalDataValueText,
             AdditionalDataValueTracking,
         ]
-    ]:
+        | None
+    ):
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

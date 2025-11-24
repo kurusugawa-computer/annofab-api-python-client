@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -33,7 +33,7 @@ class Project(BaseModel):
     project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     organization_id: StrictStr = Field(description="組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     title: StrictStr = Field(description="プロジェクトのタイトル")
-    overview: Optional[StrictStr] = Field(default=None, description="プロジェクトの概要")
+    overview: StrictStr | None = Field(default=None, description="プロジェクトの概要")
     project_status: ProjectStatus
     input_data_type: InputDataType
     configuration: ProjectConfigurationGet
@@ -69,7 +69,7 @@ class Project(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of Project from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -99,7 +99,7 @@ class Project(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of Project from a dict"""
         if obj is None:
             return None

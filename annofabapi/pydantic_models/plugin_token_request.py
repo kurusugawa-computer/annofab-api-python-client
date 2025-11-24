@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -30,10 +30,10 @@ class PluginTokenRequest(BaseModel):
     """
 
     # data type: PluginTokenRequestAuthorizationCode
-    oneof_schema_1_validator: Optional[PluginTokenRequestAuthorizationCode] = None
+    oneof_schema_1_validator: PluginTokenRequestAuthorizationCode | None = None
     # data type: PluginTokenRequestRefreshToken
-    oneof_schema_2_validator: Optional[PluginTokenRequestRefreshToken] = None
-    actual_instance: Optional[Union[PluginTokenRequestAuthorizationCode, PluginTokenRequestRefreshToken]] = None
+    oneof_schema_2_validator: PluginTokenRequestRefreshToken | None = None
+    actual_instance: Union[PluginTokenRequestAuthorizationCode, PluginTokenRequestRefreshToken] | None = None
     one_of_schemas: Set[str] = {"PluginTokenRequestAuthorizationCode", "PluginTokenRequestRefreshToken"}
 
     model_config = ConfigDict(
@@ -132,7 +132,7 @@ class PluginTokenRequest(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], PluginTokenRequestAuthorizationCode, PluginTokenRequestRefreshToken]]:
+    def to_dict(self) -> Union[Dict[str, Any], PluginTokenRequestAuthorizationCode, PluginTokenRequestRefreshToken] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

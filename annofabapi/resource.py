@@ -1,7 +1,6 @@
 import logging
 import netrc
 import os
-from typing import Optional, Union
 from urllib.parse import urlparse
 
 from annofabapi import AnnofabApi, AnnofabApi2, Wrapper
@@ -30,7 +29,7 @@ class Resource:
 
     """
 
-    def __init__(self, credentials: Union[IdPass, Pat], *, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> None:
+    def __init__(self, credentials: IdPass | Pat, *, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> None:
         self.api = AnnofabApi(
             credentials=credentials,
             endpoint_url=endpoint_url,
@@ -46,9 +45,9 @@ class Resource:
 
 
 def build(
-    login_user_id: Optional[str] = None,
-    login_password: Optional[str] = None,
-    pat: Optional[str] = None,
+    login_user_id: str | None = None,
+    login_password: str | None = None,
+    pat: str | None = None,
     *,
     endpoint_url: str = DEFAULT_ENDPOINT_URL,
     input_mfa_code_via_stdin: bool = False,

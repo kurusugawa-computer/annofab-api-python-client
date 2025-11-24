@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Self
@@ -30,15 +30,15 @@ class PutProjectRequest(BaseModel):
     """
 
     title: StrictStr = Field(description="プロジェクトのタイトル")
-    overview: Optional[StrictStr] = Field(default=None, description="プロジェクトの概要")
+    overview: StrictStr | None = Field(default=None, description="プロジェクトの概要")
     status: ProjectStatus
-    input_data_type: Optional[InputDataType] = None
+    input_data_type: InputDataType | None = None
     organization_name: StrictStr = Field(
         description="プロジェクトの所属組織を変更する場合は、ここに変更先の組織名を指定します。  * 所属組織を変更する前にプロジェクトを停止する必要があります。 * APIを呼び出すアカウントは、変更先組織の管理者またはオーナーである必要があります。 * 変更後の組織に所属していないプロジェクトメンバーも残りますが、作業はできません。あらためて組織に招待してください。 "
     )
     configuration: ProjectConfigurationPut
-    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
-    force_suspend: Optional[StrictBool] = Field(default=False, description="作業中タスクがあるプロジェクトを停止する時trueにして下さい")
+    last_updated_datetime: str | None = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    force_suspend: StrictBool | None = Field(default=False, description="作業中タスクがあるプロジェクトを停止する時trueにして下さい")
     __properties: ClassVar[List[str]] = [
         "title",
         "overview",
@@ -66,7 +66,7 @@ class PutProjectRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of PutProjectRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -93,7 +93,7 @@ class PutProjectRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of PutProjectRequest from a dict"""
         if obj is None:
             return None

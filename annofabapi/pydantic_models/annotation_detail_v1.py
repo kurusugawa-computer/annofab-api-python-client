@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Self
@@ -38,24 +38,24 @@ class AnnotationDetailV1(BaseModel):
         description="`true`の場合、アノテーションをアノテーションエディタ上での削除から保護できます。 外部から取り込んだアノテーションに属性を追加するときなどに指定すると、データの削除を防げます。 "
     )
     data_holding_type: AnnotationDataHoldingType
-    data: Optional[AnnotationDataV1] = None
-    path: Optional[StrictStr] = Field(
+    data: AnnotationDataV1 | None = None
+    path: StrictStr | None = Field(
         default=None,
         description="外部ファイルに保存されたアノテーションのパス。`data_holding_type`が`inner`の場合は未指定です。 レスポンスの場合は`annotation_id`と同じ値が格納されます。  [putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は、[createTempPath](#operation/createTempPath) APIで取得できる一時データ保存先パスを格納してください。 更新しない場合は、[getEditorAnnotation](#operation/getEditorAnnotation) APIで取得した`path`をそのまま渡せます。  外部ファイルのフォーマットは下表の通りです。  <table> <tr><th>annotation_type</th><th>形式</th></tr> <tr><td>segmentation / segmentation_v2   </td><td>PNG画像。塗りつぶした部分は<code>rgba(255, 255, 255, 1) </code>、塗りつぶしていない部分は<code>rgba(0, 0, 0, 0) </code>。</td></tr> </table> ",
     )
-    etag: Optional[StrictStr] = Field(
+    etag: StrictStr | None = Field(
         default=None,
         description="外部ファイルに保存されたアノテーションのETag。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。",
     )
-    url: Optional[StrictStr] = Field(
+    url: StrictStr | None = Field(
         default=None,
         description="外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。",
     )
     additional_data_list: List[AdditionalDataV1] = Field(
         description="属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | "
     )
-    created_datetime: Optional[str] = Field(default=None, description="作成日時")
-    updated_datetime: Optional[str] = Field(default=None, description="更新日時")
+    created_datetime: str | None = Field(default=None, description="作成日時")
+    updated_datetime: str | None = Field(default=None, description="更新日時")
     __properties: ClassVar[List[str]] = [
         "annotation_id",
         "account_id",
@@ -87,7 +87,7 @@ class AnnotationDetailV1(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationDetailV1 from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -121,7 +121,7 @@ class AnnotationDetailV1(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationDetailV1 from a dict"""
         if obj is None:
             return None

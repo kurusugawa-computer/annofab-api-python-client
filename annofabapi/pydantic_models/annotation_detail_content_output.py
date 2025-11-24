@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -37,21 +37,22 @@ class AnnotationDetailContentOutput(BaseModel):
     """
 
     # data type: AnnotationDetailContentOutputInner
-    oneof_schema_1_validator: Optional[AnnotationDetailContentOutputInner] = None
+    oneof_schema_1_validator: AnnotationDetailContentOutputInner | None = None
     # data type: AnnotationDetailContentOutputInnerUnknown
-    oneof_schema_2_validator: Optional[AnnotationDetailContentOutputInnerUnknown] = None
+    oneof_schema_2_validator: AnnotationDetailContentOutputInnerUnknown | None = None
     # data type: AnnotationDetailContentOutputOuter
-    oneof_schema_3_validator: Optional[AnnotationDetailContentOutputOuter] = None
+    oneof_schema_3_validator: AnnotationDetailContentOutputOuter | None = None
     # data type: AnnotationDetailContentOutputOuterUnresolved
-    oneof_schema_4_validator: Optional[AnnotationDetailContentOutputOuterUnresolved] = None
-    actual_instance: Optional[
+    oneof_schema_4_validator: AnnotationDetailContentOutputOuterUnresolved | None = None
+    actual_instance: (
         Union[
             AnnotationDetailContentOutputInner,
             AnnotationDetailContentOutputInnerUnknown,
             AnnotationDetailContentOutputOuter,
             AnnotationDetailContentOutputOuterUnresolved,
         ]
-    ] = None
+        | None
+    ) = None
     one_of_schemas: Set[str] = {
         "AnnotationDetailContentOutputInner",
         "AnnotationDetailContentOutputInnerUnknown",
@@ -179,7 +180,7 @@ class AnnotationDetailContentOutput(BaseModel):
 
     def to_dict(
         self,
-    ) -> Optional[
+    ) -> (
         Union[
             Dict[str, Any],
             AnnotationDetailContentOutputInner,
@@ -187,7 +188,8 @@ class AnnotationDetailContentOutput(BaseModel):
             AnnotationDetailContentOutputOuter,
             AnnotationDetailContentOutputOuterUnresolved,
         ]
-    ]:
+        | None
+    ):
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None
