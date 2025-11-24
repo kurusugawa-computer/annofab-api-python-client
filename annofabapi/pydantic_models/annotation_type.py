@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
 from typing_extensions import Self
@@ -29,12 +29,12 @@ class AnnotationType(BaseModel):
     """
 
     # data type: DefaultAnnotationType
-    oneof_schema_1_validator: Optional[DefaultAnnotationType] = None
+    oneof_schema_1_validator: DefaultAnnotationType | None = None
     # data type: str
-    oneof_schema_2_validator: Optional[StrictStr] = Field(
+    oneof_schema_2_validator: StrictStr | None = Field(
         default=None, description="ユーザー定義のアノテーション種別名です。先頭が `user_` から始まる任意の文字列を指定します。 "
     )
-    actual_instance: Optional[Union[DefaultAnnotationType, str]] = None
+    actual_instance: Union[DefaultAnnotationType, str] | None = None
     one_of_schemas: Set[str] = {"DefaultAnnotationType", "str"}
 
     model_config = ConfigDict(
@@ -135,7 +135,7 @@ class AnnotationType(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], DefaultAnnotationType, str]]:
+    def to_dict(self) -> Union[Dict[str, Any], DefaultAnnotationType, str] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

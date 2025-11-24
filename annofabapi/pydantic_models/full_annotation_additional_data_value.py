@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -41,18 +41,18 @@ class FullAnnotationAdditionalDataValue(BaseModel):
     """
 
     # data type: FullAnnotationAdditionalDataValueFlag
-    oneof_schema_1_validator: Optional[FullAnnotationAdditionalDataValueFlag] = None
+    oneof_schema_1_validator: FullAnnotationAdditionalDataValueFlag | None = None
     # data type: FullAnnotationAdditionalDataValueInteger
-    oneof_schema_2_validator: Optional[FullAnnotationAdditionalDataValueInteger] = None
+    oneof_schema_2_validator: FullAnnotationAdditionalDataValueInteger | None = None
     # data type: FullAnnotationAdditionalDataValueComment
-    oneof_schema_3_validator: Optional[FullAnnotationAdditionalDataValueComment] = None
+    oneof_schema_3_validator: FullAnnotationAdditionalDataValueComment | None = None
     # data type: FullAnnotationAdditionalDataValueChoice
-    oneof_schema_4_validator: Optional[FullAnnotationAdditionalDataValueChoice] = None
+    oneof_schema_4_validator: FullAnnotationAdditionalDataValueChoice | None = None
     # data type: FullAnnotationAdditionalDataValueTracking
-    oneof_schema_5_validator: Optional[FullAnnotationAdditionalDataValueTracking] = None
+    oneof_schema_5_validator: FullAnnotationAdditionalDataValueTracking | None = None
     # data type: FullAnnotationAdditionalDataValueLink
-    oneof_schema_6_validator: Optional[FullAnnotationAdditionalDataValueLink] = None
-    actual_instance: Optional[
+    oneof_schema_6_validator: FullAnnotationAdditionalDataValueLink | None = None
+    actual_instance: (
         Union[
             FullAnnotationAdditionalDataValueChoice,
             FullAnnotationAdditionalDataValueComment,
@@ -61,7 +61,8 @@ class FullAnnotationAdditionalDataValue(BaseModel):
             FullAnnotationAdditionalDataValueLink,
             FullAnnotationAdditionalDataValueTracking,
         ]
-    ] = None
+        | None
+    ) = None
     one_of_schemas: Set[str] = {
         "FullAnnotationAdditionalDataValueChoice",
         "FullAnnotationAdditionalDataValueComment",
@@ -213,7 +214,7 @@ class FullAnnotationAdditionalDataValue(BaseModel):
 
     def to_dict(
         self,
-    ) -> Optional[
+    ) -> (
         Union[
             Dict[str, Any],
             FullAnnotationAdditionalDataValueChoice,
@@ -223,7 +224,8 @@ class FullAnnotationAdditionalDataValue(BaseModel):
             FullAnnotationAdditionalDataValueLink,
             FullAnnotationAdditionalDataValueTracking,
         ]
-    ]:
+        | None
+    ):
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

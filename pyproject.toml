@@ -3,7 +3,7 @@ name = "annofabapi"
 dynamic = ["version"]
 description = "Python Client Library of Annofab WebAPI (https://annofab.com/docs/api/)"
 authors = [{ name = "Kurusugawa Computer Inc." }]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 readme = "README.md"
 license = "MIT"
 keywords = [
@@ -15,7 +15,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Topic :: Utilities",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -86,7 +85,7 @@ exclude = [
 show_column_numbers = true
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py310"
 line-length = 150
 exclude = [
     "annofabapi/__init__.py",
@@ -98,7 +97,6 @@ exclude = [
 ]
 
 ignore = [
-    "FA100", # `future-rewritable-type-annotation` : Python3.8をサポートしている間は無視する。
     "PD002", #すでにpandasで`inplace=True`はいろんなところで使っているため
     "RUF001", # 全角記号など`ambiguous unicode character`も使いたいため
     "RUF002",# 全角記号など`ambiguous unicode character`も使いたいため
@@ -111,7 +109,6 @@ ignore = [
     "TD", # flake8-todos
     "FIX", # flake8-fixme
     "SIM108", # if-else-block-instead-of-if-exp, 三項演算子が読みにくい場合もあるので無視する
-    "UP045", # non-pep604-annotation-optional: Python 3.9をサポートしている間は無視する。
 
     # 以下のルールはコードに合っていないので無効化した
     "RSE", # flake8-raise

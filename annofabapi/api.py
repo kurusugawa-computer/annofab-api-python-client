@@ -2,10 +2,10 @@ import copy
 import json
 import logging
 import time
-from collections.abc import Collection
+from collections.abc import Callable, Collection
 from functools import wraps
 from json import JSONDecodeError
-from typing import Any, Callable, Optional, TypeVar, Union, overload
+from typing import Any, TypeVar, overload
 
 import backoff
 import requests
@@ -111,7 +111,7 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
         headers_for_logger = _mask_sensitive_value_for_dict(dict(response.request.headers), {"Authorization"})
 
         # request_bodyのpassword関係をマスクして、logに出力する
-        request_body_for_logger: Optional[Any] = None
+        request_body_for_logger: Any | None = None
         if isinstance(response.request.body, bytes):
             try:
                 # 文字列への変換を試みる
@@ -262,7 +262,7 @@ class AnnofabApi(AbstractAnnofabApi):
         cookies: Signed Cookie情報
     """
 
-    def __init__(self, credentials: Union[IdPass, Pat], *, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> None:
+    def __init__(self, credentials: IdPass | Pat, *, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> None:
         if isinstance(credentials, IdPass) and (not credentials.user_id or not credentials.password):
             raise ValueError("login_user_id or login_password is empty.")
         if isinstance(credentials, Pat) and not credentials.token:
@@ -274,12 +274,12 @@ class AnnofabApi(AbstractAnnofabApi):
         self.url_prefix = f"{endpoint_url}/api/v1"
         self.session = requests.Session()
 
-        self.tokens: Union[Tokens, Pat, None] = None
+        self.tokens: Tokens | Pat | None = None
 
-        self.cookies: Optional[RequestsCookieJar] = None
+        self.cookies: RequestsCookieJar | None = None
 
-        self.__account_id: Optional[str] = None
-        self.__user_id: Optional[str] = None
+        self.__account_id: str | None = None
+        self.__user_id: str | None = None
 
     class _MyToken(AuthBase):
         """
@@ -319,9 +319,9 @@ class AnnofabApi(AbstractAnnofabApi):
 
     def _create_kwargs(
         self,
-        params: Optional[dict[str, Any]] = None,
-        headers: Optional[dict[str, Any]] = None,
-        request_body: Optional[Any] = None,  # noqa: ANN401
+        params: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
+        request_body: Any | None = None,  # noqa: ANN401
     ) -> dict[str, Any]:
         """
         requestsモジュールのget,...メソッドに渡すkwargsを生成する。
@@ -397,10 +397,10 @@ class AnnofabApi(AbstractAnnofabApi):
         http_method: str,
         url: str,
         *,
-        params: Optional[dict[str, Any]] = None,
-        data: Optional[Any] = None,  # noqa: ANN401
-        json: Optional[Any] = None,  # pylint: disable=redefined-outer-name  # noqa: ANN401
-        headers: Optional[dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
+        data: Any | None = None,  # noqa: ANN401
+        json: Any | None = None,  # pylint: disable=redefined-outer-name  # noqa: ANN401
+        headers: dict[str, Any] | None = None,
         stream: bool = False,
         raise_for_status: bool = True,
         **kwargs,
@@ -436,10 +436,10 @@ class AnnofabApi(AbstractAnnofabApi):
         http_method: str,
         url: str,
         *,
-        params: Optional[dict[str, Any]] = None,
-        data: Optional[Any] = None,  # noqa: ANN401
-        json: Optional[Any] = None,  # pylint: disable=redefined-outer-name  # noqa: ANN401
-        headers: Optional[dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
+        data: Any | None = None,  # noqa: ANN401
+        json: Any | None = None,  # pylint: disable=redefined-outer-name  # noqa: ANN401
+        headers: dict[str, Any] | None = None,
         stream: bool = False,
         raise_for_status: bool = True,
         **kwargs,
@@ -512,9 +512,9 @@ class AnnofabApi(AbstractAnnofabApi):
         http_method: str,
         url_path: str,
         *,
-        query_params: Optional[dict[str, Any]] = None,
-        header_params: Optional[dict[str, Any]] = None,
-        request_body: Optional[Any] = None,  # noqa: ANN401
+        query_params: dict[str, Any] | None = None,
+        header_params: dict[str, Any] | None = None,
+        request_body: Any | None = None,  # noqa: ANN401
         raise_for_status: bool = True,
     ) -> tuple[Any, requests.Response]:
         """
@@ -619,7 +619,7 @@ class AnnofabApi(AbstractAnnofabApi):
 
         return content, response
 
-    def _get_signed_cookie(self, project_id, query_params: Optional[dict[str, Any]] = None) -> tuple[dict[str, Any], requests.Response]:  # noqa: ANN001
+    def _get_signed_cookie(self, project_id, query_params: dict[str, Any] | None = None) -> tuple[dict[str, Any], requests.Response]:  # noqa: ANN001
         """
         アノテーション仕様の履歴情報を取得するために、非公開APIにアクセスする。
         変更される可能性あり.
@@ -707,7 +707,7 @@ class AnnofabApi(AbstractAnnofabApi):
         _raise_for_status(response)
         return response.json()
 
-    def login(self, mfa_code: Optional[str] = None) -> None:
+    def login(self, mfa_code: str | None = None) -> None:
         """
         ログインして、トークンをインスタンスに保持します。
         MFAが有効化されている場合は、loginRespondToAuthChallenge APIを実行してトークンを取得します。
@@ -732,7 +732,7 @@ class AnnofabApi(AbstractAnnofabApi):
         else:
             assert_noreturn(self.credentials)
 
-    def _login_id_pass(self, id_pass: IdPass, mfa_code: Optional[str] = None) -> None:
+    def _login_id_pass(self, id_pass: IdPass, mfa_code: str | None = None) -> None:
         login_info = {"user_id": id_pass.user_id, "password": id_pass.password}
 
         url = f"{self.url_prefix}/login"

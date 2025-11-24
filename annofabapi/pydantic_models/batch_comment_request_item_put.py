@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing_extensions import Annotated, Self
@@ -35,12 +35,12 @@ class BatchCommentRequestItemPut(BaseModel):
     comment_type: StrictStr = Field(
         description="コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。 * `inspection` - 検査コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 "
     )
-    phrases: Optional[List[StrictStr]] = Field(
+    phrases: List[StrictStr] | None = Field(
         default=None, description="`comment_type` の値によって指定可能な値が異なります。  * `onhold` の場合   * 使用しません（空配列 or 指定なし） "
     )
     comment: StrictStr = Field(description="コメント本文。 ")
     comment_node: CommentNode
-    datetime_for_sorting: Optional[str] = Field(
+    datetime_for_sorting: str | None = Field(
         default=None,
         description="コメントのソート順を決める日時。コメント作成時のみ指定可能です。  Annofab標準エディタでは、コメントはここで指定した日時にしたがってスレッドごとに昇順で表示されます。  コメント作成時に未指定とした場合は、作成操作オブジェクトの順序に応じてコメント作成日時からずれた時刻が自動設定されます（ソート順を一意とするため）。  なお、この値は後から更新することはできません（値を指定しても無視されます）。 ",
     )
@@ -88,7 +88,7 @@ class BatchCommentRequestItemPut(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of BatchCommentRequestItemPut from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -115,7 +115,7 @@ class BatchCommentRequestItemPut(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of BatchCommentRequestItemPut from a dict"""
         if obj is None:
             return None

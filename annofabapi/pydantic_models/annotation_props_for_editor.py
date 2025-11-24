@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Self
@@ -25,23 +25,23 @@ class AnnotationPropsForEditor(BaseModel):
     アノテーションエディタ用のアノテーション毎のプロパティです。<br /> ここに含まれているデータはアノテーション結果に反映されず、エディタが利用するために存在します。  エディタ用のデータであるため、たとえば`can_delete`や`can_edit_data`が`false`でも、APIによる編集は妨げません。<br /> ここで定義されているデータを利用して動作を変えるかどうかは、エディタによって異なります。
     """
 
-    can_delete: Optional[StrictBool] = Field(default=None, description="アノテーションがエディタ上で削除できるかどうか。 trueの場合削除可能。")
-    can_edit_data: Optional[StrictBool] = Field(
+    can_delete: StrictBool | None = Field(default=None, description="アノテーションがエディタ上で削除できるかどうか。 trueの場合削除可能。")
+    can_edit_data: StrictBool | None = Field(
         default=None,
         description="アノテーションの本体のデータを編集できるかどうか。 trueの場合編集可能。 2022/09現在、この値を利用しているエディタは存在しません。",
     )
-    can_edit_additional: Optional[StrictBool] = Field(
+    can_edit_additional: StrictBool | None = Field(
         default=None,
         description="アノテーションの付加情報を編集できるかどうか。  trueの場合編集可能。 2022/09現在、この値を利用しているエディタは存在しません。",
     )
-    description: Optional[StrictStr] = Field(
+    description: StrictStr | None = Field(
         default=None, description="アノテーションについての人間可読な説明。 2022/09現在、この値を利用しているエディタは存在しません。"
     )
-    tags: Optional[List[StrictStr]] = Field(
+    tags: List[StrictStr] | None = Field(
         default=None,
         description="アノテーションに付与されている機械可読・人間可読なタグの列。  2022/09現在、この値を利用しているエディタは存在しません",
     )
-    etc: Optional[Any] = Field(default=None, description="上記以外の任意のJson構造")
+    etc: Any | None = Field(default=None, description="上記以外の任意のJson構造")
     __properties: ClassVar[List[str]] = ["can_delete", "can_edit_data", "can_edit_additional", "description", "tags", "etc"]
 
     model_config = ConfigDict(
@@ -60,7 +60,7 @@ class AnnotationPropsForEditor(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationPropsForEditor from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -89,7 +89,7 @@ class AnnotationPropsForEditor(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationPropsForEditor from a dict"""
         if obj is None:
             return None

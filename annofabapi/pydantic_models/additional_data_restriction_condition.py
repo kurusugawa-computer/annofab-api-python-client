@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -42,20 +42,20 @@ class AdditionalDataRestrictionCondition(BaseModel):
     """
 
     # data type: AdditionalDataRestrictionConditionCanInput
-    oneof_schema_1_validator: Optional[AdditionalDataRestrictionConditionCanInput] = None
+    oneof_schema_1_validator: AdditionalDataRestrictionConditionCanInput | None = None
     # data type: AdditionalDataRestrictionConditionEquals
-    oneof_schema_2_validator: Optional[AdditionalDataRestrictionConditionEquals] = None
+    oneof_schema_2_validator: AdditionalDataRestrictionConditionEquals | None = None
     # data type: AdditionalDataRestrictionConditionNotEquals
-    oneof_schema_3_validator: Optional[AdditionalDataRestrictionConditionNotEquals] = None
+    oneof_schema_3_validator: AdditionalDataRestrictionConditionNotEquals | None = None
     # data type: AdditionalDataRestrictionConditionMatches
-    oneof_schema_4_validator: Optional[AdditionalDataRestrictionConditionMatches] = None
+    oneof_schema_4_validator: AdditionalDataRestrictionConditionMatches | None = None
     # data type: AdditionalDataRestrictionConditionNotMatches
-    oneof_schema_5_validator: Optional[AdditionalDataRestrictionConditionNotMatches] = None
+    oneof_schema_5_validator: AdditionalDataRestrictionConditionNotMatches | None = None
     # data type: AdditionalDataRestrictionConditionHasLabel
-    oneof_schema_6_validator: Optional[AdditionalDataRestrictionConditionHasLabel] = None
+    oneof_schema_6_validator: AdditionalDataRestrictionConditionHasLabel | None = None
     # data type: AdditionalDataRestrictionConditionImply
-    oneof_schema_7_validator: Optional[AdditionalDataRestrictionConditionImply] = None
-    actual_instance: Optional[
+    oneof_schema_7_validator: AdditionalDataRestrictionConditionImply | None = None
+    actual_instance: (
         Union[
             AdditionalDataRestrictionConditionCanInput,
             AdditionalDataRestrictionConditionEquals,
@@ -65,7 +65,8 @@ class AdditionalDataRestrictionCondition(BaseModel):
             AdditionalDataRestrictionConditionNotEquals,
             AdditionalDataRestrictionConditionNotMatches,
         ]
-    ] = None
+        | None
+    ) = None
     one_of_schemas: Set[str] = {
         "AdditionalDataRestrictionConditionCanInput",
         "AdditionalDataRestrictionConditionEquals",
@@ -229,7 +230,7 @@ class AdditionalDataRestrictionCondition(BaseModel):
 
     def to_dict(
         self,
-    ) -> Optional[
+    ) -> (
         Union[
             Dict[str, Any],
             AdditionalDataRestrictionConditionCanInput,
@@ -240,7 +241,8 @@ class AdditionalDataRestrictionCondition(BaseModel):
             AdditionalDataRestrictionConditionNotEquals,
             AdditionalDataRestrictionConditionNotMatches,
         ]
-    ]:
+        | None
+    ):
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

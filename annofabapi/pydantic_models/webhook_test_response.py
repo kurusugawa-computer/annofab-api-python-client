@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing_extensions import Self
@@ -28,10 +28,10 @@ class WebhookTestResponse(BaseModel):
     result: StrictStr = Field(
         description="* success: 通知先から正常なレスポンス（2xx系）を受け取った * failure: 通知先からエラーレスポンス（2xx系以外）を受け取った * error: リクエスト送信に失敗した、もしくはレスポンスを受信できなかった "
     )
-    request_body: Optional[StrictStr] = Field(default=None, description="実際に送信されたリクエストボディ")
-    response_status: Optional[StrictInt] = Field(default=None, description="通知先から返されたHTTPステータスコード")
-    response_body: Optional[StrictStr] = Field(default=None, description="通知先から返されたレスポンスボディ")
-    message: Optional[StrictStr] = Field(default=None, description='result="error" 時のエラー内容等')
+    request_body: StrictStr | None = Field(default=None, description="実際に送信されたリクエストボディ")
+    response_status: StrictInt | None = Field(default=None, description="通知先から返されたHTTPステータスコード")
+    response_body: StrictStr | None = Field(default=None, description="通知先から返されたレスポンスボディ")
+    message: StrictStr | None = Field(default=None, description='result="error" 時のエラー内容等')
     __properties: ClassVar[List[str]] = ["result", "request_body", "response_status", "response_body", "message"]
 
     @field_validator("result")
@@ -57,7 +57,7 @@ class WebhookTestResponse(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of WebhookTestResponse from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -81,7 +81,7 @@ class WebhookTestResponse(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of WebhookTestResponse from a dict"""
         if obj is None:
             return None

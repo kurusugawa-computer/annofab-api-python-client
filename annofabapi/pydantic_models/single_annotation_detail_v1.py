@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -35,9 +35,9 @@ class SingleAnnotationDetailV1(BaseModel):
     account_id: StrictStr = Field(description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     label_id: StrictStr = Field(description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     data_holding_type: AnnotationDataHoldingType
-    data: Optional[FullAnnotationData] = None
-    etag: Optional[StrictStr] = Field(default=None, description="data_holding_typeがouterの場合のみ存在し、データのETagが格納される")
-    url: Optional[StrictStr] = Field(default=None, description="data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される")
+    data: FullAnnotationData | None = None
+    etag: StrictStr | None = Field(default=None, description="data_holding_typeがouterの場合のみ存在し、データのETagが格納される")
+    url: StrictStr | None = Field(default=None, description="data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される")
     additional_data_list: List[AdditionalDataV1] = Field(
         description="属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | "
     )
@@ -72,7 +72,7 @@ class SingleAnnotationDetailV1(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of SingleAnnotationDetailV1 from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -106,7 +106,7 @@ class SingleAnnotationDetailV1(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of SingleAnnotationDetailV1 from a dict"""
         if obj is None:
             return None

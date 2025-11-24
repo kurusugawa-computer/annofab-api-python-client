@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Annotated, Self
@@ -32,11 +32,11 @@ class PutMyAccountRequest(BaseModel):
     username: StrictStr = Field(description="ユーザー名")
     lang: Lang
     keylayout: KeyLayout
-    biography: Optional[Annotated[str, Field(min_length=0, strict=True, max_length=100)]] = Field(
+    biography: Annotated[str, Field(min_length=0, strict=True, max_length=100)] | None = Field(
         default=None,
         description="人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 ",
     )
-    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    last_updated_datetime: str | None = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     __properties: ClassVar[List[str]] = ["user_id", "username", "lang", "keylayout", "biography", "last_updated_datetime"]
 
     model_config = ConfigDict(
@@ -55,7 +55,7 @@ class PutMyAccountRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of PutMyAccountRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -79,7 +79,7 @@ class PutMyAccountRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of PutMyAccountRequest from a dict"""
         if obj is None:
             return None

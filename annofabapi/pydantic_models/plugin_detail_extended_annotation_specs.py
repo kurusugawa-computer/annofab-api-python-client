@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -30,17 +30,17 @@ class PluginDetailExtendedAnnotationSpecs(BaseModel):
     カスタムのアノテーション種別を作成するプラグインを表します。 なお、このプラグインが設定されているプロジェクトでは、ここで指定したアノテーション種別以外は使用できなくなります。
     """
 
-    plugin_compatibility: Optional[OrganizationPluginCompatibility] = None
+    plugin_compatibility: OrganizationPluginCompatibility | None = None
     annotation_types: List[AnnotationType] = Field(
         description="プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。 同じ種別を重複して設定することはできません。 "
     )
-    user_defined_annotation_type_definitions: Optional[Dict[str, UserDefinedAnnotationTypeDefinition]] = Field(
+    user_defined_annotation_type_definitions: Dict[str, UserDefinedAnnotationTypeDefinition] | None = Field(
         default=None, description="Keyが[アノテーションの種類(AnnotationType)](#tag/x-data-types/AnnotationType)であるDictionaryです。 "
     )
     compatible_input_data_types: List[InputDataType] = Field(
         description="プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 "
     )
-    type: Optional[StrictStr] = Field(
+    type: StrictStr | None = Field(
         default=None, description="`ExtendedAnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type"
     )
     __properties: ClassVar[List[str]] = [
@@ -67,7 +67,7 @@ class PluginDetailExtendedAnnotationSpecs(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of PluginDetailExtendedAnnotationSpecs from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -110,7 +110,7 @@ class PluginDetailExtendedAnnotationSpecs(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of PluginDetailExtendedAnnotationSpecs from a dict"""
         if obj is None:
             return None

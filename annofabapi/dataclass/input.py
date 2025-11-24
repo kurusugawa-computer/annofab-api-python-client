@@ -9,7 +9,7 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Optional  # pylint: disable=unused-import
+from typing import Any  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -51,13 +51,13 @@ class InputData(DataClassJsonMixin):
     input_data_path: str
     """入力データの実体が保存されたURLです。 URLスキームが s3 もしくは https であるもののみをサポートしています。 """
 
-    url: Optional[str]
+    url: str | None
     """システム内部用のプロパティ"""
 
-    etag: Optional[str]
+    etag: str | None
     """[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 """
 
-    original_input_data_path: Optional[str]
+    original_input_data_path: str | None
     """システム内部用のプロパティ """
 
     updated_datetime: str

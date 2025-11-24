@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -28,14 +28,14 @@ class RootComment(BaseModel):
     RootComment
     """
 
-    data: Optional[InspectionData] = None
-    annotation_id: Optional[StrictStr] = Field(
+    data: InspectionData | None = None
+    annotation_id: StrictStr | None = Field(
         default=None,
         description="アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 ",
     )
-    label_id: Optional[StrictStr] = Field(default=None, description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    status: Optional[CommentStatus] = None
-    type: Optional[StrictStr] = Field(default=None, description="`Root` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    label_id: StrictStr | None = Field(default=None, description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    status: CommentStatus | None = None
+    type: StrictStr | None = Field(default=None, description="`Root` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
     __properties: ClassVar[List[str]] = ["data", "annotation_id", "label_id", "status", "_type"]
 
     model_config = ConfigDict(
@@ -54,7 +54,7 @@ class RootComment(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of RootComment from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -81,7 +81,7 @@ class RootComment(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of RootComment from a dict"""
         if obj is None:
             return None

@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Self
@@ -29,10 +29,10 @@ class OrganizationPlugin(BaseModel):
 
     organization_id: StrictStr = Field(description="組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     plugin_id: StrictStr = Field(description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    plugin_name: Optional[StrictStr] = Field(
+    plugin_name: StrictStr | None = Field(
         default=None, description="プラグインの名前です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 "
     )
-    description: Optional[StrictStr] = Field(
+    description: StrictStr | None = Field(
         default=None, description="プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 "
     )
     detail: PluginDetail
@@ -70,7 +70,7 @@ class OrganizationPlugin(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of OrganizationPlugin from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -97,7 +97,7 @@ class OrganizationPlugin(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of OrganizationPlugin from a dict"""
         if obj is None:
             return None

@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing_extensions import Annotated, Self
@@ -33,7 +33,7 @@ class MyAccount(BaseModel):
     username: StrictStr = Field(description="ユーザー名")
     email: StrictStr = Field(description="メールアドレス")
     lang: Lang
-    biography: Optional[Annotated[str, Field(min_length=0, strict=True, max_length=100)]] = Field(
+    biography: Annotated[str, Field(min_length=0, strict=True, max_length=100)] | None = Field(
         default=None,
         description="人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 ",
     )
@@ -43,7 +43,7 @@ class MyAccount(BaseModel):
         description="アカウントの種別 * `annofab` - 通常の手順で登録されたアカウント。後から[外部アカウントとの紐付け](/docs/faq/#yyyub0)をしたアカウントの場合もこちらになります。 * `external` - [外部アカウントだけで作成したアカウント](/docs/faq/#v1u344) * `project_guest` - [issueProjectGuestUserToken](#operation/issueProjectGuestUserToken)によって作成されたされたアカウント "
     )
     updated_datetime: str = Field(description="更新日時")
-    reset_requested_email: Optional[StrictStr] = Field(default=None, description="システム内部用のプロパティ")
+    reset_requested_email: StrictStr | None = Field(default=None, description="システム内部用のプロパティ")
     errors: List[StrictStr] = Field(description="システム内部用のプロパティ")
     __properties: ClassVar[List[str]] = [
         "account_id",
@@ -83,7 +83,7 @@ class MyAccount(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of MyAccount from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -107,7 +107,7 @@ class MyAccount(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of MyAccount from a dict"""
         if obj is None:
             return None

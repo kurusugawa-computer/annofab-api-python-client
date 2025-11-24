@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Self
@@ -35,15 +35,15 @@ class AnnotationSpecsRequestV2(BaseModel):
     additionals: List[AdditionalDataDefinitionV2] = Field(description="属性")
     restrictions: List[AdditionalDataRestriction] = Field(description="属性の制約")
     inspection_phrases: List[InspectionPhrase] = Field(description="定型指摘")
-    comment: Optional[StrictStr] = Field(default=None, description="変更内容のコメント")
-    auto_marking: Optional[StrictBool] = Field(
+    comment: StrictStr | None = Field(default=None, description="変更内容のコメント")
+    auto_marking: StrictBool | None = Field(
         default=False,
         description='trueが指定された場合、各統計グラフにマーカーを自動追加します。 マーカーのタイトルには `comment` に指定された文字列が設定されます。 `comment` が指定されていなかった場合は "アノテーション仕様の変更" という文字列が設定されます。 ',
     )
     format_version: StrictStr = Field(description="アノテーション仕様のフォーマットのバージョン")
-    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
-    option: Optional[AnnotationSpecsOption] = None
-    metadata: Optional[Dict[str, StrictStr]] = Field(default=None, description="ユーザーが自由に登録できるkey-value型のメタデータです。 ")
+    last_updated_datetime: str | None = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    option: AnnotationSpecsOption | None = None
+    metadata: Dict[str, StrictStr] | None = Field(default=None, description="ユーザーが自由に登録できるkey-value型のメタデータです。 ")
     __properties: ClassVar[List[str]] = [
         "labels",
         "additionals",
@@ -73,7 +73,7 @@ class AnnotationSpecsRequestV2(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationSpecsRequestV2 from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -128,7 +128,7 @@ class AnnotationSpecsRequestV2(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationSpecsRequestV2 from a dict"""
         if obj is None:
             return None

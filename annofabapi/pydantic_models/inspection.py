@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Annotated, Self
@@ -36,20 +36,18 @@ class Inspection(BaseModel):
     phase: TaskPhase
     phase_stage: Annotated[int, Field(strict=True, ge=1)] = Field(description="検査コメントを付与したときのフェーズのステージ")
     commenter_account_id: StrictStr = Field(description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    annotation_id: Optional[StrictStr] = Field(
+    annotation_id: StrictStr | None = Field(
         default=None,
         description="アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 ",
     )
-    label_id: Optional[StrictStr] = Field(default=None, description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    label_id: StrictStr | None = Field(default=None, description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     data: InspectionData
-    parent_inspection_id: Optional[StrictStr] = Field(
-        default=None, description="検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) "
-    )
-    phrases: Optional[List[StrictStr]] = Field(default=None, description="参照している定型指摘のID。")
+    parent_inspection_id: StrictStr | None = Field(default=None, description="検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    phrases: List[StrictStr] | None = Field(default=None, description="参照している定型指摘のID。")
     comment: StrictStr = Field(description="検査コメントの中身 ")
     status: InspectionStatus
     created_datetime: str
-    updated_datetime: Optional[str] = None
+    updated_datetime: str | None = None
     __properties: ClassVar[List[str]] = [
         "project_id",
         "task_id",
@@ -85,7 +83,7 @@ class Inspection(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of Inspection from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -112,7 +110,7 @@ class Inspection(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of Inspection from a dict"""
         if obj is None:
             return None

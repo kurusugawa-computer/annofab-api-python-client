@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr, field_validator
 from typing_extensions import Self
@@ -28,9 +28,9 @@ class AnnotationTypeFieldDefinitionOneBooleanField(BaseModel):
     """
 
     type: StrictStr = Field(alias="_type")
-    title: Optional[InternationalizationMessage] = None
-    description: Optional[InternationalizationMessage] = None
-    initial_value: Optional[StrictBool] = Field(default=None, description="フィールドの初期値 ")
+    title: InternationalizationMessage | None = None
+    description: InternationalizationMessage | None = None
+    initial_value: StrictBool | None = Field(default=None, description="フィールドの初期値 ")
     label: InternationalizationMessage
     __properties: ClassVar[List[str]] = ["_type", "title", "description", "initial_value", "label"]
 
@@ -57,7 +57,7 @@ class AnnotationTypeFieldDefinitionOneBooleanField(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationTypeFieldDefinitionOneBooleanField from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -90,7 +90,7 @@ class AnnotationTypeFieldDefinitionOneBooleanField(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationTypeFieldDefinitionOneBooleanField from a dict"""
         if obj is None:
             return None

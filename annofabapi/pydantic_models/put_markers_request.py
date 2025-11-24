@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import Self
@@ -27,8 +27,8 @@ class PutMarkersRequest(BaseModel):
     PutMarkersRequest
     """
 
-    markers: Optional[List[Marker]] = Field(default=None, description="マーカー一覧")
-    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    markers: List[Marker] | None = Field(default=None, description="マーカー一覧")
+    last_updated_datetime: str | None = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     __properties: ClassVar[List[str]] = ["markers", "last_updated_datetime"]
 
     model_config = ConfigDict(
@@ -47,7 +47,7 @@ class PutMarkersRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of PutMarkersRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -78,7 +78,7 @@ class PutMarkersRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of PutMarkersRequest from a dict"""
         if obj is None:
             return None

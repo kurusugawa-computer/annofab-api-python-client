@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing_extensions import Self
@@ -33,7 +33,7 @@ class CountResult(BaseModel):
         description="集約に使われたリソースのフィールド名です。  リソースの属性のさらに属性を参照するときは、`foo.bar.buz` のようにドット区切りになります。 ",
         alias="field",
     )
-    doc_count: Optional[StrictInt] = Field(default=None, description="集約の件数です。 ")
+    doc_count: StrictInt | None = Field(default=None, description="集約の件数です。 ")
     items: List[Count] = Field(description="集約結果の値です。 ")
     __properties: ClassVar[List[str]] = ["_type", "name", "field", "doc_count", "items"]
 
@@ -53,7 +53,7 @@ class CountResult(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of CountResult from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -84,7 +84,7 @@ class CountResult(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of CountResult from a dict"""
         if obj is None:
             return None

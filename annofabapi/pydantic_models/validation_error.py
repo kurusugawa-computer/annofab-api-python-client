@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -51,28 +51,28 @@ class ValidationError(BaseModel):
     """
 
     # data type: InvalidAnnotationData
-    oneof_schema_1_validator: Optional[InvalidAnnotationData] = None
+    oneof_schema_1_validator: InvalidAnnotationData | None = None
     # data type: DuplicatedSegmentationV2
-    oneof_schema_2_validator: Optional[DuplicatedSegmentationV2] = None
+    oneof_schema_2_validator: DuplicatedSegmentationV2 | None = None
     # data type: InvalidValue
-    oneof_schema_3_validator: Optional[InvalidValue] = None
+    oneof_schema_3_validator: InvalidValue | None = None
     # data type: UnknownLinkTarget
-    oneof_schema_4_validator: Optional[UnknownLinkTarget] = None
+    oneof_schema_4_validator: UnknownLinkTarget | None = None
     # data type: InvalidLinkTarget
-    oneof_schema_5_validator: Optional[InvalidLinkTarget] = None
+    oneof_schema_5_validator: InvalidLinkTarget | None = None
     # data type: InvalidChoice
-    oneof_schema_6_validator: Optional[InvalidChoice] = None
+    oneof_schema_6_validator: InvalidChoice | None = None
     # data type: DuplicatedV1
-    oneof_schema_7_validator: Optional[DuplicatedV1] = None
+    oneof_schema_7_validator: DuplicatedV1 | None = None
     # data type: DuplicatedV2
-    oneof_schema_8_validator: Optional[DuplicatedV2] = None
+    oneof_schema_8_validator: DuplicatedV2 | None = None
     # data type: UnknownAdditionalData
-    oneof_schema_9_validator: Optional[UnknownAdditionalData] = None
+    oneof_schema_9_validator: UnknownAdditionalData | None = None
     # data type: OverlappedRangeAnnotation
-    oneof_schema_10_validator: Optional[OverlappedRangeAnnotation] = None
+    oneof_schema_10_validator: OverlappedRangeAnnotation | None = None
     # data type: UnknownLabel
-    oneof_schema_11_validator: Optional[UnknownLabel] = None
-    actual_instance: Optional[
+    oneof_schema_11_validator: UnknownLabel | None = None
+    actual_instance: (
         Union[
             DuplicatedSegmentationV2,
             DuplicatedV1,
@@ -86,7 +86,8 @@ class ValidationError(BaseModel):
             UnknownLabel,
             UnknownLinkTarget,
         ]
-    ] = None
+        | None
+    ) = None
     one_of_schemas: Set[str] = {
         "DuplicatedSegmentationV2",
         "DuplicatedV1",
@@ -298,7 +299,7 @@ class ValidationError(BaseModel):
 
     def to_dict(
         self,
-    ) -> Optional[
+    ) -> (
         Union[
             Dict[str, Any],
             DuplicatedSegmentationV2,
@@ -313,7 +314,8 @@ class ValidationError(BaseModel):
             UnknownLabel,
             UnknownLinkTarget,
         ]
-    ]:
+        | None
+    ):
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

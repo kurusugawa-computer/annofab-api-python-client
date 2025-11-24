@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
 from typing_extensions import Self
@@ -29,13 +29,13 @@ class AnnotationDataV1(BaseModel):
     """
 
     # data type: str
-    oneof_schema_1_validator: Optional[StrictStr] = Field(
+    oneof_schema_1_validator: StrictStr | None = Field(
         default=None,
         description='アノテーション座標値や区間などの文字列表現です。 アノテーション種類（`annotation_type`）とデータ格納形式（`data_holding_type`）に応じて、以下のとおり表現が変わります。  <table> <tr><th>annotation_type</th><th>data_holding_type</th><th>文字列表現</th></tr> <tr><td>bounding_box</td><td>inner</td><td><code>"左上x,左上y,右下x,右下y"</code></td></tr> <tr><td>point</td><td>inner</td><td><code>"x1,y1"</code></td></tr> <tr><td>polygon / polyline</td><td>inner</td><td><code>"x1,y1,x2,y2, ... "</code></td></tr> <tr><td>range </td><td>inner</td><td><code>"開始時間(ミリ秒),終了時間(ミリ秒) "</code></td></tr> <tr><td>classification</td><td>inner</td><td><code>null</code></td></tr> <tr><td>segmentation</td><td>outer</td><td><code>null</code></td></tr> <tr><td>segmentation_v2</td><td>outer</td><td><code>null</code></td></tr> </table> ',
     )
     # data type: FullAnnotationData
-    oneof_schema_2_validator: Optional[FullAnnotationData] = None
-    actual_instance: Optional[Union[FullAnnotationData, str]] = None
+    oneof_schema_2_validator: FullAnnotationData | None = None
+    actual_instance: Union[FullAnnotationData, str] | None = None
     one_of_schemas: Set[str] = {"FullAnnotationData", "str"}
 
     model_config = ConfigDict(
@@ -136,7 +136,7 @@ class AnnotationDataV1(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], FullAnnotationData, str]]:
+    def to_dict(self) -> Union[Dict[str, Any], FullAnnotationData, str] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

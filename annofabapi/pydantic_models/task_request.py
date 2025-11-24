@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -28,7 +28,7 @@ class TaskRequest(BaseModel):
     input_data_id_list: List[StrictStr] = Field(
         description="タスクに割り当てる入力データのID。タスクに割り当てることができる入力データの個数は最大200です。"
     )
-    metadata: Optional[Dict[str, Any]] = Field(
+    metadata: Dict[str, Any] | None = Field(
         default=None,
         description="ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 ",
     )
@@ -50,7 +50,7 @@ class TaskRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of TaskRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -74,7 +74,7 @@ class TaskRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of TaskRequest from a dict"""
         if obj is None:
             return None

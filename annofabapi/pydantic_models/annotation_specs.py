@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -31,12 +31,12 @@ class AnnotationSpecs(BaseModel):
     """
 
     # data type: AnnotationSpecsV1
-    oneof_schema_1_validator: Optional[AnnotationSpecsV1] = None
+    oneof_schema_1_validator: AnnotationSpecsV1 | None = None
     # data type: AnnotationSpecsV2
-    oneof_schema_2_validator: Optional[AnnotationSpecsV2] = None
+    oneof_schema_2_validator: AnnotationSpecsV2 | None = None
     # data type: AnnotationSpecsV3
-    oneof_schema_3_validator: Optional[AnnotationSpecsV3] = None
-    actual_instance: Optional[Union[AnnotationSpecsV1, AnnotationSpecsV2, AnnotationSpecsV3]] = None
+    oneof_schema_3_validator: AnnotationSpecsV3 | None = None
+    actual_instance: Union[AnnotationSpecsV1, AnnotationSpecsV2, AnnotationSpecsV3] | None = None
     one_of_schemas: Set[str] = {"AnnotationSpecsV1", "AnnotationSpecsV2", "AnnotationSpecsV3"}
 
     model_config = ConfigDict(
@@ -144,7 +144,7 @@ class AnnotationSpecs(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], AnnotationSpecsV1, AnnotationSpecsV2, AnnotationSpecsV3]]:
+    def to_dict(self) -> Union[Dict[str, Any], AnnotationSpecsV1, AnnotationSpecsV2, AnnotationSpecsV3] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

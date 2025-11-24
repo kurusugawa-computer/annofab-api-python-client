@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -27,8 +27,8 @@ class AggregationResult(BaseModel):
     """
 
     # data type: CountResult
-    oneof_schema_1_validator: Optional[CountResult] = None
-    actual_instance: Optional[Union[CountResult]] = None
+    oneof_schema_1_validator: CountResult | None = None
+    actual_instance: Union[CountResult] | None = None
     one_of_schemas: Set[str] = {"CountResult"}
 
     model_config = ConfigDict(
@@ -116,7 +116,7 @@ class AggregationResult(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], CountResult]]:
+    def to_dict(self) -> Union[Dict[str, Any], CountResult] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

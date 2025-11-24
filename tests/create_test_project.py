@@ -3,7 +3,7 @@ import logging
 import os
 import uuid
 from argparse import ArgumentParser
-from typing import Any, Optional
+from typing import Any
 
 from more_itertools import first_true
 
@@ -22,7 +22,7 @@ class CreatingTestProject:
 
         self.labels_dict = {"car": "car_label_id"}
 
-    def create_project(self, organization_name: str, project_title: Optional[str] = None) -> dict[str, Any]:
+    def create_project(self, organization_name: str, project_title: str | None = None) -> dict[str, Any]:
         project_id = str(uuid.uuid4())
 
         request_body = {
@@ -240,7 +240,7 @@ class CreatingTestProject:
         logger.debug(f"検査コメントを作成しました。task_id={task_id}, input_data_id={input_data_id}")
         self.service.wrapper.change_task_status_to_break(project_id, task_id)
 
-    def main(self, organization_name: str, project_title: Optional[str] = None) -> None:
+    def main(self, organization_name: str, project_title: str | None = None) -> None:
         project = self.create_project(organization_name=organization_name, project_title=project_title)
         project_id = project["project_id"]
         logger.debug(f"project_id={project_id} プロジェクトを作成しました。")

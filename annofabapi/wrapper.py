@@ -11,9 +11,10 @@ import urllib.parse
 import uuid
 import warnings
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Optional, Union
+from typing import Any
 
 import more_itertools
 import requests
@@ -220,7 +221,7 @@ class Wrapper:
         """  # noqa: E501
         return self.api._execute_http_request(http_method="get", url=url, **kwargs)
 
-    def download(self, url: str, dest_path: Union[str, Path], *, chunk_size: int = 1024 * 1024 * 500, logger_prefix: str = "") -> None:
+    def download(self, url: str, dest_path: str | Path, *, chunk_size: int = 1024 * 1024 * 500, logger_prefix: str = "") -> None:
         """
         指定したURLからファイルをダウンロードします。
 
@@ -232,7 +233,7 @@ class Wrapper:
 
         """
 
-        def to_megabyte_string(value: Optional[Union[str, int]]) -> str:
+        def to_megabyte_string(value: str | int | None) -> str:
             if value is None:
                 return "None"
             megabyte_value = int(value) / (1024 * 1024)
@@ -267,8 +268,8 @@ class Wrapper:
     # Public Method : Annotation
     #########################################
     def get_editor_annotation_or_none(
-        self, project_id: str, task_id: str, input_data_id: str, *, query_params: Optional[dict[str, Any]] = None
-    ) -> Optional[dict[str, Any]]:
+        self, project_id: str, task_id: str, input_data_id: str, *, query_params: dict[str, Any] | None = None
+    ) -> dict[str, Any] | None:
         """
         アノテーションを取得する。
         存在しない場合(HTTP 404 Error)はNoneを返します。
@@ -290,7 +291,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def download_annotation_archive(self, project_id: str, dest_path: Union[str, Path]) -> str:
+    def download_annotation_archive(self, project_id: str, dest_path: str | Path) -> str:
         """
         simpleアノテーションZIPをダウンロードする。
 
@@ -308,7 +309,7 @@ class Wrapper:
         self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='SimpleアノテーションZIP'")
         return url
 
-    def download_full_annotation_archive(self, project_id: str, dest_path: Union[str, Path]) -> str:
+    def download_full_annotation_archive(self, project_id: str, dest_path: str | Path) -> str:
         """
         FullアノテーションZIPをダウンロードする。
 
@@ -333,7 +334,7 @@ class Wrapper:
         self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='FullアノテーションZIP'")
         return url
 
-    def get_all_annotation_list(self, project_id: str, query_params: Optional[dict[str, Any]] = None) -> list[dict[str, Any]]:
+    def get_all_annotation_list(self, project_id: str, query_params: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """
         すべてのアノテーション情報を取得する。
 
@@ -347,7 +348,7 @@ class Wrapper:
         return self._get_all_objects(self.api.get_annotation_list, limit=200, project_id=project_id, query_params=query_params)
 
     @staticmethod
-    def __replace_annotation_specs_id(detail: dict[str, Any], annotation_specs_relation: AnnotationSpecsRelation) -> Optional[dict[str, Any]]:
+    def __replace_annotation_specs_id(detail: dict[str, Any], annotation_specs_relation: AnnotationSpecsRelation) -> dict[str, Any] | None:
         """
         アノテーション仕様関係のIDを、新しいIDに置換する。
 
@@ -426,8 +427,8 @@ class Wrapper:
         task_id: str,
         input_data_id: str,
         src_details: list[dict[str, Any]],
-        account_id: Optional[str] = None,
-        annotation_specs_relation: Optional[AnnotationSpecsRelation] = None,
+        account_id: str | None = None,
+        annotation_specs_relation: AnnotationSpecsRelation | None = None,
     ) -> dict[str, Any]:
         if account_id is None:
             account_id = self.api.account_id
@@ -455,8 +456,8 @@ class Wrapper:
         self,
         src: TaskFrameKey,
         dest: TaskFrameKey,
-        account_id: Optional[str] = None,
-        annotation_specs_relation: Optional[AnnotationSpecsRelation] = None,
+        account_id: str | None = None,
+        annotation_specs_relation: AnnotationSpecsRelation | None = None,
     ) -> bool:
         """
         アノテーションをコピーする。
@@ -494,20 +495,20 @@ class Wrapper:
         self.api.put_annotation(dest.project_id, dest.task_id, dest.input_data_id, request_body=request_body)
         return True
 
-    def __get_label_info_from_label_name(self, label_name: str, annotation_specs_labels: list[LabelV1]) -> Optional[LabelV1]:
+    def __get_label_info_from_label_name(self, label_name: str, annotation_specs_labels: list[LabelV1]) -> LabelV1 | None:
         for label in annotation_specs_labels:
             if self.__get_label_name_en(label) == label_name:
                 return label
         return None
 
-    def __get_additional_data_from_attribute_name(self, attribute_name: str, label_info: LabelV1) -> Optional[AdditionalDataDefinitionV1]:
+    def __get_additional_data_from_attribute_name(self, attribute_name: str, label_info: LabelV1) -> AdditionalDataDefinitionV1 | None:
         for additional_data in label_info["additional_data_definitions"]:
             if self.__get_additional_data_definition_name_en(additional_data) == attribute_name:
                 return additional_data
 
         return None
 
-    def _get_choice_id_from_name(self, name: str, choices: list[dict[str, Any]]) -> Optional[str]:
+    def _get_choice_id_from_name(self, name: str, choices: list[dict[str, Any]]) -> str | None:
         choice_info = more_itertools.first_true(choices, pred=lambda e: self.__get_choice_name_en(e) == name)
         if choice_info is not None:
             return choice_info["choice_id"]
@@ -582,7 +583,7 @@ class Wrapper:
         parser: SimpleAnnotationParser,
         detail: SimpleAnnotationDetail,
         annotation_specs_labels: list[LabelV1],
-    ) -> Optional[AnnotationDetailV1]:
+    ) -> AnnotationDetailV1 | None:
         """
         Request Bodyに渡すDataClassに変換する。塗りつぶし画像があれば、それをS3にアップロードする。
 
@@ -648,7 +649,7 @@ class Wrapper:
             list[LabelV1]: V1版のラベル情報
         """
 
-        def get_additional(additional_data_definition_id: str) -> Optional[dict[str, Any]]:
+        def get_additional(additional_data_definition_id: str) -> dict[str, Any] | None:
             return more_itertools.first_true(additionals_v2, pred=lambda e: e["additional_data_definition_id"] == additional_data_definition_id)
 
         def to_label_v1(label_v2: dict[str, Any]) -> LabelV1:
@@ -675,7 +676,7 @@ class Wrapper:
         input_data_id: str,
         simple_annotation_json: str,
         annotation_specs_labels: list[dict[str, Any]],
-        annotation_specs_additionals: Optional[list[dict[str, Any]]] = None,
+        annotation_specs_additionals: list[dict[str, Any]] | None = None,
     ) -> bool:
         """
         Annofabからダウンロードしたアノテーションzip配下のJSONと同じフォーマット（Simple Annotation)の内容から、アノテーションを登録する。
@@ -772,7 +773,7 @@ class Wrapper:
         src_labels: list[dict[str, Any]],
         dest_labels: list[dict[str, Any]],
         dict_label_id: dict[str, str],
-    ) -> Optional[dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         src_additional_name_en = self.__get_additional_data_definition_name_en(src_additional)
         for dest_additional in dest_additionals:
             if src_additional_name_en != self.__get_additional_data_definition_name_en(dest_additional):
@@ -868,7 +869,7 @@ class Wrapper:
     #########################################
     # Public Method : Input
     #########################################
-    def get_input_data_or_none(self, project_id: str, input_data_id: str) -> Optional[InputData]:
+    def get_input_data_or_none(self, project_id: str, input_data_id: str) -> InputData | None:
         """
         入力データを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
@@ -888,7 +889,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def get_all_input_data_list(self, project_id: str, query_params: Optional[dict[str, Any]] = None) -> list[InputData]:
+    def get_all_input_data_list(self, project_id: str, query_params: dict[str, Any] | None = None) -> list[InputData]:
         """
         すべての入力データを取得する。
 
@@ -901,7 +902,7 @@ class Wrapper:
         """
         return self._get_all_objects(self.api.get_input_data_list, limit=200, project_id=project_id, query_params=query_params)
 
-    def upload_file_to_s3(self, project_id: str, file_path: str, content_type: Optional[str] = None) -> str:
+    def upload_file_to_s3(self, project_id: str, file_path: str, content_type: str | None = None) -> str:
         """
         createTempPath APIを使ってアップロード用のURLとS3パスを取得して、ファイルをアップロードする。
 
@@ -997,8 +998,8 @@ class Wrapper:
         project_id: str,
         input_data_id: str,
         file_path: str,
-        request_body: Optional[dict[str, Any]] = None,
-        content_type: Optional[str] = None,
+        request_body: dict[str, Any] | None = None,
+        content_type: str | None = None,
     ) -> InputData:
         """
         ファイル（画像データ、動画データ、 zipファイル）を入力データとして登録する。
@@ -1029,7 +1030,7 @@ class Wrapper:
     #########################################
     # Public Method : Statistics
     #########################################
-    def _get_statistics_content(self, content: Any, response: requests.Response) -> Optional[Any]:  # noqa: ANN401
+    def _get_statistics_content(self, content: Any, response: requests.Response) -> Any | None:  # noqa: ANN401
         """
         統計情報webapiのレスポンス情報に格納されているURLにアクセスして、統計情報の中身を取得する。
         統計情報webapiのレスポンス'url'にアクセスする。
@@ -1102,7 +1103,7 @@ class Wrapper:
         return results
 
     def _get_from_and_to_date_for_statistics_webapi(
-        self, project_id: str, from_date: Optional[str], to_date: Optional[str]
+        self, project_id: str, from_date: str | None, to_date: str | None
     ) -> tuple[datetime.date, datetime.date]:
         """statistics webapi用に、`datetime.date`型であるfrom_date, to_dateを取得する。
         `from_date`または`to_date`がNoneならば、`get_statistics_available_dates` APIで取得した統計情報が存在する期間を参照して、`from_date`と`to_date`を決めます。
@@ -1127,9 +1128,7 @@ class Wrapper:
         dt_to_date = datetime.datetime.fromisoformat(to_date).date()
         return dt_from_date, dt_to_date
 
-    def get_account_daily_statistics(
-        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
-    ) -> list[dict[str, Any]]:
+    def get_account_daily_statistics(self, project_id: str, *, from_date: str | None = None, to_date: str | None = None) -> list[dict[str, Any]]:
         """指定した期間の ユーザ別タスク集計データ を取得します。
 
         Args:
@@ -1159,9 +1158,7 @@ class Wrapper:
 
         return [{"account_id": k, "histories": v} for k, v in tmp_dict_results.items()]
 
-    def get_inspection_daily_statistics(
-        self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
-    ) -> list[dict[str, Any]]:
+    def get_inspection_daily_statistics(self, project_id: str, *, from_date: str | None = None, to_date: str | None = None) -> list[dict[str, Any]]:
         """
         指定した期間の 検査コメント集計データ を取得します。
 
@@ -1187,7 +1184,7 @@ class Wrapper:
         func = decorator(self.api.get_inspection_daily_statistics, project_id)
         return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
-    def get_phase_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> list[dict[str, Any]]:
+    def get_phase_daily_statistics(self, project_id: str, *, from_date: str | None = None, to_date: str | None = None) -> list[dict[str, Any]]:
         """指定した期間の フェーズ別タスク集計データ を取得します。
 
         Args:
@@ -1212,7 +1209,7 @@ class Wrapper:
         func = decorator(self.api.get_phase_daily_statistics, project_id)
         return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
-    def get_task_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> list[dict[str, Any]]:
+    def get_task_daily_statistics(self, project_id: str, *, from_date: str | None = None, to_date: str | None = None) -> list[dict[str, Any]]:
         """指定した期間の タスク集計データ を取得します。
 
         Args:
@@ -1237,7 +1234,7 @@ class Wrapper:
         func = decorator(self.api.get_task_daily_statistics, project_id)
         return self._get_statistics_daily_xxx(func, dt_from_date=dt_from_date, dt_to_date=dt_to_date)
 
-    def get_worktime_daily_statistics(self, project_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None) -> dict[str, Any]:
+    def get_worktime_daily_statistics(self, project_id: str, *, from_date: str | None = None, to_date: str | None = None) -> dict[str, Any]:
         """プロジェクト全体のタスク作業時間集計データを取得します。
 
         Args:
@@ -1263,7 +1260,7 @@ class Wrapper:
         return {"project_id": project_id, "data_series": result}
 
     def get_worktime_daily_statistics_by_account(
-        self, project_id: str, account_id: str, *, from_date: Optional[str] = None, to_date: Optional[str] = None
+        self, project_id: str, account_id: str, *, from_date: str | None = None, to_date: str | None = None
     ) -> dict[str, Any]:
         """指定したプロジェクトメンバーのタスク作業時間集計データを取得します。
 
@@ -1294,7 +1291,7 @@ class Wrapper:
     # Public Method : Supplementary
     #########################################
 
-    def get_supplementary_data_list_or_none(self, project_id: str, input_data_id: str) -> Optional[list[dict[str, Any]]]:
+    def get_supplementary_data_list_or_none(self, project_id: str, input_data_id: str) -> list[dict[str, Any]] | None:
         """
         補助情報一覧を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
@@ -1320,7 +1317,7 @@ class Wrapper:
         supplementary_data_id: str,
         file_path: str,
         request_body: dict[str, Any],
-        content_type: Optional[str] = None,
+        content_type: str | None = None,
     ) -> SupplementaryData:
         """
         補助情報ファイルをアップロードする
@@ -1384,7 +1381,7 @@ class Wrapper:
     #########################################
     # Public Method : Organization
     #########################################
-    def get_organization_or_none(self, organization_name: str) -> Optional[Organization]:
+    def get_organization_or_none(self, organization_name: str) -> Organization | None:
         """
         組織情報を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
@@ -1403,7 +1400,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def get_all_projects_of_organization(self, organization_name: str, query_params: Optional[dict[str, Any]] = None) -> list[Project]:
+    def get_all_projects_of_organization(self, organization_name: str, query_params: dict[str, Any] | None = None) -> list[Project]:
         """
         組織配下のすべてのプロジェクト一覧を取得する
 
@@ -1424,7 +1421,7 @@ class Wrapper:
     #########################################
     # Public Method : OrganizationMember
     #########################################
-    def get_organization_member_or_none(self, organization_name: str, user_id: str) -> Optional[OrganizationMember]:
+    def get_organization_member_or_none(self, organization_name: str, user_id: str) -> OrganizationMember | None:
         """
         組織メンバを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
@@ -1461,7 +1458,7 @@ class Wrapper:
     #########################################
     # Public Method : Project
     #########################################
-    def get_project_or_none(self, project_id: str) -> Optional[Project]:
+    def get_project_or_none(self, project_id: str) -> Project | None:
         """
         プロジェクトを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
@@ -1479,7 +1476,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def download_project_inputs_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
+    def download_project_inputs_url(self, project_id: str, dest_path: str | Path) -> str:
         """
         プロジェクトの入力データ全件ファイルをダウンロードする。
         ファイルの中身はJSON。
@@ -1497,7 +1494,7 @@ class Wrapper:
         self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='入力データ全件ファイル'")
         return url
 
-    def download_project_tasks_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
+    def download_project_tasks_url(self, project_id: str, dest_path: str | Path) -> str:
         """
         プロジェクトのタスク全件ファイルをダウンロードする。
         ファイルの中身はJSON。
@@ -1516,7 +1513,7 @@ class Wrapper:
         self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='タスク全件ファイル'")
         return url
 
-    def download_project_inspections_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
+    def download_project_inspections_url(self, project_id: str, dest_path: str | Path) -> str:
         """
         プロジェクトの検査コメント全件ファイルをダウンロードする。
         ファイルの中身はJSON。
@@ -1542,7 +1539,7 @@ class Wrapper:
         self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='検査コメント全件ファイル'")
         return url
 
-    def download_project_comments_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
+    def download_project_comments_url(self, project_id: str, dest_path: str | Path) -> str:
         """
         プロジェクトのコメント全件ファイルをダウンロードする。
 
@@ -1560,7 +1557,7 @@ class Wrapper:
         self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='コメント全件ファイル'")
         return url
 
-    def download_project_task_history_events_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
+    def download_project_task_history_events_url(self, project_id: str, dest_path: str | Path) -> str:
         """
         プロジェクトのタスク履歴イベント全件ファイルをダウンロードする。
         ファイルの中身はJSON。
@@ -1583,7 +1580,7 @@ class Wrapper:
         self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='タスク履歴イベント全件ファイル'")
         return url
 
-    def download_project_task_histories_url(self, project_id: str, dest_path: Union[str, Path]) -> str:
+    def download_project_task_histories_url(self, project_id: str, dest_path: str | Path) -> str:
         """
         プロジェクトのタスク履歴全件ファイルをダウンロードする。
         ファイルの中身はJSON。
@@ -1605,7 +1602,7 @@ class Wrapper:
     #########################################
     # Public Method : ProjectMember
     #########################################
-    def get_project_member_or_none(self, project_id: str, user_id: str) -> Optional[ProjectMember]:
+    def get_project_member_or_none(self, project_id: str, user_id: str) -> ProjectMember | None:
         """
         プロジェクトメンバを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
@@ -1624,7 +1621,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def get_all_project_members(self, project_id: str, query_params: Optional[dict[str, Any]] = None) -> list[ProjectMember]:
+    def get_all_project_members(self, project_id: str, query_params: dict[str, Any] | None = None) -> list[ProjectMember]:
         """
         すべてのプロジェクトメンバを取得する.
 
@@ -1663,7 +1660,7 @@ class Wrapper:
         }
         return self.api.initiate_tasks_generation(project_id, request_body=request_body)[0]
 
-    def get_task_or_none(self, project_id: str, task_id: str) -> Optional[Task]:
+    def get_task_or_none(self, project_id: str, task_id: str) -> Task | None:
         """
         タスクを取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
@@ -1683,7 +1680,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def get_task_histories_or_none(self, project_id: str, task_id: str) -> Optional[list[Task]]:
+    def get_task_histories_or_none(self, project_id: str, task_id: str) -> list[Task] | None:
         """
         タスク履歴一覧を取得する。存在しない場合(HTTP 404 Error)はNoneを返す。
 
@@ -1702,7 +1699,7 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def get_all_tasks(self, project_id: str, query_params: Optional[dict[str, Any]] = None) -> list[Task]:
+    def get_all_tasks(self, project_id: str, query_params: dict[str, Any] | None = None) -> list[Task]:
         """
         すべてのタスクを取得する。
 
@@ -1715,7 +1712,7 @@ class Wrapper:
         """
         return self._get_all_objects(self.api.get_tasks, limit=200, project_id=project_id, query_params=query_params)
 
-    def change_task_status_to_working(self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None) -> Task:
+    def change_task_status_to_working(self, project_id: str, task_id: str, *, last_updated_datetime: str | None = None) -> Task:
         """
         タスクのステータスを「作業中」に変更します。
 
@@ -1742,7 +1739,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def change_task_status_to_break(self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None) -> Task:
+    def change_task_status_to_break(self, project_id: str, task_id: str, *, last_updated_datetime: str | None = None) -> Task:
         """
         タスクのステータスを「休憩中」に変更します。
 
@@ -1770,7 +1767,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def change_task_status_to_on_hold(self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None) -> Task:
+    def change_task_status_to_on_hold(self, project_id: str, task_id: str, *, last_updated_datetime: str | None = None) -> Task:
         """
         タスクのステータスを「保留」に変更します。
 
@@ -1798,7 +1795,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def complete_task(self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None) -> Task:
+    def complete_task(self, project_id: str, task_id: str, *, last_updated_datetime: str | None = None) -> Task:
         """
         今のフェーズを完了させ、 次のフェーズに遷移させます。
         教師付フェーズのときはタスクを提出します。
@@ -1829,7 +1826,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def cancel_submitted_task(self, project_id: str, task_id: str, *, last_updated_datetime: Optional[str] = None) -> Task:
+    def cancel_submitted_task(self, project_id: str, task_id: str, *, last_updated_datetime: str | None = None) -> Task:
         """
         タスクの提出を取り消します。
         「提出されたタスク」とは、以下の状態のタスクのことです。
@@ -1866,9 +1863,9 @@ class Wrapper:
         self,
         project_id: str,
         task_id: str,
-        operator_account_id: Optional[str],
+        operator_account_id: str | None,
         *,
-        last_updated_datetime: Optional[str] = None,
+        last_updated_datetime: str | None = None,
     ) -> Task:
         """
         タスクの完了状態を取り消します。
@@ -1903,9 +1900,9 @@ class Wrapper:
         self,
         project_id: str,
         task_id: str,
-        operator_account_id: Optional[str],
+        operator_account_id: str | None,
         *,
-        last_updated_datetime: Optional[str] = None,
+        last_updated_datetime: str | None = None,
     ) -> dict[str, Any]:
         """
         タスクの担当者を変更します。
@@ -1935,7 +1932,7 @@ class Wrapper:
         updated_task, _ = self.api.operate_task(project_id, task_id, request_body=request_body)
         return updated_task
 
-    def reject_task(self, project_id: str, task_id: str, *, force: bool = False, last_updated_datetime: Optional[str] = None) -> dict[str, Any]:
+    def reject_task(self, project_id: str, task_id: str, *, force: bool = False, last_updated_datetime: str | None = None) -> dict[str, Any]:
         """
         タスクを差し戻します。
         このメソッドを実行すると、`phase`は`annotation`になります。
@@ -1974,7 +1971,7 @@ class Wrapper:
     #########################################
     # Public Method : Instruction
     #########################################
-    def get_latest_instruction(self, project_id: str) -> Optional[Instruction]:
+    def get_latest_instruction(self, project_id: str) -> Instruction | None:
         """
         最新の作業ガイドの取得.
 
@@ -1991,7 +1988,7 @@ class Wrapper:
         latest_history_id = histories[0]["history_id"]
         return self.api.get_instruction(project_id, {"history_id": latest_history_id})[0]
 
-    def upload_instruction_image(self, project_id: str, image_id: str, file_path: str, content_type: Optional[str] = None) -> str:
+    def upload_instruction_image(self, project_id: str, image_id: str, file_path: str, content_type: str | None = None) -> str:
         """
         作業ガイドの画像をアップロードする。
 
@@ -2058,7 +2055,7 @@ class Wrapper:
 
         return deleted_jobs
 
-    def get_all_project_job(self, project_id: str, query_params: Optional[dict[str, Any]] = None) -> list[ProjectJobInfo]:
+    def get_all_project_job(self, project_id: str, query_params: dict[str, Any] | None = None) -> list[ProjectJobInfo]:
         """
         すべてのバックグランドジョブを取得する。
 
@@ -2131,10 +2128,10 @@ class Wrapper:
         self,
         project_id: str,
         job_type: ProjectJobType,
-        job_id: Optional[str] = None,
+        job_id: str | None = None,
         job_access_interval: int = 60,
         max_job_access: int = 360,
-    ) -> Optional[JobStatus]:
+    ) -> JobStatus | None:
         """
         指定したジョブが終了するまで待つ。
 
@@ -2151,14 +2148,14 @@ class Wrapper:
 
         """
 
-        def get_latest_job() -> Optional[ProjectJobInfo]:
+        def get_latest_job() -> ProjectJobInfo | None:
             job_list = self.api.get_project_job(project_id, query_params={"type": job_type.value})[0]["list"]
             if len(job_list) > 0:
                 return job_list[0]
             else:
                 return None
 
-        def get_job_from_job_id(arg_job_id: str) -> Optional[ProjectJobInfo]:
+        def get_job_from_job_id(arg_job_id: str) -> ProjectJobInfo | None:
             content, _ = self.api.get_project_job(project_id, query_params={"type": job_type.value})
             job_list = content["list"]
             return more_itertools.first_true(job_list, pred=lambda e: e["job_id"] == arg_job_id)

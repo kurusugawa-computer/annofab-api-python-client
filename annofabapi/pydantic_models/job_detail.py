@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -33,16 +33,16 @@ class JobDetail(BaseModel):
     """
 
     # data type: JobDetailGenInputs
-    oneof_schema_1_validator: Optional[JobDetailGenInputs] = None
+    oneof_schema_1_validator: JobDetailGenInputs | None = None
     # data type: JobDetailGenTasks
-    oneof_schema_2_validator: Optional[JobDetailGenTasks] = None
+    oneof_schema_2_validator: JobDetailGenTasks | None = None
     # data type: JobDetailCopyProject
-    oneof_schema_3_validator: Optional[JobDetailCopyProject] = None
+    oneof_schema_3_validator: JobDetailCopyProject | None = None
     # data type: JobDetailMoveProject
-    oneof_schema_4_validator: Optional[JobDetailMoveProject] = None
+    oneof_schema_4_validator: JobDetailMoveProject | None = None
     # data type: JobDetailInvokeHook
-    oneof_schema_5_validator: Optional[JobDetailInvokeHook] = None
-    actual_instance: Optional[Union[JobDetailCopyProject, JobDetailGenInputs, JobDetailGenTasks, JobDetailInvokeHook, JobDetailMoveProject]] = None
+    oneof_schema_5_validator: JobDetailInvokeHook | None = None
+    actual_instance: Union[JobDetailCopyProject, JobDetailGenInputs, JobDetailGenTasks, JobDetailInvokeHook, JobDetailMoveProject] | None = None
     one_of_schemas: Set[str] = {"JobDetailCopyProject", "JobDetailGenInputs", "JobDetailGenTasks", "JobDetailInvokeHook", "JobDetailMoveProject"}
 
     model_config = ConfigDict(
@@ -176,7 +176,7 @@ class JobDetail(BaseModel):
 
     def to_dict(
         self,
-    ) -> Optional[Union[Dict[str, Any], JobDetailCopyProject, JobDetailGenInputs, JobDetailGenTasks, JobDetailInvokeHook, JobDetailMoveProject]]:
+    ) -> Union[Dict[str, Any], JobDetailCopyProject, JobDetailGenInputs, JobDetailGenTasks, JobDetailInvokeHook, JobDetailMoveProject] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None
