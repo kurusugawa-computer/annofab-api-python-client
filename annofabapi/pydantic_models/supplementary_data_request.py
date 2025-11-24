@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Annotated, Self
@@ -35,7 +35,7 @@ class SupplementaryDataRequest(BaseModel):
     supplementary_data_number: Annotated[int, Field(strict=True, ge=0)] = Field(
         description="補助情報の表示順を表す数値。同じ入力データに対して複数の補助情報で表示順が重複する場合、順序不定になります。"
     )
-    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    last_updated_datetime: str | None = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     __properties: ClassVar[List[str]] = [
         "supplementary_data_name",
         "supplementary_data_path",
@@ -60,7 +60,7 @@ class SupplementaryDataRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of SupplementaryDataRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -84,7 +84,7 @@ class SupplementaryDataRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of SupplementaryDataRequest from a dict"""
         if obj is None:
             return None

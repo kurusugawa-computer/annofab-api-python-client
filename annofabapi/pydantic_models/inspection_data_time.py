@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set, Union
+from typing import Any, ClassVar, Dict, List, Set, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
 from typing_extensions import Self
@@ -27,7 +27,7 @@ class InspectionDataTime(BaseModel):
 
     start: Union[StrictFloat, StrictInt] = Field(description="開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。")
     end: Union[StrictFloat, StrictInt] = Field(description="終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。")
-    type: Optional[StrictStr] = Field(default=None, description="`Time` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    type: StrictStr | None = Field(default=None, description="`Time` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
     __properties: ClassVar[List[str]] = ["start", "end", "_type"]
 
     model_config = ConfigDict(
@@ -46,7 +46,7 @@ class InspectionDataTime(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of InspectionDataTime from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -70,7 +70,7 @@ class InspectionDataTime(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of InspectionDataTime from a dict"""
         if obj is None:
             return None

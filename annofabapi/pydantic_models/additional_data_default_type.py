@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr, ValidationError, field_validator
 from typing_extensions import Self
@@ -27,12 +27,12 @@ class AdditionalDataDefaultType(BaseModel):
     """
 
     # data type: bool
-    oneof_schema_1_validator: Optional[StrictBool] = None
+    oneof_schema_1_validator: StrictBool | None = None
     # data type: int
-    oneof_schema_2_validator: Optional[StrictInt] = None
+    oneof_schema_2_validator: StrictInt | None = None
     # data type: str
-    oneof_schema_3_validator: Optional[StrictStr] = None
-    actual_instance: Optional[Union[bool, int, str]] = None
+    oneof_schema_3_validator: StrictStr | None = None
+    actual_instance: Union[bool, int, str] | None = None
     one_of_schemas: Set[str] = {"bool", "int", "str"}
 
     model_config = ConfigDict(
@@ -152,7 +152,7 @@ class AdditionalDataDefaultType(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], bool, int, str]]:
+    def to_dict(self) -> Union[Dict[str, Any], bool, int, str] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

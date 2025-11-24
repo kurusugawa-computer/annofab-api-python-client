@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing_extensions import Self
@@ -25,7 +25,7 @@ class UserDefinedAnnotationDataType(BaseModel):
     UserDefinedAnnotationDataType
     """
 
-    type: Optional[StrictStr] = Field(
+    type: StrictStr | None = Field(
         default=None,
         description="ユーザー定義アノテーション種別の型を指定します。 指定可能な値と、その意味は下記の通りです。  * `BoundingBox2d` - 2次元の矩形 * `Polygon2d` - 2次元のポリゴン * `Polyline2d` - 2次元のポリライン * `SinglePoint2d` - 2次元の点 * `SemanticSegmentation2d` - 2次元のセマンティックセグメンテーション * `InstanceSegmentation2d` - 2次元のインスタンスセグメンテーション * `Range1d` - 1次元の範囲 * `Classification` - 全体アノテーション * `Unknown` - その他のアノテーション種別  下記のフィールド定義は、すべてのアノテーション種別の型に対して使用可能です。 * `OneIntegerField` * `OneStringField` * `OneBooleanField`  その他のフィールド定義は、使用可能なアノテーション種別の型に制限があります。 ユーザー定義アノテーション種別の型ごとの、使用可能なフィールド定義を下記の表で示します。  |ユーザー定義アノテーション種別の型 | 使用可能なフィールド定義 | |-----------------|:----------:| | BoundingBox2d          | MinimumSize2dWithDefaultInsertPosition, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polygon2d              | MinimumSize2d, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polyline2d             | VertexCountMinMax, DisplayLineDirection, MarginOfErrorTolerance | | SinglePoint2d          | MarginOfErrorTolerance | | SemanticSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | InstanceSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | Range1d                | MarginOfErrorTolerance | | Classification         | MarginOfErrorTolerance | | Unknown | - | ",
         alias="_type",
@@ -72,7 +72,7 @@ class UserDefinedAnnotationDataType(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of UserDefinedAnnotationDataType from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -96,7 +96,7 @@ class UserDefinedAnnotationDataType(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of UserDefinedAnnotationDataType from a dict"""
         if obj is None:
             return None

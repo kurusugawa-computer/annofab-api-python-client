@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -45,22 +45,22 @@ class FullAnnotationData(BaseModel):
     """
 
     # data type: FullAnnotationDataClassification
-    oneof_schema_1_validator: Optional[FullAnnotationDataClassification] = None
+    oneof_schema_1_validator: FullAnnotationDataClassification | None = None
     # data type: FullAnnotationDataSegmentation
-    oneof_schema_2_validator: Optional[FullAnnotationDataSegmentation] = None
+    oneof_schema_2_validator: FullAnnotationDataSegmentation | None = None
     # data type: FullAnnotationDataSegmentationV2
-    oneof_schema_3_validator: Optional[FullAnnotationDataSegmentationV2] = None
+    oneof_schema_3_validator: FullAnnotationDataSegmentationV2 | None = None
     # data type: FullAnnotationDataBoundingBox
-    oneof_schema_4_validator: Optional[FullAnnotationDataBoundingBox] = None
+    oneof_schema_4_validator: FullAnnotationDataBoundingBox | None = None
     # data type: FullAnnotationDataPoints
-    oneof_schema_5_validator: Optional[FullAnnotationDataPoints] = None
+    oneof_schema_5_validator: FullAnnotationDataPoints | None = None
     # data type: FullAnnotationDataSinglePoint
-    oneof_schema_6_validator: Optional[FullAnnotationDataSinglePoint] = None
+    oneof_schema_6_validator: FullAnnotationDataSinglePoint | None = None
     # data type: FullAnnotationDataRange
-    oneof_schema_7_validator: Optional[FullAnnotationDataRange] = None
+    oneof_schema_7_validator: FullAnnotationDataRange | None = None
     # data type: FullAnnotationDataUnknown
-    oneof_schema_8_validator: Optional[FullAnnotationDataUnknown] = None
-    actual_instance: Optional[
+    oneof_schema_8_validator: FullAnnotationDataUnknown | None = None
+    actual_instance: (
         Union[
             FullAnnotationDataBoundingBox,
             FullAnnotationDataClassification,
@@ -71,7 +71,8 @@ class FullAnnotationData(BaseModel):
             FullAnnotationDataSinglePoint,
             FullAnnotationDataUnknown,
         ]
-    ] = None
+        | None
+    ) = None
     one_of_schemas: Set[str] = {
         "FullAnnotationDataBoundingBox",
         "FullAnnotationDataClassification",
@@ -247,7 +248,7 @@ class FullAnnotationData(BaseModel):
 
     def to_dict(
         self,
-    ) -> Optional[
+    ) -> (
         Union[
             Dict[str, Any],
             FullAnnotationDataBoundingBox,
@@ -259,7 +260,8 @@ class FullAnnotationData(BaseModel):
             FullAnnotationDataSinglePoint,
             FullAnnotationDataUnknown,
         ]
-    ]:
+        | None
+    ):
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

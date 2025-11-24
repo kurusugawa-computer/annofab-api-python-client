@@ -10,7 +10,6 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Optional  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -39,7 +38,7 @@ class ProjectMember(DataClassJsonMixin):
     member_role: ProjectMemberRole
     """"""
 
-    biography: Optional[str]
+    biography: str | None
     """人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 """
 
     updated_datetime: str
@@ -48,8 +47,8 @@ class ProjectMember(DataClassJsonMixin):
     created_datetime: str
     """作成日時"""
 
-    sampling_inspection_rate: Optional[int]
+    sampling_inspection_rate: int | None
     """抜取検査率（パーセント）"""
 
-    sampling_acceptance_rate: Optional[int]
+    sampling_acceptance_rate: int | None
     """抜取受入率（パーセント）"""

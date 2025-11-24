@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -31,12 +31,12 @@ class SystemMetadata(BaseModel):
     """
 
     # data type: SystemMetadataImage
-    oneof_schema_1_validator: Optional[SystemMetadataImage] = None
+    oneof_schema_1_validator: SystemMetadataImage | None = None
     # data type: SystemMetadataMovie
-    oneof_schema_2_validator: Optional[SystemMetadataMovie] = None
+    oneof_schema_2_validator: SystemMetadataMovie | None = None
     # data type: SystemMetadataCustom
-    oneof_schema_3_validator: Optional[SystemMetadataCustom] = None
-    actual_instance: Optional[Union[SystemMetadataCustom, SystemMetadataImage, SystemMetadataMovie]] = None
+    oneof_schema_3_validator: SystemMetadataCustom | None = None
+    actual_instance: Union[SystemMetadataCustom, SystemMetadataImage, SystemMetadataMovie] | None = None
     one_of_schemas: Set[str] = {"SystemMetadataCustom", "SystemMetadataImage", "SystemMetadataMovie"}
 
     model_config = ConfigDict(
@@ -146,7 +146,7 @@ class SystemMetadata(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], SystemMetadataCustom, SystemMetadataImage, SystemMetadataMovie]]:
+    def to_dict(self) -> Union[Dict[str, Any], SystemMetadataCustom, SystemMetadataImage, SystemMetadataMovie] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

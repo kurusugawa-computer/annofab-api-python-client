@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -28,18 +28,16 @@ class PluginDetailAnnotationSpecs(BaseModel):
     カスタムアノテーション仕様用のプラグインを表します。
     """
 
-    plugin_compatibility: Optional[OrganizationPluginCompatibility] = None
-    url: Optional[StrictStr] = Field(
+    plugin_compatibility: OrganizationPluginCompatibility | None = None
+    url: StrictStr | None = Field(
         default=None,
         description="カスタムアノテーション仕様画面の URL です。 プラグイン種別がカスタムアノテーション仕様の場合のみ有効です。  この URL には、プロジェクトを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` ",
     )
-    auth_redirect_url: Optional[StrictStr] = Field(default=None, description="認証後のリダイレクト先 ")
+    auth_redirect_url: StrictStr | None = Field(default=None, description="認証後のリダイレクト先 ")
     compatible_input_data_types: List[InputDataType] = Field(
         description="プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 "
     )
-    type: Optional[StrictStr] = Field(
-        default=None, description="`AnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type"
-    )
+    type: StrictStr | None = Field(default=None, description="`AnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
     __properties: ClassVar[List[str]] = ["plugin_compatibility", "url", "auth_redirect_url", "compatible_input_data_types", "_type"]
 
     model_config = ConfigDict(
@@ -58,7 +56,7 @@ class PluginDetailAnnotationSpecs(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of PluginDetailAnnotationSpecs from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -85,7 +83,7 @@ class PluginDetailAnnotationSpecs(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of PluginDetailAnnotationSpecs from a dict"""
         if obj is None:
             return None

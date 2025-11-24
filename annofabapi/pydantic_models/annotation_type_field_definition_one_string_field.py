@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing_extensions import Self
@@ -28,11 +28,11 @@ class AnnotationTypeFieldDefinitionOneStringField(BaseModel):
     """
 
     type: StrictStr = Field(alias="_type")
-    title: Optional[InternationalizationMessage] = None
-    prefix: Optional[StrictStr] = Field(default=None, description="フィールドの前に付与する文字列。 ")
-    postfix: Optional[StrictStr] = Field(default=None, description="フィールドの後に付与する文字列 ")
-    description: Optional[InternationalizationMessage] = None
-    initial_value: Optional[StrictStr] = Field(default=None, description="フィールドの初期値 ")
+    title: InternationalizationMessage | None = None
+    prefix: StrictStr | None = Field(default=None, description="フィールドの前に付与する文字列。 ")
+    postfix: StrictStr | None = Field(default=None, description="フィールドの後に付与する文字列 ")
+    description: InternationalizationMessage | None = None
+    initial_value: StrictStr | None = Field(default=None, description="フィールドの初期値 ")
     __properties: ClassVar[List[str]] = ["_type", "title", "prefix", "postfix", "description", "initial_value"]
 
     @field_validator("type")
@@ -58,7 +58,7 @@ class AnnotationTypeFieldDefinitionOneStringField(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationTypeFieldDefinitionOneStringField from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -88,7 +88,7 @@ class AnnotationTypeFieldDefinitionOneStringField(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationTypeFieldDefinitionOneStringField from a dict"""
         if obj is None:
             return None

@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing_extensions import Self
@@ -32,7 +32,7 @@ class BatchAnnotationRequestItemDelete(BaseModel):
         description="アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 "
     )
     updated_datetime: str = Field(description="更新日時")
-    type: Optional[StrictStr] = Field(default=None, description="[詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    type: StrictStr | None = Field(default=None, description="[詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
     __properties: ClassVar[List[str]] = ["project_id", "task_id", "input_data_id", "annotation_id", "updated_datetime", "_type"]
 
     @field_validator("type")
@@ -61,7 +61,7 @@ class BatchAnnotationRequestItemDelete(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of BatchAnnotationRequestItemDelete from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -85,7 +85,7 @@ class BatchAnnotationRequestItemDelete(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of BatchAnnotationRequestItemDelete from a dict"""
         if obj is None:
             return None

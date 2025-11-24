@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -33,10 +33,10 @@ class AnnotationThumbnail(BaseModel):
     input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     images: List[AnnotationThumbnailImage] = Field(description="サムネイル画像情報の一覧")
     annotations: Dict[str, AnnotationThumbnailDetail] = Field(description="アノテーションIDをキーとしたサムネイル情報")
-    annotation_updated_datetime: Optional[str] = Field(
+    annotation_updated_datetime: str | None = Field(
         default=None, description="サムネイルの元になったアノテーションの更新日時。サムネイルが未作成の場合はnull。"
     )
-    created_datetime: Optional[str] = Field(default=None, description="サムネイル登録日時。サムネイルが未作成の場合はnull。")
+    created_datetime: str | None = Field(default=None, description="サムネイル登録日時。サムネイルが未作成の場合はnull。")
     __properties: ClassVar[List[str]] = [
         "project_id",
         "task_id",
@@ -63,7 +63,7 @@ class AnnotationThumbnail(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationThumbnail from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -101,7 +101,7 @@ class AnnotationThumbnail(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationThumbnail from a dict"""
         if obj is None:
             return None

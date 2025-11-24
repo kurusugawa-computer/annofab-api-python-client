@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import Annotated, Self
@@ -30,9 +30,9 @@ class ProjectMemberRequest(BaseModel):
 
     member_status: ProjectMemberStatus
     member_role: ProjectMemberRole
-    sampling_inspection_rate: Optional[Annotated[int, Field(le=100, strict=True, ge=0)]] = Field(default=None, description="抜取検査率（パーセント）")
-    sampling_acceptance_rate: Optional[Annotated[int, Field(le=100, strict=True, ge=0)]] = Field(default=None, description="抜取受入率（パーセント）")
-    last_updated_datetime: Optional[str] = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
+    sampling_inspection_rate: Annotated[int, Field(le=100, strict=True, ge=0)] | None = Field(default=None, description="抜取検査率（パーセント）")
+    sampling_acceptance_rate: Annotated[int, Field(le=100, strict=True, ge=0)] | None = Field(default=None, description="抜取受入率（パーセント）")
+    last_updated_datetime: str | None = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     __properties: ClassVar[List[str]] = [
         "member_status",
         "member_role",
@@ -57,7 +57,7 @@ class ProjectMemberRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of ProjectMemberRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -81,7 +81,7 @@ class ProjectMemberRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of ProjectMemberRequest from a dict"""
         if obj is None:
             return None

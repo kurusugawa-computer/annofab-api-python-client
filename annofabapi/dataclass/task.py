@@ -10,7 +10,7 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any, Optional  # pylint: disable=unused-import
+from typing import Any  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -32,10 +32,10 @@ class TaskHistory(DataClassJsonMixin):
     task_history_id: str
     """タスク履歴ID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    started_datetime: Optional[str]
+    started_datetime: str | None
     """開始日時"""
 
-    ended_datetime: Optional[str]
+    ended_datetime: str | None
     """終了日時"""
 
     accumulated_labor_time_milliseconds: str
@@ -47,7 +47,7 @@ class TaskHistory(DataClassJsonMixin):
     phase_stage: int
     """タスクのフェーズのステージ番号"""
 
-    account_id: Optional[str]
+    account_id: str | None
     """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
 
@@ -66,7 +66,7 @@ class TaskHistoryShort(DataClassJsonMixin):
     account_id: str
     """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    worked: Optional[bool]
+    worked: bool | None
     """そのフェーズでタスクの作業を行ったかどうか（行った場合はtrue）"""
 
 
@@ -92,7 +92,7 @@ class Task(DataClassJsonMixin):
     input_data_id_list: list[str]
     """タスクに含まれる入力データのID"""
 
-    account_id: Optional[str]
+    account_id: str | None
     """アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
     histories_by_phase: list[TaskHistoryShort]
@@ -104,17 +104,17 @@ class Task(DataClassJsonMixin):
     number_of_rejections: int
     """このタスクが差戻しされた回数（すべてのフェーズでの差戻し回数の合計  このフィールドは、どのフェーズで何回差戻されたかを区別できないため、廃止予定です。 `histories_by_phase` で各フェーズの回数を計算することで、差戻し回数が分かります。  例）`acceptance`フェーズが3回ある場合、`acceptance`フェーズで2回差し戻しされたことになります。 """
 
-    started_datetime: Optional[str]
+    started_datetime: str | None
     """現在のフェーズが開始された日時"""
 
     updated_datetime: str
     """更新日時"""
 
-    operation_updated_datetime: Optional[str]
+    operation_updated_datetime: str | None
     """タスクのステータスやフェーズ、担当者などが更新されたときの日時"""
 
-    sampling: Optional[str]
+    sampling: str | None
     """検査抜取検査/抜取受入によって、どのフェーズがスキップされたか  * `inspection_skipped` - 抜取検査の対象外となり、検査フェーズがスキップされた * `inspection_stages_skipped` - 抜取検査の対象外となり、検査フェーズのステージの一部がスキップされた * `acceptance_skipped` - 抜取受入の対象外となり、受入フェーズがスキップされた * `inspection_and_acceptance_skipped` - 抜取検査・抜取受入の対象外となり、検査・受入フェーズがスキップされた  未指定ならば、どのフェーズもスキップされていません。 """
 
-    metadata: Optional[dict[str, Any]]
+    metadata: dict[str, Any] | None
     """ユーザーが自由に登録できるkey-value型のメタデータです。 keyにはメタデータ名、valueには値を指定してください。  keyに指定できる文字種は次の通りです。  * 半角英数字 * `_` (アンダースコア) * `-` (ハイフン)  valueに指定できる値は次の通りです。  * 文字列 * 数値 * 真偽値 """

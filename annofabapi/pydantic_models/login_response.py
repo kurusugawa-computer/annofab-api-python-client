@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -30,10 +30,10 @@ class LoginResponse(BaseModel):
     """
 
     # data type: LoginSucceedResponse
-    oneof_schema_1_validator: Optional[LoginSucceedResponse] = None
+    oneof_schema_1_validator: LoginSucceedResponse | None = None
     # data type: LoginNeedChallengeResponse
-    oneof_schema_2_validator: Optional[LoginNeedChallengeResponse] = None
-    actual_instance: Optional[Union[LoginNeedChallengeResponse, LoginSucceedResponse]] = None
+    oneof_schema_2_validator: LoginNeedChallengeResponse | None = None
+    actual_instance: Union[LoginNeedChallengeResponse, LoginSucceedResponse] | None = None
     one_of_schemas: Set[str] = {"LoginNeedChallengeResponse", "LoginSucceedResponse"}
 
     model_config = ConfigDict(
@@ -132,7 +132,7 @@ class LoginResponse(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], LoginNeedChallengeResponse, LoginSucceedResponse]]:
+    def to_dict(self) -> Union[Dict[str, Any], LoginNeedChallengeResponse, LoginSucceedResponse] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

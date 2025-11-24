@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -28,7 +28,7 @@ class ProjectExtraData(BaseModel):
     """
 
     project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    account_id: Optional[StrictStr] = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    account_id: StrictStr | None = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     kind_id: StrictStr = Field(description="プロジェクト追加データの種別ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     value: ProjectExtraDataValue
     __properties: ClassVar[List[str]] = ["project_id", "account_id", "kind_id", "value"]
@@ -49,7 +49,7 @@ class ProjectExtraData(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of ProjectExtraData from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -76,7 +76,7 @@ class ProjectExtraData(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of ProjectExtraData from a dict"""
         if obj is None:
             return None

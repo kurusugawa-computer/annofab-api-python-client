@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -30,10 +30,10 @@ class SingleAnnotation(BaseModel):
     """
 
     # data type: SingleAnnotationV1
-    oneof_schema_1_validator: Optional[SingleAnnotationV1] = None
+    oneof_schema_1_validator: SingleAnnotationV1 | None = None
     # data type: SingleAnnotationV2
-    oneof_schema_2_validator: Optional[SingleAnnotationV2] = None
-    actual_instance: Optional[Union[SingleAnnotationV1, SingleAnnotationV2]] = None
+    oneof_schema_2_validator: SingleAnnotationV2 | None = None
+    actual_instance: Union[SingleAnnotationV1, SingleAnnotationV2] | None = None
     one_of_schemas: Set[str] = {"SingleAnnotationV1", "SingleAnnotationV2"}
 
     model_config = ConfigDict(
@@ -130,7 +130,7 @@ class SingleAnnotation(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], SingleAnnotationV1, SingleAnnotationV2]]:
+    def to_dict(self) -> Union[Dict[str, Any], SingleAnnotationV1, SingleAnnotationV2] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

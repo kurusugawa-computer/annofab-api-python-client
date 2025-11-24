@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Optional, Set, Union
+from typing import Any, Dict, Set, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from typing_extensions import Self
@@ -33,16 +33,16 @@ class InspectionValidationError(BaseModel):
     """
 
     # data type: NoCommentInspection
-    oneof_schema_1_validator: Optional[NoCommentInspection] = None
+    oneof_schema_1_validator: NoCommentInspection | None = None
     # data type: ReplyRequired
-    oneof_schema_2_validator: Optional[ReplyRequired] = None
+    oneof_schema_2_validator: ReplyRequired | None = None
     # data type: ActionRequired
-    oneof_schema_3_validator: Optional[ActionRequired] = None
+    oneof_schema_3_validator: ActionRequired | None = None
     # data type: InspectionOrReplyRequired
-    oneof_schema_4_validator: Optional[InspectionOrReplyRequired] = None
+    oneof_schema_4_validator: InspectionOrReplyRequired | None = None
     # data type: IllegalState
-    oneof_schema_5_validator: Optional[IllegalState] = None
-    actual_instance: Optional[Union[ActionRequired, IllegalState, InspectionOrReplyRequired, NoCommentInspection, ReplyRequired]] = None
+    oneof_schema_5_validator: IllegalState | None = None
+    actual_instance: Union[ActionRequired, IllegalState, InspectionOrReplyRequired, NoCommentInspection, ReplyRequired] | None = None
     one_of_schemas: Set[str] = {"ActionRequired", "IllegalState", "InspectionOrReplyRequired", "NoCommentInspection", "ReplyRequired"}
 
     model_config = ConfigDict(
@@ -174,7 +174,7 @@ class InspectionValidationError(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], ActionRequired, IllegalState, InspectionOrReplyRequired, NoCommentInspection, ReplyRequired]]:
+    def to_dict(self) -> Union[Dict[str, Any], ActionRequired, IllegalState, InspectionOrReplyRequired, NoCommentInspection, ReplyRequired] | None:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

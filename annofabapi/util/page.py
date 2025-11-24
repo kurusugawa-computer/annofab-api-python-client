@@ -2,10 +2,8 @@
 Annofabの画面に関するユーティリティ関数を定義します。
 """
 
-from typing import Optional
 
-
-def create_video_editor_url(project_id: str, task_id: str, *, annotation_id: Optional[str] = None, seek_seconds: Optional[float] = None) -> str:
+def create_video_editor_url(project_id: str, task_id: str, *, annotation_id: str | None = None, seek_seconds: float | None = None) -> str:
     """
     動画エディタ画面のURLを生成します。
 
@@ -32,7 +30,7 @@ def create_video_editor_url(project_id: str, task_id: str, *, annotation_id: Opt
     return url
 
 
-def create_image_editor_url(project_id: str, task_id: str, *, input_data_id: Optional[str] = None, annotation_id: Optional[str] = None) -> str:
+def create_image_editor_url(project_id: str, task_id: str, *, input_data_id: str | None = None, annotation_id: str | None = None) -> str:
     """
     画像エディタ画面のURLを生成します。
 
@@ -64,8 +62,8 @@ def create_3dpc_editor_url(
     project_id: str,
     task_id: str,
     *,
-    input_data_id: Optional[str] = None,
-    annotation_id: Optional[str] = None,
+    input_data_id: str | None = None,
+    annotation_id: str | None = None,
     base_url: str = "https://d2rljy8mjgrfyd.cloudfront.net/3d-editor-latest/index.html",
 ) -> str:
     """

@@ -2,9 +2,9 @@ import abc
 import json
 import os
 import zipfile
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from pathlib import Path
-from typing import Any, Callable, Optional, Union
+from typing import Any
 
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
@@ -75,7 +75,7 @@ class SimpleAnnotationParser(abc.ABC):
 
         """
 
-    def parse(self, convert_detail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None) -> SimpleAnnotation:
+    def parse(self, convert_detail_data_func: CONVERT_ANNOTATION_DETAIL_DATA_FUNC | None = None) -> SimpleAnnotation:
         """JSONファイルをパースする
 
         Args:
@@ -163,7 +163,7 @@ class FullAnnotationParser(abc.ABC):
         JSONファイルをloadします。
         """
 
-    def parse(self, convert_detail_data_func: Optional[CONVERT_ANNOTATION_DETAIL_DATA_FUNC] = None) -> FullAnnotation:
+    def parse(self, convert_detail_data_func: CONVERT_ANNOTATION_DETAIL_DATA_FUNC | None = None) -> FullAnnotation:
         """JSONファイルをパースする
 
         Args:
@@ -394,7 +394,7 @@ class SimpleAnnotationZipParserByTask(SimpleAnnotationParserByTask):
 
         return [zip_info.filename for zip_info in self.__zip_file.infolist() if _match_task_id_and_contain_input_data_json(zip_info)]
 
-    def __init__(self, zip_file: zipfile.ZipFile, task_id: str, json_path_list: Optional[list[str]] = None) -> None:
+    def __init__(self, zip_file: zipfile.ZipFile, task_id: str, json_path_list: list[str] | None = None) -> None:
         self.__zip_file = zip_file
         if json_path_list is not None:
             self.__json_path_list = json_path_list
@@ -452,7 +452,7 @@ class SimpleAnnotationDirParserByTask(SimpleAnnotationParserByTask):
             raise ValueError(f"json_file_path '{json_file_path}' は `json_file_path_list` に含まれていません。")
 
 
-def __parse_annotation_dir(annotation_dir_path: Path, clazz: type[Union[SimpleAnnotationDirParser, FullAnnotationDirParser]]) -> Iterator[Any]:
+def __parse_annotation_dir(annotation_dir_path: Path, clazz: type[SimpleAnnotationDirParser | FullAnnotationDirParser]) -> Iterator[Any]:
     for task_dir in annotation_dir_path.iterdir():
         if not task_dir.is_dir():
             continue
@@ -574,8 +574,8 @@ def lazy_parse_simple_annotation_dir_by_task(annotation_dir_path: Path) -> Itera
         yield task_parser
 
 
-def __parse_annotation_zip(zip_file_path: Path, clazz: type[Union[SimpleAnnotationZipParser, FullAnnotationZipParser]]) -> Iterator[Any]:
-    def lazy_parser(zip_file: zipfile.ZipFile, info: zipfile.ZipInfo) -> Optional[Any]:  # noqa: ANN401
+def __parse_annotation_zip(zip_file_path: Path, clazz: type[SimpleAnnotationZipParser | FullAnnotationZipParser]) -> Iterator[Any]:
+    def lazy_parser(zip_file: zipfile.ZipFile, info: zipfile.ZipInfo) -> Any | None:  # noqa: ANN401
         paths = [p for p in info.filename.split("/") if len(p) != 0]
         if len(paths) != 2:
             return None

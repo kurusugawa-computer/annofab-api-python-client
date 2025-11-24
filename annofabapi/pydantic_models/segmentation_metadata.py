@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing_extensions import Self
@@ -30,7 +30,7 @@ class SegmentationMetadata(BaseModel):
     min_warn_rule: StrictStr = Field(
         description="サイズの制約に関する情報 * `none` - 制約なし * `or` - 幅と高さの両方が最小値以上 * `and` - 幅と高さのどちらか一方が最小値以上 "
     )
-    tolerance: Optional[StrictInt] = Field(default=None, description="許容誤差[ピクセル]")
+    tolerance: StrictInt | None = Field(default=None, description="許容誤差[ピクセル]")
     __properties: ClassVar[List[str]] = ["min_width", "min_height", "min_warn_rule", "tolerance"]
 
     @field_validator("min_warn_rule")
@@ -56,7 +56,7 @@ class SegmentationMetadata(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of SegmentationMetadata from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -80,7 +80,7 @@ class SegmentationMetadata(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of SegmentationMetadata from a dict"""
         if obj is None:
             return None

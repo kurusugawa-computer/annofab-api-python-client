@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing_extensions import Annotated, Self
@@ -31,7 +31,7 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(BaseModel):
     min_warn_rule: AnnotationTypeFieldMinWarnRule
     min_width: Annotated[int, Field(strict=True, ge=1)]
     min_height: Annotated[int, Field(strict=True, ge=1)]
-    position_for_minimum_bounding_box_insertion: Optional[List[StrictInt]] = Field(
+    position_for_minimum_bounding_box_insertion: List[StrictInt] | None = Field(
         default=None, description="最小矩形の挿入位置を、要素が2の配列で指定します。 "
     )
     __properties: ClassVar[List[str]] = ["_type", "min_warn_rule", "min_width", "min_height", "position_for_minimum_bounding_box_insertion"]
@@ -59,7 +59,7 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -83,7 +83,7 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition from a dict"""
         if obj is None:
             return None

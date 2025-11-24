@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing_extensions import Self
@@ -26,11 +26,11 @@ class PostMfaSettingRequest(BaseModel):
     """
 
     enabled: StrictBool = Field(description="MFAをONにするか")
-    mfa_code: Optional[StrictStr] = Field(
+    mfa_code: StrictStr | None = Field(
         default=None,
         description="[initiateMfaSetup](#operation/initiateMfaSetup)が返したシークレットコードを元に生成したTOTP。enabledがtrueの場合に設定する ",
     )
-    access_token: Optional[StrictStr] = Field(default=None, description="アクセストークン。enabledがtrueの場合に設定する")
+    access_token: StrictStr | None = Field(default=None, description="アクセストークン。enabledがtrueの場合に設定する")
     __properties: ClassVar[List[str]] = ["enabled", "mfa_code", "access_token"]
 
     model_config = ConfigDict(
@@ -49,7 +49,7 @@ class PostMfaSettingRequest(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of PostMfaSettingRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -73,7 +73,7 @@ class PostMfaSettingRequest(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of PostMfaSettingRequest from a dict"""
         if obj is None:
             return None

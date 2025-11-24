@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing_extensions import Self
@@ -26,9 +26,7 @@ class TaskGenerateRuleByInputDataCsv(BaseModel):
     """
 
     csv_data_path: StrictStr = Field(description="各タスクへの入力データへの割り当てを記入したCSVへのS3上のパス。 ")
-    type: Optional[StrictStr] = Field(
-        default=None, description="`ByInputDataCsv` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type"
-    )
+    type: StrictStr | None = Field(default=None, description="`ByInputDataCsv` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
     __properties: ClassVar[List[str]] = ["csv_data_path", "_type"]
 
     model_config = ConfigDict(
@@ -47,7 +45,7 @@ class TaskGenerateRuleByInputDataCsv(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Self | None:
         """Create an instance of TaskGenerateRuleByInputDataCsv from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -71,7 +69,7 @@ class TaskGenerateRuleByInputDataCsv(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
         """Create an instance of TaskGenerateRuleByInputDataCsv from a dict"""
         if obj is None:
             return None
