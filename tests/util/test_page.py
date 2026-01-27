@@ -81,13 +81,13 @@ class TestCreate3dpcEditorUrl:
     def test_with_input_data_id(self):
         """input_data_idを指定した場合のテスト"""
         result = create_3dpc_editor_url("project1", "task1", input_data_id="input1")
-        expected = "https://d2rljy8mjgrfyd.cloudfront.net/3d-editor-latest/index.html?p=project1&t=task1/#input1"
+        expected = "https://d2rljy8mjgrfyd.cloudfront.net/3d-editor-latest/index.html?p=project1&t=task1#/input1"
         assert result == expected
 
     def test_with_both_ids(self):
         """input_data_idとannotation_idの両方を指定した場合のテスト"""
         result = create_3dpc_editor_url("project1", "task1", input_data_id="input1", annotation_id="annotation1")
-        expected = "https://d2rljy8mjgrfyd.cloudfront.net/3d-editor-latest/index.html?p=project1&t=task1/#input1/annotation1"
+        expected = "https://d2rljy8mjgrfyd.cloudfront.net/3d-editor-latest/index.html?p=project1&t=task1#/input1/annotation1"
         assert result == expected
 
     def test_annotation_id_without_input_data_id_raises_error(self):
