@@ -84,7 +84,7 @@ def create_3dpc_editor_url(
     url = f"{base_url}?p={project_id}&t={task_id}"
 
     if input_data_id is not None:
-        url += f"/#{input_data_id}"
+        url += f"#/{input_data_id}"
 
     if annotation_id is not None:
         if input_data_id is None:
