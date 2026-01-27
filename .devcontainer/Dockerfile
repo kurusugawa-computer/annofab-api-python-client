@@ -84,6 +84,6 @@ ENV PATH=/home/${USERNAME}/.local/bin/:${PATH} \
     UV_LINK_MODE=copy
     
 # install python
-ARG PYTHON_VERSION=3.12.10
+ARG PYTHON_VERSION=3.13.11
 RUN uv python install ${PYTHON_VERSION} --default --preview
 
