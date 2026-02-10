@@ -28,6 +28,7 @@ from annofabapi.dataclass.project_member import ProjectMember
 from annofabapi.dataclass.supplementary import SupplementaryData
 from annofabapi.dataclass.task import Task, TaskHistory
 from annofabapi.models import GraphType, ProjectJobType
+from annofabapi.utils import str_now
 from annofabapi.wrapper import TaskFrameKey
 from tests.utils_for_test import WrapperForTest, create_csv_for_task
 
@@ -180,7 +181,7 @@ class TestAnnotationSpecs:
         request_body = {
             "labels": annotation_spec["labels"],
             "inspection_phrases": annotation_spec["inspection_phrases"],
-            "comment": f"{annofabapi.utils.str_now()} に更新しました。",
+            "comment": f"{str_now()} に更新しました。",
             "last_updated_datetime": last_updated_datetime,
         }
         puted_annotation_spec, _ = api.put_annotation_specs(project_id, request_body=request_body)
@@ -227,7 +228,7 @@ class TestComment:
                     "status": "open",
                     "_type": "Root",
                 },
-                "datetime_for_sorting": annofabapi.utils.str_now(),
+                "datetime_for_sorting": str_now(),
                 "_type": "Put",
             }
         ]
@@ -566,7 +567,7 @@ class TestStatistics:
                 "marker_id": test_marker_id,
                 "title": "add in test code",
                 "graph_type": GraphType.TASK_PROGRESS.value,
-                "marked_at": annofabapi.utils.str_now(),
+                "marked_at": str_now(),
             }
         ]
 

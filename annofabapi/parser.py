@@ -508,7 +508,7 @@ def lazy_parse_simple_annotation_zip_by_task(zip_file_path: Path) -> Iterator[Si
         """
         1階層目のディレクトリをtask_idとみなして、task_idを取得する。
         """
-        return path.split("/")[0]
+        return path.split("/", maxsplit=1)[0]
 
     def is_input_data_json(zip_info: zipfile.ZipInfo) -> bool:
         """
