@@ -184,6 +184,7 @@ select = [
     "PLR",  # Pylint Refactor
     "PERF",  # Perflint
     "F811",  # redefined-while-unused
+    "FURB171", # single-item-membership-test
 ]
 
 [tool.ruff.lint.pydocstyle]
