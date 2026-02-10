@@ -18,7 +18,8 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13"    
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14"    
 ]
 dependencies = [
     "requests",
@@ -46,15 +47,14 @@ test = [
     "pytest-cov",
 ]
 linter = [
-    "ruff>=0.12 ; python_version >= '3.13'",
+    "ruff>=0.15 ; python_version >= '3.13'",
     "mypy>=1,<2 ; python_version >= '3.13'",
-    "pylint>=3,<4 ; python_version >= '3.13'",
     "types-requests",
     "types-python-dateutil",
     "types-dataclasses",
 ]
 documentation = [
-    "sphinx>=8,<9 ; python_version >= '3.13'",
+    "sphinx>=9 ; python_version >= '3.13'",
     "pydata-sphinx-theme ; python_version >= '3.13'",
 ]
 dev = [
@@ -184,6 +184,7 @@ select = [
     "PLR",  # Pylint Refactor
     "PERF",  # Perflint
     "F811",  # redefined-while-unused
+    "FURB171", # single-item-membership-test
 ]
 
 [tool.ruff.lint.pydocstyle]
