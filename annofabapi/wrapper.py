@@ -320,17 +320,24 @@ class Wrapper:
             _, response = self.api.get_annotation_archive(project_id)
         except requests.exceptions.HTTPError as e:
             if e.response is not None and e.response.status_code == requests.codes.conflict:
-                logger.info(
-                    "project_id='%s' :: アノテーションZIPの更新中のため、更新ジョブ(gen-annotation)が完了するまで待ちます。",
-                    project_id,
-                )
-                self.wait_until_job_finished(
-                    project_id,
-                    ProjectJobType.GEN_ANNOTATION,
-                    job_access_interval=job_access_interval,
-                    max_job_access=max_job_access,
-                )
-                _, response = self.api.get_annotation_archive(project_id)
+                try:
+                    error_codes = [err["error_code"] for err in e.response.json()["errors"]]
+                except Exception:
+                    error_codes = []
+                if "WORKER_ALREADY_INVOKED" in error_codes:
+                    logger.info(
+                        "project_id='%s' :: アノテーションZIPの更新中のため、更新ジョブ(gen-annotation)が完了するまで待ちます。",
+                        project_id,
+                    )
+                    self.wait_until_job_finished(
+                        project_id,
+                        ProjectJobType.GEN_ANNOTATION,
+                        job_access_interval=job_access_interval,
+                        max_job_access=max_job_access,
+                    )
+                    _, response = self.api.get_annotation_archive(project_id)
+                else:
+                    raise
             else:
                 raise
         url = response.headers["Location"]
