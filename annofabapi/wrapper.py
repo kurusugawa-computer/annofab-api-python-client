@@ -321,7 +321,7 @@ class Wrapper:
             if e.response is not None and e.response.status_code == requests.codes.conflict:
                 try:
                     error_codes = [err["error_code"] for err in e.response.json()["errors"]]
-                except Exception:
+                except (ValueError, KeyError, TypeError):
                     error_codes = []
                 if "WORKER_ALREADY_INVOKED" in error_codes:
                     logger.info(
@@ -340,7 +340,7 @@ class Wrapper:
             else:
                 raise
 
-            # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
+        # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
         url = response.headers["Location"]
         self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='SimpleアノテーションZIP'")
         return url
