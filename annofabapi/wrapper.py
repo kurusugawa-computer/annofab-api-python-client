@@ -316,7 +316,6 @@ class Wrapper:
 
         """
         try:
-            # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
             _, response = self.api.get_annotation_archive(project_id)
         except requests.exceptions.HTTPError as e:
             if e.response is not None and e.response.status_code == requests.codes.conflict:
@@ -340,6 +339,8 @@ class Wrapper:
                     raise
             else:
                 raise
+
+            # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
         url = response.headers["Location"]
         self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='SimpleアノテーションZIP'")
         return url
