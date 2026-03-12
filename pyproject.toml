@@ -42,7 +42,7 @@ Repository = "https://github.com/kurusugawa-computer/annofab-api-python-client"
 
 [dependency-groups]
 test = [
-    "pytest>=8,<9",
+    "pytest>=8,<10",
     "pytest-xdist",
     "pytest-cov",
 ]
