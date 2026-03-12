@@ -291,20 +291,56 @@ class Wrapper:
             _raise_for_status(response)
             return content
 
-    def download_annotation_archive(self, project_id: str, dest_path: str | Path) -> str:
+    def download_annotation_archive(
+        self,
+        project_id: str,
+        dest_path: str | Path,
+        *,
+        job_access_interval: int = 60,
+        max_job_access: int = 360,
+    ) -> str:
         """
         simpleアノテーションZIPをダウンロードする。
+
+        アノテーションZIPの更新中（HTTP 409, WORKER_ALREADY_INVOKED）の場合は、
+        更新ジョブ（gen-annotation）が完了するまで待ってからダウンロードする。
 
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先のファイルパス
+            job_access_interval: アノテーションZIPの更新ジョブにアクセスする間隔[秒]
+            max_job_access: アノテーションZIPの更新ジョブに最大何回アクセスするか
 
         Returns:
             ダウンロード元のURL
 
         """
+        try:
+            _, response = self.api.get_annotation_archive(project_id)
+        except requests.exceptions.HTTPError as e:
+            if e.response is not None and e.response.status_code == requests.codes.conflict:
+                try:
+                    error_codes = [err["error_code"] for err in e.response.json()["errors"]]
+                except (ValueError, KeyError, TypeError):
+                    error_codes = []
+                if "WORKER_ALREADY_INVOKED" in error_codes:
+                    logger.info(
+                        "project_id='%s' :: アノテーションZIPの更新中のため、更新ジョブ(gen-annotation)が完了するまで待ちます。",
+                        project_id,
+                    )
+                    self.wait_until_job_finished(
+                        project_id,
+                        ProjectJobType.GEN_ANNOTATION,
+                        job_access_interval=job_access_interval,
+                        max_job_access=max_job_access,
+                    )
+                    _, response = self.api.get_annotation_archive(project_id)
+                else:
+                    raise
+            else:
+                raise
+
         # 2022/01時点でレスポンスのcontent-typeが"text/plain"なので、contentの型がdictにならない。したがって、Locationヘッダを参照する。
-        _, response = self.api.get_annotation_archive(project_id)
         url = response.headers["Location"]
         self.download(url, dest_path, logger_prefix=f"project_id='{project_id}', ダウンロード対象のファイル='SimpleアノテーションZIP'")
         return url
