@@ -33,4 +33,4 @@ def write_binary_image(array: npt.ArrayLike, fp) -> None:  # noqa: ANN001
     channel = 4  # RGBAの4チャンネル
     data = numpy.zeros((height, width, channel), dtype=numpy.uint8)
     data[mask_array] = [255, 255, 255, 255]
-    Image.fromarray(data, mode="RGBA").save(fp, format="PNG")
+    Image.fromarray(data).save(fp, format="PNG")
