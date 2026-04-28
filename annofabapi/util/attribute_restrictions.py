@@ -1003,66 +1003,6 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
     return _ast_to_atomic_restriction(ast, fac=fac, attribute=attribute)
 
 
-def _equals_restriction_to_ast(
-    *,
-    attribute: AttributeDefinition,
-    attribute_name: str,
-    attribute_type: AdditionalDataDefinitionType,
-    value: str,
-) -> RestrictionAst:
-    match attribute_type:
-        case "flag" if value == "true":
-            return RestrictionAst(type=RestrictionAstType.CHECKED, attribute_name=attribute_name)
-        case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select" if value == "":
-            return RestrictionAst(type=RestrictionAstType.IS_EMPTY, attribute_name=attribute_name)
-        case "text" | "comment" | "tracking":
-            return RestrictionAst(type=RestrictionAstType.EQUALS_STRING, attribute_name=attribute_name, value=value)
-        case "integer":
-            return RestrictionAst(
-                type=RestrictionAstType.EQUALS_INTEGER,
-                attribute_name=attribute_name,
-                value=_parse_integer_value(value, attribute=attribute, condition={"_type": "Equals", "value": value}),
-            )
-        case "choice" | "select":
-            choice = get_choice(_get_attribute_choices(attribute), choice_id=value)
-            return RestrictionAst(type=RestrictionAstType.HAS_CHOICE, attribute_name=attribute_name, choice_name=get_english_message(choice["name"]))
-        case _:
-            raise ValueError(f"RestrictionをASTへ変換できません。 :: restriction_type='Equals', attribute_type='{attribute_type}', value={value!r}")
-
-
-def _not_equals_restriction_to_ast(
-    *,
-    attribute: AttributeDefinition,
-    attribute_name: str,
-    attribute_type: AdditionalDataDefinitionType,
-    value: str,
-) -> RestrictionAst:
-    match attribute_type:
-        case "flag" if value == "true":
-            return RestrictionAst(type=RestrictionAstType.UNCHECKED, attribute_name=attribute_name)
-        case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select" if value == "":
-            return RestrictionAst(type=RestrictionAstType.IS_NOT_EMPTY, attribute_name=attribute_name)
-        case "text" | "comment" | "tracking":
-            return RestrictionAst(type=RestrictionAstType.NOT_EQUALS_STRING, attribute_name=attribute_name, value=value)
-        case "integer":
-            return RestrictionAst(
-                type=RestrictionAstType.NOT_EQUALS_INTEGER,
-                attribute_name=attribute_name,
-                value=_parse_integer_value(value, attribute=attribute, condition={"_type": "NotEquals", "value": value}),
-            )
-        case "choice" | "select":
-            choice = get_choice(_get_attribute_choices(attribute), choice_id=value)
-            return RestrictionAst(
-                type=RestrictionAstType.NOT_HAS_CHOICE,
-                attribute_name=attribute_name,
-                choice_name=get_english_message(choice["name"]),
-            )
-        case _:
-            raise ValueError(
-                f"RestrictionをASTへ変換できません。 :: restriction_type='NotEquals', attribute_type='{attribute_type}', value={value!r}"
-            )
-
-
 def _attribute_with_empty_check(fac: AttributeFactory, attribute_name: str) -> EmptyCheckMixin:
     """
     空判定をサポートする属性オブジェクトを取得します。
@@ -1160,6 +1100,70 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
         ValueError: ASTへ変換できない制約が含まれている場合
     """
 
+    def equals_restriction_to_ast(
+        *,
+        attribute: AttributeDefinition,
+        attribute_name: str,
+        attribute_type: AdditionalDataDefinitionType,
+        value: str,
+    ) -> RestrictionAst:
+        match attribute_type:
+            case "flag" if value == "true":
+                return RestrictionAst(type=RestrictionAstType.CHECKED, attribute_name=attribute_name)
+            case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select" if value == "":
+                return RestrictionAst(type=RestrictionAstType.IS_EMPTY, attribute_name=attribute_name)
+            case "text" | "comment" | "tracking":
+                return RestrictionAst(type=RestrictionAstType.EQUALS_STRING, attribute_name=attribute_name, value=value)
+            case "integer":
+                return RestrictionAst(
+                    type=RestrictionAstType.EQUALS_INTEGER,
+                    attribute_name=attribute_name,
+                    value=_parse_integer_value(value, attribute=attribute, condition={"_type": "Equals", "value": value}),
+                )
+            case "choice" | "select":
+                choice = get_choice(_get_attribute_choices(attribute), choice_id=value)
+                return RestrictionAst(
+                    type=RestrictionAstType.HAS_CHOICE,
+                    attribute_name=attribute_name,
+                    choice_name=get_english_message(choice["name"]),
+                )
+            case _:
+                raise ValueError(
+                    f"RestrictionをASTへ変換できません。 :: restriction_type='Equals', attribute_type='{attribute_type}', value={value!r}"
+                )
+
+    def not_equals_restriction_to_ast(
+        *,
+        attribute: AttributeDefinition,
+        attribute_name: str,
+        attribute_type: AdditionalDataDefinitionType,
+        value: str,
+    ) -> RestrictionAst:
+        match attribute_type:
+            case "flag" if value == "true":
+                return RestrictionAst(type=RestrictionAstType.UNCHECKED, attribute_name=attribute_name)
+            case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select" if value == "":
+                return RestrictionAst(type=RestrictionAstType.IS_NOT_EMPTY, attribute_name=attribute_name)
+            case "text" | "comment" | "tracking":
+                return RestrictionAst(type=RestrictionAstType.NOT_EQUALS_STRING, attribute_name=attribute_name, value=value)
+            case "integer":
+                return RestrictionAst(
+                    type=RestrictionAstType.NOT_EQUALS_INTEGER,
+                    attribute_name=attribute_name,
+                    value=_parse_integer_value(value, attribute=attribute, condition={"_type": "NotEquals", "value": value}),
+                )
+            case "choice" | "select":
+                choice = get_choice(_get_attribute_choices(attribute), choice_id=value)
+                return RestrictionAst(
+                    type=RestrictionAstType.NOT_HAS_CHOICE,
+                    attribute_name=attribute_name,
+                    choice_name=get_english_message(choice["name"]),
+                )
+            case _:
+                raise ValueError(
+                    f"RestrictionをASTへ変換できません。 :: restriction_type='NotEquals', attribute_type='{attribute_type}', value={value!r}"
+                )
+
     def restriction_to_atomic_ast(
         restriction: Restriction,
         *,
@@ -1171,14 +1175,14 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
             case CanInput(enable=enable):
                 return RestrictionAst(type=RestrictionAstType.CAN_INPUT, attribute_name=attribute_name, enable=enable)
             case Equals(value=value):
-                return _equals_restriction_to_ast(
+                return equals_restriction_to_ast(
                     attribute=attribute,
                     attribute_name=attribute_name,
                     attribute_type=attribute_type,
                     value=value,
                 )
             case NotEquals(value=value):
-                return _not_equals_restriction_to_ast(
+                return not_equals_restriction_to_ast(
                     attribute=attribute,
                     attribute_name=attribute_name,
                     attribute_type=attribute_type,
