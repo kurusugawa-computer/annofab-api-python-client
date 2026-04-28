@@ -531,7 +531,7 @@ class RestrictionAst(BaseModel):
         fac = AttributeFactory(annotation_specs)
         return _ast_to_restriction(self, fac=fac)
 
-    def to_human_readable(self) -> str:
+    def to_human_readable(self) -> str:  # noqa: PLR0915
         """
         ASTを人間向けの読みやすい文字列へ変換します。
 
@@ -541,6 +541,50 @@ class RestrictionAst(BaseModel):
         Raises:
             ValueError: 未知のAST種別が指定された場合
         """
+
+        def to_human_readable_text(ast: RestrictionAst, *, attribute_name: str) -> str:  # noqa: PLR0912
+            """
+            `imply` 以外のASTを人間向けの読みやすい文字列へ変換します。
+
+            Args:
+                ast: 変換対象のASTです。
+                attribute_name: `repr()` 済みの属性名です。
+
+            Returns:
+                人間向けの読みやすい文字列です。
+            """
+            match ast.type:
+                case RestrictionAstType.CHECKED:
+                    text = f"{attribute_name} is checked"
+                case RestrictionAstType.UNCHECKED:
+                    text = f"{attribute_name} is unchecked"
+                case RestrictionAstType.IS_EMPTY:
+                    text = f"{attribute_name} is empty"
+                case RestrictionAstType.IS_NOT_EMPTY:
+                    text = f"{attribute_name} is not empty"
+                case RestrictionAstType.EQUALS_STRING | RestrictionAstType.EQUALS_INTEGER:
+                    text = f"{attribute_name} is " + repr(ast.value)
+                case RestrictionAstType.NOT_EQUALS_STRING | RestrictionAstType.NOT_EQUALS_INTEGER:
+                    text = f"{attribute_name} is not " + repr(ast.value)
+                case RestrictionAstType.MATCHES_STRING:
+                    text = f"{attribute_name} matches " + repr(ast.value)
+                case RestrictionAstType.NOT_MATCHES_STRING:
+                    text = f"{attribute_name} does not match " + repr(ast.value)
+                case RestrictionAstType.HAS_CHOICE:
+                    text = f"{attribute_name} is " + repr(ast.choice_name)
+                case RestrictionAstType.NOT_HAS_CHOICE:
+                    text = f"{attribute_name} is not " + repr(ast.choice_name)
+                case RestrictionAstType.HAS_LABEL:
+                    assert ast.label_names is not None
+                    text = f"{attribute_name} has labels {', '.join(repr(label_name) for label_name in ast.label_names)}"
+                case RestrictionAstType.CAN_INPUT:
+                    assert ast.enable is not None
+                    text = f"{attribute_name} can be edited" if ast.enable else f"{attribute_name} is read-only"
+                case RestrictionAstType.IMPLY:
+                    raise AssertionError("`imply`は事前に処理されるため、ここには到達しません。")
+                case _ as never:
+                    assert_noreturn(never)
+            return text
 
         def flatten_imply_conditions(ast: RestrictionAst) -> tuple[list[RestrictionAst], RestrictionAst]:
             """
@@ -600,7 +644,7 @@ class RestrictionAst(BaseModel):
 
         assert self.attribute_name is not None
         attribute_name = repr(self.attribute_name)
-        return _restriction_ast_to_human_readable_text(self, attribute_name=attribute_name)
+        return to_human_readable_text(self, attribute_name=attribute_name)
 
 
 RestrictionAst.model_rebuild()
@@ -766,51 +810,6 @@ def _from_restriction_dict(obj: dict[str, Any]) -> Restriction:
     attribute_id = obj["additional_data_definition_id"]
     condition = obj["condition"]
     return _from_condition_dict(attribute_id=attribute_id, condition=condition)
-
-
-def _restriction_ast_to_human_readable_text(ast: RestrictionAst, *, attribute_name: str) -> str:  # noqa: PLR0912
-    """
-    `imply` 以外のASTを人間向けの読みやすい文字列へ変換します。
-
-    Args:
-        ast: 変換対象のASTです。
-        attribute_name: `repr()` 済みの属性名です。
-
-    Returns:
-        人間向けの読みやすい文字列です。
-    """
-    match ast.type:
-        case RestrictionAstType.CHECKED:
-            text = f"{attribute_name} is checked"
-        case RestrictionAstType.UNCHECKED:
-            text = f"{attribute_name} is unchecked"
-        case RestrictionAstType.IS_EMPTY:
-            text = f"{attribute_name} is empty"
-        case RestrictionAstType.IS_NOT_EMPTY:
-            text = f"{attribute_name} is not empty"
-        case RestrictionAstType.EQUALS_STRING | RestrictionAstType.EQUALS_INTEGER:
-            text = f"{attribute_name} is " + repr(ast.value)
-        case RestrictionAstType.NOT_EQUALS_STRING | RestrictionAstType.NOT_EQUALS_INTEGER:
-            text = f"{attribute_name} is not " + repr(ast.value)
-        case RestrictionAstType.MATCHES_STRING:
-            text = f"{attribute_name} matches " + repr(ast.value)
-        case RestrictionAstType.NOT_MATCHES_STRING:
-            text = f"{attribute_name} does not match " + repr(ast.value)
-        case RestrictionAstType.HAS_CHOICE:
-            text = f"{attribute_name} is " + repr(ast.choice_name)
-        case RestrictionAstType.NOT_HAS_CHOICE:
-            text = f"{attribute_name} is not " + repr(ast.choice_name)
-        case RestrictionAstType.HAS_LABEL:
-            assert ast.label_names is not None
-            text = f"{attribute_name} has labels {', '.join(repr(label_name) for label_name in ast.label_names)}"
-        case RestrictionAstType.CAN_INPUT:
-            assert ast.enable is not None
-            text = f"{attribute_name} can be edited" if ast.enable else f"{attribute_name} is read-only"
-        case RestrictionAstType.IMPLY:
-            raise AssertionError("`imply`は事前に処理されるため、ここには到達しません。")
-        case _ as never:
-            assert_noreturn(never)
-    return text
 
 
 def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any]) -> Restriction:
