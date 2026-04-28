@@ -1,0 +1,24 @@
+# 承認ポリシー。
+# "never" は、Codex がコマンド実行や権限昇格のたびに確認せず進む設定です。
+approval_policy = "never"
+
+# sandbox の種類。
+# "workspace-write" は、workspace 内と許可された追加パスへの書き込みを許可します。
+sandbox_mode = "workspace-write"
+
+[shell_environment_policy.set]
+# uv のキャッシュ先を /tmp 配下に固定し、ユーザー名依存のパスを避けます。
+UV_CACHE_DIR = "/tmp/uv-cache"
+
+[sandbox_workspace_write]
+# workspace-write sandbox 内で外向きネットワーク通信を許可します。
+network_access = true
+
+# workspace に加えて書き込みを許可する追加ディレクトリ一覧です。
+# 今回は uv キャッシュと一時ファイル用途を想定して /tmp を許可しています。
+writable_roots = [
+  "/tmp",
+]
+
+[features]
+codex_hooks = true
