@@ -846,58 +846,6 @@ def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any]) -> Res
     return restriction
 
 
-def _ast_to_atomic_restriction(ast: RestrictionAst, *, fac: AttributeFactory, attribute: AttributeDefinition) -> Restriction:  # noqa: PLR0912
-    assert ast.attribute_name is not None
-    attribute_type = attribute["type"]
-    restriction: Restriction
-
-    match ast.type:
-        case RestrictionAstType.CHECKED:
-            restriction = fac.checkbox(attribute_name=ast.attribute_name).checked()
-        case RestrictionAstType.UNCHECKED:
-            restriction = fac.checkbox(attribute_name=ast.attribute_name).unchecked()
-        case RestrictionAstType.IS_EMPTY:
-            restriction = _attribute_with_empty_check(fac, ast.attribute_name).is_empty()
-        case RestrictionAstType.IS_NOT_EMPTY:
-            restriction = _attribute_with_empty_check(fac, ast.attribute_name).is_not_empty()
-        case RestrictionAstType.CAN_INPUT:
-            assert ast.enable is not None
-            attribute_obj = _create_attribute_object_with_name(fac, ast.attribute_name)
-            restriction = attribute_obj.enabled() if ast.enable else attribute_obj.disabled()
-        case RestrictionAstType.EQUALS_STRING | RestrictionAstType.NOT_EQUALS_STRING:
-            restriction = _ast_string_equality_to_restriction(ast=ast, fac=fac, attribute=attribute, attribute_type=attribute_type)
-        case RestrictionAstType.MATCHES_STRING | RestrictionAstType.NOT_MATCHES_STRING:
-            restriction = _ast_string_match_to_restriction(ast=ast, fac=fac, attribute=attribute, attribute_type=attribute_type)
-        case RestrictionAstType.EQUALS_INTEGER | RestrictionAstType.NOT_EQUALS_INTEGER:
-            assert isinstance(ast.value, int)
-            attribute_obj = fac.integer_textbox(attribute_name=ast.attribute_name)
-            match ast.type:
-                case RestrictionAstType.EQUALS_INTEGER:
-                    restriction = attribute_obj.equals(ast.value)
-                case RestrictionAstType.NOT_EQUALS_INTEGER:
-                    restriction = attribute_obj.not_equals(ast.value)
-                case _:
-                    raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
-        case RestrictionAstType.HAS_CHOICE | RestrictionAstType.NOT_HAS_CHOICE:
-            assert ast.choice_name is not None
-            attribute_obj = fac.selection(attribute_name=ast.attribute_name)
-            match ast.type:
-                case RestrictionAstType.HAS_CHOICE:
-                    restriction = attribute_obj.has_choice(choice_name=ast.choice_name)
-                case RestrictionAstType.NOT_HAS_CHOICE:
-                    restriction = attribute_obj.not_has_choice(choice_name=ast.choice_name)
-                case _:
-                    raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
-        case RestrictionAstType.HAS_LABEL:
-            assert ast.label_names is not None
-            restriction = fac.annotation_link(attribute_name=ast.attribute_name).has_label(label_names=ast.label_names)
-        case RestrictionAstType.IMPLY:
-            raise AssertionError("`imply`は `_ast_to_restriction` で処理されるため、ここには到達しません。")
-        case _ as never:
-            assert_noreturn(never)
-    return restriction
-
-
 def _ast_string_equality_to_restriction(
     *,
     ast: RestrictionAst,
@@ -976,7 +924,7 @@ def _create_attribute_object_with_name(fac: AttributeFactory, attribute_name: st
             raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
 
 
-def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restriction:
+def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restriction:  # noqa: PLR0915
     """
     意味ベースのASTを `Restriction` オブジェクトへコンパイルします。
 
@@ -990,6 +938,58 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
     Raises:
         ValueError: AST種別が未知の場合、または属性型に対して利用できないASTが指定された場合
     """
+
+    def ast_to_atomic_restriction(ast: RestrictionAst, *, attribute: AttributeDefinition) -> Restriction:  # noqa: PLR0912
+        assert ast.attribute_name is not None
+        attribute_type = attribute["type"]
+        restriction: Restriction
+
+        match ast.type:
+            case RestrictionAstType.CHECKED:
+                restriction = fac.checkbox(attribute_name=ast.attribute_name).checked()
+            case RestrictionAstType.UNCHECKED:
+                restriction = fac.checkbox(attribute_name=ast.attribute_name).unchecked()
+            case RestrictionAstType.IS_EMPTY:
+                restriction = _attribute_with_empty_check(fac, ast.attribute_name).is_empty()
+            case RestrictionAstType.IS_NOT_EMPTY:
+                restriction = _attribute_with_empty_check(fac, ast.attribute_name).is_not_empty()
+            case RestrictionAstType.CAN_INPUT:
+                assert ast.enable is not None
+                attribute_obj = _create_attribute_object_with_name(fac, ast.attribute_name)
+                restriction = attribute_obj.enabled() if ast.enable else attribute_obj.disabled()
+            case RestrictionAstType.EQUALS_STRING | RestrictionAstType.NOT_EQUALS_STRING:
+                restriction = _ast_string_equality_to_restriction(ast=ast, fac=fac, attribute=attribute, attribute_type=attribute_type)
+            case RestrictionAstType.MATCHES_STRING | RestrictionAstType.NOT_MATCHES_STRING:
+                restriction = _ast_string_match_to_restriction(ast=ast, fac=fac, attribute=attribute, attribute_type=attribute_type)
+            case RestrictionAstType.EQUALS_INTEGER | RestrictionAstType.NOT_EQUALS_INTEGER:
+                assert isinstance(ast.value, int)
+                attribute_obj = fac.integer_textbox(attribute_name=ast.attribute_name)
+                match ast.type:
+                    case RestrictionAstType.EQUALS_INTEGER:
+                        restriction = attribute_obj.equals(ast.value)
+                    case RestrictionAstType.NOT_EQUALS_INTEGER:
+                        restriction = attribute_obj.not_equals(ast.value)
+                    case _:
+                        raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+            case RestrictionAstType.HAS_CHOICE | RestrictionAstType.NOT_HAS_CHOICE:
+                assert ast.choice_name is not None
+                attribute_obj = fac.selection(attribute_name=ast.attribute_name)
+                match ast.type:
+                    case RestrictionAstType.HAS_CHOICE:
+                        restriction = attribute_obj.has_choice(choice_name=ast.choice_name)
+                    case RestrictionAstType.NOT_HAS_CHOICE:
+                        restriction = attribute_obj.not_has_choice(choice_name=ast.choice_name)
+                    case _:
+                        raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+            case RestrictionAstType.HAS_LABEL:
+                assert ast.label_names is not None
+                restriction = fac.annotation_link(attribute_name=ast.attribute_name).has_label(label_names=ast.label_names)
+            case RestrictionAstType.IMPLY:
+                raise AssertionError("`imply`は `_ast_to_restriction` で処理されるため、ここには到達しません。")
+            case _ as never:
+                assert_noreturn(never)
+        return restriction
+
     match ast.type:
         case RestrictionAstType.IMPLY:
             assert ast.premise is not None
@@ -1000,7 +1000,7 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
 
     assert ast.attribute_name is not None
     attribute = fac.accessor.get_attribute(attribute_name=ast.attribute_name)
-    return _ast_to_atomic_restriction(ast, fac=fac, attribute=attribute)
+    return ast_to_atomic_restriction(ast, attribute=attribute)
 
 
 def _attribute_with_empty_check(fac: AttributeFactory, attribute_name: str) -> EmptyCheckMixin:
