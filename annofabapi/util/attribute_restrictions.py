@@ -846,18 +846,17 @@ def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any]) -> Res
     return restriction
 
 
-def _create_attribute_object_with_name(fac: AttributeFactory, attribute_name: str) -> Attribute:
+def _create_attribute_object(fac: AttributeFactory, attribute: AttributeDefinition) -> Attribute:
     """
-    属性名から対応する高水準属性オブジェクトを生成します。
+    属性定義から対応する高水準属性オブジェクトを生成します。
 
     Args:
         fac: 属性生成に使う `AttributeFactory` です。
-        attribute_name: 属性名です。
+        attribute: アノテーション仕様上の属性定義です。
 
     Returns:
         対応する高水準属性オブジェクトです。
     """
-    attribute = fac.accessor.get_attribute(attribute_name=attribute_name)
     attribute_id = attribute["additional_data_definition_id"]
     attribute_type: AdditionalDataDefinitionType = attribute["type"]
     match attribute_type:
@@ -946,12 +945,12 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
             case RestrictionAstType.UNCHECKED:
                 restriction = fac.checkbox(attribute_name=ast.attribute_name).unchecked()
             case RestrictionAstType.IS_EMPTY:
-                restriction = _attribute_with_empty_check(fac, ast.attribute_name).is_empty()
+                restriction = _attribute_with_empty_check(fac, attribute=attribute).is_empty()
             case RestrictionAstType.IS_NOT_EMPTY:
-                restriction = _attribute_with_empty_check(fac, ast.attribute_name).is_not_empty()
+                restriction = _attribute_with_empty_check(fac, attribute=attribute).is_not_empty()
             case RestrictionAstType.CAN_INPUT:
                 assert ast.enable is not None
-                attribute_obj = _create_attribute_object_with_name(fac, ast.attribute_name)
+                attribute_obj = _create_attribute_object(fac, attribute=attribute)
                 restriction = attribute_obj.enabled() if ast.enable else attribute_obj.disabled()
             case RestrictionAstType.EQUALS_STRING | RestrictionAstType.NOT_EQUALS_STRING:
                 restriction = ast_string_equality_to_restriction(ast=ast, attribute=attribute, attribute_type=attribute_type)
@@ -999,13 +998,13 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
     return ast_to_atomic_restriction(ast, attribute=attribute)
 
 
-def _attribute_with_empty_check(fac: AttributeFactory, attribute_name: str) -> EmptyCheckMixin:
+def _attribute_with_empty_check(fac: AttributeFactory, *, attribute: AttributeDefinition) -> EmptyCheckMixin:
     """
     空判定をサポートする属性オブジェクトを取得します。
 
     Args:
         fac: 属性生成に使う `AttributeFactory` です。
-        attribute_name: 属性名です。
+        attribute: アノテーション仕様上の属性定義です。
 
     Returns:
         `is_empty()` / `is_not_empty()` を持つ属性オブジェクトです。
@@ -1013,9 +1012,8 @@ def _attribute_with_empty_check(fac: AttributeFactory, attribute_name: str) -> E
     Raises:
         ValueError: 指定した属性で空判定を利用できない場合
     """
-    attribute_obj = _create_attribute_object_with_name(fac, attribute_name)
+    attribute_obj = _create_attribute_object(fac, attribute)
     if not isinstance(attribute_obj, EmptyCheckMixin):
-        attribute = fac.accessor.get_attribute(attribute_name=attribute_name)
         _raise_invalid_restriction(
             attribute=attribute,
             condition={"_type": "EmptyCheck"},
