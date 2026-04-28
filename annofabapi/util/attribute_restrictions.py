@@ -29,7 +29,7 @@ Example:
 
 from abc import ABC, abstractmethod
 from collections.abc import Collection
-from typing import Any, Literal
+from typing import Any, Literal, NoReturn
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -508,11 +508,12 @@ def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[
     for attribute in accessor.additionals:
         attribute_type = attribute["type"]
         choice_names = None
-        if attribute_type in {"choice", "select"}:
-            choice_names = [get_english_message(choice["name"]) for choice in attribute["choices"]]
         label_names = None
-        if attribute_type == "link":
-            label_names = [get_english_message(label["label_name"]) for label in accessor.labels]
+        match attribute_type:
+            case "choice" | "select":
+                choice_names = [get_english_message(choice["name"]) for choice in attribute["choices"]]
+            case "link":
+                label_names = [get_english_message(label["label_name"]) for label in accessor.labels]
         item = AttributeRestrictionCatalogItem(
             attribute_name=get_english_message(attribute["name"]),
             attribute_type=attribute_type,
@@ -540,6 +541,36 @@ def _from_restriction_dict(obj: dict[str, Any], *, fac: AttributeFactory | None)
     return _from_condition_dict(attribute_id=attribute_id, condition=condition, fac=fac)
 
 
+def _get_required_ast_fields(ast_type: RestrictionAstType) -> set[str]:
+    """
+    AST種別ごとに必須なフィールド名を返します。
+
+    Args:
+        ast_type: ASTノードの種類です。
+
+    Returns:
+        AST種別に対応する必須フィールド名です。
+
+    Raises:
+        ValueError: 未知のAST種別が指定された場合
+    """
+    match ast_type:
+        case "checked" | "unchecked" | "is_empty" | "is_not_empty":
+            return {"attribute_name"}
+        case "equals_string" | "not_equals_string" | "matches_string" | "not_matches_string" | "equals_integer" | "not_equals_integer":
+            return {"attribute_name", "value"}
+        case "has_choice" | "not_has_choice":
+            return {"attribute_name", "choice_name"}
+        case "has_label":
+            return {"attribute_name", "label_names"}
+        case "can_input":
+            return {"attribute_name", "enable"}
+        case "imply":
+            return {"premise", "conclusion"}
+        case _:
+            raise ValueError(f"未知のAST種別です。 :: type='{ast_type}'")
+
+
 def _validate_restriction_ast(ast: RestrictionAst) -> None:
     """
     `RestrictionAst` の構造がAST種別に整合しているか検証します。
@@ -550,27 +581,7 @@ def _validate_restriction_ast(ast: RestrictionAst) -> None:
     Raises:
         ValueError: AST種別に対して必須フィールドが不足している場合、または型が不正な場合
     """
-    type_to_fields = {
-        "checked": {"attribute_name"},
-        "unchecked": {"attribute_name"},
-        "is_empty": {"attribute_name"},
-        "is_not_empty": {"attribute_name"},
-        "equals_string": {"attribute_name", "value"},
-        "not_equals_string": {"attribute_name", "value"},
-        "matches_string": {"attribute_name", "value"},
-        "not_matches_string": {"attribute_name", "value"},
-        "equals_integer": {"attribute_name", "value"},
-        "not_equals_integer": {"attribute_name", "value"},
-        "has_choice": {"attribute_name", "choice_name"},
-        "not_has_choice": {"attribute_name", "choice_name"},
-        "has_label": {"attribute_name", "label_names"},
-        "can_input": {"attribute_name", "enable"},
-        "imply": {"premise", "conclusion"},
-    }
-    required_fields = type_to_fields.get(ast.type)
-    if required_fields is None:
-        raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
-
+    required_fields = _get_required_ast_fields(ast.type)
     actual_fields = {
         field_name
         for field_name, value in (
@@ -587,16 +598,24 @@ def _validate_restriction_ast(ast: RestrictionAst) -> None:
     if actual_fields != required_fields:
         raise ValueError(f"AST種別'{ast.type}'のフィールドが不正です。 :: required={sorted(required_fields)}, actual={sorted(actual_fields)}")
 
-    if ast.type in {"equals_string", "not_equals_string", "matches_string", "not_matches_string"} and not isinstance(ast.value, str):
-        raise ValueError(f"AST種別'{ast.type}'の'value'は文字列である必要があります。")
-    if ast.type in {"equals_integer", "not_equals_integer"} and not isinstance(ast.value, int):
-        raise ValueError(f"AST種別'{ast.type}'の'value'は整数である必要があります。")
-    if ast.type in {"has_choice", "not_has_choice"} and not isinstance(ast.choice_name, str):
-        raise ValueError(f"AST種別'{ast.type}'の'choice_name'は文字列である必要があります。")
-    if ast.type == "has_label" and (not isinstance(ast.label_names, list) or any(not isinstance(label_name, str) for label_name in ast.label_names)):
-        raise ValueError("AST種別'has_label'の'label_names'は文字列のリストである必要があります。")
-    if ast.type == "can_input" and not isinstance(ast.enable, bool):
-        raise ValueError("AST種別'can_input'の'enable'は真偽値である必要があります。")
+    match ast.type:
+        case "equals_string" | "not_equals_string" | "matches_string" | "not_matches_string":
+            if not isinstance(ast.value, str):
+                raise ValueError(f"AST種別'{ast.type}'の'value'は文字列である必要があります。")
+        case "equals_integer" | "not_equals_integer":
+            if not isinstance(ast.value, int):
+                raise ValueError(f"AST種別'{ast.type}'の'value'は整数である必要があります。")
+        case "has_choice" | "not_has_choice":
+            if not isinstance(ast.choice_name, str):
+                raise ValueError(f"AST種別'{ast.type}'の'choice_name'は文字列である必要があります。")
+        case "has_label":
+            if not isinstance(ast.label_names, list) or any(not isinstance(label_name, str) for label_name in ast.label_names):
+                raise ValueError("AST種別'has_label'の'label_names'は文字列のリストである必要があります。")
+        case "can_input":
+            if not isinstance(ast.enable, bool):
+                raise ValueError("AST種別'can_input'の'enable'は真偽値である必要があります。")
+        case _:
+            pass
 
 
 def _get_allowed_ast_types(attribute_type: str) -> list[RestrictionAstType]:
@@ -612,19 +631,21 @@ def _get_allowed_ast_types(attribute_type: str) -> list[RestrictionAstType]:
     Raises:
         ValueError: 未対応の属性種類が指定された場合
     """
-    if attribute_type == "flag":
-        return ["can_input", "checked", "unchecked"]
-    if attribute_type in {"text", "comment"}:
-        return ["can_input", "is_empty", "is_not_empty", "equals_string", "not_equals_string", "matches_string", "not_matches_string"]
-    if attribute_type == "integer":
-        return ["can_input", "is_empty", "is_not_empty", "equals_integer", "not_equals_integer"]
-    if attribute_type == "link":
-        return ["can_input", "is_empty", "is_not_empty", "has_label"]
-    if attribute_type == "tracking":
-        return ["can_input", "is_empty", "is_not_empty", "equals_string", "not_equals_string"]
-    if attribute_type in {"choice", "select"}:
-        return ["can_input", "is_empty", "is_not_empty", "has_choice", "not_has_choice"]
-    raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
+    match attribute_type:
+        case "flag":
+            return ["can_input", "checked", "unchecked"]
+        case "text" | "comment":
+            return ["can_input", "is_empty", "is_not_empty", "equals_string", "not_equals_string", "matches_string", "not_matches_string"]
+        case "integer":
+            return ["can_input", "is_empty", "is_not_empty", "equals_integer", "not_equals_integer"]
+        case "link":
+            return ["can_input", "is_empty", "is_not_empty", "has_label"]
+        case "tracking":
+            return ["can_input", "is_empty", "is_not_empty", "equals_string", "not_equals_string"]
+        case "choice" | "select":
+            return ["can_input", "is_empty", "is_not_empty", "has_choice", "not_has_choice"]
+        case _:
+            raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
 
 
 def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any], fac: AttributeFactory | None) -> Restriction:
@@ -640,14 +661,15 @@ def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any], fac: A
         復元した `Restriction` オブジェクトです。
     """
     condition_type = condition["_type"]
-    if condition_type == "Imply":
-        premise_restriction = _from_restriction_dict(condition["premise"], fac=fac)
-        conclusion_restriction = _from_condition_dict(attribute_id=attribute_id, condition=condition["condition"], fac=fac)
-        return Imply(premise_restriction=premise_restriction, conclusion_restriction=conclusion_restriction)
-
-    if fac is None:
-        return _from_condition_dict_without_validation(attribute_id=attribute_id, condition=condition)
-    return _from_condition_dict_with_validation(attribute_id=attribute_id, condition=condition, fac=fac)
+    match condition_type:
+        case "Imply":
+            premise_restriction = _from_restriction_dict(condition["premise"], fac=fac)
+            conclusion_restriction = _from_condition_dict(attribute_id=attribute_id, condition=condition["condition"], fac=fac)
+            return Imply(premise_restriction=premise_restriction, conclusion_restriction=conclusion_restriction)
+        case _ if fac is None:
+            return _from_condition_dict_without_validation(attribute_id=attribute_id, condition=condition)
+        case _:
+            return _from_condition_dict_with_validation(attribute_id=attribute_id, condition=condition, fac=fac)
 
 
 def _from_condition_dict_without_validation(*, attribute_id: str, condition: dict[str, Any]) -> Restriction:
@@ -665,19 +687,21 @@ def _from_condition_dict_without_validation(*, attribute_id: str, condition: dic
         ValueError: 未知の制約種別が指定された場合
     """
     condition_type = condition["_type"]
-    if condition_type == "CanInput":
-        return CanInput(attribute_id, enable=condition["enable"])
-    if condition_type == "Equals":
-        return Equals(attribute_id, value=condition["value"])
-    if condition_type == "NotEquals":
-        return NotEquals(attribute_id, value=condition["value"])
-    if condition_type == "Matches":
-        return Matches(attribute_id, value=condition["value"])
-    if condition_type == "NotMatches":
-        return NotMatches(attribute_id, value=condition["value"])
-    if condition_type == "HasLabel":
-        return HasLabel(attribute_id, label_ids=condition["labels"])
-    raise ValueError(f"未知の制約種別です。 :: _type='{condition_type}'")
+    match condition_type:
+        case "CanInput":
+            return CanInput(attribute_id, enable=condition["enable"])
+        case "Equals":
+            return Equals(attribute_id, value=condition["value"])
+        case "NotEquals":
+            return NotEquals(attribute_id, value=condition["value"])
+        case "Matches":
+            return Matches(attribute_id, value=condition["value"])
+        case "NotMatches":
+            return NotMatches(attribute_id, value=condition["value"])
+        case "HasLabel":
+            return HasLabel(attribute_id, label_ids=condition["labels"])
+        case _:
+            raise ValueError(f"未知の制約種別です。 :: _type='{condition_type}'")
 
 
 def _from_condition_dict_with_validation(*, attribute_id: str, condition: dict[str, Any], fac: AttributeFactory) -> Restriction:
@@ -700,70 +724,232 @@ def _from_condition_dict_with_validation(*, attribute_id: str, condition: dict[s
     attribute_type = attribute["type"]
     condition_type = condition["_type"]
 
-    if condition_type == "CanInput":
-        return attribute_obj.enabled() if condition["enable"] else attribute_obj.disabled()
+    match condition_type:
+        case "CanInput":
+            return attribute_obj.enabled() if condition["enable"] else attribute_obj.disabled()
+        case _:
+            return _from_condition_dict_for_attribute_type(
+                attribute=attribute,
+                attribute_obj=attribute_obj,
+                condition=condition,
+                attribute_type=attribute_type,
+            )
 
-    if attribute_type == "flag":
-        if condition_type == "Equals" and condition["value"] == "true":
+
+def _from_condition_dict_for_attribute_type(
+    *,
+    attribute: dict[str, Any],
+    attribute_obj: Attribute,
+    condition: dict[str, Any],
+    attribute_type: str,
+) -> Restriction:
+    match attribute_type:
+        case "flag":
+            assert isinstance(attribute_obj, Checkbox)
+            return _from_flag_condition(attribute=attribute, attribute_obj=attribute_obj, condition=condition)
+        case "text" | "comment":
+            assert isinstance(attribute_obj, StringTextbox)
+            return _from_string_condition(attribute=attribute, attribute_obj=attribute_obj, condition=condition)
+        case "integer":
+            assert isinstance(attribute_obj, IntegerTextbox)
+            return _from_integer_condition(attribute=attribute, attribute_obj=attribute_obj, condition=condition)
+        case "link":
+            assert isinstance(attribute_obj, AnnotationLink)
+            return _from_link_condition(attribute=attribute, attribute_obj=attribute_obj, condition=condition)
+        case "tracking":
+            assert isinstance(attribute_obj, TrackingId)
+            return _from_tracking_condition(attribute=attribute, attribute_obj=attribute_obj, condition=condition)
+        case "choice" | "select":
+            assert isinstance(attribute_obj, Selection)
+            return _from_selection_condition(attribute=attribute, attribute_obj=attribute_obj, condition=condition)
+        case _:
+            raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
+
+
+def _from_flag_condition(*, attribute: dict[str, Any], attribute_obj: Checkbox, condition: dict[str, Any]) -> Restriction:
+    match condition["_type"]:
+        case "Equals" if condition["value"] == "true":
             return attribute_obj.checked()
-        if condition_type == "NotEquals" and condition["value"] == "true":
+        case "NotEquals" if condition["value"] == "true":
             return attribute_obj.unchecked()
-        _raise_invalid_restriction(attribute=attribute, condition=condition)
+        case _:
+            _raise_invalid_restriction(attribute=attribute, condition=condition)
 
-    if attribute_type in {"text", "comment"}:
-        if condition_type == "Equals":
+
+def _from_string_condition(*, attribute: dict[str, Any], attribute_obj: StringTextbox, condition: dict[str, Any]) -> Restriction:
+    match condition["_type"]:
+        case "Equals":
             return attribute_obj.equals(condition["value"])
-        if condition_type == "NotEquals":
+        case "NotEquals":
             return attribute_obj.not_equals(condition["value"])
-        if condition_type == "Matches":
+        case "Matches":
             return attribute_obj.matches(condition["value"])
-        if condition_type == "NotMatches":
+        case "NotMatches":
             return attribute_obj.not_matches(condition["value"])
-        _raise_invalid_restriction(attribute=attribute, condition=condition)
+        case _:
+            _raise_invalid_restriction(attribute=attribute, condition=condition)
 
-    if attribute_type == "integer":
-        if condition_type == "Equals":
+
+def _from_integer_condition(*, attribute: dict[str, Any], attribute_obj: IntegerTextbox, condition: dict[str, Any]) -> Restriction:
+    match condition["_type"]:
+        case "Equals":
             if condition["value"] == "":
                 return attribute_obj.is_empty()
             return attribute_obj.equals(_parse_integer_value(condition["value"], attribute=attribute, condition=condition))
-        if condition_type == "NotEquals":
+        case "NotEquals":
             if condition["value"] == "":
                 return attribute_obj.is_not_empty()
             return attribute_obj.not_equals(_parse_integer_value(condition["value"], attribute=attribute, condition=condition))
-        _raise_invalid_restriction(attribute=attribute, condition=condition)
+        case _:
+            _raise_invalid_restriction(attribute=attribute, condition=condition)
 
-    if attribute_type == "link":
-        if condition_type == "HasLabel":
+
+def _from_link_condition(*, attribute: dict[str, Any], attribute_obj: AnnotationLink, condition: dict[str, Any]) -> Restriction:
+    match condition["_type"]:
+        case "HasLabel":
             return attribute_obj.has_label(label_ids=condition["labels"])
-        if condition_type == "Equals" and condition["value"] == "":
+        case "Equals" if condition["value"] == "":
             return attribute_obj.is_empty()
-        if condition_type == "NotEquals" and condition["value"] == "":
+        case "NotEquals" if condition["value"] == "":
             return attribute_obj.is_not_empty()
-        _raise_invalid_restriction(attribute=attribute, condition=condition)
+        case _:
+            _raise_invalid_restriction(attribute=attribute, condition=condition)
 
-    if attribute_type == "tracking":
-        if condition_type == "Equals":
+
+def _from_tracking_condition(*, attribute: dict[str, Any], attribute_obj: TrackingId, condition: dict[str, Any]) -> Restriction:
+    match condition["_type"]:
+        case "Equals":
             if condition["value"] == "":
                 return attribute_obj.is_empty()
             return attribute_obj.equals(condition["value"])
-        if condition_type == "NotEquals":
+        case "NotEquals":
             if condition["value"] == "":
                 return attribute_obj.is_not_empty()
             return attribute_obj.not_equals(condition["value"])
-        _raise_invalid_restriction(attribute=attribute, condition=condition)
+        case _:
+            _raise_invalid_restriction(attribute=attribute, condition=condition)
 
-    if attribute_type in {"choice", "select"}:
-        if condition_type == "Equals":
+
+def _from_selection_condition(*, attribute: dict[str, Any], attribute_obj: Selection, condition: dict[str, Any]) -> Restriction:
+    match condition["_type"]:
+        case "Equals":
             if condition["value"] == "":
                 return attribute_obj.is_empty()
             return attribute_obj.has_choice(choice_id=condition["value"])
-        if condition_type == "NotEquals":
+        case "NotEquals":
             if condition["value"] == "":
                 return attribute_obj.is_not_empty()
             return attribute_obj.not_has_choice(choice_id=condition["value"])
-        _raise_invalid_restriction(attribute=attribute, condition=condition)
+        case _:
+            _raise_invalid_restriction(attribute=attribute, condition=condition)
 
-    raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
+
+def _ast_to_atomic_restriction(ast: RestrictionAst, *, fac: AttributeFactory, attribute: dict[str, Any]) -> Restriction:
+    assert ast.attribute_name is not None
+    attribute_type = attribute["type"]
+
+    match ast.type:
+        case "checked":
+            restriction = fac.checkbox(attribute_name=ast.attribute_name).checked()
+        case "unchecked":
+            restriction = fac.checkbox(attribute_name=ast.attribute_name).unchecked()
+        case "is_empty":
+            restriction = _attribute_with_empty_check(fac, ast.attribute_name).is_empty()
+        case "is_not_empty":
+            restriction = _attribute_with_empty_check(fac, ast.attribute_name).is_not_empty()
+        case "can_input":
+            assert ast.enable is not None
+            attribute_obj = _create_attribute_object_with_name(fac, ast.attribute_name)
+            restriction = attribute_obj.enabled() if ast.enable else attribute_obj.disabled()
+        case "equals_string" | "not_equals_string":
+            restriction = _ast_string_equality_to_restriction(ast=ast, fac=fac, attribute=attribute, attribute_type=attribute_type)
+        case "matches_string" | "not_matches_string":
+            restriction = _ast_string_match_to_restriction(ast=ast, fac=fac, attribute=attribute, attribute_type=attribute_type)
+        case "equals_integer" | "not_equals_integer":
+            restriction = _ast_integer_to_restriction(ast=ast, fac=fac)
+        case "has_choice" | "not_has_choice":
+            restriction = _ast_selection_to_restriction(ast=ast, fac=fac)
+        case "has_label":
+            restriction = _ast_label_to_restriction(ast=ast, fac=fac)
+        case _:
+            raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+    return restriction
+
+
+def _ast_string_equality_to_restriction(
+    *,
+    ast: RestrictionAst,
+    fac: AttributeFactory,
+    attribute: dict[str, Any],
+    attribute_type: str,
+) -> Restriction:
+    assert isinstance(ast.value, str)
+    attribute_obj: StringTextbox | TrackingId
+    match attribute_type:
+        case "text" | "comment":
+            attribute_obj = fac.string_textbox(attribute_name=ast.attribute_name)
+        case "tracking":
+            attribute_obj = fac.tracking_id(attribute_name=ast.attribute_name)
+        case _:
+            _raise_invalid_ast(attribute=attribute, ast=ast)
+
+    match ast.type:
+        case "equals_string":
+            return attribute_obj.equals(ast.value)
+        case "not_equals_string":
+            return attribute_obj.not_equals(ast.value)
+        case _:
+            raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+
+
+def _ast_string_match_to_restriction(
+    *,
+    ast: RestrictionAst,
+    fac: AttributeFactory,
+    attribute: dict[str, Any],
+    attribute_type: str,
+) -> Restriction:
+    assert isinstance(ast.value, str)
+    if attribute_type not in {"text", "comment"}:
+        _raise_invalid_ast(attribute=attribute, ast=ast)
+
+    attribute_obj = fac.string_textbox(attribute_name=ast.attribute_name)
+    match ast.type:
+        case "matches_string":
+            return attribute_obj.matches(ast.value)
+        case "not_matches_string":
+            return attribute_obj.not_matches(ast.value)
+        case _:
+            raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+
+
+def _ast_integer_to_restriction(*, ast: RestrictionAst, fac: AttributeFactory) -> Restriction:
+    assert isinstance(ast.value, int)
+    attribute_obj = fac.integer_textbox(attribute_name=ast.attribute_name)
+    match ast.type:
+        case "equals_integer":
+            return attribute_obj.equals(ast.value)
+        case "not_equals_integer":
+            return attribute_obj.not_equals(ast.value)
+        case _:
+            raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+
+
+def _ast_selection_to_restriction(*, ast: RestrictionAst, fac: AttributeFactory) -> Restriction:
+    assert ast.choice_name is not None
+    attribute_obj = fac.selection(attribute_name=ast.attribute_name)
+    match ast.type:
+        case "has_choice":
+            return attribute_obj.has_choice(choice_name=ast.choice_name)
+        case "not_has_choice":
+            return attribute_obj.not_has_choice(choice_name=ast.choice_name)
+        case _:
+            raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+
+
+def _ast_label_to_restriction(*, ast: RestrictionAst, fac: AttributeFactory) -> Restriction:
+    assert ast.label_names is not None
+    return fac.annotation_link(attribute_name=ast.attribute_name).has_label(label_names=ast.label_names)
 
 
 def _create_attribute_object(fac: AttributeFactory, attribute: dict[str, Any]) -> Attribute:
@@ -782,19 +968,21 @@ def _create_attribute_object(fac: AttributeFactory, attribute: dict[str, Any]) -
     """
     attribute_id = attribute["additional_data_definition_id"]
     attribute_type = attribute["type"]
-    if attribute_type == "flag":
-        return fac.checkbox(attribute_id=attribute_id)
-    if attribute_type in {"text", "comment"}:
-        return fac.string_textbox(attribute_id=attribute_id)
-    if attribute_type == "integer":
-        return fac.integer_textbox(attribute_id=attribute_id)
-    if attribute_type == "link":
-        return fac.annotation_link(attribute_id=attribute_id)
-    if attribute_type == "tracking":
-        return fac.tracking_id(attribute_id=attribute_id)
-    if attribute_type in {"choice", "select"}:
-        return fac.selection(attribute_id=attribute_id)
-    raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
+    match attribute_type:
+        case "flag":
+            return fac.checkbox(attribute_id=attribute_id)
+        case "text" | "comment":
+            return fac.string_textbox(attribute_id=attribute_id)
+        case "integer":
+            return fac.integer_textbox(attribute_id=attribute_id)
+        case "link":
+            return fac.annotation_link(attribute_id=attribute_id)
+        case "tracking":
+            return fac.tracking_id(attribute_id=attribute_id)
+        case "choice" | "select":
+            return fac.selection(attribute_id=attribute_id)
+        case _:
+            raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
 
 
 def _create_attribute_object_with_name(fac: AttributeFactory, attribute_name: str) -> Attribute:
@@ -826,70 +1014,79 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
     Raises:
         ValueError: AST種別が未知の場合、または属性型に対して利用できないASTが指定された場合
     """
-    if ast.type == "imply":
-        assert ast.premise is not None
-        assert ast.conclusion is not None
-        premise_restriction = _ast_to_restriction(ast.premise, fac=fac)
-        conclusion_restriction = _ast_to_restriction(ast.conclusion, fac=fac)
-        return premise_restriction.imply(conclusion_restriction)
+    match ast.type:
+        case "imply":
+            assert ast.premise is not None
+            assert ast.conclusion is not None
+            premise_restriction = _ast_to_restriction(ast.premise, fac=fac)
+            conclusion_restriction = _ast_to_restriction(ast.conclusion, fac=fac)
+            return premise_restriction.imply(conclusion_restriction)
 
     assert ast.attribute_name is not None
     attribute = fac.accessor.get_attribute(attribute_name=ast.attribute_name)
+    return _ast_to_atomic_restriction(ast, fac=fac, attribute=attribute)
+
+
+def _restriction_to_atomic_ast(
+    restriction: Restriction,
+    *,
+    accessor: AnnotationSpecsAccessor,
+    attribute: dict[str, Any],
+    attribute_name: str,
+) -> RestrictionAst:
     attribute_type = attribute["type"]
+    match restriction:
+        case CanInput(enable=enable):
+            return RestrictionAst(type="can_input", attribute_name=attribute_name, enable=enable)
+        case Equals(value=value):
+            return _equals_restriction_to_ast(attribute=attribute, attribute_name=attribute_name, attribute_type=attribute_type, value=value)
+        case NotEquals(value=value):
+            return _not_equals_restriction_to_ast(attribute=attribute, attribute_name=attribute_name, attribute_type=attribute_type, value=value)
+        case Matches(value=value) if attribute_type in {"text", "comment"}:
+            return RestrictionAst(type="matches_string", attribute_name=attribute_name, value=value)
+        case NotMatches(value=value) if attribute_type in {"text", "comment"}:
+            return RestrictionAst(type="not_matches_string", attribute_name=attribute_name, value=value)
+        case HasLabel(label_ids=label_ids) if attribute_type == "link":
+            label_names = [get_english_message(accessor.get_label(label_id=label_id)["label_name"]) for label_id in label_ids]
+            return RestrictionAst(type="has_label", attribute_name=attribute_name, label_names=label_names)
+        case _:
+            raise ValueError(f"RestrictionをASTへ変換できません。 :: restriction={restriction.to_dict()}")
 
-    if ast.type == "checked":
-        return fac.checkbox(attribute_name=ast.attribute_name).checked()
-    if ast.type == "unchecked":
-        return fac.checkbox(attribute_name=ast.attribute_name).unchecked()
-    if ast.type == "is_empty":
-        return _attribute_with_empty_check(fac, ast.attribute_name).is_empty()
-    if ast.type == "is_not_empty":
-        return _attribute_with_empty_check(fac, ast.attribute_name).is_not_empty()
-    if ast.type == "can_input":
-        assert ast.enable is not None
-        attribute_obj = _create_attribute_object_with_name(fac, ast.attribute_name)
-        return attribute_obj.enabled() if ast.enable else attribute_obj.disabled()
-    if ast.type == "equals_string":
-        assert isinstance(ast.value, str)
-        if attribute_type in {"text", "comment"}:
-            return fac.string_textbox(attribute_name=ast.attribute_name).equals(ast.value)
-        if attribute_type == "tracking":
-            return fac.tracking_id(attribute_name=ast.attribute_name).equals(ast.value)
-        _raise_invalid_ast(attribute=attribute, ast=ast)
-    if ast.type == "not_equals_string":
-        assert isinstance(ast.value, str)
-        if attribute_type in {"text", "comment"}:
-            return fac.string_textbox(attribute_name=ast.attribute_name).not_equals(ast.value)
-        if attribute_type == "tracking":
-            return fac.tracking_id(attribute_name=ast.attribute_name).not_equals(ast.value)
-        _raise_invalid_ast(attribute=attribute, ast=ast)
-    if ast.type == "matches_string":
-        assert isinstance(ast.value, str)
-        if attribute_type in {"text", "comment"}:
-            return fac.string_textbox(attribute_name=ast.attribute_name).matches(ast.value)
-        _raise_invalid_ast(attribute=attribute, ast=ast)
-    if ast.type == "not_matches_string":
-        assert isinstance(ast.value, str)
-        if attribute_type in {"text", "comment"}:
-            return fac.string_textbox(attribute_name=ast.attribute_name).not_matches(ast.value)
-        _raise_invalid_ast(attribute=attribute, ast=ast)
-    if ast.type == "equals_integer":
-        assert isinstance(ast.value, int)
-        return fac.integer_textbox(attribute_name=ast.attribute_name).equals(ast.value)
-    if ast.type == "not_equals_integer":
-        assert isinstance(ast.value, int)
-        return fac.integer_textbox(attribute_name=ast.attribute_name).not_equals(ast.value)
-    if ast.type == "has_choice":
-        assert ast.choice_name is not None
-        return fac.selection(attribute_name=ast.attribute_name).has_choice(choice_name=ast.choice_name)
-    if ast.type == "not_has_choice":
-        assert ast.choice_name is not None
-        return fac.selection(attribute_name=ast.attribute_name).not_has_choice(choice_name=ast.choice_name)
-    if ast.type == "has_label":
-        assert ast.label_names is not None
-        return fac.annotation_link(attribute_name=ast.attribute_name).has_label(label_names=ast.label_names)
 
-    raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+def _equals_restriction_to_ast(*, attribute: dict[str, Any], attribute_name: str, attribute_type: str, value: str) -> RestrictionAst:
+    match attribute_type:
+        case "flag" if value == "true":
+            return RestrictionAst(type="checked", attribute_name=attribute_name)
+        case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select" if value == "":
+            return RestrictionAst(type="is_empty", attribute_name=attribute_name)
+        case "text" | "comment" | "tracking":
+            return RestrictionAst(type="equals_string", attribute_name=attribute_name, value=value)
+        case "integer":
+            return RestrictionAst(type="equals_integer", attribute_name=attribute_name, value=int(value))
+        case "choice" | "select":
+            choice = get_choice(attribute["choices"], choice_id=value)
+            return RestrictionAst(type="has_choice", attribute_name=attribute_name, choice_name=get_english_message(choice["name"]))
+        case _:
+            raise ValueError(f"RestrictionをASTへ変換できません。 :: restriction_type='Equals', attribute_type='{attribute_type}', value={value!r}")
+
+
+def _not_equals_restriction_to_ast(*, attribute: dict[str, Any], attribute_name: str, attribute_type: str, value: str) -> RestrictionAst:
+    match attribute_type:
+        case "flag" if value == "true":
+            return RestrictionAst(type="unchecked", attribute_name=attribute_name)
+        case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select" if value == "":
+            return RestrictionAst(type="is_not_empty", attribute_name=attribute_name)
+        case "text" | "comment" | "tracking":
+            return RestrictionAst(type="not_equals_string", attribute_name=attribute_name, value=value)
+        case "integer":
+            return RestrictionAst(type="not_equals_integer", attribute_name=attribute_name, value=int(value))
+        case "choice" | "select":
+            choice = get_choice(attribute["choices"], choice_id=value)
+            return RestrictionAst(type="not_has_choice", attribute_name=attribute_name, choice_name=get_english_message(choice["name"]))
+        case _:
+            raise ValueError(
+                f"RestrictionをASTへ変換できません。 :: restriction_type='NotEquals', attribute_type='{attribute_type}', value={value!r}"
+            )
 
 
 def _attribute_with_empty_check(fac: AttributeFactory, attribute_name: str) -> EmptyCheckMixin:
@@ -914,10 +1111,11 @@ def _attribute_with_empty_check(fac: AttributeFactory, attribute_name: str) -> E
             condition={"_type": "EmptyCheck"},
             detail="空判定はこの属性種類では利用できません。",
         )
+    assert isinstance(attribute_obj, EmptyCheckMixin)
     return attribute_obj
 
 
-def _raise_invalid_ast(*, attribute: dict[str, Any], ast: RestrictionAst) -> None:
+def _raise_invalid_ast(*, attribute: dict[str, Any], ast: RestrictionAst) -> NoReturn:
     """
     属性型に対して不正なAST種別が指定されたことを表す例外を送出します。
 
@@ -954,7 +1152,7 @@ def _parse_integer_value(value: str, *, attribute: dict[str, Any], condition: di
         raise AssertionError("unreachable") from exc
 
 
-def _raise_invalid_restriction(*, attribute: dict[str, Any], condition: dict[str, Any], detail: str | None = None) -> None:
+def _raise_invalid_restriction(*, attribute: dict[str, Any], condition: dict[str, Any], detail: str | None = None) -> NoReturn:
     """
     属性型に対して不正な制約が指定されたことを表す例外を送出します。
 
@@ -987,57 +1185,17 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
     Raises:
         ValueError: ASTへ変換できない制約が含まれている場合
     """
-    if isinstance(restriction, Imply):
-        return RestrictionAst(
-            type="imply",
-            premise=_restriction_to_ast(restriction.premise_restriction, accessor=accessor),
-            conclusion=_restriction_to_ast(restriction.conclusion_restriction, accessor=accessor),
-        )
+    match restriction:
+        case Imply(premise_restriction=premise_restriction, conclusion_restriction=conclusion_restriction):
+            return RestrictionAst(
+                type="imply",
+                premise=_restriction_to_ast(premise_restriction, accessor=accessor),
+                conclusion=_restriction_to_ast(conclusion_restriction, accessor=accessor),
+            )
 
     attribute = accessor.get_attribute(attribute_id=restriction.attribute_id)
     attribute_name = get_english_message(attribute["name"])
-    attribute_type = attribute["type"]
-
-    if isinstance(restriction, CanInput):
-        return RestrictionAst(type="can_input", attribute_name=attribute_name, enable=restriction.enable)
-
-    if isinstance(restriction, Equals):
-        if attribute_type == "flag" and restriction.value == "true":
-            return RestrictionAst(type="checked", attribute_name=attribute_name)
-        if restriction.value == "" and attribute_type in {"text", "comment", "integer", "link", "tracking", "choice", "select"}:
-            return RestrictionAst(type="is_empty", attribute_name=attribute_name)
-        if attribute_type in {"text", "comment", "tracking"}:
-            return RestrictionAst(type="equals_string", attribute_name=attribute_name, value=restriction.value)
-        if attribute_type == "integer":
-            return RestrictionAst(type="equals_integer", attribute_name=attribute_name, value=int(restriction.value))
-        if attribute_type in {"choice", "select"}:
-            choice = get_choice(attribute["choices"], choice_id=restriction.value)
-            return RestrictionAst(type="has_choice", attribute_name=attribute_name, choice_name=get_english_message(choice["name"]))
-
-    if isinstance(restriction, NotEquals):
-        if attribute_type == "flag" and restriction.value == "true":
-            return RestrictionAst(type="unchecked", attribute_name=attribute_name)
-        if restriction.value == "" and attribute_type in {"text", "comment", "integer", "link", "tracking", "choice", "select"}:
-            return RestrictionAst(type="is_not_empty", attribute_name=attribute_name)
-        if attribute_type in {"text", "comment", "tracking"}:
-            return RestrictionAst(type="not_equals_string", attribute_name=attribute_name, value=restriction.value)
-        if attribute_type == "integer":
-            return RestrictionAst(type="not_equals_integer", attribute_name=attribute_name, value=int(restriction.value))
-        if attribute_type in {"choice", "select"}:
-            choice = get_choice(attribute["choices"], choice_id=restriction.value)
-            return RestrictionAst(type="not_has_choice", attribute_name=attribute_name, choice_name=get_english_message(choice["name"]))
-
-    if isinstance(restriction, Matches) and attribute_type in {"text", "comment"}:
-        return RestrictionAst(type="matches_string", attribute_name=attribute_name, value=restriction.value)
-
-    if isinstance(restriction, NotMatches) and attribute_type in {"text", "comment"}:
-        return RestrictionAst(type="not_matches_string", attribute_name=attribute_name, value=restriction.value)
-
-    if isinstance(restriction, HasLabel) and attribute_type == "link":
-        label_names = [get_english_message(accessor.get_label(label_id=label_id)["label_name"]) for label_id in restriction.label_ids]
-        return RestrictionAst(type="has_label", attribute_name=attribute_name, label_names=label_names)
-
-    raise ValueError(f"RestrictionをASTへ変換できません。 :: restriction={restriction.to_dict()}")
+    return _restriction_to_atomic_ast(restriction, accessor=accessor, attribute=attribute, attribute_name=attribute_name)
 
 
 def _restriction_to_python_expr(restriction: Restriction, *, accessor: AnnotationSpecsAccessor, factory_name: str) -> str:
@@ -1055,77 +1213,99 @@ def _restriction_to_python_expr(restriction: Restriction, *, accessor: Annotatio
     Raises:
         ValueError: Python 式へ変換できない制約が含まれている場合
     """
-    if isinstance(restriction, Imply):
-        premise_expr = _restriction_to_python_expr(restriction.premise_restriction, accessor=accessor, factory_name=factory_name)
-        conclusion_expr = _restriction_to_python_expr(restriction.conclusion_restriction, accessor=accessor, factory_name=factory_name)
-        return f"{premise_expr}.imply({conclusion_expr})"
+    match restriction:
+        case Imply(premise_restriction=premise_restriction, conclusion_restriction=conclusion_restriction):
+            premise_expr = _restriction_to_python_expr(premise_restriction, accessor=accessor, factory_name=factory_name)
+            conclusion_expr = _restriction_to_python_expr(conclusion_restriction, accessor=accessor, factory_name=factory_name)
+            return f"{premise_expr}.imply({conclusion_expr})"
 
     attribute = accessor.get_attribute(attribute_id=restriction.attribute_id)
     attribute_expr = _attribute_to_python_expr(attribute, factory_name=factory_name)
+    return _restriction_to_atomic_python_expr(restriction, accessor=accessor, attribute=attribute, attribute_expr=attribute_expr)
+
+
+def _restriction_to_atomic_python_expr(
+    restriction: Restriction,
+    *,
+    accessor: AnnotationSpecsAccessor,
+    attribute: dict[str, Any],
+    attribute_expr: str,
+) -> str:
     attribute_type = attribute["type"]
+    match restriction:
+        case CanInput(enable=enable):
+            return f"{attribute_expr}.enabled()" if enable else f"{attribute_expr}.disabled()"
+        case Equals(value=value):
+            return _equals_restriction_to_python_expr(attribute=attribute, attribute_expr=attribute_expr, attribute_type=attribute_type, value=value)
+        case NotEquals(value=value):
+            return _not_equals_restriction_to_python_expr(
+                attribute=attribute,
+                attribute_expr=attribute_expr,
+                attribute_type=attribute_type,
+                value=value,
+            )
+        case Matches(value=value) if attribute_type in {"text", "comment"}:
+            return f"{attribute_expr}.matches({_repr_python_value(value)})"
+        case NotMatches(value=value) if attribute_type in {"text", "comment"}:
+            return f"{attribute_expr}.not_matches({_repr_python_value(value)})"
+        case HasLabel(label_ids=label_ids) if attribute_type == "link":
+            label_names = [get_english_message(accessor.get_label(label_id=label_id)["label_name"]) for label_id in label_ids]
+            return f"{attribute_expr}.has_label(label_names={_repr_python_value(label_names)})"
+        case _:
+            raise ValueError(f"Restrictionを高水準APIのPython式へ変換できません。 :: restriction={restriction.to_dict()}")
 
-    if isinstance(restriction, CanInput):
-        return f"{attribute_expr}.enabled()" if restriction.enable else f"{attribute_expr}.disabled()"
 
-    if isinstance(restriction, Equals):
-        if attribute_type == "flag" and restriction.value == "true":
-            return f"{attribute_expr}.checked()"
-        if attribute_type in {"text", "comment"}:
-            if restriction.value == "":
+def _equals_restriction_to_python_expr(*, attribute: dict[str, Any], attribute_expr: str, attribute_type: str, value: str) -> str:
+    if value == "":
+        match attribute_type:
+            case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select":
                 return f"{attribute_expr}.is_empty()"
-            return f"{attribute_expr}.equals({_repr_python_value(restriction.value)})"
-        if attribute_type == "integer":
-            if restriction.value == "":
-                return f"{attribute_expr}.is_empty()"
-            return f"{attribute_expr}.equals({int(restriction.value)})"
-        if attribute_type == "link" and restriction.value == "":
-            return f"{attribute_expr}.is_empty()"
-        if attribute_type == "tracking":
-            if restriction.value == "":
-                return f"{attribute_expr}.is_empty()"
-            return f"{attribute_expr}.equals({_repr_python_value(restriction.value)})"
-        if attribute_type in {"choice", "select"}:
-            if restriction.value == "":
-                return f"{attribute_expr}.is_empty()"
-            choice = get_choice(attribute["choices"], choice_id=restriction.value)
+
+    match attribute_type:
+        case "flag" if value == "true":
+            expr = f"{attribute_expr}.checked()"
+        case "text" | "comment":
+            expr = f"{attribute_expr}.equals({_repr_python_value(value)})"
+        case "integer":
+            expr = f"{attribute_expr}.equals({int(value)})"
+        case "tracking":
+            expr = f"{attribute_expr}.equals({_repr_python_value(value)})"
+        case "choice" | "select":
+            choice = get_choice(attribute["choices"], choice_id=value)
             choice_name = get_english_message(choice["name"])
-            return f"{attribute_expr}.has_choice(choice_name={_repr_python_value(choice_name)})"
+            expr = f"{attribute_expr}.has_choice(choice_name={_repr_python_value(choice_name)})"
+        case _:
+            raise ValueError(
+                f"Restrictionを高水準APIのPython式へ変換できません。 :: restriction_type='Equals', attribute_type='{attribute_type}', value={value!r}"
+            )
+    return expr
 
-    if isinstance(restriction, NotEquals):
-        if attribute_type == "flag" and restriction.value == "true":
-            return f"{attribute_expr}.unchecked()"
-        if attribute_type in {"text", "comment"}:
-            if restriction.value == "":
+
+def _not_equals_restriction_to_python_expr(*, attribute: dict[str, Any], attribute_expr: str, attribute_type: str, value: str) -> str:
+    if value == "":
+        match attribute_type:
+            case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select":
                 return f"{attribute_expr}.is_not_empty()"
-            return f"{attribute_expr}.not_equals({_repr_python_value(restriction.value)})"
-        if attribute_type == "integer":
-            if restriction.value == "":
-                return f"{attribute_expr}.is_not_empty()"
-            return f"{attribute_expr}.not_equals({int(restriction.value)})"
-        if attribute_type == "link" and restriction.value == "":
-            return f"{attribute_expr}.is_not_empty()"
-        if attribute_type == "tracking":
-            if restriction.value == "":
-                return f"{attribute_expr}.is_not_empty()"
-            return f"{attribute_expr}.not_equals({_repr_python_value(restriction.value)})"
-        if attribute_type in {"choice", "select"}:
-            if restriction.value == "":
-                return f"{attribute_expr}.is_not_empty()"
-            choice = get_choice(attribute["choices"], choice_id=restriction.value)
+
+    match attribute_type:
+        case "flag" if value == "true":
+            expr = f"{attribute_expr}.unchecked()"
+        case "text" | "comment":
+            expr = f"{attribute_expr}.not_equals({_repr_python_value(value)})"
+        case "integer":
+            expr = f"{attribute_expr}.not_equals({int(value)})"
+        case "tracking":
+            expr = f"{attribute_expr}.not_equals({_repr_python_value(value)})"
+        case "choice" | "select":
+            choice = get_choice(attribute["choices"], choice_id=value)
             choice_name = get_english_message(choice["name"])
-            return f"{attribute_expr}.not_has_choice(choice_name={_repr_python_value(choice_name)})"
-
-    if isinstance(restriction, Matches) and attribute_type in {"text", "comment"}:
-        return f"{attribute_expr}.matches({_repr_python_value(restriction.value)})"
-
-    if isinstance(restriction, NotMatches) and attribute_type in {"text", "comment"}:
-        return f"{attribute_expr}.not_matches({_repr_python_value(restriction.value)})"
-
-    if isinstance(restriction, HasLabel) and attribute_type == "link":
-        label_names = [get_english_message(accessor.get_label(label_id=label_id)["label_name"]) for label_id in restriction.label_ids]
-        return f"{attribute_expr}.has_label(label_names={_repr_python_value(label_names)})"
-
-    raise ValueError(f"Restrictionを高水準APIのPython式へ変換できません。 :: restriction={restriction.to_dict()}")
+            expr = f"{attribute_expr}.not_has_choice(choice_name={_repr_python_value(choice_name)})"
+        case _:
+            raise ValueError(
+                "Restrictionを高水準APIのPython式へ変換できません。 "
+                f":: restriction_type='NotEquals', attribute_type='{attribute_type}', value={value!r}"
+            )
+    return expr
 
 
 def _attribute_to_python_expr(attribute: dict[str, Any], *, factory_name: str) -> str:
@@ -1145,20 +1325,21 @@ def _attribute_to_python_expr(attribute: dict[str, Any], *, factory_name: str) -
     attribute_name = get_english_message(attribute["name"])
     attribute_type = attribute["type"]
 
-    if attribute_type == "flag":
-        factory_method = "checkbox"
-    elif attribute_type in {"text", "comment"}:
-        factory_method = "string_textbox"
-    elif attribute_type == "integer":
-        factory_method = "integer_textbox"
-    elif attribute_type == "link":
-        factory_method = "annotation_link"
-    elif attribute_type == "tracking":
-        factory_method = "tracking_id"
-    elif attribute_type in {"choice", "select"}:
-        factory_method = "selection"
-    else:
-        raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
+    match attribute_type:
+        case "flag":
+            factory_method = "checkbox"
+        case "text" | "comment":
+            factory_method = "string_textbox"
+        case "integer":
+            factory_method = "integer_textbox"
+        case "link":
+            factory_method = "annotation_link"
+        case "tracking":
+            factory_method = "tracking_id"
+        case "choice" | "select":
+            factory_method = "selection"
+        case _:
+            raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
 
     return f"{factory_name}.{factory_method}(attribute_name={_repr_python_value(attribute_name)})"
 
@@ -1183,39 +1364,37 @@ def _ast_to_human_readable(ast: RestrictionAst) -> str:
 
     assert ast.attribute_name is not None
     attribute_name = _quote_human(ast.attribute_name)
+    simple_text_map = {
+        "checked": f"{attribute_name} EQUALS 'true'",
+        "unchecked": f"{attribute_name} DOES NOT EQUAL 'true'",
+        "is_empty": f"{attribute_name} EQUALS ''",
+        "is_not_empty": f"{attribute_name} DOES NOT EQUAL ''",
+    }
+    if ast.type in simple_text_map:
+        return simple_text_map[ast.type]
 
-    if ast.type == "checked":
-        return f"{attribute_name} EQUALS 'true'"
-    if ast.type == "unchecked":
-        return f"{attribute_name} DOES NOT EQUAL 'true'"
-    if ast.type == "is_empty":
-        return f"{attribute_name} EQUALS ''"
-    if ast.type == "is_not_empty":
-        return f"{attribute_name} DOES NOT EQUAL ''"
-    if ast.type == "equals_string":
-        return f"{attribute_name} EQUALS {_quote_human(ast.value)}"
-    if ast.type == "not_equals_string":
-        return f"{attribute_name} DOES NOT EQUAL {_quote_human(ast.value)}"
-    if ast.type == "matches_string":
-        return f"{attribute_name} MATCHES {_quote_human(ast.value)}"
-    if ast.type == "not_matches_string":
-        return f"{attribute_name} DOES NOT MATCH {_quote_human(ast.value)}"
-    if ast.type == "equals_integer":
-        return f"{attribute_name} EQUALS {_quote_human(ast.value)}"
-    if ast.type == "not_equals_integer":
-        return f"{attribute_name} DOES NOT EQUAL {_quote_human(ast.value)}"
-    if ast.type == "has_choice":
-        return f"{attribute_name} EQUALS {_quote_human(ast.choice_name)}"
-    if ast.type == "not_has_choice":
-        return f"{attribute_name} DOES NOT EQUAL {_quote_human(ast.choice_name)}"
-    if ast.type == "has_label":
-        assert ast.label_names is not None
-        return f"{attribute_name} HAS LABEL {', '.join(_quote_human(label_name) for label_name in ast.label_names)}"
-    if ast.type == "can_input":
-        assert ast.enable is not None
-        return f"{attribute_name} CAN INPUT" if ast.enable else f"{attribute_name} CANNOT INPUT"
-
-    raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+    match ast.type:
+        case "equals_string" | "equals_integer":
+            text = f"{attribute_name} EQUALS {_quote_human(ast.value)}"
+        case "not_equals_string" | "not_equals_integer":
+            text = f"{attribute_name} DOES NOT EQUAL {_quote_human(ast.value)}"
+        case "matches_string":
+            text = f"{attribute_name} MATCHES {_quote_human(ast.value)}"
+        case "not_matches_string":
+            text = f"{attribute_name} DOES NOT MATCH {_quote_human(ast.value)}"
+        case "has_choice":
+            text = f"{attribute_name} EQUALS {_quote_human(ast.choice_name)}"
+        case "not_has_choice":
+            text = f"{attribute_name} DOES NOT EQUAL {_quote_human(ast.choice_name)}"
+        case "has_label":
+            assert ast.label_names is not None
+            text = f"{attribute_name} HAS LABEL {', '.join(_quote_human(label_name) for label_name in ast.label_names)}"
+        case "can_input":
+            assert ast.enable is not None
+            text = f"{attribute_name} CAN INPUT" if ast.enable else f"{attribute_name} CANNOT INPUT"
+        case _:
+            raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+    return text
 
 
 def _repr_python_value(value: object) -> str:
