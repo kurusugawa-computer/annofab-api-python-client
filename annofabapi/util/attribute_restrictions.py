@@ -876,6 +876,20 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
         ValueError: AST種別が未知の場合、または属性型に対して利用できないASTが指定された場合
     """
 
+    def raise_invalid_ast(*, attribute: AttributeDefinition, ast: RestrictionAst) -> NoReturn:
+        """
+        属性型に対して不正なAST種別が指定されたことを表す例外を送出します。
+
+        Args:
+            attribute: アノテーション仕様上の属性定義です。
+            ast: 不正だったASTです。
+
+        Raises:
+            ValueError: 常に送出されます。
+        """
+        attribute_name = get_english_message(attribute["name"])
+        raise ValueError(f"属性'{attribute_name}'(type='{attribute['type']}')ではAST種別'{ast.type}'を利用できません。")
+
     def attribute_with_empty_check(*, attribute: AttributeDefinition) -> EmptyCheckMixin:
         """
         空判定をサポートする属性オブジェクトを取得します。
@@ -913,7 +927,7 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
             case "tracking":
                 attribute_obj = fac.tracking_id(attribute_name=ast.attribute_name)
             case _:
-                _raise_invalid_ast(attribute=attribute, ast=ast)
+                raise_invalid_ast(attribute=attribute, ast=ast)
 
         match ast.type:
             case RestrictionAstType.EQUALS_STRING:
@@ -931,7 +945,7 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
     ) -> Restriction:
         assert isinstance(ast.value, str)
         if attribute_type not in {"text", "comment"}:
-            _raise_invalid_ast(attribute=attribute, ast=ast)
+            raise_invalid_ast(attribute=attribute, ast=ast)
 
         attribute_obj = fac.string_textbox(attribute_name=ast.attribute_name)
         match ast.type:
@@ -1004,21 +1018,6 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
     assert ast.attribute_name is not None
     attribute = fac.accessor.get_attribute(attribute_name=ast.attribute_name)
     return ast_to_atomic_restriction(ast, attribute=attribute)
-
-
-def _raise_invalid_ast(*, attribute: AttributeDefinition, ast: RestrictionAst) -> NoReturn:
-    """
-    属性型に対して不正なAST種別が指定されたことを表す例外を送出します。
-
-    Args:
-        attribute: アノテーション仕様上の属性定義です。
-        ast: 不正だったASTです。
-
-    Raises:
-        ValueError: 常に送出されます。
-    """
-    attribute_name = get_english_message(attribute["name"])
-    raise ValueError(f"属性'{attribute_name}'(type='{attribute['type']}')ではAST種別'{ast.type}'を利用できません。")
 
 
 def _parse_integer_value(value: str, *, attribute: AttributeDefinition, condition: dict[str, Any]) -> int:
