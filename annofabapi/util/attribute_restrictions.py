@@ -404,6 +404,34 @@ class AttributeFactory:
     def selection(self, *, attribute_id: str | None = None, attribute_name: str | None = None) -> Selection:
         return Selection(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
+    def from_definition(self, attribute: AttributeDefinition) -> Attribute:
+        """
+        属性定義から対応する高水準属性オブジェクトを生成します。
+
+        Args:
+            attribute: アノテーション仕様上の属性定義です。
+
+        Returns:
+            対応する高水準属性オブジェクトです。
+        """
+        attribute_id = attribute["additional_data_definition_id"]
+        attribute_type: AdditionalDataDefinitionType = attribute["type"]
+        match attribute_type:
+            case "flag":
+                return self.checkbox(attribute_id=attribute_id)
+            case "text" | "comment":
+                return self.string_textbox(attribute_id=attribute_id)
+            case "integer":
+                return self.integer_textbox(attribute_id=attribute_id)
+            case "link":
+                return self.annotation_link(attribute_id=attribute_id)
+            case "tracking":
+                return self.tracking_id(attribute_id=attribute_id)
+            case "choice" | "select":
+                return self.selection(attribute_id=attribute_id)
+            case _:
+                raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
+
 
 class RestrictionAst(BaseModel):
     """
@@ -846,36 +874,6 @@ def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any]) -> Res
     return restriction
 
 
-def _create_attribute_object(fac: AttributeFactory, attribute: AttributeDefinition) -> Attribute:
-    """
-    属性定義から対応する高水準属性オブジェクトを生成します。
-
-    Args:
-        fac: 属性生成に使う `AttributeFactory` です。
-        attribute: アノテーション仕様上の属性定義です。
-
-    Returns:
-        対応する高水準属性オブジェクトです。
-    """
-    attribute_id = attribute["additional_data_definition_id"]
-    attribute_type: AdditionalDataDefinitionType = attribute["type"]
-    match attribute_type:
-        case "flag":
-            return fac.checkbox(attribute_id=attribute_id)
-        case "text" | "comment":
-            return fac.string_textbox(attribute_id=attribute_id)
-        case "integer":
-            return fac.integer_textbox(attribute_id=attribute_id)
-        case "link":
-            return fac.annotation_link(attribute_id=attribute_id)
-        case "tracking":
-            return fac.tracking_id(attribute_id=attribute_id)
-        case "choice" | "select":
-            return fac.selection(attribute_id=attribute_id)
-        case _:
-            raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
-
-
 def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restriction:  # noqa: PLR0915
     """
     意味ベースのASTを `Restriction` オブジェクトへコンパイルします。
@@ -950,7 +948,7 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
                 restriction = _attribute_with_empty_check(fac, attribute=attribute).is_not_empty()
             case RestrictionAstType.CAN_INPUT:
                 assert ast.enable is not None
-                attribute_obj = _create_attribute_object(fac, attribute=attribute)
+                attribute_obj = fac.from_definition(attribute)
                 restriction = attribute_obj.enabled() if ast.enable else attribute_obj.disabled()
             case RestrictionAstType.EQUALS_STRING | RestrictionAstType.NOT_EQUALS_STRING:
                 restriction = ast_string_equality_to_restriction(ast=ast, attribute=attribute, attribute_type=attribute_type)
@@ -1012,7 +1010,7 @@ def _attribute_with_empty_check(fac: AttributeFactory, *, attribute: AttributeDe
     Raises:
         ValueError: 指定した属性で空判定を利用できない場合
     """
-    attribute_obj = _create_attribute_object(fac, attribute)
+    attribute_obj = fac.from_definition(attribute)
     if not isinstance(attribute_obj, EmptyCheckMixin):
         _raise_invalid_restriction(
             attribute=attribute,

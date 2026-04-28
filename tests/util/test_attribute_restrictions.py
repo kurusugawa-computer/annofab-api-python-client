@@ -181,6 +181,7 @@ class Test__AttributeFactory:
     def setup_method(self):
         self.annotation_specs = json.loads(Path("tests/data/util/attribute_restrictions/annotation_specs.json").read_text())
         self.factory = AttributeFactory(self.annotation_specs)
+        self.accessor = AnnotationSpecsAccessor(self.annotation_specs)
 
     def test__checkbox(self):
         checkbox = self.factory.checkbox(attribute_name="occluded")
@@ -211,6 +212,14 @@ class Test__AttributeFactory:
         selection = self.factory.selection(attribute_name="car_kind")
         assert isinstance(selection, Selection)
         assert selection.attribute_id == "cbb0155f-1631-48e1-8fc3-43c5f254b6f2"
+
+    def test__from_definition(self):
+        attribute = self.accessor.get_attribute(attribute_name="note")
+
+        actual = self.factory.from_definition(attribute)
+
+        assert isinstance(actual, StringTextbox)
+        assert actual.attribute_id == "9b05648d-1e16-4ea2-ab79-48907f5eed00"
 
 
 class Test__Restriction:
