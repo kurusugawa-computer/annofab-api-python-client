@@ -53,6 +53,17 @@ RestrictionAstType = Literal[
     "imply",
 ]
 
+AttributeType = Literal[
+    "flag",
+    "text",
+    "comment",
+    "integer",
+    "link",
+    "tracking",
+    "choice",
+    "select",
+]
+
 
 class Restriction(ABC):
     """属性の制約を表すクラス。"""
@@ -517,18 +528,20 @@ class AttributeRestrictionCatalogItem(BaseModel):
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    attribute_name: str = Field(description="Attribute name in annotation specs. LLM should refer to attributes by this name.")
-    attribute_type: str = Field(description="Attribute type in annotation specs, such as flag, text, integer, tracking, link, choice, or select.")
+    attribute_name: str = Field(description="アノテーション仕様に定義された属性名です。LLMはこの名前を使って属性を参照します。")
+    attribute_type: AttributeType = Field(
+        description="アノテーション仕様上の属性種類です。例えば flag、text、integer、tracking、link、choice、select などです。"
+    )
     allowed_ast_types: list[RestrictionAstType] = Field(
-        description="Semantic AST node types that are allowed for this attribute. LLM must not use AST types outside this list."
+        description="この属性で利用できる意味ベースAST種別の一覧です。LLMはこの一覧に含まれないAST種別を使ってはいけません。"
     )
     choice_names: list[str] | None = Field(
         default=None,
-        description="Available choice names for choice/select attributes. Null for non-choice attributes.",
+        description="choice/select 属性で利用できる選択肢名の一覧です。それ以外の属性では null です。",
     )
     label_names: list[str] | None = Field(
         default=None,
-        description="Available label names for link attributes. Null for non-link attributes.",
+        description="link 属性で利用できるラベル名の一覧です。それ以外の属性では null です。",
     )
 
 
@@ -546,26 +559,49 @@ def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[
     catalog: list[AttributeRestrictionCatalogItem] = []
     for attribute in accessor.additionals:
         attribute_type = attribute["type"]
+        choice_names = None
+        if attribute_type in {"choice", "select"}:
+            choice_names = [get_english_message(choice["name"]) for choice in attribute["choices"]]
+        label_names = None
+        if attribute_type == "link":
+            label_names = [get_english_message(label["label_name"]) for label in accessor.labels]
         item = AttributeRestrictionCatalogItem(
             attribute_name=get_english_message(attribute["name"]),
             attribute_type=attribute_type,
             allowed_ast_types=_get_allowed_ast_types(attribute_type),
+            choice_names=choice_names,
+            label_names=label_names,
         )
-        if attribute_type in {"choice", "select"}:
-            item = item.model_copy(update={"choice_names": [get_english_message(choice["name"]) for choice in attribute["choices"]]})
-        if attribute_type == "link":
-            item = item.model_copy(update={"label_names": [get_english_message(label["label_name"]) for label in accessor.labels]})
         catalog.append(item)
     return catalog
 
 
 def _from_restriction_dict(obj: dict[str, Any], *, fac: AttributeFactory | None) -> Restriction:
+    """
+    API向けの制約辞書から `Restriction` を復元します。
+
+    Args:
+        obj: APIの `restrictions` 要素を表す辞書です。
+        fac: Noneでなければ、属性型に応じた妥当性検証に使う `AttributeFactory` です。
+
+    Returns:
+        復元した `Restriction` オブジェクトです。
+    """
     attribute_id = obj["additional_data_definition_id"]
     condition = obj["condition"]
     return _from_condition_dict(attribute_id=attribute_id, condition=condition, fac=fac)
 
 
 def _validate_restriction_ast(ast: RestrictionAst) -> None:
+    """
+    `RestrictionAst` の構造がAST種別に整合しているか検証します。
+
+    Args:
+        ast: 検証対象のASTです。
+
+    Raises:
+        ValueError: AST種別に対して必須フィールドが不足している場合、または型が不正な場合
+    """
     type_to_fields = {
         "checked": {"attribute_name"},
         "unchecked": {"attribute_name"},
@@ -619,6 +655,18 @@ def _validate_restriction_ast(ast: RestrictionAst) -> None:
 
 
 def _get_allowed_ast_types(attribute_type: str) -> list[RestrictionAstType]:
+    """
+    属性種類ごとに利用可能なAST種別を返します。
+
+    Args:
+        attribute_type: アノテーション仕様上の属性種類です。
+
+    Returns:
+        指定した属性種類で利用可能なAST種別の一覧です。
+
+    Raises:
+        ValueError: 未対応の属性種類が指定された場合
+    """
     if attribute_type == "flag":
         return ["can_input", "checked", "unchecked"]
     if attribute_type in {"text", "comment"}:
@@ -635,6 +683,17 @@ def _get_allowed_ast_types(attribute_type: str) -> list[RestrictionAstType]:
 
 
 def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any], fac: AttributeFactory | None) -> Restriction:
+    """
+    条件部分の辞書から `Restriction` を復元します。
+
+    Args:
+        attribute_id: 対象属性のIDです。
+        condition: 条件部分のみを表す辞書です。
+        fac: Noneでなければ、属性型に応じた妥当性検証に使う `AttributeFactory` です。
+
+    Returns:
+        復元した `Restriction` オブジェクトです。
+    """
     condition_type = condition["_type"]
     if condition_type == "Imply":
         premise_restriction = _from_restriction_dict(condition["premise"], fac=fac)
@@ -647,6 +706,19 @@ def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any], fac: A
 
 
 def _from_condition_dict_without_validation(*, attribute_id: str, condition: dict[str, Any]) -> Restriction:
+    """
+    妥当性検証を行わずに条件辞書から `Restriction` を復元します。
+
+    Args:
+        attribute_id: 対象属性のIDです。
+        condition: 条件部分のみを表す辞書です。
+
+    Returns:
+        復元した `Restriction` オブジェクトです。
+
+    Raises:
+        ValueError: 未知の制約種別が指定された場合
+    """
     condition_type = condition["_type"]
     if condition_type == "CanInput":
         return CanInput(attribute_id, enable=condition["enable"])
@@ -664,6 +736,20 @@ def _from_condition_dict_without_validation(*, attribute_id: str, condition: dic
 
 
 def _from_condition_dict_with_validation(*, attribute_id: str, condition: dict[str, Any], fac: AttributeFactory) -> Restriction:
+    """
+    属性型の妥当性を検証しながら条件辞書から `Restriction` を復元します。
+
+    Args:
+        attribute_id: 対象属性のIDです。
+        condition: 条件部分のみを表す辞書です。
+        fac: 属性生成と妥当性検証に使う `AttributeFactory` です。
+
+    Returns:
+        復元した `Restriction` オブジェクトです。
+
+    Raises:
+        ValueError: 属性型に対して許可されていない制約が指定された場合
+    """
     attribute = fac.accessor.get_attribute(attribute_id=attribute_id)
     attribute_obj = _create_attribute_object(fac, attribute)
     attribute_type = attribute["type"]
@@ -736,6 +822,19 @@ def _from_condition_dict_with_validation(*, attribute_id: str, condition: dict[s
 
 
 def _create_attribute_object(fac: AttributeFactory, attribute: dict[str, Any]) -> Attribute:
+    """
+    属性定義から対応する高水準属性オブジェクトを生成します。
+
+    Args:
+        fac: 属性生成に使う `AttributeFactory` です。
+        attribute: アノテーション仕様上の属性定義です。
+
+    Returns:
+        対応する高水準属性オブジェクトです。
+
+    Raises:
+        ValueError: 未対応の属性種類が指定された場合
+    """
     attribute_id = attribute["additional_data_definition_id"]
     attribute_type = attribute["type"]
     if attribute_type == "flag":
@@ -754,11 +853,34 @@ def _create_attribute_object(fac: AttributeFactory, attribute: dict[str, Any]) -
 
 
 def _create_attribute_object_with_name(fac: AttributeFactory, attribute_name: str) -> Attribute:
+    """
+    属性名から対応する高水準属性オブジェクトを生成します。
+
+    Args:
+        fac: 属性生成に使う `AttributeFactory` です。
+        attribute_name: 属性名です。
+
+    Returns:
+        対応する高水準属性オブジェクトです。
+    """
     attribute = fac.accessor.get_attribute(attribute_name=attribute_name)
     return _create_attribute_object(fac, attribute)
 
 
 def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restriction:
+    """
+    意味ベースのASTを `Restriction` オブジェクトへコンパイルします。
+
+    Args:
+        ast: 変換元のASTです。
+        fac: 属性生成と妥当性検証に使う `AttributeFactory` です。
+
+    Returns:
+        変換後の `Restriction` オブジェクトです。
+
+    Raises:
+        ValueError: AST種別が未知の場合、または属性型に対して利用できないASTが指定された場合
+    """
     if ast.type == "imply":
         assert ast.premise is not None
         assert ast.conclusion is not None
@@ -826,6 +948,19 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
 
 
 def _attribute_with_empty_check(fac: AttributeFactory, attribute_name: str) -> EmptyCheckMixin:
+    """
+    空判定をサポートする属性オブジェクトを取得します。
+
+    Args:
+        fac: 属性生成に使う `AttributeFactory` です。
+        attribute_name: 属性名です。
+
+    Returns:
+        `is_empty()` / `is_not_empty()` を持つ属性オブジェクトです。
+
+    Raises:
+        ValueError: 指定した属性で空判定を利用できない場合
+    """
     attribute_obj = _create_attribute_object_with_name(fac, attribute_name)
     if not isinstance(attribute_obj, EmptyCheckMixin):
         attribute = fac.accessor.get_attribute(attribute_name=attribute_name)
@@ -838,11 +973,35 @@ def _attribute_with_empty_check(fac: AttributeFactory, attribute_name: str) -> E
 
 
 def _raise_invalid_ast(*, attribute: dict[str, Any], ast: RestrictionAst) -> None:
+    """
+    属性型に対して不正なAST種別が指定されたことを表す例外を送出します。
+
+    Args:
+        attribute: アノテーション仕様上の属性定義です。
+        ast: 不正だったASTです。
+
+    Raises:
+        ValueError: 常に送出されます。
+    """
     attribute_name = get_english_message(attribute["name"])
     raise ValueError(f"属性'{attribute_name}'(type='{attribute['type']}')ではAST種別'{ast.type}'を利用できません。")
 
 
 def _parse_integer_value(value: str, *, attribute: dict[str, Any], condition: dict[str, Any]) -> int:
+    """
+    整数属性向けの文字列値を整数へ変換します。
+
+    Args:
+        value: 変換対象の文字列値です。
+        attribute: アノテーション仕様上の属性定義です。
+        condition: 元の条件辞書です。
+
+    Returns:
+        変換後の整数値です。
+
+    Raises:
+        ValueError: 整数へ変換できない場合
+    """
     try:
         return int(value)
     except ValueError as exc:
@@ -851,6 +1010,17 @@ def _parse_integer_value(value: str, *, attribute: dict[str, Any], condition: di
 
 
 def _raise_invalid_restriction(*, attribute: dict[str, Any], condition: dict[str, Any], detail: str | None = None) -> None:
+    """
+    属性型に対して不正な制約が指定されたことを表す例外を送出します。
+
+    Args:
+        attribute: アノテーション仕様上の属性定義です。
+        condition: 不正だった制約条件です。
+        detail: 補足メッセージです。
+
+    Raises:
+        ValueError: 常に送出されます。
+    """
     attribute_name = get_english_message(attribute["name"])
     message = f"属性'{attribute_name}'(type='{attribute['type']}')では制約'{condition['_type']}'を利用できません。"
     if detail is not None:
@@ -859,6 +1029,19 @@ def _raise_invalid_restriction(*, attribute: dict[str, Any], condition: dict[str
 
 
 def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAccessor) -> RestrictionAst:
+    """
+    `Restriction` を意味ベースの `RestrictionAst` へ変換します。
+
+    Args:
+        restriction: 変換元の `Restriction` です。
+        accessor: 属性名や選択肢名の解決に使う `AnnotationSpecsAccessor` です。
+
+    Returns:
+        変換後の `RestrictionAst` です。
+
+    Raises:
+        ValueError: ASTへ変換できない制約が含まれている場合
+    """
     if isinstance(restriction, Imply):
         return RestrictionAst(
             type="imply",
@@ -913,6 +1096,20 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
 
 
 def _restriction_to_python_expr(restriction: Restriction, *, accessor: AnnotationSpecsAccessor, factory_name: str) -> str:
+    """
+    `Restriction` を fluent API 形式の Python 式へ変換します。
+
+    Args:
+        restriction: 変換元の `Restriction` です。
+        accessor: 属性名や選択肢名の解決に使う `AnnotationSpecsAccessor` です。
+        factory_name: `AttributeFactory` の変数名です。
+
+    Returns:
+        変換後の Python 式です。
+
+    Raises:
+        ValueError: Python 式へ変換できない制約が含まれている場合
+    """
     if isinstance(restriction, Imply):
         premise_expr = _restriction_to_python_expr(restriction.premise_restriction, accessor=accessor, factory_name=factory_name)
         conclusion_expr = _restriction_to_python_expr(restriction.conclusion_restriction, accessor=accessor, factory_name=factory_name)
@@ -987,6 +1184,19 @@ def _restriction_to_python_expr(restriction: Restriction, *, accessor: Annotatio
 
 
 def _attribute_to_python_expr(attribute: dict[str, Any], *, factory_name: str) -> str:
+    """
+    属性定義を `AttributeFactory` 呼び出しの Python 式へ変換します。
+
+    Args:
+        attribute: アノテーション仕様上の属性定義です。
+        factory_name: `AttributeFactory` の変数名です。
+
+    Returns:
+        属性生成部分の Python 式です。
+
+    Raises:
+        ValueError: 未対応の属性種類が指定された場合
+    """
     attribute_name = get_english_message(attribute["name"])
     attribute_type = attribute["type"]
 
@@ -1009,6 +1219,18 @@ def _attribute_to_python_expr(attribute: dict[str, Any], *, factory_name: str) -
 
 
 def _ast_to_human_readable(ast: RestrictionAst) -> str:
+    """
+    ASTを人間向けの読みやすい文字列表現へ変換します。
+
+    Args:
+        ast: 変換元のASTです。
+
+    Returns:
+        人間向けの文字列表現です。
+
+    Raises:
+        ValueError: 未知のAST種別が指定された場合
+    """
     if ast.type == "imply":
         assert ast.premise is not None
         assert ast.conclusion is not None
@@ -1052,8 +1274,26 @@ def _ast_to_human_readable(ast: RestrictionAst) -> str:
 
 
 def _repr_python_value(value: Any) -> str:
+    """
+    Python 式へ埋め込む値を `repr()` で文字列化します。
+
+    Args:
+        value: 文字列化する値です。
+
+    Returns:
+        `repr()` による文字列表現です。
+    """
     return repr(value)
 
 
 def _quote_human(value: Any) -> str:
+    """
+    人間向け表示用に値をシングルクォートで囲みます。
+
+    Args:
+        value: 表示対象の値です。
+
+    Returns:
+        シングルクォートで囲んだ文字列表現です。
+    """
     return f"'{value}'"

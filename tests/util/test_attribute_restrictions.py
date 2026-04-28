@@ -444,9 +444,9 @@ class Test__get_attribute_restriction_catalog:
     def test__catalog_model_json_schema(self):
         actual = AttributeRestrictionCatalogItem.model_json_schema()
 
-        assert actual["properties"]["attribute_name"]["description"] == "Attribute name in annotation specs. LLM should refer to attributes by this name."
+        assert actual["properties"]["attribute_name"]["description"] == "アノテーション仕様に定義された属性名です。LLMはこの名前を使って属性を参照します。"
         assert (
             actual["properties"]["allowed_ast_types"]["description"]
-            == "Semantic AST node types that are allowed for this attribute. LLM must not use AST types outside this list."
+            == "この属性で利用できる意味ベースAST種別の一覧です。LLMはこの一覧に含まれないAST種別を使ってはいけません。"
         )
-        assert actual["properties"]["choice_names"]["description"] == "Available choice names for choice/select attributes. Null for non-choice attributes."
+        assert actual["properties"]["choice_names"]["description"] == "choice/select 属性で利用できる選択肢名の一覧です。それ以外の属性では null です。"
