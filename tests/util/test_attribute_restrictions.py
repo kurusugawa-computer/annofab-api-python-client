@@ -6,6 +6,7 @@ import pytest
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
 from annofabapi.util.attribute_restrictions import (
     AnnotationLink,
+    AttributeRestrictionCatalogItem,
     AttributeFactory,
     Checkbox,
     IntegerTextbox,
@@ -424,14 +425,18 @@ class Test__get_attribute_restriction_catalog:
     def test__catalog(self):
         actual = get_attribute_restriction_catalog(accessor.annotation_specs)
 
+        assert all(isinstance(item, AttributeRestrictionCatalogItem) for item in actual)
         assert {
             "attribute_name": "tracking",
             "attribute_type": "tracking",
             "allowed_ast_types": ["can_input", "is_empty", "is_not_empty", "equals_string", "not_equals_string"],
-        } in actual
+            "choice_names": None,
+            "label_names": None,
+        } in [item.model_dump() for item in actual]
         assert {
             "attribute_name": "car_kind",
             "attribute_type": "choice",
             "allowed_ast_types": ["can_input", "is_empty", "is_not_empty", "has_choice", "not_has_choice"],
             "choice_names": ["general_car", "emergency_vehicle", "construction_vehicle"],
-        } in actual
+            "label_names": None,
+        } in [item.model_dump() for item in actual]

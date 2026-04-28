@@ -30,9 +30,28 @@ Example:
 from abc import ABC, abstractmethod
 from collections.abc import Collection
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
+from pydantic import BaseModel, ConfigDict
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, get_choice, get_english_message
+
+RestrictionAstType = Literal[
+    "checked",
+    "unchecked",
+    "is_empty",
+    "is_not_empty",
+    "equals_string",
+    "not_equals_string",
+    "matches_string",
+    "not_matches_string",
+    "equals_integer",
+    "not_equals_integer",
+    "has_choice",
+    "not_has_choice",
+    "has_label",
+    "can_input",
+    "imply",
+]
 
 
 class Restriction(ABC):
@@ -484,7 +503,28 @@ class RestrictionAst:
         return _ast_to_human_readable(self)
 
 
-def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[dict[str, Any]]:
+class AttributeRestrictionCatalogItem(BaseModel):
+    """
+    LLMへ渡す属性制約カタログの1要素を表すモデル。
+
+    Args:
+        attribute_name: 属性名です。
+        attribute_type: 属性種類です。
+        allowed_ast_types: その属性で利用できるAST種別の一覧です。
+        choice_names: 選択系属性で利用できる選択肢名の一覧です。
+        label_names: リンク属性で利用できるラベル名の一覧です。
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    attribute_name: str
+    attribute_type: str
+    allowed_ast_types: list[RestrictionAstType]
+    choice_names: list[str] | None = None
+    label_names: list[str] | None = None
+
+
+def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[AttributeRestrictionCatalogItem]:
     """
     属性制約ASTを組み立てるための属性カタログを返します。
 
@@ -495,18 +535,18 @@ def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[
         LLMへのプロンプトや入力候補生成に使いやすい属性カタログです。
     """
     accessor = AnnotationSpecsAccessor(annotation_specs)
-    catalog = []
+    catalog: list[AttributeRestrictionCatalogItem] = []
     for attribute in accessor.additionals:
         attribute_type = attribute["type"]
-        item: dict[str, Any] = {
-            "attribute_name": get_english_message(attribute["name"]),
-            "attribute_type": attribute_type,
-            "allowed_ast_types": _get_allowed_ast_types(attribute_type),
-        }
+        item = AttributeRestrictionCatalogItem(
+            attribute_name=get_english_message(attribute["name"]),
+            attribute_type=attribute_type,
+            allowed_ast_types=_get_allowed_ast_types(attribute_type),
+        )
         if attribute_type in {"choice", "select"}:
-            item["choice_names"] = [get_english_message(choice["name"]) for choice in attribute["choices"]]
+            item = item.model_copy(update={"choice_names": [get_english_message(choice["name"]) for choice in attribute["choices"]]})
         if attribute_type == "link":
-            item["label_names"] = [get_english_message(label["label_name"]) for label in accessor.labels]
+            item = item.model_copy(update={"label_names": [get_english_message(label["label_name"]) for label in accessor.labels]})
         catalog.append(item)
     return catalog
 
@@ -570,7 +610,7 @@ def _validate_restriction_ast(ast: RestrictionAst) -> None:
         raise ValueError("AST種別'can_input'の'enable'は真偽値である必要があります。")
 
 
-def _get_allowed_ast_types(attribute_type: str) -> list[str]:
+def _get_allowed_ast_types(attribute_type: str) -> list[RestrictionAstType]:
     if attribute_type == "flag":
         return ["can_input", "checked", "unchecked"]
     if attribute_type in {"text", "comment"}:
