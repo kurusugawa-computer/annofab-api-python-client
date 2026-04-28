@@ -459,8 +459,62 @@ class RestrictionAst(BaseModel):
         Raises:
             ValueError: 未知のAST種別が指定された場合
         """
+
+        def flatten_imply_conditions(ast: RestrictionAst) -> tuple[list[RestrictionAst], RestrictionAst]:
+            """
+            右側にネストした `imply` を条件列と結論へ分解します。
+
+            Args:
+                ast: `imply` 種別のASTです。
+
+            Returns:
+                条件ASTの一覧と最終的な結論ASTです。
+            """
+            assert ast.premise is not None
+            assert ast.conclusion is not None
+
+            conditions = [ast.premise]
+            conclusion = ast.conclusion
+            while conclusion.type == "imply":
+                assert conclusion.premise is not None
+                assert conclusion.conclusion is not None
+                conditions.append(conclusion.premise)
+                conclusion = conclusion.conclusion
+            return conditions, conclusion
+
+        def to_human_condition_text(ast: RestrictionAst) -> str:
+            """
+            条件節で使う人間向け文字列表現へ変換します。
+
+            Args:
+                ast: 変換対象のASTです。
+
+            Returns:
+                条件節で使いやすい文字列表現です。
+            """
+            if ast.type == "imply":
+                return f"({ast.to_human_readable()})"
+            return ast.to_human_readable()
+
+        def imply_to_human_readable(ast: RestrictionAst) -> str:
+            """
+            `imply` AST を自然文スタイルの文字列へ変換します。
+
+            右側にネストした `imply` は条件を畳み込んで、
+            `If A and B, C.` のような形へ変換します。
+
+            Args:
+                ast: `imply` 種別のASTです。
+
+            Returns:
+                自然文スタイルの文字列表現です。
+            """
+            conditions, conclusion = flatten_imply_conditions(ast)
+            conditions_text = " and ".join(to_human_condition_text(condition) for condition in conditions)
+            return f"If {conditions_text}, {conclusion.to_human_readable()}."
+
         if self.type == "imply":
-            return _imply_to_human_readable(self)
+            return imply_to_human_readable(self)
 
         assert self.attribute_name is not None
         attribute_name = repr(self.attribute_name)
@@ -1393,59 +1447,3 @@ def _repr_python_value(value: object) -> str:
         `repr()` による文字列表現です。
     """
     return repr(value)
-
-
-def _imply_to_human_readable(ast: RestrictionAst) -> str:
-    """
-    `imply` AST を自然文スタイルの文字列へ変換します。
-
-    右側にネストした `imply` は条件を畳み込んで、
-    `If A and B, C.` のような形へ変換します。
-
-    Args:
-        ast: `imply` 種別のASTです。
-
-    Returns:
-        自然文スタイルの文字列表現です。
-    """
-    conditions, conclusion = _flatten_imply_conditions(ast)
-    conditions_text = " and ".join(_to_human_condition_text(condition) for condition in conditions)
-    return f"If {conditions_text}, {conclusion.to_human_readable()}."
-
-
-def _flatten_imply_conditions(ast: RestrictionAst) -> tuple[list[RestrictionAst], RestrictionAst]:
-    """
-    右側にネストした `imply` を条件列と結論へ分解します。
-
-    Args:
-        ast: `imply` 種別のASTです。
-
-    Returns:
-        条件ASTの一覧と最終的な結論ASTです。
-    """
-    assert ast.premise is not None
-    assert ast.conclusion is not None
-
-    conditions = [ast.premise]
-    conclusion = ast.conclusion
-    while conclusion.type == "imply":
-        assert conclusion.premise is not None
-        assert conclusion.conclusion is not None
-        conditions.append(conclusion.premise)
-        conclusion = conclusion.conclusion
-    return conditions, conclusion
-
-
-def _to_human_condition_text(ast: RestrictionAst) -> str:
-    """
-    条件節で使う人間向け文字列表現へ変換します。
-
-    Args:
-        ast: 変換対象のASTです。
-
-    Returns:
-        条件節で使いやすい文字列表現です。
-    """
-    if ast.type == "imply":
-        return f"({ast.to_human_readable()})"
-    return ast.to_human_readable()
