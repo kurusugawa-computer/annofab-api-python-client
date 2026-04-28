@@ -30,7 +30,7 @@ Example:
 from abc import ABC, abstractmethod
 from collections.abc import Collection
 from enum import Enum
-from typing import Any, NoReturn
+from typing import Any, NoReturn, cast
 
 from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
 
@@ -364,13 +364,13 @@ class Selection(Attribute, EmptyCheckMixin):
 
     def has_choice(self, *, choice_id: str | None = None, choice_name: str | None = None) -> Restriction:
         """引数`choice_id`または`choice_name`に一致する選択肢が選択されているという制約"""
-        choices = _get_attribute_choices(self.attribute)
+        choices = cast(list[AttributeChoice], self.attribute["choices"])
         choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
         return Equals(self.attribute_id, choice["choice_id"])
 
     def not_has_choice(self, *, choice_id: str | None = None, choice_name: str | None = None) -> Restriction:
         """引数`choice_id`または`choice_name`に一致する選択肢が選択されていないという制約"""
-        choices = _get_attribute_choices(self.attribute)
+        choices = cast(list[AttributeChoice], self.attribute["choices"])
         choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
         return NotEquals(self.attribute_id, choice["choice_id"])
 
@@ -799,7 +799,7 @@ def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[
         label_names = None
         match attribute_type:
             case "choice" | "select":
-                choice_names = [get_english_message(choice["name"]) for choice in _get_attribute_choices(attribute)]
+                choice_names = [get_english_message(choice["name"]) for choice in cast(list[AttributeChoice], attribute["choices"])]
             case "link":
                 label_names = [get_english_message(label["label_name"]) for label in accessor.labels]
         item = AttributeRestrictionCatalogItem(
@@ -811,25 +811,6 @@ def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[
         )
         catalog.append(item)
     return catalog
-
-
-def _get_attribute_choices(attribute: AttributeDefinition) -> list[AttributeChoice]:
-    """
-    属性定義から選択肢一覧を取得します。
-
-    Args:
-        attribute: アノテーション仕様上の属性定義です。
-
-    Returns:
-        属性に紐づく選択肢一覧です。
-
-    Raises:
-        ValueError: 選択肢を持たない属性に対して呼び出された場合
-    """
-    choices = attribute["choices"]
-    if choices is None:
-        raise ValueError(f"属性(type='{attribute['type']}')には選択肢がありません。")
-    return choices
 
 
 def _from_restriction_dict(obj: dict[str, Any]) -> Restriction:
@@ -1117,7 +1098,7 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
                     value=_parse_integer_value(value, attribute=attribute, condition={"_type": "Equals", "value": value}),
                 )
             case "choice" | "select":
-                choice = get_choice(_get_attribute_choices(attribute), choice_id=value)
+                choice = get_choice(cast(list[AttributeChoice], attribute["choices"]), choice_id=value)
                 return RestrictionAst(
                     type=RestrictionAstType.HAS_CHOICE,
                     attribute_name=attribute_name,
@@ -1149,7 +1130,7 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
                     value=_parse_integer_value(value, attribute=attribute, condition={"_type": "NotEquals", "value": value}),
                 )
             case "choice" | "select":
-                choice = get_choice(_get_attribute_choices(attribute), choice_id=value)
+                choice = get_choice(cast(list[AttributeChoice], attribute["choices"]), choice_id=value)
                 return RestrictionAst(
                     type=RestrictionAstType.NOT_HAS_CHOICE,
                     attribute_name=attribute_name,
