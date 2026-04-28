@@ -655,6 +655,64 @@ def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[
     Returns:
         LLMへのプロンプトや入力候補生成に使いやすい属性カタログです。
     """
+
+    def get_allowed_ast_types(attribute_type: AdditionalDataDefinitionType) -> list[RestrictionAstType]:
+        """
+        属性種類ごとに利用可能なAST種別を返します。
+
+        Args:
+            attribute_type: アノテーション仕様上の属性種類です。
+
+        Returns:
+            指定した属性種類で利用可能なAST種別の一覧です。
+        """
+        match attribute_type:
+            case "flag":
+                return [RestrictionAstType.CAN_INPUT, RestrictionAstType.CHECKED, RestrictionAstType.UNCHECKED]
+            case "text" | "comment":
+                return [
+                    RestrictionAstType.CAN_INPUT,
+                    RestrictionAstType.IS_EMPTY,
+                    RestrictionAstType.IS_NOT_EMPTY,
+                    RestrictionAstType.EQUALS_STRING,
+                    RestrictionAstType.NOT_EQUALS_STRING,
+                    RestrictionAstType.MATCHES_STRING,
+                    RestrictionAstType.NOT_MATCHES_STRING,
+                ]
+            case "integer":
+                return [
+                    RestrictionAstType.CAN_INPUT,
+                    RestrictionAstType.IS_EMPTY,
+                    RestrictionAstType.IS_NOT_EMPTY,
+                    RestrictionAstType.EQUALS_INTEGER,
+                    RestrictionAstType.NOT_EQUALS_INTEGER,
+                ]
+            case "link":
+                return [
+                    RestrictionAstType.CAN_INPUT,
+                    RestrictionAstType.IS_EMPTY,
+                    RestrictionAstType.IS_NOT_EMPTY,
+                    RestrictionAstType.HAS_LABEL,
+                ]
+            case "tracking":
+                return [
+                    RestrictionAstType.CAN_INPUT,
+                    RestrictionAstType.IS_EMPTY,
+                    RestrictionAstType.IS_NOT_EMPTY,
+                    RestrictionAstType.EQUALS_STRING,
+                    RestrictionAstType.NOT_EQUALS_STRING,
+                ]
+            case "choice" | "select":
+                return [
+                    RestrictionAstType.CAN_INPUT,
+                    RestrictionAstType.IS_EMPTY,
+                    RestrictionAstType.IS_NOT_EMPTY,
+                    RestrictionAstType.HAS_CHOICE,
+                    RestrictionAstType.NOT_HAS_CHOICE,
+                ]
+            case _:
+                raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
+
     accessor = AnnotationSpecsAccessor(annotation_specs)
     catalog: list[AttributeRestrictionCatalogItem] = []
     for attribute in accessor.additionals:
@@ -669,7 +727,7 @@ def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[
         item = AttributeRestrictionCatalogItem(
             attribute_name=get_english_message(attribute["name"]),
             attribute_type=attribute_type,
-            allowed_ast_types=_get_allowed_ast_types(attribute_type),
+            allowed_ast_types=get_allowed_ast_types(attribute_type),
             choice_names=choice_names,
             label_names=label_names,
         )
@@ -753,67 +811,6 @@ def _restriction_ast_to_human_readable_text(ast: RestrictionAst, *, attribute_na
         case _ as never:
             assert_noreturn(never)
     return text
-
-
-def _get_allowed_ast_types(attribute_type: AdditionalDataDefinitionType) -> list[RestrictionAstType]:
-    """
-    属性種類ごとに利用可能なAST種別を返します。
-
-    Args:
-        attribute_type: アノテーション仕様上の属性種類です。
-
-    Returns:
-        指定した属性種類で利用可能なAST種別の一覧です。
-
-    Raises:
-        ValueError: 未対応の属性種類が指定された場合
-    """
-    match attribute_type:
-        case "flag":
-            return [RestrictionAstType.CAN_INPUT, RestrictionAstType.CHECKED, RestrictionAstType.UNCHECKED]
-        case "text" | "comment":
-            return [
-                RestrictionAstType.CAN_INPUT,
-                RestrictionAstType.IS_EMPTY,
-                RestrictionAstType.IS_NOT_EMPTY,
-                RestrictionAstType.EQUALS_STRING,
-                RestrictionAstType.NOT_EQUALS_STRING,
-                RestrictionAstType.MATCHES_STRING,
-                RestrictionAstType.NOT_MATCHES_STRING,
-            ]
-        case "integer":
-            return [
-                RestrictionAstType.CAN_INPUT,
-                RestrictionAstType.IS_EMPTY,
-                RestrictionAstType.IS_NOT_EMPTY,
-                RestrictionAstType.EQUALS_INTEGER,
-                RestrictionAstType.NOT_EQUALS_INTEGER,
-            ]
-        case "link":
-            return [
-                RestrictionAstType.CAN_INPUT,
-                RestrictionAstType.IS_EMPTY,
-                RestrictionAstType.IS_NOT_EMPTY,
-                RestrictionAstType.HAS_LABEL,
-            ]
-        case "tracking":
-            return [
-                RestrictionAstType.CAN_INPUT,
-                RestrictionAstType.IS_EMPTY,
-                RestrictionAstType.IS_NOT_EMPTY,
-                RestrictionAstType.EQUALS_STRING,
-                RestrictionAstType.NOT_EQUALS_STRING,
-            ]
-        case "choice" | "select":
-            return [
-                RestrictionAstType.CAN_INPUT,
-                RestrictionAstType.IS_EMPTY,
-                RestrictionAstType.IS_NOT_EMPTY,
-                RestrictionAstType.HAS_CHOICE,
-                RestrictionAstType.NOT_HAS_CHOICE,
-            ]
-        case _:
-            raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
 
 
 def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any]) -> Restriction:
