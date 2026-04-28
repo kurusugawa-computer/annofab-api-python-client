@@ -33,6 +33,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+from annofabapi.pydantic_models.additional_data_definition_type import AdditionalDataDefinitionType
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, get_choice, get_english_message
 
 RestrictionAstType = Literal[
@@ -52,18 +53,6 @@ RestrictionAstType = Literal[
     "can_input",
     "imply",
 ]
-
-AttributeType = Literal[
-    "flag",
-    "text",
-    "comment",
-    "integer",
-    "link",
-    "tracking",
-    "choice",
-    "select",
-]
-
 
 class Restriction(ABC):
     """属性の制約を表すクラス。"""
@@ -529,7 +518,7 @@ class AttributeRestrictionCatalogItem(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     attribute_name: str = Field(description="アノテーション仕様に定義された属性名です。LLMはこの名前を使って属性を参照します。")
-    attribute_type: AttributeType = Field(
+    attribute_type: AdditionalDataDefinitionType = Field(
         description="アノテーション仕様上の属性種類です。例えば flag、text、integer、tracking、link、choice、select などです。"
     )
     allowed_ast_types: list[RestrictionAstType] = Field(
