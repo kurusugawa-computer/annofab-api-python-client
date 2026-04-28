@@ -420,7 +420,7 @@ class RestrictionAst:
         conclusion: `imply` ノードの結論です。
     """
 
-    type: str
+    type: RestrictionAstType
     attribute_name: str | None = None
     value: str | int | None = None
     choice_name: str | None = None
