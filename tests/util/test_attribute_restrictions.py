@@ -231,36 +231,6 @@ class Test__Restriction:
 
         assert actual.to_dict() == restriction_dict
 
-    def test__to_python_expr(self):
-        restriction_dict = {
-            "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
-            "condition": {
-                "_type": "Imply",
-                "premise": {
-                    "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
-                    "condition": {"_type": "Equals", "value": "true"},
-                },
-                "condition": {"_type": "NotEquals", "value": ""},
-            },
-        }
-        restriction = Restriction.from_dict(restriction_dict)
-
-        actual = restriction.to_python_expr(accessor.annotation_specs)
-
-        assert actual == "fac.checkbox(attribute_name='occluded').checked().imply(fac.string_textbox(attribute_name='note').is_not_empty())"
-
-    def test__to_python_expr__selection(self):
-        restriction = Restriction.from_dict(
-            {
-                "additional_data_definition_id": "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
-                "condition": {"_type": "NotEquals", "value": "7512ee39-8073-4e24-9b8c-93d99b76b7d2"},
-            }
-        )
-
-        actual = restriction.to_python_expr(accessor.annotation_specs)
-
-        assert actual == "fac.selection(attribute_name='car_kind').not_has_choice(choice_name='general_car')"
-
     def test__to_ast(self):
         restriction = Restriction.from_dict(
             {
@@ -367,7 +337,11 @@ class Test__Restriction:
         restriction = Restriction.from_dict(restriction_dict)
 
         assert restriction.to_dict() == restriction_dict
-        assert restriction.to_python_expr(accessor.annotation_specs) == "fac.checkbox(attribute_name='occluded').enabled()"
+        assert restriction.to_ast(accessor.annotation_specs) == RestrictionAst(
+            type=RestrictionAstType.CAN_INPUT,
+            attribute_name="occluded",
+            enable=True,
+        )
 
     def test__from_ast(self):
         ast = RestrictionAst(
