@@ -2,12 +2,13 @@ import json
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
 from annofabapi.util.attribute_restrictions import (
     AnnotationLink,
-    AttributeRestrictionCatalogItem,
     AttributeFactory,
+    AttributeRestrictionCatalogItem,
     Checkbox,
     IntegerTextbox,
     Restriction,
@@ -417,8 +418,16 @@ class Test__RestrictionAst:
         assert actual == "'link_car' HAS LABEL 'car', 'number_plate'"
 
     def test__invalid_fields(self):
-        with pytest.raises(ValueError, match="required=.*attribute_name.*value"):
+        with pytest.raises(ValidationError):
             RestrictionAst(type="equals_string", attribute_name="note")
+
+    def test__model_json_schema(self):
+        actual = RestrictionAst.model_json_schema()
+        properties = actual["$defs"]["RestrictionAst"]["properties"]
+
+        assert properties["type"]["description"] == "ASTノードの種類です。"
+        assert properties["attribute_name"]["description"] == "対象属性の名前です。"
+        assert properties["premise"]["description"] == "`imply` ノードの前提です。"
 
 
 class Test__get_attribute_restriction_catalog:
@@ -444,9 +453,14 @@ class Test__get_attribute_restriction_catalog:
     def test__catalog_model_json_schema(self):
         actual = AttributeRestrictionCatalogItem.model_json_schema()
 
-        assert actual["properties"]["attribute_name"]["description"] == "アノテーション仕様に定義された属性名です。LLMはこの名前を使って属性を参照します。"
+        assert (
+            actual["properties"]["attribute_name"]["description"]
+            == "アノテーション仕様に定義された属性名です。LLMはこの名前を使って属性を参照します。"
+        )
         assert (
             actual["properties"]["allowed_ast_types"]["description"]
             == "この属性で利用できる意味ベースAST種別の一覧です。LLMはこの一覧に含まれないAST種別を使ってはいけません。"
         )
-        assert actual["properties"]["choice_names"]["description"] == "choice/select 属性で利用できる選択肢名の一覧です。それ以外の属性では null です。"
+        assert (
+            actual["properties"]["choice_names"]["description"] == "choice/select 属性で利用できる選択肢名の一覧です。それ以外の属性では null です。"
+        )

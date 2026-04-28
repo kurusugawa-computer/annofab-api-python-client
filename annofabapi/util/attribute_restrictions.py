@@ -29,10 +29,10 @@ Example:
 
 from abc import ABC, abstractmethod
 from collections.abc import Collection
-from dataclasses import dataclass
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
 from annofabapi.pydantic_models.additional_data_definition_type import AdditionalDataDefinitionType
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, get_choice, get_english_message
 
@@ -53,6 +53,7 @@ RestrictionAstType = Literal[
     "can_input",
     "imply",
 ]
+
 
 class Restriction(ABC):
     """属性の制約を表すクラス。"""
@@ -401,8 +402,7 @@ class AttributeFactory:
         return Selection(self.accessor, attribute_id=attribute_id, attribute_name=attribute_name)
 
 
-@dataclass(frozen=True)
-class RestrictionAst:
+class RestrictionAst(BaseModel):
     """
     LLMやCLI向けの意味ベースな属性制約ASTを表すクラス。
 
@@ -420,17 +420,21 @@ class RestrictionAst:
         conclusion: `imply` ノードの結論です。
     """
 
-    type: RestrictionAstType
-    attribute_name: str | None = None
-    value: str | int | None = None
-    choice_name: str | None = None
-    enable: bool | None = None
-    label_names: list[str] | None = None
-    premise: "RestrictionAst | None" = None
-    conclusion: "RestrictionAst | None" = None
+    model_config = ConfigDict(extra="forbid", frozen=True)
 
-    def __post_init__(self) -> None:
+    type: RestrictionAstType = Field(description="ASTノードの種類です。")
+    attribute_name: str | None = Field(default=None, description="対象属性の名前です。")
+    value: str | int | None = Field(default=None, description="文字列や整数の比較値です。")
+    choice_name: str | None = Field(default=None, description="選択系属性で利用する選択肢名です。")
+    enable: bool | None = Field(default=None, description="`can_input` ノードで使う真偽値です。")
+    label_names: list[str] | None = Field(default=None, description="`has_label` ノードで使うラベル名の一覧です。")
+    premise: "RestrictionAst | None" = Field(default=None, description="`imply` ノードの前提です。")
+    conclusion: "RestrictionAst | None" = Field(default=None, description="`imply` ノードの結論です。")
+
+    @model_validator(mode="after")
+    def validate_restriction_ast(self) -> "RestrictionAst":
         _validate_restriction_ast(self)
+        return self
 
     def to_dict(self) -> dict[str, Any]:
         """
@@ -439,22 +443,7 @@ class RestrictionAst:
         Returns:
             辞書形式のASTです。
         """
-        result: dict[str, Any] = {"type": self.type}
-        if self.attribute_name is not None:
-            result["attribute_name"] = self.attribute_name
-        if self.value is not None:
-            result["value"] = self.value
-        if self.choice_name is not None:
-            result["choice_name"] = self.choice_name
-        if self.enable is not None:
-            result["enable"] = self.enable
-        if self.label_names is not None:
-            result["label_names"] = self.label_names
-        if self.premise is not None:
-            result["premise"] = self.premise.to_dict()
-        if self.conclusion is not None:
-            result["conclusion"] = self.conclusion.to_dict()
-        return result
+        return self.model_dump(mode="python", exclude_none=True)
 
     @classmethod
     def from_dict(cls, obj: dict[str, Any]) -> "RestrictionAst":
@@ -467,18 +456,7 @@ class RestrictionAst:
         Returns:
             復元した `RestrictionAst` です。
         """
-        premise = cls.from_dict(obj["premise"]) if obj.get("premise") is not None else None
-        conclusion = cls.from_dict(obj["conclusion"]) if obj.get("conclusion") is not None else None
-        return cls(
-            type=obj["type"],
-            attribute_name=obj.get("attribute_name"),
-            value=obj.get("value"),
-            choice_name=obj.get("choice_name"),
-            enable=obj.get("enable"),
-            label_names=obj.get("label_names"),
-            premise=premise,
-            conclusion=conclusion,
-        )
+        return cls.model_validate(obj)
 
     def to_restriction(self, annotation_specs: dict[str, Any]) -> Restriction:
         """
@@ -501,6 +479,9 @@ class RestrictionAst:
             CLIなどで表示しやすい文字列表現です。
         """
         return _ast_to_human_readable(self)
+
+
+RestrictionAst.model_rebuild()
 
 
 class AttributeRestrictionCatalogItem(BaseModel):
@@ -626,9 +607,7 @@ def _validate_restriction_ast(ast: RestrictionAst) -> None:
         if value is not None
     }
     if actual_fields != required_fields:
-        raise ValueError(
-            f"AST種別'{ast.type}'のフィールドが不正です。 :: required={sorted(required_fields)}, actual={sorted(actual_fields)}"
-        )
+        raise ValueError(f"AST種別'{ast.type}'のフィールドが不正です。 :: required={sorted(required_fields)}, actual={sorted(actual_fields)}")
 
     if ast.type in {"equals_string", "not_equals_string", "matches_string", "not_matches_string"} and not isinstance(ast.value, str):
         raise ValueError(f"AST種別'{ast.type}'の'value'は文字列である必要があります。")
@@ -636,9 +615,8 @@ def _validate_restriction_ast(ast: RestrictionAst) -> None:
         raise ValueError(f"AST種別'{ast.type}'の'value'は整数である必要があります。")
     if ast.type in {"has_choice", "not_has_choice"} and not isinstance(ast.choice_name, str):
         raise ValueError(f"AST種別'{ast.type}'の'choice_name'は文字列である必要があります。")
-    if ast.type == "has_label":
-        if not isinstance(ast.label_names, list) or any(not isinstance(label_name, str) for label_name in ast.label_names):
-            raise ValueError("AST種別'has_label'の'label_names'は文字列のリストである必要があります。")
+    if ast.type == "has_label" and (not isinstance(ast.label_names, list) or any(not isinstance(label_name, str) for label_name in ast.label_names)):
+        raise ValueError("AST種別'has_label'の'label_names'は文字列のリストである必要があります。")
     if ast.type == "can_input" and not isinstance(ast.enable, bool):
         raise ValueError("AST種別'can_input'の'enable'は真偽値である必要があります。")
 
@@ -1262,7 +1240,7 @@ def _ast_to_human_readable(ast: RestrictionAst) -> str:
     raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
 
 
-def _repr_python_value(value: Any) -> str:
+def _repr_python_value(value: object) -> str:
     """
     Python 式へ埋め込む値を `repr()` で文字列化します。
 
@@ -1275,7 +1253,7 @@ def _repr_python_value(value: Any) -> str:
     return repr(value)
 
 
-def _quote_human(value: Any) -> str:
+def _quote_human(value: object) -> str:
     """
     人間向け表示用に値をシングルクォートで囲みます。
 
