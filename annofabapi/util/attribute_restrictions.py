@@ -1020,28 +1020,6 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
     return ast_to_atomic_restriction(ast, attribute=attribute)
 
 
-def _parse_integer_value(value: str, *, attribute: AttributeDefinition, condition: dict[str, Any]) -> int:
-    """
-    整数属性向けの文字列値を整数へ変換します。
-
-    Args:
-        value: 変換対象の文字列値です。
-        attribute: アノテーション仕様上の属性定義です。
-        condition: 元の条件辞書です。
-
-    Returns:
-        変換後の整数値です。
-
-    Raises:
-        ValueError: 整数へ変換できない場合
-    """
-    try:
-        return int(value)
-    except ValueError as exc:
-        _raise_invalid_restriction(attribute=attribute, condition=condition, detail="整数属性には整数値を指定してください。")
-        raise AssertionError("unreachable") from exc
-
-
 def _raise_invalid_restriction(*, attribute: AttributeDefinition, condition: dict[str, Any], detail: str | None = None) -> NoReturn:
     """
     属性型に対して不正な制約が指定されたことを表す例外を送出します。
@@ -1076,6 +1054,27 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
         ValueError: ASTへ変換できない制約が含まれている場合
     """
 
+    def parse_integer_value(value: str, *, attribute: AttributeDefinition, condition: dict[str, Any]) -> int:
+        """
+        整数属性向けの文字列値を整数へ変換します。
+
+        Args:
+            value: 変換対象の文字列値です。
+            attribute: アノテーション仕様上の属性定義です。
+            condition: 元の条件辞書です。
+
+        Returns:
+            変換後の整数値です。
+
+        Raises:
+            ValueError: 整数へ変換できない場合
+        """
+        try:
+            return int(value)
+        except ValueError as exc:
+            _raise_invalid_restriction(attribute=attribute, condition=condition, detail="整数属性には整数値を指定してください。")
+            raise AssertionError("unreachable") from exc
+
     def equals_restriction_to_ast(
         *,
         attribute: AttributeDefinition,
@@ -1094,7 +1093,7 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
                 return RestrictionAst(
                     type=RestrictionAstType.EQUALS_INTEGER,
                     attribute_name=attribute_name,
-                    value=_parse_integer_value(value, attribute=attribute, condition={"_type": "Equals", "value": value}),
+                    value=parse_integer_value(value, attribute=attribute, condition={"_type": "Equals", "value": value}),
                 )
             case "choice" | "select":
                 choice = get_choice(cast(list[AttributeChoice], attribute["choices"]), choice_id=value)
@@ -1126,7 +1125,7 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
                 return RestrictionAst(
                     type=RestrictionAstType.NOT_EQUALS_INTEGER,
                     attribute_name=attribute_name,
-                    value=_parse_integer_value(value, attribute=attribute, condition={"_type": "NotEquals", "value": value}),
+                    value=parse_integer_value(value, attribute=attribute, condition={"_type": "NotEquals", "value": value}),
                 )
             case "choice" | "select":
                 choice = get_choice(cast(list[AttributeChoice], attribute["choices"]), choice_id=value)
