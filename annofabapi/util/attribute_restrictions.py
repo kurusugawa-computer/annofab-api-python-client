@@ -412,15 +412,6 @@ class RestrictionAst(BaseModel):
     `type` に応じて必要なフィールドが変わります。例えば `checked` では
     `attribute_name` を使い、`imply` では `premise` と `conclusion` を使います。
 
-    Args:
-        type: ASTノードの種類です。
-        attribute_name: 対象属性の名前です。
-        value: 文字列や整数の比較値です。
-        choice_name: 選択肢名です。
-        enable: `can_input` ノードで使う真偽値です。
-        label_names: `has_label` ノードで使うラベル名の一覧です。
-        premise: `imply` ノードの前提です。
-        conclusion: `imply` ノードの結論です。
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
