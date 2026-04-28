@@ -895,6 +895,29 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
         ValueError: AST種別が未知の場合、または属性型に対して利用できないASTが指定された場合
     """
 
+    def attribute_with_empty_check(*, attribute: AttributeDefinition) -> EmptyCheckMixin:
+        """
+        空判定をサポートする属性オブジェクトを取得します。
+
+        Args:
+            attribute: アノテーション仕様上の属性定義です。
+
+        Returns:
+            `is_empty()` / `is_not_empty()` を持つ属性オブジェクトです。
+
+        Raises:
+            ValueError: 指定した属性で空判定を利用できない場合
+        """
+        attribute_obj = fac.create(attribute["type"], attribute_id=attribute["additional_data_definition_id"])
+        if not isinstance(attribute_obj, EmptyCheckMixin):
+            _raise_invalid_restriction(
+                attribute=attribute,
+                condition={"_type": "EmptyCheck"},
+                detail="空判定はこの属性種類では利用できません。",
+            )
+        assert isinstance(attribute_obj, EmptyCheckMixin)
+        return attribute_obj
+
     def ast_string_equality_to_restriction(
         *,
         ast: RestrictionAst,
@@ -949,9 +972,9 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
             case RestrictionAstType.UNCHECKED:
                 restriction = fac.checkbox(attribute_name=ast.attribute_name).unchecked()
             case RestrictionAstType.IS_EMPTY:
-                restriction = _attribute_with_empty_check(fac, attribute=attribute).is_empty()
+                restriction = attribute_with_empty_check(attribute=attribute).is_empty()
             case RestrictionAstType.IS_NOT_EMPTY:
-                restriction = _attribute_with_empty_check(fac, attribute=attribute).is_not_empty()
+                restriction = attribute_with_empty_check(attribute=attribute).is_not_empty()
             case RestrictionAstType.CAN_INPUT:
                 assert ast.enable is not None
                 attribute_obj = fac.create(attribute["type"], attribute_name=ast.attribute_name)
@@ -1000,31 +1023,6 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
     assert ast.attribute_name is not None
     attribute = fac.accessor.get_attribute(attribute_name=ast.attribute_name)
     return ast_to_atomic_restriction(ast, attribute=attribute)
-
-
-def _attribute_with_empty_check(fac: AttributeFactory, *, attribute: AttributeDefinition) -> EmptyCheckMixin:
-    """
-    空判定をサポートする属性オブジェクトを取得します。
-
-    Args:
-        fac: 属性生成に使う `AttributeFactory` です。
-        attribute: アノテーション仕様上の属性定義です。
-
-    Returns:
-        `is_empty()` / `is_not_empty()` を持つ属性オブジェクトです。
-
-    Raises:
-        ValueError: 指定した属性で空判定を利用できない場合
-    """
-    attribute_obj = fac.create(attribute["type"], attribute_id=attribute["additional_data_definition_id"])
-    if not isinstance(attribute_obj, EmptyCheckMixin):
-        _raise_invalid_restriction(
-            attribute=attribute,
-            condition={"_type": "EmptyCheck"},
-            detail="空判定はこの属性種類では利用できません。",
-        )
-    assert isinstance(attribute_obj, EmptyCheckMixin)
-    return attribute_obj
 
 
 def _raise_invalid_ast(*, attribute: AttributeDefinition, ast: RestrictionAst) -> NoReturn:
