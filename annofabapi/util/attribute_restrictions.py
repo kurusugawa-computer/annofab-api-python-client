@@ -475,6 +475,7 @@ class RestrictionAst(BaseModel):
         }
         if actual_fields != required_fields:
             raise ValueError(f"AST種別'{self.type}'のフィールドが不正です。 :: required={sorted(required_fields)}, actual={sorted(actual_fields)}")
+
         _validate_restriction_ast_field_types(self)
         return self
 
