@@ -455,8 +455,48 @@ class RestrictionAst(BaseModel):
 
         Returns:
             CLIなどで表示しやすい文字列表現です。
+
+        Raises:
+            ValueError: 未知のAST種別が指定された場合
         """
-        return _ast_to_human_readable(self)
+        if self.type == "imply":
+            assert self.premise is not None
+            assert self.conclusion is not None
+            return f"{self.conclusion.to_human_readable()} IF {self.premise.to_human_readable()}"
+
+        assert self.attribute_name is not None
+        attribute_name = _quote_human(self.attribute_name)
+        simple_text_map = {
+            "checked": f"{attribute_name} EQUALS 'true'",
+            "unchecked": f"{attribute_name} DOES NOT EQUAL 'true'",
+            "is_empty": f"{attribute_name} EQUALS ''",
+            "is_not_empty": f"{attribute_name} DOES NOT EQUAL ''",
+        }
+        if self.type in simple_text_map:
+            return simple_text_map[self.type]
+
+        match self.type:
+            case "equals_string" | "equals_integer":
+                text = f"{attribute_name} EQUALS {_quote_human(self.value)}"
+            case "not_equals_string" | "not_equals_integer":
+                text = f"{attribute_name} DOES NOT EQUAL {_quote_human(self.value)}"
+            case "matches_string":
+                text = f"{attribute_name} MATCHES {_quote_human(self.value)}"
+            case "not_matches_string":
+                text = f"{attribute_name} DOES NOT MATCH {_quote_human(self.value)}"
+            case "has_choice":
+                text = f"{attribute_name} EQUALS {_quote_human(self.choice_name)}"
+            case "not_has_choice":
+                text = f"{attribute_name} DOES NOT EQUAL {_quote_human(self.choice_name)}"
+            case "has_label":
+                assert self.label_names is not None
+                text = f"{attribute_name} HAS LABEL {', '.join(_quote_human(label_name) for label_name in self.label_names)}"
+            case "can_input":
+                assert self.enable is not None
+                text = f"{attribute_name} CAN INPUT" if self.enable else f"{attribute_name} CANNOT INPUT"
+            case _:
+                raise ValueError(f"未知のAST種別です。 :: type='{self.type}'")
+        return text
 
 
 RestrictionAst.model_rebuild()
@@ -1342,59 +1382,6 @@ def _attribute_to_python_expr(attribute: dict[str, Any], *, factory_name: str) -
             raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
 
     return f"{factory_name}.{factory_method}(attribute_name={_repr_python_value(attribute_name)})"
-
-
-def _ast_to_human_readable(ast: RestrictionAst) -> str:
-    """
-    ASTを人間向けの読みやすい文字列表現へ変換します。
-
-    Args:
-        ast: 変換元のASTです。
-
-    Returns:
-        人間向けの文字列表現です。
-
-    Raises:
-        ValueError: 未知のAST種別が指定された場合
-    """
-    if ast.type == "imply":
-        assert ast.premise is not None
-        assert ast.conclusion is not None
-        return f"{ast.conclusion.to_human_readable()} IF {ast.premise.to_human_readable()}"
-
-    assert ast.attribute_name is not None
-    attribute_name = _quote_human(ast.attribute_name)
-    simple_text_map = {
-        "checked": f"{attribute_name} EQUALS 'true'",
-        "unchecked": f"{attribute_name} DOES NOT EQUAL 'true'",
-        "is_empty": f"{attribute_name} EQUALS ''",
-        "is_not_empty": f"{attribute_name} DOES NOT EQUAL ''",
-    }
-    if ast.type in simple_text_map:
-        return simple_text_map[ast.type]
-
-    match ast.type:
-        case "equals_string" | "equals_integer":
-            text = f"{attribute_name} EQUALS {_quote_human(ast.value)}"
-        case "not_equals_string" | "not_equals_integer":
-            text = f"{attribute_name} DOES NOT EQUAL {_quote_human(ast.value)}"
-        case "matches_string":
-            text = f"{attribute_name} MATCHES {_quote_human(ast.value)}"
-        case "not_matches_string":
-            text = f"{attribute_name} DOES NOT MATCH {_quote_human(ast.value)}"
-        case "has_choice":
-            text = f"{attribute_name} EQUALS {_quote_human(ast.choice_name)}"
-        case "not_has_choice":
-            text = f"{attribute_name} DOES NOT EQUAL {_quote_human(ast.choice_name)}"
-        case "has_label":
-            assert ast.label_names is not None
-            text = f"{attribute_name} HAS LABEL {', '.join(_quote_human(label_name) for label_name in ast.label_names)}"
-        case "can_input":
-            assert ast.enable is not None
-            text = f"{attribute_name} CAN INPUT" if ast.enable else f"{attribute_name} CANNOT INPUT"
-        case _:
-            raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
-    return text
 
 
 def _repr_python_value(value: object) -> str:
