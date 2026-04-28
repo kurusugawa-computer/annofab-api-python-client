@@ -853,9 +853,10 @@ def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any]) -> Res
     return restriction
 
 
-def _ast_to_atomic_restriction(ast: RestrictionAst, *, fac: AttributeFactory, attribute: AttributeDefinition) -> Restriction:
+def _ast_to_atomic_restriction(ast: RestrictionAst, *, fac: AttributeFactory, attribute: AttributeDefinition) -> Restriction:  # noqa: PLR0912
     assert ast.attribute_name is not None
     attribute_type = attribute["type"]
+    restriction: Restriction
 
     match ast.type:
         case RestrictionAstType.CHECKED:
@@ -875,11 +876,28 @@ def _ast_to_atomic_restriction(ast: RestrictionAst, *, fac: AttributeFactory, at
         case RestrictionAstType.MATCHES_STRING | RestrictionAstType.NOT_MATCHES_STRING:
             restriction = _ast_string_match_to_restriction(ast=ast, fac=fac, attribute=attribute, attribute_type=attribute_type)
         case RestrictionAstType.EQUALS_INTEGER | RestrictionAstType.NOT_EQUALS_INTEGER:
-            restriction = _ast_integer_to_restriction(ast=ast, fac=fac)
+            assert isinstance(ast.value, int)
+            attribute_obj = fac.integer_textbox(attribute_name=ast.attribute_name)
+            match ast.type:
+                case RestrictionAstType.EQUALS_INTEGER:
+                    restriction = attribute_obj.equals(ast.value)
+                case RestrictionAstType.NOT_EQUALS_INTEGER:
+                    restriction = attribute_obj.not_equals(ast.value)
+                case _:
+                    raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
         case RestrictionAstType.HAS_CHOICE | RestrictionAstType.NOT_HAS_CHOICE:
-            restriction = _ast_selection_to_restriction(ast=ast, fac=fac)
+            assert ast.choice_name is not None
+            attribute_obj = fac.selection(attribute_name=ast.attribute_name)
+            match ast.type:
+                case RestrictionAstType.HAS_CHOICE:
+                    restriction = attribute_obj.has_choice(choice_name=ast.choice_name)
+                case RestrictionAstType.NOT_HAS_CHOICE:
+                    restriction = attribute_obj.not_has_choice(choice_name=ast.choice_name)
+                case _:
+                    raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
         case RestrictionAstType.HAS_LABEL:
-            restriction = _ast_label_to_restriction(ast=ast, fac=fac)
+            assert ast.label_names is not None
+            restriction = fac.annotation_link(attribute_name=ast.attribute_name).has_label(label_names=ast.label_names)
         case RestrictionAstType.IMPLY:
             raise AssertionError("`imply`は `_ast_to_restriction` で処理されるため、ここには到達しません。")
         case _ as never:
@@ -934,49 +952,18 @@ def _ast_string_match_to_restriction(
             raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
 
 
-def _ast_integer_to_restriction(*, ast: RestrictionAst, fac: AttributeFactory) -> Restriction:
-    assert isinstance(ast.value, int)
-    attribute_obj = fac.integer_textbox(attribute_name=ast.attribute_name)
-    match ast.type:
-        case RestrictionAstType.EQUALS_INTEGER:
-            return attribute_obj.equals(ast.value)
-        case RestrictionAstType.NOT_EQUALS_INTEGER:
-            return attribute_obj.not_equals(ast.value)
-        case _:
-            raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
-
-
-def _ast_selection_to_restriction(*, ast: RestrictionAst, fac: AttributeFactory) -> Restriction:
-    assert ast.choice_name is not None
-    attribute_obj = fac.selection(attribute_name=ast.attribute_name)
-    match ast.type:
-        case RestrictionAstType.HAS_CHOICE:
-            return attribute_obj.has_choice(choice_name=ast.choice_name)
-        case RestrictionAstType.NOT_HAS_CHOICE:
-            return attribute_obj.not_has_choice(choice_name=ast.choice_name)
-        case _:
-            raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
-
-
-def _ast_label_to_restriction(*, ast: RestrictionAst, fac: AttributeFactory) -> Restriction:
-    assert ast.label_names is not None
-    return fac.annotation_link(attribute_name=ast.attribute_name).has_label(label_names=ast.label_names)
-
-
-def _create_attribute_object(fac: AttributeFactory, attribute: AttributeDefinition) -> Attribute:
+def _create_attribute_object_with_name(fac: AttributeFactory, attribute_name: str) -> Attribute:
     """
-    属性定義から対応する高水準属性オブジェクトを生成します。
+    属性名から対応する高水準属性オブジェクトを生成します。
 
     Args:
         fac: 属性生成に使う `AttributeFactory` です。
-        attribute: アノテーション仕様上の属性定義です。
+        attribute_name: 属性名です。
 
     Returns:
         対応する高水準属性オブジェクトです。
-
-    Raises:
-        ValueError: 未対応の属性種類が指定された場合
     """
+    attribute = fac.accessor.get_attribute(attribute_name=attribute_name)
     attribute_id = attribute["additional_data_definition_id"]
     attribute_type: AdditionalDataDefinitionType = attribute["type"]
     match attribute_type:
@@ -994,21 +981,6 @@ def _create_attribute_object(fac: AttributeFactory, attribute: AttributeDefiniti
             return fac.selection(attribute_id=attribute_id)
         case _:
             raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
-
-
-def _create_attribute_object_with_name(fac: AttributeFactory, attribute_name: str) -> Attribute:
-    """
-    属性名から対応する高水準属性オブジェクトを生成します。
-
-    Args:
-        fac: 属性生成に使う `AttributeFactory` です。
-        attribute_name: 属性名です。
-
-    Returns:
-        対応する高水準属性オブジェクトです。
-    """
-    attribute = fac.accessor.get_attribute(attribute_name=attribute_name)
-    return _create_attribute_object(fac, attribute)
 
 
 def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restriction:
