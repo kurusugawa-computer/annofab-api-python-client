@@ -425,6 +425,40 @@ class RestrictionAst(BaseModel):
     premise: "RestrictionAst | None" = Field(default=None, description="`imply` ノードの前提です。")
     conclusion: "RestrictionAst | None" = Field(default=None, description="`imply` ノードの結論です。")
 
+    @classmethod
+    def _get_required_fields(cls, ast_type: RestrictionAstType) -> set[str]:
+        """
+        AST種別ごとに必須なフィールド名を返します。
+
+        Args:
+            ast_type: ASTノードの種類です。
+
+        Returns:
+            AST種別に対応する必須フィールド名です。
+        """
+        match ast_type:
+            case RestrictionAstType.CHECKED | RestrictionAstType.UNCHECKED | RestrictionAstType.IS_EMPTY | RestrictionAstType.IS_NOT_EMPTY:
+                return {"attribute_name"}
+            case (
+                RestrictionAstType.EQUALS_STRING
+                | RestrictionAstType.NOT_EQUALS_STRING
+                | RestrictionAstType.MATCHES_STRING
+                | RestrictionAstType.NOT_MATCHES_STRING
+                | RestrictionAstType.EQUALS_INTEGER
+                | RestrictionAstType.NOT_EQUALS_INTEGER
+            ):
+                return {"attribute_name", "value"}
+            case RestrictionAstType.HAS_CHOICE | RestrictionAstType.NOT_HAS_CHOICE:
+                return {"attribute_name", "choice_name"}
+            case RestrictionAstType.HAS_LABEL:
+                return {"attribute_name", "label_names"}
+            case RestrictionAstType.CAN_INPUT:
+                return {"attribute_name", "enable"}
+            case RestrictionAstType.IMPLY:
+                return {"premise", "conclusion"}
+            case _ as never:
+                assert_noreturn(never)
+
     @model_validator(mode="after")
     def validate_restriction_ast(self) -> "RestrictionAst":  # noqa: PLR0912
         """
@@ -433,7 +467,7 @@ class RestrictionAst(BaseModel):
         Raises:
             ValueError: AST種別に対して必須フィールドが不足している場合、または型が不正な場合
         """
-        required_fields = _get_required_ast_fields(self.type)
+        required_fields = self._get_required_fields(self.type)
         actual_fields = {
             field_name
             for field_name, value in (
@@ -674,43 +708,6 @@ def _from_restriction_dict(obj: dict[str, Any]) -> Restriction:
     attribute_id = obj["additional_data_definition_id"]
     condition = obj["condition"]
     return _from_condition_dict(attribute_id=attribute_id, condition=condition)
-
-
-def _get_required_ast_fields(ast_type: RestrictionAstType) -> set[str]:
-    """
-    AST種別ごとに必須なフィールド名を返します。
-
-    Args:
-        ast_type: ASTノードの種類です。
-
-    Returns:
-        AST種別に対応する必須フィールド名です。
-
-    Raises:
-        ValueError: 未知のAST種別が指定された場合
-    """
-    match ast_type:
-        case RestrictionAstType.CHECKED | RestrictionAstType.UNCHECKED | RestrictionAstType.IS_EMPTY | RestrictionAstType.IS_NOT_EMPTY:
-            return {"attribute_name"}
-        case (
-            RestrictionAstType.EQUALS_STRING
-            | RestrictionAstType.NOT_EQUALS_STRING
-            | RestrictionAstType.MATCHES_STRING
-            | RestrictionAstType.NOT_MATCHES_STRING
-            | RestrictionAstType.EQUALS_INTEGER
-            | RestrictionAstType.NOT_EQUALS_INTEGER
-        ):
-            return {"attribute_name", "value"}
-        case RestrictionAstType.HAS_CHOICE | RestrictionAstType.NOT_HAS_CHOICE:
-            return {"attribute_name", "choice_name"}
-        case RestrictionAstType.HAS_LABEL:
-            return {"attribute_name", "label_names"}
-        case RestrictionAstType.CAN_INPUT:
-            return {"attribute_name", "enable"}
-        case RestrictionAstType.IMPLY:
-            return {"premise", "conclusion"}
-        case _ as never:
-            assert_noreturn(never)
 
 
 def _restriction_ast_to_human_readable_text(ast: RestrictionAst, *, attribute_name: str) -> str:  # noqa: PLR0912
