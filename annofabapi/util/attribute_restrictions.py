@@ -463,7 +463,7 @@ class RestrictionAst(BaseModel):
             return _imply_to_human_readable(self)
 
         assert self.attribute_name is not None
-        attribute_name = _quote_human(self.attribute_name)
+        attribute_name = repr(self.attribute_name)
         simple_text_map = {
             "checked": f"{attribute_name} is checked",
             "unchecked": f"{attribute_name} is unchecked",
@@ -1393,19 +1393,6 @@ def _repr_python_value(value: object) -> str:
         `repr()` による文字列表現です。
     """
     return repr(value)
-
-
-def _quote_human(value: object) -> str:
-    """
-    人間向け表示用に値をシングルクォートで囲みます。
-
-    Args:
-        value: 表示対象の値です。
-
-    Returns:
-        シングルクォートで囲んだ文字列表現です。
-    """
-    return f"'{value}'"
 
 
 def _imply_to_human_readable(ast: RestrictionAst) -> str:
