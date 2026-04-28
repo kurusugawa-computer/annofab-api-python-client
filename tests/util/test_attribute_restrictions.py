@@ -303,7 +303,34 @@ class Test__Restriction:
 
         actual = restriction.to_human_readable(accessor.annotation_specs)
 
-        assert actual == "'note' DOES NOT EQUAL '' IF 'occluded' EQUALS 'true'"
+        assert actual == "If 'occluded' is checked, 'note' is not empty."
+
+    def test__to_human_readable__右側にネストしたimplyは条件をまとめる(self):
+        restriction = Restriction.from_dict(
+            {
+                "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+                "condition": {
+                    "_type": "Imply",
+                    "premise": {
+                        "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+                        "condition": {"_type": "Equals", "value": "true"},
+                    },
+                    "condition": {
+                        "_type": "Imply",
+                        "premise": {
+                            "additional_data_definition_id": "ec27de5d-122c-40e7-89bc-5500e37bae6a",
+                            "condition": {"_type": "Equals", "value": "2"},
+                        },
+                        "condition": {"_type": "NotEquals", "value": ""},
+                    },
+                },
+            },
+            annotation_specs=accessor.annotation_specs,
+        )
+
+        actual = restriction.to_human_readable(accessor.annotation_specs)
+
+        assert actual == "If 'occluded' is checked and 'traffic_lane' is 2, 'note' is not empty."
 
     def test__from_dict__annotation_specsを指定しない場合は妥当性検証しない(self):
         restriction_dict = {
@@ -415,7 +442,7 @@ class Test__RestrictionAst:
 
         actual = ast.to_human_readable()
 
-        assert actual == "'link_car' HAS LABEL 'car', 'number_plate'"
+        assert actual == "'link_car' has labels 'car', 'number_plate'"
 
     def test__invalid_fields(self):
         with pytest.raises(ValidationError):

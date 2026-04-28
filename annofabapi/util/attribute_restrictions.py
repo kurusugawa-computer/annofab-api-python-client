@@ -460,40 +460,38 @@ class RestrictionAst(BaseModel):
             ValueError: 未知のAST種別が指定された場合
         """
         if self.type == "imply":
-            assert self.premise is not None
-            assert self.conclusion is not None
-            return f"{self.conclusion.to_human_readable()} IF {self.premise.to_human_readable()}"
+            return _imply_to_human_readable(self)
 
         assert self.attribute_name is not None
         attribute_name = _quote_human(self.attribute_name)
         simple_text_map = {
-            "checked": f"{attribute_name} EQUALS 'true'",
-            "unchecked": f"{attribute_name} DOES NOT EQUAL 'true'",
-            "is_empty": f"{attribute_name} EQUALS ''",
-            "is_not_empty": f"{attribute_name} DOES NOT EQUAL ''",
+            "checked": f"{attribute_name} is checked",
+            "unchecked": f"{attribute_name} is unchecked",
+            "is_empty": f"{attribute_name} is empty",
+            "is_not_empty": f"{attribute_name} is not empty",
         }
         if self.type in simple_text_map:
             return simple_text_map[self.type]
 
         match self.type:
             case "equals_string" | "equals_integer":
-                text = f"{attribute_name} EQUALS {_quote_human(self.value)}"
+                text = f"{attribute_name} is {_repr_human_value(self.value)}"
             case "not_equals_string" | "not_equals_integer":
-                text = f"{attribute_name} DOES NOT EQUAL {_quote_human(self.value)}"
+                text = f"{attribute_name} is not {_repr_human_value(self.value)}"
             case "matches_string":
-                text = f"{attribute_name} MATCHES {_quote_human(self.value)}"
+                text = f"{attribute_name} matches {_repr_human_value(self.value)}"
             case "not_matches_string":
-                text = f"{attribute_name} DOES NOT MATCH {_quote_human(self.value)}"
+                text = f"{attribute_name} does not match {_repr_human_value(self.value)}"
             case "has_choice":
-                text = f"{attribute_name} EQUALS {_quote_human(self.choice_name)}"
+                text = f"{attribute_name} is {_repr_human_value(self.choice_name)}"
             case "not_has_choice":
-                text = f"{attribute_name} DOES NOT EQUAL {_quote_human(self.choice_name)}"
+                text = f"{attribute_name} is not {_repr_human_value(self.choice_name)}"
             case "has_label":
                 assert self.label_names is not None
-                text = f"{attribute_name} HAS LABEL {', '.join(_quote_human(label_name) for label_name in self.label_names)}"
+                text = f"{attribute_name} has labels {', '.join(_repr_human_value(label_name) for label_name in self.label_names)}"
             case "can_input":
                 assert self.enable is not None
-                text = f"{attribute_name} CAN INPUT" if self.enable else f"{attribute_name} CANNOT INPUT"
+                text = f"{attribute_name} can be edited" if self.enable else f"{attribute_name} is read-only"
             case _:
                 raise ValueError(f"未知のAST種別です。 :: type='{self.type}'")
         return text
@@ -1408,3 +1406,72 @@ def _quote_human(value: object) -> str:
         シングルクォートで囲んだ文字列表現です。
     """
     return f"'{value}'"
+
+
+def _repr_human_value(value: object) -> str:
+    """
+    人間向け表示用に値を読みやすく文字列化します。
+
+    Args:
+        value: 表示対象の値です。
+
+    Returns:
+        文字列はクォート付き、それ以外は自然な文字列表現です。
+    """
+    return repr(value)
+
+
+def _imply_to_human_readable(ast: RestrictionAst) -> str:
+    """
+    `imply` AST を自然文スタイルの文字列へ変換します。
+
+    右側にネストした `imply` は条件を畳み込んで、
+    `If A and B, C.` のような形へ変換します。
+
+    Args:
+        ast: `imply` 種別のASTです。
+
+    Returns:
+        自然文スタイルの文字列表現です。
+    """
+    conditions, conclusion = _flatten_imply_conditions(ast)
+    conditions_text = " and ".join(_to_human_condition_text(condition) for condition in conditions)
+    return f"If {conditions_text}, {conclusion.to_human_readable()}."
+
+
+def _flatten_imply_conditions(ast: RestrictionAst) -> tuple[list[RestrictionAst], RestrictionAst]:
+    """
+    右側にネストした `imply` を条件列と結論へ分解します。
+
+    Args:
+        ast: `imply` 種別のASTです。
+
+    Returns:
+        条件ASTの一覧と最終的な結論ASTです。
+    """
+    assert ast.premise is not None
+    assert ast.conclusion is not None
+
+    conditions = [ast.premise]
+    conclusion = ast.conclusion
+    while conclusion.type == "imply":
+        assert conclusion.premise is not None
+        assert conclusion.conclusion is not None
+        conditions.append(conclusion.premise)
+        conclusion = conclusion.conclusion
+    return conditions, conclusion
+
+
+def _to_human_condition_text(ast: RestrictionAst) -> str:
+    """
+    条件節で使う人間向け文字列表現へ変換します。
+
+    Args:
+        ast: 変換対象のASTです。
+
+    Returns:
+        条件節で使いやすい文字列表現です。
+    """
+    if ast.type == "imply":
+        return f"({ast.to_human_readable()})"
+    return ast.to_human_readable()
