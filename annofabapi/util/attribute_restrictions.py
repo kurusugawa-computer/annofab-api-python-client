@@ -453,12 +453,30 @@ class RestrictionAst(BaseModel):
 
     @model_validator(mode="after")
     def validate_restriction_ast(self) -> "RestrictionAst":
-        _validate_restriction_ast(self)
-        return self
+        """
+        `RestrictionAst` の構造がAST種別に整合しているか検証します。
 
-    @field_serializer("type")
-    def serialize_type(self, ast_type: RestrictionAstType) -> str:
-        return ast_type.value
+        Raises:
+            ValueError: AST種別に対して必須フィールドが不足している場合、または型が不正な場合
+        """
+        required_fields = _get_required_ast_fields(self.type)
+        actual_fields = {
+            field_name
+            for field_name, value in (
+                ("attribute_name", self.attribute_name),
+                ("value", self.value),
+                ("choice_name", self.choice_name),
+                ("enable", self.enable),
+                ("label_names", self.label_names),
+                ("premise", self.premise),
+                ("conclusion", self.conclusion),
+            )
+            if value is not None
+        }
+        if actual_fields != required_fields:
+            raise ValueError(f"AST種別'{self.type}'のフィールドが不正です。 :: required={sorted(required_fields)}, actual={sorted(actual_fields)}")
+        _validate_restriction_ast_field_types(self)
+        return self
 
     def to_restriction(self, annotation_specs: dict[str, Any]) -> Restriction:
         """
@@ -687,36 +705,6 @@ def _get_required_ast_fields(ast_type: RestrictionAstType) -> set[str]:
             return {"premise", "conclusion"}
         case _ as never:
             assert_noreturn(never)
-
-
-def _validate_restriction_ast(ast: RestrictionAst) -> None:
-    """
-    `RestrictionAst` の構造がAST種別に整合しているか検証します。
-
-    Args:
-        ast: 検証対象のASTです。
-
-    Raises:
-        ValueError: AST種別に対して必須フィールドが不足している場合、または型が不正な場合
-    """
-    required_fields = _get_required_ast_fields(ast.type)
-    actual_fields = {
-        field_name
-        for field_name, value in (
-            ("attribute_name", ast.attribute_name),
-            ("value", ast.value),
-            ("choice_name", ast.choice_name),
-            ("enable", ast.enable),
-            ("label_names", ast.label_names),
-            ("premise", ast.premise),
-            ("conclusion", ast.conclusion),
-        )
-        if value is not None
-    }
-    if actual_fields != required_fields:
-        raise ValueError(f"AST種別'{ast.type}'のフィールドが不正です。 :: required={sorted(required_fields)}, actual={sorted(actual_fields)}")
-
-    _validate_restriction_ast_field_types(ast)
 
 
 def _validate_restriction_ast_field_types(ast: RestrictionAst) -> None:
