@@ -1003,32 +1003,6 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
     return _ast_to_atomic_restriction(ast, fac=fac, attribute=attribute)
 
 
-def _restriction_to_atomic_ast(
-    restriction: Restriction,
-    *,
-    accessor: AnnotationSpecsAccessor,
-    attribute: AttributeDefinition,
-    attribute_name: str,
-) -> RestrictionAst:
-    attribute_type = attribute["type"]
-    match restriction:
-        case CanInput(enable=enable):
-            return RestrictionAst(type=RestrictionAstType.CAN_INPUT, attribute_name=attribute_name, enable=enable)
-        case Equals(value=value):
-            return _equals_restriction_to_ast(attribute=attribute, attribute_name=attribute_name, attribute_type=attribute_type, value=value)
-        case NotEquals(value=value):
-            return _not_equals_restriction_to_ast(attribute=attribute, attribute_name=attribute_name, attribute_type=attribute_type, value=value)
-        case Matches(value=value) if attribute_type in {"text", "comment"}:
-            return RestrictionAst(type=RestrictionAstType.MATCHES_STRING, attribute_name=attribute_name, value=value)
-        case NotMatches(value=value) if attribute_type in {"text", "comment"}:
-            return RestrictionAst(type=RestrictionAstType.NOT_MATCHES_STRING, attribute_name=attribute_name, value=value)
-        case HasLabel(label_ids=label_ids) if attribute_type == "link":
-            label_names = [get_english_message(accessor.get_label(label_id=label_id)["label_name"]) for label_id in label_ids]
-            return RestrictionAst(type=RestrictionAstType.HAS_LABEL, attribute_name=attribute_name, label_names=label_names)
-        case _:
-            _raise_invalid_restriction(attribute=attribute, condition=restriction.to_dict()["condition"])
-
-
 def _equals_restriction_to_ast(
     *,
     attribute: AttributeDefinition,
@@ -1185,6 +1159,41 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
     Raises:
         ValueError: ASTへ変換できない制約が含まれている場合
     """
+
+    def restriction_to_atomic_ast(
+        restriction: Restriction,
+        *,
+        attribute: AttributeDefinition,
+        attribute_name: str,
+    ) -> RestrictionAst:
+        attribute_type = attribute["type"]
+        match restriction:
+            case CanInput(enable=enable):
+                return RestrictionAst(type=RestrictionAstType.CAN_INPUT, attribute_name=attribute_name, enable=enable)
+            case Equals(value=value):
+                return _equals_restriction_to_ast(
+                    attribute=attribute,
+                    attribute_name=attribute_name,
+                    attribute_type=attribute_type,
+                    value=value,
+                )
+            case NotEquals(value=value):
+                return _not_equals_restriction_to_ast(
+                    attribute=attribute,
+                    attribute_name=attribute_name,
+                    attribute_type=attribute_type,
+                    value=value,
+                )
+            case Matches(value=value) if attribute_type in {"text", "comment"}:
+                return RestrictionAst(type=RestrictionAstType.MATCHES_STRING, attribute_name=attribute_name, value=value)
+            case NotMatches(value=value) if attribute_type in {"text", "comment"}:
+                return RestrictionAst(type=RestrictionAstType.NOT_MATCHES_STRING, attribute_name=attribute_name, value=value)
+            case HasLabel(label_ids=label_ids) if attribute_type == "link":
+                label_names = [get_english_message(accessor.get_label(label_id=label_id)["label_name"]) for label_id in label_ids]
+                return RestrictionAst(type=RestrictionAstType.HAS_LABEL, attribute_name=attribute_name, label_names=label_names)
+            case _:
+                _raise_invalid_restriction(attribute=attribute, condition=restriction.to_dict()["condition"])
+
     match restriction:
         case Imply(premise_restriction=premise_restriction, conclusion_restriction=conclusion_restriction):
             return RestrictionAst(
@@ -1195,4 +1204,4 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
 
     attribute = accessor.get_attribute(attribute_id=restriction.attribute_id)
     attribute_name = get_english_message(attribute["name"])
-    return _restriction_to_atomic_ast(restriction, accessor=accessor, attribute=attribute, attribute_name=attribute_name)
+    return restriction_to_atomic_ast(restriction, attribute=attribute, attribute_name=attribute_name)
