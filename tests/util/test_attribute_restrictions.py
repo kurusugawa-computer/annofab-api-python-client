@@ -226,7 +226,7 @@ class Test__Restriction:
             },
         }
 
-        actual = Restriction.from_dict(restriction_dict, annotation_specs=accessor.annotation_specs)
+        actual = Restriction.from_dict(restriction_dict)
 
         assert actual.to_dict() == restriction_dict
 
@@ -242,7 +242,7 @@ class Test__Restriction:
                 "condition": {"_type": "NotEquals", "value": ""},
             },
         }
-        restriction = Restriction.from_dict(restriction_dict, annotation_specs=accessor.annotation_specs)
+        restriction = Restriction.from_dict(restriction_dict)
 
         actual = restriction.to_python_expr(accessor.annotation_specs)
 
@@ -253,8 +253,7 @@ class Test__Restriction:
             {
                 "additional_data_definition_id": "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
                 "condition": {"_type": "NotEquals", "value": "7512ee39-8073-4e24-9b8c-93d99b76b7d2"},
-            },
-            annotation_specs=accessor.annotation_specs,
+            }
         )
 
         actual = restriction.to_python_expr(accessor.annotation_specs)
@@ -273,8 +272,7 @@ class Test__Restriction:
                     },
                     "condition": {"_type": "NotEquals", "value": ""},
                 },
-            },
-            annotation_specs=accessor.annotation_specs,
+            }
         )
 
         actual = restriction.to_ast(accessor.annotation_specs)
@@ -297,8 +295,7 @@ class Test__Restriction:
                     },
                     "condition": {"_type": "NotEquals", "value": ""},
                 },
-            },
-            annotation_specs=accessor.annotation_specs,
+            }
         )
 
         actual = restriction.to_human_readable(accessor.annotation_specs)
@@ -324,15 +321,14 @@ class Test__Restriction:
                         "condition": {"_type": "NotEquals", "value": ""},
                     },
                 },
-            },
-            annotation_specs=accessor.annotation_specs,
+            }
         )
 
         actual = restriction.to_human_readable(accessor.annotation_specs)
 
         assert actual == "If 'occluded' is checked and 'traffic_lane' is 2, 'note' is not empty."
 
-    def test__from_dict__annotation_specsを指定しない場合は妥当性検証しない(self):
+    def test__from_dict__妥当性検証せずに復元する(self):
         restriction_dict = {
             "additional_data_definition_id": "d349e76d-b59a-44cd-94b4-713a00b2e84d",
             "condition": {"_type": "Matches", "value": "\\d+"},
@@ -342,30 +338,32 @@ class Test__Restriction:
 
         assert actual.to_dict() == restriction_dict
 
-    def test__from_dict__tracking_id属性にmatchesは指定できない(self):
+    def test__to_ast__tracking_id属性にmatchesは指定できない(self):
         restriction_dict = {
             "additional_data_definition_id": "d349e76d-b59a-44cd-94b4-713a00b2e84d",
             "condition": {"_type": "Matches", "value": "\\d+"},
         }
+        restriction = Restriction.from_dict(restriction_dict)
 
         with pytest.raises(ValueError, match="属性'tracking'\\(type='tracking'\\)では制約'Matches'を利用できません。"):
-            Restriction.from_dict(restriction_dict, annotation_specs=accessor.annotation_specs)
+            restriction.to_ast(accessor.annotation_specs)
 
-    def test__from_dict__integer属性に整数以外の値は指定できない(self):
+    def test__to_ast__integer属性に整数以外の値は指定できない(self):
         restriction_dict = {
             "additional_data_definition_id": "ec27de5d-122c-40e7-89bc-5500e37bae6a",
             "condition": {"_type": "Equals", "value": "foo"},
         }
+        restriction = Restriction.from_dict(restriction_dict)
 
         with pytest.raises(ValueError, match="整数属性には整数値を指定してください。"):
-            Restriction.from_dict(restriction_dict, annotation_specs=accessor.annotation_specs)
+            restriction.to_ast(accessor.annotation_specs)
 
     def test__from_dict__can_input_true(self):
         restriction_dict = {
             "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
             "condition": {"_type": "CanInput", "enable": True},
         }
-        restriction = Restriction.from_dict(restriction_dict, annotation_specs=accessor.annotation_specs)
+        restriction = Restriction.from_dict(restriction_dict)
 
         assert restriction.to_dict() == restriction_dict
         assert restriction.to_python_expr(accessor.annotation_specs) == "fac.checkbox(attribute_name='occluded').enabled()"
