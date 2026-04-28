@@ -366,21 +366,21 @@ class Test__Restriction:
 
 
 class Test__RestrictionAst:
-    def test__to_dict(self):
+    def test__model_dump(self):
         ast = RestrictionAst(
             type="imply",
             premise=RestrictionAst(type="checked", attribute_name="occluded"),
             conclusion=RestrictionAst(type="is_not_empty", attribute_name="note"),
         )
 
-        assert ast.to_dict() == {
+        assert ast.model_dump(mode="python", exclude_none=True) == {
             "type": "imply",
             "premise": {"type": "checked", "attribute_name": "occluded"},
             "conclusion": {"type": "is_not_empty", "attribute_name": "note"},
         }
 
-    def test__from_dict(self):
-        actual = RestrictionAst.from_dict(
+    def test__model_validate(self):
+        actual = RestrictionAst.model_validate(
             {
                 "type": "imply",
                 "premise": {"type": "checked", "attribute_name": "occluded"},

@@ -436,28 +436,6 @@ class RestrictionAst(BaseModel):
         _validate_restriction_ast(self)
         return self
 
-    def to_dict(self) -> dict[str, Any]:
-        """
-        ASTをJSONシリアライズしやすい辞書へ変換します。
-
-        Returns:
-            辞書形式のASTです。
-        """
-        return self.model_dump(mode="python", exclude_none=True)
-
-    @classmethod
-    def from_dict(cls, obj: dict[str, Any]) -> "RestrictionAst":
-        """
-        辞書からASTを復元します。
-
-        Args:
-            obj: ASTを表す辞書です。
-
-        Returns:
-            復元した `RestrictionAst` です。
-        """
-        return cls.model_validate(obj)
-
     def to_restriction(self, annotation_specs: dict[str, Any]) -> Restriction:
         """
         ASTをRestrictionオブジェクトへコンパイルします。
