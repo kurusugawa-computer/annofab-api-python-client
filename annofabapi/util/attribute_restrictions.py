@@ -475,20 +475,20 @@ class RestrictionAst(BaseModel):
 
         match self.type:
             case "equals_string" | "equals_integer":
-                text = f"{attribute_name} is {_repr_human_value(self.value)}"
+                text = f"{attribute_name} is " + repr(self.value)
             case "not_equals_string" | "not_equals_integer":
-                text = f"{attribute_name} is not {_repr_human_value(self.value)}"
+                text = f"{attribute_name} is not " + repr(self.value)
             case "matches_string":
-                text = f"{attribute_name} matches {_repr_human_value(self.value)}"
+                text = f"{attribute_name} matches " + repr(self.value)
             case "not_matches_string":
-                text = f"{attribute_name} does not match {_repr_human_value(self.value)}"
+                text = f"{attribute_name} does not match " + repr(self.value)
             case "has_choice":
-                text = f"{attribute_name} is {_repr_human_value(self.choice_name)}"
+                text = f"{attribute_name} is " + repr(self.choice_name)
             case "not_has_choice":
-                text = f"{attribute_name} is not {_repr_human_value(self.choice_name)}"
+                text = f"{attribute_name} is not " + repr(self.choice_name)
             case "has_label":
                 assert self.label_names is not None
-                text = f"{attribute_name} has labels {', '.join(_repr_human_value(label_name) for label_name in self.label_names)}"
+                text = f"{attribute_name} has labels {', '.join(repr(label_name) for label_name in self.label_names)}"
             case "can_input":
                 assert self.enable is not None
                 text = f"{attribute_name} can be edited" if self.enable else f"{attribute_name} is read-only"
@@ -1406,19 +1406,6 @@ def _quote_human(value: object) -> str:
         シングルクォートで囲んだ文字列表現です。
     """
     return f"'{value}'"
-
-
-def _repr_human_value(value: object) -> str:
-    """
-    人間向け表示用に値を読みやすく文字列化します。
-
-    Args:
-        value: 表示対象の値です。
-
-    Returns:
-        文字列はクォート付き、それ以外は自然な文字列表現です。
-    """
-    return repr(value)
 
 
 def _imply_to_human_readable(ast: RestrictionAst) -> str:
