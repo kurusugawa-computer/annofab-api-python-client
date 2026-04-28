@@ -29,31 +29,37 @@ Example:
 
 from abc import ABC, abstractmethod
 from collections.abc import Collection
-from typing import Any, Literal, NoReturn
+from enum import Enum
+from typing import Any, NoReturn
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
 
 from annofabapi.pydantic_models.additional_data_definition_type import AdditionalDataDefinitionType
-from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, get_choice, get_english_message
+from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, AttributeChoice, AttributeDefinition, get_choice, get_english_message
 from annofabapi.util.type_util import assert_noreturn
 
-RestrictionAstType = Literal[
-    "checked",
-    "unchecked",
-    "is_empty",
-    "is_not_empty",
-    "equals_string",
-    "not_equals_string",
-    "matches_string",
-    "not_matches_string",
-    "equals_integer",
-    "not_equals_integer",
-    "has_choice",
-    "not_has_choice",
-    "has_label",
-    "can_input",
-    "imply",
-]
+
+class RestrictionAstType(str, Enum):
+    """属性制約ASTの種別です。"""
+
+    CHECKED = "checked"
+    UNCHECKED = "unchecked"
+    IS_EMPTY = "is_empty"
+    IS_NOT_EMPTY = "is_not_empty"
+    EQUALS_STRING = "equals_string"
+    NOT_EQUALS_STRING = "not_equals_string"
+    MATCHES_STRING = "matches_string"
+    NOT_MATCHES_STRING = "not_matches_string"
+    EQUALS_INTEGER = "equals_integer"
+    NOT_EQUALS_INTEGER = "not_equals_integer"
+    HAS_CHOICE = "has_choice"
+    NOT_HAS_CHOICE = "not_has_choice"
+    HAS_LABEL = "has_label"
+    CAN_INPUT = "can_input"
+    IMPLY = "imply"
+
+    def __str__(self) -> str:
+        return self.value
 
 
 class Restriction(ABC):
@@ -360,13 +366,13 @@ class Selection(Attribute, EmptyCheckMixin):
 
     def has_choice(self, *, choice_id: str | None = None, choice_name: str | None = None) -> Restriction:
         """引数`choice_id`または`choice_name`に一致する選択肢が選択されているという制約"""
-        choices = self.attribute["choices"]
+        choices = _get_attribute_choices(self.attribute)
         choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
         return Equals(self.attribute_id, choice["choice_id"])
 
     def not_has_choice(self, *, choice_id: str | None = None, choice_name: str | None = None) -> Restriction:
         """引数`choice_id`または`choice_name`に一致する選択肢が選択されていないという制約"""
-        choices = self.attribute["choices"]
+        choices = _get_attribute_choices(self.attribute)
         choice = get_choice(choices, choice_id=choice_id, choice_name=choice_name)
         return NotEquals(self.attribute_id, choice["choice_id"])
 
@@ -435,6 +441,10 @@ class RestrictionAst(BaseModel):
         _validate_restriction_ast(self)
         return self
 
+    @field_serializer("type")
+    def serialize_type(self, ast_type: RestrictionAstType) -> str:
+        return ast_type.value
+
     def to_restriction(self, annotation_specs: dict[str, Any]) -> Restriction:
         """
         ASTをRestrictionオブジェクトへコンパイルします。
@@ -474,7 +484,7 @@ class RestrictionAst(BaseModel):
 
             conditions = [ast.premise]
             conclusion = ast.conclusion
-            while conclusion.type == "imply":
+            while conclusion.type == RestrictionAstType.IMPLY:
                 assert conclusion.premise is not None
                 assert conclusion.conclusion is not None
                 conditions.append(conclusion.premise)
@@ -491,7 +501,7 @@ class RestrictionAst(BaseModel):
             Returns:
                 条件節で使いやすい文字列表現です。
             """
-            if ast.type == "imply":
+            if ast.type == RestrictionAstType.IMPLY:
                 return f"({ast.to_human_readable()})"
             return ast.to_human_readable()
 
@@ -512,7 +522,7 @@ class RestrictionAst(BaseModel):
             conditions_text = " and ".join(to_human_condition_text(condition) for condition in conditions)
             return f"If {conditions_text}, {conclusion.to_human_readable()}."
 
-        if self.type == "imply":
+        if self.type == RestrictionAstType.IMPLY:
             return imply_to_human_readable(self)
 
         assert self.attribute_name is not None
@@ -553,6 +563,14 @@ class AttributeRestrictionCatalogItem(BaseModel):
         description="link 属性で利用できるラベル名の一覧です。それ以外の属性では null です。",
     )
 
+    @field_serializer("attribute_type")
+    def serialize_attribute_type(self, attribute_type: AdditionalDataDefinitionType) -> str:
+        return attribute_type.value
+
+    @field_serializer("allowed_ast_types")
+    def serialize_allowed_ast_types(self, allowed_ast_types: list[RestrictionAstType]) -> list[str]:
+        return [ast_type.value for ast_type in allowed_ast_types]
+
 
 def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[AttributeRestrictionCatalogItem]:
     """
@@ -572,7 +590,7 @@ def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[
         label_names = None
         match attribute_type:
             case "choice" | "select":
-                choice_names = [get_english_message(choice["name"]) for choice in attribute["choices"]]
+                choice_names = [get_english_message(choice["name"]) for choice in _get_attribute_choices(attribute)]
             case "link":
                 label_names = [get_english_message(label["label_name"]) for label in accessor.labels]
         item = AttributeRestrictionCatalogItem(
@@ -584,6 +602,25 @@ def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[
         )
         catalog.append(item)
     return catalog
+
+
+def _get_attribute_choices(attribute: AttributeDefinition) -> list[AttributeChoice]:
+    """
+    属性定義から選択肢一覧を取得します。
+
+    Args:
+        attribute: アノテーション仕様上の属性定義です。
+
+    Returns:
+        属性に紐づく選択肢一覧です。
+
+    Raises:
+        ValueError: 選択肢を持たない属性に対して呼び出された場合
+    """
+    choices = attribute["choices"]
+    if choices is None:
+        raise ValueError(f"属性(type='{attribute['type']}')には選択肢がありません。")
+    return choices
 
 
 def _from_restriction_dict(obj: dict[str, Any]) -> Restriction:
@@ -614,17 +651,24 @@ def _get_required_ast_fields(ast_type: RestrictionAstType) -> set[str]:
         ValueError: 未知のAST種別が指定された場合
     """
     match ast_type:
-        case "checked" | "unchecked" | "is_empty" | "is_not_empty":
+        case RestrictionAstType.CHECKED | RestrictionAstType.UNCHECKED | RestrictionAstType.IS_EMPTY | RestrictionAstType.IS_NOT_EMPTY:
             return {"attribute_name"}
-        case "equals_string" | "not_equals_string" | "matches_string" | "not_matches_string" | "equals_integer" | "not_equals_integer":
+        case (
+            RestrictionAstType.EQUALS_STRING
+            | RestrictionAstType.NOT_EQUALS_STRING
+            | RestrictionAstType.MATCHES_STRING
+            | RestrictionAstType.NOT_MATCHES_STRING
+            | RestrictionAstType.EQUALS_INTEGER
+            | RestrictionAstType.NOT_EQUALS_INTEGER
+        ):
             return {"attribute_name", "value"}
-        case "has_choice" | "not_has_choice":
+        case RestrictionAstType.HAS_CHOICE | RestrictionAstType.NOT_HAS_CHOICE:
             return {"attribute_name", "choice_name"}
-        case "has_label":
+        case RestrictionAstType.HAS_LABEL:
             return {"attribute_name", "label_names"}
-        case "can_input":
+        case RestrictionAstType.CAN_INPUT:
             return {"attribute_name", "enable"}
-        case "imply":
+        case RestrictionAstType.IMPLY:
             return {"premise", "conclusion"}
         case _ as never:
             assert_noreturn(never)
@@ -671,22 +715,33 @@ def _validate_restriction_ast_field_types(ast: RestrictionAst) -> None:
         ValueError: AST種別に対して値の型が不正な場合
     """
     match ast.type:
-        case "equals_string" | "not_equals_string" | "matches_string" | "not_matches_string":
+        case (
+            RestrictionAstType.EQUALS_STRING
+            | RestrictionAstType.NOT_EQUALS_STRING
+            | RestrictionAstType.MATCHES_STRING
+            | RestrictionAstType.NOT_MATCHES_STRING
+        ):
             if not isinstance(ast.value, str):
                 raise ValueError(f"AST種別'{ast.type}'の'value'は文字列である必要があります。")
-        case "equals_integer" | "not_equals_integer":
+        case RestrictionAstType.EQUALS_INTEGER | RestrictionAstType.NOT_EQUALS_INTEGER:
             if not isinstance(ast.value, int):
                 raise ValueError(f"AST種別'{ast.type}'の'value'は整数である必要があります。")
-        case "has_choice" | "not_has_choice":
+        case RestrictionAstType.HAS_CHOICE | RestrictionAstType.NOT_HAS_CHOICE:
             if not isinstance(ast.choice_name, str):
                 raise ValueError(f"AST種別'{ast.type}'の'choice_name'は文字列である必要があります。")
-        case "has_label":
+        case RestrictionAstType.HAS_LABEL:
             if not isinstance(ast.label_names, list) or any(not isinstance(label_name, str) for label_name in ast.label_names):
                 raise ValueError("AST種別'has_label'の'label_names'は文字列のリストである必要があります。")
-        case "can_input":
+        case RestrictionAstType.CAN_INPUT:
             if not isinstance(ast.enable, bool):
                 raise ValueError("AST種別'can_input'の'enable'は真偽値である必要があります。")
-        case "checked" | "unchecked" | "is_empty" | "is_not_empty" | "imply":
+        case (
+            RestrictionAstType.CHECKED
+            | RestrictionAstType.UNCHECKED
+            | RestrictionAstType.IS_EMPTY
+            | RestrictionAstType.IS_NOT_EMPTY
+            | RestrictionAstType.IMPLY
+        ):
             pass
         case _ as never:
             assert_noreturn(never)
@@ -704,33 +759,33 @@ def _restriction_ast_to_human_readable_text(ast: RestrictionAst, *, attribute_na
         人間向けの読みやすい文字列です。
     """
     match ast.type:
-        case "checked":
+        case RestrictionAstType.CHECKED:
             text = f"{attribute_name} is checked"
-        case "unchecked":
+        case RestrictionAstType.UNCHECKED:
             text = f"{attribute_name} is unchecked"
-        case "is_empty":
+        case RestrictionAstType.IS_EMPTY:
             text = f"{attribute_name} is empty"
-        case "is_not_empty":
+        case RestrictionAstType.IS_NOT_EMPTY:
             text = f"{attribute_name} is not empty"
-        case "equals_string" | "equals_integer":
+        case RestrictionAstType.EQUALS_STRING | RestrictionAstType.EQUALS_INTEGER:
             text = f"{attribute_name} is " + repr(ast.value)
-        case "not_equals_string" | "not_equals_integer":
+        case RestrictionAstType.NOT_EQUALS_STRING | RestrictionAstType.NOT_EQUALS_INTEGER:
             text = f"{attribute_name} is not " + repr(ast.value)
-        case "matches_string":
+        case RestrictionAstType.MATCHES_STRING:
             text = f"{attribute_name} matches " + repr(ast.value)
-        case "not_matches_string":
+        case RestrictionAstType.NOT_MATCHES_STRING:
             text = f"{attribute_name} does not match " + repr(ast.value)
-        case "has_choice":
+        case RestrictionAstType.HAS_CHOICE:
             text = f"{attribute_name} is " + repr(ast.choice_name)
-        case "not_has_choice":
+        case RestrictionAstType.NOT_HAS_CHOICE:
             text = f"{attribute_name} is not " + repr(ast.choice_name)
-        case "has_label":
+        case RestrictionAstType.HAS_LABEL:
             assert ast.label_names is not None
             text = f"{attribute_name} has labels {', '.join(repr(label_name) for label_name in ast.label_names)}"
-        case "can_input":
+        case RestrictionAstType.CAN_INPUT:
             assert ast.enable is not None
             text = f"{attribute_name} can be edited" if ast.enable else f"{attribute_name} is read-only"
-        case "imply":
+        case RestrictionAstType.IMPLY:
             raise AssertionError("`imply`は事前に処理されるため、ここには到達しません。")
         case _ as never:
             assert_noreturn(never)
@@ -752,17 +807,48 @@ def _get_allowed_ast_types(attribute_type: AdditionalDataDefinitionType) -> list
     """
     match attribute_type:
         case "flag":
-            return ["can_input", "checked", "unchecked"]
+            return [RestrictionAstType.CAN_INPUT, RestrictionAstType.CHECKED, RestrictionAstType.UNCHECKED]
         case "text" | "comment":
-            return ["can_input", "is_empty", "is_not_empty", "equals_string", "not_equals_string", "matches_string", "not_matches_string"]
+            return [
+                RestrictionAstType.CAN_INPUT,
+                RestrictionAstType.IS_EMPTY,
+                RestrictionAstType.IS_NOT_EMPTY,
+                RestrictionAstType.EQUALS_STRING,
+                RestrictionAstType.NOT_EQUALS_STRING,
+                RestrictionAstType.MATCHES_STRING,
+                RestrictionAstType.NOT_MATCHES_STRING,
+            ]
         case "integer":
-            return ["can_input", "is_empty", "is_not_empty", "equals_integer", "not_equals_integer"]
+            return [
+                RestrictionAstType.CAN_INPUT,
+                RestrictionAstType.IS_EMPTY,
+                RestrictionAstType.IS_NOT_EMPTY,
+                RestrictionAstType.EQUALS_INTEGER,
+                RestrictionAstType.NOT_EQUALS_INTEGER,
+            ]
         case "link":
-            return ["can_input", "is_empty", "is_not_empty", "has_label"]
+            return [
+                RestrictionAstType.CAN_INPUT,
+                RestrictionAstType.IS_EMPTY,
+                RestrictionAstType.IS_NOT_EMPTY,
+                RestrictionAstType.HAS_LABEL,
+            ]
         case "tracking":
-            return ["can_input", "is_empty", "is_not_empty", "equals_string", "not_equals_string"]
+            return [
+                RestrictionAstType.CAN_INPUT,
+                RestrictionAstType.IS_EMPTY,
+                RestrictionAstType.IS_NOT_EMPTY,
+                RestrictionAstType.EQUALS_STRING,
+                RestrictionAstType.NOT_EQUALS_STRING,
+            ]
         case "choice" | "select":
-            return ["can_input", "is_empty", "is_not_empty", "has_choice", "not_has_choice"]
+            return [
+                RestrictionAstType.CAN_INPUT,
+                RestrictionAstType.IS_EMPTY,
+                RestrictionAstType.IS_NOT_EMPTY,
+                RestrictionAstType.HAS_CHOICE,
+                RestrictionAstType.NOT_HAS_CHOICE,
+            ]
         case _:
             raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
 
@@ -819,34 +905,34 @@ def _from_atomic_condition_dict(*, attribute_id: str, condition: dict[str, Any])
             raise ValueError(f"未知の制約種別です。 :: _type='{condition_type}'")
 
 
-def _ast_to_atomic_restriction(ast: RestrictionAst, *, fac: AttributeFactory, attribute: dict[str, Any]) -> Restriction:
+def _ast_to_atomic_restriction(ast: RestrictionAst, *, fac: AttributeFactory, attribute: AttributeDefinition) -> Restriction:
     assert ast.attribute_name is not None
     attribute_type = attribute["type"]
 
     match ast.type:
-        case "checked":
+        case RestrictionAstType.CHECKED:
             restriction = fac.checkbox(attribute_name=ast.attribute_name).checked()
-        case "unchecked":
+        case RestrictionAstType.UNCHECKED:
             restriction = fac.checkbox(attribute_name=ast.attribute_name).unchecked()
-        case "is_empty":
+        case RestrictionAstType.IS_EMPTY:
             restriction = _attribute_with_empty_check(fac, ast.attribute_name).is_empty()
-        case "is_not_empty":
+        case RestrictionAstType.IS_NOT_EMPTY:
             restriction = _attribute_with_empty_check(fac, ast.attribute_name).is_not_empty()
-        case "can_input":
+        case RestrictionAstType.CAN_INPUT:
             assert ast.enable is not None
             attribute_obj = _create_attribute_object_with_name(fac, ast.attribute_name)
             restriction = attribute_obj.enabled() if ast.enable else attribute_obj.disabled()
-        case "equals_string" | "not_equals_string":
+        case RestrictionAstType.EQUALS_STRING | RestrictionAstType.NOT_EQUALS_STRING:
             restriction = _ast_string_equality_to_restriction(ast=ast, fac=fac, attribute=attribute, attribute_type=attribute_type)
-        case "matches_string" | "not_matches_string":
+        case RestrictionAstType.MATCHES_STRING | RestrictionAstType.NOT_MATCHES_STRING:
             restriction = _ast_string_match_to_restriction(ast=ast, fac=fac, attribute=attribute, attribute_type=attribute_type)
-        case "equals_integer" | "not_equals_integer":
+        case RestrictionAstType.EQUALS_INTEGER | RestrictionAstType.NOT_EQUALS_INTEGER:
             restriction = _ast_integer_to_restriction(ast=ast, fac=fac)
-        case "has_choice" | "not_has_choice":
+        case RestrictionAstType.HAS_CHOICE | RestrictionAstType.NOT_HAS_CHOICE:
             restriction = _ast_selection_to_restriction(ast=ast, fac=fac)
-        case "has_label":
+        case RestrictionAstType.HAS_LABEL:
             restriction = _ast_label_to_restriction(ast=ast, fac=fac)
-        case "imply":
+        case RestrictionAstType.IMPLY:
             raise AssertionError("`imply`は `_ast_to_restriction` で処理されるため、ここには到達しません。")
         case _ as never:
             assert_noreturn(never)
@@ -857,7 +943,7 @@ def _ast_string_equality_to_restriction(
     *,
     ast: RestrictionAst,
     fac: AttributeFactory,
-    attribute: dict[str, Any],
+    attribute: AttributeDefinition,
     attribute_type: AdditionalDataDefinitionType,
 ) -> Restriction:
     assert isinstance(ast.value, str)
@@ -871,9 +957,9 @@ def _ast_string_equality_to_restriction(
             _raise_invalid_ast(attribute=attribute, ast=ast)
 
     match ast.type:
-        case "equals_string":
+        case RestrictionAstType.EQUALS_STRING:
             return attribute_obj.equals(ast.value)
-        case "not_equals_string":
+        case RestrictionAstType.NOT_EQUALS_STRING:
             return attribute_obj.not_equals(ast.value)
         case _:
             raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
@@ -883,7 +969,7 @@ def _ast_string_match_to_restriction(
     *,
     ast: RestrictionAst,
     fac: AttributeFactory,
-    attribute: dict[str, Any],
+    attribute: AttributeDefinition,
     attribute_type: AdditionalDataDefinitionType,
 ) -> Restriction:
     assert isinstance(ast.value, str)
@@ -892,9 +978,9 @@ def _ast_string_match_to_restriction(
 
     attribute_obj = fac.string_textbox(attribute_name=ast.attribute_name)
     match ast.type:
-        case "matches_string":
+        case RestrictionAstType.MATCHES_STRING:
             return attribute_obj.matches(ast.value)
-        case "not_matches_string":
+        case RestrictionAstType.NOT_MATCHES_STRING:
             return attribute_obj.not_matches(ast.value)
         case _:
             raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
@@ -904,9 +990,9 @@ def _ast_integer_to_restriction(*, ast: RestrictionAst, fac: AttributeFactory) -
     assert isinstance(ast.value, int)
     attribute_obj = fac.integer_textbox(attribute_name=ast.attribute_name)
     match ast.type:
-        case "equals_integer":
+        case RestrictionAstType.EQUALS_INTEGER:
             return attribute_obj.equals(ast.value)
-        case "not_equals_integer":
+        case RestrictionAstType.NOT_EQUALS_INTEGER:
             return attribute_obj.not_equals(ast.value)
         case _:
             raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
@@ -916,9 +1002,9 @@ def _ast_selection_to_restriction(*, ast: RestrictionAst, fac: AttributeFactory)
     assert ast.choice_name is not None
     attribute_obj = fac.selection(attribute_name=ast.attribute_name)
     match ast.type:
-        case "has_choice":
+        case RestrictionAstType.HAS_CHOICE:
             return attribute_obj.has_choice(choice_name=ast.choice_name)
-        case "not_has_choice":
+        case RestrictionAstType.NOT_HAS_CHOICE:
             return attribute_obj.not_has_choice(choice_name=ast.choice_name)
         case _:
             raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
@@ -929,7 +1015,7 @@ def _ast_label_to_restriction(*, ast: RestrictionAst, fac: AttributeFactory) -> 
     return fac.annotation_link(attribute_name=ast.attribute_name).has_label(label_names=ast.label_names)
 
 
-def _create_attribute_object(fac: AttributeFactory, attribute: dict[str, Any]) -> Attribute:
+def _create_attribute_object(fac: AttributeFactory, attribute: AttributeDefinition) -> Attribute:
     """
     属性定義から対応する高水準属性オブジェクトを生成します。
 
@@ -992,7 +1078,7 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
         ValueError: AST種別が未知の場合、または属性型に対して利用できないASTが指定された場合
     """
     match ast.type:
-        case "imply":
+        case RestrictionAstType.IMPLY:
             assert ast.premise is not None
             assert ast.conclusion is not None
             premise_restriction = _ast_to_restriction(ast.premise, fac=fac)
@@ -1008,78 +1094,82 @@ def _restriction_to_atomic_ast(
     restriction: Restriction,
     *,
     accessor: AnnotationSpecsAccessor,
-    attribute: dict[str, Any],
+    attribute: AttributeDefinition,
     attribute_name: str,
 ) -> RestrictionAst:
     attribute_type = attribute["type"]
     match restriction:
         case CanInput(enable=enable):
-            return RestrictionAst(type="can_input", attribute_name=attribute_name, enable=enable)
+            return RestrictionAst(type=RestrictionAstType.CAN_INPUT, attribute_name=attribute_name, enable=enable)
         case Equals(value=value):
             return _equals_restriction_to_ast(attribute=attribute, attribute_name=attribute_name, attribute_type=attribute_type, value=value)
         case NotEquals(value=value):
             return _not_equals_restriction_to_ast(attribute=attribute, attribute_name=attribute_name, attribute_type=attribute_type, value=value)
         case Matches(value=value) if attribute_type in {"text", "comment"}:
-            return RestrictionAst(type="matches_string", attribute_name=attribute_name, value=value)
+            return RestrictionAst(type=RestrictionAstType.MATCHES_STRING, attribute_name=attribute_name, value=value)
         case NotMatches(value=value) if attribute_type in {"text", "comment"}:
-            return RestrictionAst(type="not_matches_string", attribute_name=attribute_name, value=value)
+            return RestrictionAst(type=RestrictionAstType.NOT_MATCHES_STRING, attribute_name=attribute_name, value=value)
         case HasLabel(label_ids=label_ids) if attribute_type == "link":
             label_names = [get_english_message(accessor.get_label(label_id=label_id)["label_name"]) for label_id in label_ids]
-            return RestrictionAst(type="has_label", attribute_name=attribute_name, label_names=label_names)
+            return RestrictionAst(type=RestrictionAstType.HAS_LABEL, attribute_name=attribute_name, label_names=label_names)
         case _:
             _raise_invalid_restriction(attribute=attribute, condition=restriction.to_dict()["condition"])
 
 
 def _equals_restriction_to_ast(
     *,
-    attribute: dict[str, Any],
+    attribute: AttributeDefinition,
     attribute_name: str,
     attribute_type: AdditionalDataDefinitionType,
     value: str,
 ) -> RestrictionAst:
     match attribute_type:
         case "flag" if value == "true":
-            return RestrictionAst(type="checked", attribute_name=attribute_name)
+            return RestrictionAst(type=RestrictionAstType.CHECKED, attribute_name=attribute_name)
         case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select" if value == "":
-            return RestrictionAst(type="is_empty", attribute_name=attribute_name)
+            return RestrictionAst(type=RestrictionAstType.IS_EMPTY, attribute_name=attribute_name)
         case "text" | "comment" | "tracking":
-            return RestrictionAst(type="equals_string", attribute_name=attribute_name, value=value)
+            return RestrictionAst(type=RestrictionAstType.EQUALS_STRING, attribute_name=attribute_name, value=value)
         case "integer":
             return RestrictionAst(
-                type="equals_integer",
+                type=RestrictionAstType.EQUALS_INTEGER,
                 attribute_name=attribute_name,
                 value=_parse_integer_value(value, attribute=attribute, condition={"_type": "Equals", "value": value}),
             )
         case "choice" | "select":
-            choice = get_choice(attribute["choices"], choice_id=value)
-            return RestrictionAst(type="has_choice", attribute_name=attribute_name, choice_name=get_english_message(choice["name"]))
+            choice = get_choice(_get_attribute_choices(attribute), choice_id=value)
+            return RestrictionAst(type=RestrictionAstType.HAS_CHOICE, attribute_name=attribute_name, choice_name=get_english_message(choice["name"]))
         case _:
             raise ValueError(f"RestrictionをASTへ変換できません。 :: restriction_type='Equals', attribute_type='{attribute_type}', value={value!r}")
 
 
 def _not_equals_restriction_to_ast(
     *,
-    attribute: dict[str, Any],
+    attribute: AttributeDefinition,
     attribute_name: str,
     attribute_type: AdditionalDataDefinitionType,
     value: str,
 ) -> RestrictionAst:
     match attribute_type:
         case "flag" if value == "true":
-            return RestrictionAst(type="unchecked", attribute_name=attribute_name)
+            return RestrictionAst(type=RestrictionAstType.UNCHECKED, attribute_name=attribute_name)
         case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select" if value == "":
-            return RestrictionAst(type="is_not_empty", attribute_name=attribute_name)
+            return RestrictionAst(type=RestrictionAstType.IS_NOT_EMPTY, attribute_name=attribute_name)
         case "text" | "comment" | "tracking":
-            return RestrictionAst(type="not_equals_string", attribute_name=attribute_name, value=value)
+            return RestrictionAst(type=RestrictionAstType.NOT_EQUALS_STRING, attribute_name=attribute_name, value=value)
         case "integer":
             return RestrictionAst(
-                type="not_equals_integer",
+                type=RestrictionAstType.NOT_EQUALS_INTEGER,
                 attribute_name=attribute_name,
                 value=_parse_integer_value(value, attribute=attribute, condition={"_type": "NotEquals", "value": value}),
             )
         case "choice" | "select":
-            choice = get_choice(attribute["choices"], choice_id=value)
-            return RestrictionAst(type="not_has_choice", attribute_name=attribute_name, choice_name=get_english_message(choice["name"]))
+            choice = get_choice(_get_attribute_choices(attribute), choice_id=value)
+            return RestrictionAst(
+                type=RestrictionAstType.NOT_HAS_CHOICE,
+                attribute_name=attribute_name,
+                choice_name=get_english_message(choice["name"]),
+            )
         case _:
             raise ValueError(
                 f"RestrictionをASTへ変換できません。 :: restriction_type='NotEquals', attribute_type='{attribute_type}', value={value!r}"
@@ -1112,7 +1202,7 @@ def _attribute_with_empty_check(fac: AttributeFactory, attribute_name: str) -> E
     return attribute_obj
 
 
-def _raise_invalid_ast(*, attribute: dict[str, Any], ast: RestrictionAst) -> NoReturn:
+def _raise_invalid_ast(*, attribute: AttributeDefinition, ast: RestrictionAst) -> NoReturn:
     """
     属性型に対して不正なAST種別が指定されたことを表す例外を送出します。
 
@@ -1127,7 +1217,7 @@ def _raise_invalid_ast(*, attribute: dict[str, Any], ast: RestrictionAst) -> NoR
     raise ValueError(f"属性'{attribute_name}'(type='{attribute['type']}')ではAST種別'{ast.type}'を利用できません。")
 
 
-def _parse_integer_value(value: str, *, attribute: dict[str, Any], condition: dict[str, Any]) -> int:
+def _parse_integer_value(value: str, *, attribute: AttributeDefinition, condition: dict[str, Any]) -> int:
     """
     整数属性向けの文字列値を整数へ変換します。
 
@@ -1149,7 +1239,7 @@ def _parse_integer_value(value: str, *, attribute: dict[str, Any], condition: di
         raise AssertionError("unreachable") from exc
 
 
-def _raise_invalid_restriction(*, attribute: dict[str, Any], condition: dict[str, Any], detail: str | None = None) -> NoReturn:
+def _raise_invalid_restriction(*, attribute: AttributeDefinition, condition: dict[str, Any], detail: str | None = None) -> NoReturn:
     """
     属性型に対して不正な制約が指定されたことを表す例外を送出します。
 
@@ -1185,7 +1275,7 @@ def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAc
     match restriction:
         case Imply(premise_restriction=premise_restriction, conclusion_restriction=conclusion_restriction):
             return RestrictionAst(
-                type="imply",
+                type=RestrictionAstType.IMPLY,
                 premise=_restriction_to_ast(premise_restriction, accessor=accessor),
                 conclusion=_restriction_to_ast(conclusion_restriction, accessor=accessor),
             )
@@ -1225,7 +1315,7 @@ def _restriction_to_atomic_python_expr(
     restriction: Restriction,
     *,
     accessor: AnnotationSpecsAccessor,
-    attribute: dict[str, Any],
+    attribute: AttributeDefinition,
     attribute_expr: str,
 ) -> str:
     attribute_type = attribute["type"]
@@ -1254,7 +1344,7 @@ def _restriction_to_atomic_python_expr(
 
 def _equals_restriction_to_python_expr(
     *,
-    attribute: dict[str, Any],
+    attribute: AttributeDefinition,
     attribute_expr: str,
     attribute_type: AdditionalDataDefinitionType,
     value: str,
@@ -1274,7 +1364,7 @@ def _equals_restriction_to_python_expr(
         case "tracking":
             expr = f"{attribute_expr}.equals({_repr_python_value(value)})"
         case "choice" | "select":
-            choice = get_choice(attribute["choices"], choice_id=value)
+            choice = get_choice(_get_attribute_choices(attribute), choice_id=value)
             choice_name = get_english_message(choice["name"])
             expr = f"{attribute_expr}.has_choice(choice_name={_repr_python_value(choice_name)})"
         case _:
@@ -1286,7 +1376,7 @@ def _equals_restriction_to_python_expr(
 
 def _not_equals_restriction_to_python_expr(
     *,
-    attribute: dict[str, Any],
+    attribute: AttributeDefinition,
     attribute_expr: str,
     attribute_type: AdditionalDataDefinitionType,
     value: str,
@@ -1306,7 +1396,7 @@ def _not_equals_restriction_to_python_expr(
         case "tracking":
             expr = f"{attribute_expr}.not_equals({_repr_python_value(value)})"
         case "choice" | "select":
-            choice = get_choice(attribute["choices"], choice_id=value)
+            choice = get_choice(_get_attribute_choices(attribute), choice_id=value)
             choice_name = get_english_message(choice["name"])
             expr = f"{attribute_expr}.not_has_choice(choice_name={_repr_python_value(choice_name)})"
         case _:
@@ -1317,7 +1407,7 @@ def _not_equals_restriction_to_python_expr(
     return expr
 
 
-def _attribute_to_python_expr(attribute: dict[str, Any], *, factory_name: str) -> str:
+def _attribute_to_python_expr(attribute: AttributeDefinition, *, factory_name: str) -> str:
     """
     属性定義を `AttributeFactory` 呼び出しの Python 式へ変換します。
 

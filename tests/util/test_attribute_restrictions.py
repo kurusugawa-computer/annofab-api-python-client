@@ -13,6 +13,7 @@ from annofabapi.util.attribute_restrictions import (
     IntegerTextbox,
     Restriction,
     RestrictionAst,
+    RestrictionAstType,
     Selection,
     StringTextbox,
     TrackingId,
@@ -278,9 +279,9 @@ class Test__Restriction:
         actual = restriction.to_ast(accessor.annotation_specs)
 
         assert actual == RestrictionAst(
-            type="imply",
-            premise=RestrictionAst(type="checked", attribute_name="occluded"),
-            conclusion=RestrictionAst(type="is_not_empty", attribute_name="note"),
+            type=RestrictionAstType.IMPLY,
+            premise=RestrictionAst(type=RestrictionAstType.CHECKED, attribute_name="occluded"),
+            conclusion=RestrictionAst(type=RestrictionAstType.IS_NOT_EMPTY, attribute_name="note"),
         )
 
     def test__to_human_readable(self):
@@ -370,9 +371,9 @@ class Test__Restriction:
 
     def test__from_ast(self):
         ast = RestrictionAst(
-            type="imply",
-            premise=RestrictionAst(type="checked", attribute_name="occluded"),
-            conclusion=RestrictionAst(type="has_choice", attribute_name="car_kind", choice_name="general_car"),
+            type=RestrictionAstType.IMPLY,
+            premise=RestrictionAst(type=RestrictionAstType.CHECKED, attribute_name="occluded"),
+            conclusion=RestrictionAst(type=RestrictionAstType.HAS_CHOICE, attribute_name="car_kind", choice_name="general_car"),
         )
 
         actual = Restriction.from_ast(ast, accessor.annotation_specs)
@@ -393,9 +394,9 @@ class Test__Restriction:
 class Test__RestrictionAst:
     def test__model_dump(self):
         ast = RestrictionAst(
-            type="imply",
-            premise=RestrictionAst(type="checked", attribute_name="occluded"),
-            conclusion=RestrictionAst(type="is_not_empty", attribute_name="note"),
+            type=RestrictionAstType.IMPLY,
+            premise=RestrictionAst(type=RestrictionAstType.CHECKED, attribute_name="occluded"),
+            conclusion=RestrictionAst(type=RestrictionAstType.IS_NOT_EMPTY, attribute_name="note"),
         )
 
         assert ast.model_dump(mode="python", exclude_none=True) == {
@@ -414,13 +415,14 @@ class Test__RestrictionAst:
         )
 
         assert actual == RestrictionAst(
-            type="imply",
-            premise=RestrictionAst(type="checked", attribute_name="occluded"),
-            conclusion=RestrictionAst(type="has_choice", attribute_name="car_kind", choice_name="general_car"),
+            type=RestrictionAstType.IMPLY,
+            premise=RestrictionAst(type=RestrictionAstType.CHECKED, attribute_name="occluded"),
+            conclusion=RestrictionAst(type=RestrictionAstType.HAS_CHOICE, attribute_name="car_kind", choice_name="general_car"),
         )
+        assert actual.type is RestrictionAstType.IMPLY
 
     def test__to_restriction(self):
-        ast = RestrictionAst(type="matches_string", attribute_name="note", value="[abc]+")
+        ast = RestrictionAst(type=RestrictionAstType.MATCHES_STRING, attribute_name="note", value="[abc]+")
 
         actual = ast.to_restriction(accessor.annotation_specs)
 
@@ -430,13 +432,13 @@ class Test__RestrictionAst:
         }
 
     def test__to_restriction__trackingにはmatches_stringを指定できない(self):
-        ast = RestrictionAst(type="matches_string", attribute_name="tracking", value="foo")
+        ast = RestrictionAst(type=RestrictionAstType.MATCHES_STRING, attribute_name="tracking", value="foo")
 
         with pytest.raises(ValueError, match="属性'tracking'\\(type='tracking'\\)ではAST種別'matches_string'を利用できません。"):
             ast.to_restriction(accessor.annotation_specs)
 
     def test__to_human_readable(self):
-        ast = RestrictionAst(type="has_label", attribute_name="link_car", label_names=["car", "number_plate"])
+        ast = RestrictionAst(type=RestrictionAstType.HAS_LABEL, attribute_name="link_car", label_names=["car", "number_plate"])
 
         actual = ast.to_human_readable()
 
@@ -444,7 +446,7 @@ class Test__RestrictionAst:
 
     def test__invalid_fields(self):
         with pytest.raises(ValidationError):
-            RestrictionAst(type="equals_string", attribute_name="note")
+            RestrictionAst(type=RestrictionAstType.EQUALS_STRING, attribute_name="note")
 
     def test__model_json_schema(self):
         actual = RestrictionAst.model_json_schema()
@@ -460,6 +462,7 @@ class Test__get_attribute_restriction_catalog:
         actual = get_attribute_restriction_catalog(accessor.annotation_specs)
 
         assert all(isinstance(item, AttributeRestrictionCatalogItem) for item in actual)
+        assert isinstance(actual[0].allowed_ast_types[0], RestrictionAstType)
         assert {
             "attribute_name": "tracking",
             "attribute_type": "tracking",
