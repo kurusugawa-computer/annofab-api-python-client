@@ -448,6 +448,10 @@ class Test__RestrictionAst:
         with pytest.raises(ValidationError):
             RestrictionAst(type=RestrictionAstType.EQUALS_STRING, attribute_name="note")
 
+    def test__invalid_field_type(self):
+        with pytest.raises(ValidationError):
+            RestrictionAst(type=RestrictionAstType.EQUALS_STRING, attribute_name="note", value=1)
+
     def test__model_json_schema(self):
         actual = RestrictionAst.model_json_schema()
         properties = actual["$defs"]["RestrictionAst"]["properties"]

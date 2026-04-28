@@ -452,7 +452,7 @@ class RestrictionAst(BaseModel):
     conclusion: "RestrictionAst | None" = Field(default=None, description="`imply` ノードの結論です。")
 
     @model_validator(mode="after")
-    def validate_restriction_ast(self) -> "RestrictionAst":
+    def validate_restriction_ast(self) -> "RestrictionAst":  # noqa: PLR0912
         """
         `RestrictionAst` の構造がAST種別に整合しているか検証します。
 
@@ -476,7 +476,38 @@ class RestrictionAst(BaseModel):
         if actual_fields != required_fields:
             raise ValueError(f"AST種別'{self.type}'のフィールドが不正です。 :: required={sorted(required_fields)}, actual={sorted(actual_fields)}")
 
-        _validate_restriction_ast_field_types(self)
+        match self.type:
+            case (
+                RestrictionAstType.EQUALS_STRING
+                | RestrictionAstType.NOT_EQUALS_STRING
+                | RestrictionAstType.MATCHES_STRING
+                | RestrictionAstType.NOT_MATCHES_STRING
+            ):
+                if not isinstance(self.value, str):
+                    raise ValueError(f"AST種別'{self.type}'の'value'は文字列である必要があります。")
+            case RestrictionAstType.EQUALS_INTEGER | RestrictionAstType.NOT_EQUALS_INTEGER:
+                if not isinstance(self.value, int):
+                    raise ValueError(f"AST種別'{self.type}'の'value'は整数である必要があります。")
+            case RestrictionAstType.HAS_CHOICE | RestrictionAstType.NOT_HAS_CHOICE:
+                if not isinstance(self.choice_name, str):
+                    raise ValueError(f"AST種別'{self.type}'の'choice_name'は文字列である必要があります。")
+            case RestrictionAstType.HAS_LABEL:
+                if not isinstance(self.label_names, list) or any(not isinstance(label_name, str) for label_name in self.label_names):
+                    raise ValueError("AST種別'has_label'の'label_names'は文字列のリストである必要があります。")
+            case RestrictionAstType.CAN_INPUT:
+                if not isinstance(self.enable, bool):
+                    raise ValueError("AST種別'can_input'の'enable'は真偽値である必要があります。")
+            case (
+                RestrictionAstType.CHECKED
+                | RestrictionAstType.UNCHECKED
+                | RestrictionAstType.IS_EMPTY
+                | RestrictionAstType.IS_NOT_EMPTY
+                | RestrictionAstType.IMPLY
+            ):
+                pass
+            case _ as never:
+                assert_noreturn(never)
+
         return self
 
     def to_restriction(self, annotation_specs: dict[str, Any]) -> Restriction:
@@ -704,49 +735,6 @@ def _get_required_ast_fields(ast_type: RestrictionAstType) -> set[str]:
             return {"attribute_name", "enable"}
         case RestrictionAstType.IMPLY:
             return {"premise", "conclusion"}
-        case _ as never:
-            assert_noreturn(never)
-
-
-def _validate_restriction_ast_field_types(ast: RestrictionAst) -> None:
-    """
-    `RestrictionAst` の値フィールドがAST種別に整合しているか検証します。
-
-    Args:
-        ast: 検証対象のASTです。
-
-    Raises:
-        ValueError: AST種別に対して値の型が不正な場合
-    """
-    match ast.type:
-        case (
-            RestrictionAstType.EQUALS_STRING
-            | RestrictionAstType.NOT_EQUALS_STRING
-            | RestrictionAstType.MATCHES_STRING
-            | RestrictionAstType.NOT_MATCHES_STRING
-        ):
-            if not isinstance(ast.value, str):
-                raise ValueError(f"AST種別'{ast.type}'の'value'は文字列である必要があります。")
-        case RestrictionAstType.EQUALS_INTEGER | RestrictionAstType.NOT_EQUALS_INTEGER:
-            if not isinstance(ast.value, int):
-                raise ValueError(f"AST種別'{ast.type}'の'value'は整数である必要があります。")
-        case RestrictionAstType.HAS_CHOICE | RestrictionAstType.NOT_HAS_CHOICE:
-            if not isinstance(ast.choice_name, str):
-                raise ValueError(f"AST種別'{ast.type}'の'choice_name'は文字列である必要があります。")
-        case RestrictionAstType.HAS_LABEL:
-            if not isinstance(ast.label_names, list) or any(not isinstance(label_name, str) for label_name in ast.label_names):
-                raise ValueError("AST種別'has_label'の'label_names'は文字列のリストである必要があります。")
-        case RestrictionAstType.CAN_INPUT:
-            if not isinstance(ast.enable, bool):
-                raise ValueError("AST種別'can_input'の'enable'は真偽値である必要があります。")
-        case (
-            RestrictionAstType.CHECKED
-            | RestrictionAstType.UNCHECKED
-            | RestrictionAstType.IS_EMPTY
-            | RestrictionAstType.IS_NOT_EMPTY
-            | RestrictionAstType.IMPLY
-        ):
-            pass
         case _ as never:
             assert_noreturn(never)
 
