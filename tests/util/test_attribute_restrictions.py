@@ -4,7 +4,18 @@ from pathlib import Path
 import pytest
 
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
-from annofabapi.util.attribute_restrictions import AnnotationLink, AttributeFactory, Checkbox, IntegerTextbox, Selection, StringTextbox, TrackingId
+from annofabapi.util.attribute_restrictions import (
+    AnnotationLink,
+    AttributeFactory,
+    Checkbox,
+    IntegerTextbox,
+    Restriction,
+    RestrictionAst,
+    Selection,
+    StringTextbox,
+    TrackingId,
+    get_attribute_restriction_catalog,
+)
 
 accessor = AnnotationSpecsAccessor(annotation_specs=json.loads(Path("tests/data/util/attribute_restrictions/annotation_specs.json").read_text()))
 
@@ -197,3 +208,230 @@ class Test__AttributeFactory:
         selection = self.factory.selection(attribute_name="car_kind")
         assert isinstance(selection, Selection)
         assert selection.attribute_id == "cbb0155f-1631-48e1-8fc3-43c5f254b6f2"
+
+
+class Test__Restriction:
+    def test__from_dict(self):
+        restriction_dict = {
+            "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+            "condition": {
+                "_type": "Imply",
+                "premise": {
+                    "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+                    "condition": {"_type": "Equals", "value": "true"},
+                },
+                "condition": {"_type": "NotEquals", "value": ""},
+            },
+        }
+
+        actual = Restriction.from_dict(restriction_dict, annotation_specs=accessor.annotation_specs)
+
+        assert actual.to_dict() == restriction_dict
+
+    def test__to_python_expr(self):
+        restriction_dict = {
+            "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+            "condition": {
+                "_type": "Imply",
+                "premise": {
+                    "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+                    "condition": {"_type": "Equals", "value": "true"},
+                },
+                "condition": {"_type": "NotEquals", "value": ""},
+            },
+        }
+        restriction = Restriction.from_dict(restriction_dict, annotation_specs=accessor.annotation_specs)
+
+        actual = restriction.to_python_expr(accessor.annotation_specs)
+
+        assert actual == "fac.checkbox(attribute_name='occluded').checked().imply(fac.string_textbox(attribute_name='note').is_not_empty())"
+
+    def test__to_python_expr__selection(self):
+        restriction = Restriction.from_dict(
+            {
+                "additional_data_definition_id": "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
+                "condition": {"_type": "NotEquals", "value": "7512ee39-8073-4e24-9b8c-93d99b76b7d2"},
+            },
+            annotation_specs=accessor.annotation_specs,
+        )
+
+        actual = restriction.to_python_expr(accessor.annotation_specs)
+
+        assert actual == "fac.selection(attribute_name='car_kind').not_has_choice(choice_name='general_car')"
+
+    def test__to_ast(self):
+        restriction = Restriction.from_dict(
+            {
+                "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+                "condition": {
+                    "_type": "Imply",
+                    "premise": {
+                        "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+                        "condition": {"_type": "Equals", "value": "true"},
+                    },
+                    "condition": {"_type": "NotEquals", "value": ""},
+                },
+            },
+            annotation_specs=accessor.annotation_specs,
+        )
+
+        actual = restriction.to_ast(accessor.annotation_specs)
+
+        assert actual == RestrictionAst(
+            type="imply",
+            premise=RestrictionAst(type="checked", attribute_name="occluded"),
+            conclusion=RestrictionAst(type="is_not_empty", attribute_name="note"),
+        )
+
+    def test__to_human_readable(self):
+        restriction = Restriction.from_dict(
+            {
+                "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+                "condition": {
+                    "_type": "Imply",
+                    "premise": {
+                        "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+                        "condition": {"_type": "Equals", "value": "true"},
+                    },
+                    "condition": {"_type": "NotEquals", "value": ""},
+                },
+            },
+            annotation_specs=accessor.annotation_specs,
+        )
+
+        actual = restriction.to_human_readable(accessor.annotation_specs)
+
+        assert actual == "'note' DOES NOT EQUAL '' IF 'occluded' EQUALS 'true'"
+
+    def test__from_dict__annotation_specsを指定しない場合は妥当性検証しない(self):
+        restriction_dict = {
+            "additional_data_definition_id": "d349e76d-b59a-44cd-94b4-713a00b2e84d",
+            "condition": {"_type": "Matches", "value": "\\d+"},
+        }
+
+        actual = Restriction.from_dict(restriction_dict)
+
+        assert actual.to_dict() == restriction_dict
+
+    def test__from_dict__tracking_id属性にmatchesは指定できない(self):
+        restriction_dict = {
+            "additional_data_definition_id": "d349e76d-b59a-44cd-94b4-713a00b2e84d",
+            "condition": {"_type": "Matches", "value": "\\d+"},
+        }
+
+        with pytest.raises(ValueError, match="属性'tracking'\\(type='tracking'\\)では制約'Matches'を利用できません。"):
+            Restriction.from_dict(restriction_dict, annotation_specs=accessor.annotation_specs)
+
+    def test__from_dict__integer属性に整数以外の値は指定できない(self):
+        restriction_dict = {
+            "additional_data_definition_id": "ec27de5d-122c-40e7-89bc-5500e37bae6a",
+            "condition": {"_type": "Equals", "value": "foo"},
+        }
+
+        with pytest.raises(ValueError, match="整数属性には整数値を指定してください。"):
+            Restriction.from_dict(restriction_dict, annotation_specs=accessor.annotation_specs)
+
+    def test__from_dict__can_input_true(self):
+        restriction_dict = {
+            "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+            "condition": {"_type": "CanInput", "enable": True},
+        }
+        restriction = Restriction.from_dict(restriction_dict, annotation_specs=accessor.annotation_specs)
+
+        assert restriction.to_dict() == restriction_dict
+        assert restriction.to_python_expr(accessor.annotation_specs) == "fac.checkbox(attribute_name='occluded').enabled()"
+
+    def test__from_ast(self):
+        ast = RestrictionAst(
+            type="imply",
+            premise=RestrictionAst(type="checked", attribute_name="occluded"),
+            conclusion=RestrictionAst(type="has_choice", attribute_name="car_kind", choice_name="general_car"),
+        )
+
+        actual = Restriction.from_ast(ast, accessor.annotation_specs)
+
+        assert actual.to_dict() == {
+            "additional_data_definition_id": "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
+            "condition": {
+                "_type": "Imply",
+                "premise": {
+                    "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+                    "condition": {"_type": "Equals", "value": "true"},
+                },
+                "condition": {"_type": "Equals", "value": "7512ee39-8073-4e24-9b8c-93d99b76b7d2"},
+            },
+        }
+
+
+class Test__RestrictionAst:
+    def test__to_dict(self):
+        ast = RestrictionAst(
+            type="imply",
+            premise=RestrictionAst(type="checked", attribute_name="occluded"),
+            conclusion=RestrictionAst(type="is_not_empty", attribute_name="note"),
+        )
+
+        assert ast.to_dict() == {
+            "type": "imply",
+            "premise": {"type": "checked", "attribute_name": "occluded"},
+            "conclusion": {"type": "is_not_empty", "attribute_name": "note"},
+        }
+
+    def test__from_dict(self):
+        actual = RestrictionAst.from_dict(
+            {
+                "type": "imply",
+                "premise": {"type": "checked", "attribute_name": "occluded"},
+                "conclusion": {"type": "has_choice", "attribute_name": "car_kind", "choice_name": "general_car"},
+            }
+        )
+
+        assert actual == RestrictionAst(
+            type="imply",
+            premise=RestrictionAst(type="checked", attribute_name="occluded"),
+            conclusion=RestrictionAst(type="has_choice", attribute_name="car_kind", choice_name="general_car"),
+        )
+
+    def test__to_restriction(self):
+        ast = RestrictionAst(type="matches_string", attribute_name="note", value="[abc]+")
+
+        actual = ast.to_restriction(accessor.annotation_specs)
+
+        assert actual.to_dict() == {
+            "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+            "condition": {"_type": "Matches", "value": "[abc]+"},
+        }
+
+    def test__to_restriction__trackingにはmatches_stringを指定できない(self):
+        ast = RestrictionAst(type="matches_string", attribute_name="tracking", value="foo")
+
+        with pytest.raises(ValueError, match="属性'tracking'\\(type='tracking'\\)ではAST種別'matches_string'を利用できません。"):
+            ast.to_restriction(accessor.annotation_specs)
+
+    def test__to_human_readable(self):
+        ast = RestrictionAst(type="has_label", attribute_name="link_car", label_names=["car", "number_plate"])
+
+        actual = ast.to_human_readable()
+
+        assert actual == "'link_car' HAS LABEL 'car', 'number_plate'"
+
+    def test__invalid_fields(self):
+        with pytest.raises(ValueError, match="required=.*attribute_name.*value"):
+            RestrictionAst(type="equals_string", attribute_name="note")
+
+
+class Test__get_attribute_restriction_catalog:
+    def test__catalog(self):
+        actual = get_attribute_restriction_catalog(accessor.annotation_specs)
+
+        assert {
+            "attribute_name": "tracking",
+            "attribute_type": "tracking",
+            "allowed_ast_types": ["can_input", "is_empty", "is_not_empty", "equals_string", "not_equals_string"],
+        } in actual
+        assert {
+            "attribute_name": "car_kind",
+            "attribute_type": "choice",
+            "allowed_ast_types": ["can_input", "is_empty", "is_not_empty", "has_choice", "not_has_choice"],
+            "choice_names": ["general_car", "emergency_vehicle", "construction_vehicle"],
+        } in actual
