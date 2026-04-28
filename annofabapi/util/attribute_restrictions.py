@@ -32,7 +32,7 @@ from collections.abc import Collection
 from dataclasses import dataclass
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, get_choice, get_english_message
 
 RestrictionAstType = Literal[
@@ -517,11 +517,19 @@ class AttributeRestrictionCatalogItem(BaseModel):
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    attribute_name: str
-    attribute_type: str
-    allowed_ast_types: list[RestrictionAstType]
-    choice_names: list[str] | None = None
-    label_names: list[str] | None = None
+    attribute_name: str = Field(description="Attribute name in annotation specs. LLM should refer to attributes by this name.")
+    attribute_type: str = Field(description="Attribute type in annotation specs, such as flag, text, integer, tracking, link, choice, or select.")
+    allowed_ast_types: list[RestrictionAstType] = Field(
+        description="Semantic AST node types that are allowed for this attribute. LLM must not use AST types outside this list."
+    )
+    choice_names: list[str] | None = Field(
+        default=None,
+        description="Available choice names for choice/select attributes. Null for non-choice attributes.",
+    )
+    label_names: list[str] | None = Field(
+        default=None,
+        description="Available label names for link attributes. Null for non-link attributes.",
+    )
 
 
 def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[AttributeRestrictionCatalogItem]:

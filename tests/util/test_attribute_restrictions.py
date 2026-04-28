@@ -440,3 +440,13 @@ class Test__get_attribute_restriction_catalog:
             "choice_names": ["general_car", "emergency_vehicle", "construction_vehicle"],
             "label_names": None,
         } in [item.model_dump() for item in actual]
+
+    def test__catalog_model_json_schema(self):
+        actual = AttributeRestrictionCatalogItem.model_json_schema()
+
+        assert actual["properties"]["attribute_name"]["description"] == "Attribute name in annotation specs. LLM should refer to attributes by this name."
+        assert (
+            actual["properties"]["allowed_ast_types"]["description"]
+            == "Semantic AST node types that are allowed for this attribute. LLM must not use AST types outside this list."
+        )
+        assert actual["properties"]["choice_names"]["description"] == "Available choice names for choice/select attributes. Null for non-choice attributes."
