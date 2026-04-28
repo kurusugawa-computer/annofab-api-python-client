@@ -846,53 +846,6 @@ def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any]) -> Res
     return restriction
 
 
-def _ast_string_equality_to_restriction(
-    *,
-    ast: RestrictionAst,
-    fac: AttributeFactory,
-    attribute: AttributeDefinition,
-    attribute_type: AdditionalDataDefinitionType,
-) -> Restriction:
-    assert isinstance(ast.value, str)
-    attribute_obj: StringTextbox | TrackingId
-    match attribute_type:
-        case "text" | "comment":
-            attribute_obj = fac.string_textbox(attribute_name=ast.attribute_name)
-        case "tracking":
-            attribute_obj = fac.tracking_id(attribute_name=ast.attribute_name)
-        case _:
-            _raise_invalid_ast(attribute=attribute, ast=ast)
-
-    match ast.type:
-        case RestrictionAstType.EQUALS_STRING:
-            return attribute_obj.equals(ast.value)
-        case RestrictionAstType.NOT_EQUALS_STRING:
-            return attribute_obj.not_equals(ast.value)
-        case _:
-            raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
-
-
-def _ast_string_match_to_restriction(
-    *,
-    ast: RestrictionAst,
-    fac: AttributeFactory,
-    attribute: AttributeDefinition,
-    attribute_type: AdditionalDataDefinitionType,
-) -> Restriction:
-    assert isinstance(ast.value, str)
-    if attribute_type not in {"text", "comment"}:
-        _raise_invalid_ast(attribute=attribute, ast=ast)
-
-    attribute_obj = fac.string_textbox(attribute_name=ast.attribute_name)
-    match ast.type:
-        case RestrictionAstType.MATCHES_STRING:
-            return attribute_obj.matches(ast.value)
-        case RestrictionAstType.NOT_MATCHES_STRING:
-            return attribute_obj.not_matches(ast.value)
-        case _:
-            raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
-
-
 def _create_attribute_object_with_name(fac: AttributeFactory, attribute_name: str) -> Attribute:
     """
     属性名から対応する高水準属性オブジェクトを生成します。
@@ -939,6 +892,49 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
         ValueError: AST種別が未知の場合、または属性型に対して利用できないASTが指定された場合
     """
 
+    def ast_string_equality_to_restriction(
+        *,
+        ast: RestrictionAst,
+        attribute: AttributeDefinition,
+        attribute_type: AdditionalDataDefinitionType,
+    ) -> Restriction:
+        assert isinstance(ast.value, str)
+        attribute_obj: StringTextbox | TrackingId
+        match attribute_type:
+            case "text" | "comment":
+                attribute_obj = fac.string_textbox(attribute_name=ast.attribute_name)
+            case "tracking":
+                attribute_obj = fac.tracking_id(attribute_name=ast.attribute_name)
+            case _:
+                _raise_invalid_ast(attribute=attribute, ast=ast)
+
+        match ast.type:
+            case RestrictionAstType.EQUALS_STRING:
+                return attribute_obj.equals(ast.value)
+            case RestrictionAstType.NOT_EQUALS_STRING:
+                return attribute_obj.not_equals(ast.value)
+            case _:
+                raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+
+    def ast_string_match_to_restriction(
+        *,
+        ast: RestrictionAst,
+        attribute: AttributeDefinition,
+        attribute_type: AdditionalDataDefinitionType,
+    ) -> Restriction:
+        assert isinstance(ast.value, str)
+        if attribute_type not in {"text", "comment"}:
+            _raise_invalid_ast(attribute=attribute, ast=ast)
+
+        attribute_obj = fac.string_textbox(attribute_name=ast.attribute_name)
+        match ast.type:
+            case RestrictionAstType.MATCHES_STRING:
+                return attribute_obj.matches(ast.value)
+            case RestrictionAstType.NOT_MATCHES_STRING:
+                return attribute_obj.not_matches(ast.value)
+            case _:
+                raise ValueError(f"未知のAST種別です。 :: type='{ast.type}'")
+
     def ast_to_atomic_restriction(ast: RestrictionAst, *, attribute: AttributeDefinition) -> Restriction:  # noqa: PLR0912
         assert ast.attribute_name is not None
         attribute_type = attribute["type"]
@@ -958,9 +954,9 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
                 attribute_obj = _create_attribute_object_with_name(fac, ast.attribute_name)
                 restriction = attribute_obj.enabled() if ast.enable else attribute_obj.disabled()
             case RestrictionAstType.EQUALS_STRING | RestrictionAstType.NOT_EQUALS_STRING:
-                restriction = _ast_string_equality_to_restriction(ast=ast, fac=fac, attribute=attribute, attribute_type=attribute_type)
+                restriction = ast_string_equality_to_restriction(ast=ast, attribute=attribute, attribute_type=attribute_type)
             case RestrictionAstType.MATCHES_STRING | RestrictionAstType.NOT_MATCHES_STRING:
-                restriction = _ast_string_match_to_restriction(ast=ast, fac=fac, attribute=attribute, attribute_type=attribute_type)
+                restriction = ast_string_match_to_restriction(ast=ast, attribute=attribute, attribute_type=attribute_type)
             case RestrictionAstType.EQUALS_INTEGER | RestrictionAstType.NOT_EQUALS_INTEGER:
                 assert isinstance(ast.value, int)
                 attribute_obj = fac.integer_textbox(attribute_name=ast.attribute_name)
