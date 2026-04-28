@@ -830,45 +830,27 @@ def _from_condition_dict(*, attribute_id: str, condition: dict[str, Any]) -> Res
         復元した `Restriction` オブジェクトです。
     """
     condition_type = condition["_type"]
+    restriction: Restriction
     match condition_type:
         case "Imply":
             premise_restriction = _from_restriction_dict(condition["premise"])
             conclusion_restriction = _from_condition_dict(attribute_id=attribute_id, condition=condition["condition"])
-            return Imply(premise_restriction=premise_restriction, conclusion_restriction=conclusion_restriction)
-        case _:
-            return _from_atomic_condition_dict(attribute_id=attribute_id, condition=condition)
-
-
-def _from_atomic_condition_dict(*, attribute_id: str, condition: dict[str, Any]) -> Restriction:
-    """
-    原子的な条件辞書から `Restriction` を復元します。
-
-    Args:
-        attribute_id: 対象属性のIDです。
-        condition: 条件部分のみを表す辞書です。
-
-    Returns:
-        復元した `Restriction` オブジェクトです。
-
-    Raises:
-        ValueError: 未知の制約種別が指定された場合
-    """
-    condition_type = condition["_type"]
-    match condition_type:
+            restriction = Imply(premise_restriction=premise_restriction, conclusion_restriction=conclusion_restriction)
         case "CanInput":
-            return CanInput(attribute_id, enable=condition["enable"])
+            restriction = CanInput(attribute_id, enable=condition["enable"])
         case "Equals":
-            return Equals(attribute_id, value=condition["value"])
+            restriction = Equals(attribute_id, value=condition["value"])
         case "NotEquals":
-            return NotEquals(attribute_id, value=condition["value"])
+            restriction = NotEquals(attribute_id, value=condition["value"])
         case "Matches":
-            return Matches(attribute_id, value=condition["value"])
+            restriction = Matches(attribute_id, value=condition["value"])
         case "NotMatches":
-            return NotMatches(attribute_id, value=condition["value"])
+            restriction = NotMatches(attribute_id, value=condition["value"])
         case "HasLabel":
-            return HasLabel(attribute_id, label_ids=condition["labels"])
+            restriction = HasLabel(attribute_id, label_ids=condition["labels"])
         case _:
             raise ValueError(f"未知の制約種別です。 :: _type='{condition_type}'")
+    return restriction
 
 
 def _ast_to_atomic_restriction(ast: RestrictionAst, *, fac: AttributeFactory, attribute: AttributeDefinition) -> Restriction:
