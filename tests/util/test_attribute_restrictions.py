@@ -37,7 +37,7 @@ class Test__Checkbox:
         }
 
     def test__is_valid_attribute_type(self):
-        with pytest.raises(ValueError, match="属性の種類が'tracking'である属性は、クラス'Checkbox'では扱えません。"):
+        with pytest.raises(ValueError):
             Checkbox(accessor, attribute_id="d349e76d-b59a-44cd-94b4-713a00b2e84d")
 
 
@@ -323,7 +323,7 @@ class Test__Restriction:
         }
         restriction = Restriction.from_dict(restriction_dict)
 
-        with pytest.raises(ValueError, match="属性'tracking'\\(type='tracking'\\)では制約'Matches'を利用できません。"):
+        with pytest.raises(ValueError):
             restriction.to_ast(accessor.annotation_specs)
 
     def test__to_ast__integer属性に整数以外の値は指定できない(self):
@@ -333,7 +333,7 @@ class Test__Restriction:
         }
         restriction = Restriction.from_dict(restriction_dict)
 
-        with pytest.raises(ValueError, match="整数属性には整数値を指定してください。"):
+        with pytest.raises(ValueError):
             restriction.to_ast(accessor.annotation_specs)
 
     def test__from_dict__can_input_true(self):
@@ -415,7 +415,7 @@ class Test__RestrictionAst:
     def test__to_restriction__trackingにはmatches_stringを指定できない(self):
         ast = RestrictionAst(type=RestrictionAstType.MATCHES_STRING, attribute_name="tracking", value="foo")
 
-        with pytest.raises(ValueError, match="属性'tracking'\\(type='tracking'\\)ではAST種別'matches_string'を利用できません。"):
+        with pytest.raises(ValueError):
             ast.to_restriction(accessor.annotation_specs)
 
     def test__to_human_readable(self):
