@@ -1,3 +1,4 @@
+import copy
 import json
 from pathlib import Path
 
@@ -5,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from annofabapi.pydantic_models.additional_data_definition_type import AdditionalDataDefinitionType
-from annofabapi.util.annotation_specs import AnnotationSpecsAccessor
+from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, get_english_message
 from annofabapi.util.attribute_restrictions import (
     AnnotationLink,
     AttributeFactory,
@@ -462,6 +463,24 @@ class Test__get_attribute_restriction_catalog:
             "choice_names": ["general_car", "emergency_vehicle", "construction_vehicle"],
             "label_names": None,
         } in [item.model_dump() for item in actual]
+
+    def test__複数link属性でも同じラベル一覧を返す(self):
+        annotation_specs = copy.deepcopy(accessor.annotation_specs)
+        expected_label_names = [get_english_message(label["label_name"]) for label in annotation_specs["labels"]]
+        link_attribute = next(attribute for attribute in annotation_specs["additionals"] if attribute["type"] == "link")
+        copied_link_attribute = copy.deepcopy(link_attribute)
+        copied_link_attribute["additional_data_definition_id"] = "dummy-link-id"
+        copied_link_attribute["name"]["messages"][0]["message"] = "link_car_2"
+        copied_link_attribute["name"]["messages"][1]["message"] = "リンク_車両2"
+        copied_link_attribute["name"]["messages"][2]["message"] = "link_car_2"
+        annotation_specs["additionals"].append(copied_link_attribute)
+
+        actual = get_attribute_restriction_catalog(annotation_specs)
+
+        link_items = [item for item in actual if item.attribute_type == AdditionalDataDefinitionType.LINK]
+        assert len(link_items) == 2
+        assert link_items[0].label_names == expected_label_names
+        assert link_items[1].label_names == expected_label_names
 
     def test__catalog_model_json_schema(self):
         actual = AttributeRestrictionCatalogItem.model_json_schema()

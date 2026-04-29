@@ -790,6 +790,7 @@ def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[
                 raise ValueError(f"未対応の属性種類です。 :: attribute_type='{attribute_type}'")
 
     accessor = AnnotationSpecsAccessor(annotation_specs)
+    all_label_names: list[str] | None = None
     catalog: list[AttributeRestrictionCatalogItem] = []
     for attribute in accessor.additionals:
         attribute_type = attribute["type"]
@@ -799,7 +800,9 @@ def get_attribute_restriction_catalog(annotation_specs: dict[str, Any]) -> list[
             case "choice" | "select":
                 choice_names = [get_english_message(choice["name"]) for choice in cast(list[AttributeChoice], attribute["choices"])]
             case "link":
-                label_names = [get_english_message(label["label_name"]) for label in accessor.labels]
+                if all_label_names is None:
+                    all_label_names = [get_english_message(label["label_name"]) for label in accessor.labels]
+                label_names = all_label_names
         item = AttributeRestrictionCatalogItem(
             attribute_name=get_english_message(attribute["name"]),
             attribute_type=attribute_type,
