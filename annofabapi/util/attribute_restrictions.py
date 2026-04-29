@@ -103,8 +103,6 @@ class Restriction(ABC):
         Returns:
             復元した `Restriction` オブジェクトです。
 
-        Raises:
-            ValueError: 制約の形式が不正な場合
         """
         return _from_restriction_dict(obj)
 
