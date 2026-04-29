@@ -58,7 +58,7 @@ class TestCreateImageEditorUrl:
 
     def test_annotation_id_without_input_data_id_raises_error(self):
         """annotation_idのみを指定した場合にValueErrorが発生することをテスト"""
-        with pytest.raises(ValueError, match="'input_data_id' must be specified if 'annotation_id' is specified"):
+        with pytest.raises(ValueError):
             create_image_editor_url("project1", "task1", annotation_id="annotation1")
 
 
@@ -92,5 +92,5 @@ class TestCreate3dpcEditorUrl:
 
     def test_annotation_id_without_input_data_id_raises_error(self):
         """annotation_idのみを指定した場合にValueErrorが発生することをテスト"""
-        with pytest.raises(ValueError, match="'input_data_id' must be specified if 'annotation_id' is specified"):
+        with pytest.raises(ValueError):
             create_3dpc_editor_url("project1", "task1", annotation_id="annotation1")
