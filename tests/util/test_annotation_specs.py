@@ -1,6 +1,6 @@
 import pytest
 
-from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, Lang, get_choice, get_english_message, get_message_with_lang
+from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, AttributeChoice, Lang, get_choice, get_english_message, get_message_with_lang
 
 
 class Test__get_english_message:
@@ -87,7 +87,7 @@ class Test__AnnotationSpecsAccessor:
 
 class Test__get_choice:
     def setup_method(self):
-        self.choices = [
+        self.choices: list[AttributeChoice] = [
             {"choice_id": "1", "name": {"messages": [{"lang": "en-US", "message": "Option1"}]}},
             {"choice_id": "2", "name": {"messages": [{"lang": "en-US", "message": "Option2"}]}},
         ]

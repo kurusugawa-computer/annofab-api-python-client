@@ -1,11 +1,49 @@
-from typing import Any, Literal
+from typing import Any, Literal, TypedDict, cast
 
 import more_itertools
 
 from annofabapi.models import Lang
+from annofabapi.pydantic_models.additional_data_definition_type import AdditionalDataDefinitionType
 
 
-def get_english_message(internationalization_message: dict[str, Any]) -> str:
+class InternationalizationMessageItem(TypedDict):
+    """多言語メッセージの1要素です。"""
+
+    lang: str
+    message: str
+
+
+class InternationalizationMessage(TypedDict):
+    """多言語メッセージです。"""
+
+    messages: list[InternationalizationMessageItem]
+
+
+class AttributeChoice(TypedDict):
+    """属性の選択肢です。"""
+
+    choice_id: str
+    name: InternationalizationMessage
+
+
+class AttributeDefinition(TypedDict):
+    """アノテーション仕様上の属性定義です。"""
+
+    additional_data_definition_id: str
+    name: InternationalizationMessage
+    type: AdditionalDataDefinitionType
+    choices: list[AttributeChoice] | None
+
+
+class LabelDefinition(TypedDict):
+    """アノテーション仕様上のラベル定義です。"""
+
+    label_id: str
+    label_name: InternationalizationMessage
+    additional_data_definitions: list[str]
+
+
+def get_english_message(internationalization_message: InternationalizationMessage | dict[str, Any]) -> str:
     """
     `InternationalizationMessage`クラスの値から、英語メッセージを取得します。
     英語メッセージが見つからない場合は ``ValueError`` をスローします。
@@ -22,7 +60,7 @@ def get_english_message(internationalization_message: dict[str, Any]) -> str:
     Raises:
         ValueError: 英語メッセージが見つからない場合
     """
-    messages: list[dict[str, str]] = internationalization_message["messages"]
+    messages = cast(list[InternationalizationMessageItem], internationalization_message["messages"])
     result = more_itertools.first_true(messages, pred=lambda e: e["lang"] == Lang.EN_US.value)
     if result is not None:
         return result["message"]
@@ -36,7 +74,7 @@ STR_LANG = Literal["en-US", "ja-JP", "vi-VN"]
 """
 
 
-def get_message_with_lang(internationalization_message: dict[str, Any], lang: Lang | STR_LANG) -> str | None:
+def get_message_with_lang(internationalization_message: InternationalizationMessage | dict[str, Any], lang: Lang | STR_LANG) -> str | None:
     """
     `InternationalizationMessage`クラスの値から、指定した ``lang`` に対応するメッセージを取得します。
 
@@ -48,7 +86,7 @@ def get_message_with_lang(internationalization_message: dict[str, Any], lang: La
         指定した言語に対応するメッセージ。見つからない場合はNoneを返します。
 
     """
-    messages: list[dict[str, str]] = internationalization_message["messages"]
+    messages = cast(list[InternationalizationMessageItem], internationalization_message["messages"])
     if isinstance(lang, Lang):
         str_lang = lang.value
     else:
@@ -60,7 +98,7 @@ def get_message_with_lang(internationalization_message: dict[str, Any], lang: La
     return None
 
 
-def get_choice(choices: list[dict[str, Any]], *, choice_id: str | None = None, choice_name: str | None = None) -> dict[str, Any]:
+def get_choice(choices: list[AttributeChoice], *, choice_id: str | None = None, choice_name: str | None = None) -> AttributeChoice:
     """
     選択肢情報を取得します。
 
@@ -90,12 +128,12 @@ def get_choice(choices: list[dict[str, Any]], *, choice_id: str | None = None, c
 
 
 def get_attribute(
-    additionals: list[dict[str, Any]],
+    additionals: list[AttributeDefinition],
     *,
     attribute_id: str | None = None,
     attribute_name: str | None = None,
-    label: dict[str, Any] | None = None,
-) -> dict[str, Any]:
+    label: LabelDefinition | None = None,
+) -> AttributeDefinition:
     """
     属性情報を取得します。
 
@@ -133,7 +171,7 @@ def get_attribute(
     return result[0]
 
 
-def get_label(labels: list[dict[str, Any]], *, label_id: str | None = None, label_name: str | None = None) -> dict[str, Any]:
+def get_label(labels: list[LabelDefinition], *, label_id: str | None = None, label_name: str | None = None) -> LabelDefinition:
     """
     ラベル情報を取得します。
 
@@ -172,12 +210,12 @@ class AnnotationSpecsAccessor:
 
     def __init__(self, annotation_specs: dict[str, Any]) -> None:
         self.annotation_specs = annotation_specs
-        self.labels = annotation_specs["labels"]
-        self.additionals = annotation_specs["additionals"]
+        self.labels: list[LabelDefinition] = annotation_specs["labels"]
+        self.additionals: list[AttributeDefinition] = annotation_specs["additionals"]
 
     def get_attribute(
-        self, *, attribute_id: str | None = None, attribute_name: str | None = None, label: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+        self, *, attribute_id: str | None = None, attribute_name: str | None = None, label: LabelDefinition | None = None
+    ) -> AttributeDefinition:
         """
         属性情報を取得します。
 
@@ -192,7 +230,7 @@ class AnnotationSpecsAccessor:
         """
         return get_attribute(self.additionals, attribute_id=attribute_id, attribute_name=attribute_name, label=label)
 
-    def get_label(self, *, label_id: str | None = None, label_name: str | None = None) -> dict[str, Any]:
+    def get_label(self, *, label_id: str | None = None, label_name: str | None = None) -> LabelDefinition:
         """
         ラベル情報を取得します。
 
