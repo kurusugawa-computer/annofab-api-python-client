@@ -1,4 +1,5 @@
-from typing import Any, Literal, TypedDict, cast
+from collections.abc import Mapping
+from typing import Any, Literal, TypedDict
 
 import more_itertools
 
@@ -55,7 +56,7 @@ class NameHolder(TypedDict):
     name: InternationalizationMessage
 
 
-def get_english_message(internationalization_message: InternationalizationMessage | dict[str, Any]) -> str:
+def get_english_message(internationalization_message: Mapping[str, Any]) -> str:
     """
     `InternationalizationMessage`クラスの値から、英語メッセージを取得します。
     英語メッセージが見つからない場合は ``ValueError`` をスローします。
@@ -72,7 +73,7 @@ def get_english_message(internationalization_message: InternationalizationMessag
     Raises:
         ValueError: 英語メッセージが見つからない場合
     """
-    messages = cast(list[InternationalizationMessageItem], internationalization_message["messages"])
+    messages = internationalization_message["messages"]
     result = more_itertools.first_true(messages, pred=lambda e: e["lang"] == Lang.EN_US.value)
     if result is not None:
         return result["message"]
@@ -110,7 +111,7 @@ def get_message_with_lang(internationalization_message: InternationalizationMess
     return None
 
 
-def get_label_name_en(label: LabelNameHolder) -> str:
+def get_label_name_en(label: Mapping[str, Any]) -> str:
     """
     ラベル情報から英語名を取得します。
 
@@ -126,7 +127,7 @@ def get_label_name_en(label: LabelNameHolder) -> str:
     return get_english_message(label["label_name"])
 
 
-def get_attribute_name_en(attribute: NameHolder) -> str:
+def get_attribute_name_en(attribute: Mapping[str, Any]) -> str:
     """
     属性情報から英語名を取得します。
 
@@ -142,7 +143,7 @@ def get_attribute_name_en(attribute: NameHolder) -> str:
     return get_english_message(attribute["name"])
 
 
-def get_choice_name_en(choice: NameHolder) -> str:
+def get_choice_name_en(choice: Mapping[str, Any]) -> str:
     """
     選択肢情報から英語名を取得します。
 

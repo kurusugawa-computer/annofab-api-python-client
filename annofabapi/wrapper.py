@@ -14,7 +14,7 @@ from collections import defaultdict
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import more_itertools
 import requests
@@ -47,7 +47,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
-from annofabapi.util.annotation_specs import LabelNameHolder, NameHolder, get_attribute_name_en, get_choice_name_en, get_label_name_en
+from annofabapi.util.annotation_specs import get_attribute_name_en, get_choice_name_en, get_label_name_en
 
 logger = logging.getLogger(__name__)
 
@@ -534,7 +534,7 @@ class Wrapper:
 
     def __get_label_info_from_label_name(self, label_name: str, annotation_specs_labels: list[LabelV1]) -> LabelV1 | None:
         for label in annotation_specs_labels:
-            if get_label_name_en(cast(LabelNameHolder, label)) == label_name:
+            if get_label_name_en(label) == label_name:
                 return label
         return None
 
@@ -546,7 +546,7 @@ class Wrapper:
         return None
 
     def _get_choice_id_from_name(self, name: str, choices: list[dict[str, Any]]) -> str | None:
-        choice_info = more_itertools.first_true(choices, pred=lambda e: get_choice_name_en(cast(NameHolder, e)) == name)
+        choice_info = more_itertools.first_true(choices, pred=lambda e: get_choice_name_en(e) == name)
         if choice_info is not None:
             return choice_info["choice_id"]
         else:
@@ -573,7 +573,7 @@ class Wrapper:
             if specs_additional_data is None:
                 logger.warning(
                     "アノテーション仕様の '%s' ラベルに、attribute_name='%s' である属性が存在しません。",
-                    get_label_name_en(cast(LabelNameHolder, label_info)),
+                    get_label_name_en(label_info),
                     key,
                 )
                 continue
@@ -699,7 +699,7 @@ class Wrapper:
                 else:
                     raise ValueError(
                         f"additional_data_definition_id='{additional_data_definition_id}' に対応する属性情報が存在しません。"
-                        f"label_id='{label_v2['label_id']}', label_name_en='{get_label_name_en(cast(LabelNameHolder, label_v2))}'"
+                        f"label_id='{label_v2['label_id']}', label_name_en='{get_label_name_en(label_v2)}'"
                     )
             label_v2["additional_data_definitions"] = new_additional_data_definitions
             return label_v2
@@ -793,9 +793,9 @@ class Wrapper:
         dest_labels: list[dict[str, Any]],
         dict_label_id: dict[str, str],
     ) -> dict[str, Any] | None:
-        src_additional_name_en = get_attribute_name_en(cast(NameHolder, src_additional))
+        src_additional_name_en = get_attribute_name_en(src_additional)
         for dest_additional in dest_additionals:
-            if src_additional_name_en != get_attribute_name_en(cast(NameHolder, dest_additional)):
+            if src_additional_name_en != get_attribute_name_en(dest_additional):
                 continue
 
             dest_label_contains_dest_additional = True
