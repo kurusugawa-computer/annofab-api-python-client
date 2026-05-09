@@ -98,6 +98,54 @@ def get_message_with_lang(internationalization_message: InternationalizationMess
     return None
 
 
+def get_label_name_en(label: LabelDefinition | dict[str, Any]) -> str:
+    """
+    ラベル情報から英語名を取得します。
+
+    Args:
+        label: ラベル情報。キー ``label_name`` が存在している必要があります。
+
+    Returns:
+        ラベルの英語名。
+
+    Raises:
+        ValueError: 英語メッセージが見つからない場合
+    """
+    return get_english_message(label["label_name"])
+
+
+def get_attribute_name_en(attribute: AttributeDefinition | dict[str, Any]) -> str:
+    """
+    属性情報から英語名を取得します。
+
+    Args:
+        attribute: 属性情報。キー ``name`` が存在している必要があります。
+
+    Returns:
+        属性の英語名。
+
+    Raises:
+        ValueError: 英語メッセージが見つからない場合
+    """
+    return get_english_message(attribute["name"])
+
+
+def get_choice_name_en(choice: AttributeChoice | dict[str, Any]) -> str:
+    """
+    選択肢情報から英語名を取得します。
+
+    Args:
+        choice: 選択肢情報。キー ``name`` が存在している必要があります。
+
+    Returns:
+        選択肢の英語名。
+
+    Raises:
+        ValueError: 英語メッセージが見つからない場合
+    """
+    return get_english_message(choice["name"])
+
+
 def get_choice(choices: list[AttributeChoice], *, choice_id: str | None = None, choice_name: str | None = None) -> AttributeChoice:
     """
     選択肢情報を取得します。
@@ -116,7 +164,7 @@ def get_choice(choices: list[AttributeChoice], *, choice_id: str | None = None, 
     if choice_id is not None:
         result = [e for e in choices if e["choice_id"] == choice_id]
     elif choice_name is not None:
-        result = [e for e in choices if get_english_message(e["name"]) == choice_name]
+        result = [e for e in choices if get_choice_name_en(e) == choice_name]
     else:
         raise ValueError("'choice_id'か'choice_name'のどちらかはNone以外にしてください。")
 
@@ -151,14 +199,14 @@ def get_attribute(
     if attribute_id is not None:
         result = [e for e in additionals if e["additional_data_definition_id"] == attribute_id]
     elif attribute_name is not None:
-        result = [e for e in additionals if get_english_message(e["name"]) == attribute_name]
+        result = [e for e in additionals if get_attribute_name_en(e) == attribute_name]
     else:
         raise ValueError("'attribute_id'か'attribute_name'のどちらかはNone以外にしてください。")
 
     label_name = None
     if label is not None:
         result = [e for e in result if e["additional_data_definition_id"] in label["additional_data_definitions"]]
-        label_name = get_english_message(label["label_name"])
+        label_name = get_label_name_en(label)
 
     if len(result) == 0:
         raise ValueError(
@@ -189,7 +237,7 @@ def get_label(labels: list[LabelDefinition], *, label_id: str | None = None, lab
     if label_id is not None:
         result = [e for e in labels if e["label_id"] == label_id]
     elif label_name is not None:
-        result = [e for e in labels if get_english_message(e["label_name"]) == label_name]
+        result = [e for e in labels if get_label_name_en(e) == label_name]
     else:
         raise ValueError("'label_id'か'label_name'のどちらかはNone以外にしてください。")
 

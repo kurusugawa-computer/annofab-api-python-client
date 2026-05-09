@@ -1,6 +1,16 @@
 import pytest
 
-from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, AttributeChoice, Lang, get_choice, get_english_message, get_message_with_lang
+from annofabapi.util.annotation_specs import (
+    AnnotationSpecsAccessor,
+    AttributeChoice,
+    Lang,
+    get_attribute_name_en,
+    get_choice,
+    get_choice_name_en,
+    get_english_message,
+    get_label_name_en,
+    get_message_with_lang,
+)
 
 
 class Test__get_english_message:
@@ -31,6 +41,65 @@ class Test__get_message_with_lang:
         assert get_message_with_lang(i18n_message, Lang.VI_VN) is None  # type: ignore[arg-type]
 
 
+class Test__get_label_name_en:
+    def test__get_label_name_en(self):
+        label = {
+            "label_id": "1",
+            "label_name": {"messages": [{"lang": "ja-JP", "message": "自動車"}, {"lang": "en-US", "message": "Car"}]},
+            "additional_data_definitions": [],
+        }
+
+        assert get_label_name_en(label) == "Car"
+
+    def test__get_label_name_en__英語メッセージが存在しない場合はValueErrorをスローする(self):
+        label = {
+            "label_id": "1",
+            "label_name": {"messages": [{"lang": "ja-JP", "message": "自動車"}]},
+            "additional_data_definitions": [],
+        }
+
+        with pytest.raises(ValueError):
+            get_label_name_en(label)
+
+
+class Test__get_attribute_name_en:
+    def test__get_attribute_name_en(self):
+        attribute = {
+            "additional_data_definition_id": "1",
+            "name": {"messages": [{"lang": "ja-JP", "message": "色"}, {"lang": "en-US", "message": "Color"}]},
+        }
+
+        assert get_attribute_name_en(attribute) == "Color"
+
+    def test__get_attribute_name_en__英語メッセージが存在しない場合はValueErrorをスローする(self):
+        attribute = {
+            "additional_data_definition_id": "1",
+            "name": {"messages": [{"lang": "ja-JP", "message": "色"}]},
+        }
+
+        with pytest.raises(ValueError):
+            get_attribute_name_en(attribute)
+
+
+class Test__get_choice_name_en:
+    def test__get_choice_name_en(self):
+        choice = {
+            "choice_id": "1",
+            "name": {"messages": [{"lang": "ja-JP", "message": "赤"}, {"lang": "en-US", "message": "Red"}]},
+        }
+
+        assert get_choice_name_en(choice) == "Red"
+
+    def test__get_choice_name_en__英語メッセージが存在しない場合はValueErrorをスローする(self):
+        choice = {
+            "choice_id": "1",
+            "name": {"messages": [{"lang": "ja-JP", "message": "赤"}]},
+        }
+
+        with pytest.raises(ValueError):
+            get_choice_name_en(choice)
+
+
 class Test__AnnotationSpecsAccessor:
     def setup_method(self):
         self.annotation_specs = {
@@ -48,12 +117,12 @@ class Test__AnnotationSpecsAccessor:
     def test_get_label_by_id(self):
         label = self.accessor.get_label(label_id="1")
         assert label["label_id"] == "1"
-        assert get_english_message(label["label_name"]) == "Car"
+        assert get_label_name_en(label) == "Car"
 
     def test_get_label_by_name(self):
         label = self.accessor.get_label(label_name="Bike")
         assert label["label_id"] == "2"
-        assert get_english_message(label["label_name"]) == "Bike"
+        assert get_label_name_en(label) == "Bike"
 
     def test_get_label_not_found(self):
         with pytest.raises(ValueError):
@@ -62,12 +131,12 @@ class Test__AnnotationSpecsAccessor:
     def test_get_attribute_by_id(self):
         attribute = self.accessor.get_attribute(attribute_id="1")
         assert attribute["additional_data_definition_id"] == "1"
-        assert get_english_message(attribute["name"]) == "Color"
+        assert get_attribute_name_en(attribute) == "Color"
 
     def test_get_attribute_by_name(self):
         attribute = self.accessor.get_attribute(attribute_name="Size")
         assert attribute["additional_data_definition_id"] == "2"
-        assert get_english_message(attribute["name"]) == "Size"
+        assert get_attribute_name_en(attribute) == "Size"
 
     def test_get_attribute_not_found(self):
         with pytest.raises(ValueError):
@@ -77,7 +146,7 @@ class Test__AnnotationSpecsAccessor:
         label = self.accessor.get_label(label_id="1")
         attribute = self.accessor.get_attribute(attribute_id="1", label=label)
         assert attribute["additional_data_definition_id"] == "1"
-        assert get_english_message(attribute["name"]) == "Color"
+        assert get_attribute_name_en(attribute) == "Color"
 
     def test_get_attribute_by_id_and_label__not_found(self):
         label = self.accessor.get_label(label_id="2")
@@ -95,12 +164,12 @@ class Test__get_choice:
     def test_get_choice_by_id(self):
         choice = get_choice(self.choices, choice_id="1")
         assert choice["choice_id"] == "1"
-        assert get_english_message(choice["name"]) == "Option1"
+        assert get_choice_name_en(choice) == "Option1"
 
     def test_get_choice_by_name(self):
         choice = get_choice(self.choices, choice_name="Option2")
         assert choice["choice_id"] == "2"
-        assert get_english_message(choice["name"]) == "Option2"
+        assert get_choice_name_en(choice) == "Option2"
 
     def test_get_choice_not_found(self):
         with pytest.raises(ValueError):
