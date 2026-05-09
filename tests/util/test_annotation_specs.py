@@ -3,7 +3,9 @@ import pytest
 from annofabapi.util.annotation_specs import (
     AnnotationSpecsAccessor,
     AttributeChoice,
+    LabelNameHolder,
     Lang,
+    NameHolder,
     get_attribute_name_en,
     get_choice,
     get_choice_name_en,
@@ -43,19 +45,15 @@ class Test__get_message_with_lang:
 
 class Test__get_label_name_en:
     def test__get_label_name_en(self):
-        label = {
-            "label_id": "1",
+        label: LabelNameHolder = {
             "label_name": {"messages": [{"lang": "ja-JP", "message": "自動車"}, {"lang": "en-US", "message": "Car"}]},
-            "additional_data_definitions": [],
         }
 
         assert get_label_name_en(label) == "Car"
 
     def test__get_label_name_en__英語メッセージが存在しない場合はValueErrorをスローする(self):
-        label = {
-            "label_id": "1",
+        label: LabelNameHolder = {
             "label_name": {"messages": [{"lang": "ja-JP", "message": "自動車"}]},
-            "additional_data_definitions": [],
         }
 
         with pytest.raises(ValueError):
@@ -64,16 +62,14 @@ class Test__get_label_name_en:
 
 class Test__get_attribute_name_en:
     def test__get_attribute_name_en(self):
-        attribute = {
-            "additional_data_definition_id": "1",
+        attribute: NameHolder = {
             "name": {"messages": [{"lang": "ja-JP", "message": "色"}, {"lang": "en-US", "message": "Color"}]},
         }
 
         assert get_attribute_name_en(attribute) == "Color"
 
     def test__get_attribute_name_en__英語メッセージが存在しない場合はValueErrorをスローする(self):
-        attribute = {
-            "additional_data_definition_id": "1",
+        attribute: NameHolder = {
             "name": {"messages": [{"lang": "ja-JP", "message": "色"}]},
         }
 
@@ -83,16 +79,14 @@ class Test__get_attribute_name_en:
 
 class Test__get_choice_name_en:
     def test__get_choice_name_en(self):
-        choice = {
-            "choice_id": "1",
+        choice: NameHolder = {
             "name": {"messages": [{"lang": "ja-JP", "message": "赤"}, {"lang": "en-US", "message": "Red"}]},
         }
 
         assert get_choice_name_en(choice) == "Red"
 
     def test__get_choice_name_en__英語メッセージが存在しない場合はValueErrorをスローする(self):
-        choice = {
-            "choice_id": "1",
+        choice: NameHolder = {
             "name": {"messages": [{"lang": "ja-JP", "message": "赤"}]},
         }
 

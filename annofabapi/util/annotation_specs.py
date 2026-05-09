@@ -43,6 +43,18 @@ class LabelDefinition(TypedDict):
     additional_data_definitions: list[str]
 
 
+class LabelNameHolder(TypedDict):
+    """ラベル名を持つ情報です。"""
+
+    label_name: InternationalizationMessage
+
+
+class NameHolder(TypedDict):
+    """多言語化された名前を持つ情報です。"""
+
+    name: InternationalizationMessage
+
+
 def get_english_message(internationalization_message: InternationalizationMessage | dict[str, Any]) -> str:
     """
     `InternationalizationMessage`クラスの値から、英語メッセージを取得します。
@@ -98,7 +110,7 @@ def get_message_with_lang(internationalization_message: InternationalizationMess
     return None
 
 
-def get_label_name_en(label: LabelDefinition | dict[str, Any]) -> str:
+def get_label_name_en(label: LabelNameHolder) -> str:
     """
     ラベル情報から英語名を取得します。
 
@@ -114,7 +126,7 @@ def get_label_name_en(label: LabelDefinition | dict[str, Any]) -> str:
     return get_english_message(label["label_name"])
 
 
-def get_attribute_name_en(attribute: AttributeDefinition | dict[str, Any]) -> str:
+def get_attribute_name_en(attribute: NameHolder) -> str:
     """
     属性情報から英語名を取得します。
 
@@ -130,7 +142,7 @@ def get_attribute_name_en(attribute: AttributeDefinition | dict[str, Any]) -> st
     return get_english_message(attribute["name"])
 
 
-def get_choice_name_en(choice: AttributeChoice | dict[str, Any]) -> str:
+def get_choice_name_en(choice: NameHolder) -> str:
     """
     選択肢情報から英語名を取得します。
 
