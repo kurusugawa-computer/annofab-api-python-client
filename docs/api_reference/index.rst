@@ -12,12 +12,10 @@ API reference
    dataclass
    exceptions
    segmentation
-   plugin   
+   plugin
    project_member_repository
    pydantic_models
    models
    util
    utils
    credentials
-   
-
