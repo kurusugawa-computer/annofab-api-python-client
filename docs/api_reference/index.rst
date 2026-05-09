@@ -14,8 +14,7 @@ API reference
    segmentation
    plugin
    project_member_repository
-   pydantic_models
-   models
    util
    utils
-   credentials
+   pydantic_models
+   models
