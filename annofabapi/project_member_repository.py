@@ -31,7 +31,7 @@ class ProjectMemberRepository:
             self._members_by_project_id[project_id] = project_member_list
         return more_itertools.first_true(project_member_list, pred=predicate)
 
-    def get_project_member_from_account_id(self, project_id: str, account_id: str) -> ProjectMember | None:
+    def get_project_member_from_account_id(self, project_id: str, account_id: str) -> ProjectMember:
         """account_idからプロジェクトメンバを取得する。
 
         Args:
@@ -39,11 +39,17 @@ class ProjectMemberRepository:
             account_id: アカウントID
 
         Returns:
-            指定したaccount_idのプロジェクトメンバ。見つからない場合はNone。
-        """
-        return self._get_project_member_with_predicate(project_id, predicate=lambda e: e["account_id"] == account_id)
+            指定したaccount_idのプロジェクトメンバ。
 
-    def get_project_member_from_user_id(self, project_id: str, user_id: str) -> ProjectMember | None:
+        Raises:
+            ValueError: 指定したaccount_idのプロジェクトメンバが見つからない場合。
+        """
+        member = self._get_project_member_with_predicate(project_id, predicate=lambda e: e["account_id"] == account_id)
+        if member is None:
+            raise ValueError(f"project_member is not found. project_id='{project_id}', account_id='{account_id}'")
+        return member
+
+    def get_project_member_from_user_id(self, project_id: str, user_id: str) -> ProjectMember:
         """user_idからプロジェクトメンバを取得する。
 
         Args:
@@ -51,9 +57,15 @@ class ProjectMemberRepository:
             user_id: ユーザーID
 
         Returns:
-            指定したuser_idのプロジェクトメンバ。見つからない場合はNone。
+            指定したuser_idのプロジェクトメンバ。
+
+        Raises:
+            ValueError: 指定したuser_idのプロジェクトメンバが見つからない場合。
         """
-        return self._get_project_member_with_predicate(project_id, predicate=lambda e: e["user_id"] == user_id)
+        member = self._get_project_member_with_predicate(project_id, predicate=lambda e: e["user_id"] == user_id)
+        if member is None:
+            raise ValueError(f"project_member is not found. project_id='{project_id}', user_id='{user_id}'")
+        return member
 
     def get_user_id_from_account_id(self, project_id: str, account_id: str) -> str:
         """account_idからuser_idを取得する。
@@ -68,10 +80,7 @@ class ProjectMemberRepository:
         Raises:
             ValueError: 指定したaccount_idのプロジェクトメンバが見つからない場合。
         """
-        member = self.get_project_member_from_account_id(project_id, account_id)
-        if member is None:
-            raise ValueError(f"project_member is not found. project_id='{project_id}', account_id='{account_id}'")
-        return member["user_id"]
+        return self.get_project_member_from_account_id(project_id, account_id)["user_id"]
 
     def get_account_id_from_user_id(self, project_id: str, user_id: str) -> str:
         """user_idからaccount_idを取得する。
@@ -86,7 +95,4 @@ class ProjectMemberRepository:
         Raises:
             ValueError: 指定したuser_idのプロジェクトメンバが見つからない場合。
         """
-        member = self.get_project_member_from_user_id(project_id, user_id)
-        if member is None:
-            raise ValueError(f"project_member is not found. project_id='{project_id}', user_id='{user_id}'")
-        return member["account_id"]
+        return self.get_project_member_from_user_id(project_id, user_id)["account_id"]
