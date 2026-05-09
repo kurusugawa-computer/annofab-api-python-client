@@ -47,6 +47,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 from annofabapi.parser import SimpleAnnotationDirParser, SimpleAnnotationParser
+from annofabapi.util.annotation_specs import get_attribute_name_en, get_choice_name_en, get_label_name_en
 
 logger = logging.getLogger(__name__)
 
@@ -533,19 +534,19 @@ class Wrapper:
 
     def __get_label_info_from_label_name(self, label_name: str, annotation_specs_labels: list[LabelV1]) -> LabelV1 | None:
         for label in annotation_specs_labels:
-            if self.__get_label_name_en(label) == label_name:
+            if get_label_name_en(label) == label_name:
                 return label
         return None
 
     def __get_additional_data_from_attribute_name(self, attribute_name: str, label_info: LabelV1) -> AdditionalDataDefinitionV1 | None:
         for additional_data in label_info["additional_data_definitions"]:
-            if self.__get_additional_data_definition_name_en(additional_data) == attribute_name:
+            if get_attribute_name_en(additional_data) == attribute_name:
                 return additional_data
 
         return None
 
     def _get_choice_id_from_name(self, name: str, choices: list[dict[str, Any]]) -> str | None:
-        choice_info = more_itertools.first_true(choices, pred=lambda e: self.__get_choice_name_en(e) == name)
+        choice_info = more_itertools.first_true(choices, pred=lambda e: get_choice_name_en(e) == name)
         if choice_info is not None:
             return choice_info["choice_id"]
         else:
@@ -572,7 +573,7 @@ class Wrapper:
             if specs_additional_data is None:
                 logger.warning(
                     "アノテーション仕様の '%s' ラベルに、attribute_name='%s' である属性が存在しません。",
-                    self.__get_label_name_en(label_info),
+                    get_label_name_en(label_info),
                     key,
                 )
                 continue
@@ -698,7 +699,7 @@ class Wrapper:
                 else:
                     raise ValueError(
                         f"additional_data_definition_id='{additional_data_definition_id}' に対応する属性情報が存在しません。"
-                        f"label_id='{label_v2['label_id']}', label_name_en='{self.__get_label_name_en(label_v2)}'"
+                        f"label_id='{label_v2['label_id']}', label_name_en='{get_label_name_en(label_v2)}'"
                     )
             label_v2["additional_data_definitions"] = new_additional_data_definitions
             return label_v2
@@ -784,24 +785,6 @@ class Wrapper:
     # Public Method : AnnotationSpecs
     #########################################
 
-    @staticmethod
-    def __get_label_name_en(label: dict[str, Any]) -> str:
-        """label情報から英語名を取得する"""
-        label_name_messages = label["label_name"]["messages"]
-        return next(e["message"] for e in label_name_messages if e["lang"] == "en-US")
-
-    @staticmethod
-    def __get_additional_data_definition_name_en(additional_data_definition: dict[str, Any]) -> str:
-        """additional_data_definitionから英語名を取得する"""
-        messages = additional_data_definition["name"]["messages"]
-        return next(e["message"] for e in messages if e["lang"] == "en-US")
-
-    @staticmethod
-    def __get_choice_name_en(choice: dict[str, Any]) -> str:
-        """choiceから英語名を取得する"""
-        messages = choice["name"]["messages"]
-        return next(e["message"] for e in messages if e["lang"] == "en-US")
-
     def __get_dest_additional(
         self,
         src_additional: dict[str, Any],
@@ -810,9 +793,9 @@ class Wrapper:
         dest_labels: list[dict[str, Any]],
         dict_label_id: dict[str, str],
     ) -> dict[str, Any] | None:
-        src_additional_name_en = self.__get_additional_data_definition_name_en(src_additional)
+        src_additional_name_en = get_attribute_name_en(src_additional)
         for dest_additional in dest_additionals:
-            if src_additional_name_en != self.__get_additional_data_definition_name_en(dest_additional):
+            if src_additional_name_en != get_attribute_name_en(dest_additional):
                 continue
 
             dest_label_contains_dest_additional = True
@@ -861,10 +844,10 @@ class Wrapper:
 
         dict_label_id: dict[str, str] = {}
         for src_label in src_annotation_specs["labels"]:
-            src_label_name_en = self.__get_label_name_en(src_label)
+            src_label_name_en = get_label_name_en(src_label)
             dest_label = more_itertools.first_true(
                 dest_labels,
-                pred=lambda e: self.__get_label_name_en(e) == src_label_name_en,  # pylint: disable=cell-var-from-loop  # noqa: B023
+                pred=lambda e: get_label_name_en(e) == src_label_name_en,  # pylint: disable=cell-var-from-loop  # noqa: B023
             )
             if dest_label is not None:
                 dict_label_id[src_label["label_id"]] = dest_label["label_id"]
@@ -886,10 +869,10 @@ class Wrapper:
 
             dest_choices = dest_additional["choices"]
             for src_choice in src_additional["choices"]:
-                src_choice_name_en = self.__get_choice_name_en(src_choice)
+                src_choice_name_en = get_choice_name_en(src_choice)
                 dest_choice = more_itertools.first_true(
                     dest_choices,
-                    pred=lambda e: self.__get_choice_name_en(e) == src_choice_name_en,  # pylint: disable=cell-var-from-loop  # noqa: B023
+                    pred=lambda e: get_choice_name_en(e) == src_choice_name_en,  # pylint: disable=cell-var-from-loop  # noqa: B023
                 )
                 if dest_choice is not None:
                     dict_choice_id[ChoiceKey(src_additional["additional_data_definition_id"], src_choice["choice_id"])] = ChoiceKey(
