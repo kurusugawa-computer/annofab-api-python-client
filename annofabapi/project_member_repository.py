@@ -57,11 +57,10 @@ class ProjectMemberRepository:
     def get_user_id_from_account_id(self, project_id: str, account_id: str) -> str:
         """
         account_idからuser_idを取得する.
-        インスタンス変数に組織メンバがあれば、WebAPIは実行しない。
 
         Args:
-            project_id:
-            account_id:
+            project_id: プロジェクトID
+            account_id: アカウントID
 
         Returns:
             user_id
@@ -74,20 +73,22 @@ class ProjectMemberRepository:
             raise ValueError(f"project_member is not found. project_id='{project_id}', account_id='{account_id}'")
         return member["user_id"]
 
-    def get_account_id_from_user_id(self, project_id: str, user_id: str) -> str | None:
+    def get_account_id_from_user_id(self, project_id: str, user_id: str) -> str:
         """
         user_idからaccount_idを取得する。
         インスタンス変数に組織メンバがあれば、WebAPIは実行しない。
 
         Args:
-            project_id:
-            user_id:
+            project_id: プロジェクトID
+            user_id: ユーザーID
 
         Returns:
-            account_id. 見つからなければNone
+            account_id
 
+        Raises:
+            ValueError: 指定したuser_idのプロジェクトメンバが見つからなかった場合
         """
         member = self.get_project_member_from_user_id(project_id, user_id)
         if member is None:
-            return None
+            raise ValueError(f"project_member is not found. project_id='{project_id}', user_id='{user_id}'")
         return member["account_id"]

@@ -30,3 +30,24 @@ def test_get_user_id_from_account_id__存在しないaccount_idならValueError�
 
     with pytest.raises(ValueError):
         repository.get_user_id_from_account_id(PROJECT_ID, "unknown_account_id")
+
+
+def test_get_account_id_from_user_id__存在するuser_idならaccount_idを返す():
+    repository = create_repository_with_members(
+        [
+            {
+                "project_id": PROJECT_ID,
+                "account_id": "account_id",
+                "user_id": "user_id",
+            }
+        ]
+    )
+
+    assert repository.get_account_id_from_user_id(PROJECT_ID, "user_id") == "account_id"
+
+
+def test_get_account_id_from_user_id__存在しないuser_idならValueErrorを送出する():
+    repository = create_repository_with_members([])
+
+    with pytest.raises(ValueError):
+        repository.get_account_id_from_user_id(PROJECT_ID, "unknown_user_id")
