@@ -9,14 +9,12 @@ API reference
    wrapper
    resource
    parser
-   plugin
    dataclass
    exceptions
    segmentation
-   pydantic_models
-   models
+   plugin
+   project_member_repository
    util
    utils
-   credentials
-   
-
+   pydantic_models
+   models
