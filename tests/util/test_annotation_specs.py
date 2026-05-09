@@ -26,9 +26,9 @@ class Test__get_message_with_lang:
             "messages": [{"lang": "ja-JP", "message": "自動車"}, {"lang": "en-US", "message": "car"}],
             "default_lang": "ja-JP",
         }
-        assert get_message_with_lang(i18n_message, Lang.JA_JP) == "自動車"
-        assert get_message_with_lang(i18n_message, "en-US") == "car"
-        assert get_message_with_lang(i18n_message, Lang.VI_VN) is None
+        assert get_message_with_lang(i18n_message, Lang.JA_JP) == "自動車"  # type: ignore[arg-type]
+        assert get_message_with_lang(i18n_message, "en-US") == "car"  # type: ignore[arg-type]
+        assert get_message_with_lang(i18n_message, Lang.VI_VN) is None  # type: ignore[arg-type]
 
 
 class Test__AnnotationSpecsAccessor:

@@ -74,7 +74,7 @@ STR_LANG = Literal["en-US", "ja-JP", "vi-VN"]
 """
 
 
-def get_message_with_lang(internationalization_message: InternationalizationMessage | dict[str, Any], lang: Lang | STR_LANG) -> str | None:
+def get_message_with_lang(internationalization_message: InternationalizationMessage, lang: Lang | STR_LANG) -> str | None:
     """
     `InternationalizationMessage`クラスの値から、指定した ``lang`` に対応するメッセージを取得します。
 
@@ -86,7 +86,7 @@ def get_message_with_lang(internationalization_message: InternationalizationMess
         指定した言語に対応するメッセージ。見つからない場合はNoneを返します。
 
     """
-    messages = cast(list[InternationalizationMessageItem], internationalization_message["messages"])
+    messages = internationalization_message["messages"]
     if isinstance(lang, Lang):
         str_lang = lang.value
     else:
