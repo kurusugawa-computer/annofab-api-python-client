@@ -32,7 +32,9 @@ from collections.abc import Collection
 from enum import Enum
 from typing import Any, NoReturn, cast
 
-from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
+from pydantic import BaseModel, ConfigDict, Field, GetJsonSchemaHandler, field_serializer, model_validator
+from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import CoreSchema
 
 from annofabapi.pydantic_models.additional_data_definition_type import AdditionalDataDefinitionType
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, AttributeChoice, AttributeDefinition, get_choice, get_english_message
@@ -75,6 +77,44 @@ class RestrictionAstType(str, Enum):
 
     def __str__(self) -> str:
         return self.value
+
+    @property
+    def description(self) -> str:
+        """AST種別の説明文を返します。"""
+        return _RESTRICTION_AST_TYPE_DESCRIPTIONS[self]
+
+    @classmethod
+    def __get_pydantic_json_schema__(cls, core_schema: CoreSchema, handler: GetJsonSchemaHandler) -> JsonSchemaValue:
+        """AST種別ごとの説明を含むJSON Schemaを返します。"""
+        json_schema = handler(core_schema)
+        json_schema["oneOf"] = [
+            {
+                "const": ast_type.value,
+                "title": ast_type.name,
+                "description": ast_type.description,
+            }
+            for ast_type in cls
+        ]
+        return json_schema
+
+
+_RESTRICTION_AST_TYPE_DESCRIPTIONS: dict[RestrictionAstType, str] = {
+    RestrictionAstType.CHECKED: "チェックボックス属性がチェックされていることを表すAST種別です。",
+    RestrictionAstType.UNCHECKED: "チェックボックス属性がチェックされていないことを表すAST種別です。",
+    RestrictionAstType.IS_EMPTY: "属性値が空であることを表すAST種別です。",
+    RestrictionAstType.IS_NOT_EMPTY: "属性値が空でないことを表すAST種別です。",
+    RestrictionAstType.EQUALS_STRING: "文字列属性またはtracking属性が指定文字列と一致することを表すAST種別です。",
+    RestrictionAstType.NOT_EQUALS_STRING: "文字列属性またはtracking属性が指定文字列と一致しないことを表すAST種別です。",
+    RestrictionAstType.MATCHES_STRING: "文字列属性が指定した正規表現に一致することを表すAST種別です。",
+    RestrictionAstType.NOT_MATCHES_STRING: "文字列属性が指定した正規表現に一致しないことを表すAST種別です。",
+    RestrictionAstType.EQUALS_INTEGER: "整数属性が指定した整数値と一致することを表すAST種別です。",
+    RestrictionAstType.NOT_EQUALS_INTEGER: "整数属性が指定した整数値と一致しないことを表すAST種別です。",
+    RestrictionAstType.HAS_CHOICE: "選択属性で指定した選択肢が選ばれていることを表すAST種別です。",
+    RestrictionAstType.NOT_HAS_CHOICE: "選択属性で指定した選択肢が選ばれていないことを表すAST種別です。",
+    RestrictionAstType.HAS_LABEL: "リンク属性が指定したラベル群のいずれかを指すことを表すAST種別です。",
+    RestrictionAstType.CAN_INPUT: "属性が編集可能かどうかを表すAST種別です。",
+    RestrictionAstType.IMPLY: "前提を満たす場合に結論を要求する含意制約を表すAST種別です。",
+}
 
 
 class Restriction(ABC):
