@@ -51,7 +51,7 @@ class RestrictionAstType(str, Enum):
     IS_EMPTY = "is_empty"
     """属性値が空であることを表すAST種別です。"""
     IS_NOT_EMPTY = "is_not_empty"
-    """属性値が空でないことを表すAST種別です。"""
+    """属性値が空でないことを表すAST種別です。必須制約に相当します。"""
     EQUALS_STRING = "equals_string"
     """文字列属性またはtracking属性が指定文字列と一致することを表すAST種別です。"""
     NOT_EQUALS_STRING = "not_equals_string"
@@ -102,7 +102,7 @@ _RESTRICTION_AST_TYPE_DESCRIPTIONS: dict[RestrictionAstType, str] = {
     RestrictionAstType.CHECKED: "チェックボックス属性がチェックされていることを表すAST種別です。",
     RestrictionAstType.UNCHECKED: "チェックボックス属性がチェックされていないことを表すAST種別です。",
     RestrictionAstType.IS_EMPTY: "属性値が空であることを表すAST種別です。",
-    RestrictionAstType.IS_NOT_EMPTY: "属性値が空でないことを表すAST種別です。",
+    RestrictionAstType.IS_NOT_EMPTY: "属性値が空でないことを表すAST種別です。必須制約に相当します。",
     RestrictionAstType.EQUALS_STRING: "文字列属性またはtracking属性が指定文字列と一致することを表すAST種別です。",
     RestrictionAstType.NOT_EQUALS_STRING: "文字列属性またはtracking属性が指定文字列と一致しないことを表すAST種別です。",
     RestrictionAstType.MATCHES_STRING: "文字列属性が指定した正規表現に一致することを表すAST種別です。",
