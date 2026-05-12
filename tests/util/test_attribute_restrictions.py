@@ -437,10 +437,22 @@ class Test__RestrictionAst:
     def test__model_json_schema(self):
         actual = RestrictionAst.model_json_schema()
         properties = actual["$defs"]["RestrictionAst"]["properties"]
+        ast_type_schema = actual["$defs"]["RestrictionAstType"]
 
         assert properties["type"]["description"] == "ASTノードの種類です。"
         assert properties["attribute_name"]["description"] == "対象属性の名前です。"
         assert properties["premise"]["description"] == "`imply` ノードの前提です。"
+        assert ast_type_schema["description"] == "属性制約ASTの種別です。"
+        assert {
+            "const": "checked",
+            "title": "CHECKED",
+            "description": "チェックボックス属性がチェックされていることを表すAST種別です。",
+        } in ast_type_schema["oneOf"]
+        assert {
+            "const": "imply",
+            "title": "IMPLY",
+            "description": "前提を満たす場合に結論を要求する含意制約を表すAST種別です。",
+        } in ast_type_schema["oneOf"]
 
 
 class Test__get_attribute_restriction_catalog:
