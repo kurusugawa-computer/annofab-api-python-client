@@ -10,13 +10,13 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any  # pylint: disable=unused-import
+from typing import Any, Union  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
 from annofabapi.models import AdditionalDataDefinitionType, AnnotationTypeFieldMinWarnRule
 
-AdditionalDataDefaultType = bool | int | str
+AdditionalDataDefaultType = Union[bool, int, str]
 
 AdditionalDataRestrictionCondition = dict[str, Any]
 

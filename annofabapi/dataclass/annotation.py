@@ -10,7 +10,7 @@ Note:
 """
 
 from dataclasses import dataclass
-from typing import Any  # pylint: disable=unused-import
+from typing import Any, Union  # pylint: disable=unused-import
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -23,7 +23,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 
-AnnotationDataV1 = str | dict[str, Any]
+AnnotationDataV1 = Union[str, dict[str, Any]]
 FullAnnotationData = Any
 AdditionalDataValue = dict[str, Any]
 FullAnnotationAdditionalDataValue = dict[str, Any]
