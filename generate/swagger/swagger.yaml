@@ -119,7 +119,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.206.0
+  version: 0.210.0
   title: Annofab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -2094,7 +2094,7 @@ paths:
         入力データ全件ファイルにアクセスするための、認証済み一時URLを取得します。
         取得したURLは1時間で失効し、アクセスできなくなります。
 
-        入力データ全件ファイルは、すべての入力データが記載されたJSONファイルです。SON構造は、[InputData](#tag/x-data-types/InputData)の配列です。
+        入力データ全件ファイルは、すべての入力データが記載されたJSONファイルです。JSON構造は、[InputData](#tag/x-data-types/InputData)の配列です。
         ただしInputData中のurlは常にnullです。
 
         毎日AM02:00(JST)頃に更新されます。
@@ -4607,14 +4607,6 @@ paths:
           minimum: 0
           maximum: 200
           default: 30
-      - name: aggregate_by_task_and_input
-        in: query
-        description: |
-          `true`を指定すると、「タスクIDと入力データIDの組」ごとに検索結果を集計します。
-        required: false
-        schema:
-          type: boolean
-          default: false
       - name: no_aggregate_label_and_input
         in: query
         description: |

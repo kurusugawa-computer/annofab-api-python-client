@@ -1,6 +1,6 @@
 from annofabapi.models import AdditionalDataDefinitionType, AnnotationTypeFieldMinWarnRule
 
-AdditionalDataDefaultType = Union[bool, int, str]
+AdditionalDataDefaultType = bool | int | str
 
 AdditionalDataRestrictionCondition = dict[str, Any]
 

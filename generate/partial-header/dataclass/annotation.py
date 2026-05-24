@@ -7,7 +7,7 @@ from annofabapi.models import (
     TaskStatus,
 )
 
-AnnotationDataV1 = Union[str, dict[str, Any]]
+AnnotationDataV1 = str | dict[str, Any]
 FullAnnotationData = Any
 AdditionalDataValue = dict[str, Any]
 FullAnnotationAdditionalDataValue = dict[str, Any]

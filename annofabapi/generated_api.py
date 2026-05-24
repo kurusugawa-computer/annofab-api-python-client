@@ -131,7 +131,6 @@ class AbstractAnnofabApi(abc.ABC):
             query_params (dict[str, Any]): Query Parameters
                 page (int):  検索結果のうち、取得したいページの番号(1始まり）
                 limit (int):  1ページあたりの取得するデータ件数
-                aggregate_by_task_and_input (bool):  `true`を指定すると、「タスクIDと入力データIDの組」ごとに検索結果を集計します。
                 no_aggregate_label_and_input (bool):  `true`を指定すると、ラベルIDによるアノテーション検索数の集約結果、および属性IDによるアノテーション検索数の集約結果を取得しません。  このパラメーターを`true`に指定することで集約計算は行われなくなるので、アノテーションの検索が速くなる可能性があります。
                 query (str):  絞り込み条件([AnnotationQuery](#tag/x-data-types/AnnotationQuery))をJSON形式で表した文字列。
                 sort (str):  ソート順の指定。 以下のキーを使用できます。 * `task_id` * `input_data_id` * `detail.annotation_id` * `detail.account_id` * `detail.label_id` * `detail.data_holding_type` * `detail.created_datetime` * `detail.updated_datetime`   キーの先頭に`-`を付けると、降順でソートされます。  `,`でキーを区切ると、複数のキーでソートされます。先頭のキーから順に優先順位が割り振られます。
@@ -2034,7 +2033,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectDataUser
 
 
-        入力データ全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  入力データ全件ファイルは、すべての入力データが記載されたJSONファイルです。SON構造は、[InputData](#tag/x-data-types/InputData)の配列です。 ただしInputData中のurlは常にnullです。  毎日AM02:00(JST)頃に更新されます。 [postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを利用すれば、手動で入力データ全件ファイルを更新できます。
+        入力データ全件ファイルにアクセスするための、認証済み一時URLを取得します。 取得したURLは1時間で失効し、アクセスできなくなります。  入力データ全件ファイルは、すべての入力データが記載されたJSONファイルです。JSON構造は、[InputData](#tag/x-data-types/InputData)の配列です。 ただしInputData中のurlは常にnullです。  毎日AM02:00(JST)頃に更新されます。 [postProjectInputsUpdate](#operation/postProjectInputsUpdate) APIを利用すれば、手動で入力データ全件ファイルを更新できます。
 
         Args:
             project_id (str):  プロジェクトID (required)
