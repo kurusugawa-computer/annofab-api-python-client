@@ -48,7 +48,7 @@ test = [
 ]
 linter = [
     "ruff>=0.15 ; python_version >= '3.13'",
-    "mypy>=1,<2 ; python_version >= '3.13'",
+    "mypy>=2 ; python_version >= '3.13'",
     "types-requests",
     "types-python-dateutil",
     "types-dataclasses",
