@@ -159,16 +159,19 @@ class Restriction(ABC):
         accessor = AnnotationSpecsAccessor(annotation_specs)
         return _restriction_to_ast(self, accessor=accessor)
 
-    def to_human_readable(self, annotation_specs: dict[str, Any]) -> str:
+    def to_human_readable(self, annotation_specs: dict[str, Any], *, include_ids: bool = False) -> str:
         """
         Restrictionオブジェクトを、人にとって読みやすい文字列表現へ変換します。
 
         Args:
             annotation_specs: アノテーション仕様(v3)の情報です。
+            include_ids: Trueの場合、属性ID、選択肢ID、ラベルIDを文字列表現に含めます。
 
         Returns:
             CLIなどで表示しやすい文字列表現です。
         """
+        if include_ids:
+            return _restriction_to_human_readable_with_ids(self, accessor=AnnotationSpecsAccessor(annotation_specs))
         return self.to_ast(annotation_specs).to_human_readable()
 
     @classmethod
@@ -1078,6 +1081,210 @@ def _raise_invalid_restriction(*, attribute: AttributeDefinition, condition: dic
     if detail is not None:
         message += f" {detail}"
     raise ValueError(message)
+
+
+def _restriction_to_human_readable_with_ids(restriction: Restriction, *, accessor: AnnotationSpecsAccessor) -> str:  # noqa: PLR0915
+    """
+    `Restriction` をID付きの人間向け文字列へ変換します。
+
+    Args:
+        restriction: 変換元の `Restriction` です。
+        accessor: 属性名、選択肢名、ラベル名の解決に使う `AnnotationSpecsAccessor` です。
+
+    Returns:
+        属性ID、選択肢ID、ラベルIDを含む人間向け文字列表現です。
+
+    Raises:
+        ValueError: 人間向け文字列へ変換できない制約が含まれている場合
+    """
+
+    def format_attribute(attribute: AttributeDefinition) -> str:
+        """
+        属性名と属性IDを人間向け文字列へ変換します。
+
+        Args:
+            attribute: アノテーション仕様上の属性定義です。
+
+        Returns:
+            属性名と属性IDを含む文字列表現です。
+        """
+        attribute_name = get_english_message(attribute["name"])
+        attribute_id = attribute["additional_data_definition_id"]
+        return f"{attribute_name!r} [attribute_id={attribute_id!r}]"
+
+    def format_choice(choice: AttributeChoice) -> str:
+        """
+        選択肢名と選択肢IDを人間向け文字列へ変換します。
+
+        Args:
+            choice: アノテーション仕様上の選択肢定義です。
+
+        Returns:
+            選択肢名と選択肢IDを含む文字列表現です。
+        """
+        choice_name = get_english_message(choice["name"])
+        choice_id = choice["choice_id"]
+        return f"{choice_name!r} [choice_id={choice_id!r}]"
+
+    def format_label(label_id: str) -> str:
+        """
+        ラベル名とラベルIDを人間向け文字列へ変換します。
+
+        Args:
+            label_id: ラベルIDです。
+
+        Returns:
+            ラベル名とラベルIDを含む文字列表現です。
+        """
+        label = accessor.get_label(label_id=label_id)
+        label_name = get_english_message(label["label_name"])
+        return f"{label_name!r} [label_id={label_id!r}]"
+
+    def parse_integer_value(value: str, *, attribute: AttributeDefinition, condition: dict[str, Any]) -> int:
+        """
+        整数属性向けの文字列値を整数へ変換します。
+
+        Args:
+            value: 変換対象の文字列値です。
+            attribute: アノテーション仕様上の属性定義です。
+            condition: 元の条件辞書です。
+
+        Returns:
+            変換後の整数値です。
+
+        Raises:
+            ValueError: 整数へ変換できない場合
+        """
+        try:
+            return int(value)
+        except ValueError as exc:
+            _raise_invalid_restriction(attribute=attribute, condition=condition, detail="整数属性には整数値を指定してください。")
+            raise AssertionError("unreachable") from exc
+
+    def equals_restriction_to_text(
+        *, attribute: AttributeDefinition, attribute_text: str, attribute_type: AdditionalDataDefinitionType, value: str
+    ) -> str:
+        match attribute_type:
+            case "flag" if value == "true":
+                return f"{attribute_text} is checked"
+            case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select" if value == "":
+                return f"{attribute_text} is empty"
+            case "text" | "comment" | "tracking":
+                return f"{attribute_text} is {value!r}"
+            case "integer":
+                integer_value = parse_integer_value(value, attribute=attribute, condition={"_type": "Equals", "value": value})
+                return f"{attribute_text} is {integer_value!r}"
+            case "choice" | "select":
+                choice = get_choice(cast(list[AttributeChoice], attribute["choices"]), choice_id=value)
+                return f"{attribute_text} is {format_choice(choice)}"
+            case _:
+                raise ValueError(
+                    f"Restrictionを人間向け文字列へ変換できません。 :: restriction_type='Equals', attribute_type='{attribute_type}', value={value!r}"
+                )
+
+    def not_equals_restriction_to_text(
+        *, attribute: AttributeDefinition, attribute_text: str, attribute_type: AdditionalDataDefinitionType, value: str
+    ) -> str:
+        match attribute_type:
+            case "flag" if value == "true":
+                return f"{attribute_text} is unchecked"
+            case "text" | "comment" | "integer" | "link" | "tracking" | "choice" | "select" if value == "":
+                return f"{attribute_text} is not empty"
+            case "text" | "comment" | "tracking":
+                return f"{attribute_text} is not {value!r}"
+            case "integer":
+                integer_value = parse_integer_value(value, attribute=attribute, condition={"_type": "NotEquals", "value": value})
+                return f"{attribute_text} is not {integer_value!r}"
+            case "choice" | "select":
+                choice = get_choice(cast(list[AttributeChoice], attribute["choices"]), choice_id=value)
+                return f"{attribute_text} is not {format_choice(choice)}"
+            case _:
+                restriction_type = "NotEquals"
+                raise ValueError(
+                    f"Restrictionを人間向け文字列へ変換できません。 :: restriction_type='{restriction_type}', "
+                    f"attribute_type='{attribute_type}', value={value!r}"
+                )
+
+    def atomic_restriction_to_text(restriction: Restriction, *, attribute: AttributeDefinition) -> str:
+        """
+        `imply` 以外の `Restriction` をID付きの人間向け文字列へ変換します。
+
+        Args:
+            restriction: 変換元の `Restriction` です。
+            attribute: 制約対象の属性定義です。
+
+        Returns:
+            ID付きの人間向け文字列表現です。
+        """
+        attribute_type = attribute["type"]
+        attribute_text = format_attribute(attribute)
+
+        match restriction:
+            case CanInput(enable=enable):
+                return f"{attribute_text} can be edited" if enable else f"{attribute_text} is read-only"
+            case Equals(value=value):
+                return equals_restriction_to_text(
+                    attribute=attribute,
+                    attribute_text=attribute_text,
+                    attribute_type=attribute_type,
+                    value=value,
+                )
+            case NotEquals(value=value):
+                return not_equals_restriction_to_text(
+                    attribute=attribute,
+                    attribute_text=attribute_text,
+                    attribute_type=attribute_type,
+                    value=value,
+                )
+            case Matches(value=value) if attribute_type in {"text", "comment"}:
+                return f"{attribute_text} matches {value!r}"
+            case NotMatches(value=value) if attribute_type in {"text", "comment"}:
+                return f"{attribute_text} does not match {value!r}"
+            case HasLabel(label_ids=label_ids) if attribute_type == "link":
+                return f"{attribute_text} has labels {', '.join(format_label(label_id) for label_id in label_ids)}"
+            case _:
+                _raise_invalid_restriction(attribute=attribute, condition=restriction.to_dict()["condition"])
+
+    def flatten_imply_conditions(restriction: Imply) -> tuple[list[Restriction], Restriction]:
+        """
+        右側にネストした `imply` を条件列と結論へ分解します。
+
+        Args:
+            restriction: `imply` 種別の制約です。
+
+        Returns:
+            条件制約の一覧と最終的な結論制約です。
+        """
+        conditions = [restriction.premise_restriction]
+        conclusion = restriction.conclusion_restriction
+        while isinstance(conclusion, Imply):
+            conditions.append(conclusion.premise_restriction)
+            conclusion = conclusion.conclusion_restriction
+        return conditions, conclusion
+
+    def to_human_condition_text(restriction: Restriction) -> str:
+        """
+        条件節で使う人間向け文字列表現へ変換します。
+
+        Args:
+            restriction: 変換対象の制約です。
+
+        Returns:
+            条件節で使いやすい文字列表現です。
+        """
+        if isinstance(restriction, Imply):
+            return f"({_restriction_to_human_readable_with_ids(restriction, accessor=accessor)})"
+        return _restriction_to_human_readable_with_ids(restriction, accessor=accessor)
+
+    match restriction:
+        case Imply():
+            conditions, conclusion = flatten_imply_conditions(restriction)
+            conditions_text = " and ".join(to_human_condition_text(condition) for condition in conditions)
+            conclusion_text = _restriction_to_human_readable_with_ids(conclusion, accessor=accessor)
+            return f"If {conditions_text}, {conclusion_text}."
+
+    attribute = accessor.get_attribute(attribute_id=restriction.attribute_id)
+    return atomic_restriction_to_text(restriction, attribute=attribute)
 
 
 def _restriction_to_ast(restriction: Restriction, *, accessor: AnnotationSpecsAccessor) -> RestrictionAst:
