@@ -281,6 +281,58 @@ class Test__Restriction:
 
         assert actual == "If 'occluded' is checked, 'note' is not empty."
 
+    def test__to_human_readable__include_idsがTrueなら属性IDを出力する(self):
+        restriction = Restriction.from_dict(
+            {
+                "additional_data_definition_id": "9b05648d-1e16-4ea2-ab79-48907f5eed00",
+                "condition": {
+                    "_type": "Imply",
+                    "premise": {
+                        "additional_data_definition_id": "2517f635-2269-4142-8ef4-16312b4cc9f7",
+                        "condition": {"_type": "Equals", "value": "true"},
+                    },
+                    "condition": {"_type": "NotEquals", "value": ""},
+                },
+            }
+        )
+
+        actual = restriction.to_human_readable(accessor.annotation_specs, include_ids=True)
+
+        assert (
+            actual == "If 'occluded' [attribute_id='2517f635-2269-4142-8ef4-16312b4cc9f7'] is checked, "
+            "'note' [attribute_id='9b05648d-1e16-4ea2-ab79-48907f5eed00'] is not empty."
+        )
+
+    def test__to_human_readable__include_idsがTrueなら選択肢IDを出力する(self):
+        restriction = Restriction.from_dict(
+            {
+                "additional_data_definition_id": "cbb0155f-1631-48e1-8fc3-43c5f254b6f2",
+                "condition": {"_type": "Equals", "value": "7512ee39-8073-4e24-9b8c-93d99b76b7d2"},
+            }
+        )
+
+        actual = restriction.to_human_readable(accessor.annotation_specs, include_ids=True)
+
+        assert (
+            actual == "'car_kind' [attribute_id='cbb0155f-1631-48e1-8fc3-43c5f254b6f2'] is "
+            "'general_car' [choice_id='7512ee39-8073-4e24-9b8c-93d99b76b7d2']"
+        )
+
+    def test__to_human_readable__include_idsがTrueならラベルIDを出力する(self):
+        restriction = Restriction.from_dict(
+            {
+                "additional_data_definition_id": "15ba8b9d-4882-40c2-bb31-ed3f68197c2e",
+                "condition": {"_type": "HasLabel", "labels": ["9d6cca8d-3f5a-4808-a6c9-0ae18a478176"]},
+            }
+        )
+
+        actual = restriction.to_human_readable(accessor.annotation_specs, include_ids=True)
+
+        assert (
+            actual == "'link_car' [attribute_id='15ba8b9d-4882-40c2-bb31-ed3f68197c2e'] has labels "
+            "'car' [label_id='9d6cca8d-3f5a-4808-a6c9-0ae18a478176']"
+        )
+
     def test__to_human_readable__右側にネストしたimplyは条件をまとめる(self):
         restriction = Restriction.from_dict(
             {
