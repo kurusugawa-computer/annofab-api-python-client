@@ -3,6 +3,7 @@ import pytest
 from annofabapi.util.annotation_specs import (
     AnnotationSpecsAccessor,
     AttributeChoice,
+    InspectionPhrase,
     LabelNameHolder,
     Lang,
     NameHolder,
@@ -10,6 +11,7 @@ from annofabapi.util.annotation_specs import (
     get_choice,
     get_choice_name_en,
     get_english_message,
+    get_inspection_phrase,
     get_label_name_en,
     get_message_with_lang,
 )
@@ -105,6 +107,26 @@ class Test__AnnotationSpecsAccessor:
                 {"additional_data_definition_id": "1", "name": {"messages": [{"lang": "en-US", "message": "Color"}]}},
                 {"additional_data_definition_id": "2", "name": {"messages": [{"lang": "en-US", "message": "Size"}]}},
             ],
+            "inspection_phrases": [
+                {
+                    "id": "inspection_phrase_id_1",
+                    "text": {
+                        "messages": [
+                            {"lang": "ja-JP", "message": "画像がぼやけています。"},
+                            {"lang": "en-US", "message": "The image is blurry."},
+                        ]
+                    },
+                },
+                {
+                    "id": "inspection_phrase_id_2",
+                    "text": {
+                        "messages": [
+                            {"lang": "ja-JP", "message": "対象物が隠れています。"},
+                            {"lang": "en-US", "message": "The object is occluded."},
+                        ]
+                    },
+                },
+            ],
         }
         self.accessor = AnnotationSpecsAccessor(self.annotation_specs)
 
@@ -146,6 +168,31 @@ class Test__AnnotationSpecsAccessor:
         label = self.accessor.get_label(label_id="2")
         with pytest.raises(ValueError):
             self.accessor.get_attribute(attribute_id="1", label=label)
+
+    def test_get_inspection_phrase_by_id(self):
+        inspection_phrase = self.accessor.get_inspection_phrase(inspection_phrase_id="inspection_phrase_id_1")
+        assert inspection_phrase["id"] == "inspection_phrase_id_1"
+        assert get_message_with_lang(inspection_phrase["text"], Lang.EN_US) == "The image is blurry."
+
+    def test_get_inspection_phrase_not_found(self):
+        with pytest.raises(ValueError):
+            self.accessor.get_inspection_phrase(inspection_phrase_id="inspection_phrase_id_3")
+
+
+class Test__get_inspection_phrase:
+    def setup_method(self):
+        self.inspection_phrases: list[InspectionPhrase] = [
+            {"id": "1", "text": {"messages": [{"lang": "en-US", "message": "Blurry image"}]}},
+            {"id": "2", "text": {"messages": [{"lang": "en-US", "message": "Occluded object"}]}},
+        ]
+
+    def test_get_inspection_phrase_by_id(self):
+        inspection_phrase = get_inspection_phrase(self.inspection_phrases, inspection_phrase_id="1")
+        assert inspection_phrase["id"] == "1"
+
+    def test_get_inspection_phrase_not_found(self):
+        with pytest.raises(ValueError):
+            get_inspection_phrase(self.inspection_phrases, inspection_phrase_id="3")
 
 
 class Test__get_choice:
