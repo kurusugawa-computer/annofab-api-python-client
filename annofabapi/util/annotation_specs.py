@@ -36,6 +36,13 @@ class AttributeDefinition(TypedDict):
     choices: list[AttributeChoice] | None
 
 
+class InspectionPhrase(TypedDict):
+    """定型指摘です。"""
+
+    id: str
+    text: InternationalizationMessage
+
+
 class LabelDefinition(TypedDict):
     """アノテーション仕様上のラベル定義です。"""
 
@@ -261,6 +268,30 @@ def get_label(labels: list[LabelDefinition], *, label_id: str | None = None, lab
     return result[0]
 
 
+def get_inspection_phrase(
+    inspection_phrases: list[InspectionPhrase],
+    *,
+    inspection_phrase_id: str,
+) -> InspectionPhrase:
+    """
+    定型指摘を取得します。
+
+    Args:
+        inspection_phrases: 定型指摘のリスト
+        inspection_phrase_id: 定型指摘ID
+
+    Raises:
+        ValueError: 引数に合致する定型指摘が見つからない。または複数見つかった。
+    """
+    result = [e for e in inspection_phrases if e["id"] == inspection_phrase_id]
+
+    if len(result) == 0:
+        raise ValueError(f"定型指摘が見つかりませんでした。 :: inspection_phrase_id='{inspection_phrase_id}'")
+    if len(result) > 1:
+        raise ValueError(f"定型指摘が複数（{len(result)}件）見つかりました。 :: inspection_phrase_id='{inspection_phrase_id}'")
+    return result[0]
+
+
 class AnnotationSpecsAccessor:
     """
     アノテーション仕様の情報にアクセスするためのクラス。
@@ -273,6 +304,7 @@ class AnnotationSpecsAccessor:
         self.annotation_specs = annotation_specs
         self.labels: list[LabelDefinition] = annotation_specs["labels"]
         self.additionals: list[AttributeDefinition] = annotation_specs["additionals"]
+        self.inspection_phrases: list[InspectionPhrase] = annotation_specs["inspection_phrases"]
 
     def get_attribute(
         self, *, attribute_id: str | None = None, attribute_name: str | None = None, label: LabelDefinition | None = None
@@ -304,3 +336,22 @@ class AnnotationSpecsAccessor:
 
         """
         return get_label(self.labels, label_id=label_id, label_name=label_name)
+
+    def get_inspection_phrase(
+        self,
+        *,
+        inspection_phrase_id: str,
+    ) -> InspectionPhrase:
+        """
+        定型指摘を取得します。
+
+        Args:
+            inspection_phrase_id: 定型指摘ID
+
+        Raises:
+            ValueError: 引数に合致する定型指摘が見つからない。または複数見つかった。
+        """
+        return get_inspection_phrase(
+            self.inspection_phrases,
+            inspection_phrase_id=inspection_phrase_id,
+        )
