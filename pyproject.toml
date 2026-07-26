@@ -109,7 +109,7 @@ ignore = [
     "TD", # flake8-todos
     "FIX", # flake8-fixme
     "SIM108", # if-else-block-instead-of-if-exp, 三項演算子が読みにくい場合もあるので無視する
-
+    "CPY001",
     # 以下のルールはコードに合っていないので無効化した
     "RSE", # flake8-raise
     "D", # pydocstyle, Docstringを中途半端にしか書いていないので、除外する
