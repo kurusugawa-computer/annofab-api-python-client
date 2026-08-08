@@ -144,7 +144,7 @@ def get_number_of_rejections(task_histories: list[TaskHistoryShort], phase: Task
     return rejections_by_phase
 
 
-def can_put_annotation(task: Task, my_account_id: str, *, project_member_role: ProjectMemberRole | None = None) -> bool:
+def can_put_annotation(task: Task, my_account_id: str, project_member_role: ProjectMemberRole) -> bool:
     """
     対象タスクが、`put_annotation` APIで、アノテーションを更新できる状態かどうか。
     過去に担当者が割り当たっている場合、または現在の担当者が自分自身の場合は、アノテーションを更新できる。
@@ -152,7 +152,7 @@ def can_put_annotation(task: Task, my_account_id: str, *, project_member_role: P
     Args:
         task: 対象タスク
         my_account_id: 自分（ログインしているユーザ）のアカウントID
-        project_member_role: プロジェクトメンバーロール。Noneの場合、プロジェクトオーナであるとみなします。
+        project_member_role: プロジェクトメンバーロール。
 
     Returns:
         Trueならば、タスクの担当者を変更せずに`put_annotation` APIを実行できる。
