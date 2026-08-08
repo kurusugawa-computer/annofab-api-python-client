@@ -159,9 +159,10 @@ def can_put_annotation(task: Task, my_account_id: str, project_member_role: Proj
         Trueならば、`put_annotation` APIでアノテーションを更新できる。
         Falseならば、現在のタスク担当者が自分自身ではないため、アノテーションを更新できない。
     """
-    if project_member_role == ProjectMemberRole.OWNER:
-        return True
-    elif project_member_role in [ProjectMemberRole.ACCEPTER, ProjectMemberRole.WORKER]:
-        return task["account_id"] == my_account_id
-    else:
-        raise ValueError(f"引数'project_member_role'の値は不正です。 :: {project_member_role=}")
+    match project_member_role:
+        case ProjectMemberRole.OWNER:
+            return True
+        case ProjectMemberRole.ACCEPTER | ProjectMemberRole.WORKER:
+            return task["account_id"] == my_account_id
+        case _:
+            raise ValueError(f"引数'project_member_role'の値は不正です。 :: {project_member_role=}")
