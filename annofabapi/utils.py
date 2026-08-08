@@ -158,8 +158,8 @@ def can_put_annotation(task: Task, my_account_id: str, *, project_member_role: P
         Trueならば、タスクの担当者を変更せずに`put_annotation` APIを実行できる。
         Falseならば、タスクの担当者を変更してから、`put_annotation` APIを実行する必要がある。
     """
-    if project_member_role is None or project_member_role == ProjectMemberRole.OWNER:
-        return len(task["histories_by_phase"]) == 0 or task["account_id"] == my_account_id
+    if project_member_role == ProjectMemberRole.OWNER:
+        return True
     elif project_member_role in [ProjectMemberRole.ACCEPTER, ProjectMemberRole.WORKER]:
         return task["account_id"] == my_account_id
     else:
