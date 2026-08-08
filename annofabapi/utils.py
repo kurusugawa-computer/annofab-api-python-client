@@ -5,6 +5,7 @@ import dateutil
 import dateutil.tz
 
 from annofabapi.models import ProjectMemberRole, Task, TaskHistory, TaskHistoryShort, TaskPhase
+from annofabapi.util.type_util import assert_noreturn
 
 logger = logging.getLogger(__name__)
 
@@ -164,5 +165,7 @@ def can_put_annotation(task: Task, my_account_id: str, project_member_role: Proj
             return True
         case ProjectMemberRole.ACCEPTER | ProjectMemberRole.WORKER:
             return task["account_id"] == my_account_id
-        case _:
+        case ProjectMemberRole.TRAINING_DATA_USER:
             raise ValueError(f"引数'project_member_role'の値は不正です。 :: {project_member_role=}")
+        case _ as never:
+            assert_noreturn(never)

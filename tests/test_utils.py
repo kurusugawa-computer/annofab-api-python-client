@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
+
 from annofabapi.models import ProjectMemberRole, TaskPhase
 from annofabapi.utils import (
     can_put_annotation,
@@ -656,3 +658,10 @@ class TestCanPutAnnotation:
         }
         actual = can_put_annotation(task, self.MY_ACCOUNT_ID, project_member_role=ProjectMemberRole.WORKER)
         assert actual is True
+
+    def test_can_put_annotation_project_member_role_training_data_user(self):
+        """TRAINING_DATA_USERはアノテーションを更新できない。"""
+        task: dict[str, Any] = {"histories_by_phase": [], "account_id": self.MY_ACCOUNT_ID}
+
+        with pytest.raises(ValueError):
+            can_put_annotation(task, self.MY_ACCOUNT_ID, project_member_role=ProjectMemberRole.TRAINING_DATA_USER)
