@@ -4,8 +4,7 @@ import logging
 import dateutil
 import dateutil.tz
 
-from annofabapi.models import ProjectMemberRole, Task, TaskHistory, TaskHistoryShort, TaskPhase
-from annofabapi.util.type_util import assert_noreturn
+from annofabapi.models import TaskHistory, TaskHistoryShort, TaskPhase
 
 logger = logging.getLogger(__name__)
 
@@ -143,29 +142,3 @@ def get_number_of_rejections(task_histories: list[TaskHistoryShort], phase: Task
             rejections_by_phase += 1
 
     return rejections_by_phase
-
-
-def can_put_annotation(task: Task, my_account_id: str, project_member_role: ProjectMemberRole) -> bool:
-    """
-    対象タスクが、`put_annotation` APIで、アノテーションを更新できる状態かどうか。
-    プロジェクトオーナーは常にアノテーションを更新できる。アノテーターまたはチェッカーは、
-    現在のタスク担当者が自分自身の場合にアノテーションを更新できる。
-
-    Args:
-        task: 対象タスク
-        my_account_id: 自分（ログインしているユーザ）のアカウントID
-        project_member_role: 自分のプロジェクトメンバーロール。OWNER、WORKER、ACCEPTERのいずれかを指定する。
-
-    Returns:
-        Trueならば、`put_annotation` APIでアノテーションを更新できる。
-        Falseならば、現在のタスク担当者が自分自身ではないため、アノテーションを更新できない。
-    """
-    match project_member_role:
-        case ProjectMemberRole.OWNER:
-            return True
-        case ProjectMemberRole.ACCEPTER | ProjectMemberRole.WORKER:
-            return task["account_id"] == my_account_id
-        case ProjectMemberRole.TRAINING_DATA_USER:
-            raise ValueError(f"引数'project_member_role'の値は不正です。 :: {project_member_role=}")
-        case _ as never:
-            assert_noreturn(never)
