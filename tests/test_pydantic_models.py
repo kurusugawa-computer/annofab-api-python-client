@@ -12,6 +12,7 @@ from annofabapi.pydantic_models.project_member import ProjectMember
 from annofabapi.pydantic_models.simple_annotation import SimpleAnnotation
 from annofabapi.pydantic_models.single_annotation import SingleAnnotation
 from annofabapi.pydantic_models.task import Task
+from annofabapi.pydantic_models.task_history import TaskHistory
 
 # webapiにアクセスするテストモジュール
 pytestmark = pytest.mark.access_webapi
@@ -39,6 +40,21 @@ def test__Task():
     content, _ = service.api.get_tasks(project_id)
     task = content["list"][0]
     Task.from_dict(task)
+
+
+def test__TaskHistory():
+    content, _ = service.api.get_task_histories(project_id, task_id)
+    TaskHistory.from_dict(content[0])
+
+
+# swagger.yamlの定義が間違っているためエラーが発生する
+# swagger.yamlの定義が修正されるまでコメントアウトする
+# def test__Comment():
+#     with tempfile.NamedTemporaryFile() as temp_file:
+#         service.wrapper.download_project_comments_url(project_id, temp_file.name)
+#         with open(temp_file.name) as f:
+#             comments = json.load(f)
+#     Comment.from_dict(comments[0])
 
 
 def test__InputData():
