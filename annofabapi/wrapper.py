@@ -1161,7 +1161,7 @@ class Wrapper:
 
         def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1193,7 +1193,7 @@ class Wrapper:
 
         def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1218,7 +1218,7 @@ class Wrapper:
 
         def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1243,7 +1243,7 @@ class Wrapper:
 
         def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1267,7 +1267,7 @@ class Wrapper:
 
         def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content["data_series"]
 
@@ -1295,7 +1295,7 @@ class Wrapper:
 
         def decorator(f, project_id: str, account_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, account_id, *args, **kwargs)
                 return content["data_series"]
 

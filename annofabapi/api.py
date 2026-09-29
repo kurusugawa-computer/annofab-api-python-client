@@ -79,7 +79,7 @@ def _raise_for_status(response: requests.Response) -> None:
     except requests.exceptions.HTTPError as e:
         http_error_msg = f"{e.args[0]} , {response.text}"
         e.args = (http_error_msg,)
-        raise e
+        raise
 
 
 def _log_error_response(arg_logger: logging.Logger, response: requests.Response) -> None:
@@ -215,7 +215,7 @@ def my_backoff(function) -> Callable:  # noqa: ANN001
     """
 
     @wraps(function)
-    def wrapped(*args, **kwargs):  # noqa: ANN202
+    def wrapped(*args: object, **kwargs):  # noqa: ANN202
         def should_give_up(e: Exception) -> bool:
             """
             ギブアップ（リトライしない）かどうか

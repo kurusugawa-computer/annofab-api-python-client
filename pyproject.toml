@@ -92,7 +92,12 @@ exclude = [
 
 [tool.ruff.lint]
 exclude = [
-    'annofabapi/pydantic_models/.*\.py',
+    "annofabapi/pydantic_models/*.py",
+]
+
+extend-select = [
+    "TRY004",
+    "TRY201",
 ]
 
 ignore = [
@@ -102,9 +107,7 @@ ignore = [
     "RUF003",# 全角記号など`ambiguous unicode character`も使いたいため
     "PLC1901", # compare-to-empty-string : `if a == "`のように空文字列で直接比較したいときがあるため
     "PLR2004", # magic-value-comparison: listのサイズで判定するときがよくあるため
-    "ANN002", # missing-type-args
     "ANN003", # missing-type-kwargs
-    "ERA", # : 役立つこともあるが、コメントアウトしていないコードも警告されるので無視する
     "TD", # flake8-todos
     "FIX", # flake8-fixme
     "SIM108", # if-else-block-instead-of-if-exp, 三項演算子が読みにくい場合もあるので無視する
