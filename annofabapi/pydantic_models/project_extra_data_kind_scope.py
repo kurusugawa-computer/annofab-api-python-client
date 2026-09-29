@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class ProjectExtraDataKindScope(str, Enum):
+class ProjectExtraDataKindScope(StrEnum):
     """
     プロジェクト追加データがユーザーとプロジェクトに割りつくかどうかを表す列挙値。  - `project` => プロジェクトにのみ割りつき、ユーザには割りつかない - `user` => ユーザにのみ割りつき、プロジェクトには割りつかない - `both` => プロジェクトとユーザの両方に割りつく
     """

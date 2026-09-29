@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class ProjectStatus(str, Enum):
+class ProjectStatus(StrEnum):
     """
     プロジェクトの状態 * `active` - プロジェクトが進行中 * `suspended` - プロジェクトが停止中 * `initializing` - プロジェクトが初期化中
     """

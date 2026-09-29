@@ -96,6 +96,15 @@ docker run --rm   -u `id -u`:`id -g`  -v ${PWD}:/local -w /local -e JAVA_OPTS=${
     --global-property models,modelTests=false,modelDocs=false \
 
 sed 's/from openapi_client.models./from annofabapi.pydantic_models./g' out/openapi_client/models/*.py --in-place
+# Python 3.11以上をサポートしているため、文字列列挙型にはStrEnumを利用する
+for model_file in out/openapi_client/models/*.py; do
+    if grep --quiet '(str, Enum)' "${model_file}"; then
+        sed \
+            -e 's/from enum import Enum/from enum import StrEnum/' \
+            -e 's/(str, Enum)/(StrEnum)/' \
+            "${model_file}" --in-place
+    fi
+done
 
 
 replace_from_dict_method() {

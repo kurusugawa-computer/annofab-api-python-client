@@ -231,7 +231,7 @@ class FullAnnotation(DataClassJsonMixin):
     input_data_id: str
     """入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) """
 
-    input_data_name: str
+    input_data_name: str | None
     """入力データ名"""
 
     details: list[FullAnnotationDetail]

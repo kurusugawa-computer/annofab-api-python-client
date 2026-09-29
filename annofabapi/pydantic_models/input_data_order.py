@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class InputDataOrder(str, Enum):
+class InputDataOrder(StrEnum):
     """
     タスクに割り当てる入力データの順序  * `name_asc` - 入力データ名の昇順 * `name_desc` - 入力データ名の降順 * `random` - ランダム
     """

@@ -28,7 +28,7 @@ class ConfirmResetPasswordRequest(BaseModel):
     user_id: StrictStr = Field(description="ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     confirmation_code: StrictStr
     new_password: StrictStr
-    is_reset_mfa: StrictBool | None = Field(default=False, description="MFA設定をリセットするか。trueの場合にリセットする。")
+    is_reset_mfa: StrictBool = Field(description="MFA設定をリセットするか。trueの場合にリセットする。")
     __properties: ClassVar[List[str]] = ["user_id", "confirmation_code", "new_password", "is_reset_mfa"]
 
     model_config = ConfigDict(
@@ -84,7 +84,7 @@ class ConfirmResetPasswordRequest(BaseModel):
                 "user_id": obj.get("user_id"),
                 "confirmation_code": obj.get("confirmation_code"),
                 "new_password": obj.get("new_password"),
-                "is_reset_mfa": obj.get("is_reset_mfa") if obj.get("is_reset_mfa") is not None else False,
+                "is_reset_mfa": obj.get("is_reset_mfa"),
             }
         )
         return _obj

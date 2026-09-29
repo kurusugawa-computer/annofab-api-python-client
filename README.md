@@ -38,7 +38,7 @@ cURLやPostmanなどよりも簡単にAnnofab Web APIにアクセスできます
 
 
 # Requirements
-* Python 3.10+ 
+* Python 3.11+
 
 # Install
 
@@ -260,4 +260,3 @@ logging_formatter = '%(levelname)-8s : %(asctime)s : %(name)s : %(message)s'
 logging.basicConfig(format=logging_formatter)
 logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 ```
-

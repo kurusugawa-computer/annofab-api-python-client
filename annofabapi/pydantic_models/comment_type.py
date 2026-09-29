@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class CommentType(str, Enum):
+class CommentType(StrEnum):
     """
     コメントの種別。  * `onhold` - 保留コメント * `inspection` - 検査コメント
     """

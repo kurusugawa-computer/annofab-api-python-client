@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class OrganizationMemberRole(str, Enum):
+class OrganizationMemberRole(StrEnum):
     """
     組織メンバーのロール。 * `owner` - 組織オーナー * `administrator` - 組織管理者 * `contributor` - 組織貢献者
     """

@@ -35,7 +35,7 @@ class FullAnnotation(BaseModel):
     task_phase_stage: Annotated[int, Field(strict=True, ge=1)] = Field(description="タスクのフェーズのステージ番号")
     task_status: TaskStatus
     input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    input_data_name: StrictStr = Field(description="入力データ名")
+    input_data_name: StrictStr | None = Field(default=None, description="入力データ名")
     details: List[FullAnnotationDetail] = Field(description="矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列")
     updated_datetime: str | None = Field(
         default=None, description="更新日時。アノテーションが一つもない場合（教師付作業が未着手のときなど）は、未指定。"

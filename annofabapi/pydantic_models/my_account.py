@@ -31,7 +31,7 @@ class MyAccount(BaseModel):
     account_id: StrictStr = Field(description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     user_id: StrictStr = Field(description="ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
     username: StrictStr = Field(description="ユーザー名")
-    email: StrictStr = Field(description="メールアドレス")
+    email: StrictStr | None = Field(default=None, description="メールアドレス")
     lang: Lang
     biography: Annotated[str, Field(min_length=0, strict=True, max_length=100)] | None = Field(
         default=None,
