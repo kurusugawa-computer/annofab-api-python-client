@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.annotation_type import AnnotationType
@@ -38,10 +39,14 @@ class PluginDetailExtendedAnnotationSpecs(BaseModel):
         default=None, description="Keyが[アノテーションの種類(AnnotationType)](#tag/x-data-types/AnnotationType)であるDictionaryです。 "
     )
     compatible_input_data_types: List[InputDataType] = Field(
-        description="プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 "
+        description="プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 ",
+        json_schema_extra={"examples": [["custom"]]},
     )
     type: StrictStr | None = Field(
-        default=None, description="`ExtendedAnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type"
+        default=None,
+        description="`ExtendedAnnotationSpecs` [詳しくはこちら](#section/API-Convention/API-_type) ",
+        alias="_type",
+        json_schema_extra={"examples": ["ExtendedAnnotationSpecs"]},
     )
     __properties: ClassVar[List[str]] = [
         "plugin_compatibility",
@@ -52,7 +57,8 @@ class PluginDetailExtendedAnnotationSpecs(BaseModel):
     ]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -63,8 +69,7 @@ class PluginDetailExtendedAnnotationSpecs(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -95,17 +100,17 @@ class PluginDetailExtendedAnnotationSpecs(BaseModel):
         _items = []
         if self.annotation_types:
             for _item_annotation_types in self.annotation_types:
-                if _item_annotation_types:
-                    _items.append(_item_annotation_types.to_dict())
+                _items.append(_item_annotation_types.to_dict() if _item_annotation_types is not None else None)
             _dict["annotation_types"] = _items
         # override the default output from pydantic by calling `to_dict()` of each value in user_defined_annotation_type_definitions (dict)
         _field_dict = {}
         if self.user_defined_annotation_type_definitions:
             for _key_user_defined_annotation_type_definitions in self.user_defined_annotation_type_definitions:
-                if self.user_defined_annotation_type_definitions[_key_user_defined_annotation_type_definitions]:
-                    _field_dict[_key_user_defined_annotation_type_definitions] = self.user_defined_annotation_type_definitions[
-                        _key_user_defined_annotation_type_definitions
-                    ].to_dict()
+                _field_dict[_key_user_defined_annotation_type_definitions] = (
+                    self.user_defined_annotation_type_definitions[_key_user_defined_annotation_type_definitions].to_dict()
+                    if self.user_defined_annotation_type_definitions[_key_user_defined_annotation_type_definitions] is not None
+                    else None
+                )
             _dict["user_defined_annotation_type_definitions"] = _field_dict
         return _dict
 

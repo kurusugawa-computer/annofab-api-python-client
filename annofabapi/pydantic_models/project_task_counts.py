@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.project_task_counts_task_counts_inner import ProjectTaskCountsTaskCountsInner
@@ -27,12 +28,16 @@ class ProjectTaskCounts(BaseModel):
     ProjectTaskCounts
     """
 
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     task_counts: List[ProjectTaskCountsTaskCountsInner]
     __properties: ClassVar[List[str]] = ["project_id", "task_counts"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -43,8 +48,7 @@ class ProjectTaskCounts(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -72,8 +76,7 @@ class ProjectTaskCounts(BaseModel):
         _items = []
         if self.task_counts:
             for _item_task_counts in self.task_counts:
-                if _item_task_counts:
-                    _items.append(_item_task_counts.to_dict())
+                _items.append(_item_task_counts.to_dict() if _item_task_counts is not None else None)
             _dict["task_counts"] = _items
         return _dict
 

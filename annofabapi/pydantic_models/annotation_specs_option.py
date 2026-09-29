@@ -13,14 +13,12 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Any, Dict, Set, Union
+import re  # noqa: F401
+from typing import Any, ClassVar, Dict, List, Set
 
-from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
-
-from annofabapi.pydantic_models.annotation_specs_movie_option import AnnotationSpecsMovieOption
-
-ANNOTATIONSPECSOPTION_ONE_OF_SCHEMAS = ["AnnotationSpecsMovieOption"]
 
 
 class AnnotationSpecsOption(BaseModel):
@@ -28,105 +26,56 @@ class AnnotationSpecsOption(BaseModel):
     アノテーション仕様のオプション設定。  現時点では動画プロジェクトでのみ利用・指定可能。動画以外のプロジェクトでは値なし。  動画プロジェクトで値が未指定の場合、AnnotationSpecsOption内の値はすべてデフォルト値が指定されたものとして扱われる。
     """
 
-    # data type: AnnotationSpecsMovieOption
-    oneof_schema_1_validator: AnnotationSpecsMovieOption | None = None
-    actual_instance: Union[AnnotationSpecsMovieOption] | None = None
-    one_of_schemas: Set[str] = {"AnnotationSpecsMovieOption"}
+    can_overwrap: StrictBool = Field(description="動画プロジェクトのアノテーションに重複配置を許すか否か。 ")
+    __properties: ClassVar[List[str]] = ["can_overwrap"]
 
     model_config = ConfigDict(
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
 
-    def __init__(self, *args, **kwargs) -> None:
-        if args:
-            if len(args) > 1:
-                raise ValueError("If a position argument is used, only 1 is allowed to set `actual_instance`")
-            if kwargs:
-                raise ValueError("If a position argument is used, keyword arguments cannot be used.")
-            super().__init__(actual_instance=args[0])
-        else:
-            super().__init__(**kwargs)
-
-    @field_validator("actual_instance")
-    def actual_instance_must_validate_oneof(cls, v):
-        instance = AnnotationSpecsOption.model_construct()
-        error_messages = []
-        match = 0
-        # validate data type: AnnotationSpecsMovieOption
-        if not isinstance(v, AnnotationSpecsMovieOption):
-            error_messages.append(f"Error! Input type `{type(v)}` is not `AnnotationSpecsMovieOption`")
-        else:
-            match += 1
-        if match > 1:
-            # more than 1 match
-            raise ValueError(
-                "Multiple matches found when setting `actual_instance` in AnnotationSpecsOption with oneOf schemas: AnnotationSpecsMovieOption. Details: "
-                + ", ".join(error_messages)
-            )
-        elif match == 0:
-            # no match
-            raise ValueError(
-                "No match found when setting `actual_instance` in AnnotationSpecsOption with oneOf schemas: AnnotationSpecsMovieOption. Details: "
-                + ", ".join(error_messages)
-            )
-        else:
-            return v
-
-    @classmethod
-    def from_dict(cls, obj: Union[str, Dict[str, Any]]) -> Self:
-        return cls.from_json(json.dumps(obj))
-
-    @classmethod
-    def from_json(cls, json_str: str) -> Self:
-        """Returns the object represented by the json string"""
-        instance = cls.model_construct()
-        error_messages = []
-        match = 0
-
-        # deserialize data into AnnotationSpecsMovieOption
-        try:
-            instance.actual_instance = AnnotationSpecsMovieOption.from_json(json_str)
-            match += 1
-        except (ValidationError, ValueError) as e:
-            error_messages.append(str(e))
-
-        if match > 1:
-            # more than 1 match
-            raise ValueError(
-                "Multiple matches found when deserializing the JSON string into AnnotationSpecsOption with oneOf schemas: AnnotationSpecsMovieOption. Details: "
-                + ", ".join(error_messages)
-            )
-        elif match == 0:
-            # no match
-            raise ValueError(
-                "No match found when deserializing the JSON string into AnnotationSpecsOption with oneOf schemas: AnnotationSpecsMovieOption. Details: "
-                + ", ".join(error_messages)
-            )
-        else:
-            return instance
+    def to_str(self) -> str:
+        """Returns the string representation of the model using alias"""
+        return pprint.pformat(self.model_dump(by_alias=True))
 
     def to_json(self) -> str:
-        """Returns the JSON representation of the actual instance"""
-        if self.actual_instance is None:
-            return "null"
+        """Returns the JSON representation of the model using alias"""
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
-        if hasattr(self.actual_instance, "to_json") and callable(self.actual_instance.to_json):
-            return self.actual_instance.to_json()
-        else:
-            return json.dumps(self.actual_instance)
+    @classmethod
+    def from_json(cls, json_str: str) -> Self | None:
+        """Create an instance of AnnotationSpecsOption from a JSON string"""
+        return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Union[Dict[str, Any], AnnotationSpecsMovieOption] | None:
-        """Returns the dict representation of the actual instance"""
-        if self.actual_instance is None:
+    def to_dict(self) -> Dict[str, Any]:
+        """Return the dictionary representation of the model using alias.
+
+        This has the following differences from calling pydantic's
+        `self.model_dump(by_alias=True)`:
+
+        * `None` is only added to the output dict for nullable fields that
+          were set at model initialization. Other fields with value `None`
+          are ignored.
+        """
+        excluded_fields: Set[str] = set([])
+
+        _dict = self.model_dump(
+            by_alias=True,
+            exclude=excluded_fields,
+            exclude_none=True,
+        )
+        return _dict
+
+    @classmethod
+    def from_dict(cls, obj: Dict[str, Any] | None) -> Self | None:
+        """Create an instance of AnnotationSpecsOption from a dict"""
+        if obj is None:
             return None
 
-        if hasattr(self.actual_instance, "to_dict") and callable(self.actual_instance.to_dict):
-            return self.actual_instance.to_dict()
-        else:
-            # primitive type
-            return self.actual_instance
+        if not isinstance(obj, dict):
+            return cls.model_validate(obj)
 
-    def to_str(self) -> str:
-        """Returns the string representation of the actual instance"""
-        return pprint.pformat(self.model_dump())
+        _obj = cls.model_validate({"can_overwrap": obj.get("can_overwrap") if obj.get("can_overwrap") is not None else True})
+        return _obj

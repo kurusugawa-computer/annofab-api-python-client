@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.inspection_summary import InspectionSummary
@@ -28,13 +29,17 @@ class InputDataSummary(BaseModel):
     ある入力データのバリデーション結果です。入力データIDをキーに引けるようにMap[入力データID, バリデーション結果]となっています
     """
 
-    input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    input_data_id: StrictStr = Field(
+        description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     inspection_summary: InspectionSummary
     annotation_summaries: List[ValidationError]
     __properties: ClassVar[List[str]] = ["input_data_id", "inspection_summary", "annotation_summaries"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -45,8 +50,7 @@ class InputDataSummary(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -74,8 +78,7 @@ class InputDataSummary(BaseModel):
         _items = []
         if self.annotation_summaries:
             for _item_annotation_summaries in self.annotation_summaries:
-                if _item_annotation_summaries:
-                    _items.append(_item_annotation_summaries.to_dict())
+                _items.append(_item_annotation_summaries.to_dict() if _item_annotation_summaries is not None else None)
             _dict["annotation_summaries"] = _items
         return _dict
 

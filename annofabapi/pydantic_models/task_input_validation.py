@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.comment_validation_error import CommentValidationError
@@ -29,14 +30,18 @@ class TaskInputValidation(BaseModel):
     タスクの提出操作に対する入力データID別のバリデーション結果です。
     """
 
-    input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    input_data_id: StrictStr = Field(
+        description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     annotation_errors: List[ValidationError]
     inspection_errors: List[InspectionValidationError]
     comment_errors: List[CommentValidationError]
     __properties: ClassVar[List[str]] = ["input_data_id", "annotation_errors", "inspection_errors", "comment_errors"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -47,8 +52,7 @@ class TaskInputValidation(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -76,22 +80,19 @@ class TaskInputValidation(BaseModel):
         _items = []
         if self.annotation_errors:
             for _item_annotation_errors in self.annotation_errors:
-                if _item_annotation_errors:
-                    _items.append(_item_annotation_errors.to_dict())
+                _items.append(_item_annotation_errors.to_dict() if _item_annotation_errors is not None else None)
             _dict["annotation_errors"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in inspection_errors (list)
         _items = []
         if self.inspection_errors:
             for _item_inspection_errors in self.inspection_errors:
-                if _item_inspection_errors:
-                    _items.append(_item_inspection_errors.to_dict())
+                _items.append(_item_inspection_errors.to_dict() if _item_inspection_errors is not None else None)
             _dict["inspection_errors"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in comment_errors (list)
         _items = []
         if self.comment_errors:
             for _item_comment_errors in self.comment_errors:
-                if _item_comment_errors:
-                    _items.append(_item_comment_errors.to_dict())
+                _items.append(_item_comment_errors.to_dict() if _item_comment_errors is not None else None)
             _dict["comment_errors"] = _items
         return _dict
 

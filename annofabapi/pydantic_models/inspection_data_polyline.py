@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.inspection_data_polyline_coordinates_inner import InspectionDataPolylineCoordinatesInner
@@ -28,11 +29,17 @@ class InspectionDataPolyline(BaseModel):
     """
 
     coordinates: List[InspectionDataPolylineCoordinatesInner] = Field(description="ポリラインを構成する頂点の配列 ")
-    type: StrictStr | None = Field(default=None, description="`Polyline` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    type: StrictStr | None = Field(
+        default=None,
+        description="`Polyline` [詳しくはこちら](#section/API-Convention/API-_type) ",
+        alias="_type",
+        json_schema_extra={"examples": ["Polyline"]},
+    )
     __properties: ClassVar[List[str]] = ["coordinates", "_type"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -43,8 +50,7 @@ class InspectionDataPolyline(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -72,8 +78,7 @@ class InspectionDataPolyline(BaseModel):
         _items = []
         if self.coordinates:
             for _item_coordinates in self.coordinates:
-                if _item_coordinates:
-                    _items.append(_item_coordinates.to_dict())
+                _items.append(_item_coordinates.to_dict() if _item_coordinates is not None else None)
             _dict["coordinates"] = _items
         return _dict
 

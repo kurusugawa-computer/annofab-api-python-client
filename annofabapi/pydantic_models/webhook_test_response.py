@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -26,10 +27,13 @@ class WebhookTestResponse(BaseModel):
     """
 
     result: StrictStr = Field(
-        description="* success: 通知先から正常なレスポンス（2xx系）を受け取った * failure: 通知先からエラーレスポンス（2xx系以外）を受け取った * error: リクエスト送信に失敗した、もしくはレスポンスを受信できなかった "
+        description="* success: 通知先から正常なレスポンス（2xx系）を受け取った * failure: 通知先からエラーレスポンス（2xx系以外）を受け取った * error: リクエスト送信に失敗した、もしくはレスポンスを受信できなかった ",
+        json_schema_extra={"examples": ["success"]},
     )
     request_body: StrictStr | None = Field(default=None, description="実際に送信されたリクエストボディ")
-    response_status: StrictInt | None = Field(default=None, description="通知先から返されたHTTPステータスコード")
+    response_status: StrictInt | None = Field(
+        default=None, description="通知先から返されたHTTPステータスコード", json_schema_extra={"examples": [200]}
+    )
     response_body: StrictStr | None = Field(default=None, description="通知先から返されたレスポンスボディ")
     message: StrictStr | None = Field(default=None, description='result="error" 時のエラー内容等')
     __properties: ClassVar[List[str]] = ["result", "request_body", "response_status", "response_body", "message"]
@@ -42,7 +46,8 @@ class WebhookTestResponse(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -53,8 +58,7 @@ class WebhookTestResponse(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

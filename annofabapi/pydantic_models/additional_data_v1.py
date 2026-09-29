@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -25,17 +26,25 @@ class AdditionalDataV1(BaseModel):
     AdditionalDataV1
     """
 
-    additional_data_definition_id: StrictStr = Field(description="属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    additional_data_definition_id: StrictStr = Field(
+        description="属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     flag: StrictBool | None = Field(default=None, description="`additional_data_definition`の`type`が`flag`のときの属性値。 ")
     integer: StrictInt | None = Field(default=None, description="`additional_data_definition`の`type`が`integer`のときの属性値。 ")
     comment: StrictStr | None = Field(
         default=None, description="`additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 "
     )
-    choice: StrictStr | None = Field(default=None, description="選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    choice: StrictStr | None = Field(
+        default=None,
+        description="選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     __properties: ClassVar[List[str]] = ["additional_data_definition_id", "flag", "integer", "comment", "choice"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -46,8 +55,7 @@ class AdditionalDataV1(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

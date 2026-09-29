@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -28,11 +29,12 @@ class SystemMetadataMovie(BaseModel):
     input_duration: Union[StrictFloat, StrictInt] | None = Field(
         default=None, description="動画の長さ[秒]。 動画の長さが取得できなかった場合は、設定されません。 "
     )
-    type: StrictStr = Field(description="`Movie`", alias="_type")
+    type: StrictStr = Field(description="`Movie`", alias="_type", json_schema_extra={"examples": ["Movie"]})
     __properties: ClassVar[List[str]] = ["input_duration", "_type"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -43,8 +45,7 @@ class SystemMetadataMovie(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -25,12 +26,18 @@ class InstructionImagePath(BaseModel):
     InstructionImagePath
     """
 
-    url: StrictStr = Field(description="ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。")
-    path: StrictStr = Field(description="作業ガイド画像のURL")
+    url: StrictStr = Field(
+        description="ファイルアップロード用の一時URLです。このURLにファイルをアップロードします。",
+        json_schema_extra={"examples": ["https://s3.REGION.amazonaws.com/ANNOFAB-TEMP-BUCKET/UUID/UUID?param1=...&param2=..."]},
+    )
+    path: StrictStr = Field(
+        description="作業ガイド画像のURL", json_schema_extra={"examples": ["https://annofab.com/projects/{project_id}/instruction-images/{image_id}"]}
+    )
     __properties: ClassVar[List[str]] = ["url", "path"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -41,8 +48,7 @@ class InstructionImagePath(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
 from annofabapi.pydantic_models.simple_annotation_detail import SimpleAnnotationDetail
@@ -30,14 +31,23 @@ class SimpleAnnotation(BaseModel):
     """
 
     annotation_format_version: StrictStr = Field(
-        description="アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、Annofabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 "
+        description="アノテーションフォーマットのバージョンです。 アノテーションフォーマットとは、プロジェクト個別のアノテーション仕様ではなく、Annofabのアノテーション構造のことです。 したがって、アノテーション仕様を更新しても、このバージョンは変化しません。  バージョンの読み方と更新ルールは、業界慣習の[Semantic Versioning](https://semver.org/)にもとづきます。  JSONに出力されるアノテーションフォーマットのバージョンは、アノテーションZIPが作成される時点のものが使われます。 すなわち、`1.0.0`の時点のタスクで作成したアノテーションであっても、フォーマットが `1.0.1` に上がった次のZIP作成時では `1.0.1` となります。 バージョンを固定してZIPを残しておきたい場合は、プロジェクトが完了した時点でZIPをダウンロードして保管しておくか、またはプロジェクトを「停止中」にします。 ",
+        json_schema_extra={"examples": ["1.0.0"]},
     )
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    task_id: StrictStr = Field(
+        description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ", json_schema_extra={"examples": ["task_001"]}
+    )
     task_phase: TaskPhase
     task_phase_stage: Annotated[int, Field(strict=True, ge=1)] = Field(description="タスクのフェーズのステージ番号")
     task_status: TaskStatus
-    input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    input_data_id: StrictStr = Field(
+        description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     input_data_name: StrictStr = Field(description="入力データ名")
     details: List[SimpleAnnotationDetail] = Field(description="矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。")
     updated_datetime: str | None = Field(
@@ -57,7 +67,8 @@ class SimpleAnnotation(BaseModel):
     ]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -68,8 +79,7 @@ class SimpleAnnotation(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -97,8 +107,7 @@ class SimpleAnnotation(BaseModel):
         _items = []
         if self.details:
             for _item_details in self.details:
-                if _item_details:
-                    _items.append(_item_details.to_dict())
+                _items.append(_item_details.to_dict() if _item_details is not None else None)
             _dict["details"] = _items
         return _dict
 

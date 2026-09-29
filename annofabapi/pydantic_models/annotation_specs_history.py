@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -25,16 +26,27 @@ class AnnotationSpecsHistory(BaseModel):
     AnnotationSpecsHistory
     """
 
-    history_id: StrictStr = Field(description="アノテーション仕様の履歴ID")
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    history_id: StrictStr = Field(description="アノテーション仕様の履歴ID", json_schema_extra={"examples": ["1234567890"]})
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     updated_datetime: str = Field(description="更新日時")
-    url: StrictStr = Field(description="アノテーション仕様が格納されたJSONのURL。URLにアクセスするには認証認可が必要です。")
-    account_id: StrictStr | None = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    url: StrictStr = Field(
+        description="アノテーション仕様が格納されたJSONのURL。URLにアクセスするには認証認可が必要です。",
+        json_schema_extra={"examples": ["https://annofab.com/projects/PROJECT_ID/annotation_specs_histories/HISTORY_ID.json?cache=CACHE"]},
+    )
+    account_id: StrictStr | None = Field(
+        default=None,
+        description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     comment: StrictStr | None = Field(default=None, description="変更内容のコメント")
     __properties: ClassVar[List[str]] = ["history_id", "project_id", "updated_datetime", "url", "account_id", "comment"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -45,8 +57,7 @@ class AnnotationSpecsHistory(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

@@ -17,9 +17,10 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
-from annofabapi.pydantic_models.annotation_detail_v2_output import AnnotationDetailV2Output
+from annofabapi.pydantic_models.annotation_detail_v2_get import AnnotationDetailV2Get
 
 
 class AnnotationV2Output(BaseModel):
@@ -27,10 +28,18 @@ class AnnotationV2Output(BaseModel):
     AnnotationV2Output
     """
 
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    details: List[AnnotationDetailV2Output] = Field(description="矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。")
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    task_id: StrictStr = Field(
+        description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ", json_schema_extra={"examples": ["task_001"]}
+    )
+    input_data_id: StrictStr = Field(
+        description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    details: List[AnnotationDetailV2Get] = Field(description="矩形、ポリゴン、全体アノテーションなど個々のアノテーションの配列。")
     updated_datetime: str | None = Field(
         default=None,
         description="対象タスク・対象入力データへ一度もアノテーションの保存が行われていない場合、未指定となります。 そうで無い場合、対象タスク・対象入力データのアノテーション最終更新時刻です。 ",
@@ -46,7 +55,8 @@ class AnnotationV2Output(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -57,8 +67,7 @@ class AnnotationV2Output(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -86,8 +95,7 @@ class AnnotationV2Output(BaseModel):
         _items = []
         if self.details:
             for _item_details in self.details:
-                if _item_details:
-                    _items.append(_item_details.to_dict())
+                _items.append(_item_details.to_dict() if _item_details is not None else None)
             _dict["details"] = _items
         return _dict
 
@@ -105,7 +113,7 @@ class AnnotationV2Output(BaseModel):
                 "project_id": obj.get("project_id"),
                 "task_id": obj.get("task_id"),
                 "input_data_id": obj.get("input_data_id"),
-                "details": [AnnotationDetailV2Output.from_dict(_item) for _item in obj["details"]] if obj.get("details") is not None else None,
+                "details": [AnnotationDetailV2Get.from_dict(_item) for _item in obj["details"]] if obj.get("details") is not None else None,
                 "updated_datetime": obj.get("updated_datetime"),
                 "format_version": obj.get("format_version"),
             }

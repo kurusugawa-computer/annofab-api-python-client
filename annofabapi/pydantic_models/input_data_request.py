@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -29,7 +30,8 @@ class InputDataRequest(BaseModel):
         description="入力データ名。ZIPファイルをアップロードする際は、入力データ名のプレフィックスを指定してください。"
     )
     input_data_path: StrictStr = Field(
-        description="入力データの実体が存在するURLです。 Annofabにファイルをアップロードして入力データを作成する場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。  入力データの実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、スキームが s3 または https であるURLを指定してください。 S3プライベートストレージに存在するファイルを入力データとして登録する場合は、事前に[認可の設定](/docs/faq/#m0b240)が必要です。 "
+        description="入力データの実体が存在するURLです。 Annofabにファイルをアップロードして入力データを作成する場合は、[createTempPath](#operation/createTempPath) APIで取得した`path`を指定してください。  入力データの実体が[プライベートストレージ](/docs/faq/#prst9c)に存在する場合は、スキームが s3 または https であるURLを指定してください。 S3プライベートストレージに存在するファイルを入力データとして登録する場合は、事前に[認可の設定](/docs/faq/#m0b240)が必要です。 ",
+        json_schema_extra={"examples": ["s3://YOUR-BUCKET/PATH/TO/OBJECT"]},
     )
     last_updated_datetime: str | None = Field(default=None, description="新規作成時は未指定、更新時は必須（更新前の日時） ")
     sign_required: StrictBool | None = Field(
@@ -40,7 +42,8 @@ class InputDataRequest(BaseModel):
     __properties: ClassVar[List[str]] = ["input_data_name", "input_data_path", "last_updated_datetime", "sign_required", "metadata"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -51,8 +54,7 @@ class InputDataRequest(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

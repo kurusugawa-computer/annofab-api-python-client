@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.full_annotation_data import FullAnnotationData
@@ -27,16 +28,20 @@ class SimpleAnnotationDetail(BaseModel):
     SimpleAnnotationDetail
     """
 
-    label: StrictStr = Field(description="アノテーション仕様で設定したラベル名 (英語) です。 ")
-    annotation_id: StrictStr = Field(description="個々のアノテーションにつけられたIDです。 ")
+    label: StrictStr = Field(description="アノテーション仕様で設定したラベル名 (英語) です。 ", json_schema_extra={"examples": ["pedestrian"]})
+    annotation_id: StrictStr = Field(
+        description="個々のアノテーションにつけられたIDです。 ", json_schema_extra={"examples": ["acb5359e-be2e-402b-b59a-b5fdbb378ad9"]}
+    )
     data: FullAnnotationData
     attributes: Dict[str, Any] = Field(
-        description="キーと値が以下のようになっている辞書構造です。  * キー: アノテーション仕様で設定した属性名 (英語) * 値: 各属性の値   * 選択肢を定義している場合、その選択肢の表示名 (英語)   * それ以外は属性値そのまま (文字列、数値、論理値) "
+        description="キーと値が以下のようになっている辞書構造です。  * キー: アノテーション仕様で設定した属性名 (英語) * 値: 各属性の値   * 選択肢を定義している場合、その選択肢の表示名 (英語)   * それ以外は属性値そのまま (文字列、数値、論理値) ",
+        json_schema_extra={"examples": [{"maker": "AAA Motors", "size": 12345, "is_foo_bar_buz": True}]},
     )
     __properties: ClassVar[List[str]] = ["label", "annotation_id", "data", "attributes"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -47,8 +52,7 @@ class SimpleAnnotationDetail(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

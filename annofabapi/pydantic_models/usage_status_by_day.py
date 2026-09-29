@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.editor_usage_timespan import EditorUsageTimespan
@@ -27,7 +28,10 @@ class UsageStatusByDay(BaseModel):
     日ごとの利用状況
     """
 
-    organization_id: StrictStr = Field(description="組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    organization_id: StrictStr = Field(
+        description="組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     var_date: str = Field(description="対象日。日付のフォーマットはISO 8601 拡張形式です。", alias="date")
     aggregation_period_from: str = Field(description="集計期間の開始日時。日時のフォーマットはISO 8601 拡張形式です。")
     aggregation_period_to: str = Field(description="集計期間の終了日時。日時のフォーマットはISO 8601 拡張形式です。")
@@ -45,7 +49,8 @@ class UsageStatusByDay(BaseModel):
     ]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -56,8 +61,7 @@ class UsageStatusByDay(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -85,8 +89,7 @@ class UsageStatusByDay(BaseModel):
         _items = []
         if self.editor_usage:
             for _item_editor_usage in self.editor_usage:
-                if _item_editor_usage:
-                    _items.append(_item_editor_usage.to_dict())
+                _items.append(_item_editor_usage.to_dict() if _item_editor_usage is not None else None)
             _dict["editor_usage"] = _items
         return _dict
 

@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.internationalization_message_messages_inner import InternationalizationMessageMessagesInner
@@ -30,11 +31,15 @@ class InternationalizationMessage(BaseModel):
     messages: List[InternationalizationMessageMessagesInner] = Field(
         description="言語コードとメッセージ（テキスト）のリスト。  * アノテーションエディタなどでは、Annofabの表示言語（各ユーザーが個人設定で選んだ言語）のメッセージが使われます * 以下の名前は、[Simple Annotation](#tag/x-annotation-zip/Simple-Annotation-ZIP) では `en-US` のメッセージが使われます     * ラベル名     * 属性名     * 選択肢名 * いずれの場合でも、表示しようとした言語が `messages` に含まれない場合、 `default_lang` に指定した言語のメッセージが使われます "
     )
-    default_lang: StrictStr = Field(description="希望された言語のメッセージが存在しない場合に、フォールバック先として使われる言語コード")
+    default_lang: StrictStr = Field(
+        description="希望された言語のメッセージが存在しない場合に、フォールバック先として使われる言語コード",
+        json_schema_extra={"examples": ["ja-JP"]},
+    )
     __properties: ClassVar[List[str]] = ["messages", "default_lang"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -45,8 +50,7 @@ class InternationalizationMessage(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -74,8 +78,7 @@ class InternationalizationMessage(BaseModel):
         _items = []
         if self.messages:
             for _item_messages in self.messages:
-                if _item_messages:
-                    _items.append(_item_messages.to_dict())
+                _items.append(_item_messages.to_dict() if _item_messages is not None else None)
             _dict["messages"] = _items
         return _dict
 

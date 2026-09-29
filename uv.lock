@@ -79,7 +79,7 @@ requires-dist = [
     { name = "more-itertools" },
     { name = "numpy", marker = "extra == 'segmentation'" },
     { name = "pillow", marker = "extra == 'segmentation'" },
-    { name = "pydantic", specifier = ">=2,<3" },
+    { name = "pydantic", specifier = ">=2.11,<3" },
     { name = "python-dateutil" },
     { name = "requests" },
 ]

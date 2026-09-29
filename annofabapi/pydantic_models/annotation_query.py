@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
 from annofabapi.pydantic_models.additional_data_v1 import AdditionalDataV1
@@ -35,7 +36,11 @@ class AnnotationQuery(BaseModel):
     exact_match_input_data_id: StrictBool | None = Field(
         default=True, description="入力データIDの検索方法を指定します。 `true`の場合は完全一致検索、`false`の場合は部分一致検索です。 "
     )
-    label_id: StrictStr | None = Field(default=None, description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    label_id: StrictStr | None = Field(
+        default=None,
+        description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     attributes: List[AdditionalDataV1] | None = Field(
         default=None,
         description="属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | ",
@@ -60,7 +65,8 @@ class AnnotationQuery(BaseModel):
     ]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -71,8 +77,7 @@ class AnnotationQuery(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -100,8 +105,7 @@ class AnnotationQuery(BaseModel):
         _items = []
         if self.attributes:
             for _item_attributes in self.attributes:
-                if _item_attributes:
-                    _items.append(_item_attributes.to_dict())
+                _items.append(_item_attributes.to_dict() if _item_attributes is not None else None)
             _dict["attributes"] = _items
         return _dict
 

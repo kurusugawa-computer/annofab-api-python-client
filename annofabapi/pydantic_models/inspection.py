@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
 from annofabapi.pydantic_models.inspection_data import InspectionData
@@ -29,22 +30,45 @@ class Inspection(BaseModel):
     検査コメント
     """
 
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    inspection_id: StrictStr = Field(description="検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    task_id: StrictStr = Field(
+        description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ", json_schema_extra={"examples": ["task_001"]}
+    )
+    input_data_id: StrictStr = Field(
+        description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    inspection_id: StrictStr = Field(
+        description="検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     phase: TaskPhase
     phase_stage: Annotated[int, Field(strict=True, ge=1)] = Field(description="検査コメントを付与したときのフェーズのステージ")
-    commenter_account_id: StrictStr = Field(description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    commenter_account_id: StrictStr = Field(
+        description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     annotation_id: StrictStr | None = Field(
         default=None,
         description="アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
     )
-    label_id: StrictStr | None = Field(default=None, description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    label_id: StrictStr | None = Field(
+        default=None,
+        description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     data: InspectionData
-    parent_inspection_id: StrictStr | None = Field(default=None, description="検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    parent_inspection_id: StrictStr | None = Field(
+        default=None,
+        description="検査ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     phrases: List[StrictStr] | None = Field(default=None, description="参照している定型指摘のID。")
-    comment: StrictStr = Field(description="検査コメントの中身 ")
+    comment: StrictStr = Field(description="検査コメントの中身 ", json_schema_extra={"examples": ["枠がズレています"]})
     status: InspectionStatus
     created_datetime: str
     updated_datetime: str | None = None
@@ -68,7 +92,8 @@ class Inspection(BaseModel):
     ]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -79,8 +104,7 @@ class Inspection(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

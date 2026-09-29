@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.additional_data_default_type import AdditionalDataDefaultType
@@ -31,7 +32,10 @@ class AdditionalDataDefinitionV1(BaseModel):
     AdditionalDataDefinitionV1
     """
 
-    additional_data_definition_id: StrictStr = Field(description="属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    additional_data_definition_id: StrictStr = Field(
+        description="属性ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     read_only: StrictBool | None = Field(default=False, description="読み込み専用")
     name: InternationalizationMessage | None = None
     default: AdditionalDataDefaultType | None = None
@@ -57,7 +61,8 @@ class AdditionalDataDefinitionV1(BaseModel):
     ]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -68,8 +73,7 @@ class AdditionalDataDefinitionV1(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -103,15 +107,13 @@ class AdditionalDataDefinitionV1(BaseModel):
         _items = []
         if self.keybind:
             for _item_keybind in self.keybind:
-                if _item_keybind:
-                    _items.append(_item_keybind.to_dict())
+                _items.append(_item_keybind.to_dict() if _item_keybind is not None else None)
             _dict["keybind"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in choices (list)
         _items = []
         if self.choices:
             for _item_choices in self.choices:
-                if _item_choices:
-                    _items.append(_item_choices.to_dict())
+                _items.append(_item_choices.to_dict() if _item_choices is not None else None)
             _dict["choices"] = _items
         return _dict
 

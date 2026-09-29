@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.task_status import TaskStatus
@@ -29,14 +30,19 @@ class TaskOperation(BaseModel):
 
     status: TaskStatus
     last_updated_datetime: str = Field(description="新規作成時は未指定、更新時は必須（更新前の日時） ")
-    account_id: StrictStr | None = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    account_id: StrictStr | None = Field(
+        default=None,
+        description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     force: StrictBool | None = Field(
         default=False, description="タスクの強制操作を行うかどうか。 `status`が`rejected`のときのみ、`true`を指定できます。 "
     )
     __properties: ClassVar[List[str]] = ["status", "last_updated_datetime", "account_id", "force"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -47,8 +53,7 @@ class TaskOperation(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

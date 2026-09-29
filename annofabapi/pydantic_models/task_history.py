@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
 from annofabapi.pydantic_models.task_phase import TaskPhase
@@ -27,15 +28,29 @@ class TaskHistory(BaseModel):
     タスクのあるフェーズで、誰がいつどれくらいの作業時間を費やしたかを表すタスク履歴です。
     """
 
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    task_history_id: StrictStr = Field(description="タスク履歴ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    task_id: StrictStr = Field(
+        description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ", json_schema_extra={"examples": ["task_001"]}
+    )
+    task_history_id: StrictStr = Field(
+        description="タスク履歴ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     started_datetime: str | None = Field(default=None, description="開始日時")
     ended_datetime: str | None = Field(default=None, description="終了日時")
-    accumulated_labor_time_milliseconds: StrictStr = Field(description="累計実作業時間（ISO 8601 duration）")
+    accumulated_labor_time_milliseconds: StrictStr = Field(
+        description="累計実作業時間（ISO 8601 duration）", json_schema_extra={"examples": ["PT34H17M36.789S"]}
+    )
     phase: TaskPhase
     phase_stage: Annotated[int, Field(strict=True, ge=1)] = Field(description="タスクのフェーズのステージ番号")
-    account_id: StrictStr | None = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    account_id: StrictStr | None = Field(
+        default=None,
+        description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     __properties: ClassVar[List[str]] = [
         "project_id",
         "task_id",
@@ -49,7 +64,8 @@ class TaskHistory(BaseModel):
     ]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -60,8 +76,7 @@ class TaskHistory(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

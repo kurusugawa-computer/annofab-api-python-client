@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -25,7 +26,11 @@ class CountResult(BaseModel):
     CountResult
     """
 
-    type: StrictStr = Field(description="`CountResult` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    type: StrictStr = Field(
+        description="`CountResult` [詳しくはこちら](#section/API-Convention/API-_type) ",
+        alias="_type",
+        json_schema_extra={"examples": ["CountResult"]},
+    )
     name: StrictStr = Field(
         description="複数の集約を区別するための名前です。  `(フィールド名)_(集約内容)` のように命名されます。例えば `account_id` フィールドを `count` する場合、`account_id_count` となります。 "
     )
@@ -38,7 +43,8 @@ class CountResult(BaseModel):
     __properties: ClassVar[List[str]] = ["_type", "name", "field", "doc_count", "items"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -49,8 +55,7 @@ class CountResult(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -78,8 +83,7 @@ class CountResult(BaseModel):
         _items = []
         if self.items:
             for _item_items in self.items:
-                if _item_items:
-                    _items.append(_item_items.to_dict())
+                _items.append(_item_items.to_dict() if _item_items is not None else None)
             _dict["items"] = _items
         return _dict
 

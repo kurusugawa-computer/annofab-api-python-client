@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.oidc_attribute_mapping import OidcAttributeMapping
@@ -29,7 +30,9 @@ class OrganizationOidcIdp(BaseModel):
     """
 
     id: StrictStr = Field(description="組織IDプロバイダーのID。[値の制約についてはこちら。](#section/API-Convention/APIID)")
-    organization_name: StrictStr = Field(description="組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    organization_name: StrictStr = Field(
+        description="組織名。[値の制約についてはこちら。](#section/API-Convention/APIID) ", json_schema_extra={"examples": ["sample-organization"]}
+    )
     client_id: StrictStr = Field(description="外部IDプロバイダーで指定されたクライアントID")
     client_secret: StrictStr = Field(description="外部IDプロバイダーで指定されたクライアントシークレット")
     attributes_request_method: StrictStr = Field(description="ユーザー属性を取得する際に利用するリクエストメソッド ")
@@ -59,7 +62,8 @@ class OrganizationOidcIdp(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -70,8 +74,7 @@ class OrganizationOidcIdp(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

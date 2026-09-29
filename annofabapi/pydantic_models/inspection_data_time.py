@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -27,11 +28,17 @@ class InspectionDataTime(BaseModel):
 
     start: Union[StrictFloat, StrictInt] = Field(description="開始時間（ミリ秒）。小数点以下はミリ秒以下を表します。")
     end: Union[StrictFloat, StrictInt] = Field(description="終了時間（ミリ秒）。小数点以下はミリ秒以下を表します。")
-    type: StrictStr | None = Field(default=None, description="`Time` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    type: StrictStr | None = Field(
+        default=None,
+        description="`Time` [詳しくはこちら](#section/API-Convention/API-_type) ",
+        alias="_type",
+        json_schema_extra={"examples": ["Time"]},
+    )
     __properties: ClassVar[List[str]] = ["start", "end", "_type"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -42,8 +49,7 @@ class InspectionDataTime(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

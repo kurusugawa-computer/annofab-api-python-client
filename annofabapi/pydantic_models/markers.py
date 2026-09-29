@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.marker import Marker
@@ -27,13 +28,17 @@ class Markers(BaseModel):
     Markers
     """
 
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     markers: List[Marker] = Field(description="マーカー一覧")
     updated_datetime: str | None = Field(default=None, description="更新日時")
     __properties: ClassVar[List[str]] = ["project_id", "markers", "updated_datetime"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -44,8 +49,7 @@ class Markers(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -73,8 +77,7 @@ class Markers(BaseModel):
         _items = []
         if self.markers:
             for _item_markers in self.markers:
-                if _item_markers:
-                    _items.append(_item_markers.to_dict())
+                _items.append(_item_markers.to_dict() if _item_markers is not None else None)
             _dict["markers"] = _items
         return _dict
 

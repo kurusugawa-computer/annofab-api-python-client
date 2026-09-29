@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.comment_status import CommentStatus
@@ -32,14 +33,25 @@ class RootComment(BaseModel):
     annotation_id: StrictStr | None = Field(
         default=None,
         description="アノテーションID。[値の制約についてはこちら。](#section/API-Convention/APIID)  `annotation_type`が`classification`の場合は label_id と同じ値が格納されます。 ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
     )
-    label_id: StrictStr | None = Field(default=None, description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    label_id: StrictStr | None = Field(
+        default=None,
+        description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     status: CommentStatus | None = None
-    type: StrictStr | None = Field(default=None, description="`Root` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    type: StrictStr | None = Field(
+        default=None,
+        description="`Root` [詳しくはこちら](#section/API-Convention/API-_type) ",
+        alias="_type",
+        json_schema_extra={"examples": ["Root"]},
+    )
     __properties: ClassVar[List[str]] = ["data", "annotation_id", "label_id", "status", "_type"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -50,8 +62,7 @@ class RootComment(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

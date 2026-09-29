@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.internationalization_message import InternationalizationMessage
@@ -40,7 +41,8 @@ class UserDefinedAnnotationTypeDefinition(BaseModel):
     __properties: ClassVar[List[str]] = ["annotation_type_name", "field_definitions", "metadata", "annotation_data_type"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -51,8 +53,7 @@ class UserDefinedAnnotationTypeDefinition(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -83,8 +84,7 @@ class UserDefinedAnnotationTypeDefinition(BaseModel):
         _items = []
         if self.field_definitions:
             for _item_field_definitions in self.field_definitions:
-                if _item_field_definitions:
-                    _items.append(_item_field_definitions.to_dict())
+                _items.append(_item_field_definitions.to_dict() if _item_field_definitions is not None else None)
             _dict["field_definitions"] = _items
         # override the default output from pydantic by calling `to_dict()` of annotation_data_type
         if self.annotation_data_type:
