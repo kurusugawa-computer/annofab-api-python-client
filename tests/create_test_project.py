@@ -3,6 +3,7 @@ import logging
 import os
 import uuid
 from argparse import ArgumentParser
+from pathlib import Path
 from typing import Any
 
 from more_itertools import first_true
@@ -249,8 +250,8 @@ class CreatingTestProject:
         logger.debug("アノテーション仕様を作成しました。")
 
         # プロジェクトトップに移動する
-        now_dir = os.getcwd()
-        os.chdir(os.path.dirname(os.path.abspath(__file__)) + "/../")
+        now_dir = Path.cwd()
+        os.chdir(Path(__file__).resolve().parent.parent)
 
         input_data_id = "test_input_1"
         self.create_input_data(project_id, input_data_id, image_path="tests/data/lenna.png")

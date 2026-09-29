@@ -8,6 +8,7 @@ from __future__ import annotations
 import configparser
 import datetime
 import uuid
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -279,15 +280,11 @@ class TestInputData:
 
     def test_wrapper_put_input_data_from_file_and_delete_input_data(self):
         test_input_data_id = str(uuid.uuid4())
-        print()
-        print(f"put_input_data: input_data_id={test_input_data_id}")
         assert type(wrapper.put_input_data_from_file(project_id, test_input_data_id, f"{test_dir}/lenna.png")) == dict  # noqa: E721
         assert type(api.delete_input_data(project_id, test_input_data_id)[0]) == dict  # noqa: E721
 
     def test_put_input_data_from_file_and_batch_update_inputs(self):
         test_input_data_id = str(uuid.uuid4())
-        print()
-        print(f"put_input_data: input_data_id={test_input_data_id}")
         wrapper.put_input_data_from_file(project_id, test_input_data_id, f"{test_dir}/lenna.png")
 
         request_body = [{"project_id": project_id, "input_data_id": test_input_data_id, "_type": "Delete"}]
@@ -305,8 +302,6 @@ class TestInstruction:
 
     def test_wrapper_upload_instruction_image_and_delete_instruction_image(self):
         test_image_id = str(uuid.uuid4())
-        print()
-        print(f"wrapper.upload_instruction_image: image_id={test_image_id}")
         wrapper.upload_instruction_image(project_id, test_image_id, f"{test_dir}/lenna.png")
 
         api.delete_instruction_image(project_id, test_image_id)
@@ -596,8 +591,6 @@ class TestSupplementary:
         supplementary_data_id = str(uuid.uuid4())
         request_body = {"supplementary_data_number": 1}
 
-        print()
-        print(f"wrapper.put_supplementary_data_from_file: supplementary_data_id={supplementary_data_id}")
         wrapper.put_supplementary_data_from_file(
             project_id, self.input_data_id, supplementary_data_id, f"{test_dir}/sample.txt", request_body=request_body
         )
@@ -626,11 +619,11 @@ class TestTask:
         assert type(wrapper.get_all_tasks(project_id, query_params={"task_id": "foo"})) == list  # noqa: E721
 
     @pytest.mark.submitting_job
-    def test_initiate_tasks_generation_by_csv(self):
-        csv_file_path = f"{test_dir}/tmp/create_task.csv"
+    def test_initiate_tasks_generation_by_csv(self, tmp_path: Path):
+        csv_file_path = tmp_path / "create_task.csv"
         test_task_id = str(uuid.uuid4())
         create_csv_for_task(csv_file_path, test_task_id, self.input_data_id)
-        content = wrapper.initiate_tasks_generation_by_csv(project_id, csv_file_path)
+        content = wrapper.initiate_tasks_generation_by_csv(project_id, str(csv_file_path))
         assert type(content) == dict  # noqa: E721
 
     def test_get_task(self):
@@ -642,8 +635,6 @@ class TestTask:
     def test_put_task_and_delete_task(self):
         test_task_id = str(uuid.uuid4())
         request_body = {"input_data_id_list": [self.input_data_id]}
-        print()
-        print(f"put_task: task_id={task_id}")
         test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]
         assert type(test_task_data) == dict  # noqa: E721
 
@@ -667,8 +658,6 @@ class TestTask:
     def test_batch_update_tasks(self):
         test_task_id = str(uuid.uuid4())
         request_body = {"input_data_id_list": [self.input_data_id]}
-        print()
-        print(f"put_task: task_id={task_id}")
         test_task_data = api.put_task(project_id, test_task_id, request_body=request_body)[0]  # noqa: F841
 
         request_body2 = [{"project_id": project_id, "task_id": test_task_id, "_type": "Delete"}]
