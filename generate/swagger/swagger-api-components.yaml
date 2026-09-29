@@ -714,6 +714,7 @@ components:
         - user_id
         - confirmation_code
         - new_password
+        - is_reset_mfa
       properties:
         user_id:
           $ref: "#/components/schemas/UserId"
@@ -723,7 +724,6 @@ components:
           type: string
         is_reset_mfa:
           type: boolean
-          default: false
           description: MFA設定をリセットするか。trueの場合にリセットする。
     ResetEmailRequest:
       type: object
@@ -770,7 +770,6 @@ components:
         - account_id
         - user_id
         - username
-        - email
         - lang
         - keylayout
         - authority
@@ -2276,7 +2275,6 @@ components:
       required:
         - title
         - status
-        - organization_name
         - configuration
       properties:
         title:
@@ -5137,7 +5135,6 @@ components:
         - supplementary_data_path
         - supplementary_data_type
         - supplementary_data_number
-        - url
         - updated_datetime
       properties:
         organization_id:
@@ -6474,7 +6471,6 @@ components:
         - task_phase_stage
         - task_status
         - input_data_id
-        - input_data_name
         - details
         - annotation_format_version
       properties:
@@ -7330,7 +7326,6 @@ components:
     Instruction:
       type: object
       required:
-        - html
         - last_updated_datetime
       properties:
         html:

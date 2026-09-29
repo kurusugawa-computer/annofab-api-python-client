@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class SupplementaryDataType(str, Enum):
+class SupplementaryDataType(StrEnum):
     """
     補助情報の種類 * `image` - 画像 * `text` - テキスト * `custom` - カスタム（カスタムプロジェクトでしか利用できません）
     """

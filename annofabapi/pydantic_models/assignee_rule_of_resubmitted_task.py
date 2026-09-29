@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class AssigneeRuleOfResubmittedTask(str, Enum):
+class AssigneeRuleOfResubmittedTask(StrEnum):
     """
     再提出されたタスクの検査/受入担当者の割当方法 * `no_assignee` - 以前の担当者で固定せず、未割当てにします。 * `fixed` - 以前の担当者が再度担当します。以前の担当者がいない(1回目の検査/受入)場合は未割当てになります。
     """

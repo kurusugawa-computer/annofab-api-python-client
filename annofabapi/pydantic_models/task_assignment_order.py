@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class TaskAssignmentOrder(str, Enum):
+class TaskAssignmentOrder(StrEnum):
     """
     タスクの割当優先度を決定するための並び順。  * `asc` -  昇順 * `desc` - 降順
     """

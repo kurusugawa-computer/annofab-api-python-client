@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class CommentStatus(str, Enum):
+class CommentStatus(StrEnum):
     """
     `comment_type` の値によってコメントのステータスに格納される値とステータスの意味が変わります。  * `onhold` の場合   * `open`（未対応）、`resolved`（対応完了）を指定可能 * `inspection` の場合   * `open`（未対応）、`resolved`（対応完了）、`closed`（対応不要）を指定可能
     """

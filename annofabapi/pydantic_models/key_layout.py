@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class KeyLayout(str, Enum):
+class KeyLayout(StrEnum):
     """
     キーボードレイアウト * `ja-JP` - 日本語(106/109)配列 * `en-US` - 英語(101/104)配列 * `other` - その他
     """

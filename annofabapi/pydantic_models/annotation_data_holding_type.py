@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class AnnotationDataHoldingType(str, Enum):
+class AnnotationDataHoldingType(StrEnum):
     """
     アノテーションのデータがどこに保持されるか * `inner` - アノテーションのデータ部をJSON内部に保持します。 * `outer` - アノテーションのデータ部を外部ファイルの形式（画像など）で保持します
     """

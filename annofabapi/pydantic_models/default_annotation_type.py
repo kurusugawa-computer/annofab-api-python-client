@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class DefaultAnnotationType(str, Enum):
+class DefaultAnnotationType(StrEnum):
     """
     アノテーションの種類 * `bounding_box` - 矩形 * `segmentation` - 塗りつぶし（インスタンスセグメンテーション用） * `segmentation_v2` - 塗りつぶしv2（セマンティックセグメンテーション用） * `polygon` - ポリゴン（閉じた頂点集合） * `polyline` - ポリライン（開いた頂点集合） * `point` - 点 * `classification` - 全体 * `range` - 動画の区間 * `custom` - カスタム  プロジェクトの種類によって、使用できるアノテーションの種類は決まっています。アノテーションの種類が使用できるかどうかを、以下の表に記載しました。  * `○`：使用できる  * `×`：使用できない   |アノテーションの種類                 | 画像プロジェクト        | 動画プロジェクト | カスタムプロジェクト | |-----------------|:----------:|:----:|:------:| | bounding_box    | 〇         | ×  | ×    | | segmentation    | 〇         | ×  | ×    | | segmentation_v2 | 〇         | ×  | ×    | | polygon         | 〇         | ×  | ×    | | polyline        | 〇         | ×  | ×    | | point           | 〇         | ×  | ×    | | classification  | 〇         | 〇  | ×    | | range           | ×         | 〇  | ×    | | custom          | ×         | ×  | 〇    |
     """

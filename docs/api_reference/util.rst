@@ -44,14 +44,6 @@ annofabapi.util.tracking\_id module
    :show-inheritance:
    :undoc-members:
 
-annofabapi.util.type\_util module
----------------------------------
-
-.. automodule:: annofabapi.util.type_util
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 Module contents
 ---------------
 

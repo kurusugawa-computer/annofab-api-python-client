@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class TaskStatus(str, Enum):
+class TaskStatus(StrEnum):
     """
     タスクのステータス * `not_started` - 未着手 * `working` - 作業中 * `on_hold` - 保留中 * `break` - 休憩中 * `complete` - 完了 * `rejected` - 差し戻し。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。 * `cancelled` - 提出の取り消し。[operateTask](#operation/operateTask) APIのリクエストボディに渡すときのみ利用する。その他のAPIのリクエストやレスポンスには使われない。
     """

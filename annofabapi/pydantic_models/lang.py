@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class Lang(str, Enum):
+class Lang(StrEnum):
     """
     表示言語 * `ja-JP` - 日本語 * `en-US` - 英語 * `vi-VN` - ベトナム語
     """

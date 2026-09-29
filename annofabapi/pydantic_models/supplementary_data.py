@@ -38,7 +38,7 @@ class SupplementaryData(BaseModel):
     supplementary_data_path: StrictStr = Field(
         description="補助情報の実体が存在するURLです。 URLスキームが s3 もしくは https であるもののみをサポートしています。 "
     )
-    url: StrictStr = Field(description="システム内部用のプロパティ")
+    url: StrictStr | None = Field(default=None, description="システム内部用のプロパティ")
     etag: StrictStr | None = Field(
         default=None, description="[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 "
     )

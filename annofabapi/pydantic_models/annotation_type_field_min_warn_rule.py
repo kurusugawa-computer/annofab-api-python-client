@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class AnnotationTypeFieldMinWarnRule(str, Enum):
+class AnnotationTypeFieldMinWarnRule(StrEnum):
     """
     最小の幅(min_width)と最小の高さ(min_height)がどのような状態になったときにエラーとするかを指定します。  * `and` - min_width、min_heightの両方が最小値未満の場合にエラーとなります。 * `or` - min_width、min_heightのいずれかが最小値未満の場合にエラーとなります。
     """

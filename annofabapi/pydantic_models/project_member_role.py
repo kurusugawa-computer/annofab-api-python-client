@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class ProjectMemberRole(str, Enum):
+class ProjectMemberRole(StrEnum):
     """
     プロジェクトメンバーのロール * `owner` - オーナー * `worker` - アノテーター * `accepter` - チェッカー * `training_data_user` - アノテーションユーザー
     """
