@@ -97,6 +97,8 @@ exclude = [
 
 extend-select = [
     "ISC004",
+    "S108",
+    "S324",
     "TRY004",
     "TRY201",
 ]
@@ -115,7 +117,6 @@ ignore = [
     # 以下のルールはコードに合っていないので無効化した
     "D", # pydocstyle, Docstringを中途半端にしか書いていないので、除外する
     "C90", # mccabe
-    "T20", # flake8-print
     "SLF", #  flake8-self
     "FBT", # flake8-boolean-trap
     "TRY", # tryceratops
@@ -125,7 +126,6 @@ ignore = [
     "ICN", # flake8-import-conventions
     "RET", #flake8-return
     "TCH", # flake8-type-checking
-    "PTH", #pathlibを使わないコードが多いので、除外する
     "ISC", #flake8-implicit-str-concat
     "N", # pep8-naming
     "PT", # flake8-pytest-style
