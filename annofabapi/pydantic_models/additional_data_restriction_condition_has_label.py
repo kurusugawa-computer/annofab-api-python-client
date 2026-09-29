@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -25,12 +26,15 @@ class AdditionalDataRestrictionConditionHasLabel(BaseModel):
     AdditionalDataRestrictionConditionHasLabel
     """
 
-    type: StrictStr = Field(description="`HasLabel` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    type: StrictStr = Field(
+        description="`HasLabel` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type", json_schema_extra={"examples": ["HasLabel"]}
+    )
     labels: List[StrictStr] = Field(description="アノテーションリンク属性において、アノテーションリンク先として指定可能なラベルIDを制限します。")
     __properties: ClassVar[List[str]] = ["_type", "labels"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -41,8 +45,7 @@ class AdditionalDataRestrictionConditionHasLabel(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

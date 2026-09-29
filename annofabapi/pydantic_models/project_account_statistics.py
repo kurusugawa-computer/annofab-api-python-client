@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.project_account_statistics_history import ProjectAccountStatisticsHistory
@@ -27,12 +28,16 @@ class ProjectAccountStatistics(BaseModel):
     ProjectAccountStatistics
     """
 
-    account_id: StrictStr = Field(description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    account_id: StrictStr = Field(
+        description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     histories: List[ProjectAccountStatisticsHistory]
     __properties: ClassVar[List[str]] = ["account_id", "histories"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -43,8 +48,7 @@ class ProjectAccountStatistics(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -72,8 +76,7 @@ class ProjectAccountStatistics(BaseModel):
         _items = []
         if self.histories:
             for _item_histories in self.histories:
-                if _item_histories:
-                    _items.append(_item_histories.to_dict())
+                _items.append(_item_histories.to_dict() if _item_histories is not None else None)
             _dict["histories"] = _items
         return _dict
 

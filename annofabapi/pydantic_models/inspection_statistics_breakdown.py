@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.inspection_statistics_phrases import InspectionStatisticsPhrases
@@ -32,7 +33,8 @@ class InspectionStatisticsBreakdown(BaseModel):
     __properties: ClassVar[List[str]] = ["labels", "no_label"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -43,8 +45,7 @@ class InspectionStatisticsBreakdown(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -72,8 +73,7 @@ class InspectionStatisticsBreakdown(BaseModel):
         _field_dict = {}
         if self.labels:
             for _key_labels in self.labels:
-                if self.labels[_key_labels]:
-                    _field_dict[_key_labels] = self.labels[_key_labels].to_dict()
+                _field_dict[_key_labels] = self.labels[_key_labels].to_dict() if self.labels[_key_labels] is not None else None
             _dict["labels"] = _field_dict
         # override the default output from pydantic by calling `to_dict()` of no_label
         if self.no_label:

@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.annotation_thumbnail_detail import AnnotationThumbnailDetail
@@ -28,9 +29,17 @@ class AnnotationThumbnail(BaseModel):
     アノテーションのサムネイル情報
     """
 
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    task_id: StrictStr = Field(
+        description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ", json_schema_extra={"examples": ["task_001"]}
+    )
+    input_data_id: StrictStr = Field(
+        description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     images: List[AnnotationThumbnailImage] = Field(description="サムネイル画像情報の一覧")
     annotations: Dict[str, AnnotationThumbnailDetail] = Field(description="アノテーションIDをキーとしたサムネイル情報")
     annotation_updated_datetime: str | None = Field(
@@ -48,7 +57,8 @@ class AnnotationThumbnail(BaseModel):
     ]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -59,8 +69,7 @@ class AnnotationThumbnail(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -88,15 +97,15 @@ class AnnotationThumbnail(BaseModel):
         _items = []
         if self.images:
             for _item_images in self.images:
-                if _item_images:
-                    _items.append(_item_images.to_dict())
+                _items.append(_item_images.to_dict() if _item_images is not None else None)
             _dict["images"] = _items
         # override the default output from pydantic by calling `to_dict()` of each value in annotations (dict)
         _field_dict = {}
         if self.annotations:
             for _key_annotations in self.annotations:
-                if self.annotations[_key_annotations]:
-                    _field_dict[_key_annotations] = self.annotations[_key_annotations].to_dict()
+                _field_dict[_key_annotations] = (
+                    self.annotations[_key_annotations].to_dict() if self.annotations[_key_annotations] is not None else None
+                )
             _dict["annotations"] = _field_dict
         return _dict
 

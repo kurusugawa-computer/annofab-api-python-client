@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
 from annofabapi.pydantic_models.supplementary_data_type import SupplementaryDataType
@@ -27,20 +28,36 @@ class SupplementaryData(BaseModel):
     SupplementaryData
     """
 
-    organization_id: StrictStr = Field(description="組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    input_data_set_id: StrictStr = Field(
-        description="入力データセットID(システム内部用のプロパティ)。[値の制約についてはこちら。](#section/API-Convention/APIID) "
+    organization_id: StrictStr = Field(
+        description="組織ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
     )
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    input_data_id: StrictStr = Field(description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    supplementary_data_id: StrictStr = Field(description="補助情報ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    input_data_set_id: StrictStr = Field(
+        description="入力データセットID(システム内部用のプロパティ)。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    input_data_id: StrictStr = Field(
+        description="入力データID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    supplementary_data_id: StrictStr = Field(
+        description="補助情報ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     supplementary_data_name: StrictStr = Field(description="補助情報の名前")
     supplementary_data_path: StrictStr = Field(
-        description="補助情報の実体が存在するURLです。 URLスキームが s3 もしくは https であるもののみをサポートしています。 "
+        description="補助情報の実体が存在するURLです。 URLスキームが s3 もしくは https であるもののみをサポートしています。 ",
+        json_schema_extra={"examples": ["s3://ANNOFAB-BUCKET/PATH/TO/INPUT_DATA"]},
     )
     url: StrictStr | None = Field(default=None, description="システム内部用のプロパティ")
     etag: StrictStr | None = Field(
-        default=None, description="[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 "
+        default=None,
+        description="[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 ",
+        json_schema_extra={"examples": ['"33a64df551425fcc55e4d42a148795d9f25f89d4"']},
     )
     supplementary_data_type: SupplementaryDataType
     supplementary_data_number: Annotated[int, Field(strict=True, ge=0)] = Field(description="補助情報の表示順を表す数値。")
@@ -61,7 +78,8 @@ class SupplementaryData(BaseModel):
     ]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -72,8 +90,7 @@ class SupplementaryData(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

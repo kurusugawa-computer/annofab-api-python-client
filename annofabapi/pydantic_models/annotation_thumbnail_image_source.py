@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -27,7 +28,8 @@ class AnnotationThumbnailImageSource(BaseModel):
 
     type: StrictStr | None = Field(default=None, alias="_type")
     temporary_path: StrictStr = Field(
-        description="事前にアップロードしたサムネイル画像のパス。 [createTempPath](#operation/createTempPath) APIで取得した `path` の値を指定します。"
+        description="事前にアップロードしたサムネイル画像のパス。 [createTempPath](#operation/createTempPath) APIで取得した `path` の値を指定します。",
+        json_schema_extra={"examples": ["s3://BUCKET/PATH/TO/OBJECT"]},
     )
     __properties: ClassVar[List[str]] = ["_type", "temporary_path"]
 
@@ -42,7 +44,8 @@ class AnnotationThumbnailImageSource(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -53,8 +56,7 @@ class AnnotationThumbnailImageSource(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

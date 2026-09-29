@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
 from annofabapi.pydantic_models.comment_node import CommentNode
@@ -28,17 +29,23 @@ class BatchCommentRequestItemPut(BaseModel):
     コメント更新
     """
 
-    comment_id: StrictStr = Field(description="コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    comment_id: StrictStr = Field(
+        description="コメントのID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     phase: TaskPhase
     phase_stage: Annotated[int, Field(strict=True, ge=1)] = Field(description="コメントを作成したときのフェーズのステージ。")
-    account_id: StrictStr = Field(description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    account_id: StrictStr = Field(
+        description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     comment_type: StrictStr = Field(
         description="コメントの種別。次の値が指定できます。  * `onhold` - 保留コメントとして扱われます。 * `inspection` - 検査コメントとして扱われます。  返信コメント作成時は返信先コメントの `comment_type` と同じ値を指定してください。  コメント更新時は更新前コメントと同じ値を指定してください（変更はできません）。 "
     )
     phrases: List[StrictStr] | None = Field(
         default=None, description="`comment_type` の値によって指定可能な値が異なります。  * `onhold` の場合   * 使用しません（空配列 or 指定なし） "
     )
-    comment: StrictStr = Field(description="コメント本文。 ")
+    comment: StrictStr = Field(description="コメント本文。 ", json_schema_extra={"examples": ["確認中のため対応保留します"]})
     comment_node: CommentNode
     datetime_for_sorting: str | None = Field(
         default=None,
@@ -73,7 +80,8 @@ class BatchCommentRequestItemPut(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -84,8 +92,7 @@ class BatchCommentRequestItemPut(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

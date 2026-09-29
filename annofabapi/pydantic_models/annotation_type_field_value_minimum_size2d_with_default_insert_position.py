@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
+from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
 from annofabapi.pydantic_models.annotation_type_field_min_warn_rule import AnnotationTypeFieldMinWarnRule
@@ -32,7 +33,7 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(BaseModel):
     min_width: Annotated[int, Field(strict=True, ge=1)]
     min_height: Annotated[int, Field(strict=True, ge=1)]
     position_for_minimum_bounding_box_insertion: List[StrictInt] | None = Field(
-        default=None, description="最小矩形の挿入位置を、要素が2の配列で指定します。 "
+        default=None, description="最小矩形の挿入位置を、要素が2の配列で指定します。 ", json_schema_extra={"examples": [[0, 0]]}
     )
     __properties: ClassVar[List[str]] = ["_type", "min_warn_rule", "min_width", "min_height", "position_for_minimum_bounding_box_insertion"]
 
@@ -44,7 +45,8 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -55,8 +57,7 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

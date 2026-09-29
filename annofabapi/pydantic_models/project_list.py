@@ -17,9 +17,10 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
-from annofabapi.pydantic_models.aggregation_result import AggregationResult
+from annofabapi.pydantic_models.count_result import CountResult
 from annofabapi.pydantic_models.project import Project
 
 
@@ -35,11 +36,12 @@ class ProjectList(BaseModel):
     )
     total_count: Union[StrictFloat, StrictInt] = Field(description="検索結果の総件数。")
     over_limit: StrictBool = Field(description="検索結果が1万件を超えた場合にtrueとなる。")
-    aggregations: List[AggregationResult] = Field(description="システム内部用のプロパティ ")
+    aggregations: List[CountResult] = Field(description="システム内部用のプロパティ ")
     __properties: ClassVar[List[str]] = ["list", "page_no", "total_page_no", "total_count", "over_limit", "aggregations"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -50,8 +52,7 @@ class ProjectList(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -79,15 +80,13 @@ class ProjectList(BaseModel):
         _items = []
         if self.list:
             for _item_list in self.list:
-                if _item_list:
-                    _items.append(_item_list.to_dict())
+                _items.append(_item_list.to_dict() if _item_list is not None else None)
             _dict["list"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in aggregations (list)
         _items = []
         if self.aggregations:
             for _item_aggregations in self.aggregations:
-                if _item_aggregations:
-                    _items.append(_item_aggregations.to_dict())
+                _items.append(_item_aggregations.to_dict() if _item_aggregations is not None else None)
             _dict["aggregations"] = _items
         return _dict
 
@@ -107,9 +106,7 @@ class ProjectList(BaseModel):
                 "total_page_no": obj.get("total_page_no"),
                 "total_count": obj.get("total_count"),
                 "over_limit": obj.get("over_limit"),
-                "aggregations": [AggregationResult.from_dict(_item) for _item in obj["aggregations"]]
-                if obj.get("aggregations") is not None
-                else None,
+                "aggregations": [CountResult.from_dict(_item) for _item in obj["aggregations"]] if obj.get("aggregations") is not None else None,
             }
         )
         return _obj

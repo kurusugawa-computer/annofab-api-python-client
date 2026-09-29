@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
 from annofabapi.pydantic_models.key_layout import KeyLayout
@@ -28,14 +29,20 @@ class Account(BaseModel):
     Account
     """
 
-    account_id: StrictStr = Field(description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    user_id: StrictStr = Field(description="ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    username: StrictStr = Field(description="ユーザー名")
+    account_id: StrictStr = Field(
+        description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    user_id: StrictStr = Field(
+        description="ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) ", json_schema_extra={"examples": ["john_doe"]}
+    )
+    username: StrictStr = Field(description="ユーザー名", json_schema_extra={"examples": ["John Doe"]})
     email: StrictStr | None = Field(default=None, description="メールアドレス")
     lang: Lang
     biography: Annotated[str, Field(min_length=0, strict=True, max_length=100)] | None = Field(
         default=None,
         description="人物紹介、略歴。  この属性は、Annofab外の所属先や肩書などを表すために用います。 Annofab上の「複数の組織」で活動する場合、本籍を示すのに便利です。 ",
+        json_schema_extra={"examples": ["Annotation Manager, ABC Company"]},
     )
     keylayout: KeyLayout
     authority: StrictStr = Field(description="システム内部用のプロパティ")
@@ -64,7 +71,8 @@ class Account(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -75,8 +83,7 @@ class Account(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

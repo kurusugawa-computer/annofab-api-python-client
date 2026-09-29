@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
 from annofabapi.pydantic_models.assignee_rule_of_resubmitted_task import AssigneeRuleOfResubmittedTask
@@ -43,7 +44,8 @@ class ProjectConfigurationGet(BaseModel):
         description="保留中のタスクを含めて、1人（オーナー以外）に割り当てられるタスク数上限の保留分。 割り当て時の上限チェックは、max_tasks_per_memberとこの数字の合計で行われます。  例えばmax_tasks_per_memberが10、max_tasks_per_member_including_holdが20の場合、保留中を含むタスク数の割り当て上限は30になります。 ",
     )
     input_data_set_id_list: List[StrictStr] = Field(
-        description="システム内部用のプロパティ。 [putProject](#operation/putProject) APIでプロジェクトを更新する際は、[getProject](#operation/getProject) APIで取得した値を指定してください。 "
+        description="システム内部用のプロパティ。 [putProject](#operation/putProject) APIでプロジェクトを更新する際は、[getProject](#operation/getProject) APIで取得した値を指定してください。 ",
+        json_schema_extra={"examples": [[]]},
     )
     input_data_max_long_side_length: Annotated[int, Field(strict=True, ge=0)] | None = Field(
         default=None,
@@ -58,20 +60,31 @@ class ProjectConfigurationGet(BaseModel):
     private_storage_aws_iam_role_arn: StrictStr | None = Field(
         default=None,
         description="AWS IAMロール。S3プライベートストレージの認可で使います。 [S3プライベートストレージの認可の設定についてはこちら](/docs/faq/#m0b240)をご覧ください。 ",
+        json_schema_extra={"examples": ["arn:aws:iam::123456789012:role/AnnofabPrivateStorageAccessor"]},
     )
     use_s3_transfer_acceleration: StrictBool | None = Field(
         default=False,
         description="S3プライベートストレージにアクセスする際に、AWS S3 Transfer Accelerationを使用するかどうか。trueの場合に使用します。 private_storage_aws_iam_role_arnの設定がなされていない場合、この値は無視されます。 ",
     )
-    plugin_id: StrictStr | None = Field(default=None, description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    plugin_id: StrictStr | None = Field(
+        default=None,
+        description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     custom_task_assignment_plugin_id: StrictStr | None = Field(
-        default=None, description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) "
+        default=None,
+        description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
     )
     custom_specs_plugin_id: StrictStr | None = Field(
-        default=None, description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) "
+        default=None,
+        description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
     )
     extended_specs_plugin_id: StrictStr | None = Field(
-        default=None, description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) "
+        default=None,
+        description="プラグインID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
     )
     editor_version: StrictStr | None = Field(
         default=None,
@@ -102,7 +115,8 @@ class ProjectConfigurationGet(BaseModel):
     ]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -113,8 +127,7 @@ class ProjectConfigurationGet(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

@@ -1,6 +1,6 @@
 #!/bin/bash -uex
 
-DOCKER_IMAGE=openapitools/openapi-generator-cli:v7.11.0
+DOCKER_IMAGE=openapitools/openapi-generator-cli:v7.25.0
 
 PROGNAME=$(basename $0)
 
