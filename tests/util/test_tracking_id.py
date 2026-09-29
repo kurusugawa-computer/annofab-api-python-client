@@ -7,13 +7,24 @@ from annofabapi.util.tracking_id import TrackingIdGenerator
 
 
 class TestTrackingIdGenerator:
-    def test_generate__形式と一意性(self):
+    def test_generate__形式(self, monkeypatch: pytest.MonkeyPatch):
+        random_values = iter("ABCDEF7")
+        monkeypatch.setattr(secrets, "choice", lambda _: next(random_values))
         generator = TrackingIdGenerator()
 
-        actual = [generator.generate() for _ in range(100)]
+        actual = generator.generate()
 
-        assert len(set(actual)) == len(actual)
-        assert all(re.fullmatch(r"[A-Z]{3}-[A-Z]{3}[0-9]", tracking_id) is not None for tracking_id in actual)
+        assert actual == "ABC-DEF7"
+        assert re.fullmatch(r"[A-Z]{3}-[A-Z]{3}[0-9]", actual) is not None
+
+    def test_generate__生成済みのtracking_idと重複したら再生成する(self, monkeypatch: pytest.MonkeyPatch):
+        random_values = iter("AAAAAA0AAAAAA0BBBBBB1")
+        monkeypatch.setattr(secrets, "choice", lambda _: next(random_values))
+        generator = TrackingIdGenerator()
+
+        actual = [generator.generate(), generator.generate()]
+
+        assert actual == ["AAA-AAA0", "BBB-BBB1"]
 
     def test_generate__既存のtracking_idと重複したら再生成する(self, monkeypatch: pytest.MonkeyPatch):
         random_values = iter("AAAAAA0BBBBBB1")
