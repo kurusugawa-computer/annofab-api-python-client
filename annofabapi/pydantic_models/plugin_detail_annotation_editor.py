@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.input_data_type import InputDataType
@@ -32,19 +33,28 @@ class PluginDetailAnnotationEditor(BaseModel):
     url: StrictStr | None = Field(
         default=None,
         description="カスタムアノテーションエディタでタスクを開くための URL です。 プラグインを使用するプロジェクトのタスク一覧などで使用されます。 プラグイン種別がカスタムアノテーションエディタの場合のみ有効です。  この URL には、タスクを特定するための以下のパラメータを必ず埋め込んでください。  * `{projectId}` * `{taskId}`  以下のパラメーターは任意で指定します。  * `{inputDataId}`: アノテーション一覧などから、特定の入力データにフォーカスした状態でタスクを開くときなどに指定します。 * `{annotationId}`: アノテーション一覧などから、特定のアノテーションにフォーカスした状態でタスクを開くときなどに指定します。 ",
+        json_schema_extra={"examples": ["https://example.com/my/editors?p={projectId}&t={taskId}"]},
     )
     auth_redirect_url: StrictStr | None = Field(
         default=None,
         description="認証後のリダイレクト先。このURLに `?code=xxx` をつけてリダイレクトされます。 url プロパティとは異なり、 `{projectId}` や `{taskId}` といったパラメータの置換は行われません。  詳しくは [requestPluginToken API](#operation/requestPluginToken) を参照してください。 ",
+        json_schema_extra={"examples": ["https://example.com/my/editors"]},
     )
     compatible_input_data_types: List[InputDataType] = Field(
-        description="プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 "
+        description="プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 ",
+        json_schema_extra={"examples": [["custom"]]},
     )
-    type: StrictStr | None = Field(default=None, description="`AnnotationEditor` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    type: StrictStr | None = Field(
+        default=None,
+        description="`AnnotationEditor` [詳しくはこちら](#section/API-Convention/API-_type) ",
+        alias="_type",
+        json_schema_extra={"examples": ["AnnotationEditor"]},
+    )
     __properties: ClassVar[List[str]] = ["plugin_compatibility", "url", "auth_redirect_url", "compatible_input_data_types", "_type"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -55,8 +65,7 @@ class PluginDetailAnnotationEditor(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

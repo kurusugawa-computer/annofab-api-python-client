@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -25,16 +26,26 @@ class InstructionImage(BaseModel):
     InstructionImage
     """
 
-    image_id: StrictStr = Field(description="作業ガイド画像ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    path: StrictStr = Field(description="作業ガイド画像の実体が保存されたパスです。 ")
-    url: StrictStr = Field(description="作業ガイド画像を取得するためのシステム内部用のURLです。")
+    image_id: StrictStr = Field(
+        description="作業ガイド画像ID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    path: StrictStr = Field(
+        description="作業ガイド画像の実体が保存されたパスです。 ", json_schema_extra={"examples": ["s3://ANNOFAB-BUCKET/PATH/TO/INSTRUCTION_IMAGE"]}
+    )
+    url: StrictStr = Field(
+        description="作業ガイド画像を取得するためのシステム内部用のURLです。",
+        json_schema_extra={"examples": ["https://annofab.com/projects/PROJECT_ID/instruction-images/IMAGE_ID"]},
+    )
     etag: StrictStr = Field(
-        description="[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 "
+        description="[HTTPレスポンスヘッダー ETag](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)に相当する値です。 ",
+        json_schema_extra={"examples": ['"33a64df551425fcc55e4d42a148795d9f25f89d4"']},
     )
     __properties: ClassVar[List[str]] = ["image_id", "path", "url", "etag"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -45,8 +56,7 @@ class InstructionImage(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

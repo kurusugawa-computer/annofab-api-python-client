@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.additional_data_definition_v2 import AdditionalDataDefinitionV2
@@ -31,7 +32,10 @@ class AnnotationSpecsV2(BaseModel):
     AnnotationSpecsV2
     """
 
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     labels: List[LabelV2] = Field(description="ラベル")
     additionals: List[AdditionalDataDefinitionV2] = Field(description="属性")
     restrictions: List[AdditionalDataRestriction] = Field(description="属性の制約")
@@ -53,7 +57,8 @@ class AnnotationSpecsV2(BaseModel):
     ]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -64,8 +69,7 @@ class AnnotationSpecsV2(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -93,29 +97,25 @@ class AnnotationSpecsV2(BaseModel):
         _items = []
         if self.labels:
             for _item_labels in self.labels:
-                if _item_labels:
-                    _items.append(_item_labels.to_dict())
+                _items.append(_item_labels.to_dict() if _item_labels is not None else None)
             _dict["labels"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in additionals (list)
         _items = []
         if self.additionals:
             for _item_additionals in self.additionals:
-                if _item_additionals:
-                    _items.append(_item_additionals.to_dict())
+                _items.append(_item_additionals.to_dict() if _item_additionals is not None else None)
             _dict["additionals"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in restrictions (list)
         _items = []
         if self.restrictions:
             for _item_restrictions in self.restrictions:
-                if _item_restrictions:
-                    _items.append(_item_restrictions.to_dict())
+                _items.append(_item_restrictions.to_dict() if _item_restrictions is not None else None)
             _dict["restrictions"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in inspection_phrases (list)
         _items = []
         if self.inspection_phrases:
             for _item_inspection_phrases in self.inspection_phrases:
-                if _item_inspection_phrases:
-                    _items.append(_item_inspection_phrases.to_dict())
+                _items.append(_item_inspection_phrases.to_dict() if _item_inspection_phrases is not None else None)
             _dict["inspection_phrases"] = _items
         # override the default output from pydantic by calling `to_dict()` of option
         if self.option:

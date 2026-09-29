@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -25,13 +26,16 @@ class TaskAssignRequestTypeSelection(BaseModel):
     TaskAssignRequestTypeSelection
     """
 
-    user_id: StrictStr = Field(description="ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    user_id: StrictStr = Field(
+        description="ユーザーID。[値の制約についてはこちら。](#section/API-Convention/APIID) ", json_schema_extra={"examples": ["john_doe"]}
+    )
     task_ids: List[StrictStr] = Field(description="割り当てるタスクのID")
-    type: StrictStr | None = Field(default=None, description="`Selection` ", alias="_type")
+    type: StrictStr | None = Field(default=None, description="`Selection` ", alias="_type", json_schema_extra={"examples": ["Selection"]})
     __properties: ClassVar[List[str]] = ["user_id", "task_ids", "_type"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -42,8 +46,7 @@ class TaskAssignRequestTypeSelection(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

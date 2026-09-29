@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.plugin_detail import PluginDetail
@@ -28,10 +29,14 @@ class PutOrganizationPluginRequest(BaseModel):
     """
 
     plugin_name: StrictStr | None = Field(
-        default=None, description="プラグインの名前です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 "
+        default=None,
+        description="プラグインの名前です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 ",
+        json_schema_extra={"examples": ["foo-bar"]},
     )
     description: StrictStr | None = Field(
-        default=None, description="プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 "
+        default=None,
+        description="プラグインの説明です。 プラグイン一覧や、プロジェクトで使うプラグインを選ぶときなどに表示されます。 ",
+        json_schema_extra={"examples": ["desc"]},
     )
     project_extra_data_kinds: List[StrictStr] | None = Field(
         default=None, description="プラグインが適用されたプロジェクトで使用可能となるProjectExtraDataKindのId列。 "
@@ -41,7 +46,8 @@ class PutOrganizationPluginRequest(BaseModel):
     __properties: ClassVar[List[str]] = ["plugin_name", "description", "project_extra_data_kinds", "detail", "last_updated_datetime"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -52,8 +58,7 @@ class PutOrganizationPluginRequest(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

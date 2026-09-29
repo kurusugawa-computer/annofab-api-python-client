@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.supplementary_data import SupplementaryData
@@ -33,7 +34,8 @@ class GetSupplementaryDataInBulkResponse(BaseModel):
     __properties: ClassVar[List[str]] = ["success", "failure"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -44,8 +46,7 @@ class GetSupplementaryDataInBulkResponse(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -73,15 +74,13 @@ class GetSupplementaryDataInBulkResponse(BaseModel):
         _items = []
         if self.success:
             for _item_success in self.success:
-                if _item_success:
-                    _items.append(_item_success.to_dict())
+                _items.append(_item_success.to_dict() if _item_success is not None else None)
             _dict["success"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in failure (list)
         _items = []
         if self.failure:
             for _item_failure in self.failure:
-                if _item_failure:
-                    _items.append(_item_failure.to_dict())
+                _items.append(_item_failure.to_dict() if _item_failure is not None else None)
             _dict["failure"] = _items
         return _dict
 

@@ -17,9 +17,10 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
-from annofabapi.pydantic_models.personal_access_token_permission import PersonalAccessTokenPermission
+from annofabapi.pydantic_models.personal_access_token_permission_all import PersonalAccessTokenPermissionAll
 
 
 class PersonalAccessTokenInfo(BaseModel):
@@ -28,18 +29,23 @@ class PersonalAccessTokenInfo(BaseModel):
     """
 
     id: StrictStr = Field(
-        description="パーソナルアクセストークンのID。ユーザごとに一意な文字列。 [値の制約についてはこちら。](#section/API-Convention/APIID) "
+        description="パーソナルアクセストークンのID。ユーザごとに一意な文字列。 [値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["my-personal-access-token"]},
     )
-    account_id: StrictStr = Field(description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    account_id: StrictStr = Field(
+        description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     note: StrictStr = Field(description="人間可読なトークンの説明")
     expired_datetime: str = Field(description="トークンの有効期限")
-    permissions: List[PersonalAccessTokenPermission] = Field(description="トークンが持つ権限")
+    permissions: List[PersonalAccessTokenPermissionAll] = Field(description="トークンが持つ権限")
     created_datetime: str = Field(description="トークンの作成時刻")
     last_used_datetime: str | None = Field(default=None, description="トークンの最終利用時刻")
     __properties: ClassVar[List[str]] = ["id", "account_id", "note", "expired_datetime", "permissions", "created_datetime", "last_used_datetime"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -50,8 +56,7 @@ class PersonalAccessTokenInfo(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -79,8 +84,7 @@ class PersonalAccessTokenInfo(BaseModel):
         _items = []
         if self.permissions:
             for _item_permissions in self.permissions:
-                if _item_permissions:
-                    _items.append(_item_permissions.to_dict())
+                _items.append(_item_permissions.to_dict() if _item_permissions is not None else None)
             _dict["permissions"] = _items
         return _dict
 
@@ -99,7 +103,7 @@ class PersonalAccessTokenInfo(BaseModel):
                 "account_id": obj.get("account_id"),
                 "note": obj.get("note"),
                 "expired_datetime": obj.get("expired_datetime"),
-                "permissions": [PersonalAccessTokenPermission.from_dict(_item) for _item in obj["permissions"]]
+                "permissions": [PersonalAccessTokenPermissionAll.from_dict(_item) for _item in obj["permissions"]]
                 if obj.get("permissions") is not None
                 else None,
                 "created_datetime": obj.get("created_datetime"),

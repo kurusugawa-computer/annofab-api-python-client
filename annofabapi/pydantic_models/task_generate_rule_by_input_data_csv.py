@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -25,12 +26,21 @@ class TaskGenerateRuleByInputDataCsv(BaseModel):
     各タスクへの入力データへの割当を記入したCSVへのS3上のパスを指定してタスクを生成します。 1つのタスクに対する入力データの個数は最大200です。200を超えるタスクが1つでもある場合にはタスク生成に失敗します。
     """
 
-    csv_data_path: StrictStr = Field(description="各タスクへの入力データへの割り当てを記入したCSVへのS3上のパス。 ")
-    type: StrictStr | None = Field(default=None, description="`ByInputDataCsv` [詳しくはこちら](#section/API-Convention/API-_type) ", alias="_type")
+    csv_data_path: StrictStr = Field(
+        description="各タスクへの入力データへの割り当てを記入したCSVへのS3上のパス。 ",
+        json_schema_extra={"examples": ["s3://ANNOFAB-BUCKET/PATH/TO/CSV"]},
+    )
+    type: StrictStr | None = Field(
+        default=None,
+        description="`ByInputDataCsv` [詳しくはこちら](#section/API-Convention/API-_type) ",
+        alias="_type",
+        json_schema_extra={"examples": ["ByInputDataCsv"]},
+    )
     __properties: ClassVar[List[str]] = ["csv_data_path", "_type"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -41,8 +51,7 @@ class TaskGenerateRuleByInputDataCsv(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

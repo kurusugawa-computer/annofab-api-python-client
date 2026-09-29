@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.worktime_statistics_item import WorktimeStatisticsItem
@@ -40,7 +41,8 @@ class WorktimeStatisticsData(BaseModel):
     __properties: ClassVar[List[str]] = ["date", "grouped_by_input", "grouped_by_task", "grouped_by_minute"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -51,8 +53,7 @@ class WorktimeStatisticsData(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -80,22 +81,19 @@ class WorktimeStatisticsData(BaseModel):
         _items = []
         if self.grouped_by_input:
             for _item_grouped_by_input in self.grouped_by_input:
-                if _item_grouped_by_input:
-                    _items.append(_item_grouped_by_input.to_dict())
+                _items.append(_item_grouped_by_input.to_dict() if _item_grouped_by_input is not None else None)
             _dict["grouped_by_input"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in grouped_by_task (list)
         _items = []
         if self.grouped_by_task:
             for _item_grouped_by_task in self.grouped_by_task:
-                if _item_grouped_by_task:
-                    _items.append(_item_grouped_by_task.to_dict())
+                _items.append(_item_grouped_by_task.to_dict() if _item_grouped_by_task is not None else None)
             _dict["grouped_by_task"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in grouped_by_minute (list)
         _items = []
         if self.grouped_by_minute:
             for _item_grouped_by_minute in self.grouped_by_minute:
-                if _item_grouped_by_minute:
-                    _items.append(_item_grouped_by_minute.to_dict())
+                _items.append(_item_grouped_by_minute.to_dict() if _item_grouped_by_minute is not None else None)
             _dict["grouped_by_minute"] = _items
         return _dict
 

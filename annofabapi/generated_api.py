@@ -549,7 +549,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                batch_input_data_request_item (list[BatchInputDataRequestItem]):  (required)
+                batch_input_data_request_item_delete (list[BatchInputDataRequestItemDelete]):  (required)
 
         Returns:
             tuple[list[InputData], requests.Response]
@@ -2883,7 +2883,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                batch_task_request_item (list[BatchTaskRequestItem]):  (required)
+                batch_task_request_item_delete (list[BatchTaskRequestItemDelete]):  (required)
 
         Returns:
             tuple[list[Task], requests.Response]
@@ -3115,7 +3115,7 @@ class AbstractAnnofabApi(abc.ABC):
         Args:
             project_id (str):  プロジェクトID (required)
             request_body (Any): Request Body
-                request_body (Dict[str, Dict[str, __DictStrKeyAnyValue__]]):  (required)
+                request_body (Dict[str, Dict[str, object]]):  (required)
 
         Returns:
             tuple[Message, requests.Response]

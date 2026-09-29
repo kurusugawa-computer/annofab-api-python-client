@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
+from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
 from annofabapi.pydantic_models.task_history_short import TaskHistoryShort
@@ -29,13 +30,22 @@ class Task(BaseModel):
     Task
     """
 
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
-    task_id: StrictStr = Field(description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
+    task_id: StrictStr = Field(
+        description="タスクID。[値の制約についてはこちら。](#section/API-Convention/APIID) ", json_schema_extra={"examples": ["task_001"]}
+    )
     phase: TaskPhase
     phase_stage: Annotated[int, Field(strict=True, ge=1)] = Field(description="タスクのフェーズのステージ番号")
     status: TaskStatus
     input_data_id_list: List[StrictStr] = Field(description="タスクに含まれる入力データのID")
-    account_id: StrictStr | None = Field(default=None, description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    account_id: StrictStr | None = Field(
+        default=None,
+        description="アカウントID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     histories_by_phase: List[TaskHistoryShort] = Field(description="簡易的なタスク履歴（あるフェーズを誰が担当したか）")
     work_time_span: StrictInt = Field(description="累計実作業時間(ミリ秒)")
     number_of_rejections: StrictInt = Field(
@@ -83,7 +93,8 @@ class Task(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -94,8 +105,7 @@ class Task(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -123,8 +133,7 @@ class Task(BaseModel):
         _items = []
         if self.histories_by_phase:
             for _item_histories_by_phase in self.histories_by_phase:
-                if _item_histories_by_phase:
-                    _items.append(_item_histories_by_phase.to_dict())
+                _items.append(_item_histories_by_phase.to_dict() if _item_histories_by_phase is not None else None)
             _dict["histories_by_phase"] = _items
         return _dict
 

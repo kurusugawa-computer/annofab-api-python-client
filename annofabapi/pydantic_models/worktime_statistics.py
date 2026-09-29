@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 from annofabapi.pydantic_models.account_worktime_statistics import AccountWorktimeStatistics
@@ -28,7 +29,10 @@ class WorktimeStatistics(BaseModel):
     WorktimeStatistics
     """
 
-    project_id: StrictStr = Field(description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    project_id: StrictStr = Field(
+        description="プロジェクトID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     var_date: str = Field(alias="date")
     by_tasks: List[WorktimeStatisticsItem] = Field(
         description="タスクごとに計算した「画像1枚あたりの作業時間平均」の統計（動画プロジェクトの場合は空リスト）"
@@ -39,7 +43,8 @@ class WorktimeStatistics(BaseModel):
     __properties: ClassVar[List[str]] = ["project_id", "date", "by_tasks", "by_inputs", "by_minutes", "accounts"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -50,8 +55,7 @@ class WorktimeStatistics(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -79,29 +83,25 @@ class WorktimeStatistics(BaseModel):
         _items = []
         if self.by_tasks:
             for _item_by_tasks in self.by_tasks:
-                if _item_by_tasks:
-                    _items.append(_item_by_tasks.to_dict())
+                _items.append(_item_by_tasks.to_dict() if _item_by_tasks is not None else None)
             _dict["by_tasks"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in by_inputs (list)
         _items = []
         if self.by_inputs:
             for _item_by_inputs in self.by_inputs:
-                if _item_by_inputs:
-                    _items.append(_item_by_inputs.to_dict())
+                _items.append(_item_by_inputs.to_dict() if _item_by_inputs is not None else None)
             _dict["by_inputs"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in by_minutes (list)
         _items = []
         if self.by_minutes:
             for _item_by_minutes in self.by_minutes:
-                if _item_by_minutes:
-                    _items.append(_item_by_minutes.to_dict())
+                _items.append(_item_by_minutes.to_dict() if _item_by_minutes is not None else None)
             _dict["by_minutes"] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in accounts (list)
         _items = []
         if self.accounts:
             for _item_accounts in self.accounts:
-                if _item_accounts:
-                    _items.append(_item_accounts.to_dict())
+                _items.append(_item_accounts.to_dict() if _item_accounts is not None else None)
             _dict["accounts"] = _items
         return _dict
 

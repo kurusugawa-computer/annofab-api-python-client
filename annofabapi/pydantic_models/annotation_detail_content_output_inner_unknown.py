@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -27,7 +28,8 @@ class AnnotationDetailContentOutputInnerUnknown(BaseModel):
 
     type: StrictStr = Field(alias="_type")
     data: StrictStr = Field(
-        description='アノテーション座標値や区間などの文字列表現です。 アノテーション種類（`annotation_type`）とデータ格納形式（`data_holding_type`）に応じて、以下のとおり表現が変わります。  <table> <tr><th>annotation_type</th><th>data_holding_type</th><th>文字列表現</th></tr> <tr><td>bounding_box</td><td>inner</td><td><code>"左上x,左上y,右下x,右下y"</code></td></tr> <tr><td>point</td><td>inner</td><td><code>"x1,y1"</code></td></tr> <tr><td>polygon / polyline</td><td>inner</td><td><code>"x1,y1,x2,y2, ... "</code></td></tr> <tr><td>range </td><td>inner</td><td><code>"開始時間(ミリ秒),終了時間(ミリ秒) "</code></td></tr> <tr><td>classification</td><td>inner</td><td><code>null</code></td></tr> <tr><td>segmentation</td><td>outer</td><td><code>null</code></td></tr> <tr><td>segmentation_v2</td><td>outer</td><td><code>null</code></td></tr> </table> '
+        description='アノテーション座標値や区間などの文字列表現です。 アノテーション種類（`annotation_type`）とデータ格納形式（`data_holding_type`）に応じて、以下のとおり表現が変わります。  <table> <tr><th>annotation_type</th><th>data_holding_type</th><th>文字列表現</th></tr> <tr><td>bounding_box</td><td>inner</td><td><code>"左上x,左上y,右下x,右下y"</code></td></tr> <tr><td>point</td><td>inner</td><td><code>"x1,y1"</code></td></tr> <tr><td>polygon / polyline</td><td>inner</td><td><code>"x1,y1,x2,y2, ... "</code></td></tr> <tr><td>range </td><td>inner</td><td><code>"開始時間(ミリ秒),終了時間(ミリ秒) "</code></td></tr> <tr><td>classification</td><td>inner</td><td><code>null</code></td></tr> <tr><td>segmentation</td><td>outer</td><td><code>null</code></td></tr> <tr><td>segmentation_v2</td><td>outer</td><td><code>null</code></td></tr> </table> ',
+        json_schema_extra={"examples": ["1,1,5,5"]},
     )
     __properties: ClassVar[List[str]] = ["_type", "data"]
 
@@ -39,7 +41,8 @@ class AnnotationDetailContentOutputInnerUnknown(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -50,8 +53,7 @@ class AnnotationDetailContentOutputInnerUnknown(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

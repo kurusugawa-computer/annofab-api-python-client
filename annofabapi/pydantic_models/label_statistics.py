@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
 
@@ -25,13 +26,17 @@ class LabelStatistics(BaseModel):
     LabelStatistics
     """
 
-    label_id: StrictStr = Field(description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ")
+    label_id: StrictStr = Field(
+        description="ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) ",
+        json_schema_extra={"examples": ["12345678-abcd-1234-abcd-1234abcd5678"]},
+    )
     completed: Annotated[int, Field(strict=True, ge=0)] = Field(description="ラベルごとの受入が完了したアノテーション数")
     wip: Annotated[int, Field(strict=True, ge=0)] = Field(description="ラベルごとの受入が完了していないアノテーション数")
     __properties: ClassVar[List[str]] = ["label_id", "completed", "wip"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -42,8 +47,7 @@ class LabelStatistics(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:

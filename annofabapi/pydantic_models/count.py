@@ -17,6 +17,7 @@ import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from pydantic_core import to_jsonable_python
 from typing_extensions import Self
 
 
@@ -27,13 +28,12 @@ class Count(BaseModel):
 
     key: StrictStr | None = Field(default=None, description="集約対象の `field` の値です。 ")
     count: StrictInt | None = Field(default=None, description="集約対象 `field` の値が `key` の値と等しかったリソースの件数です。 ")
-    aggregations: List[AggregationResult] | None = Field(
-        default=None, description="この集約のサブ集約です。サブ集約がないときは空の配列になります。 "
-    )
+    aggregations: List[CountResult] | None = Field(default=None, description="この集約のサブ集約です。サブ集約がないときは空の配列になります。 ")
     __properties: ClassVar[List[str]] = ["key", "count", "aggregations"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -44,8 +44,7 @@ class Count(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Self | None:
@@ -73,8 +72,7 @@ class Count(BaseModel):
         _items = []
         if self.aggregations:
             for _item_aggregations in self.aggregations:
-                if _item_aggregations:
-                    _items.append(_item_aggregations.to_dict())
+                _items.append(_item_aggregations.to_dict() if _item_aggregations is not None else None)
             _dict["aggregations"] = _items
         return _dict
 
@@ -91,15 +89,13 @@ class Count(BaseModel):
             {
                 "key": obj.get("key"),
                 "count": obj.get("count"),
-                "aggregations": [AggregationResult.from_dict(_item) for _item in obj["aggregations"]]
-                if obj.get("aggregations") is not None
-                else None,
+                "aggregations": [CountResult.from_dict(_item) for _item in obj["aggregations"]] if obj.get("aggregations") is not None else None,
             }
         )
         return _obj
 
 
-from annofabapi.pydantic_models.aggregation_result import AggregationResult
+from annofabapi.pydantic_models.count_result import CountResult
 
 # TODO: Rewrite to not use raise_errors
 Count.model_rebuild(raise_errors=False)
