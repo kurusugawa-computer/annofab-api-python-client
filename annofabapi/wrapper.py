@@ -251,7 +251,7 @@ class Wrapper:
             logger.info("%s :: ダウンロードします。 :: Content-Length='%s', Last-Modified='%s'", logger_prefix, content_length, last_modified)
 
             p.parent.mkdir(parents=True, exist_ok=True)
-            with open(dest_path, "wb") as f:
+            with p.open("wb") as f:
                 sum_chunk_size = 0
                 for chunk in response.iter_content(chunk_size=chunk_size):
                     sum_chunk_size += len(chunk)
@@ -940,7 +940,7 @@ class Wrapper:
 
         # content_type を推測
         new_content_type = self._get_mime_type(file_path) if content_type is None else content_type
-        with open(file_path, "rb") as f:
+        with Path(file_path).open("rb") as f:
             try:
                 return self.upload_data_to_s3(project_id, data=f, content_type=new_content_type)
             except CheckSumError as e:
@@ -968,7 +968,7 @@ class Wrapper:
         """  # noqa: E501
 
         def get_md5_value_from_file(fp) -> str:  # noqa: ANN001
-            md5_obj = hashlib.md5()
+            md5_obj = hashlib.md5(usedforsecurity=False)
             while True:
                 chunk = fp.read(2048 * md5_obj.block_size)
                 if len(chunk) == 0:
@@ -998,7 +998,7 @@ class Wrapper:
             data.seek(0)
             uploaded_data_hash = get_md5_value_from_file(data)
         else:
-            uploaded_data_hash = hashlib.md5(data).hexdigest()
+            uploaded_data_hash = hashlib.md5(data, usedforsecurity=False).hexdigest()
 
         # ETagにはダブルクォートが含まれているため、`str_md5`もそれに合わせる
         response_etag = res_put.headers["ETag"]
@@ -1161,7 +1161,7 @@ class Wrapper:
 
         def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1193,7 +1193,7 @@ class Wrapper:
 
         def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1218,7 +1218,7 @@ class Wrapper:
 
         def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1243,7 +1243,7 @@ class Wrapper:
 
         def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content
 
@@ -1267,7 +1267,7 @@ class Wrapper:
 
         def decorator(f, project_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, *args, **kwargs)
                 return content["data_series"]
 
@@ -1295,7 +1295,7 @@ class Wrapper:
 
         def decorator(f, project_id: str, account_id: str):  # noqa: ANN001, ANN202
             @functools.wraps(f)
-            def wrapper(*args, **kwargs):  # noqa: ANN202
+            def wrapper(*args: object, **kwargs):  # noqa: ANN202
                 content, _ = f(project_id, account_id, *args, **kwargs)
                 return content["data_series"]
 
@@ -2022,7 +2022,7 @@ class Wrapper:
         """
         new_content_type = self._get_mime_type(file_path) if content_type is None else content_type
 
-        with open(file_path, "rb") as f:
+        with Path(file_path).open("rb") as f:
             return self.upload_data_as_instruction_image(project_id, image_id, data=f, content_type=new_content_type)
 
     def upload_data_as_instruction_image(self, project_id: str, image_id: str, data: Any, content_type: str) -> str:  # noqa: ANN401

@@ -539,7 +539,8 @@ class RestrictionAst(BaseModel):
         `RestrictionAst` の構造がAST種別に整合しているか検証します。
 
         Raises:
-            ValueError: AST種別に対して必須フィールドが不足している場合、または型が不正な場合
+            ValueError: AST種別に対して必須フィールドが不足している場合
+            TypeError: AST種別に対してフィールドの型が不正な場合
         """
         required_fields = self._get_required_fields(self.type)
         actual_fields = {
@@ -566,19 +567,19 @@ class RestrictionAst(BaseModel):
                 | RestrictionAstType.NOT_MATCHES_STRING
             ):
                 if not isinstance(self.value, str):
-                    raise ValueError(f"AST種別'{self.type}'の'value'は文字列である必要があります。")
+                    raise TypeError(f"AST種別'{self.type}'の'value'は文字列である必要があります。")
             case RestrictionAstType.EQUALS_INTEGER | RestrictionAstType.NOT_EQUALS_INTEGER:
                 if not isinstance(self.value, int):
-                    raise ValueError(f"AST種別'{self.type}'の'value'は整数である必要があります。")
+                    raise TypeError(f"AST種別'{self.type}'の'value'は整数である必要があります。")
             case RestrictionAstType.HAS_CHOICE | RestrictionAstType.NOT_HAS_CHOICE:
                 if not isinstance(self.choice_name, str):
-                    raise ValueError(f"AST種別'{self.type}'の'choice_name'は文字列である必要があります。")
+                    raise TypeError(f"AST種別'{self.type}'の'choice_name'は文字列である必要があります。")
             case RestrictionAstType.HAS_LABEL:
                 if not isinstance(self.label_names, list) or any(not isinstance(label_name, str) for label_name in self.label_names):
-                    raise ValueError("AST種別'has_label'の'label_names'は文字列のリストである必要があります。")
+                    raise TypeError("AST種別'has_label'の'label_names'は文字列のリストである必要があります。")
             case RestrictionAstType.CAN_INPUT:
                 if not isinstance(self.enable, bool):
-                    raise ValueError("AST種別'can_input'の'enable'は真偽値である必要があります。")
+                    raise TypeError("AST種別'can_input'の'enable'は真偽値である必要があります。")
             case (
                 RestrictionAstType.CHECKED
                 | RestrictionAstType.UNCHECKED

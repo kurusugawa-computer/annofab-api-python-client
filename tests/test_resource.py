@@ -12,10 +12,6 @@ from annofabapi.resource import build, build_from_env
 
 
 class TestBuild:
-    # def test_build_from_netrc(self):
-    #     # ".netrc"ファイルが存在すること前提
-    #     assert isinstance(build_from_netrc(), annofabapi.Resource)
-
     def test_raise_ValueError(self):
         with pytest.raises(ValueError):
             annofabapi.AnnofabApi(IdPass("test_user", ""))

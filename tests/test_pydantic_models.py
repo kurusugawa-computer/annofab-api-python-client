@@ -1,5 +1,6 @@
 import configparser
 import json
+from pathlib import Path
 
 import pytest
 
@@ -70,7 +71,7 @@ def test_AnnotationSpecsV3():
 
 
 def test__SimpleAnnotation():
-    with open("tests/data/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json") as f:
+    with Path("tests/data/simple-annotation/sample_1/c86205d1-bdd4-4110-ae46-194e661d622b.json").open() as f:
         content = json.load(f)
     SimpleAnnotation.from_dict(content)
 

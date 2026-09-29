@@ -46,7 +46,7 @@ test = [
     "pytest-cov",
 ]
 linter = [
-    "ruff>=0.15 ; python_version >= '3.13'",
+    "ruff>=0.16 ; python_version >= '3.13'",
     "mypy>=2 ; python_version >= '3.13'",
     "types-requests",
     "types-python-dateutil",
@@ -92,40 +92,40 @@ exclude = [
 
 [tool.ruff.lint]
 exclude = [
-    'annofabapi/pydantic_models/.*\.py',
+    "annofabapi/pydantic_models/*.py",
+]
+
+extend-select = [
+    "ISC004",
+    "S108",
+    "S324",
+    "TRY004",
+    "TRY201",
 ]
 
 ignore = [
-    "PD002", #すでにpandasで`inplace=True`はいろんなところで使っているため
     "RUF001", # 全角記号など`ambiguous unicode character`も使いたいため
     "RUF002",# 全角記号など`ambiguous unicode character`も使いたいため
     "RUF003",# 全角記号など`ambiguous unicode character`も使いたいため
     "PLC1901", # compare-to-empty-string : `if a == "`のように空文字列で直接比較したいときがあるため
     "PLR2004", # magic-value-comparison: listのサイズで判定するときがよくあるため
-    "ANN002", # missing-type-args
     "ANN003", # missing-type-kwargs
-    "ERA", # : 役立つこともあるが、コメントアウトしていないコードも警告されるので無視する
     "TD", # flake8-todos
     "FIX", # flake8-fixme
     "SIM108", # if-else-block-instead-of-if-exp, 三項演算子が読みにくい場合もあるので無視する
     "CPY001",
     # 以下のルールはコードに合っていないので無効化した
-    "RSE", # flake8-raise
     "D", # pydocstyle, Docstringを中途半端にしか書いていないので、除外する
     "C90", # mccabe
-    "T20", # flake8-print
     "SLF", #  flake8-self
-    "BLE", # flake8-blind-except
     "FBT", # flake8-boolean-trap
     "TRY", # tryceratops
     "COM", # flake8-commas
     "S", # flake8-bandit
     "EM",#flake8-errmsg
-    "EXE", # flake8-executable
     "ICN", # flake8-import-conventions
     "RET", #flake8-return
     "TCH", # flake8-type-checking
-    "PTH", #pathlibを使わないコードが多いので、除外する
     "ISC", #flake8-implicit-str-concat
     "N", # pep8-naming
     "PT", # flake8-pytest-style

@@ -1,18 +1,19 @@
 import csv
-import os
+from pathlib import Path
 
 from annofabapi import AnnofabApi
 
 
-def create_csv_for_task(file_path, task_id: str, input_data_id: str):
+def create_csv_for_task(file_path: str | Path, task_id: str, input_data_id: str) -> None:
     """
     タスク生成用のCSVを作成する
     """
     first_line = [task_id, "", input_data_id]
     lines = [first_line]
 
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    with open(file_path, "w") as f:
+    path = Path(file_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w") as f:
         writer = csv.writer(f, delimiter=",", lineterminator="\n")
         writer.writerows(lines)
 
