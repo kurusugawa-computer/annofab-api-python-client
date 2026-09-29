@@ -30,7 +30,7 @@ Example:
 from abc import ABC, abstractmethod
 from collections.abc import Collection
 from enum import Enum
-from typing import Any, NoReturn, cast
+from typing import Any, NoReturn, assert_never, cast
 
 from pydantic import BaseModel, ConfigDict, Field, GetJsonSchemaHandler, field_serializer, model_validator
 from pydantic.json_schema import JsonSchemaValue
@@ -38,7 +38,6 @@ from pydantic_core import CoreSchema
 
 from annofabapi.pydantic_models.additional_data_definition_type import AdditionalDataDefinitionType
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, AttributeChoice, AttributeDefinition, get_choice, get_english_message
-from annofabapi.util.type_util import assert_noreturn
 
 
 class RestrictionAstType(str, Enum):
@@ -532,7 +531,7 @@ class RestrictionAst(BaseModel):
             case RestrictionAstType.IMPLY:
                 return {"premise", "conclusion"}
             case _ as never:
-                assert_noreturn(never)
+                assert_never(never)
 
     @model_validator(mode="after")
     def validate_restriction_ast(self) -> "RestrictionAst":  # noqa: PLR0912
@@ -589,7 +588,7 @@ class RestrictionAst(BaseModel):
             ):
                 pass
             case _ as never:
-                assert_noreturn(never)
+                assert_never(never)
 
         return self
 
@@ -658,7 +657,7 @@ class RestrictionAst(BaseModel):
                 case RestrictionAstType.IMPLY:
                     raise AssertionError("`imply`は事前に処理されるため、ここには到達しません。")
                 case _ as never:
-                    assert_noreturn(never)
+                    assert_never(never)
             return text
 
         def flatten_imply_conditions(ast: RestrictionAst) -> tuple[list[RestrictionAst], RestrictionAst]:
@@ -1048,7 +1047,7 @@ def _ast_to_restriction(ast: RestrictionAst, *, fac: AttributeFactory) -> Restri
             case RestrictionAstType.IMPLY:
                 raise AssertionError("`imply`は `_ast_to_restriction` で処理されるため、ここには到達しません。")
             case _ as never:
-                assert_noreturn(never)
+                assert_never(never)
         return restriction
 
     match ast.type:

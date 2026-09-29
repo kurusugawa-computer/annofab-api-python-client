@@ -5,7 +5,7 @@ import time
 from collections.abc import Callable, Collection
 from functools import wraps
 from json import JSONDecodeError
-from typing import Any, TypeVar, overload
+from typing import Any, TypeVar, assert_never, overload
 
 import backoff
 import requests
@@ -15,7 +15,6 @@ from requests.cookies import RequestsCookieJar
 from annofabapi.credentials import IdPass, Pat, Tokens
 from annofabapi.exceptions import InvalidMfaCodeError, MfaEnabledUserExecutionError, NotLoggedInError
 from annofabapi.generated_api import AbstractAnnofabApi
-from annofabapi.util.type_util import assert_noreturn
 
 logger = logging.getLogger(__name__)
 
@@ -730,7 +729,7 @@ class AnnofabApi(AbstractAnnofabApi):
         elif isinstance(self.credentials, Pat):
             self._login_pat(self.credentials)
         else:
-            assert_noreturn(self.credentials)
+            assert_never(self.credentials)
 
     def _login_id_pass(self, id_pass: IdPass, mfa_code: str | None = None) -> None:
         login_info = {"user_id": id_pass.user_id, "password": id_pass.password}
