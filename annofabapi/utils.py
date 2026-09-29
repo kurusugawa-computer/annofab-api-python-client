@@ -1,7 +1,5 @@
 import datetime
 import logging
-import secrets
-import string
 
 import dateutil
 import dateutil.tz
@@ -10,28 +8,10 @@ from annofabapi.models import TaskHistory, TaskHistoryShort, TaskPhase
 
 logger = logging.getLogger(__name__)
 
-_TRACKING_ID_LETTERS_LENGTH = 3
-"""tracking_idのハイフン前後に配置する英字の文字数。"""
-
 
 #########################################
 # Public Method
 #########################################
-
-
-def generate_tracking_id() -> str:
-    """Annofab画像エディタで識別しやすいtracking_idを生成する。
-
-    生成するIDはグローバルな一意性を保証しない。同一画像系列内の物体を
-    人間が識別する用途を想定している。
-
-    Returns:
-        ``XXX-YYY9`` 形式のtracking_id。
-    """
-    first_letters = "".join(secrets.choice(string.ascii_uppercase) for _ in range(_TRACKING_ID_LETTERS_LENGTH))
-    last_letters = "".join(secrets.choice(string.ascii_uppercase) for _ in range(_TRACKING_ID_LETTERS_LENGTH))
-    digit = secrets.choice(string.digits)
-    return f"{first_letters}-{last_letters}{digit}"
 
 
 def str_now() -> str:

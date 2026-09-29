@@ -1,20 +1,13 @@
 from __future__ import annotations
 
-import re
 from typing import Any
 
 from annofabapi.models import TaskPhase
 from annofabapi.utils import (
-    generate_tracking_id,
     get_number_of_rejections,
     get_task_history_index_skipped_acceptance,
     get_task_history_index_skipped_inspection,
 )
-
-
-def test_generate_tracking_id():
-    for _ in range(100):
-        assert re.fullmatch(r"[A-Z]{3}-[A-Z]{3}[0-9]", generate_tracking_id()) is not None
 
 
 class TestTaskHistoryUtils:
