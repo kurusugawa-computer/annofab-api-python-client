@@ -487,7 +487,7 @@ class Test__RestrictionAst:
             RestrictionAst(type=RestrictionAstType.EQUALS_STRING, attribute_name="note")
 
     def test__invalid_field_type(self):
-        with pytest.raises(ValidationError):
+        with pytest.raises(TypeError):
             RestrictionAst(type=RestrictionAstType.EQUALS_STRING, attribute_name="note", value=1)
 
     def test__model_json_schema(self):

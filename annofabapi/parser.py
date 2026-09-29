@@ -1,20 +1,14 @@
 import abc
 import json
-import os
 import zipfile
 from collections.abc import Callable, Iterator
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from annofabapi.dataclass.annotation import FullAnnotation, SimpleAnnotation
 from annofabapi.exceptions import AnnotationOuterFileNotFoundError
 
 CONVERT_ANNOTATION_DETAIL_DATA_FUNC = Callable[[dict[str, Any]], Any]
-
-
-def _trim_extension(file_path: str) -> str:
-    """ファイルパスから拡張子を除去した文字列を返す"""
-    return os.path.splitext(file_path)[0]
 
 
 class SimpleAnnotationParser(abc.ABC):
@@ -37,7 +31,7 @@ class SimpleAnnotationParser(abc.ABC):
         p = Path(json_file_path)
         self.__json_file_path = json_file_path
         self.__task_id = p.parent.name
-        self.__input_data_id = _trim_extension(p.name)
+        self.__input_data_id = p.stem
 
     @property
     def task_id(self) -> str:
@@ -120,7 +114,7 @@ class FullAnnotationParser(abc.ABC):
         p = Path(json_file_path)
         self.__json_file_path = json_file_path
         self.__task_id = p.parent.name
-        self.__input_data_id = _trim_extension(p.name)
+        self.__input_data_id = p.stem
 
     @property
     def task_id(self) -> str:
@@ -208,7 +202,7 @@ class SimpleAnnotationZipParser(SimpleAnnotationParser):
             return json.load(entry)
 
     def open_outer_file(self, data_uri: str):  # noqa: ANN201
-        outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
+        outer_file_path = str(PurePosixPath(self.json_file_path).with_suffix("") / data_uri)
         try:
             return self.__zip_file.open(outer_file_path, mode="r")
         except KeyError as e:
@@ -235,13 +229,13 @@ class SimpleAnnotationDirParser(SimpleAnnotationParser):
         super().__init__(str(json_file_path))
 
     def load_json(self) -> Any:  # noqa: ANN401
-        with open(self.json_file_path, encoding="utf-8") as f:
+        with Path(self.json_file_path).open(encoding="utf-8") as f:
             return json.load(f)
 
     def open_outer_file(self, data_uri: str):  # noqa: ANN201
-        outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
+        outer_file_path = Path(self.json_file_path).with_suffix("") / data_uri
         try:
-            return open(outer_file_path, mode="rb")
+            return outer_file_path.open(mode="rb")
         except FileNotFoundError as e:
             raise AnnotationOuterFileNotFoundError(str(outer_file_path)) from e
 
@@ -273,7 +267,7 @@ class FullAnnotationZipParser(FullAnnotationParser):
             return json.load(entry)
 
     def open_outer_file(self, data_uri: str):  # noqa: ANN201
-        outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
+        outer_file_path = str(PurePosixPath(self.json_file_path).with_suffix("") / data_uri)
         try:
             return self.__zip_file.open(outer_file_path, mode="r")
         except KeyError as e:
@@ -301,13 +295,13 @@ class FullAnnotationDirParser(FullAnnotationParser):
         super().__init__(str(json_file_path))
 
     def load_json(self) -> Any:  # noqa: ANN401
-        with open(self.json_file_path, encoding="utf-8") as f:
+        with Path(self.json_file_path).open(encoding="utf-8") as f:
             return json.load(f)
 
     def open_outer_file(self, data_uri: str):  # noqa: ANN201
-        outer_file_path = _trim_extension(self.json_file_path) + "/" + data_uri
+        outer_file_path = Path(self.json_file_path).with_suffix("") / data_uri
         try:
-            return open(outer_file_path, mode="rb")
+            return outer_file_path.open(mode="rb")
         except FileNotFoundError as e:
             raise AnnotationOuterFileNotFoundError(str(outer_file_path)) from e
 

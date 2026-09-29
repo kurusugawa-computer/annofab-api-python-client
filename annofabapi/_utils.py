@@ -15,7 +15,7 @@ def _issue_deprecated_warning_with_class(cls, stacklevel: int, deprecated_date: 
 def _process_class(cls, deprecated_date: str, new_class_name: str | None = None):  # noqa: ANN001, ANN202
     def decorator(function):  # noqa: ANN001, ANN202
         @wraps(function)
-        def wrapped(*args, **kwargs):  # noqa: ANN202
+        def wrapped(*args: object, **kwargs):  # noqa: ANN202
             _issue_deprecated_warning_with_class(cls, stacklevel=3, deprecated_date=deprecated_date, new_class_name=new_class_name)
             return function(*args, **kwargs)
 
