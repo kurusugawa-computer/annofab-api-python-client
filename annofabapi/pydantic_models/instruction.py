@@ -25,7 +25,7 @@ class Instruction(BaseModel):
     Instruction
     """
 
-    html: StrictStr = Field(description="作業ガイドのHTML")
+    html: StrictStr | None = Field(default=None, description="作業ガイドのHTML")
     last_updated_datetime: str = Field(description="更新日時")
     __properties: ClassVar[List[str]] = ["html", "last_updated_datetime"]
 
