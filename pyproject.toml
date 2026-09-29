@@ -46,7 +46,7 @@ test = [
     "pytest-cov",
 ]
 linter = [
-    "ruff>=0.15 ; python_version >= '3.13'",
+    "ruff>=0.16 ; python_version >= '3.13'",
     "mypy>=2 ; python_version >= '3.13'",
     "types-requests",
     "types-python-dateutil",
