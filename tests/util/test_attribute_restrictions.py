@@ -426,6 +426,10 @@ class Test__Restriction:
 
 
 class Test__RestrictionAst:
+    def test__str(self):
+        assert str(RestrictionAstType.CHECKED) == "checked"
+        assert str(AdditionalDataDefinitionType.TEXT) == "text"
+
     def test__model_dump(self):
         ast = RestrictionAst(
             type=RestrictionAstType.IMPLY,

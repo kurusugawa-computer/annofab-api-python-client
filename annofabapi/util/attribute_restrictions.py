@@ -29,7 +29,7 @@ Example:
 
 from abc import ABC, abstractmethod
 from collections.abc import Collection
-from enum import Enum
+from enum import StrEnum
 from typing import Any, NoReturn, assert_never, cast
 
 from pydantic import BaseModel, ConfigDict, Field, GetJsonSchemaHandler, field_serializer, model_validator
@@ -40,7 +40,7 @@ from annofabapi.pydantic_models.additional_data_definition_type import Additiona
 from annofabapi.util.annotation_specs import AnnotationSpecsAccessor, AttributeChoice, AttributeDefinition, get_choice, get_english_message
 
 
-class RestrictionAstType(str, Enum):
+class RestrictionAstType(StrEnum):
     """属性制約ASTの種別です。"""
 
     CHECKED = "checked"

@@ -12,12 +12,12 @@ Do not edit the class manually.
 from __future__ import annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 
 from typing_extensions import Self
 
 
-class InputDataType(str, Enum):
+class InputDataType(StrEnum):
     """
     アノテーションする入力データの種類。 * `image` - 画像 * `movie` - 動画 * `custom` - カスタム
     """

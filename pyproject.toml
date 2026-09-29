@@ -176,7 +176,6 @@ select = [
     "UP007", # non-pep604-annotation-union
     "UP006", # non-pep585-annotation
     "UP035", #  deprecated-import
-    "UP042", # StrEnumに変更するとstr()の結果が変わるため、生成された列挙型の互換性を維持する
     "E402", # module-level-imports
     "C4",  # nnecessary-literal-set
     "F841",
@@ -186,10 +185,6 @@ select = [
     "F811",  # redefined-while-unused
     "FURB171", # single-item-membership-test
 ]
-"annofabapi/util/attribute_restrictions.py" = [
-    "UP042", # StrEnumに変更するとstr()の結果が変わるため、既存の列挙型の互換性を維持する
-]
-
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
