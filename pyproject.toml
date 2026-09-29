@@ -91,10 +91,6 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-exclude = [
-    "annofabapi/pydantic_models/*.py",
-]
-
 extend-select = [
     "ISC004",
     "S108",
