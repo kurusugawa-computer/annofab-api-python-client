@@ -576,7 +576,7 @@ class RestrictionAst(BaseModel):
                     raise TypeError(f"AST種別'{self.type}'の'choice_name'は文字列である必要があります。")
             case RestrictionAstType.HAS_LABEL:
                 if not isinstance(self.label_names, list) or any(not isinstance(label_name, str) for label_name in self.label_names):
-                    raise ValueError("AST種別'has_label'の'label_names'は文字列のリストである必要があります。")
+                    raise TypeError("AST種別'has_label'の'label_names'は文字列のリストである必要があります。")
             case RestrictionAstType.CAN_INPUT:
                 if not isinstance(self.enable, bool):
                     raise TypeError("AST種別'can_input'の'enable'は真偽値である必要があります。")
