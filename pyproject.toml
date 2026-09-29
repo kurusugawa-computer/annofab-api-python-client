@@ -27,7 +27,7 @@ dependencies = [
     "backoff",
     "dataclasses-json",
     "more-itertools",
-    "pydantic>=2,<3",
+    "pydantic>=2.11,<3",
 ]
 
 [project.optional-dependencies]
