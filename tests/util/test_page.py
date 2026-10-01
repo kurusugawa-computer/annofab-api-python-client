@@ -4,7 +4,15 @@ page.pyのテストコード
 
 import pytest
 
-from annofabapi.util.page import create_3dpc_editor_url, create_image_editor_url, create_video_editor_url
+from annofabapi.util.page import create_3dpc_editor_url, create_image_editor_url, create_project_url, create_video_editor_url
+
+
+class TestCreateProjectUrl:
+    """create_project_url関数のテストクラス"""
+
+    def test_basic_url(self):
+        result = create_project_url("project1")
+        assert result == "https://annofab.com/projects/project1"
 
 
 class TestCreateVideoEditorUrl:
