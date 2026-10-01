@@ -3,6 +3,19 @@ Annofabの画面に関するユーティリティ関数を定義します。
 """
 
 
+def create_project_url(project_id: str) -> str:
+    """プロジェクトトップ画面のURLを生成します。
+
+    Args:
+        project_id: プロジェクトID
+
+    Returns:
+        プロジェクトトップ画面のURL
+        （例： ``https://annofab.com/projects/p1`` ）
+    """
+    return f"https://annofab.com/projects/{project_id}"
+
+
 def create_video_editor_url(project_id: str, task_id: str, *, annotation_id: str | None = None, seek_seconds: float | None = None) -> str:
     """
     動画エディタ画面のURLを生成します。
