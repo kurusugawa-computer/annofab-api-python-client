@@ -10,7 +10,7 @@ from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from annofabapi.util.annotation_specs import get_english_message
+from annofabapi.util.annotation_specs import get_attribute_name_en, get_choice_name_en, get_label_name_en
 
 
 @dataclass(frozen=True)
@@ -81,13 +81,11 @@ class AttributeRestrictionValidator:
                 if attribute_id not in label["additional_data_definitions"]:
                     continue
                 if not self._evaluate(restriction, annotation, by_id):
-                    results.append(
-                        AttributeRestrictionViolation(annotation["annotation_id"], attribute_id, get_english_message(attribute["name"]), index)
-                    )
+                    results.append(AttributeRestrictionViolation(annotation["annotation_id"], attribute_id, get_attribute_name_en(attribute), index))
         return results
 
     def _find_label(self, name: str) -> Mapping[str, Any]:
-        labels = [label for label in self._labels if get_english_message(label["label_name"]) == name]
+        labels = [label for label in self._labels if get_label_name_en(label) == name]
         if len(labels) != 1:
             raise ValueError(f"ラベル名を一意に解決できません: {name!r}")
         return labels[0]
@@ -115,11 +113,11 @@ class AttributeRestrictionValidator:
         label = self._find_label(annotation["label"])
         if attribute_id not in label["additional_data_definitions"]:
             raise ValueError(f"ラベルに属性がありません: {attribute_id}")
-        name = get_english_message(attribute["name"])
+        name = get_attribute_name_en(attribute)
         same_name = [
             item
             for item_id, item in self._attributes.items()
-            if item_id in label["additional_data_definitions"] and get_english_message(item["name"]) == name
+            if item_id in label["additional_data_definitions"] and get_attribute_name_en(item) == name
         ]
         if len(same_name) != 1:
             raise ValueError(f"属性名を一意に解決できません: {name!r}")
@@ -137,7 +135,7 @@ class AttributeRestrictionValidator:
             case "text" | "comment" | "tracking" | "link" if isinstance(value, str):
                 return value
             case "choice" | "select" if isinstance(value, str):
-                choices = [choice for choice in attribute["choices"] if get_english_message(choice["name"]) == value]
+                choices = [choice for choice in attribute["choices"] if get_choice_name_en(choice) == value]
                 if len(choices) != 1:
                     raise ValueError(f"選択肢名を一意に解決できません: {value!r}")
                 return str(choices[0]["choice_id"])
