@@ -277,17 +277,16 @@ validator = AttributeRestrictionValidator(annotation_specs)
 for parser in annofabapi.parser.lazy_parse_simple_annotation_zip(Path("simple-annotation.zip")):
     annotation = parser.load_json()
     results = validator.validate_simple_annotation_details(annotation["details"])
-    for result in results:
-        if result.status != "satisfied":
-            print(annotation["task_id"], annotation["input_data_id"], result)
+    for violation in results:
+        print(annotation["task_id"], annotation["input_data_id"], violation)
 ```
 
 - 引数には同一タスク・同一入力データの `details` 全件を渡してください。リンク先の検索にも使用します。
-- 結果は「アノテーション × トップレベルの制約」で1件です。`restriction_index` は仕様の `restrictions` 内の0始まりの位置です。
-- `status` は `satisfied`（成立）、`violated`（違反）、`undetermined`（判定不能）のいずれかです。
-  `message` は判定不能の説明であり、機械処理用の固定形式ではありません。
+- 結果は違反した「アノテーション × トップレベルの制約」で1件です。`restriction_index` は仕様の `restrictions` 内の0始まりの位置です。
+- 各違反は `annotation_id`、`attribute_id`、`restriction_index` の3項目を持ちます。
+  成立・適用対象外の制約は返さず、違反0件なら空リストです。制約0件・アノテーション0件の場合も空リストです。
 - `Equals` / `NotEquals`、`Matches` / `NotMatches`、ネストした `Imply`、`HasLabel` に対応します。
-  `Imply` の前提がfalseの場合は成立です。前提が判定不能でも後続条件がtrueなら成立、それ以外は判定不能です。
+  `Imply` の前提がfalseの場合は違反を返しません。前提がtrueの場合に後続条件を評価し、違反時は後続条件の属性IDを返します。
 - ラベルに属さない属性への制約、読取専用属性への制約、結論が `CanInput` の制約は結果に含めません。
   条件付き `CanInput` による他の制約の有効・無効の切り替えは再現しません。
 - 未設定・nullは空値、チェックボックスの未設定・null・空文字はfalseと扱います。デフォルト値の補完や空白の除去は行いません。
@@ -295,9 +294,12 @@ for parser in annofabapi.parser.lazy_parse_simple_annotation_zip(Path("simple-an
 - 正規表現はPythonの `re.fullmatch` による全体一致です。例えば `\d` は数字1桁に一致し、2桁の数字には一致しません。
   Annofabの正規表現と完全互換ではありません。
 - `HasLabel` は空リンクを許可します（必須条件は別途 `NotEquals ""` で評価）。許可ラベルが空のときはラベルを制限しません。
-  空でないリンクの参照先が見つからない場合は判定不能です。
-- 解決できない・曖昧なラベル名、属性名、選択肢名、不正な属性値・正規表現、未対応条件は判定不能として扱います。
-  判定不能な条件があっても、他の条件の評価は続行します。
+  空でないリンクの参照先が見つからない場合は `ValueError` にします。
+- 評価に必要な名前を解決できない場合、不正な属性値・正規表現、未対応条件は `ValueError` にします。
+  検証を中断するため、途中までの違反一覧は返しません。Implyの前提が評価できない場合も同様です。
+- 属性名は対象ラベル内で解決します。別ラベル間で同じ属性名が使われていても構いませんが、
+  同じラベル内で属性名が重複して一意に解決できない場合は `ValueError` にします。
+  ラベルの英語名、参照する選択肢の英語名が重複して一意に解決できない場合も同様です。
 
 Annofabの提出時検証を完全に再現する機能ではありません。
 ZIPと仕様の英語名を対応付けるため、可能ならZIPに対応する時点の仕様を使用してください。

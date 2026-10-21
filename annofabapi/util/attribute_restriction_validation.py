@@ -8,14 +8,14 @@ import copy
 import re
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any
 
 from annofabapi.util.annotation_specs import get_english_message
 
 
 @dataclass(frozen=True)
-class RestrictionEvaluation:
-    """アノテーションとトップレベル制約の組に対する評価結果。"""
+class AttributeRestrictionViolation:
+    """違反したアノテーション・属性・トップレベル制約の組。"""
 
     annotation_id: str
     """評価対象のアノテーションID。"""
@@ -23,16 +23,6 @@ class RestrictionEvaluation:
     """制約対象の属性ID。"""
     restriction_index: int
     """仕様の ``restrictions`` 内の0始まりの位置。"""
-    status: Literal["satisfied", "violated", "undetermined"]
-    """成立、違反、判定不能のいずれか。"""
-    message: str | None = None
-    """判定不能の場合の説明。機械処理用の固定形式ではありません。"""
-
-
-@dataclass(frozen=True)
-class _ConditionResult:
-    value: bool | None
-    message: str | None = None
 
 
 class AttributeRestrictionValidator:
@@ -52,7 +42,7 @@ class AttributeRestrictionValidator:
         self._attributes = {attribute["additional_data_definition_id"]: attribute for attribute in specs["additionals"]}
         self._restrictions = specs["restrictions"]
 
-    def validate_simple_annotation_details(self, details: Iterable[Mapping[str, Any]]) -> list[RestrictionEvaluation]:
+    def validate_simple_annotation_details(self, details: Iterable[Mapping[str, Any]]) -> list[AttributeRestrictionViolation]:
         """同一入力データに属するSimple Annotationのdetails全件を検証します。
 
         Args:
@@ -61,11 +51,12 @@ class AttributeRestrictionValidator:
                 各要素にはannotation_id、label、attributesが必要です。
 
         Returns:
-            アノテーション順・制約順の評価結果。適用対象外の制約は含めません。
-            違反がなくてもundeterminedがあれば、全件の適合は確認できていません。
+            アノテーション順・制約順の違反一覧。成立・適用対象外の制約は含めません。
+            違反がない場合は空リストを返します。Implyでは後続条件の属性IDを返します。
 
         Raises:
-            ValueError: 同一入力データ内でアノテーションIDが重複している場合。
+            ValueError: 名前を一意に解決できない、条件を評価できない、
+                または同一入力データ内でアノテーションIDが重複している場合。
             KeyError: 必須の入力フィールドがない場合。
         """
         annotations = list(details)
@@ -82,24 +73,13 @@ class AttributeRestrictionValidator:
                 attribute = self._attributes.get(attribute_id)
                 if self._is_editability(restriction["condition"]) or (attribute is not None and attribute.get("read_only", False)):
                     continue
-                try:
-                    label = self._find_label(annotation["label"])
-                    if attribute is None:
-                        raise ValueError(f"属性IDが仕様にありません: {attribute_id}")
-                    if attribute_id not in label["additional_data_definitions"]:
-                        continue
-                    outcome = self._evaluate(restriction, annotation, by_id)
-                except ValueError as exc:
-                    outcome = _ConditionResult(None, str(exc))
-                status: Literal["satisfied", "violated", "undetermined"]
-                match outcome.value:
-                    case True:
-                        status = "satisfied"
-                    case False:
-                        status = "violated"
-                    case None:
-                        status = "undetermined"
-                results.append(RestrictionEvaluation(annotation["annotation_id"], attribute_id, index, status, outcome.message))
+                label = self._find_label(annotation["label"])
+                if attribute is None:
+                    raise ValueError(f"属性IDが仕様にありません: {attribute_id}")
+                if attribute_id not in label["additional_data_definitions"]:
+                    continue
+                if not self._evaluate(restriction, annotation, by_id):
+                    results.append(AttributeRestrictionViolation(annotation["annotation_id"], attribute_id, index))
         return results
 
     def _find_label(self, name: str) -> Mapping[str, Any]:
@@ -110,29 +90,21 @@ class AttributeRestrictionValidator:
 
     @staticmethod
     def _is_editability(condition: Mapping[str, Any]) -> bool:
-        match condition.get("_type"):
-            case "CanInput":
-                return True
-            case "Imply":
-                return AttributeRestrictionValidator._is_editability(condition.get("condition", {}))
-            case _:
-                return False
+        while isinstance(condition, Mapping) and condition.get("_type") == "Imply":
+            condition = condition.get("condition", {})
+        return isinstance(condition, Mapping) and condition.get("_type") == "CanInput"
 
-    def _evaluate(self, restriction: Mapping[str, Any], annotation: Mapping[str, Any], by_id: Mapping[str, Mapping[str, Any]]) -> _ConditionResult:
+    def _evaluate(self, restriction: Mapping[str, Any], annotation: Mapping[str, Any], by_id: Mapping[str, Mapping[str, Any]]) -> bool:
         try:
             attribute_id = restriction["additional_data_definition_id"]
             condition = restriction["condition"]
             if condition["_type"] == "Imply":
-                premise = self._evaluate(condition["premise"], annotation, by_id)
-                if premise.value is False:
-                    return _ConditionResult(True)
-                conclusion = self._evaluate({"additional_data_definition_id": attribute_id, "condition": condition["condition"]}, annotation, by_id)
-                if premise.value is True or conclusion.value is True:
-                    return conclusion
-                return premise
-            return _ConditionResult(self._evaluate_atomic(attribute_id, condition, annotation, by_id))
-        except (KeyError, ValueError, TypeError, OverflowError, RecursionError, re.error) as exc:
-            return _ConditionResult(None, f"条件を評価できません: {exc}")
+                if not self._evaluate(condition["premise"], annotation, by_id):
+                    return True
+                return self._evaluate({"additional_data_definition_id": attribute_id, "condition": condition["condition"]}, annotation, by_id)
+            return self._evaluate_atomic(attribute_id, condition, annotation, by_id)
+        except (KeyError, TypeError, OverflowError, RecursionError, re.error) as exc:
+            raise ValueError(f"条件を評価できません: {exc}") from exc
 
     def _attribute_value(self, attribute_id: str, annotation: Mapping[str, Any]) -> str | int | bool:
         attribute = self._attributes[attribute_id]
