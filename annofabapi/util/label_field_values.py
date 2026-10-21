@@ -3,7 +3,7 @@
 import json
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, TypeGuard
 
 
 @dataclass(frozen=True)
@@ -49,7 +49,7 @@ def _text(ja: str, en: str, lang: Literal["ja", "en"]) -> str:
     return ja if lang == "ja" else en
 
 
-def _integer(value: object, *, minimum: int = 0) -> bool:
+def _integer(value: object, *, minimum: int = 0) -> TypeGuard[int]:
     return type(value) is int and value >= minimum
 
 
@@ -58,7 +58,8 @@ def _keys_match(value: Mapping[str, object], required: set[str], optional: set[s
     return required <= keys <= required | (optional or set())
 
 
-def _minimum_size(value: Mapping[str, object], *, with_position: bool, lang: Literal["ja", "en"]) -> str | None:
+def _minimum_size(value: Mapping[str, object], *, annotation_type: str, lang: Literal["ja", "en"]) -> str | None:  # noqa: PLR0912
+    with_position = annotation_type == "bounding_box"
     position_key = "position_for_minimum_bounding_box_insertion"
     if not _keys_match(value, {"min_warn_rule", "min_width", "min_height"}, {position_key} if with_position else set()):
         return None
@@ -87,27 +88,57 @@ def _minimum_size(value: Mapping[str, object], *, with_position: bool, lang: Lit
             )
         case _:
             return None
-    text += _text(
-        "サイズ制約の警告があっても、タスクの提出・合格は可能です。",
-        " Size warnings do not prevent task submission or acceptance.",
-        lang,
-    )
+    if annotation_type in {"segmentation", "segmentation_v2"}:
+        measurement = _text(
+            "幅・高さは塗りつぶし領域の外接矩形の大きさです。",
+            "Width and height are measured using the filled region's axis-aligned bounding box. ",
+            lang,
+        )
+    else:
+        measurement = _text(
+            "幅・高さは、頂点座標を整数に丸めて求める外接矩形の大きさです。",
+            "Width and height are measured using the axis-aligned bounding box after rounding vertex coordinates to integers. ",
+            lang,
+        )
+    text = measurement + text
+    if annotation_type in {"polygon", "polyline"}:
+        text += _text(
+            "この最小サイズ制約は提出時にも検証され、違反すると提出できません。",
+            " This minimum-size constraint is also checked on submission; a violation prevents submission.",
+            lang,
+        )
+    else:
+        text += _text(
+            "このサイズ警告自体はタスクの提出・合格を妨げません。",
+            " This size warning itself does not prevent task submission or acceptance.",
+            lang,
+        )
     if not with_position:
         return text
+    insert_width, insert_height = max(width, 1), max(height, 1)
+    if width == 0 or height == 0:
+        text += _text(
+            "矩形の挿入時は、0の幅・高さを1ピクセルに補正します。",
+            " When inserting a box, a zero width or height is replaced with 1 pixel.",
+            lang,
+        )
     position = value.get(position_key)
     match position:
         case None:
             state = _text("省略", "omitted", lang) if position_key not in value else "null"
             text += _text(
-                f"挿入位置は{state}です。作図ボタンでは、表示範囲の中央に幅{width}・高さ{height}ピクセルの矩形を作成します。",
-                f" The insertion position is {state}. The drawing button creates a {width} by {height} pixel box"
-                " at the center of the visible canvas.",
+                f"挿入位置は{state}です。作図モードで作図ボタンを押すと、幅{insert_width}・高さ{insert_height}ピクセルの矩形を、"
+                "表示範囲の中央を基準に配置します。左上座標が0未満になる場合は、その座標を0に補正します。",
+                f" The insertion position is {state}. In drawing mode, the drawing button creates a {insert_width} by {insert_height} pixel box"
+                " positioned relative to the center of the visible canvas. Each negative top-left coordinate is clamped to 0.",
                 lang,
             )
         case [x, y] if type(x) is int and type(y) is int:
             text += _text(
-                f"作図ボタンでは、画像左上を原点とする位置(x={x}, y={y})に幅{width}・高さ{height}ピクセルの矩形を作成します。",
-                f" The drawing button creates a {width} by {height} pixel box at (x={x}, y={y}), relative to the top-left of the image.",
+                f"作図モードで作図ボタンを押すと、画像左上を原点とする左上座標(x={x}, y={y})に"
+                f"幅{insert_width}・高さ{insert_height}ピクセルの矩形を作成します。",
+                f" In drawing mode, the drawing button creates a {insert_width} by {insert_height} pixel box"
+                f" with top-left coordinates (x={x}, y={y}), relative to the top-left of the image.",
                 lang,
             )
         case _:
@@ -116,9 +147,9 @@ def _minimum_size(value: Mapping[str, object], *, with_position: bool, lang: Lit
 
 
 def _vertex_count(value: Mapping[str, object], *, annotation_type: str, lang: Literal["ja", "en"]) -> str | None:
-    if not _keys_match(value, {"min", "max"}):
+    if not _keys_match(value, set(), {"min", "max"}):
         return None
-    minimum, maximum = value["min"], value["max"]
+    minimum, maximum = value.get("min"), value.get("max")
     geometric_minimum = 3 if annotation_type == "polygon" else 2
     if minimum is not None and not _integer(minimum, minimum=geometric_minimum):
         return None
@@ -126,26 +157,71 @@ def _vertex_count(value: Mapping[str, object], *, annotation_type: str, lang: Li
         return None
     if isinstance(minimum, int) and isinstance(maximum, int) and minimum > maximum:
         return None
+    lower_state = _text("省略", "omitted", lang) if "min" not in value else "null"
+    upper_state = _text("省略", "omitted", lang) if "max" not in value else "null"
     lower = _text(
-        "頂点数の下限設定はnull（追加の下限制約なし）です。" if minimum is None else f"頂点数の下限は{minimum}個です。",
-        "The vertex-count lower bound is null (no additional lower bound)." if minimum is None else f"The minimum vertex count is {minimum}.",
+        f"頂点数の下限設定は{lower_state}（追加の下限制約なし）です。" if minimum is None else f"頂点数の下限は{minimum}個です。",
+        f"The vertex-count lower bound is {lower_state} (no additional lower bound)."
+        if minimum is None
+        else f"The minimum vertex count is {minimum}.",
         lang,
     )
     upper = _text(
-        "頂点数の上限設定はnull（追加の上限制約なし）です。" if maximum is None else f"頂点数の上限は{maximum}個です。",
-        "The vertex-count upper bound is null (no additional upper bound)." if maximum is None else f"The maximum vertex count is {maximum}.",
+        f"頂点数の上限設定は{upper_state}（追加の上限制約なし）です。" if maximum is None else f"頂点数の上限は{maximum}個です。",
+        f"The vertex-count upper bound is {upper_state} (no additional upper bound)."
+        if maximum is None
+        else f"The maximum vertex count is {maximum}.",
         lang,
     )
-    return lower + ("" if lang == "ja" else " ") + upper
+    text = lower + ("" if lang == "ja" else " ") + upper
+    if minimum is not None or maximum is not None:
+        text += _text(
+            "この追加の頂点数制約に違反すると警告を表示します。この警告自体はタスクの提出・合格を妨げません。",
+            " Violating these additional vertex-count bounds shows a warning. This warning itself does not prevent task submission or acceptance.",
+            lang,
+        )
+    text += _text(
+        f"図形自体に必要な{geometric_minimum}頂点未満の場合は、提出時にエラーになります。",
+        f" Fewer than the {geometric_minimum} vertices required by the shape itself causes a submission error.",
+        lang,
+    )
+    if annotation_type == "polygon":
+        initial_vertices = maximum if isinstance(maximum, int) else max(minimum or 0, 16)
+        text += _text(
+            f"多角形作図ツールの頂点数の初期値は{initial_vertices}個です。",
+            f" The initial vertex count for the polygon-by-rectangle drawing tool is {initial_vertices}.",
+            lang,
+        )
+    return text
 
 
-def _editor_features(value: Mapping[str, object], *, lang: Literal["ja", "en"]) -> str | None:
+def _editor_features(value: Mapping[str, object], *, annotation_type: str, lang: Literal["ja", "en"]) -> str | None:
     if not _keys_match(value, set(_EDITOR_FEATURES)) or any(type(value[key]) is not bool for key in _EDITOR_FEATURES):
         return None
     texts = []
     for key, (ja, en) in _EDITOR_FEATURES.items():
-        state_ja, state_en = ("使用できます", "available") if value[key] else ("使用できません", "unavailable")
-        texts.append(_text(f"作図機能「{ja}」は{state_ja}。", f"The {en} drawing feature is {state_en}.", lang))
+        state_ja, state_en = ("有効", "enabled") if value[key] else ("無効", "disabled")
+        if key in {"append", "erase"}:
+            texts.append(_text(f"作図モード「{ja}」の選択は{state_ja}です。", f"Selection of the {en} drawing mode is {state_en}.", lang))
+        else:
+            texts.append(_text(f"作図ツール「{ja}」は{state_ja}です。", f"The {en} drawing tool is {state_en}.", lang))
+    if value["append"] or value["erase"]:
+        texts.append(
+            _text(
+                "追記・消しゴムモードを利用するには、編集可能な状態で対象アノテーションを選択する必要があります。",
+                "Using append or eraser mode also requires editing permission and a selected target annotation.",
+                lang,
+            )
+        )
+    if annotation_type == "segmentation_v2":
+        texts.append(
+            _text(
+                "塗りつぶしv2は追記モードの設定にかかわらず、通常の作図でも同じラベルの既存アノテーションへ追記します。",
+                "For segmentation_v2, ordinary drawing also appends to an existing annotation of the same label,"
+                " regardless of the append-mode setting.",
+                lang,
+            )
+        )
     return ("" if lang == "ja" else " ").join(texts)
 
 
@@ -154,29 +230,43 @@ def _describe(  # noqa: PLR0911
 ) -> str | None:
     match field_id:
         case "minimum_size_2d" | "minimum_size_2d_with_default_insert_position":
-            return _minimum_size(value, with_position=field_id == "minimum_size_2d_with_default_insert_position", lang=lang)
+            return _minimum_size(value, annotation_type=annotation_type, lang=lang)
         case "vertex_count_min_max":
             return _vertex_count(value, annotation_type=annotation_type, lang=lang)
         case "annotation_editor_feature":
-            return _editor_features(value, lang=lang)
+            return _editor_features(value, annotation_type=annotation_type, lang=lang)
         case "minimum_area_2d" if _keys_match(value, {"min_area"}) and _integer(value["min_area"], minimum=1):
             area = value["min_area"]
             return _text(
-                f"面積が{area}平方ピクセル未満の場合にサイズ制約の警告を表示します。警告があっても、タスクの提出・合格は可能です。",
-                f"A size warning is shown when area is less than {area} square pixels. Size warnings do not prevent task submission or acceptance.",
+                f"ポリゴンの面積が{area}平方ピクセル未満の場合に警告を表示します。この面積警告自体はタスクの提出・合格を妨げません。",
+                f"A warning is shown when the polygon area is less than {area} square pixels."
+                " This area warning itself does not prevent task submission or acceptance.",
                 lang,
             )
         case "margin_of_error_tolerance" if _keys_match(value, {"max_pixel"}) and _integer(value["max_pixel"]):
             pixels = value["max_pixel"]
             return _text(
-                f"誤差許容範囲は{pixels}ピクセルです。画像エディタの許容範囲表示を有効にすると、半径{pixels}ピクセルの円を表示します。",
-                f"The error tolerance is {pixels} pixels. Enabling tolerance display in the image editor"
-                f" shows a circle with a radius of {pixels} pixels.",
+                f"誤差許容範囲は{pixels}ピクセルです。この値による誤差の自動検証は行いません。"
+                + (
+                    "0の場合、許容範囲の円は描画しません。"
+                    if pixels == 0
+                    else "画像エディタの許容範囲表示を有効にすると、カーソル付近に許容範囲を表す円を表示します。"
+                ),
+                f"The error tolerance is {pixels} pixels. This value is not used to automatically validate annotation errors. "
+                + (
+                    "No tolerance circle is drawn when the value is 0."
+                    if pixels == 0
+                    else "Enabling tolerance display in the image editor shows a tolerance circle near the cursor."
+                ),
                 lang,
             )
         case "display_line_direction" if _keys_match(value, {"has_direction"}) and type(value["has_direction"]) is bool:
             if value["has_direction"]:
-                return _text("ポリラインの向きを表示します。", "The polyline direction is displayed.", lang)
+                return _text(
+                    "ポリラインの向きの表示を有効にします。ただし、エディタ側で線の向きを非表示にしている場合は表示されません。",
+                    "Polyline direction display is enabled, but the editor's hide-line-direction setting can hide it.",
+                    lang,
+                )
             return _text("ポリラインの向きを表示しません。", "The polyline direction is not displayed.", lang)
         case _:
             return None
