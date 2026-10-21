@@ -274,7 +274,16 @@ class ParsedPluginUrl(ParsedOrganizationUrl):
 def _split_annofab_url(url: str, *, resource: str = "projects") -> tuple[SplitResult, list[str]]:
     parsed = urlsplit(url)
     parts = parsed.path.split("/")
-    if parsed.scheme != "https" or parsed.netloc.lower() != "annofab.com" or len(parts) < 3 or parts[1] != resource or not parts[2]:
+    if (
+        parsed.scheme != "https"
+        or parsed.hostname != "annofab.com"
+        or parsed.port not in (None, 443)
+        or parsed.username is not None
+        or parsed.password is not None
+        or len(parts) < 3
+        or parts[1] != resource
+        or not parts[2]
+    ):
         raise ValueError(f"Annofabの{resource}に属する画面のURLを指定してください。")
     return parsed, parts
 

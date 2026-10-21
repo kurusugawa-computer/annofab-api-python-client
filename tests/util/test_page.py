@@ -424,3 +424,28 @@ def test_resource_url_rejects_wrong_resource(parse, path):
 @pytest.mark.parametrize("path", ["inputs/i1", "webhooks/w1"])
 def test_project_url_accepts_resource_screens(path):
     assert parse_project_url(f"https://annofab.com/projects/p1/{path}").project_id == "p1"
+
+
+@pytest.mark.parametrize(
+    ("parse", "path", "expected"),
+    [
+        (parse_project_url, "projects/p1", {"project_id": "p1"}),
+        (parse_task_url, "projects/p1/tasks/t1", {"project_id": "p1", "task_id": "t1"}),
+        (parse_image_editor_url, "projects/p1/tasks/t1/editor#i1/a1", {"input_data_id": "i1", "annotation_id": "a1"}),
+        (parse_video_editor_url, "projects/p1/tasks/t1/timeline#a1/3.3", {"annotation_id": "a1", "seek_seconds": 3.3}),
+        (parse_input_data_url, "projects/p1/inputs/i1", {"input_data_id": "i1"}),
+        (parse_organization_url, "organizations/o1/settings", {"organization_name": "o1"}),
+        (parse_organization_member_url, "organizations/o1/members/u1", {"user_id": "u1"}),
+        (parse_webhook_url, "projects/p1/webhooks/w1", {"webhook_id": "w1"}),
+        (parse_plugin_url, "organizations/o1/plugins/plugin1", {"plugin_id": "plugin1"}),
+    ],
+)
+def test_explicit_https_default_port(parse, path, expected):
+    result = parse(f"https://ANNOFAB.COM:443/{path}")
+    assert {name: getattr(result, name) for name in expected} == expected
+
+
+@pytest.mark.parametrize("authority", ["annofab.com:80", "annofab.com:444", "annofab.com:invalid", "user@annofab.com", "user:password@annofab.com"])
+def test_rejects_other_ports_and_userinfo(authority):
+    with pytest.raises(ValueError):
+        parse_project_url(f"https://{authority}/projects/p1")
