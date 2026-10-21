@@ -20,6 +20,13 @@ annofabapi.util.attribute\_restrictions module
    :show-inheritance:
    :undoc-members:
 
+annofabapi.util.attribute\_restriction\_validation module
+----------------------------------------------------------
+
+.. automodule:: annofabapi.util.attribute_restriction_validation
+   :members:
+   :show-inheritance:
+
 annofabapi.util.page module
 ---------------------------
 
