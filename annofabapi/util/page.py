@@ -114,6 +114,8 @@ def create_3dpc_editor_url(
 def create_input_data_url(project_id: str, input_data_id: str) -> str:
     """入力データ詳細画面のURLを生成します。
 
+    生成したURLは :func:`parse_input_data_url` で解析できます。
+
     Args:
         project_id: プロジェクトID。
         input_data_id: 入力データID。
@@ -127,6 +129,8 @@ def create_input_data_url(project_id: str, input_data_id: str) -> str:
 def create_organization_url(organization_name: str) -> str:
     """組織設定画面のURLを生成します。
 
+    生成したURLは :func:`parse_organization_url` で解析できます。
+
     Args:
         organization_name: 組織名。
 
@@ -138,6 +142,8 @@ def create_organization_url(organization_name: str) -> str:
 
 def create_organization_member_url(organization_name: str, user_id: str) -> str:
     """組織メンバー詳細画面のURLを生成します。
+
+    生成したURLは :func:`parse_organization_member_url` で解析できます。
 
     Args:
         organization_name: 組織名。
@@ -152,6 +158,8 @@ def create_organization_member_url(organization_name: str, user_id: str) -> str:
 def create_webhook_url(project_id: str, webhook_id: str) -> str:
     """Webhook詳細画面のURLを生成します。
 
+    生成したURLは :func:`parse_webhook_url` で解析できます。
+
     Args:
         project_id: プロジェクトID。
         webhook_id: Webhook ID。
@@ -164,6 +172,8 @@ def create_webhook_url(project_id: str, webhook_id: str) -> str:
 
 def create_plugin_url(organization_name: str, plugin_id: str) -> str:
     """プラグイン詳細画面のURLを生成します。
+
+    生成したURLは :func:`parse_plugin_url` で解析できます。
 
     Args:
         organization_name: 組織名。
@@ -437,6 +447,8 @@ def parse_input_data_url(url: str) -> ParsedInputDataUrl:
     後続のパス、クエリ、フラグメントは無視します。IDはパーセントデコードして返します。
     画面の存在やアクセス権は検証しません。
 
+    対応するURLは :func:`create_input_data_url` で生成できます。
+
     Args:
         url: 入力データに属する画面のURL。
 
@@ -456,6 +468,8 @@ def parse_organization_url(url: str) -> ParsedOrganizationUrl:
     ``https://annofab.com/organizations/{organization_name}[/...]`` に対応します。
     設定・メンバー・プラグインなど、後続のパス、クエリ、フラグメントは無視します。
     組織名はパーセントデコードして返します。画面の存在やアクセス権は検証しません。
+
+    対応するURLは :func:`create_organization_url` で生成できます。
 
     Args:
         url: 組織に属する画面のURL。
@@ -477,6 +491,8 @@ def parse_organization_member_url(url: str) -> ParsedOrganizationMemberUrl:
     後続のパス、クエリ、フラグメントは無視します。組織名とIDはパーセントデコードして返します。
     画面の存在やアクセス権は検証しません。
 
+    対応するURLは :func:`create_organization_member_url` で生成できます。
+
     Args:
         url: 組織メンバーに属する画面のURL。
 
@@ -497,6 +513,8 @@ def parse_webhook_url(url: str) -> ParsedWebhookUrl:
     後続のパス、クエリ、フラグメントは無視します。IDはパーセントデコードして返します。
     画面の存在やアクセス権は検証しません。
 
+    対応するURLは :func:`create_webhook_url` で生成できます。
+
     Args:
         url: Webhookに属する画面のURL。
 
@@ -516,6 +534,8 @@ def parse_plugin_url(url: str) -> ParsedPluginUrl:
     ``https://annofab.com/organizations/{organization_name}/plugins/{plugin_id}[/...]`` に対応します。
     後続のパス、クエリ、フラグメントは無視します。組織名とIDはパーセントデコードして返します。
     画面の存在やアクセス権は検証しません。
+
+    対応するURLは :func:`create_plugin_url` で生成できます。
 
     Args:
         url: プラグインに属する画面のURL。
