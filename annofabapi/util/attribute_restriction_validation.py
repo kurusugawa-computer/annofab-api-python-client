@@ -1,7 +1,7 @@
 """Simple Annotationの属性制約を、API通信せずに検証します。
 
 Annofabの提出時検証の完全な再現ではありません。欠落・nullは空値として扱い、
-デフォルト値は補完しません。正規表現にはPythonの ``re.search`` を使用します。
+デフォルト値は補完しません。正規表現にはPythonの ``re.fullmatch`` を使用します。
 """
 
 import copy
@@ -189,7 +189,7 @@ class AttributeRestrictionValidator:
                         equal = value == expected
                 return equal if condition["_type"] == "Equals" else not equal
             case "Matches" | "NotMatches" if attribute_type in {"text", "comment"}:
-                matches = re.search(condition["value"], str(value)) is not None
+                matches = re.fullmatch(condition["value"], str(value)) is not None
                 return matches if condition["_type"] == "Matches" else not matches
             case "HasLabel" if attribute_type == "link":
                 labels = condition["labels"]
