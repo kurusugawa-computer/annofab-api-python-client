@@ -279,8 +279,9 @@ def test_nested_premise(specs):
 
 
 @pytest.mark.parametrize("condition_type", ["Matches", "NotMatches"])
-def test_regex_overflow_does_not_stop_other_checks(specs, condition_type):
-    specs["restrictions"] = [restriction("note", condition_type, value="a{4294967296}"), restriction(value="")]
+@pytest.mark.parametrize("pattern", ["a{4294967296}", "(?:" * 1000 + "a" + ")" * 1000], ids=["overflow", "recursion"])
+def test_regex_error_does_not_stop_other_checks(specs, condition_type, pattern):
+    specs["restrictions"] = [restriction("note", condition_type, value=pattern), restriction(value="")]
     results = evaluate(specs, {"note": "abc"})
     assert [r.status for r in results] == ["undetermined", "satisfied"]
     assert results[0].message

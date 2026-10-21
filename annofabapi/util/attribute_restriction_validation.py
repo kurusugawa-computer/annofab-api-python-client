@@ -131,7 +131,7 @@ class AttributeRestrictionValidator:
                     return conclusion
                 return premise
             return _ConditionResult(self._evaluate_atomic(attribute_id, condition, annotation, by_id))
-        except (KeyError, ValueError, TypeError, OverflowError, re.error) as exc:
+        except (KeyError, ValueError, TypeError, OverflowError, RecursionError, re.error) as exc:
             return _ConditionResult(None, f"条件を評価できません: {exc}")
 
     def _attribute_value(self, attribute_id: str, annotation: Mapping[str, Any]) -> str | int | bool:
