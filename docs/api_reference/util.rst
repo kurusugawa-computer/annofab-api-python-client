@@ -25,6 +25,35 @@ annofabapi.util.page module
 
 Annofabの画面URLの生成と解析に利用できます。
 
+入力データ・組織設定・組織メンバー・Webhook・プラグインの画面には、
+次の生成・解析関数を利用できます。生成時には各IDや組織名をパーセントエンコードします。
+
+.. list-table::
+   :header-rows: 1
+
+   * - 生成関数
+     - 解析関数
+     - 抽出する情報
+   * - ``create_input_data_url``
+     - ``parse_input_data_url``
+     - ``project_id``, ``input_data_id``
+   * - ``create_organization_url`` （設定画面）
+     - ``parse_organization_url``
+     - ``organization_name``
+   * - ``create_organization_member_url``
+     - ``parse_organization_member_url``
+     - ``organization_name``, ``user_id``
+   * - ``create_webhook_url``
+     - ``parse_webhook_url``
+     - ``project_id``, ``webhook_id``
+   * - ``create_plugin_url``
+     - ``parse_plugin_url``
+     - ``organization_name``, ``plugin_id``
+
+これらの解析関数は、後続のパス、クエリ、フラグメントを無視します。
+``parse_project_url`` は入力データ・Webhookの画面にも、
+``parse_organization_url`` は設定・メンバー・プラグインの画面にも対応します。
+
 * ``parse_project_url``: プロジェクト配下の画面からプロジェクトIDを抽出します。
 * ``parse_task_url``: 履歴やエディタを含むタスク配下の画面からプロジェクトIDとタスクIDを抽出します。
 * ``parse_image_editor_url``: 画像エディタから入力データIDとアノテーションIDも抽出します。
@@ -48,6 +77,16 @@ IDはパーセントデコードされます。対応しない形式には ``Val
     editor = parse_image_editor_url(url)
     assert editor.input_data_id == "i1"
     assert editor.annotation_id == "a1"
+
+.. code-block:: python
+
+    from annofabapi.util.page import create_organization_member_url, parse_organization_member_url
+
+    url = create_organization_member_url("DAIKIN", "kawamatsu_yuuji")
+    assert url == "https://annofab.com/organizations/DAIKIN/members/kawamatsu_yuuji"
+    member = parse_organization_member_url(url)
+    assert member.organization_name == "DAIKIN"
+    assert member.user_id == "kawamatsu_yuuji"
 
 .. automodule:: annofabapi.util.page
    :members:

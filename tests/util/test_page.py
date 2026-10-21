@@ -7,13 +7,23 @@ import pytest
 from annofabapi.util.page import (
     create_3dpc_editor_url,
     create_image_editor_url,
+    create_input_data_url,
+    create_organization_member_url,
+    create_organization_url,
+    create_plugin_url,
     create_project_url,
     create_video_editor_url,
+    create_webhook_url,
     parse_3dpc_editor_url,
     parse_image_editor_url,
+    parse_input_data_url,
+    parse_organization_member_url,
+    parse_organization_url,
+    parse_plugin_url,
     parse_project_url,
     parse_task_url,
     parse_video_editor_url,
+    parse_webhook_url,
 )
 
 
@@ -268,3 +278,149 @@ class TestParse3dpcEditorUrl:
     def test_invalid_base_url(self, base_url):
         with pytest.raises(ValueError):
             parse_3dpc_editor_url("https://example.com/editor?p=p1&t=t1", base_url=base_url)
+
+
+@pytest.mark.parametrize(
+    ("create", "parse", "ids", "expected_url", "attributes"),
+    [
+        (
+            create_input_data_url,
+            parse_input_data_url,
+            ("003f20b7-5ee7-403a-ae2e-62c244e671fe", "ea984e1a-b3e3-54cb-9f3f-7d0d315f8b8d"),
+            "https://annofab.com/projects/003f20b7-5ee7-403a-ae2e-62c244e671fe/inputs/ea984e1a-b3e3-54cb-9f3f-7d0d315f8b8d",
+            ("project_id", "input_data_id"),
+        ),
+        (
+            create_organization_url,
+            parse_organization_url,
+            ("kurusugawa",),
+            "https://annofab.com/organizations/kurusugawa/settings",
+            ("organization_name",),
+        ),
+        (
+            create_organization_member_url,
+            parse_organization_member_url,
+            ("DAIKIN", "kawamatsu_yuuji"),
+            "https://annofab.com/organizations/DAIKIN/members/kawamatsu_yuuji",
+            ("organization_name", "user_id"),
+        ),
+        (
+            create_webhook_url,
+            parse_webhook_url,
+            ("58a2a621-7d4b-41e7-927b-cdc570c1114a", "84fd7529-2337-4628-ae42-e90774adca99"),
+            "https://annofab.com/projects/58a2a621-7d4b-41e7-927b-cdc570c1114a/webhooks/84fd7529-2337-4628-ae42-e90774adca99",
+            ("project_id", "webhook_id"),
+        ),
+        (
+            create_plugin_url,
+            parse_plugin_url,
+            ("kurusugawa", "1e942da8-58e1-4740-a069-19fb5a2571dd"),
+            "https://annofab.com/organizations/kurusugawa/plugins/1e942da8-58e1-4740-a069-19fb5a2571dd",
+            ("organization_name", "plugin_id"),
+        ),
+    ],
+)
+def test_resource_url_examples(create, parse, ids, expected_url, attributes):
+    """提示された画面URLを生成し、各IDを名前付きで取得できる。"""
+    assert create(*ids) == expected_url
+    result = parse(expected_url)
+    assert tuple(getattr(result, name) for name in attributes) == ids
+
+
+@pytest.mark.parametrize(
+    ("create", "parse", "path", "attributes"),
+    [
+        (create_input_data_url, parse_input_data_url, "projects/{}/inputs/{}", ("project_id", "input_data_id")),
+        (create_organization_member_url, parse_organization_member_url, "organizations/{}/members/{}", ("organization_name", "user_id")),
+        (create_webhook_url, parse_webhook_url, "projects/{}/webhooks/{}", ("project_id", "webhook_id")),
+        (create_plugin_url, parse_plugin_url, "organizations/{}/plugins/{}", ("organization_name", "plugin_id")),
+    ],
+)
+@pytest.mark.parametrize("suffix", ["", "/", "/settings", "?version=preview#fragment"])
+def test_resource_url_structure(create, parse, path, attributes, suffix):
+    """特殊文字の往復変換と、後続パス・クエリ・フラグメントの無視を確認する。"""
+    ids = ("組織 /?#%+", "ID /?#%+")
+    encoded = ("%E7%B5%84%E7%B9%94%20%2F%3F%23%25%2B", "ID%20%2F%3F%23%25%2B")
+    url = f"https://annofab.com/{path.format(*encoded)}"
+    assert create(*ids) == url
+    result = parse(url + suffix)
+    assert tuple(getattr(result, name) for name in attributes) == ids
+
+
+@pytest.mark.parametrize("suffix", ["", "/", "/settings", "/members/u1", "/plugins/plugin1", "?q=1#fragment"])
+def test_organization_screens(suffix):
+    result = parse_organization_url(f"https://annofab.com/organizations/DAIKIN{suffix}")
+    assert result.organization_name == "DAIKIN"
+
+
+def test_organization_name_round_trip():
+    organization_name = "組織 /?#%+"
+    url = create_organization_url(organization_name)
+    assert url == "https://annofab.com/organizations/%E7%B5%84%E7%B9%94%20%2F%3F%23%25%2B/settings"
+    assert parse_organization_url(url).organization_name == organization_name
+
+
+@pytest.mark.parametrize(
+    ("parse", "path"),
+    [
+        (parse_input_data_url, "projects/p1/inputs/i1"),
+        (parse_organization_url, "organizations/o1/settings"),
+        (parse_organization_member_url, "organizations/o1/members/u1"),
+        (parse_webhook_url, "projects/p1/webhooks/w1"),
+        (parse_plugin_url, "organizations/o1/plugins/plugin1"),
+    ],
+)
+@pytest.mark.parametrize(
+    "origin", ["http://annofab.com", "https://example.com", "https://annofab.com.example.com", "https://annofab.com@evil.example", ""]
+)
+def test_resource_url_rejects_wrong_origin(parse, path, origin):
+    with pytest.raises(ValueError):
+        parse(f"{origin}/{path}")
+
+
+@pytest.mark.parametrize(
+    ("parse", "parent", "resource"),
+    [
+        (parse_input_data_url, "projects/p1", "inputs"),
+        (parse_organization_member_url, "organizations/o1", "members"),
+        (parse_webhook_url, "projects/p1", "webhooks"),
+        (parse_plugin_url, "organizations/o1", "plugins"),
+    ],
+)
+@pytest.mark.parametrize("suffix", ["", "/", "?id=other", "/?id=other", "//other"])
+def test_resource_url_requires_id(parse, parent, resource, suffix):
+    with pytest.raises(ValueError):
+        parse(f"https://annofab.com/{parent}/{resource}{suffix}")
+
+
+@pytest.mark.parametrize(
+    ("parse", "path"),
+    [
+        (parse_input_data_url, "organizations/o1/inputs/i1"),
+        (parse_input_data_url, "projects/p1/tasks/t1"),
+        (parse_input_data_url, "projects//inputs/i1"),
+        (parse_organization_url, "projects/p1/settings"),
+        (parse_organization_url, "organizations"),
+        (parse_organization_url, "organizations/"),
+        (parse_organization_url, "organizations/?organization=o1"),
+        (parse_organization_member_url, "projects/p1/members/u1"),
+        (parse_organization_member_url, "organizations/o1/plugins/plugin1"),
+        (parse_organization_member_url, "organizations//members/u1"),
+        (parse_webhook_url, "organizations/o1/webhooks/w1"),
+        (parse_webhook_url, "projects/p1/inputs/i1"),
+        (parse_webhook_url, "projects//webhooks/w1"),
+        (parse_plugin_url, "projects/p1/plugins/plugin1"),
+        (parse_plugin_url, "organizations/o1/members/u1"),
+        (parse_plugin_url, "organizations//plugins/plugin1"),
+        (parse_project_url, "organizations/o1/settings"),
+        (parse_task_url, "organizations/o1/tasks/t1"),
+    ],
+)
+def test_resource_url_rejects_wrong_resource(parse, path):
+    with pytest.raises(ValueError):
+        parse(f"https://annofab.com/{path}")
+
+
+@pytest.mark.parametrize("path", ["inputs/i1", "webhooks/w1"])
+def test_project_url_accepts_resource_screens(path):
+    assert parse_project_url(f"https://annofab.com/projects/p1/{path}").project_id == "p1"

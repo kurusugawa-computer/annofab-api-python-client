@@ -4,7 +4,7 @@ Annofabの画面に関するユーティリティ関数を定義します。
 
 from dataclasses import dataclass
 from math import isfinite
-from urllib.parse import SplitResult, parse_qs, unquote, urlsplit
+from urllib.parse import SplitResult, parse_qs, quote, unquote, urlsplit
 
 
 def create_project_url(project_id: str) -> str:
@@ -111,6 +111,70 @@ def create_3dpc_editor_url(
     return url
 
 
+def create_input_data_url(project_id: str, input_data_id: str) -> str:
+    """入力データ詳細画面のURLを生成します。
+
+    Args:
+        project_id: プロジェクトID。
+        input_data_id: 入力データID。
+
+    Returns:
+        入力データ詳細画面のURL。各IDはパーセントエンコードします。
+    """
+    return f"https://annofab.com/projects/{quote(project_id, safe='')}/inputs/{quote(input_data_id, safe='')}"
+
+
+def create_organization_url(organization_name: str) -> str:
+    """組織設定画面のURLを生成します。
+
+    Args:
+        organization_name: 組織名。
+
+    Returns:
+        組織設定画面のURL。組織名はパーセントエンコードします。
+    """
+    return f"https://annofab.com/organizations/{quote(organization_name, safe='')}/settings"
+
+
+def create_organization_member_url(organization_name: str, user_id: str) -> str:
+    """組織メンバー詳細画面のURLを生成します。
+
+    Args:
+        organization_name: 組織名。
+        user_id: ユーザーID。
+
+    Returns:
+        組織メンバー詳細画面のURL。組織名とユーザーIDはパーセントエンコードします。
+    """
+    return f"https://annofab.com/organizations/{quote(organization_name, safe='')}/members/{quote(user_id, safe='')}"
+
+
+def create_webhook_url(project_id: str, webhook_id: str) -> str:
+    """Webhook詳細画面のURLを生成します。
+
+    Args:
+        project_id: プロジェクトID。
+        webhook_id: Webhook ID。
+
+    Returns:
+        Webhook詳細画面のURL。各IDはパーセントエンコードします。
+    """
+    return f"https://annofab.com/projects/{quote(project_id, safe='')}/webhooks/{quote(webhook_id, safe='')}"
+
+
+def create_plugin_url(organization_name: str, plugin_id: str) -> str:
+    """プラグイン詳細画面のURLを生成します。
+
+    Args:
+        organization_name: 組織名。
+        plugin_id: プラグインID。
+
+    Returns:
+        プラグイン詳細画面のURL。組織名とプラグインIDはパーセントエンコードします。
+    """
+    return f"https://annofab.com/organizations/{quote(organization_name, safe='')}/plugins/{quote(plugin_id, safe='')}"
+
+
 @dataclass(frozen=True)
 class ParsedProjectUrl:
     """プロジェクトに属する画面のURLから抽出した情報。"""
@@ -157,18 +221,62 @@ class Parsed3dpcEditorUrl(ParsedTaskUrl):
     """アノテーションID。URLで省略されている場合はNone。"""
 
 
-def _split_annofab_url(url: str) -> tuple[SplitResult, list[str]]:
+@dataclass(frozen=True)
+class ParsedInputDataUrl(ParsedProjectUrl):
+    """入力データに属する画面のURLから抽出した情報。"""
+
+    input_data_id: str
+    """入力データID。"""
+
+
+@dataclass(frozen=True)
+class ParsedWebhookUrl(ParsedProjectUrl):
+    """Webhookに属する画面のURLから抽出した情報。"""
+
+    webhook_id: str
+    """Webhook ID。"""
+
+
+@dataclass(frozen=True)
+class ParsedOrganizationUrl:
+    """組織に属する画面のURLから抽出した情報。"""
+
+    organization_name: str
+    """組織名。"""
+
+
+@dataclass(frozen=True)
+class ParsedOrganizationMemberUrl(ParsedOrganizationUrl):
+    """組織メンバーに属する画面のURLから抽出した情報。"""
+
+    user_id: str
+    """ユーザーID。"""
+
+
+@dataclass(frozen=True)
+class ParsedPluginUrl(ParsedOrganizationUrl):
+    """プラグインに属する画面のURLから抽出した情報。"""
+
+    plugin_id: str
+    """プラグインID。"""
+
+
+def _split_annofab_url(url: str, *, resource: str = "projects") -> tuple[SplitResult, list[str]]:
     parsed = urlsplit(url)
     parts = parsed.path.split("/")
-    if parsed.scheme != "https" or parsed.netloc.lower() != "annofab.com" or len(parts) < 3 or parts[1] != "projects" or not parts[2]:
-        raise ValueError("Annofabのプロジェクトに属する画面のURLを指定してください。")
+    if parsed.scheme != "https" or parsed.netloc.lower() != "annofab.com" or len(parts) < 3 or parts[1] != resource or not parts[2]:
+        raise ValueError(f"Annofabの{resource}に属する画面のURLを指定してください。")
     return parsed, parts
 
 
+def _resource_id(parts: list[str], resource: str) -> str:
+    if len(parts) < 5 or parts[3] != resource or not parts[4]:
+        raise ValueError(f"Annofabの{resource}に属する画面のURLを指定してください。")
+    return unquote(parts[4])
+
+
 def _task_ids(parts: list[str]) -> ParsedTaskUrl:
-    if len(parts) < 5 or parts[3] != "tasks" or not parts[4]:
-        raise ValueError("Annofabのタスクに属する画面のURLを指定してください。")
-    return ParsedTaskUrl(project_id=unquote(parts[2]), task_id=unquote(parts[4]))
+    return ParsedTaskUrl(project_id=unquote(parts[2]), task_id=_resource_id(parts, "tasks"))
 
 
 def _split_editor_url(url: str, screen: str) -> tuple[SplitResult, ParsedTaskUrl]:
@@ -320,3 +428,103 @@ def parse_3dpc_editor_url(
         raise ValueError("3次元エディタのフラグメントは'/'で始まる必要があります。")
     input_data_id, annotation_id = _input_and_annotation_ids(fragment.removeprefix("/"))
     return Parsed3dpcEditorUrl(query["p"][0], query["t"][0], input_data_id, annotation_id)
+
+
+def parse_input_data_url(url: str) -> ParsedInputDataUrl:
+    """入力データに属する画面のURLからプロジェクトIDと入力データIDを抽出します。
+
+    ``https://annofab.com/projects/{project_id}/inputs/{input_data_id}[/...]`` に対応します。
+    後続のパス、クエリ、フラグメントは無視します。IDはパーセントデコードして返します。
+    画面の存在やアクセス権は検証しません。
+
+    Args:
+        url: 入力データに属する画面のURL。
+
+    Returns:
+        プロジェクトIDと入力データIDを持つ解析結果。
+
+    Raises:
+        ValueError: URLが対応する形式ではない場合。
+    """
+    _, parts = _split_annofab_url(url)
+    return ParsedInputDataUrl(project_id=unquote(parts[2]), input_data_id=_resource_id(parts, "inputs"))
+
+
+def parse_organization_url(url: str) -> ParsedOrganizationUrl:
+    """組織に属する画面のURLから組織名を抽出します。
+
+    ``https://annofab.com/organizations/{organization_name}[/...]`` に対応します。
+    設定・メンバー・プラグインなど、後続のパス、クエリ、フラグメントは無視します。
+    組織名はパーセントデコードして返します。画面の存在やアクセス権は検証しません。
+
+    Args:
+        url: 組織に属する画面のURL。
+
+    Returns:
+        組織名を持つ解析結果。
+
+    Raises:
+        ValueError: URLが対応する形式ではない場合。
+    """
+    _, parts = _split_annofab_url(url, resource="organizations")
+    return ParsedOrganizationUrl(organization_name=unquote(parts[2]))
+
+
+def parse_organization_member_url(url: str) -> ParsedOrganizationMemberUrl:
+    """組織メンバーに属する画面のURLから組織名とユーザーIDを抽出します。
+
+    ``https://annofab.com/organizations/{organization_name}/members/{user_id}[/...]`` に対応します。
+    後続のパス、クエリ、フラグメントは無視します。組織名とIDはパーセントデコードして返します。
+    画面の存在やアクセス権は検証しません。
+
+    Args:
+        url: 組織メンバーに属する画面のURL。
+
+    Returns:
+        組織名とユーザーIDを持つ解析結果。
+
+    Raises:
+        ValueError: URLが対応する形式ではない場合。
+    """
+    _, parts = _split_annofab_url(url, resource="organizations")
+    return ParsedOrganizationMemberUrl(organization_name=unquote(parts[2]), user_id=_resource_id(parts, "members"))
+
+
+def parse_webhook_url(url: str) -> ParsedWebhookUrl:
+    """Webhookに属する画面のURLからプロジェクトIDとWebhook IDを抽出します。
+
+    ``https://annofab.com/projects/{project_id}/webhooks/{webhook_id}[/...]`` に対応します。
+    後続のパス、クエリ、フラグメントは無視します。IDはパーセントデコードして返します。
+    画面の存在やアクセス権は検証しません。
+
+    Args:
+        url: Webhookに属する画面のURL。
+
+    Returns:
+        プロジェクトIDとWebhook IDを持つ解析結果。
+
+    Raises:
+        ValueError: URLが対応する形式ではない場合。
+    """
+    _, parts = _split_annofab_url(url)
+    return ParsedWebhookUrl(project_id=unquote(parts[2]), webhook_id=_resource_id(parts, "webhooks"))
+
+
+def parse_plugin_url(url: str) -> ParsedPluginUrl:
+    """プラグインに属する画面のURLから組織名とプラグインIDを抽出します。
+
+    ``https://annofab.com/organizations/{organization_name}/plugins/{plugin_id}[/...]`` に対応します。
+    後続のパス、クエリ、フラグメントは無視します。組織名とIDはパーセントデコードして返します。
+    画面の存在やアクセス権は検証しません。
+
+    Args:
+        url: プラグインに属する画面のURL。
+
+    Returns:
+        組織名とプラグインIDを持つ解析結果。
+
+    Raises:
+        ValueError: URLが対応する形式ではない場合。
+    """
+    _, parts = _split_annofab_url(url, resource="organizations")
+    return ParsedPluginUrl(organization_name=unquote(parts[2]), plugin_id=_resource_id(parts, "plugins"))
