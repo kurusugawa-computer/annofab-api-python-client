@@ -283,10 +283,11 @@ for parser in annofabapi.parser.lazy_parse_simple_annotation_zip(Path("simple-an
 
 - 引数には同一タスク・同一入力データの `details` 全件を渡してください。リンク先の検索にも使用します。
 - 結果は違反した「アノテーション × トップレベルの制約」で1件です。`restriction_index` は仕様の `restrictions` 内の0始まりの位置です。
-- 各違反は `annotation_id`、`attribute_id`、`restriction_index` の3項目を持ちます。
+- 各違反は `annotation_id`、`attribute_id`、`attribute_name`、`restriction_index` の4項目を持ちます。
+  `attribute_name` は仕様上の英語名で、Simple Annotationの `attributes` のキーに対応します。
   成立・適用対象外の制約は返さず、違反0件なら空リストです。制約0件・アノテーション0件の場合も空リストです。
 - `Equals` / `NotEquals`、`Matches` / `NotMatches`、ネストした `Imply`、`HasLabel` に対応します。
-  `Imply` の前提がfalseの場合は違反を返しません。前提がtrueの場合に後続条件を評価し、違反時は後続条件の属性IDを返します。
+  `Imply` の前提がfalseの場合は違反を返しません。前提がtrueの場合に後続条件を評価し、違反時は後続条件の属性ID・英語名を返します。
 - ラベルに属さない属性への制約、読取専用属性への制約、結論が `CanInput` の制約は結果に含めません。
   条件付き `CanInput` による他の制約の有効・無効の切り替えは再現しません。
 - 未設定・nullは空値、チェックボックスの未設定・null・空文字はfalseと扱います。デフォルト値の補完や空白の除去は行いません。

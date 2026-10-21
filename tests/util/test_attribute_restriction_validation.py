@@ -52,7 +52,8 @@ def assert_evaluation(specs, attributes, expected, others=()):
             evaluate(specs, attributes, others)
     else:
         actual = evaluate(specs, attributes, others)
-        assert actual == ([AttributeRestrictionViolation("a1", specs["restrictions"][0]["additional_data_definition_id"], 0)] if expected else [])
+        attribute_id = specs["restrictions"][0]["additional_data_definition_id"]
+        assert actual == ([AttributeRestrictionViolation("a1", attribute_id, attribute_id, 0)] if expected else [])
 
 
 @pytest.mark.parametrize(
@@ -146,7 +147,7 @@ def test_nested_imply_is_one_result(specs):
     ]
     results = evaluate(specs, {"unclear": True, "count": 1})
     assert len(results) == 1
-    assert results[0] == AttributeRestrictionViolation("a1", "note", 0)
+    assert results[0] == AttributeRestrictionViolation("a1", "note", "note", 0)
     assert evaluate(specs, {"unclear": True, "count": 2}) == []
 
 
@@ -187,7 +188,7 @@ def test_can_input_and_read_only_are_excluded(specs):
 
 def test_default_is_not_filled(specs):
     specs["additionals"][0]["default"] = "default"
-    assert evaluate(specs) == [AttributeRestrictionViolation("a1", "note", 0)]
+    assert evaluate(specs) == [AttributeRestrictionViolation("a1", "note", "note", 0)]
 
 
 def test_not_applicable_and_empty_input(specs):
@@ -230,8 +231,8 @@ def test_same_attribute_name_on_different_labels(specs):
     specs["restrictions"].append(restriction("other-note", value=""))
     annotations = [detail(), detail(annotation_id="a2", label="other")]
     assert AttributeRestrictionValidator(specs).validate_simple_annotation_details(annotations) == [
-        AttributeRestrictionViolation("a1", "note", 0),
-        AttributeRestrictionViolation("a2", "other-note", 1),
+        AttributeRestrictionViolation("a1", "note", "note", 0),
+        AttributeRestrictionViolation("a2", "other-note", "note", 1),
     ]
 
 
@@ -253,7 +254,7 @@ def test_duplicate_ids_and_missing_input_fields(specs):
 def test_reusable_validator_and_spec_snapshot(specs):
     validator = AttributeRestrictionValidator(specs)
     specs["restrictions"].clear()
-    assert validator.validate_simple_annotation_details(iter([detail()])) == [AttributeRestrictionViolation("a1", "note", 0)]
+    assert validator.validate_simple_annotation_details(iter([detail()])) == [AttributeRestrictionViolation("a1", "note", "note", 0)]
     assert validator.validate_simple_annotation_details([detail({"note": "ok"})]) == []
 
 
@@ -262,7 +263,7 @@ def test_real_spec_and_existing_restriction_model():
     specs["restrictions"] = [Restriction.from_dict(r).to_dict() for r in specs["restrictions"]]
     validator = AttributeRestrictionValidator(specs)
     results = validator.validate_simple_annotation_details([detail(label="car"), detail(annotation_id="a2", label="number_plate")])
-    assert results == [AttributeRestrictionViolation("a1", specs["restrictions"][1]["additional_data_definition_id"], 1)]
+    assert results == [AttributeRestrictionViolation("a1", specs["restrictions"][1]["additional_data_definition_id"], "tracking", 1)]
 
 
 def test_zip_parser_integration(specs):
@@ -275,7 +276,7 @@ def test_zip_parser_integration(specs):
     validator = AttributeRestrictionValidator(specs)
     results = [result for annotation in annotations for result in validator.validate_simple_annotation_details(annotation["details"])]
     assert results
-    assert all(r.attribute_id == "note" and r.restriction_index == 0 for r in results)
+    assert all(r.attribute_id == "note" and r.attribute_name == "note" and r.restriction_index == 0 for r in results)
 
 
 @pytest.mark.parametrize(
@@ -314,7 +315,7 @@ def test_premise_attribute_not_on_label(specs):
 def test_nested_premise(specs):
     premise = conditional(restriction("unclear", "Equals", value="true"), restriction("count", "Equals", value="1"))
     specs["restrictions"] = [conditional(premise, restriction(value=""))]
-    assert evaluate(specs, {"unclear": True, "count": 1}) == [AttributeRestrictionViolation("a1", "note", 0)]
+    assert evaluate(specs, {"unclear": True, "count": 1}) == [AttributeRestrictionViolation("a1", "note", "note", 0)]
     assert evaluate(specs, {"unclear": True, "count": 2}) == []
 
 
@@ -335,7 +336,16 @@ def test_multiple_violations_preserve_order_and_conclusion_attribute(specs):
     specs["restrictions"] = [restriction(value=""), conditional(restriction("unclear", "Equals", value="true"), restriction(value=""))]
     annotations = [detail({"unclear": True}), detail({"note": "ok"}, annotation_id="a2"), detail(annotation_id="a3")]
     assert AttributeRestrictionValidator(specs).validate_simple_annotation_details(annotations) == [
-        AttributeRestrictionViolation("a1", "note", 0),
-        AttributeRestrictionViolation("a1", "note", 1),
-        AttributeRestrictionViolation("a3", "note", 0),
+        AttributeRestrictionViolation("a1", "note", "note", 0),
+        AttributeRestrictionViolation("a1", "note", "note", 1),
+        AttributeRestrictionViolation("a3", "note", "note", 0),
+    ]
+
+
+def test_attribute_english_name_for_atomic_and_imply_violations(specs):
+    specs["additionals"][0]["name"] = {"messages": [{"lang": "ja-JP", "message": "コメント"}, {"lang": "en-US", "message": "comment"}]}
+    specs["restrictions"] = [restriction(value=""), conditional(restriction("unclear", "Equals", value="true"), restriction(value=""))]
+    assert evaluate(specs, {"unclear": True, "comment": ""}) == [
+        AttributeRestrictionViolation("a1", "note", "comment", 0),
+        AttributeRestrictionViolation("a1", "note", "comment", 1),
     ]

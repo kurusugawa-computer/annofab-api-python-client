@@ -21,6 +21,8 @@ class AttributeRestrictionViolation:
     """評価対象のアノテーションID。"""
     attribute_id: str
     """制約対象の属性ID。"""
+    attribute_name: str
+    """制約対象の属性の英語名。Simple Annotationのattributesのキーに対応します。"""
     restriction_index: int
     """仕様の ``restrictions`` 内の0始まりの位置。"""
 
@@ -52,7 +54,7 @@ class AttributeRestrictionValidator:
 
         Returns:
             アノテーション順・制約順の違反一覧。成立・適用対象外の制約は含めません。
-            違反がない場合は空リストを返します。Implyでは後続条件の属性IDを返します。
+            違反がない場合は空リストを返します。Implyでは後続条件の属性ID・英語名を返します。
 
         Raises:
             ValueError: 名前を一意に解決できない、条件を評価できない、
@@ -79,7 +81,9 @@ class AttributeRestrictionValidator:
                 if attribute_id not in label["additional_data_definitions"]:
                     continue
                 if not self._evaluate(restriction, annotation, by_id):
-                    results.append(AttributeRestrictionViolation(annotation["annotation_id"], attribute_id, index))
+                    results.append(
+                        AttributeRestrictionViolation(annotation["annotation_id"], attribute_id, get_english_message(attribute["name"]), index)
+                    )
         return results
 
     def _find_label(self, name: str) -> Mapping[str, Any]:
