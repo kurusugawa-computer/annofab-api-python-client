@@ -6,5 +6,6 @@ User Guide
 
    basic_usage
    advanced_usage
+   label_field_values
    for_developer
 

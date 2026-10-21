@@ -20,6 +20,14 @@ annofabapi.util.attribute\_restrictions module
    :show-inheritance:
    :undoc-members:
 
+annofabapi.util.label\_field\_values module
+-------------------------------------------
+
+.. automodule:: annofabapi.util.label_field_values
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 annofabapi.util.page module
 ---------------------------
 
