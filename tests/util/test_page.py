@@ -338,10 +338,9 @@ def test_resource_url_examples(create, parse, ids, expected_url, attributes):
 )
 @pytest.mark.parametrize("suffix", ["", "/", "/settings", "?version=preview#fragment"])
 def test_resource_url_structure(create, parse, path, attributes, suffix):
-    """特殊文字の往復変換と、後続パス・クエリ・フラグメントの無視を確認する。"""
-    ids = ("組織 /?#%+", "ID /?#%+")
-    encoded = ("%E7%B5%84%E7%B9%94%20%2F%3F%23%25%2B", "ID%20%2F%3F%23%25%2B")
-    url = f"https://annofab.com/{path.format(*encoded)}"
+    """許可される文字種と、後続パス・クエリ・フラグメントの無視を確認する。"""
+    ids = ("Org_01-name.example", "ID_02-name.example")
+    url = f"https://annofab.com/{path.format(*ids)}"
     assert create(*ids) == url
     result = parse(url + suffix)
     assert tuple(getattr(result, name) for name in attributes) == ids
@@ -354,9 +353,9 @@ def test_organization_screens(suffix):
 
 
 def test_organization_name_round_trip():
-    organization_name = "組織 /?#%+"
+    organization_name = "Org_01-name.example"
     url = create_organization_url(organization_name)
-    assert url == "https://annofab.com/organizations/%E7%B5%84%E7%B9%94%20%2F%3F%23%25%2B/settings"
+    assert url == "https://annofab.com/organizations/Org_01-name.example/settings"
     assert parse_organization_url(url).organization_name == organization_name
 
 

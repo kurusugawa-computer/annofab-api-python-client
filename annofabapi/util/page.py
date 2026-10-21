@@ -4,7 +4,7 @@ Annofabの画面に関するユーティリティ関数を定義します。
 
 from dataclasses import dataclass
 from math import isfinite
-from urllib.parse import SplitResult, parse_qs, quote, unquote, urlsplit
+from urllib.parse import SplitResult, parse_qs, unquote, urlsplit
 
 
 def create_project_url(project_id: str) -> str:
@@ -121,9 +121,9 @@ def create_input_data_url(project_id: str, input_data_id: str) -> str:
         input_data_id: 入力データID。
 
     Returns:
-        入力データ詳細画面のURL。各IDはパーセントエンコードします。
+        入力データ詳細画面のURL。
     """
-    return f"https://annofab.com/projects/{quote(project_id, safe='')}/inputs/{quote(input_data_id, safe='')}"
+    return f"https://annofab.com/projects/{project_id}/inputs/{input_data_id}"
 
 
 def create_organization_url(organization_name: str) -> str:
@@ -135,9 +135,9 @@ def create_organization_url(organization_name: str) -> str:
         organization_name: 組織名。
 
     Returns:
-        組織設定画面のURL。組織名はパーセントエンコードします。
+        組織設定画面のURL。
     """
-    return f"https://annofab.com/organizations/{quote(organization_name, safe='')}/settings"
+    return f"https://annofab.com/organizations/{organization_name}/settings"
 
 
 def create_organization_member_url(organization_name: str, user_id: str) -> str:
@@ -150,9 +150,9 @@ def create_organization_member_url(organization_name: str, user_id: str) -> str:
         user_id: ユーザーID。
 
     Returns:
-        組織メンバー詳細画面のURL。組織名とユーザーIDはパーセントエンコードします。
+        組織メンバー詳細画面のURL。
     """
-    return f"https://annofab.com/organizations/{quote(organization_name, safe='')}/members/{quote(user_id, safe='')}"
+    return f"https://annofab.com/organizations/{organization_name}/members/{user_id}"
 
 
 def create_webhook_url(project_id: str, webhook_id: str) -> str:
@@ -165,9 +165,9 @@ def create_webhook_url(project_id: str, webhook_id: str) -> str:
         webhook_id: Webhook ID。
 
     Returns:
-        Webhook詳細画面のURL。各IDはパーセントエンコードします。
+        Webhook詳細画面のURL。
     """
-    return f"https://annofab.com/projects/{quote(project_id, safe='')}/webhooks/{quote(webhook_id, safe='')}"
+    return f"https://annofab.com/projects/{project_id}/webhooks/{webhook_id}"
 
 
 def create_plugin_url(organization_name: str, plugin_id: str) -> str:
@@ -180,9 +180,9 @@ def create_plugin_url(organization_name: str, plugin_id: str) -> str:
         plugin_id: プラグインID。
 
     Returns:
-        プラグイン詳細画面のURL。組織名とプラグインIDはパーセントエンコードします。
+        プラグイン詳細画面のURL。
     """
-    return f"https://annofab.com/organizations/{quote(organization_name, safe='')}/plugins/{quote(plugin_id, safe='')}"
+    return f"https://annofab.com/organizations/{organization_name}/plugins/{plugin_id}"
 
 
 @dataclass(frozen=True)
