@@ -5,7 +5,7 @@ import time
 from collections.abc import Callable, Collection
 from functools import wraps
 from json import JSONDecodeError
-from typing import Any, TypeVar, assert_never, overload
+from typing import Any, assert_never, overload
 
 import backoff
 import requests
@@ -139,16 +139,13 @@ def _log_error_response(arg_logger: logging.Logger, response: requests.Response)
         )
 
 
-T = TypeVar("T")
-
-
 @overload
 def _create_request_body_for_logger(data: bytes) -> str:
     pass
 
 
 @overload
-def _create_request_body_for_logger(data: T) -> T: ...
+def _create_request_body_for_logger[T](data: T) -> T: ...
 
 
 def _create_request_body_for_logger(data: Any) -> Any:

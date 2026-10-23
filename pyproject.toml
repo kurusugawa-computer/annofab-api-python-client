@@ -3,7 +3,7 @@ name = "annofabapi"
 dynamic = ["version"]
 description = "Python Client Library of Annofab WebAPI (https://annofab.com/docs/api/)"
 authors = [{ name = "Kurusugawa Computer Inc." }]
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 readme = "README.md"
 license = "MIT"
 keywords = [
@@ -15,10 +15,10 @@ classifiers = [
     "Intended Audience :: Developers",
     "Topic :: Utilities",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14"    
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
 ]
 dependencies = [
     "requests",
@@ -41,20 +41,21 @@ Repository = "https://github.com/kurusugawa-computer/annofab-api-python-client"
 
 [dependency-groups]
 test = [
-    "pytest>=8,<10",
-    "pytest-xdist",
-    "pytest-cov",
+    "pytest>=9.1.1",
+    "pytest-xdist>=3.8.0",
+    "pytest-cov>=7.1.0",
 ]
 linter = [
-    "ruff>=0.16 ; python_version >= '3.13'",
-    "mypy>=2 ; python_version >= '3.13'",
-    "types-requests",
-    "types-python-dateutil",
-    "types-dataclasses",
+    "ruff>=0.17.2",
+    "mypy>=2.4.0",
+    "types-requests>=2.33.0.20261006",
+    "types-python-dateutil>=2.9.0.20261021",
+    "types-dataclasses>=0.6.6",
 ]
 documentation = [
-    "sphinx>=9 ; python_version >= '3.13'",
-    "pydata-sphinx-theme ; python_version >= '3.13'",
+    "sphinx>=9.1.1; python_version < '3.13'",
+    "sphinx>=9.2.0; python_version >= '3.13'",
+    "pydata-sphinx-theme>=0.23.0",
 ]
 dev = [
     "ipython",
@@ -85,7 +86,7 @@ exclude = [
 show_column_numbers = true
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"
 line-length = 150
 exclude = [
     "annofabapi/__init__.py",
@@ -188,11 +189,9 @@ convention = "google"
 [tool.ruff.lint.pylint]
 max-args = 10
 
-
 [build-system]
 requires = ["hatchling", "uv-dynamic-versioning"]
 build-backend = "hatchling.build"
-
 
 [tool.hatch.version]
 source = "uv-dynamic-versioning"
