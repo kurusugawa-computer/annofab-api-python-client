@@ -1,7 +1,7 @@
 # annofab-api-python-client
 [Annofab Web API](https://annofab.com/docs/api/) のPythonクライアントライブラリです。
 
-[![Build Status](https://app.travis-ci.com/kurusugawa-computer/annofab-api-python-client.svg?branch=main)](https://app.travis-ci.com/kurusugawa-computer/annofab-api-python-client)
+[![Build Status](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/lint-test.yml/badge.svg)](https://github.com/kurusugawa-computer/annofab-api-python-client/actions)
 [![CodeQL](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml)
 [![PyPI version](https://badge.fury.io/py/annofabapi.svg)](https://badge.fury.io/py/annofabapi)
 [![Python Versions](https://img.shields.io/pypi/pyversions/annofabapi.svg)](https://pypi.org/project/annofabapi/)
@@ -38,7 +38,7 @@ cURLやPostmanなどよりも簡単にAnnofab Web APIにアクセスできます
 
 
 # Requirements
-* Python 3.11+
+* Python 3.12+
 
 # Install
 
