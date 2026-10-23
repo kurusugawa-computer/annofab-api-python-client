@@ -1,5 +1,8 @@
 FROM ubuntu:22.04
 
+# Install gitleaks for local secret scanning
+COPY --from=ghcr.io/gitleaks/gitleaks:v8.30.1 /usr/bin/gitleaks /usr/local/bin/gitleaks
+
 # Install prerequisites
 RUN set -x \
     && export DEBIAN_FRONTEND=noninteractive \
