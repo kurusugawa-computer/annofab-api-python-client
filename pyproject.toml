@@ -62,6 +62,7 @@ dev = [
 ]
 
 [tool.uv]
+required-version = ">=0.13.4"
 default-groups = [
     "test",
     "linter",

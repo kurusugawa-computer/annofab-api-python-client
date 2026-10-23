@@ -73,7 +73,7 @@ RUN useradd -m -s /bin/bash -u 5000 -U ${USERNAME} \
 
 USER ${USERNAME}
 
-ARG UV_VERSION=0.6.14
+ARG UV_VERSION=0.13.5
 RUN set -x \
     && curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh \
     && echo 'eval "$(uv generate-shell-completion bash)"' >> /home/${USERNAME}/.bashrc \

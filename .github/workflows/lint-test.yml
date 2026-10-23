@@ -24,7 +24,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}        
-          version: "0.9.11"
+          version: "latest"
       - name: Install the project
         run: uv sync --all-extras
       - name: Test
@@ -43,7 +43,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           python-version: 3.13
-          version: "0.9.11"
+          version: "latest"
       - name: Install the project
         run: uv sync --all-extras
       - name: Lint
