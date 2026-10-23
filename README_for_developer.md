@@ -106,6 +106,8 @@ ReadTheDocsのビルド結果は https://readthedocs.org/projects/annofab-api-py
 
 `make gitleaks` で現在のブランチの Git 履歴（マージ時の変更を含む）を検査します。gitleaks をインストール済みならそのコマンドを使い、未インストールなら Docker で v8.30.1 を実行します。検出値はログでマスクします。CI でも同じ検査を実行します。
 
+DevContainer には gitleaks v8.30.1 を同梱しています。既存のコンテナは再ビルドしてください。
+
 コミット前の差分検査には pre-commit フックを利用できます。
 
 ```sh
