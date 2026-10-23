@@ -33,7 +33,7 @@ docs:
 
 gitleaks:
 	@if command -v gitleaks >/dev/null 2>&1; then \
-		gitleaks git --redact=100 --verbose --log-opts=HEAD .; \
+		gitleaks git --redact=100 --verbose --log-opts="-m HEAD" .; \
 	elif command -v docker >/dev/null 2>&1; then \
 		if [ -n "${GITLEAKS_DOCKER_CONFIG}" ]; then \
 			mkdir -p "${GITLEAKS_DOCKER_CONFIG}"; \
@@ -42,7 +42,7 @@ gitleaks:
 		docker run --rm \
 			-v "$$(pwd):$$(pwd):ro" \
 			-v "$$(git rev-parse --path-format=absolute --git-common-dir):$$(git rev-parse --path-format=absolute --git-common-dir):ro" \
-			-w "$$(pwd)" ghcr.io/gitleaks/gitleaks:${GITLEAKS_VERSION} git --redact=100 --verbose --log-opts=HEAD .; \
+			-w "$$(pwd)" ghcr.io/gitleaks/gitleaks:${GITLEAKS_VERSION} git --redact=100 --verbose --log-opts="-m HEAD" .; \
 	else \
 		echo "gitleaksまたはdockerをインストールしてください。" >&2; \
 		exit 127; \
