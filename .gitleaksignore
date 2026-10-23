@@ -1,0 +1,2 @@
+# False positive: devcontainer --env options contain environment variable names only.
+15e4f7c522107b9cf4c623a74e07343a082c321c:.devcontainer/devcontainer.json:generic-api-key:23
