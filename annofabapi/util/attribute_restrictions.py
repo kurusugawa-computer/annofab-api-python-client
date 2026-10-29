@@ -340,11 +340,15 @@ class StringTextbox(Attribute, EmptyCheckMixin):
         return NotEquals(self.attribute_id, value)
 
     def matches(self, value: str) -> Restriction:
-        """引数`value`に渡された正規表現に一致するという制約"""
+        """引数`value`に渡された正規表現に完全一致するという制約。
+        部分一致ではないため、`^`と`$`は不要です。
+        """
         return Matches(self.attribute_id, value)
 
     def not_matches(self, value: str) -> Restriction:
-        """引数`value`に渡された正規表現に一致しないという制約"""
+        """引数`value`に渡された正規表現に完全一致しないという制約。
+        部分一致ではないため、`^`と`$`は不要です。
+        """
         return NotMatches(self.attribute_id, value)
 
 
