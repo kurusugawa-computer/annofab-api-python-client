@@ -2005,7 +2005,7 @@ class Wrapper:
             return None
 
         latest_history_id = histories[0]["history_id"]
-        return self.api.get_instruction(project_id, {"history_id": latest_history_id})[0]
+        return self.api.get_instruction(project_id, query_params={"history_id": latest_history_id})[0]
 
     def upload_instruction_image(self, project_id: str, image_id: str, file_path: str, content_type: str | None = None) -> str:
         """

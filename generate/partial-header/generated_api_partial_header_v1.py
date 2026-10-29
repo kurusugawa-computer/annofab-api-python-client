@@ -22,6 +22,7 @@ class AbstractAnnofabApi(abc.ABC):
         self,
         http_method: str,
         url_path: str,
+        *,
         query_params: Optional[dict[str, Any]] = None,
         header_params: Optional[dict[str, Any]] = None,
         request_body: Optional[Any] = None,

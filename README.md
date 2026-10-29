@@ -133,6 +133,26 @@ service = build()
 2. `.netrc`
 
 
+## APIメソッドの引数
+
+`service.api`・`service.api2` の生成されたAPIメソッドでは、`query_params`・`header_params`・`request_body` はキーワード専用引数です。パス引数は位置引数でも指定できます。
+
+これらを位置引数で渡していたコードは、次のようにキーワード指定へ変更してください。位置引数で渡すと `TypeError` になります。
+
+```python
+# 変更前（TypeErrorになる呼び出し）
+service.api.put_annotation(project_id, task_id, input_data_id, query_params, request_body)
+
+# 変更後
+service.api.put_annotation(
+    project_id, task_id, input_data_id,
+    query_params=query_params,
+    request_body=request_body,
+)
+```
+
+引数名を明示することで、API仕様の更新で引数が追加されても、別の引数として解釈されることを防ぎます。
+
 ## `service.api`のサンプルコード
 
 * `service.api`には、Web APIに対応するメソッドが定義されています。
