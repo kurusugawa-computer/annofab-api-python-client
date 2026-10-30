@@ -104,3 +104,37 @@ def test_download_annotation_zip_waits_for_update(tmp_path, method_name):
     sleep.assert_called_once_with(7)
     assert actual_url == url
     assert dest_path.read_bytes() == content
+
+
+@pytest.mark.parametrize("method_name", ["download_annotation_archive", "download_annotation_zip"])
+@pytest.mark.parametrize("max_job_access", [1, 2])
+def test_download_annotation_zip_limits_job_access(tmp_path, method_name, max_job_access):
+    """ジョブが進行中でも、指定した確認回数の上限に達したら待機を終了する。"""
+    api = AnnofabApi(Pat("test-token"))
+    wrapper = Wrapper(api)
+    url = "https://example.com/annotation.zip"
+    conflict = requests.Response()
+    conflict.status_code = 409
+    conflict._content = b'{"errors": [{"error_code": "WORKER_ALREADY_INVOKED"}]}'
+    metadata_response = requests.Response()
+    metadata_response.headers["Location"] = url
+    content = (data_dir / "simple-annotation.zip").read_bytes()
+    download_response = requests.Response()
+    download_response.raw = io.BytesIO(content)
+    dest_path = tmp_path / "annotation.zip"
+    progress = {"job_id": "job-1", "job_status": "progress"}
+
+    with (
+        patch.object(api, "get_annotation_archive", side_effect=[requests.HTTPError(response=conflict), ({}, metadata_response)]),
+        patch.object(api, "get_project_job", return_value=({"list": [progress]}, metadata_response)) as get_job,
+        patch.object(api, "_execute_http_request", return_value=download_response),
+        patch("annofabapi.wrapper.time.sleep") as sleep,
+        warnings.catch_warnings(),
+    ):
+        warnings.simplefilter("ignore", FutureWarning)
+        actual_url = getattr(wrapper, method_name)("project-1", dest_path, job_access_interval=7, max_job_access=max_job_access)
+
+    assert get_job.call_count == max_job_access
+    assert sleep.call_count == max_job_access - 1
+    assert actual_url == url
+    assert dest_path.read_bytes() == content
