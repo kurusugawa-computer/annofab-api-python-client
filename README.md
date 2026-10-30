@@ -51,6 +51,8 @@ https://pypi.org/project/annofabapi/
 
 ## インスタンス生成
 
+認証にはパーソナルアクセストークン（PAT）の利用を推奨します。
+
 ### user_id, passwordをコンストラクタ引数に渡す場合
 
 ```python
@@ -77,31 +79,6 @@ service = build(pat = pat)
 ```
 
 
-### `.netrc`に認証情報を記載する場合
-`.netrc`ファイルに、AnnofabのユーザIDとパスワードを記載します。
-
-```plain:.netrc
-machine annofab.com
-login annofab_user_id
-password annofab_password
-```
-
-```python
-from annofabapi import build_from_netrc
-service = build_from_netrc()
-```
-
-
-#### For Linux
-* パスは`$HOME/.netrc`
-* `$ chmod 600 $HOME/.netrc`でパーミッションを変更する
-
-
-
-#### For Windows
-* パスは`%USERPROFILE%\.netrc`
-
-
 ### 環境変数に認証情報を設定する場合
 
 
@@ -117,8 +94,8 @@ service = build_from_env()
 ```
 
 
-### `.netrc`または環境変数に認証情報を設定する場合
-``build()`` を実行すると、環境変数または `.netrc` ファイルから認証情報を読み込みます。
+### 引数なしでインスタンスを生成する場合
+``build()`` を実行すると、環境変数から認証情報を読み込みます。
 
 ```python
 from annofabapi import build
@@ -126,10 +103,8 @@ service = build()
 ```
 
 優先順位は以下の通りです。
-1. 環境変数
-    1. `ANNOFAB_PAT`
-    2. `ANNOFAB_USER_ID`及び`ANNOFAB_PASSWORD`
-2. `.netrc`
+1. `ANNOFAB_PAT`
+2. `ANNOFAB_USER_ID`及び`ANNOFAB_PASSWORD`
 
 
 ## APIメソッドの引数
