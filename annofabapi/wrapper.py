@@ -306,6 +306,46 @@ class Wrapper:
         アノテーションZIPの更新中（HTTP 409, WORKER_ALREADY_INVOKED）の場合は、
         更新ジョブ（gen-annotation）が完了するまで待ってからダウンロードする。
 
+        .. deprecated:: 2026-10-30
+            2027-04-01以降に削除予定です。:meth:`download_annotation_zip` を使用してください。
+
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先のファイルパス
+            job_access_interval: アノテーションZIPの更新ジョブにアクセスする間隔[秒]
+            max_job_access: アノテーションZIPの更新ジョブに最大何回アクセスするか
+
+        Returns:
+            ダウンロード元のURL
+
+        """
+        warnings.warn(
+            "annofabapi.Wrapper.download_annotation_archive() is deprecated and will be removed on or after 2027-04-01. "
+            "Use annofabapi.Wrapper.download_annotation_zip() instead.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        return self.download_annotation_zip(
+            project_id,
+            dest_path,
+            job_access_interval=job_access_interval,
+            max_job_access=max_job_access,
+        )
+
+    def download_annotation_zip(
+        self,
+        project_id: str,
+        dest_path: str | Path,
+        *,
+        job_access_interval: int = 60,
+        max_job_access: int = 360,
+    ) -> str:
+        """
+        simpleアノテーションZIPをダウンロードする。
+
+        アノテーションZIPの更新中（HTTP 409, WORKER_ALREADY_INVOKED）の場合は、
+        更新ジョブ（gen-annotation）が完了するまで待ってからダウンロードする。
+
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先のファイルパス
@@ -1500,6 +1540,30 @@ class Wrapper:
         プロジェクトの入力データ全件ファイルをダウンロードする。
         ファイルの中身はJSON。
 
+        .. deprecated:: 2026-10-30
+            2027-04-01以降に削除予定です。:meth:`download_project_inputs_json` を使用してください。
+
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先ファイルのパス
+
+        Returns:
+            ダウンロード元のURL
+
+        """
+        warnings.warn(
+            "annofabapi.Wrapper.download_project_inputs_url() is deprecated and will be removed on or after 2027-04-01. "
+            "Use annofabapi.Wrapper.download_project_inputs_json() instead.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        return self.download_project_inputs_json(project_id, dest_path)
+
+    def download_project_inputs_json(self, project_id: str, dest_path: str | Path) -> str:
+        """
+        プロジェクトの入力データ全件ファイルをダウンロードする。
+        ファイルの中身はJSON。
+
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先ファイルのパス
@@ -1514,6 +1578,30 @@ class Wrapper:
         return url
 
     def download_project_tasks_url(self, project_id: str, dest_path: str | Path) -> str:
+        """
+        プロジェクトのタスク全件ファイルをダウンロードする。
+        ファイルの中身はJSON。
+
+        .. deprecated:: 2026-10-30
+            2027-04-01以降に削除予定です。:meth:`download_project_tasks_json` を使用してください。
+
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先ファイルのパス
+
+        Returns:
+            ダウンロード元のURL
+
+        """
+        warnings.warn(
+            "annofabapi.Wrapper.download_project_tasks_url() is deprecated and will be removed on or after 2027-04-01. "
+            "Use annofabapi.Wrapper.download_project_tasks_json() instead.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        return self.download_project_tasks_json(project_id, dest_path)
+
+    def download_project_tasks_json(self, project_id: str, dest_path: str | Path) -> str:
         """
         プロジェクトのタスク全件ファイルをダウンロードする。
         ファイルの中身はJSON。
@@ -1562,6 +1650,29 @@ class Wrapper:
         """
         プロジェクトのコメント全件ファイルをダウンロードする。
 
+        .. deprecated:: 2026-10-30
+            2027-04-01以降に削除予定です。:meth:`download_project_comments_json` を使用してください。
+
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先ファイルのパス
+
+        Returns:
+            ダウンロード元のURL
+
+        """
+        warnings.warn(
+            "annofabapi.Wrapper.download_project_comments_url() is deprecated and will be removed on or after 2027-04-01. "
+            "Use annofabapi.Wrapper.download_project_comments_json() instead.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        return self.download_project_comments_json(project_id, dest_path)
+
+    def download_project_comments_json(self, project_id: str, dest_path: str | Path) -> str:
+        """
+        プロジェクトのコメント全件ファイルをダウンロードする。
+
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先ファイルのパス
@@ -1581,12 +1692,41 @@ class Wrapper:
         プロジェクトのタスク履歴イベント全件ファイルをダウンロードする。
         ファイルの中身はJSON。
 
+        .. deprecated:: 2026-10-30
+            2027-04-01以降に削除予定です。:meth:`download_project_task_history_events_json` を使用してください。
+
         Args:
             project_id: プロジェクトID
             dest_path: ダウンロード先ファイルのパス
 
         Returns:
             ダウンロード元のURL
+
+        """
+        warnings.warn(
+            "annofabapi.Wrapper.download_project_task_history_events_url() is deprecated and will be removed on or after 2027-04-01. "
+            "Use annofabapi.Wrapper.download_project_task_history_events_json() instead.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        return self.download_project_task_history_events_json(project_id, dest_path)
+
+    def download_project_task_history_events_json(self, project_id: str, dest_path: str | Path) -> str:
+        """
+        プロジェクトのタスク履歴イベント全件ファイルをダウンロードする。
+        ファイルの中身はJSON。
+
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先ファイルのパス
+
+        Returns:
+            ダウンロード元のURL
+
+        Note:
+            取得元の ``get_project_task_history_events_url`` APIは非推奨で、将来廃止される予定です。
+            廃止時期は未定です。タスク履歴イベントでのみ取得できる情報があるため、
+            このメソッドでは取得元APIの非推奨警告を抑止して提供を継続しています。
 
         """
         with warnings.catch_warnings():
@@ -1600,6 +1740,30 @@ class Wrapper:
         return url
 
     def download_project_task_histories_url(self, project_id: str, dest_path: str | Path) -> str:
+        """
+        プロジェクトのタスク履歴全件ファイルをダウンロードする。
+        ファイルの中身はJSON。
+
+        .. deprecated:: 2026-10-30
+            2027-04-01以降に削除予定です。:meth:`download_project_task_histories_json` を使用してください。
+
+        Args:
+            project_id: プロジェクトID
+            dest_path: ダウンロード先ファイルのパス
+
+        Returns:
+            ダウンロード元のURL
+
+        """
+        warnings.warn(
+            "annofabapi.Wrapper.download_project_task_histories_url() is deprecated and will be removed on or after 2027-04-01. "
+            "Use annofabapi.Wrapper.download_project_task_histories_json() instead.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        return self.download_project_task_histories_json(project_id, dest_path)
+
+    def download_project_task_histories_json(self, project_id: str, dest_path: str | Path) -> str:
         """
         プロジェクトのタスク履歴全件ファイルをダウンロードする。
         ファイルの中身はJSON。

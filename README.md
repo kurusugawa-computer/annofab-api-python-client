@@ -192,7 +192,7 @@ print(tasks)
 
 
 # simpleアノテーションzipのダウンロード
-service.wrapper.download_annotation_archive(project_id, 'output_dir')
+service.wrapper.download_annotation_zip(project_id, 'output_dir/simple_annotation.zip')
 
 # 画像ファイルを入力データとして登録する
 service.wrapper.put_input_data_from_file(project_id, 'sample_input_data_id', f'sample.png')

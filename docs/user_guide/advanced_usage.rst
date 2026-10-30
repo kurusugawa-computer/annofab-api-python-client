@@ -68,21 +68,18 @@ service.wrapper.download_xxx メソッド
 ---------------------------------------------
 アノテーションzipなどのファイルをダウンロードできるメソッドです。
 
-* ``download_annotation_archive``
-* ``download_full_annotation_archive``
-* ``download_project_inputs_url``
-* ``download_project_tasks_url``
-* ``download_project_inspections_url``
-* ``download_project_task_history_events_url``
-* ``download_project_task_histories_url``
+* ``download_annotation_zip``
+* ``download_project_inputs_json``
+* ``download_project_tasks_json``
+* ``download_project_comments_json``
+* ``download_project_task_history_events_json``
+* ``download_project_task_histories_json``
 
 
 .. code-block:: python
 
     # アノテーションzipをダウンロードする
-    service.wrapper.download_annotation_archive(project_id, "out/simple_annotation.zip")
-
-
+    service.wrapper.download_annotation_zip(project_id, "out/simple_annotation.zip")
 
 
 service.api.operate_task を使いやすくしたメソッド

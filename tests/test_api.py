@@ -139,8 +139,8 @@ class TestAnnotation:
         content, response = api.get_annotation_archive(project_id)
         assert response.headers["Location"].startswith("https://")
 
-    def test_wrapper_download_annotation_archive(self):
-        wrapper.download_annotation_archive(project_id, f"{out_dir}/simple-annotation.zip")
+    def test_wrapper_download_annotation_zip(self):
+        wrapper.download_annotation_zip(project_id, f"{out_dir}/simple-annotation.zip")
 
     @pytest.mark.submitting_job
     def test_post_annotation_archive_update(self):
@@ -443,20 +443,20 @@ class TestProject:
     def test_post_project_tasks_update(self):
         assert type(api.post_project_tasks_update(project_id)[0]) == dict  # noqa: E721
 
-    def test_wrapper_download_project_inputs_url(self):
-        assert wrapper.download_project_inputs_url(project_id, f"{out_dir}/inputs.json").startswith("https://")
+    def test_wrapper_download_project_inputs_json(self):
+        assert wrapper.download_project_inputs_json(project_id, f"{out_dir}/inputs.json").startswith("https://")
 
-    def test_wrapper_download_project_tasks_url(self):
-        assert wrapper.download_project_tasks_url(project_id, f"{out_dir}/tasks.json").startswith("https://")
+    def test_wrapper_download_project_tasks_json(self):
+        assert wrapper.download_project_tasks_json(project_id, f"{out_dir}/tasks.json").startswith("https://")
 
-    def test_wrapper_download_project_task_history_events_url(self):
-        assert wrapper.download_project_task_history_events_url(project_id, f"{out_dir}/task_history_events.json").startswith("https://")
+    def test_wrapper_download_project_task_history_events_json(self):
+        assert wrapper.download_project_task_history_events_json(project_id, f"{out_dir}/task_history_events.json").startswith("https://")
 
-    def test_wrapper_download_project_task_histories_url(self):
-        assert wrapper.download_project_task_histories_url(project_id, f"{out_dir}/task_histories.json").startswith("https://")
+    def test_wrapper_download_project_task_histories_json(self):
+        assert wrapper.download_project_task_histories_json(project_id, f"{out_dir}/task_histories.json").startswith("https://")
 
-    def test_wrapper_download_project_comments_url(self):
-        assert wrapper.download_project_comments_url(project_id, f"{out_dir}/comments.json").startswith("https://")
+    def test_wrapper_download_project_comments_json(self):
+        assert wrapper.download_project_comments_json(project_id, f"{out_dir}/comments.json").startswith("https://")
 
 
 @pytest.mark.access_webapi
