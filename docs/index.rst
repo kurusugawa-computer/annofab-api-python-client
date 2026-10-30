@@ -16,6 +16,7 @@ Table of Contents
    user_guide/index
    api_reference/index
    faq
+   release_notes
 
 
 --------------------------------------------------

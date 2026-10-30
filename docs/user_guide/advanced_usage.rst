@@ -68,21 +68,49 @@ service.wrapper.download_xxx メソッド
 ---------------------------------------------
 アノテーションzipなどのファイルをダウンロードできるメソッドです。
 
-* ``download_annotation_archive``
-* ``download_full_annotation_archive``
-* ``download_project_inputs_url``
-* ``download_project_tasks_url``
-* ``download_project_inspections_url``
-* ``download_project_task_history_events_url``
-* ``download_project_task_histories_url``
+* ``download_annotation_zip``
+* ``download_project_inputs_json``
+* ``download_project_tasks_json``
+* ``download_project_comments_json``
+* ``download_project_task_history_events_json``
+* ``download_project_task_histories_json``
 
 
 .. code-block:: python
 
     # アノテーションzipをダウンロードする
-    service.wrapper.download_annotation_archive(project_id, "out/simple_annotation.zip")
+    service.wrapper.download_annotation_zip(project_id, "out/simple_annotation.zip")
 
 
+保存先にはファイルパス（``str`` または ``pathlib.Path``）を指定します。
+戻り値はダウンロード元のURLです。
+
+旧メソッド名からの移行
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+以下の旧メソッドは非推奨です。呼び出すと ``FutureWarning`` が発生します。
+旧メソッドは2027-04-01以降に削除予定のため、新メソッドに移行してください。
+引数、戻り値、ダウンロード処理は変わりません。
+
+.. list-table::
+   :header-rows: 1
+
+   * - 旧メソッド名
+     - 新メソッド名
+   * - ``download_annotation_archive``
+     - ``download_annotation_zip``
+   * - ``download_project_inputs_url``
+     - ``download_project_inputs_json``
+   * - ``download_project_tasks_url``
+     - ``download_project_tasks_json``
+   * - ``download_project_comments_url``
+     - ``download_project_comments_json``
+   * - ``download_project_task_history_events_url``
+     - ``download_project_task_history_events_json``
+   * - ``download_project_task_histories_url``
+     - ``download_project_task_histories_json``
+
+すでに非推奨の ``download_full_annotation_archive`` と
+``download_project_inspections_url`` には、新メソッドを追加しません。
 
 
 service.api.operate_task を使いやすくしたメソッド
