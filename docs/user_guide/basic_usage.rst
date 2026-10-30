@@ -119,8 +119,7 @@ annofabapiは、pythonのloggingモジュールを利用してログメッセー
     logging.getLogger("annofabapi").setLevel(level=logging.DEBUG)
 
     from annofabapi import build
-    servcie = build()
-    # DEBUG    : 2020-12-09 21:09:04,728 : resource.py : annofabapi.resource : build_from_netrc : .netrcファイルからAnnofab認証情報を読み込みました。
+    service = build()
 
 
 

@@ -1,7 +1,5 @@
 import logging
-import netrc
 import os
-from urllib.parse import urlparse
 
 from annofabapi import AnnofabApi, AnnofabApi2, Wrapper
 from annofabapi.api import DEFAULT_ENDPOINT_URL
@@ -56,8 +54,7 @@ def build(
     AnnofabApi, Wrapperのインスタンスを保持するインスタンスを生成する。
 
     ``pat``が渡された場合はそれが優先して利用される。
-    ``pat`` / ``login_user_id`` / ``login_password`` の全てがNoneの場合は、``.netrc`` ファイルまたは環境変数から認証情報を取得する。
-    認証情報は、環境変数, ``.netrc`` ファイルの順に読み込む。
+    ``pat`` / ``login_user_id`` / ``login_password`` の全てがNoneの場合は、環境変数から認証情報を取得する。
 
     環境変数は``ANNOFAB_USER_ID`` , ``ANNOFAB_PASSWORD``, ``ANNOFAB_PAT`` を参照し、``ANNOFAB_PAT``が設定されている場合はそれ以外を無視する。
 
@@ -73,7 +70,7 @@ def build(
         AnnofabApi, Wrapperのインスタンスを保持するインスタンス
 
     Raises:
-        CredentialsNotFoundError: `.netrc`ファイルまたは環境変数にAnnofabの認証情報がなかった
+        CredentialsNotFoundError: 環境変数にAnnofabの認証情報がなかった
 
     """
     if pat is not None:
@@ -84,50 +81,9 @@ def build(
         )
 
     elif login_user_id is None and login_password is None and pat is None:
-        try:
-            return build_from_env(endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
-        except CredentialsNotFoundError:
-            try:
-                return build_from_netrc(endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
-            except CredentialsNotFoundError as e:
-                raise CredentialsNotFoundError("環境変数または`.netrc`ファイルにAnnofab認証情報はありませんでした。") from e
+        return build_from_env(endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
     else:
         raise ValueError("引数`login_user_id`か`login_password`のどちらか一方がNoneです。両方Noneでないか、両方Noneである必要があります。")
-
-
-def build_from_netrc(*, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> Resource:
-    """
-    ``.netrc`` ファイルから、annofabapi.Resourceインスタンスを生成する。
-
-    Args:
-        endpoint_url: Annofab APIのエンドポイント。
-        input_mfa_code_via_stdin: MFAコードを標準入力から入力するかどうか
-                                  Falseを渡して且つMFAコードの入力を求められるアカウントを利用する場合、mfa_codeを引数にloginメソッドを直接呼び出さなければならず、そうしない場合は例外を送出する
-
-    Returns:
-        annofabapi.Resourceインスタンス
-
-    Raises:
-        CredentialsNotFoundError: `.netrc`ファイルにAnnofabの認証情報がなかった
-
-    """
-    try:
-        netrc_hosts = netrc.netrc().hosts
-    except FileNotFoundError as e:
-        raise CredentialsNotFoundError("`.netrc`ファイルは見つかりません。") from e
-
-    annofab_hostname = (urlparse(endpoint_url)).hostname
-
-    if annofab_hostname not in netrc_hosts:
-        raise CredentialsNotFoundError(f"The `.netrc` file does not contain the machine name '{annofab_hostname}'")
-
-    host = netrc_hosts[annofab_hostname]
-    login_user_id = host[0]
-    login_password = host[2]
-    if login_user_id is None or login_password is None:
-        raise CredentialsNotFoundError("User ID or password in the .netrc file are None.")
-
-    return Resource(credentials=IdPass(login_user_id, login_password), endpoint_url=endpoint_url, input_mfa_code_via_stdin=input_mfa_code_via_stdin)
 
 
 def build_from_env(*, endpoint_url: str = DEFAULT_ENDPOINT_URL, input_mfa_code_via_stdin: bool = False) -> Resource:
