@@ -666,7 +666,7 @@ class TestTask:
 
     def test_patch_tasks_metadata(self):
         request_body = {task_id: {"alice": "foo", "bob": 1.23, "charlie": False}}
-        content, _ = api.patch_tasks_metadata(project_id, request_body)
+        content, _ = api.patch_tasks_metadata(project_id, request_body=request_body)
         assert type(content) == dict  # noqa: E721
 
 

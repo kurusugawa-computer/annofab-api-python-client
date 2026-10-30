@@ -97,6 +97,7 @@ OpenAPI Specファイルの間違いを許容する部分/許容しない部分�
 * WebAPIにQuery Parametersがあれば、引数に`query_params`を追加する。
 * WebAPIにHeader Parametersがあれば、引数に`header_params`を追加する。
 * WebAPIにRequest Bodyがあれば、引数に`request_body`を追加する。
+* `query_params`、`header_params`、`request_body`はキーワード専用引数にする。パス引数は位置引数でもキーワード引数でも指定できる。
 * WebAPIからRequest Bodyなどが不要になってもメソッドが動くようにするため、メソッド引数には`**kwargs`を用意する。
 
 
