@@ -2,10 +2,9 @@
 [Annofab Web API](https://annofab.com/docs/api/) のPythonクライアントライブラリです。
 
 [![Build Status](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/lint-test.yml/badge.svg)](https://github.com/kurusugawa-computer/annofab-api-python-client/actions)
-[![CodeQL](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/kurusugawa-computer/annofab-api-python-client/actions/workflows/codeql-analysis.yml)
 [![PyPI version](https://badge.fury.io/py/annofabapi.svg)](https://badge.fury.io/py/annofabapi)
 [![Python Versions](https://img.shields.io/pypi/pyversions/annofabapi.svg)](https://pypi.org/project/annofabapi/)
-[![Documentation Status](https://readthedocs.org/projects/annofab-api-python-client/badge/?version=latest)](https://annofab-api-python-client.readthedocs.io/en/latest/?badge=latest)
+
 
 
 
@@ -25,7 +24,7 @@
 * put, post, delete系のメソッドを間違えて実行してしまわないよう、注意してください。特に「プロジェクト削除」や「アノテーション仕様更新」のAPIには十分注意してください。
  
 # 廃止予定
-現在ありません。
+https://annofab-api-python-client.readthedocs.io/en/latest/deprecations.html を参照してください。
 
 
 # Features
