@@ -82,44 +82,6 @@ service.wrapper.download_xxx メソッド
     service.wrapper.download_annotation_zip(project_id, "out/simple_annotation.zip")
 
 
-保存先にはファイルパス（``str`` または ``pathlib.Path``）を指定します。
-戻り値はダウンロード元のURLです。
-
-.. note::
-
-   ``download_project_task_history_events_json`` が使用する
-   ``get_project_task_history_events_url`` API自体は非推奨で、将来廃止される予定です。
-   取得元APIの廃止時期は未定です。タスク履歴イベントでのみ取得できる情報があるため、
-   このメソッドでは取得元APIの非推奨警告を抑止して提供を継続しています。
-
-旧メソッド名からの移行
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-以下の旧メソッドは非推奨です。呼び出すと ``FutureWarning`` が発生します。
-旧メソッドは2027-04-01以降に削除予定のため、新メソッドに移行してください。
-引数、戻り値、ダウンロード処理は変わりません。
-
-.. list-table::
-   :header-rows: 1
-
-   * - 旧メソッド名
-     - 新メソッド名
-   * - ``download_annotation_archive``
-     - ``download_annotation_zip``
-   * - ``download_project_inputs_url``
-     - ``download_project_inputs_json``
-   * - ``download_project_tasks_url``
-     - ``download_project_tasks_json``
-   * - ``download_project_comments_url``
-     - ``download_project_comments_json``
-   * - ``download_project_task_history_events_url``
-     - ``download_project_task_history_events_json``
-   * - ``download_project_task_histories_url``
-     - ``download_project_task_histories_json``
-
-すでに非推奨の ``download_full_annotation_archive`` と
-``download_project_inspections_url`` には、新メソッドを追加しません。
-
-
 service.api.operate_task を使いやすくしたメソッド
 --------------------------------------------------
 ``service.api.operate_task`` メソッドをユースケースごと分割して、使いやすくしたメソッドです。
