@@ -1723,6 +1723,11 @@ class Wrapper:
         Returns:
             ダウンロード元のURL
 
+        Note:
+            取得元の ``get_project_task_history_events_url`` APIは非推奨で、将来廃止される予定です。
+            廃止時期は未定です。タスク履歴イベントでのみ取得できる情報があるため、
+            このメソッドでは取得元APIの非推奨警告を抑止して提供を継続しています。
+
         """
         with warnings.catch_warnings():
             # `get_project_task_history_events_url`関数は非推奨だが、タスク履歴イベントでしか取得できない情報があるため、annofab-cliなどではよく利用する  # noqa: E501

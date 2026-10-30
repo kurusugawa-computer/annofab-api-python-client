@@ -85,6 +85,13 @@ service.wrapper.download_xxx メソッド
 保存先にはファイルパス（``str`` または ``pathlib.Path``）を指定します。
 戻り値はダウンロード元のURLです。
 
+.. note::
+
+   ``download_project_task_history_events_json`` が使用する
+   ``get_project_task_history_events_url`` API自体は非推奨で、将来廃止される予定です。
+   取得元APIの廃止時期は未定です。タスク履歴イベントでのみ取得できる情報があるため、
+   このメソッドでは取得元APIの非推奨警告を抑止して提供を継続しています。
+
 旧メソッド名からの移行
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 以下の旧メソッドは非推奨です。呼び出すと ``FutureWarning`` が発生します。
