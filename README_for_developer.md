@@ -23,7 +23,7 @@ $ make format && make lint
 # Test
 
 ## テストの実行方法
-1. Annofabの認証情報を、`.netrc`ファイルまたは環境変数に設定する。
+1. 環境変数`ANNOFAB_PAT`にAnnofabのパーソナルアクセストークンを設定する。
 2. 以下のコマンドを実行して、テスト用のプロジェクトとタスクを作成する。
      * `uv run python tests/create_test_project.py --organization ${MY_ORGANIZATION}`
 3. `pytest.ini`に、テスト対象の`project_id`と`task_id`を指定する。
