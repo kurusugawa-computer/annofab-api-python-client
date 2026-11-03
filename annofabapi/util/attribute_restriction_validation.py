@@ -92,9 +92,9 @@ class AttributeRestrictionValidator:
 
     @staticmethod
     def _is_editability(condition: Mapping[str, Any]) -> bool:
-        while isinstance(condition, Mapping) and condition.get("_type") == "Imply":
-            condition = condition.get("condition", {})
-        return isinstance(condition, Mapping) and condition.get("_type") == "CanInput"
+        while isinstance(condition, Mapping) and condition["_type"] == "Imply":
+            condition = condition["condition"]
+        return isinstance(condition, Mapping) and condition["_type"] == "CanInput"
 
     def _evaluate(self, restriction: Mapping[str, Any], annotation: Mapping[str, Any], by_id: Mapping[str, Mapping[str, Any]]) -> bool:
         try:
