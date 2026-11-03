@@ -175,15 +175,18 @@ def test_imply_with_link_premise(specs):
     assert_evaluation(specs, {"link": "missing"}, None)
 
 
-def test_can_input_and_read_only_are_excluded(specs):
+def test_can_input_is_excluded(specs):
     specs["restrictions"] = [
         restriction("note", "CanInput", enable=False),
         conditional(restriction("unclear", "Equals", value="true"), restriction("note", "CanInput", enable=False)),
     ]
     assert evaluate(specs, {"note": "existing", "unclear": True}) == []
-    specs["restrictions"] = [restriction(value="")]
+
+
+@pytest.mark.parametrize("attributes, expected", [({}, True), ({"note": ""}, True), ({"note": "existing"}, False)])
+def test_read_only_is_validated(specs, attributes, expected):
     specs["additionals"][0]["read_only"] = True
-    assert evaluate(specs) == []
+    assert_evaluation(specs, attributes, expected)
 
 
 def test_default_is_not_filled(specs):

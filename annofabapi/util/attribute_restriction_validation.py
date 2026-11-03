@@ -31,7 +31,7 @@ class AttributeRestrictionValidator:
     """v3の仕様に含まれる属性制約でSimple Annotationを検証します。
 
     同じインスタンスを複数の入力データに使えます。仕様は初期化時にコピーします。
-    制約の適用先はラベルの属性定義で決定します。読取専用属性の制約と、
+    制約の適用先はラベルの属性定義で決定し、読取専用属性の制約も評価します。
     結論がCanInputである制約は評価対象から除外します。
 
     Args:
@@ -73,7 +73,7 @@ class AttributeRestrictionValidator:
             for index, restriction in enumerate(self._restrictions):
                 attribute_id = restriction["additional_data_definition_id"]
                 attribute = self._attributes.get(attribute_id)
-                if self._is_editability(restriction["condition"]) or (attribute is not None and attribute.get("read_only", False)):
+                if self._is_editability(restriction["condition"]):
                     continue
                 label = self._find_label(annotation["label"])
                 if attribute is None:
