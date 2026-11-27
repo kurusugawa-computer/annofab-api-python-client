@@ -316,10 +316,10 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(DataClassJs
     """"""
 
     min_width: int
-    """"""
+    """最小の幅。標準の矩形種別では0以上を指定します。ユーザー定義種別では、現在、下限は検証されません。 """
 
     min_height: int
-    """"""
+    """最小の高さ。標準の矩形種別では0以上を指定します。ユーザー定義種別では、現在、下限は検証されません。 """
 
     position_for_minimum_bounding_box_insertion: list[int] | None
     """最小矩形の挿入位置を、要素が2の配列で指定します。 """
@@ -347,11 +347,11 @@ class AnnotationTypeFieldValueVertexCountMinMax(DataClassJsonMixin):
     type: str
     """"""
 
-    min: int
-    """"""
+    min: int | None
+    """頂点数の最小値。データ型が `Polyline2d` の場合は2以上、`Polygon2d` の場合は3以上を指定します。 """
 
-    max: int
-    """"""
+    max: int | None
+    """頂点数の最大値。標準種別ではポリラインは2以上、ポリゴンは3以上を指定します。ユーザー定義種別では、`max` のみ指定した場合、下限は検証されません。 """
 
 
 @dataclass
@@ -610,7 +610,7 @@ class LabelV3(DataClassJsonMixin):
     """"""
 
     field_values: dict[str, AnnotationTypeFieldValue]
-    """KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#tag/x-data-types/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 """
+    """ラベルごとの制約や設定値を保持するオブジェクトです。 キーには設定項目を識別するフィールドIDを指定し、値にはそのフィールドに設定する制約やオプションを表すオブジェクトを指定します。 例えば頂点数制約は、`\"vertex_count_min_max\": {\"_type\": \"VertexCountMinMax\", \"max\": 20}` のように指定します。  Annofabの標準エディタでは、アノテーション種別ごとに、使用可能なフィールドIDと設定値の構造があらかじめ決まっています。設定値の構造は、値オブジェクトの `_type` に設定値の構造を示す名前を指定することで示します。以下の表に、フィールドIDと設定値の構造を示す名前を示します。  | エディタ | アノテーション種別（`annotation_type`） | フィールドID → 設定値の構造を示す名前 | | --- | --- | --- | | 画像 | 矩形（`bounding_box`） | `minimum_size_2d_with_default_insert_position` → `MinimumSize2dWithDefaultInsertPosition`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance` | | 画像 | ポリゴン（`polygon`） | `minimum_size_2d` → `MinimumSize2d`<br>`minimum_area_2d` → `MinimumArea2d`<br>`vertex_count_min_max` → `VertexCountMinMax`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance` | | 画像 | ポリライン（`polyline`） | `minimum_size_2d` → `MinimumSize2d`<br>`vertex_count_min_max` → `VertexCountMinMax`<br>`display_line_direction` → `DisplayLineDirection`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance` | | 画像 | 点（`point`） | `margin_of_error_tolerance` → `MarginOfErrorTolerance` | | 画像 | 塗りつぶし（`segmentation`）・塗りつぶしv2（`segmentation_v2`） | `minimum_size_2d` → `MinimumSize2d`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance`<br>`annotation_editor_feature` → `AnnotationEditorFeature` | | 画像・動画 | 全体（`classification`） | なし | | 動画 | 区間（`range`） | なし |  ユーザー定義アノテーション種別では、[組織プラグイン](#operation/putOrganizationPlugin)の [UserDefinedAnnotationTypeDefinition](#tag/x-data-types/UserDefinedAnnotationTypeDefinition) の `field_definitions` で定義されたフィールドIDをキーに指定します。値オブジェクトの `_type` には、設定値の構造を示す名前を指定します。指定する名前は、[フィールド定義と設定値の対応表](#tag/x-data-types/UserDefinedAnnotationTypeDefinition)（`field_definitions` の `definition` の説明）を参照してください。 """
 
     additional_data_definitions: list[str]
     """ラベルに所属する属性のID"""

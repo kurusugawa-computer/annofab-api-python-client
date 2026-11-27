@@ -429,10 +429,10 @@ class AbstractAnnofabApi(abc.ABC):
         https://annofab.com/docs/api/#operation/putAnnotationSpecs
 
 
-        authorizations: ProjectOwner
+        authorizations: ProjectAccepter
 
 
-        アノテーション仕様を更新します。
+        アノテーション仕様を更新します。  プロジェクトのチェッカーロールを持つユーザーは、以下の項目のみ変更できます。 * ラベルの色 * ラベル・属性・選択肢のショートカットキー * ラベル・属性・選択肢の表示順 * 定型指摘  チェッカーロールを持つユーザーがそれ以外の項目を変更しようとした場合、`403 Forbidden`（エラーコード`FORBIDDEN_FEATURE`）になります。
 
         Args:
             project_id (str):  プロジェクトID (required)
@@ -3147,7 +3147,7 @@ class AbstractAnnofabApi(abc.ABC):
         authorizations: ProjectOwner
 
 
-        タスクを作成または更新します。  大量のタスクを一括で生成する場合は、[initiateTasksGeneration](#operation/initiateTasksGeneration) APIの使用を検討してください。
+        タスクを作成または更新します。  一度でもタスクが作業中になっている場合は、タスクの入力データを更新することはできません。入力データを更新したい場合は、新しくタスクを作成してください。  大量のタスクを一括で生成する場合は、[initiateTasksGeneration](#operation/initiateTasksGeneration) APIの使用を検討してください。
 
         Args:
             project_id (str):  プロジェクトID (required)

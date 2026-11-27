@@ -47,7 +47,7 @@ USERDEFINEDANNOTATIONTYPEFIELDDEFINITION_ONE_OF_SCHEMAS = [
 
 class UserDefinedAnnotationTypeFieldDefinition(BaseModel):
     """
-    ユーザー定義のアノテーション種別に設定可能なフィールドについての定義です。
+    ユーザー定義アノテーション種別が持つ、制約やオプションを設定するためのフィールドを定義します。 アノテーション仕様V3では、このフィールド定義に対応する設定値オブジェクトを指定します。フィールド定義と設定値は、それぞれのオブジェクトの `_type` で種類を識別します。両者の対応を以下の表に示します。 設定値には、表に示す `_type` を持つ [AnnotationTypeFieldValue](#tag/x-data-types/AnnotationTypeFieldValue) のオブジェクトを指定します。  | フィールド定義の `_type` | 設定値オブジェクトの `_type` | | --- | --- | | `MinimumSize2d` | `MinimumSize2d` | | `MinimumSize2dWithDefaultInsertPosition` | `MinimumSize2dWithDefaultInsertPosition` | | `MarginOfErrorTolerance` | `MarginOfErrorTolerance` | | `VertexCountMinMax` | `VertexCountMinMax` | | `MinimumArea2d` | `MinimumArea2d` | | `DisplayLineDirection` | `DisplayLineDirection` | | `AnnotationEditorFeature` | `AnnotationEditorFeature` | | `OneIntegerField` | `OneIntegerFieldValue` | | `OneStringField` | `OneStringFieldValue` | | `OneBooleanField` | `OneBooleanFieldValue` |
     """
 
     # data type: AnnotationTypeFieldDefinitionMinimumSize2d

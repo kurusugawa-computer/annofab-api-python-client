@@ -33,7 +33,7 @@ class AdditionalDataV1(BaseModel):
     flag: StrictBool | None = Field(default=None, description="`additional_data_definition`の`type`が`flag`のときの属性値。 ")
     integer: StrictInt | None = Field(default=None, description="`additional_data_definition`の`type`が`integer`のときの属性値。 ")
     comment: StrictStr | None = Field(
-        default=None, description="`additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 "
+        default=None, description="`additional_data_definition`の`type`が`comment`,`text`,`link` または `tracking`のときの属性値。 "
     )
     choice: StrictStr | None = Field(
         default=None,

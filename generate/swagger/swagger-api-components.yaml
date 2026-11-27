@@ -1180,7 +1180,7 @@ components:
         user_defined_annotation_type_definitions:
           type: object
           description: |
-            Keyが[アノテーションの種類(AnnotationType)](#tag/x-data-types/AnnotationType)であるDictionaryです。
+            Keyが[アノテーション種別(AnnotationType)](#tag/x-data-types/AnnotationType)であるDictionaryです。
           additionalProperties:
             $ref: "#/components/schemas/UserDefinedAnnotationTypeDefinition"
         compatible_input_data_types:
@@ -3330,7 +3330,7 @@ components:
         - range
         - custom
       description: |
-        アノテーションの種類
+        アノテーション種別
         * `bounding_box` - 矩形
         * `segmentation` - 塗りつぶし（インスタンスセグメンテーション用）
         * `segmentation_v2` - 塗りつぶしv2（セマンティックセグメンテーション用）
@@ -3341,12 +3341,12 @@ components:
         * `range` - 動画の区間
         * `custom` - カスタム
 
-        プロジェクトの種類によって、使用できるアノテーションの種類は決まっています。アノテーションの種類が使用できるかどうかを、以下の表に記載しました。
+        プロジェクトの種類によって、使用できるアノテーション種別は決まっています。アノテーション種別が使用できるかどうかを、以下の表に記載しました。
          * `○`：使用できる
          * `×`：使用できない
 
 
-        |アノテーションの種類                 | 画像プロジェクト        | 動画プロジェクト | カスタムプロジェクト |
+        |アノテーション種別                 | 画像プロジェクト        | 動画プロジェクト | カスタムプロジェクト |
         |-----------------|:----------:|:----:|:------:|
         | bounding_box    | 〇         | ×  | ×    |
         | segmentation    | 〇         | ×  | ×    |
@@ -3361,7 +3361,7 @@ components:
     UserDefinedAnnotationType:
       type: string
       description: |
-        ユーザー定義のアノテーション種別名です。先頭が `user_` から始まる任意の文字列を指定します。
+        ユーザー定義アノテーション種別名です。先頭が `user_` から始まる任意の文字列を指定します。
       example: user_bounding_box
     UserDefinedAnnotationTypeDefinition:
       type: object
@@ -3399,7 +3399,22 @@ components:
           $ref: "#/components/schemas/UserDefinedAnnotationDataType"
     UserDefinedAnnotationTypeFieldDefinition:
       description: |
-        ユーザー定義のアノテーション種別に設定可能なフィールドについての定義です。
+        ユーザー定義アノテーション種別が持つ、制約やオプションを設定するためのフィールドを定義します。
+        アノテーション仕様V3では、このフィールド定義に対応する設定値オブジェクトを指定します。フィールド定義と設定値は、それぞれのオブジェクトの `_type` で種類を識別します。両者の対応を以下の表に示します。
+        設定値には、表に示す `_type` を持つ [AnnotationTypeFieldValue](#tag/x-data-types/AnnotationTypeFieldValue) のオブジェクトを指定します。
+
+        | フィールド定義の `_type` | 設定値オブジェクトの `_type` |
+        | --- | --- |
+        | `MinimumSize2d` | `MinimumSize2d` |
+        | `MinimumSize2dWithDefaultInsertPosition` | `MinimumSize2dWithDefaultInsertPosition` |
+        | `MarginOfErrorTolerance` | `MarginOfErrorTolerance` |
+        | `VertexCountMinMax` | `VertexCountMinMax` |
+        | `MinimumArea2d` | `MinimumArea2d` |
+        | `DisplayLineDirection` | `DisplayLineDirection` |
+        | `AnnotationEditorFeature` | `AnnotationEditorFeature` |
+        | `OneIntegerField` | `OneIntegerFieldValue` |
+        | `OneStringField` | `OneStringFieldValue` |
+        | `OneBooleanField` | `OneBooleanFieldValue` |
       oneOf:
         - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionMinimumSize2d"
         - $ref: "#/components/schemas/AnnotationTypeFieldDefinitionMinimumSize2dWithDefaultInsertPosition"
@@ -3587,7 +3602,7 @@ components:
         _type:
           type: string
           description: |
-            ユーザー定義アノテーション種別の型を指定します。
+            ユーザー定義アノテーション種別が扱うデータ型を指定します。
             指定可能な値と、その意味は下記の通りです。
 
             * `BoundingBox2d` - 2次元の矩形
@@ -3600,25 +3615,25 @@ components:
             * `Classification` - 全体アノテーション
             * `Unknown` - その他のアノテーション種別
 
-            下記のフィールド定義は、すべてのアノテーション種別の型に対して使用可能です。
+            下記のフィールド定義は、すべてのデータ型に対して使用可能です。
             * `OneIntegerField`
             * `OneStringField`
             * `OneBooleanField`
 
-            その他のフィールド定義は、使用可能なアノテーション種別の型に制限があります。
-            ユーザー定義アノテーション種別の型ごとの、使用可能なフィールド定義を下記の表で示します。
+            その他のフィールド定義は、使用可能なデータ型に制限があります。
+            データ型ごとの、使用可能なフィールド定義を下記の表で示します。
 
-            |ユーザー定義アノテーション種別の型 | 使用可能なフィールド定義 |
+            |データ型 | 使用可能なフィールド定義 |
             |-----------------|:----------:|
-            | BoundingBox2d          | MinimumSize2dWithDefaultInsertPosition, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance |
+            | BoundingBox2d          | MinimumSize2d, MinimumSize2dWithDefaultInsertPosition, MinimumArea2d, MarginOfErrorTolerance |
             | Polygon2d              | MinimumSize2d, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance |
-            | Polyline2d             | VertexCountMinMax, DisplayLineDirection, MarginOfErrorTolerance |
+            | Polyline2d             | MinimumSize2d, VertexCountMinMax, DisplayLineDirection, MarginOfErrorTolerance |
             | SinglePoint2d          | MarginOfErrorTolerance |
-            | SemanticSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance |
-            | InstanceSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance |
-            | Range1d                | MarginOfErrorTolerance |
-            | Classification         | MarginOfErrorTolerance |
-            | Unknown | - |
+            | SemanticSegmentation2d | MinimumSize2d, AnnotationEditorFeature, MarginOfErrorTolerance |
+            | InstanceSegmentation2d | MinimumSize2d, AnnotationEditorFeature, MarginOfErrorTolerance |
+            | Range1d                | なし |
+            | Classification         | なし |
+            | Unknown | なし |
           enum:
             - BoundingBox2d
             - Polygon2d
@@ -3634,8 +3649,8 @@ components:
       enum:
         - flag
         - integer
-        - text
         - comment
+        - text
         - choice
         - select
         - tracking
@@ -3644,8 +3659,8 @@ components:
         属性の種類
         * `flag` - 真偽値
         * `integer` - 整数値
-        * `text` - 自由記述（1行）
-        * `comment` - 自由記述（複数行）
+        * `comment` - 自由記述（1行）
+        * `text` - 自由記述（複数行）
         * `choice` - 選択肢（ラジオボタン式）
         * `select` - 選択肢（ドロップダウン式）
         * `tracking` - トラッキングID
@@ -3856,9 +3871,23 @@ components:
         field_values:
           type: object
           description: |
-            KeyがフィールドIdであるDictionaryです。
+            ラベルごとの制約や設定値を保持するオブジェクトです。
+            キーには設定項目を識別するフィールドIDを指定し、値にはそのフィールドに設定する制約やオプションを表すオブジェクトを指定します。
+            例えば頂点数制約は、`"vertex_count_min_max": {"_type": "VertexCountMinMax", "max": 20}` のように指定します。
 
-            カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#tag/x-data-types/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。
+            Annofabの標準エディタでは、アノテーション種別ごとに、使用可能なフィールドIDと設定値の構造があらかじめ決まっています。設定値の構造は、値オブジェクトの `_type` に設定値の構造を示す名前を指定することで示します。以下の表に、フィールドIDと設定値の構造を示す名前を示します。
+
+            | エディタ | アノテーション種別（`annotation_type`） | フィールドID → 設定値の構造を示す名前 |
+            | --- | --- | --- |
+            | 画像 | 矩形（`bounding_box`） | `minimum_size_2d_with_default_insert_position` → `MinimumSize2dWithDefaultInsertPosition`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance` |
+            | 画像 | ポリゴン（`polygon`） | `minimum_size_2d` → `MinimumSize2d`<br>`minimum_area_2d` → `MinimumArea2d`<br>`vertex_count_min_max` → `VertexCountMinMax`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance` |
+            | 画像 | ポリライン（`polyline`） | `minimum_size_2d` → `MinimumSize2d`<br>`vertex_count_min_max` → `VertexCountMinMax`<br>`display_line_direction` → `DisplayLineDirection`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance` |
+            | 画像 | 点（`point`） | `margin_of_error_tolerance` → `MarginOfErrorTolerance` |
+            | 画像 | 塗りつぶし（`segmentation`）・塗りつぶしv2（`segmentation_v2`） | `minimum_size_2d` → `MinimumSize2d`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance`<br>`annotation_editor_feature` → `AnnotationEditorFeature` |
+            | 画像・動画 | 全体（`classification`） | なし |
+            | 動画 | 区間（`range`） | なし |
+
+            ユーザー定義アノテーション種別では、[組織プラグイン](#operation/putOrganizationPlugin)の [UserDefinedAnnotationTypeDefinition](#tag/x-data-types/UserDefinedAnnotationTypeDefinition) の `field_definitions` で定義されたフィールドIDをキーに指定します。値オブジェクトの `_type` には、設定値の構造を示す名前を指定します。指定する名前は、[フィールド定義と設定値の対応表](#tag/x-data-types/UserDefinedAnnotationTypeDefinition)（`field_definitions` の `definition` の説明）を参照してください。
           additionalProperties:
             $ref: "#/components/schemas/AnnotationTypeFieldValue"
         additional_data_definitions:
@@ -3876,8 +3905,9 @@ components:
             type: string
     AnnotationTypeFieldValue:
       description: |
-        ユーザー定義アノテーション種別のフィールドに設定される値です。
-        アノテーション種別のフィールド定義と対応するフィールド値のみ登録を許可されます。
+        フィールドに設定する制約やオプションを表すオブジェクトです。
+        Annofabの標準エディタで使用するアノテーション種別では、[LabelV3 の `field_values`](#tag/x-data-types/LabelV3) に記載された、設定値の構造を示す名前を `_type` に指定します。
+        ユーザー定義アノテーション種別では、[フィールド定義と設定値の対応表](#tag/x-data-types/UserDefinedAnnotationTypeDefinition)（`field_definitions` の `definition` の説明）に示す、設定値オブジェクトの `_type` を指定します。
       oneOf:
         - $ref: "#/components/schemas/AnnotationTypeFieldValueMinimumSize"
         - $ref: "#/components/schemas/AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition"
@@ -3920,11 +3950,12 @@ components:
           $ref: "#/components/schemas/AnnotationTypeFieldMinWarnRule"
         min_width:
           type: integer
-          minimum: 1
+          minimum: 0
         min_height:
           type: integer
-          minimum: 1
+          minimum: 0
     AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition:
+      type: object
       required:
         - _type
         - min_warn_rule
@@ -3938,27 +3969,38 @@ components:
           $ref: "#/components/schemas/AnnotationTypeFieldMinWarnRule"
         min_width:
           type: integer
-          minimum: 1
+          description: |
+            最小の幅。標準の矩形種別では0以上を指定します。ユーザー定義種別では、現在、下限は検証されません。
         min_height:
           type: integer
-          minimum: 1
+          description: |
+            最小の高さ。標準の矩形種別では0以上を指定します。ユーザー定義種別では、現在、下限は検証されません。
         position_for_minimum_bounding_box_insertion:
           type: array
+          nullable: true
+          minItems: 2
+          maxItems: 2
           description: |
             最小矩形の挿入位置を、要素が2の配列で指定します。
           example: [0, 0]
           items:
             type: integer
     AnnotationTypeFieldMinWarnRule:
-      type: string
-      enum:
-        - and
-        - or
+      type: object
+      required:
+        - _type
+      properties:
+        _type:
+          type: string
+          enum:
+            - And
+            - Or
+      example: {"_type": "Or"}
       description: |
-        最小の幅(min_width)と最小の高さ(min_height)がどのような状態になったときにエラーとするかを指定します。
+        最小の幅(min_width)と最小の高さ(min_height)に対する判定条件を指定します。
 
-        * `and` - min_width、min_heightの両方が最小値未満の場合にエラーとなります。
-        * `or` - min_width、min_heightのいずれかが最小値未満の場合にエラーとなります。
+        * `And` - min_width、min_heightの両方が最小値未満の場合に最小サイズ違反となります。
+        * `Or` - min_width、min_heightのいずれかが最小値未満の場合に最小サイズ違反となります。
     AnnotationTypeFieldValueMarginOfErrorTolerance:
       type: object
       description: 誤差許容範囲
@@ -3971,25 +4013,28 @@ components:
           enum: ["MarginOfErrorTolerance"]
         max_pixel:
             type: integer
-            minimum: 1
+            minimum: 0
     AnnotationTypeFieldValueVertexCountMinMax:
       type: object
       description: |
         頂点数の最大・最小
       required:
         - _type
-        - min
-        - max
       properties:
         _type:
           type: string
           enum: ["VertexCountMinMax"]
         min:
+            description: |
+              頂点数の最小値。データ型が `Polyline2d` の場合は2以上、`Polygon2d` の場合は3以上を指定します。
             type: integer
-            minimum: 1
+            minimum: 2
+            nullable: true
         max:
+            description: |
+              頂点数の最大値。標準種別ではポリラインは2以上、ポリゴンは3以上を指定します。ユーザー定義種別では、`max` のみ指定した場合、下限は検証されません。
             type: integer
-            minimum: 1
+            nullable: true
     AnnotationTypeFieldValueMinimumArea2d:
       type: object
       description: |
@@ -4270,9 +4315,9 @@ components:
           * `AdditionalDataRestrictionConditionEquals`: 指定した値に等しい
           * `AdditionalDataRestrictionConditionNotEquals`: 指定した値に等しくない
           * `AdditionalDataRestrictionConditionMatches`: 指定した正規表現に一致する
-              * `AdditionalDataDefinitionType`が`text`か`comment`のときのみ利用可能
+              * `AdditionalDataDefinitionType`が`comment`か`text`のときのみ利用可能
           * `AdditionalDataRestrictionConditionNotMatches`: 指定した正規表現に一致しない
-              * `AdditionalDataDefinitionType`が`text`か`comment`のときのみ利用可能
+              * `AdditionalDataDefinitionType`が`comment`か`text`のときのみ利用可能
           * `AdditionalDataRestrictionConditionHasLabel`: 指定したラベルIDに一致する（アノテーションリンク属性限定）
               * `AdditionalDataDefinitionType`が`link`のときのみ利用可能
           * `AdditionalDataRestrictionConditionImply`: 指定した前提条件を満たすときのみ、制約を満たすかどうか
@@ -5866,8 +5911,8 @@ components:
         |------------|-------------------------|----------------------|
         | ON/OFF | flag       | flag                                          |
         | 整数 | integer    | integer                                       |
-        | 自由記述（1行）| text       | comment                                       |
-        | 自由記述（複数行）| comment    | comment                                       |
+        | 自由記述（1行）| comment    | comment                                       |
+        | 自由記述（複数行）| text       | comment                                       |
         | トラッキングID  | tracking | comment                                       |
         | アノテーションリンク    | link   | comment                                       |
         | 排他選択（ラジオボタン）  |choice   | choice                                        |
@@ -5899,7 +5944,7 @@ components:
         comment:
           type: string
           description: |
-            `additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。
+            `additional_data_definition`の`type`が`comment`,`text`,`link` または `tracking`のときの属性値。
         choice:
           $ref: "#/components/schemas/ChoiceId"
           description: |
@@ -8102,8 +8147,8 @@ components:
         |-----------------|----------|
         | flag    | 真偽値(`true` or `false`)|
         | integer    | 整数値         |
-        | text | 文字列         |
         | comment         | 文字列|
+        | text | 文字列         |
         | choice        | 選択肢(`choices`)の `choice_id` |
         | select           | 選択肢(`choices`)の`choice_id`|
 

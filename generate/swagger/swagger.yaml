@@ -119,7 +119,7 @@ info:
     上記例 `account_id_count` は、タスクのフィールド `account_id` でタスクを分類したところ「`account_id` が `c5eee002` であるタスクが9件、`9f110e48` であるタスクが5件、`b25dfeb3` であるタスクが1件」だったという結果を表しています。
     また、AggregationResultの集約の件数は、合計で10000件以下に制限されており、それを超える件数がある場合は上位10000件が取得されます。もし、省略された部分を取得したい場合は、検索条件を縛って結果に上る集約の数を減らしてください。
 
-  version: 0.213.0
+  version: 0.214.0
   title: Annofab Web API
   x-logo:
     url: "https://annofab.com/resource/images/logo_landscape.png"
@@ -317,8 +317,14 @@ tags:
     # AnnotationType
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/AnnotationType" />
 
+    # LabelV3
+    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/LabelV3" />
+
     # UserDefinedAnnotationTypeDefinition
     <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/UserDefinedAnnotationTypeDefinition" />
+
+    # AnnotationTypeFieldValue
+    <SchemaDefinition schemaRef="swagger-api-components.yaml#/components/schemas/AnnotationTypeFieldValue" />
 
 x-tagGroups:
   - name: API
@@ -3645,8 +3651,16 @@ paths:
       summary: アノテーション仕様更新
       description: |
         アノテーション仕様を更新します。
+
+        プロジェクトのチェッカーロールを持つユーザーは、以下の項目のみ変更できます。
+        * ラベルの色
+        * ラベル・属性・選択肢のショートカットキー
+        * ラベル・属性・選択肢の表示順
+        * 定型指摘
+
+        チェッカーロールを持つユーザーがそれ以外の項目を変更しようとした場合、`403 Forbidden`（エラーコード`FORBIDDEN_FEATURE`）になります。
       security:
-      - ProjectOwner: []
+      - ProjectAccepter: []
       operationId: putAnnotationSpecs
       parameters:
       - name: project_id
@@ -4158,6 +4172,8 @@ paths:
       summary: タスク作成/更新
       description: |
         タスクを作成または更新します。
+
+        一度でもタスクが作業中になっている場合は、タスクの入力データを更新することはできません。入力データを更新したい場合は、新しくタスクを作成してください。
 
         大量のタスクを一括で生成する場合は、[initiateTasksGeneration](#operation/initiateTasksGeneration) APIの使用を検討してください。
 

@@ -30,8 +30,8 @@ class AnnotationTypeFieldValueMinimumSize(BaseModel):
 
     type: StrictStr = Field(alias="_type")
     min_warn_rule: AnnotationTypeFieldMinWarnRule
-    min_width: Annotated[int, Field(strict=True, ge=1)]
-    min_height: Annotated[int, Field(strict=True, ge=1)]
+    min_width: Annotated[int, Field(strict=True, ge=0)]
+    min_height: Annotated[int, Field(strict=True, ge=0)]
     __properties: ClassVar[List[str]] = ["_type", "min_warn_rule", "min_width", "min_height"]
 
     @field_validator("type")
@@ -78,6 +78,9 @@ class AnnotationTypeFieldValueMinimumSize(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of min_warn_rule
+        if self.min_warn_rule:
+            _dict["min_warn_rule"] = self.min_warn_rule.to_dict()
         return _dict
 
     @classmethod
@@ -92,7 +95,7 @@ class AnnotationTypeFieldValueMinimumSize(BaseModel):
         _obj = cls.model_validate(
             {
                 "_type": obj.get("_type"),
-                "min_warn_rule": obj.get("min_warn_rule"),
+                "min_warn_rule": AnnotationTypeFieldMinWarnRule.from_dict(obj["min_warn_rule"]) if obj.get("min_warn_rule") is not None else None,
                 "min_width": obj.get("min_width"),
                 "min_height": obj.get("min_height"),
             }
