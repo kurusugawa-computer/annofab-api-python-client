@@ -27,7 +27,7 @@ class AnnotationTypeFieldValueMarginOfErrorTolerance(BaseModel):
     """
 
     type: StrictStr = Field(alias="_type")
-    max_pixel: Annotated[int, Field(strict=True, ge=1)]
+    max_pixel: Annotated[int, Field(strict=True, ge=0)]
     __properties: ClassVar[List[str]] = ["_type", "max_pixel"]
 
     @field_validator("type")

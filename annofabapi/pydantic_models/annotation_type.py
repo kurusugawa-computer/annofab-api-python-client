@@ -33,7 +33,7 @@ class AnnotationType(BaseModel):
     # data type: str
     oneof_schema_2_validator: StrictStr | None = Field(
         default=None,
-        description="ユーザー定義のアノテーション種別名です。先頭が `user_` から始まる任意の文字列を指定します。 ",
+        description="ユーザー定義アノテーション種別名です。先頭が `user_` から始まる任意の文字列を指定します。 ",
         json_schema_extra={"examples": ["user_bounding_box"]},
     )
     actual_instance: Union[DefaultAnnotationType, str] | None = None

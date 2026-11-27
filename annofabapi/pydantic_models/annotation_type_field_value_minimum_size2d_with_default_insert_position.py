@@ -30,9 +30,9 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(BaseModel):
 
     type: StrictStr = Field(alias="_type")
     min_warn_rule: AnnotationTypeFieldMinWarnRule
-    min_width: Annotated[int, Field(strict=True, ge=1)]
-    min_height: Annotated[int, Field(strict=True, ge=1)]
-    position_for_minimum_bounding_box_insertion: List[StrictInt] | None = Field(
+    min_width: StrictInt = Field(description="最小の幅。標準の矩形種別では0以上を指定します。ユーザー定義種別では、現在、下限は検証されません。 ")
+    min_height: StrictInt = Field(description="最小の高さ。標準の矩形種別では0以上を指定します。ユーザー定義種別では、現在、下限は検証されません。 ")
+    position_for_minimum_bounding_box_insertion: Annotated[List[StrictInt], Field(min_length=2, max_length=2)] | None = Field(
         default=None, description="最小矩形の挿入位置を、要素が2の配列で指定します。 ", json_schema_extra={"examples": [[0, 0]]}
     )
     __properties: ClassVar[List[str]] = ["_type", "min_warn_rule", "min_width", "min_height", "position_for_minimum_bounding_box_insertion"]
@@ -81,6 +81,14 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of min_warn_rule
+        if self.min_warn_rule:
+            _dict["min_warn_rule"] = self.min_warn_rule.to_dict()
+        # set to None if position_for_minimum_bounding_box_insertion (nullable) is None
+        # and model_fields_set contains the field
+        if self.position_for_minimum_bounding_box_insertion is None and "position_for_minimum_bounding_box_insertion" in self.model_fields_set:
+            _dict["position_for_minimum_bounding_box_insertion"] = None
+
         return _dict
 
     @classmethod
@@ -95,7 +103,7 @@ class AnnotationTypeFieldValueMinimumSize2dWithDefaultInsertPosition(BaseModel):
         _obj = cls.model_validate(
             {
                 "_type": obj.get("_type"),
-                "min_warn_rule": obj.get("min_warn_rule"),
+                "min_warn_rule": AnnotationTypeFieldMinWarnRule.from_dict(obj["min_warn_rule"]) if obj.get("min_warn_rule") is not None else None,
                 "min_width": obj.get("min_width"),
                 "min_height": obj.get("min_height"),
                 "position_for_minimum_bounding_box_insertion": obj.get("position_for_minimum_bounding_box_insertion"),

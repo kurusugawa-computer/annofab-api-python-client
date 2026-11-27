@@ -16,7 +16,7 @@ import pprint
 import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List, Set
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from pydantic_core import to_jsonable_python
 from typing_extensions import Annotated, Self
 
@@ -27,8 +27,13 @@ class AnnotationTypeFieldValueVertexCountMinMax(BaseModel):
     """
 
     type: StrictStr = Field(alias="_type")
-    min: Annotated[int, Field(strict=True, ge=1)]
-    max: Annotated[int, Field(strict=True, ge=1)]
+    min: Annotated[int, Field(strict=True, ge=2)] | None = Field(
+        default=None, description="頂点数の最小値。データ型が `Polyline2d` の場合は2以上、`Polygon2d` の場合は3以上を指定します。 "
+    )
+    max: StrictInt | None = Field(
+        default=None,
+        description="頂点数の最大値。標準種別ではポリラインは2以上、ポリゴンは3以上を指定します。ユーザー定義種別では、`max` のみ指定した場合、下限は検証されません。 ",
+    )
     __properties: ClassVar[List[str]] = ["_type", "min", "max"]
 
     @field_validator("type")
@@ -75,6 +80,16 @@ class AnnotationTypeFieldValueVertexCountMinMax(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # set to None if min (nullable) is None
+        # and model_fields_set contains the field
+        if self.min is None and "min" in self.model_fields_set:
+            _dict["min"] = None
+
+        # set to None if max (nullable) is None
+        # and model_fields_set contains the field
+        if self.max is None and "max" in self.model_fields_set:
+            _dict["max"] = None
+
         return _dict
 
     @classmethod

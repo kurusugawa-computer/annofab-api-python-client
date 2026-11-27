@@ -231,7 +231,7 @@ Keys of dict
 
 AdditionalDataDefaultType = dict[str, Any]
 """
-属性の初期値です。  初期値を設定する場合、属性の種類に応じて次の値を指定してください。 属性の種類に対して有効でない初期値を指定した場合、その初期値は無視されます。  |属性の種類（`type`）                 | 指定できる初期値| |-----------------|----------| | flag    | 真偽値(`true` or `false`)| | integer    | 整数値         | | text | 文字列         | | comment         | 文字列| | choice        | 選択肢(`choices`)の `choice_id` | | select           | 選択肢(`choices`)の`choice_id`|  属性の種類が`tracking`または`link`の場合、初期値を設定できません。  初期値を設定しない場合は、nullまたは空文字を指定してください。 
+属性の初期値です。  初期値を設定する場合、属性の種類に応じて次の値を指定してください。 属性の種類に対して有効でない初期値を指定した場合、その初期値は無視されます。  |属性の種類（`type`）                 | 指定できる初期値| |-----------------|----------| | flag    | 真偽値(`true` or `false`)| | integer    | 整数値         | | comment         | 文字列| | text | 文字列         | | choice        | 選択肢(`choices`)の `choice_id` | | select           | 選択肢(`choices`)の`choice_id`|  属性の種類が`tracking`または`link`の場合、初期値を設定できません。  初期値を設定しない場合は、nullまたは空文字を指定してください。 
 
 Keys of dict
 
@@ -241,13 +241,13 @@ Keys of dict
 
 class AdditionalDataDefinitionType(Enum):
     """
-    属性の種類 * `flag` - 真偽値 * `integer` - 整数値 * `text` - 自由記述（1行） * `comment` - 自由記述（複数行） * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - トラッキングID * `link` - アノテーションリンク
+    属性の種類 * `flag` - 真偽値 * `integer` - 整数値 * `comment` - 自由記述（1行） * `text` - 自由記述（複数行） * `choice` - 選択肢（ラジオボタン式） * `select` - 選択肢（ドロップダウン式） * `tracking` - トラッキングID * `link` - アノテーションリンク
     """
 
     FLAG = "flag"
     INTEGER = "integer"
-    TEXT = "text"
     COMMENT = "comment"
+    TEXT = "text"
     CHOICE = "choice"
     SELECT = "select"
     TRACKING = "tracking"
@@ -340,7 +340,7 @@ Keys of dict
 
 AdditionalDataRestrictionCondition = dict[str, Any]
 """
-属性の制約    * `AdditionalDataRestrictionConditionCanInput`: 属性値の入力を許可するかどうか   * `AdditionalDataRestrictionConditionEquals`: 指定した値に等しい   * `AdditionalDataRestrictionConditionNotEquals`: 指定した値に等しくない   * `AdditionalDataRestrictionConditionMatches`: 指定した正規表現に一致する       * `AdditionalDataDefinitionType`が`text`か`comment`のときのみ利用可能   * `AdditionalDataRestrictionConditionNotMatches`: 指定した正規表現に一致しない       * `AdditionalDataDefinitionType`が`text`か`comment`のときのみ利用可能   * `AdditionalDataRestrictionConditionHasLabel`: 指定したラベルIDに一致する（アノテーションリンク属性限定）       * `AdditionalDataDefinitionType`が`link`のときのみ利用可能   * `AdditionalDataRestrictionConditionImply`: 指定した前提条件を満たすときのみ、制約を満たすかどうか  以下のJSONは、「属性IDが`attr2`の属性値が`true`ならば、属性IDが`attr1`の属性値は`choice1`である」という制約を表しています。  ``` {     \"additional_data_definition_id\": \"attr1\",     \"condition\": {         \"_type\": \"Imply\",         \"premise\": {             \"additional_data_definition_id\": \"attr2\",             \"condition\": {                 \"_type\": \"Equals\",                 \"value\": \"true\"             }         },         \"condition\": {             \"_type\": \"Equals\",             \"value\": \"choice1\"         }     } } ``` 
+属性の制約    * `AdditionalDataRestrictionConditionCanInput`: 属性値の入力を許可するかどうか   * `AdditionalDataRestrictionConditionEquals`: 指定した値に等しい   * `AdditionalDataRestrictionConditionNotEquals`: 指定した値に等しくない   * `AdditionalDataRestrictionConditionMatches`: 指定した正規表現に一致する       * `AdditionalDataDefinitionType`が`comment`か`text`のときのみ利用可能   * `AdditionalDataRestrictionConditionNotMatches`: 指定した正規表現に一致しない       * `AdditionalDataDefinitionType`が`comment`か`text`のときのみ利用可能   * `AdditionalDataRestrictionConditionHasLabel`: 指定したラベルIDに一致する（アノテーションリンク属性限定）       * `AdditionalDataDefinitionType`が`link`のときのみ利用可能   * `AdditionalDataRestrictionConditionImply`: 指定した前提条件を満たすときのみ、制約を満たすかどうか  以下のJSONは、「属性IDが`attr2`の属性値が`true`ならば、属性IDが`attr1`の属性値は`choice1`である」という制約を表しています。  ``` {     \"additional_data_definition_id\": \"attr1\",     \"condition\": {         \"_type\": \"Imply\",         \"premise\": {             \"additional_data_definition_id\": \"attr2\",             \"condition\": {                 \"_type\": \"Equals\",                 \"value\": \"true\"             }         },         \"condition\": {             \"_type\": \"Equals\",             \"value\": \"choice1\"         }     } } ``` 
 
 Keys of dict
 
@@ -465,7 +465,7 @@ Keys of dict
 * integer: int
     `additional_data_definition`の`type`が`integer`のときの属性値。 
 * comment: str
-    `additional_data_definition`の`type`が`text`,`comment`,`link` または `tracking`のときの属性値。 
+    `additional_data_definition`の`type`が`comment`,`text`,`link` または `tracking`のときの属性値。 
 * choice: str
     選択肢ID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 
@@ -789,7 +789,7 @@ Keys of dict
 * url: str
     外部ファイルに保存されたアノテーションの認証済み一時URL。`data_holding_type`が`inner`の場合、または[putAnnotation](#operation/putAnnotation) APIのリクエストボディに渡す場合は未指定です。
 * additional_data_list: list[AdditionalDataV1]
-    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
+    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| comment    | comment                                       | | 自由記述（複数行）| text       | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * created_datetime: str
     作成日時
 * updated_datetime: str
@@ -1051,7 +1051,7 @@ Keys of dict
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * attributes: list[AdditionalDataV1]
-    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
+    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| comment    | comment                                       | | 自由記述（複数行）| text       | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * updated_from: str
     開始日・終了日を含む区間[updated_from, updated_to]でアノテーションの更新日を絞り込むときに使用する、開始日（ISO 8601 拡張形式または基本形式）。  `updated_to` より後の日付が指定された場合、期間指定は開始日・終了日を含む区間[updated_to, updated_from]となる。未指定の場合、API実行日(JST)の日付が指定されたものとして扱われる。 
 * updated_to: str
@@ -1588,19 +1588,20 @@ Keys of dict
 
 """
 
+AnnotationTypeFieldMinWarnRule = dict[str, Any]
+"""
+最小の幅(min_width)と最小の高さ(min_height)に対する判定条件を指定します。  * `And` - min_width、min_heightの両方が最小値未満の場合に最小サイズ違反となります。 * `Or` - min_width、min_heightのいずれかが最小値未満の場合に最小サイズ違反となります。 
 
-class AnnotationTypeFieldMinWarnRule(Enum):
-    """
-    最小の幅(min_width)と最小の高さ(min_height)がどのような状態になったときにエラーとするかを指定します。  * `and` - min_width、min_heightの両方が最小値未満の場合にエラーとなります。 * `or` - min_width、min_heightのいずれかが最小値未満の場合にエラーとなります。
-    """
+Keys of dict
 
-    AND = "and"
-    OR = "or"
+* type: str
+    
 
+"""
 
 AnnotationTypeFieldValue = dict[str, Any]
 """
-ユーザー定義アノテーション種別のフィールドに設定される値です。 アノテーション種別のフィールド定義と対応するフィールド値のみ登録を許可されます。 
+フィールドに設定する制約やオプションを表すオブジェクトです。 Annofabの標準エディタで使用するアノテーション種別では、[LabelV3 の `field_values`](#tag/x-data-types/LabelV3) に記載された、設定値の構造を示す名前を `_type` に指定します。 ユーザー定義アノテーション種別では、[フィールド定義と設定値の対応表](#tag/x-data-types/UserDefinedAnnotationTypeDefinition)（`field_definitions` の `definition` の説明）に示す、設定値オブジェクトの `_type` を指定します。 
 
 Keys of dict
 
@@ -1609,17 +1610,17 @@ Keys of dict
 * min_warn_rule: AnnotationTypeFieldMinWarnRule
     
 * min_width: int
-    
+    最小の幅。標準の矩形種別では0以上を指定します。ユーザー定義種別では、現在、下限は検証されません。 
 * min_height: int
-    
+    最小の高さ。標準の矩形種別では0以上を指定します。ユーザー定義種別では、現在、下限は検証されません。 
 * position_for_minimum_bounding_box_insertion: list[int]
     最小矩形の挿入位置を、要素が2の配列で指定します。 
 * max_pixel: int
     
 * min: int
-    
+    頂点数の最小値。データ型が `Polyline2d` の場合は2以上、`Polygon2d` の場合は3以上を指定します。 
 * max: int
-    
+    頂点数の最大値。標準種別ではポリラインは2以上、ポリゴンは3以上を指定します。ユーザー定義種別では、`max` のみ指定した場合、下限は検証されません。 
 * min_area: int
     
 * has_direction: bool
@@ -1742,9 +1743,9 @@ Keys of dict
 * min_warn_rule: AnnotationTypeFieldMinWarnRule
     
 * min_width: int
-    
+    最小の幅。標準の矩形種別では0以上を指定します。ユーザー定義種別では、現在、下限は検証されません。 
 * min_height: int
-    
+    最小の高さ。標準の矩形種別では0以上を指定します。ユーザー定義種別では、現在、下限は検証されません。 
 * position_for_minimum_bounding_box_insertion: list[int]
     最小矩形の挿入位置を、要素が2の配列で指定します。 
 
@@ -1798,9 +1799,9 @@ Keys of dict
 * type: str
     
 * min: int
-    
+    頂点数の最小値。データ型が `Polyline2d` の場合は2以上、`Polygon2d` の場合は3以上を指定します。 
 * max: int
-    
+    頂点数の最大値。標準種別ではポリラインは2以上、ポリゴンは3以上を指定します。ユーザー定義種別では、`max` のみ指定した場合、下限は検証されません。 
 
 """
 
@@ -1977,7 +1978,7 @@ Keys of dict
 * label_id: str
     ラベルID。[値の制約についてはこちら。](#section/API-Convention/APIID) 
 * additional_data_list: list[AdditionalDataV1]
-    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
+    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| comment    | comment                                       | | 自由記述（複数行）| text       | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * updated_datetime: str
     アノテーション取得時の更新日時。更新時の楽観ロックに利用されます。 AnnotationDetailのものではなく、それを格納するAnnotationV2Outputなどが保持する更新時刻であることに注意してください。 
 
@@ -2464,7 +2465,7 @@ Keys of dict
 
 class DefaultAnnotationType(Enum):
     """
-    アノテーションの種類 * `bounding_box` - 矩形 * `segmentation` - 塗りつぶし（インスタンスセグメンテーション用） * `segmentation_v2` - 塗りつぶしv2（セマンティックセグメンテーション用） * `polygon` - ポリゴン（閉じた頂点集合） * `polyline` - ポリライン（開いた頂点集合） * `point` - 点 * `classification` - 全体 * `range` - 動画の区間 * `custom` - カスタム  プロジェクトの種類によって、使用できるアノテーションの種類は決まっています。アノテーションの種類が使用できるかどうかを、以下の表に記載しました。  * `○`：使用できる  * `×`：使用できない   |アノテーションの種類                 | 画像プロジェクト        | 動画プロジェクト | カスタムプロジェクト | |-----------------|:----------:|:----:|:------:| | bounding_box    | 〇         | ×  | ×    | | segmentation    | 〇         | ×  | ×    | | segmentation_v2 | 〇         | ×  | ×    | | polygon         | 〇         | ×  | ×    | | polyline        | 〇         | ×  | ×    | | point           | 〇         | ×  | ×    | | classification  | 〇         | 〇  | ×    | | range           | ×         | 〇  | ×    | | custom          | ×         | ×  | 〇    |
+    アノテーション種別 * `bounding_box` - 矩形 * `segmentation` - 塗りつぶし（インスタンスセグメンテーション用） * `segmentation_v2` - 塗りつぶしv2（セマンティックセグメンテーション用） * `polygon` - ポリゴン（閉じた頂点集合） * `polyline` - ポリライン（開いた頂点集合） * `point` - 点 * `classification` - 全体 * `range` - 動画の区間 * `custom` - カスタム  プロジェクトの種類によって、使用できるアノテーション種別は決まっています。アノテーション種別が使用できるかどうかを、以下の表に記載しました。  * `○`：使用できる  * `×`：使用できない   |アノテーション種別                 | 画像プロジェクト        | 動画プロジェクト | カスタムプロジェクト | |-----------------|:----------:|:----:|:------:| | bounding_box    | 〇         | ×  | ×    | | segmentation    | 〇         | ×  | ×    | | segmentation_v2 | 〇         | ×  | ×    | | polygon         | 〇         | ×  | ×    | | polyline        | 〇         | ×  | ×    | | point           | 〇         | ×  | ×    | | classification  | 〇         | 〇  | ×    | | range           | ×         | 〇  | ×    | | custom          | ×         | ×  | 〇    |
     """
 
     BOUNDING_BOX = "bounding_box"
@@ -3835,7 +3836,7 @@ Keys of dict
 * annotation_type: AnnotationType
     
 * field_values: dict(str, AnnotationTypeFieldValue)
-    KeyがフィールドIdであるDictionaryです。  カスタムの[組織プラグイン](#operation/putOrganizationPlugin)で利用される[UserDefinedAnnotationTypeDefinition](#tag/x-data-types/UserDefinedAnnotationTypeDefinition).`field_definitions`で定義されます。 
+    ラベルごとの制約や設定値を保持するオブジェクトです。 キーには設定項目を識別するフィールドIDを指定し、値にはそのフィールドに設定する制約やオプションを表すオブジェクトを指定します。 例えば頂点数制約は、`\"vertex_count_min_max\": {\"_type\": \"VertexCountMinMax\", \"max\": 20}` のように指定します。  Annofabの標準エディタでは、アノテーション種別ごとに、使用可能なフィールドIDと設定値の構造があらかじめ決まっています。設定値の構造は、値オブジェクトの `_type` に設定値の構造を示す名前を指定することで示します。以下の表に、フィールドIDと設定値の構造を示す名前を示します。  | エディタ | アノテーション種別（`annotation_type`） | フィールドID → 設定値の構造を示す名前 | | --- | --- | --- | | 画像 | 矩形（`bounding_box`） | `minimum_size_2d_with_default_insert_position` → `MinimumSize2dWithDefaultInsertPosition`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance` | | 画像 | ポリゴン（`polygon`） | `minimum_size_2d` → `MinimumSize2d`<br>`minimum_area_2d` → `MinimumArea2d`<br>`vertex_count_min_max` → `VertexCountMinMax`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance` | | 画像 | ポリライン（`polyline`） | `minimum_size_2d` → `MinimumSize2d`<br>`vertex_count_min_max` → `VertexCountMinMax`<br>`display_line_direction` → `DisplayLineDirection`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance` | | 画像 | 点（`point`） | `margin_of_error_tolerance` → `MarginOfErrorTolerance` | | 画像 | 塗りつぶし（`segmentation`）・塗りつぶしv2（`segmentation_v2`） | `minimum_size_2d` → `MinimumSize2d`<br>`margin_of_error_tolerance` → `MarginOfErrorTolerance`<br>`annotation_editor_feature` → `AnnotationEditorFeature` | | 画像・動画 | 全体（`classification`） | なし | | 動画 | 区間（`range`） | なし |  ユーザー定義アノテーション種別では、[組織プラグイン](#operation/putOrganizationPlugin)の [UserDefinedAnnotationTypeDefinition](#tag/x-data-types/UserDefinedAnnotationTypeDefinition) の `field_definitions` で定義されたフィールドIDをキーに指定します。値オブジェクトの `_type` には、設定値の構造を示す名前を指定します。指定する名前は、[フィールド定義と設定値の対応表](#tag/x-data-types/UserDefinedAnnotationTypeDefinition)（`field_definitions` の `definition` の説明）を参照してください。 
 * additional_data_definitions: list[str]
     ラベルに所属する属性のID
 * color: Color
@@ -4669,7 +4670,7 @@ Keys of dict
 * annotation_types: list[AnnotationType]
     プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。 同じ種別を重複して設定することはできません。 
 * user_defined_annotation_type_definitions: dict(str, UserDefinedAnnotationTypeDefinition)
-    Keyが[アノテーションの種類(AnnotationType)](#tag/x-data-types/AnnotationType)であるDictionaryです。 
+    Keyが[アノテーション種別(AnnotationType)](#tag/x-data-types/AnnotationType)であるDictionaryです。 
 
 """
 
@@ -4722,7 +4723,7 @@ Keys of dict
 * annotation_types: list[AnnotationType]
     プラグインを使用したプロジェクトで選択可能なアノテーション種別のリストです。 同じ種別を重複して設定することはできません。 
 * user_defined_annotation_type_definitions: dict(str, UserDefinedAnnotationTypeDefinition)
-    Keyが[アノテーションの種類(AnnotationType)](#tag/x-data-types/AnnotationType)であるDictionaryです。 
+    Keyが[アノテーション種別(AnnotationType)](#tag/x-data-types/AnnotationType)であるDictionaryです。 
 * compatible_input_data_types: list[InputDataType]
     プラグインが対応している入力データです。 プラグイン種別がカスタムアノテーションエディタ、またはカスタムアノテーション仕様の場合のみ有効です。 
 * type: str
@@ -5955,7 +5956,7 @@ Keys of dict
 * url: str
     data_holding_typeがouterの場合のみ存在し、データへの一時URLが格納される
 * additional_data_list: list[AdditionalDataV1]
-    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| text       | comment                                       | | 自由記述（複数行）| comment    | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
+    属性情報。  アノテーション属性の種類（`additional_data_definition`の`type`）によって、属性値を格納するプロパティは変わります。  | 属性の種類 | `additional_data_definition`の`type` | 属性値を格納するプロパティ                    | |------------|-------------------------|----------------------| | ON/OFF | flag       | flag                                          | | 整数 | integer    | integer                                       | | 自由記述（1行）| comment    | comment                                       | | 自由記述（複数行）| text       | comment                                       | | トラッキングID  | tracking | comment                                       | | アノテーションリンク    | link   | comment                                       | | 排他選択（ラジオボタン）  |choice   | choice                                        | | 排他選択（ドロップダウン） | select    | choice                                        | 
 * created_datetime: str
     作成日時
 * updated_datetime: str
@@ -6813,7 +6814,7 @@ UserDefinedAnnotationDataType = dict[str, Any]
 Keys of dict
 
 * type: str
-    ユーザー定義アノテーション種別の型を指定します。 指定可能な値と、その意味は下記の通りです。  * `BoundingBox2d` - 2次元の矩形 * `Polygon2d` - 2次元のポリゴン * `Polyline2d` - 2次元のポリライン * `SinglePoint2d` - 2次元の点 * `SemanticSegmentation2d` - 2次元のセマンティックセグメンテーション * `InstanceSegmentation2d` - 2次元のインスタンスセグメンテーション * `Range1d` - 1次元の範囲 * `Classification` - 全体アノテーション * `Unknown` - その他のアノテーション種別  下記のフィールド定義は、すべてのアノテーション種別の型に対して使用可能です。 * `OneIntegerField` * `OneStringField` * `OneBooleanField`  その他のフィールド定義は、使用可能なアノテーション種別の型に制限があります。 ユーザー定義アノテーション種別の型ごとの、使用可能なフィールド定義を下記の表で示します。  |ユーザー定義アノテーション種別の型 | 使用可能なフィールド定義 | |-----------------|:----------:| | BoundingBox2d          | MinimumSize2dWithDefaultInsertPosition, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polygon2d              | MinimumSize2d, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polyline2d             | VertexCountMinMax, DisplayLineDirection, MarginOfErrorTolerance | | SinglePoint2d          | MarginOfErrorTolerance | | SemanticSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | InstanceSegmentation2d | AnnotationEditorFeature, MarginOfErrorTolerance | | Range1d                | MarginOfErrorTolerance | | Classification         | MarginOfErrorTolerance | | Unknown | - | 
+    ユーザー定義アノテーション種別が扱うデータ型を指定します。 指定可能な値と、その意味は下記の通りです。  * `BoundingBox2d` - 2次元の矩形 * `Polygon2d` - 2次元のポリゴン * `Polyline2d` - 2次元のポリライン * `SinglePoint2d` - 2次元の点 * `SemanticSegmentation2d` - 2次元のセマンティックセグメンテーション * `InstanceSegmentation2d` - 2次元のインスタンスセグメンテーション * `Range1d` - 1次元の範囲 * `Classification` - 全体アノテーション * `Unknown` - その他のアノテーション種別  下記のフィールド定義は、すべてのデータ型に対して使用可能です。 * `OneIntegerField` * `OneStringField` * `OneBooleanField`  その他のフィールド定義は、使用可能なデータ型に制限があります。 データ型ごとの、使用可能なフィールド定義を下記の表で示します。  |データ型 | 使用可能なフィールド定義 | |-----------------|:----------:| | BoundingBox2d          | MinimumSize2d, MinimumSize2dWithDefaultInsertPosition, MinimumArea2d, MarginOfErrorTolerance | | Polygon2d              | MinimumSize2d, VertexCountMinMax, MinimumArea2d, MarginOfErrorTolerance | | Polyline2d             | MinimumSize2d, VertexCountMinMax, DisplayLineDirection, MarginOfErrorTolerance | | SinglePoint2d          | MarginOfErrorTolerance | | SemanticSegmentation2d | MinimumSize2d, AnnotationEditorFeature, MarginOfErrorTolerance | | InstanceSegmentation2d | MinimumSize2d, AnnotationEditorFeature, MarginOfErrorTolerance | | Range1d                | なし | | Classification         | なし | | Unknown | なし | 
 
 """
 
@@ -6849,7 +6850,7 @@ Keys of dict
 
 UserDefinedAnnotationTypeFieldDefinition = dict[str, Any]
 """
-ユーザー定義のアノテーション種別に設定可能なフィールドについての定義です。 
+ユーザー定義アノテーション種別が持つ、制約やオプションを設定するためのフィールドを定義します。 アノテーション仕様V3では、このフィールド定義に対応する設定値オブジェクトを指定します。フィールド定義と設定値は、それぞれのオブジェクトの `_type` で種類を識別します。両者の対応を以下の表に示します。 設定値には、表に示す `_type` を持つ [AnnotationTypeFieldValue](#tag/x-data-types/AnnotationTypeFieldValue) のオブジェクトを指定します。  | フィールド定義の `_type` | 設定値オブジェクトの `_type` | | --- | --- | | `MinimumSize2d` | `MinimumSize2d` | | `MinimumSize2dWithDefaultInsertPosition` | `MinimumSize2dWithDefaultInsertPosition` | | `MarginOfErrorTolerance` | `MarginOfErrorTolerance` | | `VertexCountMinMax` | `VertexCountMinMax` | | `MinimumArea2d` | `MinimumArea2d` | | `DisplayLineDirection` | `DisplayLineDirection` | | `AnnotationEditorFeature` | `AnnotationEditorFeature` | | `OneIntegerField` | `OneIntegerFieldValue` | | `OneStringField` | `OneStringFieldValue` | | `OneBooleanField` | `OneBooleanFieldValue` | 
 
 Keys of dict
 

@@ -49,7 +49,7 @@ ANNOTATIONTYPEFIELDVALUE_ONE_OF_SCHEMAS = [
 
 class AnnotationTypeFieldValue(BaseModel):
     """
-    ユーザー定義アノテーション種別のフィールドに設定される値です。 アノテーション種別のフィールド定義と対応するフィールド値のみ登録を許可されます。
+    フィールドに設定する制約やオプションを表すオブジェクトです。 Annofabの標準エディタで使用するアノテーション種別では、[LabelV3 の `field_values`](#tag/x-data-types/LabelV3) に記載された、設定値の構造を示す名前を `_type` に指定します。 ユーザー定義アノテーション種別では、[フィールド定義と設定値の対応表](#tag/x-data-types/UserDefinedAnnotationTypeDefinition)（`field_definitions` の `definition` の説明）に示す、設定値オブジェクトの `_type` を指定します。
     """
 
     # data type: AnnotationTypeFieldValueMinimumSize
